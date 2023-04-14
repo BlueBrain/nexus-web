@@ -352,7 +352,8 @@ function useGlobalSearchData(
   queryLayout: string,
   onSuccess: (queryResponse: any) => void,
   onSortOptionsChanged: () => void,
-  nexus: NexusClient
+  nexus: NexusClient,
+  setSelectedRowKeys: React.Dispatch<any>
 ) {
   const history = useHistory();
   const location = useLocation();
@@ -372,6 +373,7 @@ function useGlobalSearchData(
     if (!(config && config.layouts && config.layouts.length > 0)) return;
     // default to first search layout
     setSelectedSearchLayout(queryLayout ?? config.layouts[0].name);
+    setSelectedRowKeys([]);
   }, [config, queryLayout]);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
@@ -625,6 +627,7 @@ function useGlobalSearchData(
     if (config?.layouts && config.layouts.length > 0) {
       const layout = config.layouts.find(l => l.name === selectedSearchLayout);
       layout && applyLayout(layout, columns);
+      setSelectedRowKeys([]);
       return;
     }
     clearAllFilters();
@@ -714,10 +717,10 @@ function useGlobalSearchData(
   }, [selectedSearchLayout]);
   React.useEffect(() => {
     const layout = config?.layouts.find(l => l.name === queryLayout);
-    console.log('@@@@layout', config?.layouts, 'l:', layout, 'q', queryLayout);
     if (!layout) return;
 
     applyLayout(layout, columns);
+    setSelectedRowKeys([]);
   }, [queryLayout, config?.layouts]);
 
   return {

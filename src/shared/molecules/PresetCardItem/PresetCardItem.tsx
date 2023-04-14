@@ -1,5 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
+import { clsx } from 'clsx';
 import './styles.less';
 
 type TProps = {
@@ -10,7 +11,10 @@ type TProps = {
   label?: string;
   stats?: string;
   to: string;
+  selected?: boolean;
+  onChangeLayout?(layout?: string): void;
 };
+
 
 const PresetCardItem: React.FC<TProps> = ({
   title,
@@ -39,3 +43,13 @@ export default PresetCardItem;
 export const PresetCardItemSkeleton = () => {
   return <div className="preset-card skeleton" />;
 };
+
+export const PresetCardItemCompact: React.FC<Partial<TProps>> = ({ title, selected, onChangeLayout, titleStyle }) => {
+  return (
+    <div className={clsx('preset-card compact', selected && 'selected')} onClick={() => onChangeLayout?.(title) }>
+      <div className={'preset-card-title'} style={titleStyle}>
+          {title}
+      </div>
+    </div>
+  )
+}

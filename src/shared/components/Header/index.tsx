@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Dropdown, Popover, MenuItemProps } from 'antd';
+import { useLocation } from 'react-router';
+import { Menu, Dropdown, MenuItemProps } from 'antd';
 import {
   UserOutlined,
   BookOutlined,
@@ -11,18 +12,17 @@ import {
   CopyOutlined,
   MenuOutlined,
   PlusOutlined,
+  CloseOutlined
 } from '@ant-design/icons';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk';
 import useNotification from '../../../shared/hooks/useNotification';
+import { UISettingsActionTypes } from '../../../shared/store/actions/ui-settings';
 import { ConsentType } from '../../layouts/FusionMainLayout';
 import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AppInfo } from '../../../shared/modals';
+import { RootState } from '../../../shared/store/reducers';
 import './Header.less';
-
-declare var Version: string;
-
-const copyIcon = require('../../images/copyIcon.svg');
 
 interface InformationContentProps {
   version: string;
@@ -71,8 +71,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   authenticated,
 }) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const notification = useNotification();
   const [visible, setModalVisible] = useState<boolean>(false);
+  const { openCreationPanel } = useSelector((state: RootState) => state.uiSettings);
   const onModalStateChange = () => setModalVisible(() => false);
   const copyTokenCmd = () => {
     if (token) {
@@ -156,7 +158,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </Menu.Item>
     </Menu>
   );
-  const handleOpenCreationPanel = () => {};
+  const showCreationPanel = location.pathname === '/search';
+  const handleOpenCreationPanel = () => {
+    dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL })
+  };
   return (
     <Fragment>
       <header className="Header">
@@ -171,12 +176,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           </Link>
         </div>
         <div className="menu-block">
-          {name && (
+          {name && showCreationPanel && (
             <div className="menu-open-creation-panel">
-              <PlusOutlined
-                style={{ color: 'white', fontSize: 18 }}
-                onClick={handleOpenCreationPanel}
-              />
+                <PlusOutlined
+                  rotate={openCreationPanel ? 45 : 90 }
+                  style={{ color: 'white', fontSize: 18 }}
+                  onClick={handleOpenCreationPanel}
+                /> 
             </div>
           )}
           {name && (

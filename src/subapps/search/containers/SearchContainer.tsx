@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import TableHeightWrapper from '../components/TableHeightWrapper';
-import { Spin, Pagination, Table, Button, Checkbox, Result } from 'antd';
+import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
+import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import useSearchPagination, {
   useAdjustTableHeight,
@@ -12,14 +12,29 @@ import useSearchPagination, {
   ESMaxResultWindowSize,
 } from '../hooks/useSearchPagination';
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
-import './SearchContainer.less';
 import FiltersConfig from '../components/FiltersConfig';
-import SearchLayouts from '../components/Layouts';
 import SortConfigContainer from './SortConfigContainer';
-import {
-  DATA_PANEL_STORAGE,
-  DATA_PANEL_STORAGE_EVENT,
-} from 'shared/organisms/DataPanel/DataPanel';
+import './SearchContainer.less';
+import { TDataSource, TResourceTableData } from '../../../shared/molecules/MyDataTable/MyDataTable';
+import { DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from '../../../shared/organisms/DataPanel/DataPanel';
+import { uniq, uniqBy } from 'lodash';
+
+
+type TRecord = {
+  key: string,
+  description: string;
+  name: string;
+  '@id': string;
+  '@type': string;
+  createdAt: string,
+  updatedAt: string;
+  _self: string[];
+  project: {
+    identifier: string;
+    label: string;
+  },
+  [key: string]: any
+};
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -97,7 +112,7 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-          lastPageOfResults !== 0
+            lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -161,7 +176,8 @@ const SearchContainer: React.FC = () => {
     layout,
     onQuerySuccess,
     onSortOptionsChanged,
-    nexus
+    nexus,
+    setSelectedRowKeys,
   );
 
   const clearAllCustomisation = () => {
@@ -169,10 +185,40 @@ const SearchContainer: React.FC = () => {
     resetAll();
   };
 
-  const handleSelect = (record: any, selected: any) => {
-    console.log('@@handleSelect', { record, selected });
+  const handleSelect = (record: TRecord, selected: any) => {
+    const newRecord: TDataSource = {
+      source: layout,
+      key: record['@id'],
+      createdAt: record.createdAt,
+      description: record.description,
+      name: record.name,
+      project: record.project.identifier,
+      updatedAt: record.updatedAt,
+      type: record['@type'],
+    }
     if (selected) {
       setSelectedRowKeys((keys: any) => [...keys, record.key]);
+      const dataPanelLS: TResourceTableData = JSON.parse(
+        localStorage.getItem(DATA_PANEL_STORAGE)!
+      );
+      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+      let selectedRows = dataPanelLS?.selectedRows || [];
+      selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
+      selectedRows = uniqBy([...selectedRows, newRecord], 'key' );
+      localStorage.setItem(
+        DATA_PANEL_STORAGE,
+        JSON.stringify({
+          selectedRowKeys,
+          selectedRows,
+        })
+      );
+      window.dispatchEvent(
+        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+          detail: {
+            datapanel: { selectedRowKeys, selectedRows },
+          },
+        })
+      );
     } else {
       setSelectedRowKeys((keys: any) => {
         const index = keys.indexOf(record.key);
@@ -211,19 +257,20 @@ const SearchContainer: React.FC = () => {
             handleSelect(record, !checked);
           }}
         >
-          {checked ? null : (
-            <span className="row-index">
-              {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
-            </span>
-          )}
-          <Checkbox className={checked ? '' : 'row-select'} checked={checked} />
+          {/* {checked ? null : (
+          )} */}
+          <Checkbox className='row-select' checked={checked} />
+          <span className="row-index">
+            {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
+          </span>
         </div>
       );
     },
   };
 
   return (
-    <Spin spinning={isLoading}>
+    <React.Fragment>
+      {/* <Spin spinning={isLoading}> */}
       {searchError ? (
         <Result
           status="500"
@@ -235,24 +282,20 @@ const SearchContainer: React.FC = () => {
           {searchError.stack}
         </Result>
       ) : (
-        <TableHeightWrapper
-          wrapperHeightRef={wrapperHeightRef}
-          resultTableHeightTestRef={resultTableHeightTestRef}
-          wrapperDOMProps={wrapperDOMProps}
-        >
+        <div>
           {visibleColumns && data && (
             <>
+              {config?.layouts && (
+                <SearchByPresetsCompact
+                  layouts={config?.layouts}
+                  selectedLayout={selectedSearchLayout}
+                  onChangeLayout={layoutName => {
+                    handleChangeSearchLayout(layoutName);
+                  }}
+                />
+              )}
               <div className="search-table-header">
                 <div className="search-table-header__options">
-                  {config?.layouts && (
-                    <SearchLayouts
-                      layouts={config?.layouts}
-                      selectedLayout={selectedSearchLayout}
-                      onChangeLayout={layoutName => {
-                        handleChangeSearchLayout(layoutName);
-                      }}
-                    />
-                  )}
                   <ColumnsVisibilityConfig
                     columnsVisibility={fieldsVisibilityState}
                     dispatchFieldVisibility={dispatchFieldVisibility}
@@ -295,20 +338,26 @@ const SearchContainer: React.FC = () => {
               </div>
               <div className="search-table">
                 <Table
+                  sticky
+                  className='result-table'
+                  loading={isLoading}
                   rowSelection={rowSelection}
-                  tableLayout="fixed"
+                  rowClassName="search-table-row"
                   rowKey="key"
                   columns={visibleColumns}
                   dataSource={data}
                   pagination={false}
                   onRow={onRowClick}
+                  scroll={{ x: true }}
                 />
               </div>
             </>
           )}
-        </TableHeightWrapper>
+        </div>
+        // </TableHeightWrapper>
       )}
-    </Spin>
+      {/* </Spin> */}
+    </React.Fragment>
   );
 };
 

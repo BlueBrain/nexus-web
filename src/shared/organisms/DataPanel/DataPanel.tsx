@@ -20,6 +20,7 @@ import { RootState } from '../../../shared/store/reducers';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import DeprecatedIcon from '../../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import './styles.less';
+import isValidUrl from '../../../utils/validUrl';
 
 type Props = {
   authenticated?: boolean;
@@ -53,9 +54,11 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   );
   const handleRemoveItemFromDataPanel = (record: TDataSource) => {
+    console.log('@@handleRemoveItemFromDataPanel', record);
     const selectedRowKeys = resources.selectedRowKeys.filter(
       t => t !== record.key
     );
+    console.log('@@handleRemoveItemFromDataPanel', selectedRowKeys);
     const selectedRows = resources.selectedRows.filter(
       t => t.key !== record.key
     );
@@ -113,7 +116,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       title: 'Name',
       dataIndex: 'name',
       fixed: true,
-      render: text => `${text.split('/').pop()}`,
+      render: text => isValidUrl(text) ? `${text.split('/').pop()}` : text,
     },
     {
       key: 'project',

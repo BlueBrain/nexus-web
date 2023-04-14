@@ -43,6 +43,7 @@ type TResource = {
   _updatedBy: string;
 };
 export type TDataSource = {
+  source?: string;
   key: React.Key;
   name: string;
   project: string;
@@ -50,7 +51,7 @@ export type TDataSource = {
   type?: string | string[];
   updatedAt: string;
   createdAt: string;
-  resource: TResource;
+  resource?: TResource;
 };
 type TProps = {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
@@ -121,7 +122,7 @@ const MyDataTable: React.FC<TProps> = ({
         fixed: true,
         sorter: (a, b) => a.name.length - b.name.length,
         render: (text, record) => {
-          if (text && record.resource._project) {
+          if (text && record.resource?._project) {
             const { org, project } = makeOrgProjectTuple(
               record.resource._project
             );
@@ -221,7 +222,7 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
       selectedRowKeys = [...selectedRowKeys, record.key];
-      selectedRows = [...selectedRows, record];
+      selectedRows = [...selectedRows, {...record, source: 'my-data'}];
     } else {
       selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
       selectedRows = selectedRows.filter(t => t.key !== record.key);
@@ -253,7 +254,7 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      selectedRows = union(selectedRows, changeRows);
+      selectedRows = union(selectedRows, changeRows.map(t => ({ ...t, source: 'my-data'})));
       selectedRowKeys = union(
         selectedRowKeys,
         changeRows.map(t => t.key)

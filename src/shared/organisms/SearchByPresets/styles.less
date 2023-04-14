@@ -1,0 +1,32 @@
+.searchby-presets {
+  &-title {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #bfbfbf;
+  }
+
+  &-container {
+    display: flex;
+    flex-flow: row wrap;
+    column-gap: 10px;
+    row-gap: 5px;
+  }
+
+  &.compact {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px 10px;
+    .searchby-presets-container {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      column-gap: 5px;
+      row-gap: 5px;
+    }
+  }
+}

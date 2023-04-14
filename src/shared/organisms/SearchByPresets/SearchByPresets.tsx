@@ -4,8 +4,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { Spin } from 'antd';
 import { unionBy } from 'lodash';
-import { PresetCardItem, PresetCardItemSkeleton } from '../../molecules';
-import { SearchConfig } from '../../../subapps/search/hooks/useGlobalSearch';
+import { PresetCardItem, PresetCardItemSkeleton, PresetCardItemCompact } from '../../molecules';
+import { SearchConfig, SearchLayout } from '../../../subapps/search/hooks/useGlobalSearch';
 import './styles.less';
 
 type Props = {};
@@ -46,6 +46,8 @@ const ConfigQueryBuilder = (id: string) => {
 export const fetchNexusSearchConfig = (
   nexus: NexusClient
 ): Promise<SearchConfig> => nexus.Search.config();
+
+
 const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
   const results: TLayout[] = [];
   for (const layout of layouts.filter(l => l.id)) {
@@ -58,9 +60,11 @@ const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
   }
   return results;
 };
-const HomeSearchByPresets = (props: Props) => {
+
+
+const SearchByPresets = (props: Props) => {
   const nexus = useNexusContext();
-  const { data, isSuccess } = useQuery('nexus-search-config', {
+  const { data, isSuccess, isLoading } = useQuery('nexus-search-config', {
     queryFn: () => fetchNexusSearchConfig(nexus),
     keepPreviousData: true,
   });
@@ -80,11 +84,11 @@ const HomeSearchByPresets = (props: Props) => {
   );
   const displayLayouts = unionBy(layoutsWithStats, layouts, i => i.id);
   return (
-    <div className="home-searchby-presets">
-      <h2 className="home-searchby-presets-title">Search By</h2>
-      {status === 'loading' && (
+    <div className="searchby-presets">
+      <h2 className="searchby-presets-title">Search By</h2>
+      {(status === 'loading' || isLoading) && (
         <Spin spinning={status === 'loading'}>
-          <div className="home-searchby-presets-container">
+          <div className="searchby-presets-container">
             {Array(8)
               .fill('')
               .map((_, i) => (
@@ -94,7 +98,7 @@ const HomeSearchByPresets = (props: Props) => {
         </Spin>
       )}
       {status === 'success' && (
-        <div className="home-searchby-presets-container">
+        <div className="searchby-presets-container">
           {(displayLayouts as TLayout[]).map(layout => (
             <PresetCardItem
               key={`preset-card-${layout.id}`}
@@ -112,4 +116,24 @@ const HomeSearchByPresets = (props: Props) => {
   );
 };
 
-export default HomeSearchByPresets;
+export default SearchByPresets;
+
+type SearchLayoutProps = {
+  layouts?: SearchLayout[];
+  selectedLayout?: string;
+  onChangeLayout: (layout: string) => void;
+};
+
+export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({ layouts, selectedLayout, onChangeLayout }) => {
+  return (
+    <div className='searchby-presets compact'>
+      <div className="searchby-presets-container">
+        {layouts?.map(item => <PresetCardItemCompact
+          title={item.name}
+          selected={selectedLayout === item.name}
+          onChangeLayout={onChangeLayout}
+        />)}
+      </div>
+    </div>
+  )
+}

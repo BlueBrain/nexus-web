@@ -17,7 +17,6 @@ import getUserManager from '../../client/userManager';
 import { getLogoutUrl, getDestinationParam } from '../utils';
 import { url as githubIssueURL } from '../../../package.json';
 import useLocalStorage from '../hooks/useLocalStorage';
-import SearchBarContainer from '../containers/SearchBarContainer';
 import DataCartContainer, {
   FallbackCart,
 } from '../containers/DataCartContainer';

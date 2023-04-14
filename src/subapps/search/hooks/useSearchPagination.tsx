@@ -1,6 +1,6 @@
 import * as React from 'react';
-import useMeasure from '../../../shared/hooks/useMeasure';
 import { debounce } from 'lodash';
+import useMeasure from '../../../shared/hooks/useMeasure';
 
 export type SearchPagination = {
   numRowsFitOnPage: number;
