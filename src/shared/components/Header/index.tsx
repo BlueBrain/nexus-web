@@ -22,17 +22,9 @@ import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AppInfo } from '../../../shared/modals';
 import { RootState } from '../../../shared/store/reducers';
 import './Header.less';
-
-interface InformationContentProps {
-  version: string;
-  githubIssueURL: string;
-  commitHash?: string;
-  consent?: ConsentType;
-  onClickRemoveConsent?(): void;
-}
+import { EnvironmentInfo } from 'shared/modals/AppInfo/AppInfo';
 
 export interface HeaderProps {
-  version: string;
   githubIssueURL: string;
   forgeLink: string;
   name?: string;
@@ -51,6 +43,7 @@ export interface HeaderProps {
   authenticated: boolean;
   logoImg: string;
   handleLogout: MenuItemProps['onClick'];
+  environment: EnvironmentInfo;
 }
 
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -58,7 +51,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   token,
   logoImg,
   handleLogout,
-  version,
+  environment,
   githubIssueURL,
   forgeLink,
   consent,
@@ -211,7 +204,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           visible,
           onClickRemoveConsent,
           onModalStateChange,
-          fusionVersion: version,
+          environment,
         }}
       />
     </Fragment>

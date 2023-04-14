@@ -24,10 +24,12 @@ import './FusionMainLayout.less';
 import useNotification from '../hooks/useNotification';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
+import { parseUserAgent } from 'react-device-detect';
 
 const { Content } = Layout;
 
 declare var COMMIT_HASH: string;
+declare var FUSION_VERSION: string;
 
 export interface FusionMainLayoutProps {
   authenticated: boolean;
@@ -125,6 +127,19 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     return '';
   }, [versions]);
 
+  const environmentName = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.environment as string;
+    }
+    return '';
+  }, [versions]);
+
+  const userPlatform = parseUserAgent(navigator.userAgent);
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
+    ?.version ?? ''}`;
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
+    ?.version ?? ''}`;
+
   React.useEffect(() => {
     const currentSubApp =
       subApps.find(({ route }) => {
@@ -205,7 +220,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             performLogin={login}
             handleLogout={handleLogout}
             displayLogin={canLogin}
-            version={deltaVersion}
             githubIssueURL={githubIssueURL}
             forgeLink={layoutSettings.forgeLink}
             logoImg={layoutSettings.logoImg}
@@ -219,6 +233,13 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             }
             subApps={subApps}
             authenticated={authenticated}
+            environment={{
+              deltaVersion,
+              operatingSystem,
+              browser,
+              environmentName,
+              fusionVersion: FUSION_VERSION,
+            }}
           />
         )}
         <ConsentContainer consent={consent} updateConsent={setConsent} />
