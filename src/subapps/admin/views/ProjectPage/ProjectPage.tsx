@@ -146,7 +146,7 @@ const ProjectView: React.FunctionComponent = () => {
         });
       })
       .catch(error => {
-        console.log('@@@projectpageerror', error)
+        console.log('@@@projectpageerror', error);
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,

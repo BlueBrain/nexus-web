@@ -5,6 +5,7 @@ import {
 import { AnyAction } from 'redux';
 
 export const DEFAULT_UI_SETTINGS = {
+  openCreationPanel: false,
   pageSizes: {
     orgsListPageSize: 5,
     projectsListPageSize: 5,
@@ -14,6 +15,7 @@ export const DEFAULT_UI_SETTINGS = {
 };
 
 export interface UISettingsState {
+  openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
 }
 
@@ -30,7 +32,13 @@ export default function uiSettingsReducer(
           [action.filterKey]: action.payload.pageSize,
         },
       };
-      break;
+    case UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL: {
+      return {
+        ...state,
+        openCreationPanel: action.payload ?? !state.openCreationPanel,
+      };
+    }
+    default:
+      return state;
   }
-  return state;
 }

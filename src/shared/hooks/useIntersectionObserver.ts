@@ -25,7 +25,7 @@ export default function useIntersectionObserver<T>({
       entries =>
         entries.forEach(entry => entry.isIntersecting && onIntersect()),
       {
-        root: root,
+        root,
         rootMargin,
         threshold,
       }

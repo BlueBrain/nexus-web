@@ -26,9 +26,8 @@ function timeago(date: Date) {
     if (counter > 0) {
       if (counter === 1) {
         return `${counter} ${interval} ago`;
-      } else {
-        return `${counter} ${interval}s ago`;
       }
+      return `${counter} ${interval}s ago`;
     }
   }
   return 'just now';

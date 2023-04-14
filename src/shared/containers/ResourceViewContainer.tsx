@@ -75,7 +75,6 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   // @ts-ignore
   const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
-  
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
@@ -112,8 +111,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       }
     }
   }, []);
-
-  
 
   const goToResource = (
     orgLabel: string,
@@ -556,9 +553,9 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
   React.useEffect(() => {
-    window.scrollTo({ 
+    window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   }, []);
   return (

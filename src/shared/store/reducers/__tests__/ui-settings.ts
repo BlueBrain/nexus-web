@@ -18,6 +18,7 @@ describe('UISettings Reducer', () => {
       payload: { pageSize: 50 },
     };
     expect(uiSettingsReducer(undefined, changeOrgsListAction)).toEqual({
+      openCreationPanel: false,
       pageSizes: {
         ...DEFAULT_UI_SETTINGS.pageSizes,
         orgsListPageSize: 50,

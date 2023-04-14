@@ -14,8 +14,6 @@ import useNotification, {
   NexusError,
 } from '../../../shared/hooks/useNotification';
 
-
-
 const DEFAULT_PAGE_SIZE = 20;
 const SHOULD_INCLUDE_DEPRECATED = false;
 

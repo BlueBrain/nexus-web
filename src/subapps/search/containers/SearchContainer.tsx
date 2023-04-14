@@ -16,7 +16,10 @@ import './SearchContainer.less';
 import FiltersConfig from '../components/FiltersConfig';
 import SearchLayouts from '../components/Layouts';
 import SortConfigContainer from './SortConfigContainer';
-import { DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from 'shared/organisms/DataPanel/DataPanel';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+} from 'shared/organisms/DataPanel/DataPanel';
 
 const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
@@ -94,7 +97,7 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-            lastPageOfResults !== 0
+          lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -167,7 +170,7 @@ const SearchContainer: React.FC = () => {
   };
 
   const handleSelect = (record: any, selected: any) => {
-    console.log('@@handleSelect', { record, selected })
+    console.log('@@handleSelect', { record, selected });
     if (selected) {
       setSelectedRowKeys((keys: any) => [...keys, record.key]);
     } else {

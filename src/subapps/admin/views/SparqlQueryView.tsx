@@ -10,7 +10,6 @@ import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useOrganisationsSubappContext } from '..';
 
-
 const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   const match = useRouteMatch<{

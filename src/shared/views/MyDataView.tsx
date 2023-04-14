@@ -1,14 +1,14 @@
-import React from 'react'
+import React from 'react';
 import { MyData } from '../canvas';
 
-type Props = {}
+type Props = {};
 
 const MyDataView = (props: Props) => {
   return (
     <div className="my-data-view view-container">
-        <MyData />
+      <MyData />
     </div>
-  )
-}
+  );
+};
 
-export default MyDataView
+export default MyDataView;

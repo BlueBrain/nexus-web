@@ -10,7 +10,7 @@ const Home: React.FunctionComponent = () => {
     ({ oidc }: RootState) => oidc && !!oidc.user
   );
   if (!userLoggedIn) {
-    return <AuthenticationPage />
+    return <AuthenticationPage />;
   }
   return (
     <div className="home-view view-container">

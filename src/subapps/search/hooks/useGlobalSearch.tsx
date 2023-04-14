@@ -343,7 +343,6 @@ export type ESSortField = {
   fieldName: string;
   direction: SortDirection;
   format?: string;
-  
 };
 
 function useGlobalSearchData(
@@ -650,9 +649,7 @@ function useGlobalSearchData(
   };
 
   const handleChangeSearchLayout = (layoutName: string) => {
-    history.replace(
-      `${location.pathname}?layout=${layoutName}`
-    );
+    history.replace(`${location.pathname}?layout=${layoutName}`);
     setSelectedSearchLayout(layoutName);
   };
 
@@ -702,7 +699,7 @@ function useGlobalSearchData(
           };
         })
         .filter(filter => filter !== undefined);
-        console.log('fromLayout-filters', filters)
+      console.log('fromLayout-filters', filters);
       dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
     } else {
       dispatchFilter({ type: 'fromLayout', payload: [] });

@@ -89,7 +89,6 @@ describe('StudioListContainer', () => {
     await waitFor(async () => {
       const studios = await screen.getAllByRole('listitem');
       expect(studios[1]).toHaveTextContent('test-label-2');
-
     });
   });
 });

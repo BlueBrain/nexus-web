@@ -1,123 +1,122 @@
 @import '../../lib.less';
 
-
 .app-information-modal {
-    .ant-modal-content {
-        padding: 25px 20px !important;
-        background-color: white !important;
-        .ant-modal-close-x {
-            position: absolute;
-            top: -45px;
-            right: -50px;
-            color: white;
-            svg {
-                width: 1.6em;
-                height: 1.6em;
-            }
-        }
+  .ant-modal-content {
+    padding: 25px 20px !important;
+    background-color: white !important;
+    .ant-modal-close-x {
+      position: absolute;
+      top: -45px;
+      right: -50px;
+      color: white;
+      svg {
+        width: 1.6em;
+        height: 1.6em;
+      }
     }
-    .description {
-        h3 {
-            font-family: 'Titillium Web';
-            font-style: normal;
-            font-weight: 600;
-            font-size: 16px;
-            line-height: 24px;
-            color: @fusion-neutral-0;
-            margin-bottom: .2em;
-        }
-
-        p {
-            font-family: 'Titillium Web';
-            font-style: normal;
-            font-weight: 300;
-            font-size: 14px;
-            line-height: 115%;
-            letter-spacing: 0.03em;
-            color: @fusion-neutral-0;
-        }
+  }
+  .description {
+    h3 {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      color: @fusion-neutral-0;
+      margin-bottom: 0.2em;
     }
 
-    .copyright {
-        font-family: 'Titillium Web';
-        font-style: normal;
-        font-weight: 300;
-        font-size: 14px;
-        // line-height: 135%;
-        letter-spacing: 0.03em;
-        color: @fusion-neutral-8;
-        display: flex;
-        align-items: center;
-        img {
-            height: 17px;
-            margin-left: 20px;
-        }
+    p {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 115%;
+      letter-spacing: 0.03em;
+      color: @fusion-neutral-0;
     }
+  }
 
-    .versions {
-        &-items{
-            display: grid;
-            grid-template-columns: repeat(2, max-content);
-            gap: 10px;
-        }
-        &-title {
-            font-family: 'Titillium Web';
-            font-style: normal;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 135%;
-            letter-spacing: 0.03em;
-            color: @fusion-neutral-8;   
-            margin-bottom: 10px;
-        }
-        .version-item {
-            border-radius: 4px;
-            font-family: 'Titillium Web';
-            font-style: normal;
-            font-weight: 400;
-            font-size: 13px;
-            line-height: 125%;
-            font-feature-settings: 'tnum' on, 'lnum' on;
-            color: @fusion-daybreak-9;
-            padding: 15px 25px;
-            background: @fusion-blue-1;
-            box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
-            border-radius: 4px;
-            div {
-                font-weight: 700;
-                margin-bottom: 5px;
-            }
-            p {
-                font-size: 10px;
-                font-weight: 400;
-                line-height: 110%;
-                font-feature-settings: 'tnum' on, 'lnum' on;
-                color: @fusion-daybreak-9;
-            }
-        }
+  .copyright {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    // line-height: 135%;
+    letter-spacing: 0.03em;
+    color: @fusion-neutral-8;
+    display: flex;
+    align-items: center;
+    img {
+      height: 17px;
+      margin-left: 20px;
     }
-    .repository {
-        display: grid;
-        grid-template-columns: repeat(2, max-content);
-        gap: 10px;
-        .gh-link {
-            font-family: 'Titillium Web';
-            font-style: normal;
-            font-weight: 300;
-            font-size: 14px;
-            line-height: 135%;
-            letter-spacing: 0.03em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            a {
-                margin-left: 5px;
-                color: @fusion-neutral-8 !important;
-            }
-        }
+  }
+
+  .versions {
+    &-items {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      gap: 10px;
     }
-    .ant-divider {
-        margin-top: 13px !important;
-        margin-bottom: 13px !important;
+    &-title {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 135%;
+      letter-spacing: 0.03em;
+      color: @fusion-neutral-8;
+      margin-bottom: 10px;
     }
+    .version-item {
+      border-radius: 4px;
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 125%;
+      font-feature-settings: 'tnum' on, 'lnum' on;
+      color: @fusion-daybreak-9;
+      padding: 15px 25px;
+      background: @fusion-blue-1;
+      box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      div {
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      p {
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 110%;
+        font-feature-settings: 'tnum' on, 'lnum' on;
+        color: @fusion-daybreak-9;
+      }
+    }
+  }
+  .repository {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 10px;
+    .gh-link {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 135%;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      a {
+        margin-left: 5px;
+        color: @fusion-neutral-8 !important;
+      }
+    }
+  }
+  .ant-divider {
+    margin-top: 13px !important;
+    margin-bottom: 13px !important;
+  }
 }

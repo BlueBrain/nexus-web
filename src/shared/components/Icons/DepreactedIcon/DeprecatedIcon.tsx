@@ -1,5 +1,4 @@
-import * as React from "react";
-
+import * as React from 'react';
 
 const DeprecatedIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -18,7 +17,5 @@ const DeprecatedIcon = (props: React.SVGProps<SVGSVGElement>) => (
       d="M4.992 5.375c0 .666-1 .666-1 0 0-.667 1-.667 1 0ZM3.993 2.25h1v1.875h-1V2.25Z"
     />
   </svg>
-)
+);
 export default DeprecatedIcon;
-
-

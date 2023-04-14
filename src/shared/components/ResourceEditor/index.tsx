@@ -75,7 +75,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       setFoldCodeMiror(() => false);
     }
     onFormatChange?.(expanded);
-  }
+  };
   const onMetadataChangeFold = (checked: boolean) => {
     if (codeMirorRef.current) {
       codeMirorRef.current.execCommand('foldAll');
@@ -83,7 +83,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       setFoldCodeMiror(() => false);
     }
     onMetadataChange?.(checked);
-  }
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -123,7 +123,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     // onMetadataChange?.(false);
     return () => {
       setFoldCodeMiror(false);
-    }
+    };
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
@@ -184,7 +184,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               checkedChildren="Metadata"
               unCheckedChildren="Show Metadata"
               checked={showMetadata}
-              onChange={(checked) => onMetadataChangeFold(checked)}
+              onChange={checked => onMetadataChangeFold(checked)}
               style={switchMarginRight}
             />
           )}
@@ -193,7 +193,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               checkedChildren="Expanded"
               unCheckedChildren="Expand"
               checked={expanded}
-              onChange={(expaned) => onFormatChangeFold(expanded)}
+              onChange={expaned => onFormatChangeFold(expanded)}
               style={switchMarginRight}
             />
           )}

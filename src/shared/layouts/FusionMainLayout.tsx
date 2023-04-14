@@ -171,7 +171,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     dispatch(push(url, { previousUrl: window.location.href }));
   };
 
-  const handleLogout: MenuItemProps['onClick'] = (e) => {
+  const handleLogout: MenuItemProps['onClick'] = e => {
     e.domEvent.preventDefault();
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
@@ -197,29 +197,31 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
     <>
       <SeoHeaders />
       <Layout className={`fusion-main-layout ${token ? 'authed' : 'wall'}`}>
-        { token && <Header
-          name={authenticated ? name : undefined}
-          token={token}
-          realms={realms}
-          serviceAccountsRealm={serviceAccountsRealm}
-          performLogin={login}
-          handleLogout={handleLogout}
-          displayLogin={canLogin}
-          version={deltaVersion}
-          githubIssueURL={githubIssueURL}
-          forgeLink={layoutSettings.forgeLink}
-          logoImg={layoutSettings.logoImg}
-          consent={consent}
-          commitHash={COMMIT_HASH}
-          onClickRemoveConsent={() => setConsent(undefined)}
-          dataCart={
-            <ErrorBoundary fallback={FallbackCart}>
-              <DataCartContainer />
-            </ErrorBoundary>
-          }
-          subApps={subApps}
-          authenticated={authenticated}
-        /> }
+        {token && (
+          <Header
+            name={authenticated ? name : undefined}
+            token={token}
+            realms={realms}
+            serviceAccountsRealm={serviceAccountsRealm}
+            performLogin={login}
+            handleLogout={handleLogout}
+            displayLogin={canLogin}
+            version={deltaVersion}
+            githubIssueURL={githubIssueURL}
+            forgeLink={layoutSettings.forgeLink}
+            logoImg={layoutSettings.logoImg}
+            consent={consent}
+            commitHash={COMMIT_HASH}
+            onClickRemoveConsent={() => setConsent(undefined)}
+            dataCart={
+              <ErrorBoundary fallback={FallbackCart}>
+                <DataCartContainer />
+              </ErrorBoundary>
+            }
+            subApps={subApps}
+            authenticated={authenticated}
+          />
+        )}
         <ConsentContainer consent={consent} updateConsent={setConsent} />
         <Content className="site-layout-background fusion-main-layout__content">
           {children}

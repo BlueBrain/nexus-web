@@ -25,8 +25,9 @@ const organisationSubappProps = {
   namespace: 'orgs',
   icon: require('../../shared/images/dbIcon.svg'),
   requireLogin: true,
-  description: 'Browse through different  group of datasets gather by those providing datas',
-}
+  description:
+    'Browse through different  group of datasets gather by those providing datas',
+};
 export const AdminSubappContext = React.createContext<{
   title: string;
   namespace: string;
@@ -84,9 +85,12 @@ export const OrganisationsSubappContext = React.createContext<{
   requireLogin: boolean;
   description: string;
 }>(organisationSubappProps);
-export const useOrganisationsSubappContext = () => React.useContext(OrganisationsSubappContext);
+export const useOrganisationsSubappContext = () =>
+  React.useContext(OrganisationsSubappContext);
 
-export const OrganizationsSubappProviderHOC = (component: React.FunctionComponent) => {
+export const OrganizationsSubappProviderHOC = (
+  component: React.FunctionComponent
+) => {
   return () => (
     <OrganisationsSubappContext.Provider value={organisationSubappProps}>
       {component({})}
@@ -94,36 +98,41 @@ export const OrganizationsSubappProviderHOC = (component: React.FunctionComponen
   );
 };
 export const Organizations: SubApp = () => {
-  return ({
+  return {
     subAppType: 'internal',
     title: 'Organizations',
     namespace: 'orgs',
     icon: require('../../shared/images/dbIcon.svg'),
     requireLogin: true,
-    description: 'Browse through different  group of datasets gather by those providing datas',
-    routes: [{
-      path: '/',
-      exact: true,
-      component: OrganizationsSubappProviderHOC(OrganizationListPage),
-    }, {
-      path: '/:orgLabel',
-      exact: true,
-      component: OrganizationsSubappProviderHOC(OrganizationProjectsPage),
-    }, {
-      path: [
-        '/:orgLabel/:projectLabel',
-        '/:orgLabel/:projectLabel/browse',
-        '/:orgLabel/:projectLabel/query/:viewId?',
-        '/:orgLabel/:projectLabel/create',
-        '/:orgLabel/:projectLabel/statistics',
-        '/:orgLabel/:projectLabel/settings',
-        '/:orgLabel/:projectLabel/graph-analytics',
-        '/:orgLabel/:projectLabel/jira',
-      ],
-      exact: true,
-      component: AdminSubappProviderHOC(ProjectView),
-    },]
-  })
-}
+    description:
+      'Browse through different  group of datasets gather by those providing datas',
+    routes: [
+      {
+        path: '/',
+        exact: true,
+        component: OrganizationsSubappProviderHOC(OrganizationListPage),
+      },
+      {
+        path: '/:orgLabel',
+        exact: true,
+        component: OrganizationsSubappProviderHOC(OrganizationProjectsPage),
+      },
+      {
+        path: [
+          '/:orgLabel/:projectLabel',
+          '/:orgLabel/:projectLabel/browse',
+          '/:orgLabel/:projectLabel/query/:viewId?',
+          '/:orgLabel/:projectLabel/create',
+          '/:orgLabel/:projectLabel/statistics',
+          '/:orgLabel/:projectLabel/settings',
+          '/:orgLabel/:projectLabel/graph-analytics',
+          '/:orgLabel/:projectLabel/jira',
+        ],
+        exact: true,
+        component: AdminSubappProviderHOC(ProjectView),
+      },
+    ],
+  };
+};
 
 export default Admin;

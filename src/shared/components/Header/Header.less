@@ -29,6 +29,7 @@
     // padding-right: @default-pad;
     align-items: center;
     min-width: 120px;
+
     button,
     a {
       // margin: 0 4px;
@@ -52,13 +53,27 @@
       padding: 5px 20px;
       // height: 32px;
       background-color: @fusion-main-color;
+
       span {
+        user-select: none;
         margin-left: 5px;
         text-transform: capitalize;
       }
     }
   }
-  
+
+  .menu-open-creation-panel {
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    background: #003a8c;
+    height: 50px;
+    min-width: 50px;
+    width: 100%;
+  }
 
   .ui-header-info-button {
     margin: 5px 5px 4px;
@@ -131,55 +146,67 @@
 
 .menu-overlay-custom {
   top: 52px !important;
-  .ant-dropdown-menu{
+
+  .ant-dropdown-menu {
     background-color: @fusion-main-color !important;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     box-shadow: none !important;
     padding: 0 !important;
+
     .ant-dropdown-menu-item {
       line-height: 30px !important;
     }
-    .ant-dropdown-menu-submenu-title, .ant-dropdown-menu-item{
+
+    .ant-dropdown-menu-submenu-title,
+    .ant-dropdown-menu-item {
       color: @fusion-daybreak-3;
     }
   }
-  .menu-item-logout{
+
+  .menu-item-logout {
     background-color: @fusion-daybreak-10;
   }
 }
-.submenu-overlay-custom{
+
+.submenu-overlay-custom {
   span {
     line-height: 30px !important;
   }
-  &:hover{
-    .ant-dropdown-menu-submenu-title{
+
+  &:hover {
+    .ant-dropdown-menu-submenu-title {
       background-color: @fusion-daybreak-3 !important;
       color: @fusion-daybreak-9 !important;
     }
   }
+
   .ant-dropdown-menu-item {
     line-height: 30px !important;
   }
-  .ant-dropdown-menu-submenu-expand-icon{
+
+  .ant-dropdown-menu-submenu-expand-icon {
     display: none !important;
   }
 }
+
 .submenu-overlay-custom-popup {
   border-radius: 0 !important;
 
-  .ant-dropdown-menu{
+  .ant-dropdown-menu {
     background-color: @fusion-daybreak-3 !important;
     box-shadow: none !important;
     margin-left: 0px !important;
     margin-right: 0px !important;
     padding: 0px 0px;
-    .ant-dropdown-menu-item{
+
+    .ant-dropdown-menu-item {
       line-height: 30px !important;
       color: @fusion-daybreak-9 !important;
     }
   }
 }
+
 .link-menu-item {
   a {
     color: @fusion-daybreak-3 !important;
@@ -189,6 +216,7 @@
 .ant-popover-inner {
   background-color: @fusion-background-color !important;
 }
+
 .ant-popover-inner-content {
   padding: 6px !important;
 }
