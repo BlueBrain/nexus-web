@@ -12,7 +12,7 @@ import {
   CopyOutlined,
   MenuOutlined,
   PlusOutlined,
-  CloseOutlined
+  CloseOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk';
@@ -74,7 +74,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const location = useLocation();
   const notification = useNotification();
   const [visible, setModalVisible] = useState<boolean>(false);
-  const { openCreationPanel } = useSelector((state: RootState) => state.uiSettings);
+  const { openCreationPanel } = useSelector(
+    (state: RootState) => state.uiSettings
+  );
   const onModalStateChange = () => setModalVisible(() => false);
   const copyTokenCmd = () => {
     if (token) {
@@ -160,7 +162,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   );
   const showCreationPanel = location.pathname === '/search';
   const handleOpenCreationPanel = () => {
-    dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL })
+    dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   };
   return (
     <Fragment>
@@ -178,11 +180,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <div className="menu-block">
           {name && showCreationPanel && (
             <div className="menu-open-creation-panel">
-                <PlusOutlined
-                  rotate={openCreationPanel ? 45 : 90 }
-                  style={{ color: 'white', fontSize: 18 }}
-                  onClick={handleOpenCreationPanel}
-                /> 
+              <PlusOutlined
+                rotate={openCreationPanel ? 45 : 90}
+                style={{ color: 'white', fontSize: 18 }}
+                onClick={handleOpenCreationPanel}
+              />
             </div>
           )}
           {name && (

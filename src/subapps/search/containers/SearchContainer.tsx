@@ -15,25 +15,30 @@ import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfigContainer from './SortConfigContainer';
 import './SearchContainer.less';
-import { TDataSource, TResourceTableData } from '../../../shared/molecules/MyDataTable/MyDataTable';
-import { DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from '../../../shared/organisms/DataPanel/DataPanel';
+import {
+  TDataSource,
+  TResourceTableData,
+} from '../../../shared/molecules/MyDataTable/MyDataTable';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+} from '../../../shared/organisms/DataPanel/DataPanel';
 import { uniq, uniqBy } from 'lodash';
 
-
 type TRecord = {
-  key: string,
+  key: string;
   description: string;
   name: string;
   '@id': string;
   '@type': string;
-  createdAt: string,
+  createdAt: string;
   updatedAt: string;
   _self: string[];
   project: {
     identifier: string;
     label: string;
-  },
-  [key: string]: any
+  };
+  [key: string]: any;
 };
 
 const SearchContainer: React.FC = () => {
@@ -112,7 +117,7 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-            lastPageOfResults !== 0
+          lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -177,7 +182,7 @@ const SearchContainer: React.FC = () => {
     onQuerySuccess,
     onSortOptionsChanged,
     nexus,
-    setSelectedRowKeys,
+    setSelectedRowKeys
   );
 
   const clearAllCustomisation = () => {
@@ -195,7 +200,7 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-    }
+    };
     if (selected) {
       setSelectedRowKeys((keys: any) => [...keys, record.key]);
       const dataPanelLS: TResourceTableData = JSON.parse(
@@ -204,7 +209,7 @@ const SearchContainer: React.FC = () => {
       let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
       let selectedRows = dataPanelLS?.selectedRows || [];
       selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
-      selectedRows = uniqBy([...selectedRows, newRecord], 'key' );
+      selectedRows = uniqBy([...selectedRows, newRecord], 'key');
       localStorage.setItem(
         DATA_PANEL_STORAGE,
         JSON.stringify({
@@ -259,7 +264,7 @@ const SearchContainer: React.FC = () => {
         >
           {/* {checked ? null : (
           )} */}
-          <Checkbox className='row-select' checked={checked} />
+          <Checkbox className="row-select" checked={checked} />
           <span className="row-index">
             {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
           </span>
@@ -339,7 +344,7 @@ const SearchContainer: React.FC = () => {
               <div className="search-table">
                 <Table
                   sticky
-                  className='result-table'
+                  className="result-table"
                   loading={isLoading}
                   rowSelection={rowSelection}
                   rowClassName="search-table-row"

@@ -116,7 +116,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       title: 'Name',
       dataIndex: 'name',
       fixed: true,
-      render: text => isValidUrl(text) ? `${text.split('/').pop()}` : text,
+      render: text => (isValidUrl(text) ? `${text.split('/').pop()}` : text),
     },
     {
       key: 'project',

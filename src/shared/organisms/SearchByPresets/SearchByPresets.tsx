@@ -4,8 +4,15 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { Spin } from 'antd';
 import { unionBy } from 'lodash';
-import { PresetCardItem, PresetCardItemSkeleton, PresetCardItemCompact } from '../../molecules';
-import { SearchConfig, SearchLayout } from '../../../subapps/search/hooks/useGlobalSearch';
+import {
+  PresetCardItem,
+  PresetCardItemSkeleton,
+  PresetCardItemCompact,
+} from '../../molecules';
+import {
+  SearchConfig,
+  SearchLayout,
+} from '../../../subapps/search/hooks/useGlobalSearch';
 import './styles.less';
 
 type Props = {};
@@ -47,7 +54,6 @@ export const fetchNexusSearchConfig = (
   nexus: NexusClient
 ): Promise<SearchConfig> => nexus.Search.config();
 
-
 const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
   const results: TLayout[] = [];
   for (const layout of layouts.filter(l => l.id)) {
@@ -60,7 +66,6 @@ const getPresetsStats = async (nexus: NexusClient, layouts: TLayout[]) => {
   }
   return results;
 };
-
 
 const SearchByPresets = (props: Props) => {
   const nexus = useNexusContext();
@@ -124,16 +129,22 @@ type SearchLayoutProps = {
   onChangeLayout: (layout: string) => void;
 };
 
-export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({ layouts, selectedLayout, onChangeLayout }) => {
+export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({
+  layouts,
+  selectedLayout,
+  onChangeLayout,
+}) => {
   return (
-    <div className='searchby-presets compact'>
+    <div className="searchby-presets compact">
       <div className="searchby-presets-container">
-        {layouts?.map(item => <PresetCardItemCompact
-          title={item.name}
-          selected={selectedLayout === item.name}
-          onChangeLayout={onChangeLayout}
-        />)}
+        {layouts?.map(item => (
+          <PresetCardItemCompact
+            title={item.name}
+            selected={selectedLayout === item.name}
+            onChangeLayout={onChangeLayout}
+          />
+        ))}
       </div>
     </div>
-  )
-}
+  );
+};

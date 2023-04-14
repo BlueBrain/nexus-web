@@ -222,7 +222,7 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
       selectedRowKeys = [...selectedRowKeys, record.key];
-      selectedRows = [...selectedRows, {...record, source: 'my-data'}];
+      selectedRows = [...selectedRows, { ...record, source: 'my-data' }];
     } else {
       selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
       selectedRows = selectedRows.filter(t => t.key !== record.key);
@@ -254,7 +254,10 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      selectedRows = union(selectedRows, changeRows.map(t => ({ ...t, source: 'my-data'})));
+      selectedRows = union(
+        selectedRows,
+        changeRows.map(t => ({ ...t, source: 'my-data' }))
+      );
       selectedRowKeys = union(
         selectedRowKeys,
         changeRows.map(t => t.key)
