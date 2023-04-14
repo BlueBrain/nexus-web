@@ -5,7 +5,7 @@ import CreateOrganization from '../../modals/CreateOrganization/CreateOrganizati
 import CreateProject from '../../modals/CreateProject/CreateProject';
 import './styles.less';
 
-type Props = {
+type TProps = {
   id: string;
   containerStyle?: CSSProperties;
   titleStyle?: CSSProperties;
@@ -17,7 +17,7 @@ type Props = {
   createLabel?: string;
 };
 
-export default function SubAppCardItem({
+const SubAppCardItem: React.FC<TProps> = ({
   to,
   id,
   title,
@@ -27,7 +27,7 @@ export default function SubAppCardItem({
   containerStyle,
   titleStyle,
   subtitleStyle,
-}: Props) {
+}) => {
   const [modalVisible, setModalVisible] = useState<boolean>(() => false);
   const updateVisibility = (value?: boolean) => {
     setModalVisible(state => value ?? !state);
@@ -75,4 +75,5 @@ export default function SubAppCardItem({
       )}
     </Fragment>
   );
-}
+};
+export default SubAppCardItem;

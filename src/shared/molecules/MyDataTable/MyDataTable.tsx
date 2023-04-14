@@ -52,7 +52,7 @@ export type TDataSource = {
   createdAt: string;
   resource: TResource;
 };
-type Props = {
+type TProps = {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
   isLoading: boolean;
   resources: PaginatedList<TResource> | undefined;
@@ -81,14 +81,14 @@ const makeResourceUri = (
     resourceId
   )}`;
 };
-export default function MyDataTabel({
+const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
   isLoading,
   resources,
   size,
   offset,
   total,
-}: Props) {
+}) => {
   const history = useHistory();
   const [{ selectedRowKeys }, updateTableData] = useReducer(
     (
@@ -189,6 +189,7 @@ export default function MyDataTabel({
   const dataSource: TDataSource[] =
     resources?._results.map(resource => {
       return {
+        resource,
         key: resource._self,
         name: resource['@id'],
         project: resource._project,
@@ -196,7 +197,6 @@ export default function MyDataTabel({
         type: resource['@type'],
         createdAt: resource._createdAt,
         updatedAt: resource._updatedAt,
-        resource,
       };
     }) || [];
   const tablePaginationConfig: TablePaginationConfig = {
@@ -331,4 +331,6 @@ export default function MyDataTabel({
       }}
     />
   );
-}
+};
+
+export default MyDataTable;

@@ -1,10 +1,8 @@
-import * as React from 'react';
-import { Fragment, useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Dropdown, Popover, MenuItemProps } from 'antd';
 import {
   UserOutlined,
-  LoginOutlined,
   BookOutlined,
   SettingOutlined,
   FileTextOutlined,
@@ -14,6 +12,7 @@ import {
   MenuOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk';
 import useNotification from '../../../shared/hooks/useNotification';
 import { ConsentType } from '../../layouts/FusionMainLayout';
@@ -71,6 +70,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   subApps,
   authenticated,
 }) => {
+  const dispatch = useDispatch();
   const notification = useNotification();
   const [visible, setModalVisible] = useState<boolean>(false);
   const onModalStateChange = () => setModalVisible(() => false);
@@ -156,7 +156,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </Menu.Item>
     </Menu>
   );
-
+  const handleOpenCreationPanel = () => {};
   return (
     <Fragment>
       <header className="Header">
@@ -173,7 +173,10 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <div className="menu-block">
           {name && (
             <div className="menu-open-creation-panel">
-              <PlusOutlined style={{ color: 'white', fontSize: 18 }} />
+              <PlusOutlined
+                style={{ color: 'white', fontSize: 18 }}
+                onClick={handleOpenCreationPanel}
+              />
             </div>
           )}
           {name && (

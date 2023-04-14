@@ -2,7 +2,7 @@ import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import './styles.less';
 
-type Props = {
+type TProps = {
   containerStyle?: CSSProperties;
   titleStyle?: CSSProperties;
   statsStyle?: CSSProperties;
@@ -12,15 +12,15 @@ type Props = {
   to: string;
 };
 
-export default function PresetCardItem({
-  containerStyle,
-  titleStyle,
-  statsStyle,
+const PresetCardItem: React.FC<TProps> = ({
   title,
   stats,
   label,
   to,
-}: Props) {
+  containerStyle,
+  titleStyle,
+  statsStyle,
+}) => {
   return (
     <Link to={to} className="preset-card">
       <div className="preset-card-container" style={containerStyle}>
@@ -33,7 +33,9 @@ export default function PresetCardItem({
       </div>
     </Link>
   );
-}
+};
+
+export default PresetCardItem;
 export const PresetCardItemSkeleton = () => {
   return <div className="preset-card skeleton" />;
 };

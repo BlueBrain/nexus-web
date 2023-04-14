@@ -11,7 +11,7 @@ import * as configActions from '../../shared/store/actions/config';
 import './styles.less';
 import { useHistory } from 'react-router';
 
-type Props = {
+type TProps = {
   realms: Realm[];
   serviceAccountsRealm: string;
   performLogin(realmName: string): void;
@@ -32,7 +32,12 @@ const LandingVideo = () => (
     />
   </video>
 );
-function LandingPage({ realms, serviceAccountsRealm, performLogin }: Props) {
+
+const LandingPage: React.FC<TProps> = ({
+  realms,
+  serviceAccountsRealm,
+  performLogin,
+}) => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
@@ -108,7 +113,7 @@ function LandingPage({ realms, serviceAccountsRealm, performLogin }: Props) {
       </div>
     </div>
   );
-}
+};
 
 const mapStateToProps = (state: RootState) => {
   const { auth, config } = state;

@@ -8,8 +8,7 @@ import React, {
 import { useHistory } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
 import { useInfiniteQuery, useQueryClient } from 'react-query';
-import { Alert, Radio } from 'antd';
-import { Button, Modal, Drawer, Input, Spin, List } from 'antd';
+import { Alert, Radio, Button, Modal, Drawer, Input, Spin, List } from 'antd';
 import {
   PlusSquareOutlined,
   RightSquareOutlined,
@@ -116,7 +115,7 @@ const OrganizationItem = ({
     </List.Item>
   );
 };
-function OrganizationListView({}: Props) {
+const OrganizationListView: React.FC<Props> = ({}) => {
   const queryInputRef = useRef<Input>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -162,9 +161,9 @@ function OrganizationListView({}: Props) {
       fetchOrganizationList({
         nexus,
         query,
+        sort,
         from: pageParam,
         size: DEFAULT_PAGE_SIZE,
-        sort,
       }),
     getNextPageParam: lastPage =>
       (lastPage as TNewOrganizationList)._next
@@ -291,14 +290,14 @@ function OrganizationListView({}: Props) {
     }
   }, []);
   // @ts-ignore
-  const _total = data?.pages?.[0]?._total as number;
+  const total = data?.pages?.[0]?._total as number;
   return (
     <Fragment>
       <div className="main-route">
         <PinnedMenu />
         <RouteHeader
           title="Organizations"
-          extra={`Total of ${_total} Projects`}
+          extra={total ? `Total of ${total} Projects` : ''}
           alt="sscx"
           bg={require('../../shared/images/organizations-bg.png')}
           createLabel="Create Orgnanization"
@@ -491,6 +490,6 @@ function OrganizationListView({}: Props) {
       />
     </Fragment>
   );
-}
+};
 
 export default OrganizationListView;

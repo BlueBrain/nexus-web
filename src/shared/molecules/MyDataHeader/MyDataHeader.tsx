@@ -19,9 +19,8 @@ import { TagProps } from 'antd/lib/tag';
 import { useIMask } from 'react-imask';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { capitalize, isString } from 'lodash';
+import { capitalize, isString, startCase, pull as removeItem } from 'lodash';
 import * as moment from 'moment';
-import { startCase, pull as removeItem } from 'lodash';
 import { NexusClient } from '@bbp/nexus-sdk';
 import IMask from 'imask';
 import useClickOutside from '../../../shared/hooks/useClickOutside';
@@ -385,15 +384,15 @@ const Filters = ({
   );
 };
 
-export default function MyDataHeader({
+const MyDataHeader: React.FC<THeaderProps> = ({
+  date,
+  total,
   dataType,
   dateField,
   query,
   dateType,
-  date,
-  total,
   setFilterOptions,
-}: THeaderProps) {
+}) => {
   return (
     <div className="my-data-table-header">
       <Title
@@ -408,4 +407,6 @@ export default function MyDataHeader({
       />
     </div>
   );
-}
+};
+
+export default MyDataHeader;

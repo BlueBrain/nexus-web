@@ -178,7 +178,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-function OrganizationProjectsPage({}: Props) {
+const OrganizationProjectsPage: React.FC<Props> = ({}) => {
   const queryInputRef = useRef<Input>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -372,7 +372,7 @@ function OrganizationProjectsPage({}: Props) {
     </Button>
   );
   const dataSource: ProjectResponseCommon[] = flatten(
-    //@ts-ignore
+    // @ts-ignore
     data?.pages.map(page => page._results)
   );
   useIntersectionObserver({
@@ -389,14 +389,14 @@ function OrganizationProjectsPage({}: Props) {
     }
   }, []);
   // @ts-ignore
-  const _total = data?.pages?.[0]?._total as number;
+  const total = data?.pages?.[0]?._total as number;
   return (
     <Fragment>
       <div className="main-route">
         <PinnedMenu />
         <RouteHeader
           title="Projects"
-          extra={`Total of ${_total} Projects`}
+          extra={total ? `Total of ${total} Projects` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/projects-bg.png')}
           imgCss={{ width: '83%' }}
@@ -627,6 +627,6 @@ function OrganizationProjectsPage({}: Props) {
     //   </Drawer>
     // </Fragment>
   );
-}
+};
 
 export default OrganizationProjectsPage;

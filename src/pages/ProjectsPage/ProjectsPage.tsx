@@ -34,7 +34,7 @@ import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
 import '../../shared/styles/route-layout.less';
 
-type Props = {};
+type TProps = {};
 type TProjectOptions = {
   from: number;
   size: number;
@@ -133,7 +133,7 @@ const ProjectItem = ({
   );
 };
 
-function FusionProjectsPage({}: Props) {
+const ProjectsPage: React.FC<TProps> = ({}) => {
   const queryInputRef = useRef<Input>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -207,13 +207,13 @@ function FusionProjectsPage({}: Props) {
     enabled: !!hasNextPage,
   });
   // @ts-ignore
-  const _total = data?.pages?.[0]?._total as number;
+  const total = data?.pages?.[0]?._total as number;
   return (
     <div className="main-route">
       <PinnedMenu />
       <RouteHeader
         title="Projects"
-        extra={_total ? `Total of ${_total} Projects` : ''}
+        extra={total ? `Total of ${total} Projects` : ''}
         alt="hippocampus"
         bg={require('../../shared/images/projects-bg.png')}
         imgCss={{ width: '83%' }}
@@ -334,6 +334,6 @@ function FusionProjectsPage({}: Props) {
     //     </div>
     // </div>
   );
-}
+};
 
-export default FusionProjectsPage;
+export default ProjectsPage;

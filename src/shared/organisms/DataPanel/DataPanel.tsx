@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React, { Fragment, useEffect, useReducer, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Fragment, useEffect, useMemo, useReducer, useRef } from 'react';
 import { animate, spring } from 'motion';
 import { Button, Checkbox, Table, Tag } from 'antd';
 import { ColumnsType } from 'antd/lib/table';

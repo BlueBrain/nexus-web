@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState, useRef, useReducer } from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input, Button, Alert } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
@@ -147,14 +146,14 @@ const StudioItem = ({
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const loadMoreRef = useRef(null);
-  const dataContainerRef = useRef<HTMLDivElement>(null);
-  const [studioList, setStudioList] = useState<StudioItem[]>([]);
-  const [searchFilter, setSearchFilter] = useState<string>('');
-  const [query, setQueryString] = useState<string>('');
+  const loadMoreRef = React.useRef(null);
+  const dataContainerRef = React.useRef<HTMLDivElement>(null);
+  const [studioList, setStudioList] = React.useState<StudioItem[]>([]);
+  const [searchFilter, setSearchFilter] = React.useState<string>('');
+  const [query, setQueryString] = React.useState<string>('');
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value.toLowerCase());
-  const [{ sort }, setOptions] = useReducer(
+  const [{ sort }, setOptions] = React.useReducer(
     // @ts-ignore
     (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
       ...previous,
@@ -229,7 +228,7 @@ const FusionStudiosPage: React.FC = () => {
     )
   );
   // @ts-ignore
-  const _total = data?._total as number;
+  const total = data?._total as number;
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -242,7 +241,7 @@ const FusionStudiosPage: React.FC = () => {
         <PinnedMenu />
         <RouteHeader
           title="Studios"
-          extra={_total ? `Total of ${_total} Studios` : ''}
+          extra={total ? `Total of ${total} Studios` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/studios-bg.png')}
           imgCss={{ width: '85.5%' }}

@@ -60,7 +60,7 @@ const PinnedItem: React.FC<TMenuItem> = ({ title, url, icon, bg }) => {
     </Link>
   );
 };
-export default function PinnedMenu({}: Props) {
+const PinnedMenu: React.FC<Props> = ({}) => {
   return (
     <div className="pinned-menu">
       {Array.from(Menu).map(([_, item]) => (
@@ -68,4 +68,6 @@ export default function PinnedMenu({}: Props) {
       ))}
     </div>
   );
-}
+};
+
+export default PinnedMenu;
