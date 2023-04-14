@@ -1,16 +1,14 @@
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Form, Modal, Input, Button, notification } from 'antd';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useMutation } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
+import { RootState } from '../../store/reducers';
+import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 
-export type TCreationUnitModal = {
-  visible: boolean;
-  updateVisibility(value?: boolean): void;
-};
-type Props = TCreationUnitModal & {};
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -44,10 +42,14 @@ const createOrganizationMutation = async ({
   }
 };
 
-const CreateOrganization = ({ visible, updateVisibility }: Props) => {
+const CreateOrganization: React.FC<{}> = () => {
   const history = useHistory();
   const nexus = useNexusContext();
   const subapp = useOrganisationsSubappContext();
+  const dispatch = useDispatch();
+  const { createOrganizationModel } = useSelector(
+    (state: RootState) => state.modals
+  );
   const [form] = Form.useForm<{ label: string; description: string }>();
   const { mutateAsync, status } = useMutation(createOrganizationMutation);
   const handleSubmit = (values: { label: string; description: string }) =>
@@ -63,7 +65,10 @@ const CreateOrganization = ({ visible, updateVisibility }: Props) => {
             message: <strong>{data._label}</strong>,
             description: `Organisation has been created Successfully`,
             duration: 5,
-            onClose: () => history.push(`/${subapp.namespace}/${data._label}`),
+            onClose: () => {
+              form.resetFields();
+              history.push(`/${subapp.namespace}/${data._label}`);
+            },
           });
         },
         onError: error => {
@@ -79,11 +84,17 @@ const CreateOrganization = ({ visible, updateVisibility }: Props) => {
         },
       }
     );
+  const updateVisibility = (payload?: boolean) =>
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
+    });
   return (
     <Modal
       centered
       closable
-      visible={visible}
+      destroyOnClose
+      visible={createOrganizationModel}
       onCancel={() => updateVisibility(false)}
       footer={null}
       title={<strong>Create Organization</strong>}

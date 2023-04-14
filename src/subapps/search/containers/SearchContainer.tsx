@@ -184,7 +184,6 @@ const SearchContainer: React.FC = () => {
     nexus,
     setSelectedRowKeys
   );
-
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
     resetAll();
@@ -201,35 +200,37 @@ const SearchContainer: React.FC = () => {
       updatedAt: record.updatedAt,
       type: record['@type'],
     };
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
       setSelectedRowKeys((keys: any) => [...keys, record.key]);
-      const dataPanelLS: TResourceTableData = JSON.parse(
-        localStorage.getItem(DATA_PANEL_STORAGE)!
-      );
-      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
-      let selectedRows = dataPanelLS?.selectedRows || [];
       selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
       selectedRows = uniqBy([...selectedRows, newRecord], 'key');
-      localStorage.setItem(
-        DATA_PANEL_STORAGE,
-        JSON.stringify({
-          selectedRowKeys,
-          selectedRows,
-        })
-      );
-      window.dispatchEvent(
-        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
-          detail: {
-            datapanel: { selectedRowKeys, selectedRows },
-          },
-        })
-      );
     } else {
       setSelectedRowKeys((keys: any) => {
         const index = keys.indexOf(record.key);
         return [...keys.slice(0, index), ...keys.slice(index + 1)];
       });
+      selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
+      selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
+    localStorage.setItem(
+      DATA_PANEL_STORAGE,
+      JSON.stringify({
+        selectedRowKeys,
+        selectedRows,
+      })
+    );
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: { selectedRowKeys, selectedRows },
+        },
+      })
+    );
   };
 
   const toggleSelectAll = () => {
@@ -262,8 +263,6 @@ const SearchContainer: React.FC = () => {
             handleSelect(record, !checked);
           }}
         >
-          {/* {checked ? null : (
-          )} */}
           <Checkbox className="row-select" checked={checked} />
           <span className="row-index">
             {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
@@ -275,7 +274,6 @@ const SearchContainer: React.FC = () => {
 
   return (
     <React.Fragment>
-      {/* <Spin spinning={isLoading}> */}
       {searchError ? (
         <Result
           status="500"
@@ -361,7 +359,6 @@ const SearchContainer: React.FC = () => {
         </div>
         // </TableHeightWrapper>
       )}
-      {/* </Spin> */}
     </React.Fragment>
   );
 };

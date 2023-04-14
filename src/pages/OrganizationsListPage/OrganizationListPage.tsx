@@ -20,6 +20,7 @@ import {
   OrganizationList,
   OrgResponseCommon,
 } from '@bbp/nexus-sdk';
+import { useDispatch } from 'react-redux';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Partial, flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
@@ -31,9 +32,10 @@ import useNotification, {
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import OrgForm from '../../subapps/admin/components/Orgs/OrgForm';
+
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+
 import '../../shared/styles/route-layout.less';
-import CreateOrganization from '../../shared/modals/CreateOrganization/CreateOrganization';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -120,11 +122,15 @@ const OrganizationListView: React.FC<Props> = ({}) => {
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const dispatch = useDispatch();
   const [formBusy, setFormBusy] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [visibleCreateModel, openCreateModel] = useState(false);
-  const updateCreateModelVisibility = (value?: boolean) =>
-    openCreateModel(state => value ?? !state);
+  const updateCreateModelVisibility = (payload?: boolean) => {
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
+    });
+  };
   const [selectedOrg, setSelectedOrg] = useState<OrgResponseCommon | undefined>(
     undefined
   );
@@ -484,10 +490,6 @@ const OrganizationListView: React.FC<Props> = ({}) => {
 			)}
 		</Drawer> */}
       </div>
-      <CreateOrganization
-        visible={visibleCreateModel}
-        updateVisibility={updateCreateModelVisibility}
-      />
     </Fragment>
   );
 };

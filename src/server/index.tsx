@@ -14,6 +14,7 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
+import { DEFAULT_MODALS_STATE } from '../shared/store/reducers/modals';
 import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
   DEFAULT_REPORT_CATEGORIES,
@@ -137,6 +138,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       isLoadingUser: false,
     },
     search: DEFAULT_SEARCH_STATE,
+    modals: DEFAULT_MODALS_STATE,
   };
 
   // render an HTML string of our app

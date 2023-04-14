@@ -15,6 +15,7 @@ type TProps = {
   tileColor: string;
   to: string;
   createLabel?: string;
+  onCreateClick?(payload?: boolean): void;
 };
 
 const SubAppCardItem: React.FC<TProps> = ({
@@ -27,11 +28,8 @@ const SubAppCardItem: React.FC<TProps> = ({
   containerStyle,
   titleStyle,
   subtitleStyle,
+  onCreateClick,
 }) => {
-  const [modalVisible, setModalVisible] = useState<boolean>(() => false);
-  const updateVisibility = (value?: boolean) => {
-    setModalVisible(state => value ?? !state);
-  };
   return (
     <Fragment>
       <div className="subapp-card-item">
@@ -52,7 +50,7 @@ const SubAppCardItem: React.FC<TProps> = ({
         {createLabel && (
           <button
             className="subapp-create-btn"
-            onClick={() => updateVisibility(true)}
+            onClick={() => onCreateClick?.(true)}
             // @ts-ignore
             style={{ '--bg-color': tileColor }}
           >
@@ -61,18 +59,6 @@ const SubAppCardItem: React.FC<TProps> = ({
           </button>
         )}
       </div>
-      {id === 'applist/organisations' && (
-        <CreateOrganization
-          visible={modalVisible}
-          updateVisibility={updateVisibility}
-        />
-      )}
-      {id === 'applist/projects' && (
-        <CreateProject
-          visible={modalVisible}
-          updateVisibility={updateVisibility}
-        />
-      )}
     </Fragment>
   );
 };

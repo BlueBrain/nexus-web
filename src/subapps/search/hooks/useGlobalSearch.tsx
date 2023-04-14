@@ -27,6 +27,7 @@ import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
 import { useHistory, useLocation } from 'react-router';
+import { useQueries, useQuery } from 'react-query';
 
 export type SearchConfigField =
   | {
@@ -357,9 +358,6 @@ function useGlobalSearchData(
 ) {
   const history = useHistory();
   const location = useLocation();
-  const [searchError, setSearchError] = React.useState<Error | null>(null);
-  const [result, setResult] = React.useState<any>({});
-  const [config, setConfig] = React.useState<SearchConfig>();
   const defaultFilter: FilterState[] = [];
   const [filterState, dispatchFilter] = React.useReducer(
     filterReducer,
@@ -369,15 +367,7 @@ function useGlobalSearchData(
     string
   >(() => queryLayout);
 
-  React.useEffect(() => {
-    if (!(config && config.layouts && config.layouts.length > 0)) return;
-    // default to first search layout
-    setSelectedSearchLayout(queryLayout ?? config.layouts[0].name);
-    setSelectedRowKeys([]);
-  }, [config, queryLayout]);
-
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
-
   const removeSortOption = (sortFieldOption: ESSortField) => {
     setSortState(sort =>
       sort.filter(s => s.fieldName !== sortFieldOption.fieldName)
@@ -525,15 +515,38 @@ function useGlobalSearchData(
     const withFilter = constructFilterSet(baseQuery, filterState);
     const withPagination = addPagination(withFilter, page, pageSize);
     const withSorting = addSorting(withPagination, sortState);
-    console.log('€€esQuery', query, filterState);
     return withSorting.build();
   }, [query, filterState, page, pageSize, sortState]);
-  const [isLoading, setIsLoading] = React.useState(false);
+
+  const [
+    { data: searchConfig, isLoading: loadingConfig },
+    { data: queryResult, isLoading: loadingQuery, error: searchError },
+  ] = useQueries<[{ data: SearchConfig }, { data: any; error: Error }]>([
+    {
+      queryKey: ['fusion-search-config'],
+      queryFn: () => nexus.Search.config(),
+    },
+    {
+      queryKey: ['fusion-search-query', { query: JSON.stringify(esQuery) }],
+      queryFn: () => nexus.Search.query(esQuery),
+      onSuccess: (data: any) => onSuccess(data),
+    },
+  ]);
+  console.log('@@searchConfig', searchConfig);
+  React.useEffect(() => {
+    if (
+      !(searchConfig && searchConfig.layouts && searchConfig.layouts.length > 0)
+    ) {
+      return;
+    }
+    setSelectedSearchLayout(queryLayout ?? searchConfig.layouts[0].name);
+    setSelectedRowKeys([]);
+  }, [searchConfig, queryLayout]);
   const columns: SearchConfigField = React.useMemo(() => {
-    return config
-      ? makeColumnConfig(config, fieldMenu, filteredFields, sortState)
+    return searchConfig
+      ? makeColumnConfig(searchConfig, fieldMenu, filteredFields, sortState)
       : undefined;
-  }, [config, fieldsVisibilityState, filteredFields, sortState]);
+  }, [searchConfig, fieldsVisibilityState, filteredFields, sortState]);
 
   const visibleColumns = React.useMemo(
     () =>
@@ -570,46 +583,13 @@ function useGlobalSearchData(
   }, [fieldsVisibilityState]);
 
   const data = React.useMemo(() => {
-    if (result.hits && result.hits.hits) {
-      return result.hits.hits.map((hit: any, ix: number) => {
-        return { ...hit._source, key: ix };
+    if (queryResult && queryResult.hits && queryResult.hits.hits) {
+      return queryResult.hits.hits.map((hit: any) => {
+        return { ...hit._source, key: hit._source._self };
       });
     }
     return [];
-  }, [result]);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    nexus.Search.config()
-      .then((response: any) => {
-        const searchConfig = response as SearchConfig;
-        setConfig(searchConfig);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    console.log('@@@esQuery', esQuery);
-    nexus.Search.query(esQuery)
-      .then((queryResponse: any) => {
-        setResult(queryResponse);
-        onSuccess(queryResponse);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [esQuery]);
+  }, [queryResult]);
 
   const clearAllFilters = () => {
     filterState.forEach(filter => {
@@ -624,8 +604,10 @@ function useGlobalSearchData(
   };
 
   const resetAll = () => {
-    if (config?.layouts && config.layouts.length > 0) {
-      const layout = config.layouts.find(l => l.name === selectedSearchLayout);
+    if (searchConfig?.layouts && searchConfig.layouts.length > 0) {
+      const layout = searchConfig.layouts.find(
+        l => l.name === selectedSearchLayout
+      );
       layout && applyLayout(layout, columns);
       setSelectedRowKeys([]);
       return;
@@ -673,7 +655,7 @@ function useGlobalSearchData(
     if (layout.sort) {
       const sorting = layout.sort
         .map(sort => {
-          const field = config?.fields.find(f => f.name === sort.field);
+          const field = searchConfig?.fields.find(f => f.name === sort.field);
           if (!field) return;
           return {
             fieldName: field.name,
@@ -693,7 +675,7 @@ function useGlobalSearchData(
     if (layout.filters) {
       const filters = layout.filters
         .map(filter => {
-          const field = config?.fields.find(f => f.name === filter.field);
+          const field = searchConfig?.fields.find(f => f.name === filter.field);
           if (!field) return;
           return {
             filters: filter.values,
@@ -710,21 +692,22 @@ function useGlobalSearchData(
   };
 
   React.useEffect(() => {
-    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
+    const layout = searchConfig?.layouts.find(
+      l => l.name === selectedSearchLayout
+    );
     if (!layout) return;
 
     applyLayout(layout, columns);
   }, [selectedSearchLayout]);
   React.useEffect(() => {
-    const layout = config?.layouts.find(l => l.name === queryLayout);
+    const layout = searchConfig?.layouts.find(l => l.name === queryLayout);
     if (!layout) return;
 
     applyLayout(layout, columns);
     setSelectedRowKeys([]);
-  }, [queryLayout, config?.layouts]);
+  }, [queryLayout, searchConfig?.layouts]);
 
   return {
-    isLoading,
     searchError,
     columns,
     data,
@@ -737,9 +720,10 @@ function useGlobalSearchData(
     changeSortOption,
     resetAll,
     dispatchFieldVisibility,
-    config,
     handleChangeSearchLayout,
     selectedSearchLayout,
+    config: searchConfig,
+    isLoading: loadingQuery || loadingConfig,
   };
 }
 

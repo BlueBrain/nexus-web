@@ -12,7 +12,6 @@ import {
   CopyOutlined,
   MenuOutlined,
   PlusOutlined,
-  CloseOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk';
@@ -179,11 +178,14 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </div>
         <div className="menu-block">
           {name && showCreationPanel && (
-            <div className="menu-open-creation-panel">
+            <div
+              role="button"
+              className="menu-open-creation-panel"
+              onClick={handleOpenCreationPanel}
+            >
               <PlusOutlined
                 rotate={openCreationPanel ? 45 : 90}
                 style={{ color: 'white', fontSize: 18 }}
-                onClick={handleOpenCreationPanel}
               />
             </div>
           )}

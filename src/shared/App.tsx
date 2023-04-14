@@ -14,6 +14,8 @@ import {
 } from './hooks/useNotification';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { DataPanelDetailsBar } from './organisms';
+import CreateProject from './modals/CreateProject/CreateProject';
+import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 
 const App: React.FC = () => {
   // TODO log the error in to sentry.
@@ -32,6 +34,8 @@ const App: React.FC = () => {
           <SubAppsView routesWithSubApps={routesWithSubApps} />
           <GalleryView />
           <DataPanelDetailsBar />
+          <CreateProject />
+          <CreateOrganization />
         </FusionMainLayout>
       </NotificationContext.Provider>
     </CartContext.Provider>

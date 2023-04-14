@@ -1,24 +1,27 @@
 import * as React from 'react';
 import {
-  Button,
-  Col,
-  Collapse,
-  Form,
   Input,
   Modal,
   Row,
   notification,
+  Button,
+  Col,
+  Collapse,
+  Form,
+  Select,
 } from 'antd';
-import { TCreationUnitModal } from '../CreateOrganization/CreateOrganization';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../../shared/store/reducers';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
+import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 
-type Props = TCreationUnitModal & {};
 type TProject = {
+  organization: string;
   label: string;
   description: string;
   base: string;
@@ -28,6 +31,16 @@ type TProject = {
 type TCreateProject = TProject & {
   nexus: NexusClient;
   orgLabel: string;
+};
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 19 },
+  },
 };
 const PrefixMappingGroupInput: React.FC<{
   groupId: number;
@@ -79,7 +92,7 @@ const createProjectMutation = async ({
   base,
   vocab,
   apiMappings,
-}: TCreateProject) => {
+}: Omit<TCreateProject, 'organization'>) => {
   try {
     return await nexus.Project.create(orgLabel, label, {
       base: base || undefined,
@@ -96,13 +109,22 @@ const createProjectMutation = async ({
   }
 };
 
-const CreateProject = ({ visible, updateVisibility }: Props) => {
+const CreateProject: React.FC<{}> = ({}) => {
+  const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();
+  const { user } = useSelector((state: RootState) => state.oidc);
+  const { identities } = useSelector((state: RootState) => state.auth);
+  const userUri = identities?.data?.identities.find(
+    t => t['@type'] === 'User'
+  )?.['@id'];
   const [form] = Form.useForm<TProject>();
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
+  );
+  const { createProjectModel } = useSelector(
+    (state: RootState) => state.modals
   );
   const orgLabel = match?.params.orgLabel;
   const currentId = 0;
@@ -128,8 +150,17 @@ const CreateProject = ({ visible, updateVisibility }: Props) => {
       activeKeys: activeKeys.filter((key: any) => key !== k),
     });
   };
+  const { data: organizations, isLoading } = useQuery({
+    queryKey: ['organizations', { user: userUri! }],
+    queryFn: () =>
+      nexus.Organization.list({
+        createdBy: userUri,
+        deprecated: false,
+      }),
+  });
   const { mutateAsync, status } = useMutation(createProjectMutation);
   const handleSubmit = ({
+    organization,
     label,
     description,
     base,
@@ -140,6 +171,14 @@ const CreateProject = ({ visible, updateVisibility }: Props) => {
     const apiMappingsArray = Object.keys(mappingObject).map(
       (mapping: any) => apiMappings![mapping]
     );
+    console.log('@@handleSubmit', {
+      organization,
+      label,
+      description,
+      base,
+      vocab,
+      apiMappings,
+    });
     mutateAsync(
       {
         nexus,
@@ -148,15 +187,22 @@ const CreateProject = ({ visible, updateVisibility }: Props) => {
         label,
         description,
         apiMappings: apiMappingsArray,
-        orgLabel: orgLabel!,
+        orgLabel: orgLabel ?? organization,
       },
       {
         onSuccess: data => {
           notification.success({
+            duration: 2,
             message: <strong>{data._label}</strong>,
             description: `Project has been created Successfully`,
-            duration: 5,
-            onClose: () => history.push(`/orgs/${orgLabel}/${data._label}`),
+            onClose: () => {
+              form.resetFields();
+              dispatch({
+                type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+                payload: false,
+              });
+              history.push(`/orgs/${orgLabel ?? organization}/${data._label}`);
+            },
           });
         },
         onError: error => {
@@ -195,22 +241,18 @@ const CreateProject = ({ visible, updateVisibility }: Props) => {
     )
   );
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 5 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 19 },
-    },
-  };
+  const updateVisibility = (payload?: boolean) =>
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+    });
   return (
     <Modal
       centered
       closable
-      visible={visible}
+      visible={createProjectModel}
       onCancel={() => updateVisibility(false)}
+      destroyOnClose
       footer={null}
       title={<strong>Create Project</strong>}
     >
@@ -220,6 +262,21 @@ const CreateProject = ({ visible, updateVisibility }: Props) => {
         form={form}
         autoComplete="off"
       >
+        <Form.Item
+          {...formItemLayout}
+          label="Orgnanization"
+          name="organization"
+          initialValue={''}
+          required
+        >
+          <Select placeholder="Select organization" loading={isLoading}>
+            {organizations?._results.map(org => (
+              <Select.Option value={org._label} key={org['@id']}>
+                {org._label}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
         <Form.Item
           {...formItemLayout}
           label="Label"

@@ -54,11 +54,9 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   );
   const handleRemoveItemFromDataPanel = (record: TDataSource) => {
-    console.log('@@handleRemoveItemFromDataPanel', record);
     const selectedRowKeys = resources.selectedRowKeys.filter(
       t => t !== record.key
     );
-    console.log('@@handleRemoveItemFromDataPanel', selectedRowKeys);
     const selectedRows = resources.selectedRows.filter(
       t => t.key !== record.key
     );

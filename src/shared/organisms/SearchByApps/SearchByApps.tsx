@@ -1,8 +1,9 @@
 import React from 'react';
 import { SubAppCardItem } from '../../molecules';
+import { useDispatch } from 'react-redux';
+import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 import './styles.less';
 
-type Props = {};
 type AppDetails = {
   key: React.Key;
   id: string;
@@ -11,6 +12,7 @@ type AppDetails = {
   tileColor: string;
   link: string;
   createLabel?: string;
+  action?: string;
 };
 const AppsList = new Map<string, AppDetails>([
   [
@@ -24,6 +26,7 @@ const AppsList = new Map<string, AppDetails>([
       tileColor: 'linear-gradient(90deg, #F4CCA7 1.19%, #CA6666 100%)',
       link: '/orgs',
       createLabel: 'Create Organisation',
+      action: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
     },
   ],
   [
@@ -37,6 +40,7 @@ const AppsList = new Map<string, AppDetails>([
       tileColor: 'linear-gradient(90deg, #A7F4EB 1.19%, #66CABC 100%)',
       link: '/projects',
       createLabel: 'Create Project',
+      action: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
     },
   ],
   [
@@ -53,14 +57,25 @@ const AppsList = new Map<string, AppDetails>([
   ],
 ]);
 
-const HomeSearchByApps = (props: Props) => {
+const HomeSearchByApps: React.FC<{}> = () => {
   const apps = [...AppsList.values()];
+  const dispatch = useDispatch();
   return (
     <div className="home-searchby-appslist">
       <h2 className="home-searchby-appslist-title">Search by Lists</h2>
       <div className="home-searchby-appslist-container">
         {apps.map(app => (
-          <SubAppCardItem {...app} to={app.link} />
+          <SubAppCardItem
+            {...app}
+            to={app.link}
+            onCreateClick={() => {
+              app.action &&
+                dispatch({
+                  type: app.action,
+                  payload: true,
+                });
+            }}
+          />
         ))}
       </div>
     </div>

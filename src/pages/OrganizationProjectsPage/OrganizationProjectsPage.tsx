@@ -35,6 +35,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { flatten } from 'lodash';
+import { useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
@@ -47,6 +48,8 @@ import CreateProject from '../../shared/modals/CreateProject/CreateProject';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+
 import '../../shared/styles/route-layout.less';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -183,12 +186,16 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const dispatch = useDispatch();
   const notification = useNotification();
   const [formBusy, setFormBusy] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [visibleCreateModel, openCreateModel] = useState(false);
-  const updateCreateModelVisibility = (value?: boolean) =>
-    openCreateModel(state => value ?? !state);
+  const updateCreateModelVisibility = (payload?: boolean) => {
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+    });
+  };
   const [query, setQueryString] = useState<string>('');
   const [activeOrg, setActiveOrg] = useState<
     OrgResponseCommon | null | undefined
@@ -473,10 +480,6 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
           </div>
         </div>
       </div>
-      <CreateProject
-        visible={visibleCreateModel}
-        updateVisibility={updateCreateModelVisibility}
-      />
     </Fragment>
     // <Fragment>
     //   <div className='org-projects-view view-container'>
