@@ -83,7 +83,10 @@ export const DEFAULT_FIELDS = [
     displayIndex: 3,
   },
 ];
-const sorter = (dataIndex: string) => {
+
+type ColumnSorter = (a: Record<string, any>, b: Record<string, any>) => -1 | 1 | 0
+
+const sorter = (dataIndex: string): ColumnSorter => {
   return (
     a: {
       [key: string]: any;
@@ -259,7 +262,7 @@ const accessData = async (
   const headerProperties: {
     title: string;
     dataIndex: string;
-    sorter?: (dataIndex: string) => any;
+    sorter?: ColumnSorter;
   }[] = result.headerProperties.map(headerProp => {
     const currentConfig = columnConfig.find(
       c => c.name === headerProp.dataIndex
@@ -267,7 +270,7 @@ const accessData = async (
     if (currentConfig && currentConfig.enableSort) {
       return {
         ...headerProp,
-        sorter,
+        sorter: sorter(headerProp.dataIndex),
       };
     }
     return headerProp;
