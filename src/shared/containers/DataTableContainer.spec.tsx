@@ -4,13 +4,13 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
-    Mock_Var,
-    Original_Order_1_Sorted_2,
-    Original_Order_2_Sorted_1,
-    Original_Order_3_Sorted_3,
-    Original_Order_4_Sorted_4,
-    Original_Order_5_Sorted_6,
-    Original_Order_6_Sorted_5,
+    MOCK_VAR,
+    ORIGINAL_1_SORTED_2,
+    ORIGINAL_2_SORTED_1,
+    ORIGINAL_3_SORTED_3,
+    ORIGINAL_4_SORTED_4,
+    ORIGINAL_5_SORTED_6,
+    ORIGINAL_6_SORTED_5,
     dashboardResource,
     dashboardVocabulary,
     sparqlViewSingleResult,
@@ -81,7 +81,7 @@ describe('DataTableContainer.spec.tsx', () => {
   const getSortableHeader = async () => {
     return await waitFor(() => {
       visibleTableRows();
-      const sortableHeader = screen.getByText(Mock_Var).closest('th');
+      const sortableHeader = screen.getByText(MOCK_VAR).closest('th');
       expect(sortableHeader).toBeDefined();
       return sortableHeader!;
     });
@@ -92,11 +92,11 @@ describe('DataTableContainer.spec.tsx', () => {
       const rows = visibleTableRows();
 
       expect(rows.length).toEqual(5);
-      expect(rows[0].textContent).toEqual(Original_Order_1_Sorted_2);
-      expect(rows[1].textContent).toEqual(Original_Order_2_Sorted_1);
-      expect(rows[2].textContent).toEqual(Original_Order_3_Sorted_3);
-      expect(rows[3].textContent).toEqual(Original_Order_4_Sorted_4);
-      expect(rows[4].textContent).toEqual(Original_Order_5_Sorted_6);
+      expect(rows[0].textContent).toEqual(ORIGINAL_1_SORTED_2);
+      expect(rows[1].textContent).toEqual(ORIGINAL_2_SORTED_1);
+      expect(rows[2].textContent).toEqual(ORIGINAL_3_SORTED_3);
+      expect(rows[3].textContent).toEqual(ORIGINAL_4_SORTED_4);
+      expect(rows[4].textContent).toEqual(ORIGINAL_5_SORTED_6);
     });
   });
 
@@ -110,11 +110,11 @@ describe('DataTableContainer.spec.tsx', () => {
       const sortedRows = visibleTableRows();
       expect(sortedRows.length).toEqual(5);
 
-      expect(sortedRows[0].textContent).toEqual(Original_Order_2_Sorted_1);
-      expect(sortedRows[1].textContent).toEqual(Original_Order_1_Sorted_2);
-      expect(sortedRows[2].textContent).toEqual(Original_Order_3_Sorted_3);
-      expect(sortedRows[3].textContent).toEqual(Original_Order_4_Sorted_4);
-      expect(sortedRows[4].textContent).toEqual(Original_Order_6_Sorted_5);
+      expect(sortedRows[0].textContent).toEqual(ORIGINAL_2_SORTED_1);
+      expect(sortedRows[1].textContent).toEqual(ORIGINAL_1_SORTED_2);
+      expect(sortedRows[2].textContent).toEqual(ORIGINAL_3_SORTED_3);
+      expect(sortedRows[3].textContent).toEqual(ORIGINAL_4_SORTED_4);
+      expect(sortedRows[4].textContent).toEqual(ORIGINAL_6_SORTED_5);
     });
   });
 
@@ -129,11 +129,11 @@ describe('DataTableContainer.spec.tsx', () => {
       const sortedRows = visibleTableRows();
       expect(sortedRows.length).toEqual(5);
 
-      expect(sortedRows[0].textContent).toEqual(Original_Order_5_Sorted_6);
-      expect(sortedRows[1].textContent).toEqual(Original_Order_4_Sorted_4);
-      expect(sortedRows[2].textContent).toEqual(Original_Order_6_Sorted_5);
-      expect(sortedRows[3].textContent).toEqual(Original_Order_3_Sorted_3);
-      expect(sortedRows[4].textContent).toEqual(Original_Order_1_Sorted_2);
+      expect(sortedRows[0].textContent).toEqual(ORIGINAL_5_SORTED_6);
+      expect(sortedRows[1].textContent).toEqual(ORIGINAL_4_SORTED_4);
+      expect(sortedRows[2].textContent).toEqual(ORIGINAL_6_SORTED_5);
+      expect(sortedRows[3].textContent).toEqual(ORIGINAL_3_SORTED_3);
+      expect(sortedRows[4].textContent).toEqual(ORIGINAL_1_SORTED_2);
     });
   });
 });

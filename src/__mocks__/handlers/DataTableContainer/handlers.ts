@@ -101,13 +101,13 @@ export const dashboardVocabulary = rest.get(
   }
 );
 
-export const Original_Order_1_Sorted_2 = '42_VALUE';
-export const Original_Order_2_Sorted_1 = '0_VALUE';
-export const Original_Order_3_Sorted_3 = 'Malory_Archer';
-export const Original_Order_4_Sorted_4 = 'STERLING_ARCHER';
-export const Original_Order_5_Sorted_6 = 'Woodhouse';
-export const Original_Order_6_Sorted_5 = 'sterling_archer';
-export const Mock_Var = 'S';
+export const ORIGINAL_1_SORTED_2 = '42_VALUE';
+export const ORIGINAL_2_SORTED_1 = '0_VALUE';
+export const ORIGINAL_3_SORTED_3 = 'Malory_Archer';
+export const ORIGINAL_4_SORTED_4 = 'STERLING_ARCHER';
+export const ORIGINAL_5_SORTED_6 = 'Woodhouse';
+export const ORIGINAL_6_SORTED_5 = 'sterling_archer';
+export const MOCK_VAR = 'S';
 
 export const sparqlViewSingleResult = rest.post(
   deltaPath('/views/copies/sscx/graph/sparql'),
@@ -121,7 +121,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_1_Sorted_2,
+              value: ORIGINAL_1_SORTED_2,
             },
             self: {
               type: 'uri',
@@ -132,7 +132,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_2_Sorted_1,
+              value: ORIGINAL_2_SORTED_1,
             },
             self: {
               type: 'uri',
@@ -143,7 +143,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_3_Sorted_3,
+              value: ORIGINAL_3_SORTED_3,
             },
             self: {
               type: 'uri',
@@ -154,7 +154,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_4_Sorted_4,
+              value: ORIGINAL_4_SORTED_4,
             },
             self: {
               type: 'uri',
@@ -165,7 +165,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_5_Sorted_6,
+              value: ORIGINAL_5_SORTED_6,
             },
             self: {
               type: 'uri',
@@ -176,7 +176,7 @@ export const sparqlViewSingleResult = rest.post(
           {
             s: {
               type: 'uri',
-              value: Original_Order_6_Sorted_5,
+              value: ORIGINAL_6_SORTED_5,
             },
             self: {
               type: 'uri',
