@@ -34,6 +34,7 @@ describe('DataTableContainer.spec.tsx', () => {
 
   beforeEach(() => {
     const history = createMemoryHistory({});
+
     const nexus = createNexusClient({
       fetch,
       uri: deltaPath(),
