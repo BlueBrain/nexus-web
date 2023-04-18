@@ -202,7 +202,7 @@
     "trailingComma": "es5"
   },
   "lint-staged": {
-    "**.*.{ts, tsx, js, jsx, less}": [
+    "*.{ts, tsx, js, jsx, less}": [
       "prettier --write",
       "git add"
     ],

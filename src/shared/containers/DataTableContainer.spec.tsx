@@ -4,16 +4,16 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
-    MOCK_VAR,
-    ORIGINAL_1_SORTED_2,
-    ORIGINAL_2_SORTED_1,
-    ORIGINAL_3_SORTED_3,
-    ORIGINAL_4_SORTED_4,
-    ORIGINAL_5_SORTED_6,
-    ORIGINAL_6_SORTED_5,
-    dashboardResource,
-    dashboardVocabulary,
-    sparqlViewSingleResult,
+  MOCK_VAR,
+  ORIGINAL_1_SORTED_2,
+  ORIGINAL_2_SORTED_1,
+  ORIGINAL_3_SORTED_3,
+  ORIGINAL_4_SORTED_4,
+  ORIGINAL_5_SORTED_6,
+  ORIGINAL_6_SORTED_5,
+  dashboardResource,
+  dashboardVocabulary,
+  sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { createMemoryHistory } from 'history';
