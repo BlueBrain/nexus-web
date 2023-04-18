@@ -84,7 +84,10 @@ export const DEFAULT_FIELDS = [
   },
 ];
 
-type ColumnSorter = (a: Record<string, any>, b: Record<string, any>) => -1 | 1 | 0
+type ColumnSorter = (
+  a: Record<string, any>,
+  b: Record<string, any>
+) => -1 | 1 | 0;
 
 const normalizeString = (str: string) => str.trim().toLowerCase();
 
@@ -97,9 +100,13 @@ const sorter = (dataIndex: string): ColumnSorter => {
       [key: string]: any;
     }
   ) => {
-    const sortA = isString(a[dataIndex]) ? normalizeString(a[dataIndex]) : a[dataIndex];
-    const sortB = isString(b[dataIndex]) ? normalizeString(b[dataIndex]) : b[dataIndex];
-    
+    const sortA = isString(a[dataIndex])
+      ? normalizeString(a[dataIndex])
+      : a[dataIndex];
+    const sortB = isString(b[dataIndex])
+      ? normalizeString(b[dataIndex])
+      : b[dataIndex];
+
     if (sortA < sortB) {
       return -1;
     }
