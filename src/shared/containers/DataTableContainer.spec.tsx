@@ -1,6 +1,7 @@
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
+import { RenderResult, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -26,13 +27,14 @@ describe('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
   let container: HTMLElement;
   let user: UserEvent;
+  let component: RenderResult;
 
   beforeAll(() => {
     server.listen();
     server.use(dashboardResource, dashboardVocabulary, sparqlViewSingleResult);
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const history = createMemoryHistory({});
 
     const nexus = createNexusClient({
@@ -40,14 +42,14 @@ describe('DataTableContainer.spec.tsx', () => {
       uri: deltaPath(),
     });
 
-    const component = render(
+    component = render(
       <Router history={history}>
         <QueryClientProvider client={queryClient}>
           <NexusProvider nexusClient={nexus}>
             <DataTableContainer
-              orgLabel="copies"
-              projectLabel="sscx"
-              tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
+              orgLabel="bbp"
+              projectLabel="agents"
+              tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
               options={{
                 disableAddFromCart: true,
                 disableDelete: true,
@@ -61,6 +63,8 @@ describe('DataTableContainer.spec.tsx', () => {
 
     container = component.container;
     user = userEvent.setup();
+
+    await waitForTableRows();
   });
 
   // reset any request handlers that are declared as a part of our tests
@@ -79,25 +83,53 @@ describe('DataTableContainer.spec.tsx', () => {
     return container.querySelectorAll('table tbody tr.data-table-row');
   };
 
+  const columns = (name: string) => {
+    return container.querySelectorAll(`td.testid-${name}`);
+  };
+
+  const waitForTableRows = async (expectedRowsCount = 5) => {
+    return await waitFor(() => {
+      const rows = visibleTableRows();
+      expect(rows.length).toEqual(expectedRowsCount);
+      return rows;
+    });
+  };
+
   const getSortableHeader = async () => {
     return await waitFor(() => {
-      visibleTableRows();
       const sortableHeader = screen.getByText(MOCK_VAR).closest('th');
       expect(sortableHeader).toBeDefined();
       return sortableHeader!;
     });
   };
 
+  const assertDataOrderInColumn = (colName: string, expectedData: string[]) => {
+    const actualDataInCol = columns(colName);
+    expect(actualDataInCol.length).toEqual(expectedData.length);
+
+    expectedData.forEach((expectedText, index) => {
+      expect(actualDataInCol[index].textContent).toEqual(expectedText);
+    });
+  };
+
+  const filterButtonForColumn = async (columnTitle: string) => {
+    const titleRegExp = new RegExp(columnTitle, 'i');
+    const columnHeader = await screen.getByRole('columnheader', {
+      name: titleRegExp,
+    });
+
+    return within(columnHeader).queryByTestId('filter-icon');
+  };
+
   it('displays unsorted data (i.e. in same order as received in server response) in table originally', async () => {
     await waitFor(() => {
-      const rows = visibleTableRows();
-
-      expect(rows.length).toEqual(5);
-      expect(rows[0].textContent).toEqual(ORIGINAL_1_SORTED_2);
-      expect(rows[1].textContent).toEqual(ORIGINAL_2_SORTED_1);
-      expect(rows[2].textContent).toEqual(ORIGINAL_3_SORTED_3);
-      expect(rows[3].textContent).toEqual(ORIGINAL_4_SORTED_4);
-      expect(rows[4].textContent).toEqual(ORIGINAL_5_SORTED_6);
+      assertDataOrderInColumn('givenName', [
+        ORIGINAL_1_SORTED_2,
+        ORIGINAL_2_SORTED_1,
+        ORIGINAL_3_SORTED_3,
+        ORIGINAL_4_SORTED_4,
+        ORIGINAL_5_SORTED_6,
+      ]);
     });
   });
 
@@ -107,16 +139,15 @@ describe('DataTableContainer.spec.tsx', () => {
     // Click on sort button once to sort in ascending order
     await user.click(sortableHeader!);
 
-    await waitFor(() => {
-      const sortedRows = visibleTableRows();
-      expect(sortedRows.length).toEqual(5);
+    await waitForTableRows(5);
 
-      expect(sortedRows[0].textContent).toEqual(ORIGINAL_2_SORTED_1);
-      expect(sortedRows[1].textContent).toEqual(ORIGINAL_1_SORTED_2);
-      expect(sortedRows[2].textContent).toEqual(ORIGINAL_3_SORTED_3);
-      expect(sortedRows[3].textContent).toEqual(ORIGINAL_4_SORTED_4);
-      expect(sortedRows[4].textContent).toEqual(ORIGINAL_6_SORTED_5);
-    });
+    assertDataOrderInColumn('givenName', [
+      ORIGINAL_2_SORTED_1,
+      ORIGINAL_1_SORTED_2,
+      ORIGINAL_3_SORTED_3,
+      ORIGINAL_4_SORTED_4,
+      ORIGINAL_6_SORTED_5,
+    ]);
   });
 
   it('sorts rows in descending order when header column clicked twice', async () => {
@@ -126,15 +157,43 @@ describe('DataTableContainer.spec.tsx', () => {
     await user.click(sortableHeader!);
     await user.click(sortableHeader!);
 
-    await waitFor(() => {
-      const sortedRows = visibleTableRows();
-      expect(sortedRows.length).toEqual(5);
+    await waitForTableRows(5);
 
-      expect(sortedRows[0].textContent).toEqual(ORIGINAL_5_SORTED_6);
-      expect(sortedRows[1].textContent).toEqual(ORIGINAL_4_SORTED_4);
-      expect(sortedRows[2].textContent).toEqual(ORIGINAL_6_SORTED_5);
-      expect(sortedRows[3].textContent).toEqual(ORIGINAL_3_SORTED_3);
-      expect(sortedRows[4].textContent).toEqual(ORIGINAL_1_SORTED_2);
+    assertDataOrderInColumn('givenName', [
+      ORIGINAL_5_SORTED_6,
+      ORIGINAL_4_SORTED_4,
+      ORIGINAL_6_SORTED_5,
+      ORIGINAL_3_SORTED_3,
+      ORIGINAL_1_SORTED_2,
+    ]);
+  });
+
+  it('shows filter option for columns that have filter enabled', async () => {
+    const givenNameFilter = await filterButtonForColumn('Given Name');
+    expect(givenNameFilter).toBeInTheDocument();
+  });
+
+  it('does not show filter option for columns that do not have filter enabled', async () => {
+    const familyNameFilter = await filterButtonForColumn('Family Name');
+    expect(familyNameFilter).not.toBeInTheDocument();
+  });
+
+  it('filters rows based on user input', async () => {
+    const givenNameFilter = await filterButtonForColumn('Given Name');
+    await user.click(givenNameFilter!);
+
+    const filterInput = await waitFor(() => {
+      return screen.findByPlaceholderText('Filter Given Name');
     });
+
+    await user.type(filterInput, 'sterling');
+
+    const submitFilter = screen.getByRole('button', { name: 'Filter' });
+    await user.click(submitFilter);
+
+    assertDataOrderInColumn('givenName', [
+      ORIGINAL_4_SORTED_4,
+      ORIGINAL_6_SORTED_5,
+    ]);
   });
 });

@@ -15,6 +15,7 @@ import { parseURL } from './nexusParse';
 import { ResultTableFields } from '../types/search';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
+import { FilterConfigByColumnFn } from 'shared/hooks/useAccessDataForTable';
 
 export const rowRender = (value: string) => {
   if (isURL(value)) {
@@ -50,7 +51,8 @@ export function addColumnsForES(
   field: ResultTableFields,
   sorter: (
     dataIndex: string
-  ) => (a: { [key: string]: any }, b: { [key: string]: any }) => 1 | -1 | 0
+  ) => (a: { [key: string]: any }, b: { [key: string]: any }) => 1 | -1 | 0,
+  filterConfig: FilterConfigByColumnFn
 ): {
   sorter:
     | false
@@ -66,6 +68,7 @@ export function addColumnsForES(
     .with('label', () => ({
       ...field,
       sorter: !!field.sortable && sorter('label'),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
         return getResourceLabel(resource);
       },
@@ -73,6 +76,7 @@ export function addColumnsForES(
     .with('description', () => ({
       ...field,
       sorter: !!field.sortable && sorter('description'),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) =>
         convertMarkdownHandlebarStringWithData(
           resource.description || '',
@@ -82,6 +86,7 @@ export function addColumnsForES(
     .with('project', () => ({
       ...field,
       sorter: !!field.sortable && sorter('project'),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
         const { org, project } = parseURL(resource._self);
         return `${org} | ${project}`;
@@ -90,6 +95,7 @@ export function addColumnsForES(
     .with('schema', () => ({
       ...field,
       sorter: !!field.sortable && sorter('schema'),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
         return (
           <Tooltip title={resource._constrainedBy}>
@@ -101,6 +107,7 @@ export function addColumnsForES(
     .with('@type', () => ({
       ...field,
       sorter: !!field.sortable && sorter('@type'),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
         const typeList =
           !!resource['@type'] &&
@@ -115,6 +122,7 @@ export function addColumnsForES(
     .otherwise(() => ({
       ...field,
       sorter: !!field.sortable && sorter(field.key),
+      ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
         if (text) {
           try {
