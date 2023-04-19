@@ -11,7 +11,7 @@ import * as React from 'react';
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
 import { CartContext } from './useDataCart';
-import { pick } from 'lodash';
+import { pick, isString } from 'lodash';
 import { Projection } from '../components/EditTableForm';
 
 export type TableResource = Resource<{
@@ -83,7 +83,15 @@ export const DEFAULT_FIELDS = [
     displayIndex: 3,
   },
 ];
-const sorter = (dataIndex: string) => {
+
+type ColumnSorter = (
+  a: Record<string, any>,
+  b: Record<string, any>
+) => -1 | 1 | 0;
+
+const normalizeString = (str: string) => str.trim().toLowerCase();
+
+const sorter = (dataIndex: string): ColumnSorter => {
   return (
     a: {
       [key: string]: any;
@@ -92,8 +100,13 @@ const sorter = (dataIndex: string) => {
       [key: string]: any;
     }
   ) => {
-    const sortA = a[dataIndex];
-    const sortB = b[dataIndex];
+    const sortA = isString(a[dataIndex])
+      ? normalizeString(a[dataIndex])
+      : a[dataIndex];
+    const sortB = isString(b[dataIndex])
+      ? normalizeString(b[dataIndex])
+      : b[dataIndex];
+
     if (sortA < sortB) {
       return -1;
     }
@@ -259,7 +272,7 @@ const accessData = async (
   const headerProperties: {
     title: string;
     dataIndex: string;
-    sorter?: (dataIndex: string) => any;
+    sorter?: ColumnSorter;
   }[] = result.headerProperties.map(headerProp => {
     const currentConfig = columnConfig.find(
       c => c.name === headerProp.dataIndex
@@ -267,7 +280,7 @@ const accessData = async (
     if (currentConfig && currentConfig.enableSort) {
       return {
         ...headerProp,
-        sorter,
+        sorter: sorter(headerProp.dataIndex),
       };
     }
     return headerProp;
