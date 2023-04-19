@@ -30,7 +30,7 @@ export const parseResourceId = (url: string) => {
   return '';
 };
 
-const parseProjectUrl = (projectUrl: string) => {
+export const parseProjectUrl = (projectUrl: string) => {
   const projectUrlR = /projects\/([\w-]+)\/([\w-]+)\/?$/;
   const [, org, proj] = projectUrl.match(projectUrlR) as string[];
   return [org, proj];

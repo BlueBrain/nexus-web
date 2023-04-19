@@ -20,6 +20,7 @@ import {
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -32,12 +33,26 @@ import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import { intersection, isArray } from 'lodash';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+
+const containsImages = (distribution: any[]) => {
+  const encodingFormat = distribution.map(t => t.encodingFormat);
+  const formats = [
+    'image/png',
+    'image/webp',
+    'image/bmp',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+  ];
+  return intersection(encodingFormat, formats).length !== 0;
+};
 
 const ResourceViewContainer: React.FunctionComponent<{
   render?: (
@@ -433,6 +448,24 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const resourceContainsImages =
+    resource &&
+    isArray(resource.distribution) &&
+    containsImages(resource.distribution);
+  const imagePreviewPlugin = resource &&
+    showPluginConsideringStudioContext('preview') &&
+    resource.distribution &&
+    resourceContainsImages && (
+      <ImagePreview
+        key="imagePreviewPlugin"
+        nexus={nexus}
+        resource={resource}
+        collapsed={openPlugins.includes('imagePreview')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('imagePreview');
+        }}
+      />
+    );
 
   const adminPlugin = resource &&
     latestResource &&
@@ -547,6 +580,11 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
+    {
+      key: 'imagePreview',
+      name: 'imagePreview',
+      pluginComponent: imagePreviewPlugin,
+    },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
