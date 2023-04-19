@@ -77,7 +77,6 @@ const ProjectView: React.FunctionComponent = () => {
 
   const pathFromTab = (tab: string | undefined) => {
     const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
-    console.log('@@@pathFromTab', base);
     switch (tab) {
       case 'browse':
         return `${base}`;
@@ -136,7 +135,6 @@ const ProjectView: React.FunctionComponent = () => {
       error: null,
       busy: true,
     });
-    console.log('@@@@@projectpage -->', { orgLabel, projectLabel });
     nexus.Project.get(orgLabel, projectLabel)
       .then(response => {
         setState({
@@ -146,7 +144,6 @@ const ProjectView: React.FunctionComponent = () => {
         });
       })
       .catch(error => {
-        console.log('@@@projectpageerror', error);
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,

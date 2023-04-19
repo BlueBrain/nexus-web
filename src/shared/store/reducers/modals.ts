@@ -8,10 +8,12 @@ import { AnyAction } from 'redux';
 export const DEFAULT_MODALS_STATE = {
   createOrganizationModel: false,
   createProjectModel: false,
+  createStudioModel: false,
 };
 export type modalsState = {
   createOrganizationModel: boolean;
   createProjectModel: boolean;
+  createStudioModel: boolean;
 };
 
 export default function modalsReducer(
@@ -30,6 +32,12 @@ export default function modalsReducer(
         ...state,
         createOrganizationModel:
           action.payload ?? !state.createOrganizationModel,
+      };
+    }
+    case ModalsActionsEnum.OPEN_STUDIO_CREATION_MODEL: {
+      return {
+        ...state,
+        createStudioModel: action.payload ?? !state.createStudioModel,
       };
     }
   }

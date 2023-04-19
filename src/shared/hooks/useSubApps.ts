@@ -49,13 +49,11 @@ const useSubApps = () => {
 
   React.useEffect(() => {
     if (subAppsManifestPath) {
-      console.log('@@@', subAppsManifestPath);
       fetch(`${subAppsManifestPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
         .then(resp => resp.json())
         .then(manifest => {
-          console.log('@@@@manifest', manifest);
           let apps: Map<string, SubAppObject> = Array.from(
             SubApps.values()
           ).reduce((memo: Map<string, SubAppObject>, subApp: SubApp) => {
@@ -121,7 +119,6 @@ const useSubApps = () => {
       version: subApp.version,
     }));
   }, [subAppsState]);
-  console.log('@@subAppRoutes', subAppRoutes);
   return {
     subAppProps,
     subAppRoutes,

@@ -2,9 +2,9 @@ import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
 import { Table, Tag } from 'antd';
 import { Link, useHistory } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
+import { difference, differenceBy, union } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
-import { difference, differenceBy, union } from 'lodash';
 import {
   DataPanelEvent,
   DATA_PANEL_STORAGE,
@@ -45,6 +45,8 @@ type TResource = {
 export type TDataSource = {
   source?: string;
   key: React.Key;
+  _self: string | string[];
+  id: string;
   name: string;
   project: string;
   description: string;
@@ -52,6 +54,11 @@ export type TDataSource = {
   updatedAt: string;
   createdAt: string;
   resource?: TResource;
+  distribution?: {
+    contentSize: number;
+    encodingFormat: string | string[];
+    label: string | string[];
+  };
 };
 type TProps = {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
@@ -192,12 +199,20 @@ const MyDataTable: React.FC<TProps> = ({
       return {
         resource,
         key: resource._self,
+        _self: resource._self,
+        id: resource['@id'],
         name: resource['@id'],
         project: resource._project,
         description: '',
         type: resource['@type'],
         createdAt: resource._createdAt,
         updatedAt: resource._updatedAt,
+        distribution: {
+          contentSize: resource.distribution?.contentSize ?? 0,
+          encodingFormat: resource.distribution?.encodingFormat ?? '',
+          label: resource.distribution?.label ?? '',
+        },
+        source: 'my-data',
       };
     }) || [];
   const tablePaginationConfig: TablePaginationConfig = {
@@ -214,7 +229,6 @@ const MyDataTable: React.FC<TProps> = ({
     record,
     selected
   ) => {
-    console.log('@@record', { record, selected });
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );

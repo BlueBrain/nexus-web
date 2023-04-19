@@ -23,6 +23,7 @@ import { capitalize, isString, startCase, pull as removeItem } from 'lodash';
 import * as moment from 'moment';
 import { NexusClient } from '@bbp/nexus-sdk';
 import IMask from 'imask';
+import SeparatedDateInput from '../../../shared/components/SeparatedDateInput/SeparatedDateInput';
 import useClickOutside from '../../../shared/hooks/useClickOutside';
 import useMeasure from '../../../shared/hooks/useMeasure';
 import './styles.less';
@@ -225,6 +226,16 @@ const Filters = ({
           </Fragment>
         )}
         {dateType !== 'range' && (
+          // <SeparatedDateInput
+          //   setDefaultValue={setFilterOptions}
+          //   defaultValue={
+          //     (dateType === 'before' || dateType === 'after') &&
+          //       date &&
+          //       isString(date)
+          //       ? date
+          //       : undefined
+          //   }
+          // />
           <input
             ref={ref}
             defaultValue={
@@ -241,6 +252,7 @@ const Filters = ({
       </div>
     </Fragment>
   );
+
   const selectedDate =
     dateType === 'range' && date !== ''
       ? `${date?.[0]}  →  ${date?.[1]}`

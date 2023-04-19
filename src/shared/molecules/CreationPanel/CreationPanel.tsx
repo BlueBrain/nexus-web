@@ -36,6 +36,7 @@ const creationButtons: TCreationButton[] = [
   },
   {
     title: 'Create Studio',
+    action: ModalsActionsEnum.OPEN_STUDIO_CREATION_MODEL,
   },
 ];
 

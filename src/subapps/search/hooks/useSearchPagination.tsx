@@ -73,12 +73,12 @@ function useSearchPagination() {
   const renderShowTotal = React.useCallback(
     (total: number, range: [number, number]) =>
       pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
-        <>
+        <span>
           {total === 0 ? 'No' : total.toLocaleString('en-US')}
           {total === 1 ? 'result' : 'results'}
-        </>
+        </span>
       ) : (
-        <>{total.toLocaleString('en-US')} results</>
+        <span>{`${total.toLocaleString('en-US')} results`}</span>
       ),
     [pagination]
   );

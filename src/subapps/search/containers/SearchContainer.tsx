@@ -3,6 +3,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
+import { difference, differenceBy, union, uniq, uniqBy } from 'lodash';
+import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
 import useQueryString from '../../../shared/hooks/useQueryString';
@@ -14,7 +16,6 @@ import useSearchPagination, {
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfigContainer from './SortConfigContainer';
-import './SearchContainer.less';
 import {
   TDataSource,
   TResourceTableData,
@@ -22,8 +23,9 @@ import {
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
-import { uniq, uniqBy } from 'lodash';
+import './SearchContainer.less';
 
 type TRecord = {
   key: string;
@@ -133,11 +135,7 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  const {
-    wrapperHeightRef,
-    resultTableHeightTestRef,
-    wrapperDOMProps,
-  } = useAdjustTableHeight(
+  useAdjustTableHeight(
     pagination,
     onTableHeightChanged,
     onPageSizeOptionsChanged
@@ -192,6 +190,8 @@ const SearchContainer: React.FC = () => {
   const handleSelect = (record: TRecord, selected: any) => {
     const newRecord: TDataSource = {
       source: layout,
+      _self: record._self,
+      id: record['@id'],
       key: record['@id'],
       createdAt: record.createdAt,
       description: record.description,
@@ -199,6 +199,7 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
+      distribution: record.distribution,
     };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -206,14 +207,14 @@ const SearchContainer: React.FC = () => {
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      setSelectedRowKeys((keys: any) => [...keys, record.key]);
+      // setSelectedRowKeys((keys: any) => [...keys, record.key]);
       selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
       selectedRows = uniqBy([...selectedRows, newRecord], 'key');
     } else {
-      setSelectedRowKeys((keys: any) => {
-        const index = keys.indexOf(record.key);
-        return [...keys.slice(0, index), ...keys.slice(index + 1)];
-      });
+      // setSelectedRowKeys((keys: any) => {
+      //   const index = keys.indexOf(record.key);
+      //   return [...keys.slice(0, index), ...keys.slice(index + 1)];
+      // });
       selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
       selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
@@ -232,28 +233,66 @@ const SearchContainer: React.FC = () => {
       })
     );
   };
-
-  const toggleSelectAll = () => {
-    setSelectedRowKeys((keys: any) =>
-      keys.length === data.length ? [] : data.map((r: any) => r.key)
+  const onSelectAllChange = (
+    selected: boolean,
+    tSelectedRows: TRecord[],
+    changeRows: TRecord[]
+  ) => {
+    const changeRowsFormatted = changeRows.map(record => ({
+      source: layout,
+      _self: record._self,
+      id: record['@id'],
+      key: record['@id'],
+      createdAt: record.createdAt,
+      description: record.description,
+      name: record.name,
+      project: record.project.identifier,
+      updatedAt: record.updatedAt,
+      type: record['@type'],
+      distribution: record.distribution,
+    }));
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let selectedRows = dataPanelLS?.selectedRows || [];
+    if (selected) {
+      selectedRows = union(
+        selectedRows,
+        changeRowsFormatted.map(t => ({ ...t, source: layout }))
+      );
+      selectedRowKeys = union(
+        selectedRowKeys,
+        changeRowsFormatted.map(t => t.key)
+      );
+    } else {
+      selectedRows = differenceBy(selectedRows, changeRowsFormatted, 'key');
+      selectedRowKeys = difference(
+        selectedRowKeys,
+        changeRowsFormatted.map(t => t.key)
+      );
+    }
+    localStorage.setItem(
+      DATA_PANEL_STORAGE,
+      JSON.stringify({
+        selectedRowKeys,
+        selectedRows,
+      })
+    );
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: { selectedRowKeys, selectedRows },
+        },
+      })
     );
   };
 
-  const headerCheckbox = (
-    <Checkbox
-      checked={selectedRowKeys.length}
-      indeterminate={
-        selectedRowKeys.length > 0 && selectedRowKeys.length < data.length
-      }
-      onChange={toggleSelectAll}
-    />
-  );
-
-  const rowSelection = {
+  const rowSelection: TableRowSelection<TRecord> = {
     selectedRowKeys,
-    columnTitle: headerCheckbox,
+    onSelectAll: onSelectAllChange,
     columnWidth: 70,
-    renderCell: (checked: any, record: any, index: number, originNode: any) => {
+    renderCell: (checked: any, record: any, index: number) => {
       return (
         <div
           className="row-selection-checkbox"
@@ -271,7 +310,41 @@ const SearchContainer: React.FC = () => {
       );
     },
   };
+  const filterMenuRef = React.useRef<HTMLDivElement>(null);
+  const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
 
+  React.useEffect(() => {
+    const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
+    const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
+    if (dataLs && dataLs.length) {
+      const selectedRows = dataLsObject.selectedRows
+        .filter(t => t.source === layout)
+        .map(o => o.key);
+      setSelectedRowKeys(selectedRows);
+    }
+  }, [layout, pagination]);
+
+  React.useEffect(() => {
+    const dataPanelEventListner = (
+      event: DataPanelEvent<{ datapanel: TResourceTableData }>
+    ) => {
+      setSelectedRowKeys(
+        event.detail?.datapanel.selectedRows
+          .filter(item => item.source === layout)
+          .map(item => item.key)
+      );
+    };
+    window.addEventListener(
+      DATA_PANEL_STORAGE_EVENT,
+      dataPanelEventListner as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+    };
+  }, [layout]);
   return (
     <React.Fragment>
       {searchError ? (
@@ -288,60 +361,65 @@ const SearchContainer: React.FC = () => {
         <div>
           {visibleColumns && data && (
             <>
-              {config?.layouts && (
-                <SearchByPresetsCompact
-                  layouts={config?.layouts}
-                  selectedLayout={selectedSearchLayout}
-                  onChangeLayout={layoutName => {
-                    handleChangeSearchLayout(layoutName);
-                  }}
-                />
-              )}
-              <div className="search-table-header">
-                <div className="search-table-header__options">
-                  <ColumnsVisibilityConfig
-                    columnsVisibility={fieldsVisibilityState}
-                    dispatchFieldVisibility={dispatchFieldVisibility}
+              <div className="search-tools-menu" ref={searchToolsMenuRef}>
+                {config?.layouts && (
+                  <SearchByPresetsCompact
+                    layouts={config?.layouts}
+                    selectedLayout={selectedSearchLayout}
+                    onChangeLayout={layoutName => {
+                      handleChangeSearchLayout(layoutName);
+                    }}
                   />
-                  <FiltersConfig
-                    filters={filterState}
-                    columns={columns}
-                    onRemoveFilter={filter =>
-                      dispatchFilter({ type: 'remove', payload: filter })
-                    }
+                )}
+                <div className="search-table-header" ref={filterMenuRef}>
+                  <div className="search-table-header__options">
+                    <ColumnsVisibilityConfig
+                      columnsVisibility={fieldsVisibilityState}
+                      dispatchFieldVisibility={dispatchFieldVisibility}
+                    />
+                    <FiltersConfig
+                      filters={filterState}
+                      columns={columns}
+                      onRemoveFilter={filter =>
+                        dispatchFilter({ type: 'remove', payload: filter })
+                      }
+                    />
+                    <SortConfigContainer
+                      sortedFields={sortState}
+                      onRemoveSort={sortToRemove =>
+                        removeSortOption(sortToRemove)
+                      }
+                      onChangeSortDirection={sortToChange =>
+                        changeSortOption(sortToChange)
+                      }
+                    />
+                    <Button type="link" onClick={() => clearAllCustomisation()}>
+                      <CloseCircleOutlined />
+                      Reset
+                    </Button>
+                  </div>
+                  <Pagination
+                    disabled={pagination.totalNumberOfResults === 0}
+                    showTotal={renderShowTotal}
+                    onShowSizeChange={onPageSizeOptionChanged}
+                    total={pagination.totalNumberOfResults}
+                    pageSize={pagination.pageSize}
+                    current={pagination.currentPage}
+                    onChange={paginationWithRowSelection}
+                    locale={{ items_per_page: '' }}
+                    showSizeChanger={true}
+                    pageSizeOptions={pagination.pageSizeOptions}
+                    showLessItems={true}
+                    className="search-table-header__paginator"
                   />
-                  <SortConfigContainer
-                    sortedFields={sortState}
-                    onRemoveSort={sortToRemove =>
-                      removeSortOption(sortToRemove)
-                    }
-                    onChangeSortDirection={sortToChange =>
-                      changeSortOption(sortToChange)
-                    }
-                  />
-                  <Button type="link" onClick={() => clearAllCustomisation()}>
-                    <CloseCircleOutlined />
-                    Reset
-                  </Button>
                 </div>
-                <Pagination
-                  disabled={pagination.totalNumberOfResults === 0}
-                  showTotal={renderShowTotal}
-                  onShowSizeChange={onPageSizeOptionChanged}
-                  total={pagination.totalNumberOfResults}
-                  pageSize={pagination.pageSize}
-                  current={pagination.currentPage}
-                  onChange={paginationWithRowSelection}
-                  locale={{ items_per_page: '' }}
-                  showSizeChanger={true}
-                  pageSizeOptions={pagination.pageSizeOptions}
-                  showLessItems={true}
-                  className="search-table-header__paginator"
-                />
               </div>
               <div className="search-table">
                 <Table
-                  sticky
+                  sticky={{
+                    offsetHeader: 50,
+                    getContainer: () => window,
+                  }}
                   className="result-table"
                   loading={isLoading}
                   rowSelection={rowSelection}
@@ -351,7 +429,10 @@ const SearchContainer: React.FC = () => {
                   dataSource={data}
                   pagination={false}
                   onRow={onRowClick}
-                  scroll={{ x: true }}
+                  scroll={{
+                    x: true,
+                    // y: tableHeight
+                  }}
                 />
               </div>
             </>

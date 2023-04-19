@@ -1,5 +1,11 @@
+import * as React from 'react';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { Button, Tooltip } from 'antd';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { useQueries } from 'react-query';
 import {
-  DownOutlined,
+  CaretDownOutlined,
   EyeInvisibleOutlined,
   FunnelPlotOutlined,
   SortAscendingOutlined,
@@ -11,11 +17,9 @@ import {
   addPagination,
   addSorting,
 } from '../utils';
-import { useSelector } from 'react-redux';
+
 import { RootState } from '../../../shared/store/reducers';
-import { NexusClient } from '@bbp/nexus-sdk';
-import * as React from 'react';
-import { Button, Tooltip } from 'antd';
+
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
@@ -23,11 +27,9 @@ import FilterOptions, {
 } from '../containers/FilterOptions';
 import DateFilterOptions from '../containers/DateFilterOptions';
 import NumberFilterOptions from '../containers/NumberFilterOptions';
-import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
-import { useHistory, useLocation } from 'react-router';
-import { useQueries, useQuery } from 'react-query';
+import '../containers/SearchContainer.less';
 
 export type SearchConfigField =
   | {
@@ -230,7 +232,7 @@ function renderColumnTitle(
               <SortDescendingOutlined />
             )}
             {hasFilterApplied && <FunnelPlotOutlined />}
-            <DownOutlined />
+            <CaretDownOutlined style={{ color: '#888' }} />
           </div>
         </Tooltip>
       </div>
@@ -532,7 +534,7 @@ function useGlobalSearchData(
       onSuccess: (data: any) => onSuccess(data),
     },
   ]);
-  console.log('@@searchConfig', searchConfig);
+
   React.useEffect(() => {
     if (
       !(searchConfig && searchConfig.layouts && searchConfig.layouts.length > 0)
@@ -585,7 +587,7 @@ function useGlobalSearchData(
   const data = React.useMemo(() => {
     if (queryResult && queryResult.hits && queryResult.hits.hits) {
       return queryResult.hits.hits.map((hit: any) => {
-        return { ...hit._source, key: hit._source._self };
+        return { ...hit._source, key: hit._source['@id'] };
       });
     }
     return [];
@@ -684,7 +686,6 @@ function useGlobalSearchData(
           };
         })
         .filter(filter => filter !== undefined);
-      console.log('fromLayout-filters', filters);
       dispatchFilter({ type: 'fromLayout', payload: filters as FilterState[] });
     } else {
       dispatchFilter({ type: 'fromLayout', payload: [] });

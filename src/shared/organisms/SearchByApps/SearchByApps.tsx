@@ -53,6 +53,8 @@ const AppsList = new Map<string, AppDetails>([
         'Custom dashboards containing data grouped by thematic by scientist',
       tileColor: 'linear-gradient(90deg, #C6A3F6 1.19%, #706CE8 100%)',
       link: '/studios',
+      createLabel: 'Create Studios',
+      action: ModalsActionsEnum.OPEN_STUDIO_CREATION_MODEL,
     },
   ],
 ]);

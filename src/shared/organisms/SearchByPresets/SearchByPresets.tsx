@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { Alert, Spin } from 'antd';
-import { orderBy, unionBy } from 'lodash';
+import { orderBy } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import { PromisePool } from '@supercharge/promise-pool';
-
+import { animate } from 'motion';
+import clsx from 'clsx';
 import {
   PresetCardItem,
   PresetCardItemSkeleton,
@@ -16,6 +17,7 @@ import {
   SearchConfig,
   SearchLayout,
 } from '../../../subapps/search/hooks/useGlobalSearch';
+import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
 import './styles.less';
 
 type TProps = {};
@@ -85,7 +87,6 @@ export const fetchNexusSearchConfig = async (nexus: NexusClient) => {
       results: orderBy(results, i => Number(i.stats), ['desc']),
     };
   } catch (error) {
-    console.log('@@error', error);
     // @ts-ignore
     throw new Error('Error found when fetching search configuration', {
       cause: error,
@@ -99,6 +100,8 @@ const SearchByPresets: React.FC<TProps> = ({}) => {
     queryKey: ['nexus-search-config-details'],
     queryFn: () => fetchNexusSearchConfig(nexus),
     keepPreviousData: true,
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 
   return (
@@ -160,8 +163,44 @@ export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({
   selectedLayout,
   onChangeLayout,
 }) => {
+  const presetsRef = useRef<HTMLDivElement>(null);
+  const floatPresetRef = useRef<HTMLDivElement>(null);
+  const [intersection, setIntersection] = useState<boolean>(true);
+  useIntersectionObserver({
+    target: presetsRef,
+    threshold: 0.2,
+    onIntersect: () => setIntersection(() => true),
+    onNonIntersect: () => setIntersection(() => false),
+    enabled: true,
+  });
+  const handleGoUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+  useEffect(() => {
+    if (floatPresetRef.current) {
+      animate(
+        floatPresetRef.current,
+        {
+          opacity: intersection ? 0 : 1,
+        },
+        {
+          easing: 'ease-out',
+        }
+      );
+    }
+  }, [floatPresetRef.current, intersection]);
   return (
-    <div className="searchby-presets compact">
+    <div className="searchby-presets compact" ref={presetsRef}>
+      <div
+        ref={floatPresetRef}
+        className={clsx('floated-preset-card')}
+        onClick={handleGoUp}
+      >
+        {selectedLayout}
+      </div>
       <div className="searchby-presets-container">
         {layouts?.map(item => (
           <PresetCardItemCompact

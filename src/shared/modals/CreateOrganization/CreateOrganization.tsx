@@ -7,7 +7,10 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import { RootState } from '../../store/reducers';
-import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
+import {
+  ModalsActionsEnum,
+  updateOrganizationModalVisibility,
+} from '../../../shared/store/actions/modals';
 
 const formItemLayout = {
   labelCol: {
@@ -84,18 +87,15 @@ const CreateOrganization: React.FC<{}> = () => {
         },
       }
     );
-  const updateVisibility = (payload?: boolean) =>
-    dispatch({
-      payload,
-      type: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
-    });
+  const updateVisibility = () =>
+    dispatch(updateOrganizationModalVisibility(false));
   return (
     <Modal
       centered
       closable
       destroyOnClose
       visible={createOrganizationModel}
-      onCancel={() => updateVisibility(false)}
+      onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Organization</strong>}
     >

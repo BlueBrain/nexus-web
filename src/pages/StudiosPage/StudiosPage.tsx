@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, List, Input, Button, Alert } from 'antd';
-import { Link, useHistory } from 'react-router-dom';
+import { Spin, List, Input, Alert } from 'antd';
+import { Link } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
+import { useDispatch } from 'react-redux';
 import {
   NexusClient,
   ResourceList,
@@ -24,6 +25,7 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
+import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
 import timeago from '../../utils/timeago';
 import '../../shared/styles/route-layout.less';
 
@@ -145,11 +147,9 @@ const StudioItem = ({
 };
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
-  const history = useHistory();
+  const dispatch = useDispatch();
   const loadMoreRef = React.useRef(null);
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
-  const [studioList, setStudioList] = React.useState<StudioItem[]>([]);
-  const [searchFilter, setSearchFilter] = React.useState<string>('');
   const [query, setQueryString] = React.useState<string>('');
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value.toLowerCase());
@@ -196,15 +196,14 @@ const FusionStudiosPage: React.FC = () => {
         : undefined,
   });
   const loadMoreFooter = hasNextPage && (
-    <Button
+    <div
       className="infinitfetch-loader"
       ref={loadMoreRef}
       onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
     >
       <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-    </Button>
+      <span>Loading more</span>
+    </div>
   );
 
   const dataSource = flatten(
@@ -228,7 +227,7 @@ const FusionStudiosPage: React.FC = () => {
     )
   );
   // @ts-ignore
-  const total = data?._total as number;
+  const total = data?.pages?.[0]?._total as number;
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -244,7 +243,9 @@ const FusionStudiosPage: React.FC = () => {
           extra={total ? `Total of ${total} Studios` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/studios-bg.png')}
-          imgCss={{ width: '85.5%' }}
+          imgCss={{ width: '77.65%' }}
+          createLabel="Create Studio"
+          onCreateClick={() => dispatch(updateStudioModalVisibility(true))}
         />
         <div className="route-body">
           <div className="route-body-container">

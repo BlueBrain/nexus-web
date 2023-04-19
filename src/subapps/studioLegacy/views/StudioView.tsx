@@ -66,9 +66,9 @@ const StudioView: React.FunctionComponent<{}> = () => {
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
+              <Link to={`/orgs/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/admin/${orgLabel}/${projectLabel}`}>
+              <Link to={`/orgs/${orgLabel}/${projectLabel}`}>
                 {projectLabel}
               </Link>
             </span>

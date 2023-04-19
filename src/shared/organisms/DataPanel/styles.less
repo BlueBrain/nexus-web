@@ -13,17 +13,16 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    padding: 0px 10px 0px 0px;
+    // align-items: center;
     background: @fusion-daybreak-10;
-    padding: 10px 20px;
+    padding: 0 0 0 10px;
 
     .left {
       display: grid;
       grid-template-columns: repeat(2, max-content);
       gap: 10px;
       align-items: center;
-
+      padding: 10px 20px;
       .selected-items {
         cursor: pointer;
         color: white;
@@ -39,6 +38,41 @@
     }
 
     .download-options {
+      display: grid;
+      grid-template-columns: repeat(1, max-content);
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      &.sized.exts {
+        grid-template-columns: repeat(3, max-content);
+      }
+      &.sized,
+      &.sexts {
+        grid-template-columns: repeat(2, max-content);
+      }
+      .download-size {
+        color: @fusion-active-link-color;
+        border-left: 2px solid @fusion-daybreak-7;
+        padding: 10px 20px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+          margin-right: 5px;
+        }
+      }
+      .download-filetypes {
+        padding: 10px 20px;
+      }
+      .download-btn {
+        background: #0050b3;
+        height: 100%;
+        button {
+          color: white;
+          height: 100%;
+        }
+      }
       .ant-checkbox-wrapper {
         color: white !important;
         font-family: 'Titillium Web';

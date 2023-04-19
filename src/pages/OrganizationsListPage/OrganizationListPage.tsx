@@ -7,10 +7,9 @@ import React, {
 } from 'react';
 import { useHistory } from 'react-router';
 import { Link, useLocation } from 'react-router-dom';
-import { useInfiniteQuery, useQueryClient } from 'react-query';
-import { Alert, Radio, Button, Modal, Drawer, Input, Spin, List } from 'antd';
+import { useInfiniteQuery, useQuery, useQueryClient } from 'react-query';
+import { Alert, Input, Spin, List } from 'antd';
 import {
-  PlusSquareOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -26,15 +25,12 @@ import { Partial, flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
-import useNotification, {
-  NexusError,
-} from '../../shared/hooks/useNotification';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import useNotification from '../../shared/hooks/useNotification';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-
-import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-
+import formatNumber from '../../utils/formatNumber';
 import '../../shared/styles/route-layout.less';
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -84,14 +80,18 @@ const fetchOrganizationList = async ({
 const OrganizationItem = ({
   title,
   to,
-  count,
   description,
+  nexus,
 }: {
   title: string;
   to: string;
   description?: string;
-  count: number;
+  nexus: NexusClient;
 }) => {
+  const { data } = useQuery({
+    queryKey: ['organization-projects', { orgLabel: title }],
+    queryFn: () => nexus.Project.list(title),
+  });
   return (
     <List.Item className="route-result-list_item">
       <div className="route-result-list_item_wrapper">
@@ -104,7 +104,7 @@ const OrganizationItem = ({
         <div className="statistics">
           <div className="statistics_item">
             <div>Projects</div>
-            <div>{count}</div>
+            <div>{(data?._total && formatNumber(data._total)) ?? '0'}</div>
           </div>
         </div>
         <div className="redirection">
@@ -184,10 +184,9 @@ const OrganizationListView: React.FC<Props> = ({}) => {
       className="infinitfetch-loader"
       ref={loadMoreRef}
       onClick={() => fetchNextPage()}
-      style={{ display: !hasNextPage || isFetchingNextPage ? 'none' : 'flex' }}
     >
       <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
+      <span>Loading more</span>
     </div>
   );
 
@@ -251,24 +250,7 @@ const OrganizationListView: React.FC<Props> = ({}) => {
         });
       });
   };
-  const saveAndCreate = (newOrg: NewOrg) => {
-    setFormBusy(true);
-    nexus.Organization.create(newOrg.label, { description: newOrg.description })
-      .then(() => {
-        notification.success({
-          message: 'Organization created',
-        });
-        setFormBusy(false);
-        goTo(newOrg.label);
-      })
-      .catch((error: NexusError) => {
-        setFormBusy(false);
-        notification.error({
-          message: 'Error creating organization',
-          description: error.reason,
-        });
-      });
-  };
+
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
@@ -305,7 +287,7 @@ const OrganizationListView: React.FC<Props> = ({}) => {
           title="Organizations"
           extra={total ? `Total of ${total} Projects` : ''}
           alt="sscx"
-          bg={require('../../shared/images/organizations-bg.png')}
+          bg={require('../../shared/images/sscx-by-layers-v3.png')}
           createLabel="Create Orgnanization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}
@@ -356,12 +338,11 @@ const OrganizationListView: React.FC<Props> = ({}) => {
                       dataSource={dataSource}
                       renderItem={(item: OrgResponseCommon) => {
                         const to = `/orgs/${item._label}/`;
-                        const count = 31;
                         return (
                           <OrganizationItem
                             {...{
                               to,
-                              count,
+                              nexus,
                               title: item._label,
                               description: item.description,
                             }}

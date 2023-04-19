@@ -1,5 +1,5 @@
 import React, { Fragment, useReducer, useRef, useState } from 'react';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { Link, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
@@ -31,7 +31,9 @@ import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/Depreca
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import timeago from '../../utils//timeago';
+import timeago from '../../utils/timeago';
+import formatNumber from '../../utils/formatNumber';
+
 import '../../shared/styles/route-layout.less';
 
 type TProps = {};
@@ -65,29 +67,44 @@ const fetchProjectsList = async ({
 };
 
 const TSort = ['asc', 'desc'] as const;
+export const DATA_SET_TYPE = 'http://schema.org/Dataset';
 interface TPageOptions {
   sort: typeof TSort[number];
 }
 type TProjectItem = {
   title: string;
   to: string;
+  orgLabel: string;
+  projectLabel: string;
   deprected: boolean;
   description?: string;
   datasets?: string;
   createdAt: Date;
   updatedAt: Date;
   access?: string;
+  nexus: NexusClient;
 };
 const ProjectItem = ({
   title,
   to,
   description,
   deprected,
-  datasets,
   createdAt,
   updatedAt,
   access,
+  orgLabel,
+  projectLabel,
+  nexus,
 }: TProjectItem) => {
+  const { data } = useQuery({
+    queryKey: ['datesets', { orgLabel, projectLabel }],
+    queryFn: () =>
+      nexus.Resource.list(orgLabel, projectLabel, {
+        type: DATA_SET_TYPE,
+      }),
+  });
+  const datasets = data?._total;
+  console.log('@@data', data);
   return (
     <List.Item className="route-result-list_item">
       <div className="route-result-list_item_wrapper">
@@ -107,7 +124,7 @@ const ProjectItem = ({
         <div className="statistics">
           <div className="statistics_item">
             <div>Datasets</div>
-            <div>{datasets || '2M'}</div>
+            <div>{(datasets && formatNumber(datasets)) || '0'}</div>
           </div>
           <div className="statistics_item">
             <div>Your access</div>
@@ -137,7 +154,6 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
   const queryInputRef = useRef<Input>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
   const [query, setQueryString] = useState<string>('');
   const nexus: NexusClient = useNexusContext();
   const [{ sort }, setOptions] = useReducer(
@@ -170,15 +186,14 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
   });
 
   const loadMoreFooter = hasNextPage && (
-    <Button
+    <div
       className="infinitfetch-loader"
       ref={loadMoreRef}
       onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
     >
       <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-    </Button>
+      <span>Loading more</span>
+    </div>
   );
 
   const dataSource: ProjectResponseCommon[] = flatten<ProjectResponseCommon>(
@@ -215,8 +230,8 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
         title="Projects"
         extra={total ? `Total of ${total} Projects` : ''}
         alt="hippocampus"
-        bg={require('../../shared/images/projects-bg.png')}
-        imgCss={{ width: '83%' }}
+        bg={require('../../shared/images/hippocampus.png')}
+        imgCss={{ width: '75.4%' }}
       />
       <div className="route-body">
         <div className="route-body-container">
@@ -267,6 +282,10 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
                         <ProjectItem
                           {...{
                             to,
+                            nexus,
+                            projectLabel: item._label,
+                            orgLabel: item._organizationLabel,
+                            type: item['@type'],
                             title: item._label,
                             deprected: item._deprecated,
                             createdAt: new Date(item._createdAt),

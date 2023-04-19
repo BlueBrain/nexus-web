@@ -165,7 +165,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   };
   return (
     <Fragment>
-      <header className="Header">
+      <header id="header" className="Header">
         <div className="logo-container">
           <Link to="/">
             <div className="logo-container__logo">

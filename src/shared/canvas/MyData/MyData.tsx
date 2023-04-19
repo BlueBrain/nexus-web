@@ -72,7 +72,7 @@ const HomeMyData = (props: Props) => {
     }
   };
 
-  const { data: resources, isLoading, error } = useQuery({
+  const { data: resources, isLoading } = useQuery({
     queryKey: ['my-data-resources', { size, offset, query }],
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {

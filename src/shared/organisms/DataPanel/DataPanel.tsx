@@ -1,31 +1,62 @@
-import React, { Fragment, useEffect, useReducer, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, {
+  Fragment,
+  useEffect,
+  useReducer,
+  useRef,
+  useMemo,
+  useState,
+} from 'react';
+import { Link } from 'react-router-dom';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import {
+  isArray,
+  toUpper,
+  isEmpty,
+  isNil,
+  compact,
+  groupBy,
+  flatMap,
+  omit,
+  filter,
+} from 'lodash';
 import { animate, spring } from 'motion';
-import { Button, Checkbox, Table, Tag } from 'antd';
+import { Button, Checkbox, Table, Tag, notification } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
+import { useMutation } from 'react-query';
+import { clsx } from 'clsx';
 import {
   FileDoneOutlined,
   DownloadOutlined,
-  PlusOutlined,
   CloseOutlined,
   CloseSquareOutlined,
+  FileZipOutlined,
 } from '@ant-design/icons';
 import {
   makeOrgProjectTuple,
   TDataSource,
   TResourceTableData,
 } from '../../molecules/MyDataTable/MyDataTable';
-import { RootState } from '../../../shared/store/reducers';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
-import DeprecatedIcon from '../../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
-import './styles.less';
 import isValidUrl from '../../../utils/validUrl';
+import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
+import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
+import formatBytes from '../../../utils/formatBytesUnit';
+
+import './styles.less';
 
 type Props = {
   authenticated?: boolean;
   token?: string;
 };
+type DownloadResourcePayload = {
+  '@type': string;
+  resourceId: string;
+  project: string;
+  path: string;
+};
+
 type TDataPanel = {
   resources: TResourceTableData;
   openDataPanel: boolean;
@@ -36,11 +67,77 @@ export class DataPanelEvent<T> extends Event {
 export const DATA_PANEL_STORAGE_EVENT = 'datapanelupdated';
 export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
+function sum(...args: number[]) {
+  return args.reduce((a, b) => a + b, 0);
+}
+
+function findIndexes(arr: any[], predicate: any) {
+  const indexes: number[] = [];
+  arr.forEach((item, index) => {
+    if (predicate(item)) {
+      indexes.push(index);
+    }
+  });
+  return indexes;
+}
+function removeIndeces(arr: any[], indicesToRemove: number[]) {
+  return arr.filter((_, index) => !indicesToRemove.includes(index));
+}
+
+function makePayload(resourcesPayload: DownloadResourcePayload[]) {
+  const archiveId = uuidv4();
+  const payload: ArchivePayload = {
+    archiveId,
+    resources: resourcesPayload,
+  };
+  return { payload, archiveId };
+}
+
+async function downloadArchive({
+  nexus,
+  parsedData,
+  resourcesPayload,
+  format,
+}: {
+  nexus: NexusClient;
+  parsedData: ParsedNexusUrl;
+  resourcesPayload: any;
+  format?: 'x-tar' | 'json';
+}) {
+  const {
+    payload,
+    archiveId,
+  }: { payload: ArchivePayload; archiveId: string } = makePayload(
+    resourcesPayload
+  );
+  try {
+    await nexus.Archive.create(parsedData.org, parsedData.project, payload);
+  } catch (error) {}
+  try {
+    const archive = await nexus.Archive.get(
+      parsedData.org,
+      parsedData.project,
+      archiveId,
+      { as: format || 'x-tar' }
+    );
+    const blob =
+      !format || format === 'x-tar'
+        ? (archive as Blob)
+        : new Blob([archive.toString()]);
+    return {
+      blob,
+      archiveId,
+      format,
+    };
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('can not fetch archive', { cause: error });
+  }
+}
+
 const DataPanel: React.FC<Props> = ({}) => {
-  const location = useLocation();
-  const oidc = useSelector((state: RootState) => state.oidc);
-  const authenticated = !!oidc.user;
-  const token = oidc.user && oidc.user.access_token;
+  const nexus = useNexusContext();
+  const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
   const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
   const [{ openDataPanel, resources }, updateDataPanel] = useReducer(
@@ -53,61 +150,9 @@ const DataPanel: React.FC<Props> = ({}) => {
       openDataPanel: false,
     }
   );
-  const handleRemoveItemFromDataPanel = (record: TDataSource) => {
-    const selectedRowKeys = resources.selectedRowKeys.filter(
-      t => t !== record.key
-    );
-    const selectedRows = resources.selectedRows.filter(
-      t => t.key !== record.key
-    );
-    localStorage.setItem(
-      DATA_PANEL_STORAGE,
-      JSON.stringify({ selectedRowKeys, selectedRows })
-    );
-    window.dispatchEvent(
-      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
-        detail: {
-          datapanel: { selectedRowKeys, selectedRows },
-        },
-      })
-    );
-    updateDataPanel({ resources: { selectedRowKeys, selectedRows } });
-  };
+
   const totalSelectedResources = resources?.selectedRowKeys?.length;
-  const handleOpenDataPanel: React.MouseEventHandler<HTMLDivElement> = e => {
-    e.preventDefault();
-    e.stopPropagation();
-    updateDataPanel({ openDataPanel: true });
-  };
-  const handleCloseDataPanel = () => {
-    updateDataPanel({ openDataPanel: false });
-    datapanelRef.current &&
-      animate(
-        datapanelRef.current,
-        {
-          height: '0px',
-          opacity: 0,
-          display: 'none',
-        },
-        {
-          duration: 1,
-          easing: spring(),
-        }
-      );
-  };
-  const handleClearSelectedItems = () => {
-    updateDataPanel({
-      resources: { selectedRowKeys: [], selectedRows: [] },
-    });
-    localStorage.removeItem(DATA_PANEL_STORAGE);
-    window.dispatchEvent(
-      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
-        detail: {
-          datapanel: { selectedRowKeys: [], selectedRows: [] },
-        },
-      })
-    );
-  };
+  const dataSource: TDataSource[] = resources?.selectedRows || [];
   const columns: ColumnsType<TDataSource> = [
     {
       key: 'name',
@@ -162,7 +207,62 @@ const DataPanel: React.FC<Props> = ({}) => {
       },
     },
   ];
-  const dataSource: TDataSource[] = resources?.selectedRows || [];
+
+  const handleClearSelectedItems = () => {
+    updateDataPanel({
+      resources: { selectedRowKeys: [], selectedRows: [] },
+    });
+    localStorage.removeItem(DATA_PANEL_STORAGE);
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: { selectedRowKeys: [], selectedRows: [] },
+        },
+      })
+    );
+  };
+  const handleRemoveItemFromDataPanel = (record: TDataSource) => {
+    const selectedRowKeys = resources.selectedRowKeys.filter(
+      t => t !== record.key
+    );
+    const selectedRows = resources.selectedRows.filter(
+      t => t.key !== record.key
+    );
+    localStorage.setItem(
+      DATA_PANEL_STORAGE,
+      JSON.stringify({ selectedRowKeys, selectedRows })
+    );
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: { selectedRowKeys, selectedRows },
+        },
+      })
+    );
+    updateDataPanel({ resources: { selectedRowKeys, selectedRows } });
+  };
+  const handleOpenDataPanel: React.MouseEventHandler<HTMLDivElement> = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateDataPanel({ openDataPanel: true });
+  };
+  const handleCloseDataPanel = () => {
+    updateDataPanel({ openDataPanel: false });
+    datapanelRef.current &&
+      animate(
+        datapanelRef.current,
+        {
+          height: '0px',
+          opacity: 0,
+          display: 'none',
+        },
+        {
+          duration: 1,
+          easing: spring(),
+        }
+      );
+  };
+
   useEffect(() => {
     const dataPanelEventListner = (
       event: DataPanelEvent<{ datapanel: TResourceTableData }>
@@ -204,18 +304,122 @@ const DataPanel: React.FC<Props> = ({}) => {
       handleCloseDataPanel();
     }
   });
-  if (
-    !(authenticated && token) ||
-    !(
-      dataSource.length &&
-      (location.pathname === '/' ||
-        location.pathname === '/search' ||
-        location.pathname === '/my-data')
-    )
-  ) {
-    return null;
-  }
-  return (
+  const resourceProjectPaths = useMemo(
+    () => [
+      ...new Set(
+        dataSource
+          .filter(r => !isNil(r.project))
+          ?.map(r => {
+            const [orgLabel, projectLabel] = parseProjectUrl(r.project);
+            return `/${orgLabel}/${projectLabel}`;
+          })
+      ),
+    ],
+    [dataSource]
+  );
+  const resourcesGrouped = useMemo(() => {
+    const newDataSource = dataSource
+      .filter(resource => !isNil(resource._self))
+      .map(resource => {
+        const url = isArray(resource._self)
+          ? resource._self[0]
+          : resource._self;
+        try {
+          const parsedSelf = parseURL(url);
+          const size = resource.distribution
+            ? isArray(resource.distribution?.contentSize)
+              ? sum(...resource.distribution.contentSize)
+              : resource.distribution.contentSize
+            : 0;
+          const contentType = resource.distribution
+            ? isArray(resource.distribution?.label)
+              ? resource.distribution?.label[0].split('.').pop()
+              : resource.distribution?.label.split('.').pop() ?? ''
+            : '';
+          return {
+            size,
+            contentType,
+            distribution: resource.distribution,
+            _self: resource._self,
+            '@type': resource.type === 'File' ? 'File' : 'Resource',
+            resourceId: resource.id,
+            project: `${parsedSelf.org}/${parsedSelf.project}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}`,
+          };
+        } catch (error) {
+          return;
+        }
+      });
+    return groupBy(newDataSource, 'contentType');
+  }, [dataSource]);
+  const existedTypes = compact(Object.keys(resourcesGrouped));
+  const resultsObject = useMemo(() => {
+    if (types.length) {
+      return flatMap(
+        Object.entries(resourcesGrouped).map(([key, value]) => {
+          if (types.includes(key)) {
+            return value;
+          }
+          return null;
+        })
+      );
+    }
+    return flatMap(resourcesGrouped);
+  }, [types, resourcesGrouped]);
+  const resourcesPayload = flatMap(resultsObject)
+    .map(item => omit(item, ['distribution', 'size', 'contentType']))
+    .filter(i => !isEmpty(i) && !isNil(i));
+  const totalSize = sum(
+    ...compact(flatMap(resultsObject).map(item => item?.size))
+  );
+  const handleFileTypeChange = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      setTypes(state => [...state, e.target.value]);
+    } else {
+      setTypes(types.filter(t => t !== e.target.value));
+    }
+  };
+  const parsedData: ParsedNexusUrl | undefined = resourcesPayload.length
+    ? parseURL(resourcesPayload.find(item => !!item._self)?._self as string)
+    : undefined;
+  const { mutateAsync: downloadSelectedResource, status } = useMutation(
+    downloadArchive
+  );
+  const handleDownloadResourcesArchive = () => {
+    if (parsedData) {
+      downloadSelectedResource(
+        {
+          nexus,
+          parsedData,
+          resourcesPayload: resourcesPayload.map(i => omit(i, '_self')),
+        },
+        {
+          onSuccess: data => {
+            const url = window.URL.createObjectURL(new Blob([data.blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `data-${data.archiveId}.tar`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+          },
+          onError: (error: any) => {
+            notification.error({
+              message: (
+                <div>
+                  <strong>Error when downloading archive</strong>
+                  <div>{error.cause?.['@type']}</div>
+                </div>
+              ),
+              description: <em>{error.cause?.reason}</em>,
+            });
+          },
+        }
+      );
+    }
+  };
+
+  return Boolean(dataSource.length) ? (
     <div className="datapanel">
       <div ref={datapanelRef} className="datapanel-content">
         <div className="datapanel-content-wrapper">
@@ -260,21 +464,49 @@ const DataPanel: React.FC<Props> = ({}) => {
             <span>{totalSelectedResources} elements selected</span>
           </div>
         </div>
-        <div className="download-options">
-          <Checkbox>ASC</Checkbox>
-          <Checkbox>SWC</Checkbox>
-          <Checkbox>
-            H5 <DeprecatedIcon style={{ marginBottom: 5 }} />{' '}
-          </Checkbox>
-          <Checkbox>OBJ</Checkbox>
-          <Button type="link">
-            <DownloadOutlined />
-            Download
-          </Button>
+        <div
+          className={clsx(
+            'download-options',
+            Boolean(totalSize) && 'sized',
+            Boolean(existedTypes) && 'exts'
+          )}
+        >
+          {Boolean(existedTypes.length) && (
+            <div className="download-filetypes">
+              {existedTypes.map(ext => (
+                <Checkbox value={ext} onChange={handleFileTypeChange}>
+                  {toUpper(ext)}
+                </Checkbox>
+              ))}
+            </div>
+          )}
+          {Boolean(totalSize) && (
+            <div className="download-size">
+              <FileZipOutlined />
+              <span>{formatBytes(totalSize)}</span>
+            </div>
+          )}
+          <AccessControl
+            path={resourceProjectPaths}
+            permissions={['archives/write']}
+            noAccessComponent={() => <div>Have not access</div>}
+          >
+            <div className="download-btn">
+              <Button
+                type="link"
+                onClick={handleDownloadResourcesArchive}
+                loading={status === 'loading'}
+                download={`data-cart-${uuidv4()}.tar`}
+              >
+                <DownloadOutlined />
+                Download
+              </Button>
+            </div>
+          </AccessControl>
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default DataPanel;

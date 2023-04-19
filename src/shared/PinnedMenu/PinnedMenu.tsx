@@ -4,6 +4,7 @@ import {
   SearchOutlined,
   FolderOutlined,
   WalletOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import './styles.less';
 
@@ -18,11 +19,21 @@ type TMenuItem = {
 const ICON_SIZE = 16;
 const Menu = new Map<string, TMenuItem>([
   [
+    'home',
+    {
+      id: 'pinned-menu/home',
+      title: 'Search',
+      url: '/',
+      bg: '#002766',
+      icon: <HomeOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
+    },
+  ],
+  [
     'search',
     {
-      id: 'pinned-menu/organizations',
-      title: 'Organizations',
-      url: '/orgs',
+      id: 'pinned-menu/search',
+      title: 'Search',
+      url: '/search',
       bg: '#003A8C',
       icon: <SearchOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     },
@@ -30,9 +41,9 @@ const Menu = new Map<string, TMenuItem>([
   [
     'organizations',
     {
-      id: 'pinned-menu/projects',
-      title: 'Projects',
-      url: '/projects',
+      id: 'pinned-menu/organizations',
+      title: 'Organizations',
+      url: '/orgs',
       bg: '#0050B3',
       icon: <FolderOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     },
@@ -40,9 +51,9 @@ const Menu = new Map<string, TMenuItem>([
   [
     'projects',
     {
-      id: 'pinned-menu/studios',
-      title: 'Studios',
-      url: '/studios',
+      id: 'pinned-menu/projects',
+      title: 'Projects',
+      url: '/projects',
       bg: '#096DD9',
       icon: <WalletOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     },

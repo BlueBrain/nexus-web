@@ -399,18 +399,14 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          <Button
-            shape="round"
-            type="default"
-            icon={<EditOutlined />}
-            style={{
-              marginRight: '5px',
-            }}
-            role="button"
+          <Menu.Item
+            style={{ maxWidth: 'max-content', float: 'right', margin: '0 5px' }}
           >
-            {' '}
-            Workspace
-          </Button>
+            <Button shape="round" type="default" role="button">
+              <EditOutlined />
+              Workspace
+            </Button>
+          </Menu.Item>
         </Popover>
         {selectedWorkspace ? (
           <Popover
@@ -419,14 +415,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             content={editDhashBoardspaceWrapper}
             trigger="click"
           >
-            <Button
-              shape="round"
-              type="default"
-              icon={<EditOutlined />}
-              role="button"
-            >
-              Dashboard
-            </Button>
+            <Menu.Item style={{ maxWidth: 'max-content', float: 'right' }}>
+              <Button shape="round" type="default" role="button">
+                <EditOutlined />
+                Dashboard
+              </Button>
+            </Menu.Item>
           </Popover>
         ) : null}
       </>
@@ -694,7 +688,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           <Menu.SubMenu
             icon={<DownOutlined />}
             title={w.label}
-            key={w['@id']}
+            key={`workspace-${w['@id']}`}
             popupOffset={[0, 0]}
             className={selectKeysHighlight(w)}
             onTitleClick={() => setSelectedWorkspace(w)}
@@ -708,7 +702,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               dashboards.map((d: Resource) => {
                 return (
                   <Menu.Item
-                    key={`${w['@id']}-${d['@id']}`}
+                    key={`w${w['@id']}-d${d['@id']}`}
                     onClick={() => {
                       setSelectedKeys([`${w['@id']}*${d['@id']}`]);
                       setSelectedDashboard(d);
@@ -721,7 +715,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             )}
           </Menu.SubMenu>
         ))}
-        <div className="workspace-action">{actionButtons()}</div>
+        {actionButtons()}
+        {/* <div className="workspace-action">
+
+          </div> */}
       </Menu>
       <div>
         {renderResults()}

@@ -4,6 +4,7 @@ type IntersectionObserver<T> = {
   root?: Element | Document | null | undefined;
   target: React.MutableRefObject<HTMLElement | null>;
   onIntersect: any;
+  onNonIntersect?: any;
   threshold?: number;
   rootMargin?: string;
   enabled?: boolean;
@@ -12,6 +13,7 @@ export default function useIntersectionObserver<T>({
   root,
   target,
   onIntersect,
+  onNonIntersect,
   threshold = 1.0,
   rootMargin = '0px',
   enabled = true,
@@ -23,7 +25,10 @@ export default function useIntersectionObserver<T>({
 
     const observer = new IntersectionObserver(
       entries =>
-        entries.forEach(entry => entry.isIntersecting && onIntersect()),
+        entries.forEach(entry => {
+          !entry.isIntersecting && onNonIntersect();
+          entry.isIntersecting && onIntersect();
+        }),
       {
         root,
         rootMargin,

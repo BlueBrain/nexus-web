@@ -33,7 +33,7 @@ import {
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus';
 import { flatten } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
@@ -44,11 +44,12 @@ import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver'
 import ProjectForm from '../../subapps/admin/components/Projects/ProjectForm';
 import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import CreateProject from '../../shared/modals/CreateProject/CreateProject';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
+import formatNumber from '../../utils/formatNumber';
 
 import '../../shared/styles/route-layout.less';
 
@@ -123,20 +124,30 @@ type TProjectItem = {
   description?: string;
   deprected: boolean;
   access?: string;
-  datasets?: string;
   createdAt: Date;
   updatedAt: Date;
+  organization: string;
+  nexus: NexusClient;
 };
 const ProjectItem = ({
   title,
   to,
   description,
   deprected,
-  datasets,
   createdAt,
   updatedAt,
   access,
+  organization,
+  nexus,
 }: TProjectItem) => {
+  const { data } = useQuery({
+    queryKey: ['datesets', { orgLabel: organization, projectLabel: title }],
+    queryFn: () =>
+      nexus.Resource.list(organization, title, {
+        type: DATA_SET_TYPE,
+      }),
+  });
+  const datasets = data?._total;
   return (
     <List.Item className="route-result-list_item">
       <div className="route-result-list_item_wrapper">
@@ -156,7 +167,7 @@ const ProjectItem = ({
         <div className="statistics">
           <div className="statistics_item">
             <div>Datasets</div>
-            <div>{datasets}</div>
+            <div>{(datasets && formatNumber(datasets)) ?? '0'}</div>
           </div>
           <div className="statistics_item">
             <div>Your access</div>
@@ -368,15 +379,14 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
   });
 
   const loadMoreFooter = hasNextPage && (
-    <Button
+    <div
       className="infinitfetch-loader"
       ref={loadMoreRef}
       onClick={() => fetchNextPage()}
-      disabled={!hasNextPage || isFetchingNextPage}
     >
       <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      {hasNextPage && !isFetchingNextPage && <span>Load more</span>}
-    </Button>
+      <span>Loading more</span>
+    </div>
   );
   const dataSource: ProjectResponseCommon[] = flatten(
     // @ts-ignore
@@ -406,7 +416,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
           extra={total ? `Total of ${total} Projects` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/projects-bg.png')}
-          imgCss={{ width: '83%' }}
+          imgCss={{ width: '75.4%' }}
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}
@@ -463,7 +473,9 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
                           <ProjectItem
                             {...{
                               to,
+                              nexus,
                               title: item._label,
+                              organization: item._organizationLabel,
                               deprected: item._deprecated,
                               createdAt: new Date(item._createdAt),
                               updatedAt: new Date(item._updatedAt),

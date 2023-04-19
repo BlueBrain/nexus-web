@@ -16,9 +16,12 @@ import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../shared/store/reducers';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
-import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
+import {
+  ModalsActionsEnum,
+  updateProjectModalVisibility,
+} from '../../../shared/store/actions/modals';
+import { RootState } from '../../../shared/store/reducers';
 
 type TProject = {
   organization: string;
@@ -101,7 +104,6 @@ const createProjectMutation = async ({
       apiMappings: apiMappings || undefined,
     });
   } catch (error) {
-    console.log('@@error', error);
     // @ts-ignore
     throw new Error(`Error when creating new project in ${orgLabel}`, {
       cause: error,
@@ -113,7 +115,6 @@ const CreateProject: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();
-  const { user } = useSelector((state: RootState) => state.oidc);
   const { identities } = useSelector((state: RootState) => state.auth);
   const userUri = identities?.data?.identities.find(
     t => t['@type'] === 'User'
@@ -151,7 +152,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     });
   };
   const { data: organizations, isLoading } = useQuery({
-    queryKey: ['organizations', { user: userUri! }],
+    queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({
         createdBy: userUri,
@@ -171,14 +172,6 @@ const CreateProject: React.FC<{}> = ({}) => {
     const apiMappingsArray = Object.keys(mappingObject).map(
       (mapping: any) => apiMappings![mapping]
     );
-    console.log('@@handleSubmit', {
-      organization,
-      label,
-      description,
-      base,
-      vocab,
-      apiMappings,
-    });
     mutateAsync(
       {
         nexus,
@@ -241,17 +234,13 @@ const CreateProject: React.FC<{}> = ({}) => {
     )
   );
 
-  const updateVisibility = (payload?: boolean) =>
-    dispatch({
-      payload,
-      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
-    });
+  const updateVisibility = () => dispatch(updateProjectModalVisibility(false));
   return (
     <Modal
       centered
       closable
       visible={createProjectModel}
-      onCancel={() => updateVisibility(false)}
+      onCancel={updateVisibility}
       destroyOnClose
       footer={null}
       title={<strong>Create Project</strong>}
