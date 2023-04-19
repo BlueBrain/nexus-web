@@ -551,7 +551,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
-  ];
+  ]
   React.useEffect(() => {
     window.scrollTo({
       top: 0,

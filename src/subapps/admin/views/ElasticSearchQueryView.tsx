@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import * as queryString from 'query-string';
 import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { isNil } from 'lodash';
-
-import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import { Button, Col, Row, Select } from 'antd';
+import * as queryString from 'query-string';
+import { useOrganisationsSubappContext } from '..';
 import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';
-import { useOrganisationsSubappContext } from '..';
+import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 
 const { Option } = Select;
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {

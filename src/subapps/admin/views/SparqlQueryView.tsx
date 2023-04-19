@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
+import { Button, Col, Row, Select } from 'antd';
 import { Link } from 'react-router-dom';
-import * as queryString from 'query-string';
 import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as queryString from 'query-string';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
-import { Button, Col, Row, Select } from 'antd';
 import { getResourceLabel } from '../../../shared/utils';
 import { useOrganisationsSubappContext } from '..';
 
