@@ -90,13 +90,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     <Menu mode="inline" className="ant-menu-inline">
       <Menu.Item className="link-menu-item" key="header-menu-my-date">
         <Link to="/my-data">
-          <MenuOutlined />
+          <MenuOutlined style={{ marginRight: 3 }} />
           My data
         </Link>
       </Menu.Item>
       {token && (
         <Menu.Item onClick={copyTokenCmd} key="header-menu-my-token">
-          <CopyOutlined />
+          <CopyOutlined style={{ marginRight: 3 }} />
           Copy token
         </Menu.Item>
       )}
@@ -106,7 +106,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         popupClassName="submenu-overlay-custom-popup"
         title={
           <>
-            <BookOutlined />
+            <BookOutlined style={{ marginRight: 3 }} />
             <span>Resources</span>
           </>
         }
@@ -117,7 +117,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://bluebrainnexus.io/docs/index.html"
           >
-            <FileTextOutlined />
+            <FileTextOutlined style={{ marginRight: 3 }} />
             <span>Documentation</span>
           </a>
         </Menu.Item>
@@ -127,7 +127,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://bluebrainnexus.io/"
           >
-            <LinkOutlined />
+            <LinkOutlined style={{ marginRight: 3 }} />
             <span>Web Protégé</span>
           </a>
         </Menu.Item>
@@ -137,7 +137,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://portal.bluebrain.epfl.ch/resources/models/cell-atlas/"
           >
-            <LinkOutlined />
+            <LinkOutlined style={{ marginRight: 3 }} />
             <span>Atlas</span>
           </a>
         </Menu.Item>
@@ -146,7 +146,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         className="link-menu-item"
         onClick={() => setModalVisible(() => true)}
       >
-        <SettingOutlined />
+        <SettingOutlined style={{ marginRight: 3 }} />
         About
       </Menu.Item>
       <Menu.Item
@@ -154,15 +154,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         className="menu-item-logout"
         key={'logout'}
       >
-        <LogoutOutlined />
+        <LogoutOutlined style={{ marginRight: 3 }} />
         Logout
       </Menu.Item>
     </Menu>
   );
   const showCreationPanel = location.pathname === '/search';
-  const handleOpenCreationPanel = () => {
-    dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
-  };
+  const handleOpenCreationPanel = () => dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   return (
     <Fragment>
       <header id="header" className="Header">

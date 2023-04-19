@@ -716,9 +716,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           </Menu.SubMenu>
         ))}
         {actionButtons()}
-        {/* <div className="workspace-action">
-
-          </div> */}
       </Menu>
       <div>
         {renderResults()}
@@ -736,7 +733,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         {selectedWorkspace ? (
           <Modal
             title="Delete Workspace"
-            visible={deleteConfirmation}
+            open={deleteConfirmation}
             onCancel={() => {
               setDeleteConfirmation(false);
             }}
@@ -757,7 +754,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
         <Modal
           title="Remove Dashboard"
-          visible={deleteDashBoardConfirmation}
+          open={deleteDashBoardConfirmation}
           onCancel={() => {
             setDeleteDashBoardConfirmation(false);
           }}
@@ -768,7 +765,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           </p>
         </Modal>
         <Modal
-          visible={showEditTableForm}
+          open={showEditTableForm}
           footer={null}
           onCancel={() => setShowEditTableForm(false)}
           width={950}

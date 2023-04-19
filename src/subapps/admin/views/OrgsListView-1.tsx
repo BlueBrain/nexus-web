@@ -217,7 +217,7 @@ const OrgsListView: React.FunctionComponent = () => {
 
         <Modal
           title="New Organization"
-          visible={modalVisible}
+          open={modalVisible}
           onCancel={() => setModalVisible(false)}
           confirmLoading={formBusy}
           footer={null}
@@ -226,7 +226,7 @@ const OrgsListView: React.FunctionComponent = () => {
         </Modal>
         <Drawer
           width={640}
-          visible={!!(selectedOrg && selectedOrg._label)}
+          open={!!(selectedOrg && selectedOrg._label)}
           onClose={() => setSelectedOrg(undefined)}
           title={selectedOrg && selectedOrg._label}
         >

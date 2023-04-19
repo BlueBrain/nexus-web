@@ -101,7 +101,7 @@ export const CreateIssueUI = ({
     <Modal
       footer={null}
       title="Create A JIRA Issue"
-      visible={true}
+      open={true}
       forceRender={true}
       destroyOnClose={true}
       mask={false}
@@ -127,6 +127,7 @@ export const CreateIssueUI = ({
             style={{ width: '100%' }}
             onChange={(value: string) => setProject(value)}
             filterOption={(input, option) =>
+              // @ts-ignore
               option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
             }
             data-testid="project-select"
@@ -197,7 +198,7 @@ export const LinkIssueUI = ({
     <>
       <Modal
         title="Link Issue"
-        visible={true}
+        open={true}
         forceRender={true}
         destroyOnClose={true}
         mask={false}

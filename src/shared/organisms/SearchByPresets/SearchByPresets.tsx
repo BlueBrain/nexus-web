@@ -8,15 +8,8 @@ import { match as pmatch } from 'ts-pattern';
 import { PromisePool } from '@supercharge/promise-pool';
 import { animate } from 'motion';
 import clsx from 'clsx';
-import {
-  PresetCardItem,
-  PresetCardItemSkeleton,
-  PresetCardItemCompact,
-} from '../../molecules';
-import {
-  SearchConfig,
-  SearchLayout,
-} from '../../../subapps/search/hooks/useGlobalSearch';
+import { PresetCardItem, PresetCardItemSkeleton, PresetCardItemCompact, } from '../../molecules';
+import { SearchConfig, SearchLayout, } from '../../../subapps/search/hooks/useGlobalSearch';
 import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
 import './styles.less';
 
@@ -183,12 +176,8 @@ export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({
     if (floatPresetRef.current) {
       animate(
         floatPresetRef.current,
-        {
-          opacity: intersection ? 0 : 1,
-        },
-        {
-          easing: 'ease-out',
-        }
+        { opacity: intersection ? 0 : 1, },
+        { easing: 'ease-out', }
       );
     }
   }, [floatPresetRef.current, intersection]);

@@ -5,9 +5,14 @@
   &.ant-drawer-right.ant-drawer-open {
     width: 60% !important;
     margin-top: 52px; // do not overlay app header
+    margin-left: auto;
+  }
+  .ant-drawer-mask {
+    all: unset !important;
   }
   & .ant-drawer-body {
-    margin-bottom: 62px; // compensate for margin-top and some
+    // margin-bottom: 62px; // compensate for margin-top and some
+    margin-bottom: 12px; // compensate for margin-top and some
   }
   @media only screen and (max-width: @screen-sm-max) {
     &.ant-drawer-left.ant-drawer-open,

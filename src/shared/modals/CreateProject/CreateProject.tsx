@@ -239,7 +239,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     <Modal
       centered
       closable
-      visible={createProjectModel}
+      open={createProjectModel}
       onCancel={updateVisibility}
       destroyOnClose
       footer={null}

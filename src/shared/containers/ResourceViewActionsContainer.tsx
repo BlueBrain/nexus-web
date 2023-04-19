@@ -1,16 +1,15 @@
+import * as React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Context, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row } from 'antd';
-import * as React from 'react';
 import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
-import Copy from '../components/Copy';
+import { useSelector } from 'react-redux';
 import { CartContext } from '../hooks/useDataCart';
 import { makeResourceUri } from '../utils';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
-import { intersection as intersect } from 'lodash';
+import Copy from '../components/Copy';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -148,8 +147,7 @@ const ResourceViewActionsContainer: React.FC<{
 
                   if (!isLatest) {
                     triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}?rev=${
-                        resource._rev
+                      `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
                       }`
                     );
                   } else {
@@ -190,8 +188,7 @@ const ResourceViewActionsContainer: React.FC<{
                         )}`;
 
                         triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${
-                            resource._rev
+                          `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
                           }`
                         );
                       }}

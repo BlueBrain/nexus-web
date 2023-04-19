@@ -146,7 +146,7 @@ const WorkflowStepContainer: React.FC<{
         </StepsBoard>
       </Spin>
       <Modal
-        visible={showAddForm}
+        open={showAddForm}
         footer={null}
         onCancel={() => setShowAddForm(false)}
         width={800}

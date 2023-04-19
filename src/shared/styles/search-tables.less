@@ -61,20 +61,23 @@ html {
 .result-table {
   // width: auto;
   font-weight: 200;
+
   // margin-right: 10px;
   .ant-table {
     line-height: 1.2em;
 
-    thead.ant-table-thead > tr > th {
+    thead.ant-table-thead>tr>th {
       font-weight: 400;
       background: #f5f5f5 !important;
       width: 200px;
       padding: 10px 15px;
       border: none !important;
       .thead-borders();
+
       &.ant-table-selection-column {
         text-align: left !important;
       }
+
       // FILTER ICON PLAYGROUND
       .ant-table-filter-column {
         display: grid;
@@ -104,19 +107,18 @@ html {
             background: none;
           }
 
-          .ant-table-filter-trigger > .anticon {
+          .ant-table-filter-trigger>.anticon {
             left: 20px;
           }
         }
       }
     }
+
     .ant-table-body {
       table {
         background: @bg;
 
-        .ant-table-thead
-          th.ant-table-column-has-sorters
-          .ant-table-column-sorters {
+        .ant-table-thead th.ant-table-column-has-sorters .ant-table-column-sorters {
           padding: 0;
         }
 
@@ -124,6 +126,7 @@ html {
           &.ant-table-selection-column {
             text-align: left !important;
           }
+
           .row-index {
             display: block;
             font-size: 12px;
@@ -161,8 +164,8 @@ html {
         }
 
         td.ant-table-cell,
-        td.ant-table-cell > div,
-        td.ant-table-cell > pre {
+        td.ant-table-cell>div,
+        td.ant-table-cell>pre {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
@@ -175,7 +178,7 @@ html {
 
         .ant-checkbox-wrapper:hover .ant-checkbox-inner,
         .ant-checkbox:hover .ant-checkbox-inner,
-        .ant-checkbox-input:focus + .ant-checkbox-inner {
+        .ant-checkbox-input:focus+.ant-checkbox-inner {
           border-color: @select-black;
         }
 
@@ -188,7 +191,7 @@ html {
           border: 1px solid @select-black;
         }
 
-        .ant-table-tbody > tr.ant-table-row-selected > td {
+        .ant-table-tbody>tr.ant-table-row-selected>td {
           background: @select-blue;
         }
       }
@@ -211,14 +214,24 @@ html {
         }
       }
     }
+
     .ant-table-placeholder {
       background-color: #f5f5f5;
+
       td {
         border: none !important;
       }
+
       .ant-empty-description {
         color: #333;
       }
     }
   }
+}
+
+.search-tooltip {
+  position: fixed;
+  top: 0;
+  right: 200px;
+  z-index: 999;
 }

@@ -262,7 +262,7 @@ const ActivitiesLinkingContainer: React.FC<{
       </Popover>
       <Modal
         maskClosable
-        visible={showLinkForm}
+        open={showLinkForm}
         footer={null}
         onCancel={() => setShowLinkForm(false)}
         width={600}
@@ -277,7 +277,7 @@ const ActivitiesLinkingContainer: React.FC<{
       </Modal>
       <Modal
         maskClosable
-        visible={showCreateStepForm}
+        open={showCreateStepForm}
         footer={null}
         onCancel={() => setshowCreateStepForm(false)}
         width={1200}

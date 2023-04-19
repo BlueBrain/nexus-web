@@ -324,7 +324,8 @@ const CreateStudio = () => {
       centered
       closable
       destroyOnClose
-      visible={createStudioModel}
+      forceRender
+      open={createStudioModel}
       onCancel={updateVisibility}
       title={<strong>Create Studio</strong>}
       footer={null}
@@ -477,7 +478,7 @@ const CreateStudio = () => {
                   onChange={handleSelectAllPlugin}
                   style={{
                     marginRight: 5,
-                    backgroundColor: selectAllPlugin ? 'black' : '-moz-initial',
+                    backgroundColor: selectAllPlugin ? 'black' : '#BCBCBC',
                   }}
                 />
                 {selectAllPlugin ? 'Unselect All' : 'Select All'}
@@ -545,6 +546,7 @@ const CreateStudio = () => {
                                   valuePropName="checked"
                                   key={el.key}
                                   trigger="onChange"
+                                  style={{ marginBottom:  3 }}
                                 >
                                   {el.visible ? (
                                     <MoreOutlined />

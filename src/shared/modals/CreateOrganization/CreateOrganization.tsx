@@ -94,7 +94,7 @@ const CreateOrganization: React.FC<{}> = () => {
       centered
       closable
       destroyOnClose
-      visible={createOrganizationModel}
+      open={createOrganizationModel}
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Organization</strong>}

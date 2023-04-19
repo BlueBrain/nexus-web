@@ -5,31 +5,17 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
-import { Link, useLocation } from 'react-router-dom';
+import {  useRouteMatch } from 'react-router';
+import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
+import { InputRef, Input, Spin, Alert, List, } from 'antd';
 import {
-  Button,
-  Modal,
-  Drawer,
-  Input,
-  Spin,
-  Alert,
-  Avatar,
-  Breadcrumb,
-  List,
-  Tag,
-} from 'antd';
-import {
-  PlusSquareOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import {
   NexusClient,
-  OrganizationList,
-  OrgResponseCommon,
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
@@ -39,11 +25,7 @@ import { useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
-import useNotification from '../../shared/hooks/useNotification';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import ProjectForm from '../../subapps/admin/components/Projects/ProjectForm';
-import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
-import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
@@ -192,40 +174,19 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<Props> = ({}) => {
-  const queryInputRef = useRef<Input>(null);
+const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
+  const nexus = useNexusContext();
+  const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
   const dispatch = useDispatch();
-  const notification = useNotification();
-  const [formBusy, setFormBusy] = useState<boolean>(false);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const updateCreateModelVisibility = (payload?: boolean) => {
-    dispatch({
-      payload,
-      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
-    });
-  };
   const [query, setQueryString] = useState<string>('');
-  const [activeOrg, setActiveOrg] = useState<
-    OrgResponseCommon | null | undefined
-  >(null);
-  const [
-    selectedProject,
-    setSelectedProject,
-  ] = useState<ProjectResponseCommon | null>(null);
-
-  const nexus = useNexusContext();
-  const history = useHistory();
   // const subapp = useAdminSubappContext();
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
   const orgLabel = match?.params.orgLabel;
-  const goTo = (org: string, project: string) =>
-    history.push(`${org}/${project}`);
   const [{ sort }, setOptions] = useReducer(
     // @ts-ignore
     (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
@@ -241,103 +202,12 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
     queryKey: ['organization-projects', { orgLabel, sort }],
     queryFn: () => fetchOrganizationDetails({ nexus, orgLabel: orgLabel! }),
   });
-
-  const saveAndCreate = (newProject: ProjectResponseCommon) => {
-    setFormBusy(true);
-    if (!activeOrg) {
-      return;
-    }
-    nexus.Project.create(activeOrg._label, newProject._label, {
-      base: newProject.base || undefined,
-      vocab: newProject.vocab || undefined,
-      description: newProject.description || '',
-      apiMappings: newProject.apiMappings || undefined,
-    })
-      .then(() => {
-        notification.success({
-          message: 'Project created',
-        });
-        setFormBusy(false);
-        goTo(activeOrg._label, newProject._label);
-      })
-      .catch(error => {
-        setFormBusy(false);
-        notification.error({
-          message: 'Error creating project',
-          description: error.reason || error.message,
-        });
-      });
+  const updateCreateModelVisibility = (payload?: boolean) => {
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+    });
   };
-
-  const saveAndModify = (
-    selectedProject: ProjectResponseCommon,
-    newProject: ProjectResponseCommon
-  ) => {
-    setFormBusy(true);
-    if (!activeOrg) {
-      return;
-    }
-    nexus.Project.update(
-      activeOrg._label,
-      newProject._label,
-      selectedProject._rev,
-      {
-        base: newProject.base,
-        vocab: newProject.vocab,
-        description: newProject.description,
-        apiMappings: newProject.apiMappings || [],
-      }
-    )
-      .then(() => {
-        notification.success({
-          message: 'Project saved',
-        });
-        setFormBusy(false);
-        setModalVisible(false);
-        setSelectedProject(null);
-        // TODO: reload porject
-      })
-      .catch((error: Error) => {
-        setFormBusy(false);
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-        });
-      });
-  };
-
-  const saveAndDeprecate = (selectedProject: ProjectResponseCommon) => {
-    setFormBusy(true);
-    nexus.Project.deprecate(
-      selectedProject._organizationLabel,
-      selectedProject._label,
-      selectedProject._rev
-    )
-      .then(
-        () => {
-          notification.success({
-            message: 'Project successfully deprecated',
-          });
-          setFormBusy(false);
-          setModalVisible(false);
-          setSelectedProject(null);
-        },
-        (action: { type: string; error: Error }) => {
-          notification.warning({
-            message: 'Project NOT deprecated',
-            description: action?.error?.message,
-          });
-          setFormBusy(false);
-        }
-      )
-      .catch((error: Error) => {
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-        });
-      });
-  };
-
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
@@ -377,17 +247,8 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
         ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
         : undefined,
   });
-
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
+  // @ts-ignore
+  const total = data?.pages?.[0]?._total as number;
   const dataSource: ProjectResponseCommon[] = flatten(
     // @ts-ignore
     data?.pages.map(page => page._results)
@@ -405,8 +266,16 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
       });
     }
   }, []);
-  // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
+  const loadMoreFooter = hasNextPage && (
+    <div
+      className="infinitfetch-loader"
+      ref={loadMoreRef}
+      onClick={() => fetchNextPage()}
+    >
+      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
+      <span>Loading more</span>
+    </div>
+  );
   return (
     <Fragment>
       <div className="main-route">
@@ -493,154 +362,6 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
         </div>
       </div>
     </Fragment>
-    // <Fragment>
-    //   <div className='org-projects-view view-container'>
-    //     {status === 'loading' && <Spin/>}
-    //     {status === 'error' && <div className='org-projects-view-error'>
-    //         <Alert
-    //           type="error"
-    //           message="⛔️ Error loading the organizations details"
-    //           description={JSON.stringify(organisationError, null, 2)}
-    //         />
-    //         </div>}
-    //     {status === 'success' && organization && <div className='org-projects-view-container'>
-    //       <Breadcrumb>
-    //         <Breadcrumb.Item>
-    //           <Link to={'/'}>Home</Link>
-    //         </Breadcrumb.Item>
-    //         <Breadcrumb.Item>
-    //           <Link to='/orgs'>Organazation List</Link>
-    //         </Breadcrumb.Item>
-    //         <Breadcrumb.Item>
-    //           <Link to={location.pathname}>{orgLabel}</Link>
-    //         </Breadcrumb.Item>
-    //       </Breadcrumb>
-    //       <div className='org-projects-view-title'>
-    //         <h2>{organization._label}</h2>
-    //         <p>{organization.description}</p>
-    //         <h3>Projects</h3>
-    //       </div>
-    //       <div className='org-projects-view-actions'>
-    //         <Input.Search
-    //           allowClear
-    //           ref={queryInputRef}
-    //           value={query}
-    //           onChange={handleOnOrgSearch}
-    //           placeholder='Search Organisation'
-    //         />
-    //         <AccessControl
-    //           permissions={['projects/create']}
-    //           path={`/${organization._label}`}
-    //         >
-    //           <Button className='org-projects-view-create-project' type="primary" onClick={() => setModalVisible(true)}>
-    //             <PlusSquareOutlined
-    //               type="plus-square"
-    //               style={{ fontSize: '16px', color: 'white' }}
-    //             />
-    //             Create Project
-    //           </Button>
-    //         </AccessControl>
-    //       </div>
-    //       <div className='org-projects-view-list'>
-    //         {projectStatus === 'error' && <div className='org-projects-view-error'>
-    //             <Alert
-    //               type="error"
-    //               message="⛔️ Error loading the organizations projects list"
-    //               description={JSON.stringify(projectError, null, 2)}
-    //             />
-    //           </div>}
-    //         <Spin spinning={isLoading}>
-    //         {/* {projectStatus === 'success' && */}
-    //             <List
-    //               itemLayout="horizontal"
-    //               loadMore={loadMoreFooter}
-    //               dataSource={dataSource}
-    //               renderItem={item => {
-    //                 const to = `/orgs/${item._organizationLabel}/${item._label}`;
-    //                 return (
-    //                   <List.Item
-    //                     className='organizations-view-list-item'
-    //                     actions={[
-    //                       <Link to={to}>
-    //                         <Button type='link'>More</Button>
-    //                       </Link>
-    //                     ]}
-    //                   >
-    //                     <List.Item.Meta
-    //                       avatar={<Avatar className='organization-initial'>{item._label.substring(0, 2)}</Avatar>}
-    //                       title={
-    //                         <Fragment>
-    //                           <Link to={to} className='organization-link'>{item._label}</Link>
-    //                         </Fragment>
-    //                       }
-    //                       description={item.description}
-    //                     />
-    //                   </List.Item>
-    //                 )
-    //               }}
-    //             />
-    //           {/* } */}
-    //         </Spin>
-    //       </div>
-    //     </div>}
-    //   </div>
-    //   <Modal
-    //     title="New Project"
-    //     visible={modalVisible}
-    //     onCancel={() => setModalVisible(false)}
-    //     confirmLoading={formBusy}
-    //     footer={null}
-    //     width={600}
-    //   >
-    //     <ProjectForm
-    //       onSubmit={(p: ProjectResponseCommon) => saveAndCreate(p)}
-    //       busy={formBusy}
-    //     />
-    //   </Modal>
-    //   <Drawer
-    //     width={750}
-    //     visible={!!(selectedProject && selectedProject._label)}
-    //     onClose={() => setSelectedProject(null)}
-    //     title={`Project: ${selectedProject && selectedProject._label}`}
-    //   >
-    //     {selectedProject && (
-    //       <>
-    //         <AccessControl
-    //           key="quotas-access-control"
-    //           path={`/${selectedProject._organizationLabel}/${selectedProject._label}`}
-    //           permissions={['quotas/read']}
-    //         >
-    //           <QuotasContainer
-    //             orgLabel={selectedProject._organizationLabel}
-    //             projectLabel={selectedProject._label}
-    //           />
-    //           <StoragesContainer
-    //             orgLabel={selectedProject._organizationLabel}
-    //             projectLabel={selectedProject._label}
-    //           />
-    //         </AccessControl>
-    //         <h3>Project Settings</h3>
-    //         <br />
-    //         <ProjectForm
-    //           project={{
-    //             _label: selectedProject._label,
-    //             _rev: selectedProject._rev,
-    //             description: selectedProject.description || '',
-    //             base: selectedProject.base,
-    //             vocab: selectedProject.vocab,
-    //             apiMappings: selectedProject.apiMappings,
-    //           }}
-    //           onSubmit={(p: ProjectResponseCommon) =>
-    //             saveAndModify(selectedProject, p)
-    //           }
-    //           onDeprecate={() => saveAndDeprecate(selectedProject)}
-    //           busy={formBusy}
-    //           mode="edit"
-    //         />
-    //       </>
-    //     )}
-    //   </Drawer>
-    // </Fragment>
   );
 };
 

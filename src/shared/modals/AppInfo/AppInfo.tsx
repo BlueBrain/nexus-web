@@ -24,7 +24,7 @@ const AppInfo = ({
 }: Props) => {
   return (
     <Modal
-      visible={visible}
+      open={visible}
       onCancel={onModalStateChange}
       centered
       closable

@@ -231,7 +231,7 @@ const ProjectsView: React.FunctionComponent = () => {
           </ProjectList>
           <Modal
             title="New Project"
-            visible={modalVisible}
+            open={modalVisible}
             onCancel={() => setModalVisible(false)}
             confirmLoading={formBusy}
             footer={null}
@@ -244,7 +244,7 @@ const ProjectsView: React.FunctionComponent = () => {
           </Modal>
           <Drawer
             width={750}
-            visible={!!(selectedProject && selectedProject._label)}
+            open={!!(selectedProject && selectedProject._label)}
             onClose={() => setSelectedProject(null)}
             title={`Project: ${selectedProject && selectedProject._label}`}
           >

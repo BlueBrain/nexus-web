@@ -10,25 +10,21 @@ import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-
-import StoragesContainer from '../../containers/StoragesContainer';
-import ProjectStatsContainer from '../../containers/ProjectStatsContainer';
-import QuotasContainer from '../../containers/QuotasContainer';
-import ProjectForm from '../../components/Projects/ProjectForm';
-import ViewStatisticsContainer from '../../components/Views/ViewStatisticsProgress';
-import ResourceListBoardContainer from '../../../../shared/containers/ResourceListBoardContainer';
-import ACLsView from '../ACLsView';
-import QueryEditor from '../../components/Projects/QueryEditor';
-import { useAdminSubappContext, useOrganisationsSubappContext } from '../..';
-import useNotification, {
-  NexusError,
-} from '../../../../shared/hooks/useNotification';
-import ProjectToDeleteContainer from '../../containers/ProjectToDeleteContainer';
+import { useOrganisationsSubappContext } from '../..';
 import { RootState } from '../../../../shared/store/reducers';
+import ResourceListBoardContainer from '../../../../shared/containers/ResourceListBoardContainer';
 import ResourceCreateUploadContainer from '../../../../shared/containers/ResourceCreateUploadContainer';
-import { makeOrganizationUri } from '../../../../shared/utils';
-import JiraPluginProjectContainer from '../../containers/JiraContainer';
+import useNotification from '../../../../shared/hooks/useNotification';
 import { useJiraPlugin } from '../../../../shared/hooks/useJIRA';
+import StoragesContainer from '../../containers/StoragesContainer';
+import QuotasContainer from '../../containers/QuotasContainer';
+import ProjectStatsContainer from '../../containers/ProjectStatsContainer';
+import ProjectToDeleteContainer from '../../containers/ProjectToDeleteContainer';
+import JiraPluginProjectContainer from '../../containers/JiraContainer';
+import SettingsContainer from '../../containers/SettingsContainer';
+import ViewStatisticsContainer from '../../components/Views/ViewStatisticsProgress';
+import QueryEditor from '../../components/Projects/QueryEditor';
+// import './ProjectView.less';
 import './styles.less';
 
 const ProjectView: React.FunctionComponent = () => {
@@ -109,7 +105,6 @@ const ProjectView: React.FunctionComponent = () => {
     busy: false,
     error: null,
   });
-  const [formBusy, setFormBusy] = React.useState<boolean>(false);
 
   const [refreshLists, setRefreshLists] = React.useState(false);
   const [activeKey, setActiveKey] = React.useState<string>(
@@ -209,54 +204,6 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
-  const saveAndModify = (newProject: ProjectResponseCommon) => {
-    if (!project) {
-      return;
-    }
-    setFormBusy(true);
-    nexus.Project.update(orgLabel, projectLabel, project._rev, {
-      base: newProject.base,
-      vocab: newProject.vocab,
-      description: newProject.description,
-      apiMappings: newProject.apiMappings || [],
-    })
-      .then(() => {
-        notification.success({
-          message: 'Project saved',
-        });
-        setFormBusy(false);
-      })
-      .catch((error: Error) => {
-        setFormBusy(false);
-        notification.error({
-          message: 'An unknown error occurred',
-          description: error.message,
-        });
-      });
-  };
-
-  const deprecateProject = () => {
-    if (!project) {
-      return;
-    }
-    setFormBusy(true);
-    nexus.Project.deprecate(orgLabel, projectLabel, project._rev)
-      .then(() => {
-        history.push(makeOrganizationUri(orgLabel));
-        notification.success({
-          message: 'Project deprecated',
-        });
-      })
-      .catch((error: NexusError) => {
-        notification.error({
-          message: 'Error deprecating project',
-          description: error.reason,
-        });
-      })
-      .finally(() => {
-        setFormBusy(false);
-      });
-  };
 
   const handleTabChange = (activeKey: string) => {
     if (activeKey === 'studios' || activeKey === 'workflows') return;
@@ -383,29 +330,17 @@ const ProjectView: React.FunctionComponent = () => {
                 </AccessControl>
               </TabPane>
               <TabPane tab="Settings" key="settings">
-                <>
-                  <br />
-                  <h3>Settings</h3>
-                  <div style={{ flexGrow: 1 }}>
-                    <ProjectForm
-                      project={{
-                        _label: project._label,
-                        _rev: project._rev,
-                        description: project.description || '',
-                        base: project.base,
-                        vocab: project.vocab,
-                        apiMappings: project.apiMappings,
-                      }}
-                      onSubmit={(p: ProjectResponseCommon) => saveAndModify(p)}
-                      onDeprecate={deprecateProject}
-                      busy={formBusy}
-                      mode="edit"
-                    />
-                  </div>
-                  <br />
-                  <ACLsView />
-                  <br />
-                </>
+                <SettingsContainer
+                  project={{
+                    _label: project._label,
+                    _rev: project._rev,
+                    description: project.description || '',
+                    base: project.base,
+                    vocab: project.vocab,
+                  }}
+                  apiMappings={project.apiMappings}
+                  mode="edit"
+                />
               </TabPane>
               {deltaPlugins &&
                 'jira' in deltaPlugins &&

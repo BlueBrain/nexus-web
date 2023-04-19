@@ -47,10 +47,11 @@ const SearchContainer: React.FC = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
+  const filterMenuRef = React.useRef<HTMLDivElement>(null);
+  const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
   const [queryParams] = useQueryString();
   const { query, layout } = queryParams;
-  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
-
   const makeResourceUri = (
     orgLabel: string,
     projectLabel: string,
@@ -60,7 +61,6 @@ const SearchContainer: React.FC = () => {
       resourceId
     )}`;
   };
-
   const goToResource = (
     orgLabel: string,
     projectLabel: string,
@@ -70,7 +70,6 @@ const SearchContainer: React.FC = () => {
       background: location,
     });
   };
-
   const onRowClick = (record: any): { onClick: () => void } => {
     return {
       onClick: () => {
@@ -80,7 +79,6 @@ const SearchContainer: React.FC = () => {
       },
     };
   };
-
   const {
     pagination,
     setPagination,
@@ -88,11 +86,10 @@ const SearchContainer: React.FC = () => {
     renderShowTotal,
     onPageSizeOptionChanged,
   } = useSearchPagination();
-
-  function onPageSizeOptionsChanged(
+  const onPageSizeOptionsChanged = (
     sortedPageSizeOptionsWithoutPotentialDupes: string[],
     pagination: SearchPagination
-  ) {
+  ) => {
     setPagination((prevPagination: SearchPagination) => {
       return {
         ...prevPagination,
@@ -103,30 +100,26 @@ const SearchContainer: React.FC = () => {
       };
     });
   }
-
   const paginationWithRowSelection = (
     page: number,
     pageSize?: number | undefined
   ) => {
-    setSelectedRowKeys([]);
     handlePaginationChange(page, pageSize);
   };
-
-  function onTableHeightChanged(numRows: number, lastPageOfResults: number) {
+  const onTableHeightChanged = (numRows: number, lastPageOfResults: number) => {
     setPagination((prevPagination: SearchPagination) => {
       return {
         ...prevPagination,
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-          lastPageOfResults !== 0
+            lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
     });
   }
-
-  function onSortOptionsChanged() {
+  const onSortOptionsChanged = () => {
     setPagination((prevPagination: SearchPagination) => {
       return {
         ...prevPagination,
@@ -135,58 +128,10 @@ const SearchContainer: React.FC = () => {
     });
   }
 
-  useAdjustTableHeight(
-    pagination,
-    onTableHeightChanged,
-    onPageSizeOptionsChanged
-  );
-
-  function onQuerySuccess(queryResponse: any) {
-    setPagination((prevPagination: SearchPagination) => {
-      return {
-        ...prevPagination,
-        isInitialized: true,
-        totalNumberOfResults:
-          queryResponse.hits.total.value > ESMaxResultWindowSize
-            ? ESMaxResultWindowSize
-            : queryResponse.hits.total.value,
-        trueTotalNumberOfResults: queryResponse.hits.total.value,
-      };
-    });
-  }
-
-  const {
-    isLoading,
-    searchError,
-    columns,
-    data,
-    visibleColumns,
-    filterState,
-    dispatchFilter,
-    sortState,
-    removeSortOption,
-    changeSortOption,
-    resetAll,
-    fieldsVisibilityState,
-    dispatchFieldVisibility,
-    config,
-    handleChangeSearchLayout,
-    selectedSearchLayout,
-  } = useGlobalSearchData(
-    query,
-    pagination.currentPage,
-    pagination.pageSize,
-    layout,
-    onQuerySuccess,
-    onSortOptionsChanged,
-    nexus,
-    setSelectedRowKeys
-  );
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
     resetAll();
   };
-
   const handleSelect = (record: TRecord, selected: any) => {
     const newRecord: TDataSource = {
       source: layout,
@@ -207,14 +152,9 @@ const SearchContainer: React.FC = () => {
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      // setSelectedRowKeys((keys: any) => [...keys, record.key]);
       selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
       selectedRows = uniqBy([...selectedRows, newRecord], 'key');
     } else {
-      // setSelectedRowKeys((keys: any) => {
-      //   const index = keys.indexOf(record.key);
-      //   return [...keys.slice(0, index), ...keys.slice(index + 1)];
-      // });
       selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
       selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
@@ -287,7 +227,6 @@ const SearchContainer: React.FC = () => {
       })
     );
   };
-
   const rowSelection: TableRowSelection<TRecord> = {
     selectedRowKeys,
     onSelectAll: onSelectAllChange,
@@ -310,9 +249,52 @@ const SearchContainer: React.FC = () => {
       );
     },
   };
-  const filterMenuRef = React.useRef<HTMLDivElement>(null);
-  const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
 
+  useAdjustTableHeight(
+    pagination,
+    onTableHeightChanged,
+    onPageSizeOptionsChanged
+  );
+
+  const onQuerySuccess = (queryResponse: any) => {
+    setPagination((prevPagination: SearchPagination) => {
+      return {
+        ...prevPagination,
+        isInitialized: true,
+        totalNumberOfResults:
+          queryResponse.hits.total.value > ESMaxResultWindowSize
+            ? ESMaxResultWindowSize
+            : queryResponse.hits.total.value,
+        trueTotalNumberOfResults: queryResponse.hits.total.value,
+      };
+    });
+  }
+
+  const {
+    isLoading,
+    searchError,
+    columns,
+    data,
+    visibleColumns,
+    filterState,
+    dispatchFilter,
+    sortState,
+    removeSortOption,
+    changeSortOption,
+    resetAll,
+    fieldsVisibilityState,
+    dispatchFieldVisibility,
+    config,
+    handleChangeSearchLayout,
+    selectedSearchLayout,
+  } = useGlobalSearchData({
+    query,
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    queryLayout: layout,
+    onSuccess: onQuerySuccess,
+    onSortOptionsChanged: onSortOptionsChanged
+  });
   React.useEffect(() => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
     const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
@@ -345,103 +327,98 @@ const SearchContainer: React.FC = () => {
       );
     };
   }, [layout]);
-  return (
-    <React.Fragment>
-      {searchError ? (
-        <Result
-          status="500"
-          title="500"
-          subTitle="Sorry, something went wrong."
-        >
-          {searchError.message}
-          {searchError.name}
-          {searchError.stack}
-        </Result>
-      ) : (
-        <div>
-          {visibleColumns && data && (
-            <>
-              <div className="search-tools-menu" ref={searchToolsMenuRef}>
-                {config?.layouts && (
-                  <SearchByPresetsCompact
-                    layouts={config?.layouts}
-                    selectedLayout={selectedSearchLayout}
-                    onChangeLayout={layoutName => {
-                      handleChangeSearchLayout(layoutName);
-                    }}
-                  />
-                )}
-                <div className="search-table-header" ref={filterMenuRef}>
-                  <div className="search-table-header__options">
-                    <ColumnsVisibilityConfig
-                      columnsVisibility={fieldsVisibilityState}
-                      dispatchFieldVisibility={dispatchFieldVisibility}
-                    />
-                    <FiltersConfig
-                      filters={filterState}
-                      columns={columns}
-                      onRemoveFilter={filter =>
-                        dispatchFilter({ type: 'remove', payload: filter })
-                      }
-                    />
-                    <SortConfigContainer
-                      sortedFields={sortState}
-                      onRemoveSort={sortToRemove =>
-                        removeSortOption(sortToRemove)
-                      }
-                      onChangeSortDirection={sortToChange =>
-                        changeSortOption(sortToChange)
-                      }
-                    />
-                    <Button type="link" onClick={() => clearAllCustomisation()}>
-                      <CloseCircleOutlined />
-                      Reset
-                    </Button>
-                  </div>
-                  <Pagination
-                    disabled={pagination.totalNumberOfResults === 0}
-                    showTotal={renderShowTotal}
-                    onShowSizeChange={onPageSizeOptionChanged}
-                    total={pagination.totalNumberOfResults}
-                    pageSize={pagination.pageSize}
-                    current={pagination.currentPage}
-                    onChange={paginationWithRowSelection}
-                    locale={{ items_per_page: '' }}
-                    showSizeChanger={true}
-                    pageSizeOptions={pagination.pageSizeOptions}
-                    showLessItems={true}
-                    className="search-table-header__paginator"
-                  />
-                </div>
-              </div>
-              <div className="search-table">
-                <Table
-                  sticky={{
-                    offsetHeader: 50,
-                    getContainer: () => window,
-                  }}
-                  className="result-table"
-                  loading={isLoading}
-                  rowSelection={rowSelection}
-                  rowClassName="search-table-row"
-                  rowKey="key"
-                  columns={visibleColumns}
-                  dataSource={data}
-                  pagination={false}
-                  onRow={onRowClick}
-                  scroll={{
-                    x: true,
-                    // y: tableHeight
-                  }}
-                />
-              </div>
-            </>
+
+  if (searchError) {
+    return (
+      <Result
+        status="500"
+        title="500"
+        subTitle="Sorry, something went wrong."
+      >
+        {searchError.message}
+        {searchError.name}
+        {searchError.stack}
+      </Result>
+    )
+  }
+  if (visibleColumns && data) {
+    return (
+      <React.Fragment>
+        <div className="search-tools-menu" ref={searchToolsMenuRef}>
+          {config?.layouts && (
+            <SearchByPresetsCompact
+              layouts={config?.layouts}
+              selectedLayout={selectedSearchLayout}
+              onChangeLayout={layoutName => {
+                handleChangeSearchLayout(layoutName);
+              }}
+            />
           )}
+          <div className="search-table-header" ref={filterMenuRef}>
+            <div className="search-table-header__options">
+              <ColumnsVisibilityConfig
+                columnsVisibility={fieldsVisibilityState}
+                dispatchFieldVisibility={dispatchFieldVisibility}
+              />
+              <FiltersConfig
+                filters={filterState}
+                columns={columns}
+                onRemoveFilter={filter =>
+                  dispatchFilter({ type: 'remove', payload: filter })
+                }
+              />
+              <SortConfigContainer
+                sortedFields={sortState}
+                onRemoveSort={sortToRemove =>
+                  removeSortOption(sortToRemove)
+                }
+                onChangeSortDirection={sortToChange =>
+                  changeSortOption(sortToChange)
+                }
+              />
+              <Button type="link" onClick={() => clearAllCustomisation()}>
+                <CloseCircleOutlined />
+                Reset
+              </Button>
+            </div>
+            <Pagination
+              showLessItems
+              showSizeChanger
+              disabled={pagination.totalNumberOfResults === 0}
+              showTotal={renderShowTotal}
+              onShowSizeChange={onPageSizeOptionChanged}
+              total={pagination.totalNumberOfResults}
+              pageSize={pagination.pageSize}
+              current={pagination.currentPage}
+              onChange={paginationWithRowSelection}
+              locale={{ items_per_page: '' }}
+              pageSizeOptions={pagination.pageSizeOptions}
+              className="search-table-header__paginator"
+            />
+          </div>
         </div>
-        // </TableHeightWrapper>
-      )}
-    </React.Fragment>
-  );
+        <div className="search-table">
+          <Table
+            sticky={{
+              offsetHeader: 50,
+              getContainer: () => window,
+            }}
+            className="result-table"
+            loading={isLoading}
+            rowSelection={rowSelection}
+            rowClassName="search-table-row"
+            rowKey="key"
+            columns={visibleColumns}
+            dataSource={data}
+            pagination={false}
+            onRow={onRowClick}
+            scroll={{ x: true, }}
+          />
+        </div>
+      </React.Fragment>
+    )
+  }
+  return <></>
 };
 
 export default SearchContainer;

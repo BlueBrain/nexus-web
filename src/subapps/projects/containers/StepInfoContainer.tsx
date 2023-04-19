@@ -327,7 +327,7 @@ const StepInfoContainer: React.FC<{
     <div>
       <Button onClick={() => setShowForm(true)}>Step Info</Button>
       <Drawer
-        visible={showForm}
+        open={showForm}
         destroyOnClose={true}
         onClose={() => setShowForm(false)}
         title={step.name}

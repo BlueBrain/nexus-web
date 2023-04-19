@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as queryString from 'query-string';
+import { useOrganisationsSubappContext } from '..';
+import { getResourceLabel } from '../../../shared/utils';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
-import { getResourceLabel } from '../../../shared/utils';
-import { useOrganisationsSubappContext } from '..';
 
 const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
@@ -44,7 +44,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     );
   }, [selectedView]);
   const menu = (
-    <Row gutter={3} justify="space-between" align="middle">
+    <Row gutter={3} justify="space-between" align="middle" style={{ marginBottom: 10 }}>
       <Col flex="auto">
         <Select
           value={selectedView as string}

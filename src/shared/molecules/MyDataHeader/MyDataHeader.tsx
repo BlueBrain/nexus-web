@@ -1,29 +1,20 @@
 import React, { Fragment, useMemo, useRef, useState } from 'react';
 import {
-  Input,
-  Radio,
-  Tag,
-  Select,
+  Input, Radio, Tag,
   RadioChangeEvent,
-  Dropdown,
-  Button,
-  Menu,
-  MenuProps,
-  Row,
-  Col,
-  Checkbox,
+  Dropdown, Button, Menu, MenuProps,
+  Row, Col, Checkbox,
 } from 'antd';
-// import { MenuProps } from 'antd/es/select';
 import { CalendarOutlined, RightOutlined } from '@ant-design/icons';
 import { TagProps } from 'antd/lib/tag';
 import { useIMask } from 'react-imask';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { capitalize, isString, startCase, pull as removeItem } from 'lodash';
-import * as moment from 'moment';
 import { NexusClient } from '@bbp/nexus-sdk';
+import * as moment from 'moment';
 import IMask from 'imask';
-import SeparatedDateInput from '../../../shared/components/SeparatedDateInput/SeparatedDateInput';
+import * as pluralize from 'pluralize';
 import useClickOutside from '../../../shared/hooks/useClickOutside';
 import useMeasure from '../../../shared/hooks/useMeasure';
 import './styles.less';
@@ -226,16 +217,6 @@ const Filters = ({
           </Fragment>
         )}
         {dateType !== 'range' && (
-          // <SeparatedDateInput
-          //   setDefaultValue={setFilterOptions}
-          //   defaultValue={
-          //     (dateType === 'before' || dateType === 'after') &&
-          //       date &&
-          //       isString(date)
-          //       ? date
-          //       : undefined
-          //   }
-          // />
           <input
             ref={ref}
             defaultValue={
@@ -301,7 +282,7 @@ const Filters = ({
   useClickOutside(popoverRef, onDatePopoverVisibleChange);
   return (
     <div className="my-data-table-header-actions">
-      <Dropdown
+      {/* <Dropdown
         placement="bottomLeft"
         trigger={['click']}
         overlay={DateFieldMenu}
@@ -384,13 +365,15 @@ const Filters = ({
           className="my-data-type-picker"
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
-      </Dropdown>
+      </Dropdown> */}
+
       <Input.Search
         className="my-data-search"
         placeholder="Search dataset"
         bordered={false}
         value={query}
         onChange={handleQueryChange}
+        style={{ marginLeft: 'auto' }}
       />
     </div>
   );
@@ -409,7 +392,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
     <div className="my-data-table-header">
       <Title
         text="My data"
-        label="Dataset"
+        label={pluralize("Dataset", Number(total))}
         total={new Intl.NumberFormat('de-CH', {
           maximumSignificantDigits: 3,
         }).format(Number(total))}

@@ -68,10 +68,9 @@ const Navigation: React.FC<{ subApps: any; authenticated: boolean }> = ({
   authenticated,
 }) => {
   const [navMenuVisible, setNavMenuVisible] = React.useState(false);
-
   return (
     <Popover
-      visible={navMenuVisible}
+      open={navMenuVisible}
       onVisibleChange={visible => setNavMenuVisible(visible)}
       content={
         <div>

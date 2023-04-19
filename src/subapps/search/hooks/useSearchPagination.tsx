@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { debounce } from 'lodash';
 import useMeasure from '../../../shared/hooks/useMeasure';
+import * as pluralize from 'pluralize';
 
 export type SearchPagination = {
   numRowsFitOnPage: number;
@@ -24,7 +25,7 @@ function useSearchPagination() {
     currentPage: 1,
     totalNumberOfResults: 0,
     trueTotalNumberOfResults: 0,
-    pageSize: 0,
+    pageSize: 50,
     pageSizeOptions: [] as string[],
     pageSizeFixed: false,
     isInitialized: false,
@@ -74,11 +75,10 @@ function useSearchPagination() {
     (total: number, range: [number, number]) =>
       pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
         <span>
-          {total === 0 ? 'No' : total.toLocaleString('en-US')}
-          {total === 1 ? 'result' : 'results'}
+          {total.toLocaleString('en-US')}{' '}{pluralize('result', total)}
         </span>
       ) : (
-        <span>{`${total.toLocaleString('en-US')} results`}</span>
+        <span>{`${total.toLocaleString('en-US')}`} {' '}{pluralize('result', total)} </span>
       ),
     [pagination]
   );

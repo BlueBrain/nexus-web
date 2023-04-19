@@ -83,7 +83,7 @@ const FiltersConfig: React.FC<{
       {isFiltersConfigVisible && (
         <Modal
           onCancel={() => setIsFiltersConfigVisible(false)}
-          visible={isFiltersConfigVisible}
+          open={isFiltersConfigVisible}
           style={{ ...positionModal(), position: 'fixed' }}
           mask={false}
           footer={null}

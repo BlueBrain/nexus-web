@@ -1,6 +1,6 @@
-import React, { Fragment, useReducer, useRef, useState } from 'react';
+import React, { useReducer, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   RightSquareOutlined,
@@ -12,18 +12,7 @@ import {
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
-import {
-  Alert,
-  Avatar,
-  Breadcrumb,
-  Button,
-  Card,
-  Input,
-  List,
-  Skeleton,
-  Spin,
-  Tag,
-} from 'antd';
+import { Alert, Input, InputRef, List, Spin, } from 'antd';
 import { flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
@@ -104,7 +93,6 @@ const ProjectItem = ({
       }),
   });
   const datasets = data?._total;
-  console.log('@@data', data);
   return (
     <List.Item className="route-result-list_item">
       <div className="route-result-list_item_wrapper">
@@ -150,9 +138,9 @@ const ProjectItem = ({
   );
 };
 
-const ProjectsPage: React.FC<TProps> = ({}) => {
-  const queryInputRef = useRef<Input>(null);
-  const loadMoreRef = useRef(null);
+const ProjectsPage: React.FC<TProps> = ({ }) => {
+  const queryInputRef = useRef<InputRef>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [query, setQueryString] = useState<string>('');
   const nexus: NexusClient = useNexusContext();
@@ -185,17 +173,9 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
         : undefined,
   });
 
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
 
+  // @ts-ignore
+  const total = data?.pages?.[0]?._total as number;
   const dataSource: ProjectResponseCommon[] = flatten<ProjectResponseCommon>(
     // @ts-ignore
     data?.pages?.map((page: ProjectList) => page._results)
@@ -221,8 +201,16 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
+  const loadMoreFooter = hasNextPage && (
+    <div
+      className="infinitfetch-loader"
+      ref={loadMoreRef}
+      onClick={() => fetchNextPage()}
+    >
+      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
+      <span>Loading more</span>
+    </div>
+  );
   return (
     <div className="main-route">
       <PinnedMenu />

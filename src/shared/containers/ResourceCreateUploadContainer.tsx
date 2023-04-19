@@ -1,6 +1,6 @@
+import * as React from 'react';
 import { ResourcePayload } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as React from 'react';
 import ResourceCreateUpload from '../components/ResourceForm/ResourceCreateUpload';
 
 const ResourceCreateUploadContainer: React.FunctionComponent<{

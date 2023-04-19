@@ -110,7 +110,7 @@ const CreateStudioContainer: React.FC<{
       </Button>
       <Modal
         title="Create Studio"
-        visible={showModal}
+        open={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
         destroyOnClose={true}

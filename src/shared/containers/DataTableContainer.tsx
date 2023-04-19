@@ -411,7 +411,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             }}
           />
           <Modal
-            visible={showEditForm}
+            open={showEditForm}
             footer={null}
             onCancel={() => setShowEditForm(false)}
             width={950}

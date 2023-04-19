@@ -590,6 +590,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ]
+  
   React.useEffect(() => {
     window.scrollTo({
       top: 0,

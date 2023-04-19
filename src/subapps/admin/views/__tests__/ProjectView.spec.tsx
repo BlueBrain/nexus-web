@@ -1,10 +1,11 @@
+import '@testing-library/jest-dom';
+import * as React from 'react';
+import { rest } from 'msw';
+import fetch from 'node-fetch';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import * as React from 'react';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ProjectView from '../ProjectPage/ProjectPage';
-import { rest } from 'msw';
 import { render, server, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';

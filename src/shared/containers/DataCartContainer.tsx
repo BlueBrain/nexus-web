@@ -319,7 +319,7 @@ const DataCartContainer = () => {
         title="Data Cart"
         placement="right"
         onClose={handleDrawerClose}
-        visible={showShoppingCart}
+        open={showShoppingCart}
       >
         {length && length > 0 ? (
           <>

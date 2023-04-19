@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { SearchByPresetsCompact } from '../../shared/organisms/SearchByPresets/SearchByPresets';
 import SearchContainer from '../../subapps/search/containers/SearchContainer';
 import ErrorBoundary from '../../subapps/search/components/SearchErrorBoundary';
 import CreationPanel from '../../shared/molecules/CreationPanel/CreationPanel';
@@ -12,15 +11,7 @@ const SearchPage: React.FC = () => {
         <CreationPanel />
         <div className="search-container">
           <SearchContainer />
-          <div
-            className="tooltipContainer"
-            style={{
-              position: 'fixed',
-              top: '0',
-              right: '200',
-              zIndex: 999,
-            }}
-          ></div>
+          <div className="tooltipContainer search-tooltip" />
         </div>
       </React.Fragment>
     </ErrorBoundary>

@@ -136,7 +136,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
               <Modal
                 title={selectedVideo.name}
                 bodyStyle={{ padding: 0 }}
-                visible={isModalVisible && !!selectedVideo}
+                open={isModalVisible && !!selectedVideo}
                 onOk={handleOk}
                 onCancel={handleCancel}
                 width={640}
