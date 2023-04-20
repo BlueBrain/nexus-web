@@ -17,6 +17,7 @@ import {
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import { flatten } from 'lodash';
+import * as pluralize from 'pluralize';
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
@@ -102,7 +103,7 @@ const StudioItem = ({
   access,
 }: TStudioItem) => {
   return (
-    <List.Item className="route-result-list_item" role="listitem">
+    <List.Item className="route-result-list_item" role='routeitem-studio'>
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -145,6 +146,25 @@ const StudioItem = ({
     </List.Item>
   );
 };
+export const useInfiniteStudiosQuery = ({
+  nexus, query, sort,
+}: {
+  nexus: NexusClient,
+  query: string,
+  sort: string
+}) => {
+  return useInfiniteQuery({
+    queryKey: ['fusion-studios', { query, sort }],
+    queryFn: ({ pageParam = undefined }) =>
+      fetchStudios({ nexus, query, sort, after: pageParam, size: 10 }),
+    getNextPageParam: lastPage =>
+      (lastPage as TNewPaginationList)._next
+        ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
+          'after'
+        )
+        : undefined,
+  });
+}
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const dispatch = useDispatch();
@@ -184,17 +204,7 @@ const FusionStudiosPage: React.FC = () => {
     status,
     isLoading,
     isFetching,
-  } = useInfiniteQuery({
-    queryKey: ['fusion-studios', { query, sort }],
-    queryFn: ({ pageParam = undefined }) =>
-      fetchStudios({ nexus, query, sort, after: pageParam, size: 10 }),
-    getNextPageParam: lastPage =>
-      (lastPage as TNewPaginationList)._next
-        ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-            'after'
-          )
-        : undefined,
-  });
+  } = useInfiniteStudiosQuery({ nexus, query, sort });
   const loadMoreFooter = hasNextPage && (
     <div
       className="infinitfetch-loader"
@@ -240,7 +250,7 @@ const FusionStudiosPage: React.FC = () => {
         <PinnedMenu />
         <RouteHeader
           title="Studios"
-          extra={total ? `Total of ${total} Studios` : ''}
+          extra={total ? `Total of ${total} ${pluralize('Studio', total)}` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/studios-bg.png')}
           imgCss={{ width: '77.65%' }}

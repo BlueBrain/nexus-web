@@ -7,7 +7,6 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ProjectView from '../ProjectPage/ProjectPage';
 import { render, server, screen } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';

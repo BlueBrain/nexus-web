@@ -5,10 +5,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {  useRouteMatch } from 'react-router';
+import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
-import { InputRef, Input, Spin, Alert, List, } from 'antd';
+import { InputRef, Input, Spin, Alert, List } from 'antd';
 import {
   RightSquareOutlined,
   SortAscendingOutlined,
@@ -16,12 +16,14 @@ import {
 } from '@ant-design/icons';
 import {
   NexusClient,
+  Organization,
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { flatten } from 'lodash';
 import { useDispatch } from 'react-redux';
+import * as pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
@@ -100,6 +102,55 @@ const fetchOrganizationProjectsList = async ({
     });
   }
 };
+export const useInfiniteOrganizationProjectsQuery = ({
+  nexus,
+  orgLabel,
+  query, sort,
+  enabled,
+}: {
+  nexus: NexusClient
+  orgLabel?: string,
+  query: string, 
+  sort: string
+  enabled: boolean
+}) => {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status: projectStatus,
+    error: projectError,
+    isLoading,
+    isFetching,
+  } = useInfiniteQuery({
+    enabled,
+    queryKey: ['fusion-projects', { query, sort }],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchOrganizationProjectsList({
+        nexus,
+        query,
+        orgLabel: orgLabel!,
+        size: DEFAULT_PAGE_SIZE,
+        from: pageParam,
+      }),
+    getNextPageParam: lastPage =>
+      (lastPage as TNewProjectList)._next
+        ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
+        : undefined,
+  });
+  return {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status: projectStatus,
+    error: projectError,
+    isLoading,
+    isFetching,
+  }
+}
+
 type TProjectItem = {
   title: string;
   to: string;
@@ -131,7 +182,7 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item">
+    <List.Item className="route-result-list_item" role="routeitem-org-project">
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -174,7 +225,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
+const OrganizationProjectsPage: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
@@ -222,6 +273,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
       });
     }
   };
+
   const {
     data,
     fetchNextPage,
@@ -231,24 +283,12 @@ const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
     error: projectError,
     isLoading,
     isFetching,
-  } = useInfiniteQuery({
+  } = useInfiniteOrganizationProjectsQuery({
+    nexus, orgLabel, query, sort,
     enabled: !!orgLabel && !!organization?.['@id'],
-    queryKey: ['fusion-projects', { query, sort }],
-    queryFn: ({ pageParam = 0 }) =>
-      fetchOrganizationProjectsList({
-        nexus,
-        query,
-        orgLabel: orgLabel!,
-        size: DEFAULT_PAGE_SIZE,
-        from: pageParam,
-      }),
-    getNextPageParam: lastPage =>
-      (lastPage as TNewProjectList)._next
-        ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
-        : undefined,
   });
   // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
+  const total = (data?.pages?.[0]?._total as number) || 0;
   const dataSource: ProjectResponseCommon[] = flatten(
     // @ts-ignore
     data?.pages.map(page => page._results)
@@ -282,7 +322,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
         <PinnedMenu />
         <RouteHeader
           title="Projects"
-          extra={total ? `Total of ${total} Projects` : ''}
+          extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/projects-bg.png')}
           imgCss={{ width: '75.4%' }}
@@ -300,6 +340,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
                   value={query}
                   onChange={handleOnOrgSearch}
                   placeholder="Search Organisation"
+                  role='search'
                 />
               </div>
               <div className="action-sort">

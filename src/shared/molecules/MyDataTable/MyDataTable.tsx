@@ -18,16 +18,16 @@ type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
+  | string
+  | (
     | string
-    | (
-        | string
-        | {
-            [key: string]: any;
-          }
-      )[]
     | {
-        [key: string]: any;
-      };
+      [key: string]: any;
+    }
+  )[]
+  | {
+    [key: string]: any;
+  };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -331,7 +331,10 @@ const MyDataTable: React.FC<TProps> = ({
   }, []);
   return (
     <Table<TDataSource>
-      sticky
+      sticky={{
+        offsetHeader: 50,
+        getContainer: () => window,
+      }}
       rowKey={record => record.key}
       loading={isLoading}
       columns={columns}

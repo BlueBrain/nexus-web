@@ -80,7 +80,6 @@ const fetchStorages = async ({
         );
       })
     );
-    console.log('@@@storages', storages);
     // @ts-ignore
     const storagesData = parseResponses(storages);
     return storagesData;

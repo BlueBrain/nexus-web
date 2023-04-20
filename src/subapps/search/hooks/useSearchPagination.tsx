@@ -75,10 +75,12 @@ function useSearchPagination() {
     (total: number, range: [number, number]) =>
       pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
         <span>
-          {total.toLocaleString('en-US')}{' '}{pluralize('result', total)}
+          {total.toLocaleString('en-US')} {pluralize('result', total)}
         </span>
       ) : (
-        <span>{`${total.toLocaleString('en-US')}`} {' '}{pluralize('result', total)} </span>
+        <span>
+          {`${total.toLocaleString('en-US')}`} {pluralize('result', total)}{' '}
+        </span>
       ),
     [pagination]
   );

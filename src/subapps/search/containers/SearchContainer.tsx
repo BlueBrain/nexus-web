@@ -44,7 +44,6 @@ type TRecord = {
 };
 
 const SearchContainer: React.FC = () => {
-  const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
   const filterMenuRef = React.useRef<HTMLDivElement>(null);
@@ -99,7 +98,7 @@ const SearchContainer: React.FC = () => {
           : prevPagination.numRowsFitOnPage,
       };
     });
-  }
+  };
   const paginationWithRowSelection = (
     page: number,
     pageSize?: number | undefined
@@ -113,12 +112,12 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-            lastPageOfResults !== 0
+          lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
     });
-  }
+  };
   const onSortOptionsChanged = () => {
     setPagination((prevPagination: SearchPagination) => {
       return {
@@ -126,7 +125,7 @@ const SearchContainer: React.FC = () => {
         currentPage: 1,
       };
     });
-  }
+  };
 
   const clearAllCustomisation = () => {
     handlePaginationChange(1);
@@ -268,7 +267,7 @@ const SearchContainer: React.FC = () => {
         trueTotalNumberOfResults: queryResponse.hits.total.value,
       };
     });
-  }
+  };
 
   const {
     isLoading,
@@ -289,11 +288,11 @@ const SearchContainer: React.FC = () => {
     selectedSearchLayout,
   } = useGlobalSearchData({
     query,
+    onSortOptionsChanged,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     queryLayout: layout,
     onSuccess: onQuerySuccess,
-    onSortOptionsChanged: onSortOptionsChanged
   });
   React.useEffect(() => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
@@ -330,16 +329,12 @@ const SearchContainer: React.FC = () => {
 
   if (searchError) {
     return (
-      <Result
-        status="500"
-        title="500"
-        subTitle="Sorry, something went wrong."
-      >
+      <Result status="500" title="500" subTitle="Sorry, something went wrong.">
         {searchError.message}
         {searchError.name}
         {searchError.stack}
       </Result>
-    )
+    );
   }
   if (visibleColumns && data) {
     return (
@@ -369,9 +364,7 @@ const SearchContainer: React.FC = () => {
               />
               <SortConfigContainer
                 sortedFields={sortState}
-                onRemoveSort={sortToRemove =>
-                  removeSortOption(sortToRemove)
-                }
+                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
                 onChangeSortDirection={sortToChange =>
                   changeSortOption(sortToChange)
                 }
@@ -412,13 +405,13 @@ const SearchContainer: React.FC = () => {
             dataSource={data}
             pagination={false}
             onRow={onRowClick}
-            scroll={{ x: true, }}
+            scroll={{ x: true }}
           />
         </div>
       </React.Fragment>
-    )
+    );
   }
-  return <></>
+  return null;
 };
 
 export default SearchContainer;

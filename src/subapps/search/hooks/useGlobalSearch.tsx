@@ -34,19 +34,19 @@ import '../containers/SearchContainer.less';
 
 export type SearchConfigField =
   | {
-    title: () => JSX.Element;
-    dataIndex: string;
-    key: string;
-    render: (value: any) => JSX.Element | '';
-    label: string;
-  }[]
+      title: () => JSX.Element;
+      dataIndex: string;
+      key: string;
+      render: (value: any) => JSX.Element | '';
+      label: string;
+    }[]
   | undefined;
 
 type actionType =
   | {
-    type: 'add' | 'remove';
-    payload: FilterState;
-  }
+      type: 'add' | 'remove';
+      payload: FilterState;
+    }
   | { type: 'fromLayout'; payload: FilterState[] };
 
 export type FilterState = {
@@ -161,25 +161,25 @@ export type fieldVisibilityActionType =
 
 export type ConfigField =
   | {
-    name: string;
-    label: string;
-    array: boolean;
-    optional: boolean;
-    fields: { name: string; format: string }[];
-    format?: undefined;
-    filterable: boolean;
-    sortable: boolean;
-  }
+      name: string;
+      label: string;
+      array: boolean;
+      optional: boolean;
+      fields: { name: string; format: string }[];
+      format?: undefined;
+      filterable: boolean;
+      sortable: boolean;
+    }
   | {
-    name: string;
-    label: string;
-    format: string;
-    array: boolean;
-    optional: boolean;
-    fields?: undefined;
-    filterable: boolean;
-    sortable: boolean;
-  };
+      name: string;
+      label: string;
+      format: string;
+      array: boolean;
+      optional: boolean;
+      fields?: undefined;
+      filterable: boolean;
+      sortable: boolean;
+    };
 
 export type SearchLayout = {
   name: string;
@@ -187,10 +187,10 @@ export type SearchLayout = {
   filters: {
     field: string;
     operator:
-    | 'and' // maps to allof
-    | 'or' // maps to anyof
-    | 'none' // maps to noneof
-    | 'missing'; // map to missing.  Perhaps we should use same operator names?
+      | 'and' // maps to allof
+      | 'or' // maps to anyof
+      | 'none' // maps to noneof
+      | 'missing'; // map to missing.  Perhaps we should use same operator names?
     values: string[];
   }[];
   sort: { field: string; order: 'asc' | 'desc' }[];
@@ -319,7 +319,7 @@ function makeColumnConfig(
   filterMenu: (field: ConfigField) => JSX.Element,
   filteredFields: string[],
   sortedFields: ESSortField[],
-  basePath: string,
+  basePath: string
 ) {
   return searchConfig.fields.map((field: ConfigField) => {
     const sorted = sortedFields.find(s => s.fieldName === field.name);
@@ -371,25 +371,27 @@ const fetchNexusSearchQuery = async ({
   }
 };
 type TGlobalSearch = {
-  query: string,
-  page: number,
-  pageSize: number,
-  queryLayout: string,
-  onSuccess: (queryResponse: any) => void,
-  onSortOptionsChanged: () => void,
-}
-function useGlobalSearchData(
-  {
-    query, page, pageSize,
-    queryLayout, onSuccess,
-    onSortOptionsChanged,
-  }: TGlobalSearch
-) {
+  query: string;
+  page: number;
+  pageSize: number;
+  queryLayout: string;
+  onSuccess: (queryResponse: any) => void;
+  onSortOptionsChanged: () => void;
+};
+function useGlobalSearchData({
+  query,
+  page,
+  pageSize,
+  queryLayout,
+  onSuccess,
+  onSortOptionsChanged,
+}: TGlobalSearch) {
   const history = useHistory();
   const location = useLocation();
   const nexus = useNexusContext();
   const defaultFilter: FilterState[] = [];
-  const basePath = useSelector((state: RootState) => state.config.basePath) || '';
+  const basePath =
+    useSelector((state: RootState) => state.config.basePath) || '';
   const [filterState, dispatchFilter] = React.useReducer(
     filterReducer,
     defaultFilter
@@ -399,7 +401,6 @@ function useGlobalSearchData(
   >(() => queryLayout);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
-
 
   const removeSortOption = (sortFieldOption: ESSortField) => {
     setSortState(sort =>
@@ -453,7 +454,7 @@ function useGlobalSearchData(
       f => f.filterTerm === field.name && f.isMissing
     );
     return !!res;
-  }
+  };
   const onFilterSubmit = (values: FilterState) => {
     if (values.filters.length === 0) {
       dispatchFilter({ type: 'remove', payload: values });
@@ -567,7 +568,13 @@ function useGlobalSearchData(
   }, [queryResult]);
   const columns: SearchConfigField = React.useMemo(() => {
     return searchConfig
-      ? makeColumnConfig(searchConfig, fieldMenu, filteredFields, sortState, basePath)
+      ? makeColumnConfig(
+          searchConfig,
+          fieldMenu,
+          filteredFields,
+          sortState,
+          basePath
+        )
       : undefined;
   }, [searchConfig, fieldsVisibilityState, filteredFields, sortState]);
   const visibleColumns = React.useMemo(
@@ -679,7 +686,6 @@ function useGlobalSearchData(
       dispatchFilter({ type: 'fromLayout', payload: [] });
     }
   };
-
 
   React.useEffect(() => {
     if (fieldsVisibilityState.isPersistent) {

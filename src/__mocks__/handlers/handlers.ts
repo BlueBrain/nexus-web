@@ -11,7 +11,7 @@ export const deltaPath = (
   }
   return new URL(path, mockDeltaAPIBasePath).toString();
 };
-
+const STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 export const handlers = [
   rest.post(
     deltaPath(
@@ -1045,66 +1045,79 @@ export const handlers = [
     );
   }),
   rest.get(deltaPath('/resources'), (req, res, ctx) => {
+    const type = req.url.searchParams.get('type');
+    let _results = [
+      {
+        '@id': 'id-1',
+        label: 'test-label-1',
+        projectLabel: 'project',
+        _project: '/org1/project1',
+        type: STUDIO_TYPE,
+      },
+      {
+        '@id': 'id-2',
+        label: 'test-label-2',
+        _project: '/org/project',
+        type: '',
+      },
+      {
+        '@id': 'id-3',
+        label: 'test-label-3',
+        _project: '/org/project',
+        type: '',
+      },
+      {
+        '@id': 'id-4',
+        label: 'test-label-4',
+        _project: '/org/project',
+        type: STUDIO_TYPE,
+      },
+      {
+        '@id': 'id-5',
+        label: 'test-label-5',
+        _project: '/org/project',
+        type: STUDIO_TYPE,
+      },
+      {
+        '@id': 'id-6',
+        label: 'test-label-6',
+        _project: '/org/project',
+        type: STUDIO_TYPE,
+      },
+      {
+        '@id': 'id-7',
+        label: 'test-label-7',
+        _project: '/org/project',
+        type: '',
+      },
+      {
+        '@id': 'id-8',
+        label: 'test-label-8',
+        _project: '/org/project',
+        type: '',
+      },
+      {
+        '@id': 'id-9',
+        label: 'test-label-9',
+        _project: '/org/project',
+        type: '',
+      },
+      {
+        '@id': 'id-10',
+        label: 'test-label-10',
+        _project: '/org/project',
+        type: STUDIO_TYPE,
+      },
+    ];
+    _results = _results.filter(t => t.type === STUDIO_TYPE);
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
         'https://bluebrain.github.io/nexus/contexts/search.json',
         'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
       ],
-      _total: 19,
-      _results: [
-        {
-          '@id': 'id-1',
-          label: 'test-label-1',
-          projectLabel: 'project',
-          _project: '/org1/project1',
-        },
-        {
-          '@id': 'id-2',
-          label: 'test-label-2',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-3',
-          label: 'test-label-3',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-4',
-          label: 'test-label-4',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-5',
-          label: 'test-label-5',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-6',
-          label: 'test-label-6',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-7',
-          label: 'test-label-7',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-8',
-          label: 'test-label-8',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-9',
-          label: 'test-label-9',
-          _project: '/org/project',
-        },
-        {
-          '@id': 'id-10',
-          label: 'test-label-10',
-          _project: '/org/project',
-        },
-      ],
+      _total: type ? 5 : 19,
+      _results,
     };
     return res(
       // Respond with a 200 status code
@@ -1142,6 +1155,886 @@ export const handlers = [
       // Respond with a 200 status code
       ctx.status(200),
       ctx.json(mockResponse)
+    );
+  }),
+  rest.get(deltaPath('/org/:label'), (req, res, ctx) => {
+    const { label } = req.params;
+    console.log('@@label', label);
+    const mockResponse = [
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr1',
+        '@type': 'Project',
+        apiMappings: [],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr1/',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr1/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T10:00:41.803Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr1',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr1',
+        _updatedAt: '2023-04-20T10:53:41.803Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: '932bc410-0149-4cb5-97cd-4048fb4b07d2',
+      },
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr2',
+        '@type': 'Project',
+        apiMappings: [
+          {
+            namespace: 'https://neuroshapes.org/dash/',
+            prefix: 'datashapes',
+          },
+        ],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr2/_/',
+        description: 'test project 2',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr2/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T09:27:43.752Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://neuroshapes.org/dash/',
+            _prefix: 'datashapes',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr2',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr2',
+        _updatedAt: '2023-04-20T09:40:46.879Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: 'b2c8cb70-9163-4a7a-94a6-5641146f56de',
+      },
+    ];
+    return res(ctx.status(200), ctx.json(mockResponse));
+  }),
+  rest.get(deltaPath('/orgs'), (req, res, ctx) => {
+    const mockResponse = [
+      {
+        '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST1',
+        '@type': 'Organization',
+        description: '',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/organizations.json',
+        _createdAt: '2022-06-24T07:52:52.146Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test1',
+        _deprecated: false,
+        _label: 'TEST1',
+        _rev: 1,
+        _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+        _updatedAt: '2023-04-20T07:52:52.146Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test1',
+        _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+      },
+      {
+        '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST2',
+        '@type': 'Organization',
+        description: '',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/organizations.json',
+        _createdAt: '2022-06-24T07:52:52.146Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test2',
+        _deprecated: false,
+        _label: 'TEST2',
+        _rev: 1,
+        _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+        _updatedAt: '2023-04-20T07:52:52.146Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test2',
+        _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+      },
+      {
+        '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST3',
+        '@type': 'Organization',
+        description: '',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/organizations.json',
+        _createdAt: '2022-06-24T07:52:52.146Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test3',
+        _deprecated: false,
+        _label: 'TEST3',
+        _rev: 1,
+        _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+        _updatedAt: '2023-04-20T07:52:52.146Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test3',
+        _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+      },
+    ];
+    return res(
+      ctx.status(200),
+      ctx.json({
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrain.github.io/nexus/contexts/search.json',
+          'https://bluebrain.github.io/nexus/contexts/organizations.json',
+        ],
+        _results: mockResponse,
+        _total: 3,
+      })
+    );
+  }),
+  rest.get(deltaPath('/projects/:orgLabel'), (req, res, ctx) => {
+    const { orgLabel } = req.params;
+    const mockResponse = [
+      {
+        '@id': `https://staging.nise.bbp.epfl.ch/nexus/v1/projects/${orgLabel}/test1-pr1`,
+        '@type': 'Project',
+        apiMappings: [],
+        base: `https://staging.nise.bbp.epfl.ch/nexus/v1/resources/${orgLabel}/test1-pr1/`,
+        vocab: `https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/${orgLabel}/test1-pr1/`,
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T10:00:41.803Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: orgLabel,
+        _markedForDeletion: false,
+        _organizationLabel: orgLabel,
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self: `https://staging.nise.bbp.epfl.ch/nexus/v1/projects/${orgLabel}/test1-pr1`,
+        _updatedAt: '2023-04-20T10:53:41.803Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: '932bc410-0149-4cb5-97cd-4048fb4b07d2',
+      },
+      {
+        '@id': `https://staging.nise.bbp.epfl.ch/nexus/v1/projects/${orgLabel}/test1-pr2`,
+        '@type': 'Project',
+        apiMappings: [
+          {
+            namespace: 'https://neuroshapes.org/dash/',
+            prefix: 'datashapes',
+          },
+        ],
+        base: `https://staging.nise.bbp.epfl.ch/nexus/v1/resources/${orgLabel}/test1-pr2/_/`,
+        description: 'test project 2',
+        vocab: `https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/${orgLabel}/test1-pr2/`,
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T09:27:43.752Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://neuroshapes.org/dash/',
+            _prefix: 'datashapes',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: orgLabel,
+        _markedForDeletion: false,
+        _organizationLabel: orgLabel,
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self: `https://staging.nise.bbp.epfl.ch/nexus/v1/projects/${orgLabel}/test1-pr2`,
+        _updatedAt: '2023-04-20T09:40:46.879Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: 'b2c8cb70-9163-4a7a-94a6-5641146f56de',
+      },
+    ];
+    return res(
+      ctx.status(200),
+      ctx.json({
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrain.github.io/nexus/contexts/search.json',
+          'https://bluebrain.github.io/nexus/contexts/projects.json',
+        ],
+        _results: mockResponse,
+        _total: 2,
+      })
+    );
+  }),
+  rest.get(deltaPath('/projects'), (req, res, ctx) => {
+    const mockResponse = [
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr1',
+        '@type': 'Project',
+        apiMappings: [],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr1/',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr1/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T10:00:41.803Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr1',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr1',
+        _updatedAt: '2023-04-20T10:53:41.803Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: '932bc410-0149-4cb5-97cd-4048fb4b07d2',
+      },
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr2',
+        '@type': 'Project',
+        apiMappings: [
+          {
+            namespace: 'https://neuroshapes.org/dash/',
+            prefix: 'datashapes',
+          },
+        ],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr2/_/',
+        description: 'test project 2',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr2/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T09:27:43.752Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://neuroshapes.org/dash/',
+            _prefix: 'datashapes',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr2',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr2',
+        _updatedAt: '2023-04-20T09:40:46.879Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: 'b2c8cb70-9163-4a7a-94a6-5641146f56de',
+      },
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr3',
+        '@type': 'Project',
+        apiMappings: [
+          {
+            namespace: 'https://neuroshapes.org/dash/',
+            prefix: 'datashapes',
+          },
+        ],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr3/_/',
+        description: 'test project 2',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr3/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T09:27:43.752Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://neuroshapes.org/dash/',
+            _prefix: 'datashapes',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr3',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr3',
+        _updatedAt: '2023-04-20T09:40:46.879Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: 'b2c8cb70-9163-4a7a-94a6-5641146f56de',
+      },
+      {
+        '@id':
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr4',
+        '@type': 'Project',
+        apiMappings: [
+          {
+            namespace: 'https://neuroshapes.org/dash/',
+            prefix: 'datashapes',
+          },
+        ],
+        base:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/test1/test1-pr4/_/',
+        description: 'test project 2',
+        vocab:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/test1/test1-pr4/',
+        _constrainedBy:
+          'https://bluebrain.github.io/nexus/schemas/projects.json',
+        _createdAt: '2023-04-20T09:27:43.752Z',
+        _createdBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _deprecated: false,
+        _effectiveApiMappings: [
+          {
+            _namespace: 'https://neuroshapes.org/dash/',
+            _prefix: 'datashapes',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+            _prefix: 'nxv',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+            _prefix: 'documents',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+            _prefix: 'defaultResolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+            _prefix: 'schema',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: 'resource',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+            _prefix: '_',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+            _prefix: 'view',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/storages.json',
+            _prefix: 'storage',
+          },
+          {
+            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+            _prefix: 'file',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+            _prefix: 'resolver',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+            _prefix: 'graph',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/schemas/archives.json',
+            _prefix: 'archive',
+          },
+          {
+            _namespace:
+              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+            _prefix: 'defaultStorage',
+          },
+        ],
+        _label: 'test1-pr4',
+        _markedForDeletion: false,
+        _organizationLabel: 'test1',
+        _organizationUuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+        _rev: 1,
+        _self:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/test1/test1-pr4',
+        _updatedAt: '2023-04-20T09:40:46.879Z',
+        _updatedBy:
+          'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/meddah',
+        _uuid: 'b2c8cb70-9163-4a7a-94a6-5641146f56de',
+      },
+    ];
+    return res(
+      ctx.status(200),
+      ctx.json({
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrain.github.io/nexus/contexts/search.json',
+          'https://bluebrain.github.io/nexus/contexts/projects.json',
+        ],
+        _results: mockResponse,
+        _total: 4,
+      })
     );
   }),
 ];

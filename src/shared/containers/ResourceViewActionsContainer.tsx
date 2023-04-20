@@ -147,7 +147,8 @@ const ResourceViewActionsContainer: React.FC<{
 
                   if (!isLatest) {
                     triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
+                      `${window.location.origin.toString()}${pathToResource}?rev=${
+                        resource._rev
                       }`
                     );
                   } else {
@@ -188,7 +189,8 @@ const ResourceViewActionsContainer: React.FC<{
                         )}`;
 
                         triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
+                          `${window.location.origin.toString()}${pathToResource}?rev=${
+                            resource._rev
                           }`
                         );
                       }}

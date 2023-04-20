@@ -18,11 +18,11 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
         style="opacity: 1; order: 0;"
       >
         <div
-          aria-controls="rc-menu-uuid-test-w1-popup"
+          aria-controls="rc-menu-uuid-test-workspace-w1-popup"
           aria-expanded="false"
           aria-haspopup="true"
           class="ant-menu-submenu-title"
-          data-menu-id="rc-menu-uuid-test-w1"
+          data-menu-id="rc-menu-uuid-test-workspace-w1"
           role="menuitem"
           tabindex="-1"
         >
@@ -55,68 +55,84 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
           />
         </div>
       </li>
-      <div
-        class="workspace-action"
-        eventkey="tmp_key-1"
+      <li
+        class="ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-only-child"
+        role="menuitem"
+        style="opacity: 1; order: 1; max-width: max-content; float: right; margin: 0px 5px;"
+        tabindex="-1"
       >
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          style="margin-right: 5px;"
-          type="button"
+        <span
+          class="ant-menu-title-content"
         >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
+          <button
+            class="ant-btn ant-btn-round ant-btn-default"
+            role="button"
+            type="button"
           >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
+            <span
+              aria-label="edit"
+              class="anticon anticon-edit"
+              role="img"
             >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-            Workspace
-          </span>
-        </button>
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          type="button"
+              <svg
+                aria-hidden="true"
+                data-icon="edit"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
+                />
+              </svg>
+            </span>
+            <span>
+              Workspace
+            </span>
+          </button>
+        </span>
+      </li>
+      <li
+        class="ant-menu-overflow-item ant-menu-item ant-menu-item-active ant-menu-item-only-child"
+        role="menuitem"
+        style="opacity: 1; order: 1; max-width: max-content; float: right;"
+        tabindex="-1"
+      >
+        <span
+          class="ant-menu-title-content"
         >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
+          <button
+            class="ant-btn ant-btn-round ant-btn-default"
+            role="button"
+            type="button"
           >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
+            <span
+              aria-label="edit"
+              class="anticon anticon-edit"
+              role="img"
             >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-            Dashboard
-          </span>
-        </button>
-      </div>
+              <svg
+                aria-hidden="true"
+                data-icon="edit"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
+                />
+              </svg>
+            </span>
+            <span>
+              Dashboard
+            </span>
+          </button>
+        </span>
+      </li>
       <li
         aria-hidden="true"
         class="ant-menu-overflow-item ant-menu-overflow-item-rest ant-menu-submenu ant-menu-submenu-horizontal"
@@ -160,70 +176,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
     <div
       aria-hidden="true"
       style="display: none;"
-    >
-      <div
-        class="workspace-action"
-        eventkey="tmp_key-1"
-      >
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          style="margin-right: 5px;"
-          type="button"
-        >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
-          >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
-            >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-            Workspace
-          </span>
-        </button>
-        <button
-          class="ant-btn ant-btn-round ant-btn-default"
-          role="button"
-          type="button"
-        >
-          <span
-            aria-label="edit"
-            class="anticon anticon-edit"
-            role="img"
-          >
-            <svg
-              aria-hidden="true"
-              data-icon="edit"
-              fill="currentColor"
-              focusable="false"
-              height="1em"
-              viewBox="64 64 896 896"
-              width="1em"
-            >
-              <path
-                d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-              />
-            </svg>
-          </span>
-          <span>
-            Dashboard
-          </span>
-        </button>
-      </div>
-    </div>
+    />
     <div>
       <div>
         <div

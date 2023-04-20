@@ -113,6 +113,7 @@
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "12.1.2",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^14.4.2",
     "@types/codemirror": "^5.60.7",
     "@types/cookie-parser": "^1.4.1",

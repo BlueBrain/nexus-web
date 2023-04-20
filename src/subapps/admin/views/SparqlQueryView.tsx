@@ -44,7 +44,12 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     );
   }, [selectedView]);
   const menu = (
-    <Row gutter={3} justify="space-between" align="middle" style={{ marginBottom: 10 }}>
+    <Row
+      gutter={3}
+      justify="space-between"
+      align="middle"
+      style={{ marginBottom: 10 }}
+    >
       <Col flex="auto">
         <Select
           value={selectedView as string}

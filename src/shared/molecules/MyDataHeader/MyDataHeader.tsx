@@ -1,9 +1,16 @@
 import React, { Fragment, useMemo, useRef, useState } from 'react';
 import {
-  Input, Radio, Tag,
+  Input,
+  Radio,
+  Tag,
   RadioChangeEvent,
-  Dropdown, Button, Menu, MenuProps,
-  Row, Col, Checkbox,
+  Dropdown,
+  Button,
+  Menu,
+  MenuProps,
+  Row,
+  Col,
+  Checkbox,
 } from 'antd';
 import { CalendarOutlined, RightOutlined } from '@ant-design/icons';
 import { TagProps } from 'antd/lib/tag';
@@ -392,7 +399,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
     <div className="my-data-table-header">
       <Title
         text="My data"
-        label={pluralize("Dataset", Number(total))}
+        label={pluralize('Dataset', Number(total))}
         total={new Intl.NumberFormat('de-CH', {
           maximumSignificantDigits: 3,
         }).format(Number(total))}

@@ -12,9 +12,10 @@ import {
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
-import { Alert, Input, InputRef, List, Spin, } from 'antd';
+import { Alert, Input, InputRef, List, Spin } from 'antd';
 import { flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
+import * as pluralize from 'pluralize';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
@@ -94,7 +95,7 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item">
+    <List.Item className="route-result-list_item" role='routeitem-project'>
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -137,7 +138,42 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-
+export const useInfiniteProjectsQuery = ({
+  nexus, query, sort,
+}: {
+  nexus: NexusClient, 
+  query: string, 
+  sort: string
+}) => {
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading,
+    isFetching,
+  } = useInfiniteQuery({
+    queryKey: ['fusion-projects', { query, sort }],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchProjectsList({ nexus, query, sort, from: pageParam, size: 10 }),
+    getNextPageParam: lastPage =>
+      (lastPage as TNewProjectList)._next
+        ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
+        : undefined,
+  });
+  return {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    isLoading,
+    isFetching,
+  }
+}
 const ProjectsPage: React.FC<TProps> = ({ }) => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -163,19 +199,12 @@ const ProjectsPage: React.FC<TProps> = ({ }) => {
     status,
     isLoading,
     isFetching,
-  } = useInfiniteQuery({
-    queryKey: ['fusion-projects', { query, sort }],
-    queryFn: ({ pageParam = 0 }) =>
-      fetchProjectsList({ nexus, query, sort, from: pageParam, size: 10 }),
-    getNextPageParam: lastPage =>
-      (lastPage as TNewProjectList)._next
-        ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
-        : undefined,
-  });
-
+  } = useInfiniteProjectsQuery({
+    nexus, query, sort,
+  })
 
   // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
+  const total = (data?.pages?.[0]?._total as number) || 0;
   const dataSource: ProjectResponseCommon[] = flatten<ProjectResponseCommon>(
     // @ts-ignore
     data?.pages?.map((page: ProjectList) => page._results)
@@ -216,7 +245,7 @@ const ProjectsPage: React.FC<TProps> = ({ }) => {
       <PinnedMenu />
       <RouteHeader
         title="Projects"
-        extra={total ? `Total of ${total} Projects` : ''}
+        extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
         alt="hippocampus"
         bg={require('../../shared/images/hippocampus.png')}
         imgCss={{ width: '75.4%' }}

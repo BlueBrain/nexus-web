@@ -546,7 +546,7 @@ const CreateStudio = () => {
                                   valuePropName="checked"
                                   key={el.key}
                                   trigger="onChange"
-                                  style={{ marginBottom:  3 }}
+                                  style={{ marginBottom: 3 }}
                                 >
                                   {el.visible ? (
                                     <MoreOutlined />

@@ -20,14 +20,14 @@ exports[`StudioAdminView renders studios in a list 1`] = `
           >
             <span>
               <a
-                href="/admin/org"
+                href="/orgs/org"
                 role="link"
               >
                 org
               </a>
                | 
               <a
-                href="/admin/org/project"
+                href="/orgs/org/project"
                 role="link"
               >
                 project

@@ -160,7 +160,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     </Menu>
   );
   const showCreationPanel = location.pathname === '/search';
-  const handleOpenCreationPanel = () => dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
+  const handleOpenCreationPanel = () =>
+    dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   return (
     <Fragment>
       <header id="header" className="Header">

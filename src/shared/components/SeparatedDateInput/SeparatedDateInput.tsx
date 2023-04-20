@@ -66,7 +66,6 @@ type TSeparatedInput = {
   setDefaultValue: React.Dispatch<any>;
 };
 const Input = ({ defaultValue, setDefaultValue }: TSeparatedInput) => {
-  console.log('@@@Input', defaultValue);
   const dayRef = useRef<Ref>(null);
   const monthRef = useRef<Ref>(null);
   const yearRef = useRef<Ref>(null);
