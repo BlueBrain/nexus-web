@@ -105,14 +105,15 @@ const fetchOrganizationProjectsList = async ({
 export const useInfiniteOrganizationProjectsQuery = ({
   nexus,
   orgLabel,
-  query, sort,
+  query,
+  sort,
   enabled,
 }: {
-  nexus: NexusClient
-  orgLabel?: string,
-  query: string, 
-  sort: string
-  enabled: boolean
+  nexus: NexusClient;
+  orgLabel?: string;
+  query: string;
+  sort: string;
+  enabled: boolean;
 }) => {
   const {
     data,
@@ -144,12 +145,12 @@ export const useInfiniteOrganizationProjectsQuery = ({
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status: projectStatus,
-    error: projectError,
     isLoading,
     isFetching,
-  }
-}
+    status: projectStatus,
+    error: projectError,
+  };
+};
 
 type TProjectItem = {
   title: string;
@@ -284,7 +285,10 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
     isLoading,
     isFetching,
   } = useInfiniteOrganizationProjectsQuery({
-    nexus, orgLabel, query, sort,
+    nexus,
+    orgLabel,
+    query,
+    sort,
     enabled: !!orgLabel && !!organization?.['@id'],
   });
   // @ts-ignore
@@ -322,7 +326,9 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
         <PinnedMenu />
         <RouteHeader
           title="Projects"
-          extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
+          extra={
+            total ? `Total of ${total} ${pluralize('Project', total)}` : ''
+          }
           alt="hippocampus"
           bg={require('../../shared/images/projects-bg.png')}
           imgCss={{ width: '75.4%' }}
@@ -340,7 +346,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
                   value={query}
                   onChange={handleOnOrgSearch}
                   placeholder="Search Organisation"
-                  role='search'
+                  role="search"
                 />
               </div>
               <div className="action-sort">

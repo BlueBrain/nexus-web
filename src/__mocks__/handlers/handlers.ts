@@ -1046,7 +1046,7 @@ export const handlers = [
   }),
   rest.get(deltaPath('/resources'), (req, res, ctx) => {
     const type = req.url.searchParams.get('type');
-    let _results = [
+    let results = [
       {
         '@id': 'id-1',
         label: 'test-label-1',
@@ -1109,7 +1109,7 @@ export const handlers = [
         type: STUDIO_TYPE,
       },
     ];
-    _results = _results.filter(t => t.type === STUDIO_TYPE);
+    results = results.filter(t => t.type === STUDIO_TYPE);
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1117,7 +1117,7 @@ export const handlers = [
         'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
       ],
       _total: type ? 5 : 19,
-      _results,
+      _results: results,
     };
     return res(
       // Respond with a 200 status code

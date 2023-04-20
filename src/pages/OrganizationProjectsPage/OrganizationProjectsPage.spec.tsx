@@ -10,73 +10,83 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
 import {
-    render,
-    fireEvent,
-    waitFor,
-    screen,
-    server,
+  render,
+  fireEvent,
+  waitFor,
+  screen,
+  server,
 } from '../../utils/testUtil';
 import configureStore from '../../shared/store';
-import OrganizationProjectsPage, { useInfiniteOrganizationProjectsQuery } from './OrganizationProjectsPage';
+import OrganizationProjectsPage, {
+  useInfiniteOrganizationProjectsQuery,
+} from './OrganizationProjectsPage';
 
 describe('OrganizationProjectsPage', () => {
-    const history = createBrowserHistory({ basename: '/' });
+  const history = createBrowserHistory({ basename: '/' });
 
-    // establish API mocking before all tests
-    beforeAll(() => {
-        server.listen();
-    });
-    // reset any request handlers that are declared as a part of our tests
-    // (i.e. for testing one-time error scenarios)
-    afterEach(() => server.resetHandlers());
-    // clean up once the tests are done
-    afterAll(() => server.close());
+  // establish API mocking before all tests
+  beforeAll(() => {
+    server.listen();
+  });
+  // reset any request handlers that are declared as a part of our tests
+  // (i.e. for testing one-time error scenarios)
+  afterEach(() => server.resetHandlers());
+  // clean up once the tests are done
+  afterAll(() => server.close());
 
-    const nexus = createNexusClient({
-        fetch,
-        uri: 'https://localhost:3000',
-    });
-    const queryClient = new QueryClient();
-    const store = configureStore(history, { nexus }, {});
-    xit('renders organization projects in a list', async () => {
-        await act(async () => {
-            await render(
-                <Provider store={store}>
-                    <ConnectedRouter history={history}>
-                        <NexusProvider nexusClient={nexus}>
-                            <QueryClientProvider client={queryClient}>
-                                <OrganizationProjectsPage />
-                            </QueryClientProvider>
-                        </NexusProvider>
-                    </ConnectedRouter>
-                </Provider>
-            );
-        });
-
-        await waitFor(async () => {
-            const orgProjects = await screen.getAllByRole('routeitem-org-project');
-            expect(orgProjects.length).toBe(2);
-            const pageTitleExtra = await screen.findAllByText('Total of 2 Projects')
-            expect(pageTitleExtra).toBeInTheDocument();
-        });
+  const nexus = createNexusClient({
+    fetch,
+    uri: 'https://localhost:3000',
+  });
+  const queryClient = new QueryClient();
+  const store = configureStore(history, { nexus }, {});
+  xit('renders organization projects in a list', async () => {
+    await act(async () => {
+      await render(
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <NexusProvider nexusClient={nexus}>
+              <QueryClientProvider client={queryClient}>
+                <OrganizationProjectsPage />
+              </QueryClientProvider>
+            </NexusProvider>
+          </ConnectedRouter>
+        </Provider>
+      );
     });
 
-    it('Test inifinite fetching of organisation projects', async () => {
-        const wrapper = ({ children }: { children: React.ReactNode }) => (
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
-          );
-          const orgLabel = "test-2";
-          const { result, waitFor } = renderHook(() => useInfiniteOrganizationProjectsQuery({
-            nexus, orgLabel, query: "", sort: "", enabled: true
-          }), { wrapper });
-          
-          await waitFor(() => result.current.status === 'success');
-          expect(result.current.data).toBeTruthy();
-          // @ts-ignore
-          expect(result.current.data?.pages?.[0]._total).toEqual(2);
-          // @ts-ignore
-          expect(result.current.data?.pages?.[0]._results.map(item => item._label)).toContain(orgLabel);
-    })
+    await waitFor(async () => {
+      const orgProjects = await screen.getAllByRole('routeitem-org-project');
+      expect(orgProjects.length).toBe(2);
+      const pageTitleExtra = await screen.findAllByText('Total of 2 Projects');
+      expect(pageTitleExtra).toBeInTheDocument();
+    });
+  });
+
+  it('Test inifinite fetching of organisation projects', async () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+    const orgLabel = 'test-2';
+    const { result, waitFor } = renderHook(
+      () =>
+        useInfiniteOrganizationProjectsQuery({
+          nexus,
+          orgLabel,
+          query: '',
+          sort: '',
+          enabled: true,
+        }),
+      { wrapper }
+    );
+
+    await waitFor(() => result.current.status === 'success');
+    expect(result.current.data).toBeTruthy();
+    // @ts-ignore
+    expect(result.current.data?.pages?.[0]._total).toEqual(2);
+    expect(
+      // @ts-ignore
+      result.current.data?.pages?.[0]._results.map(item => item._label)
+    ).toContain(orgLabel);
+  });
 });

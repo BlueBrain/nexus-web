@@ -18,16 +18,16 @@ type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
-  | string
-  | (
     | string
+    | (
+        | string
+        | {
+            [key: string]: any;
+          }
+      )[]
     | {
-      [key: string]: any;
-    }
-  )[]
-  | {
-    [key: string]: any;
-  };
+        [key: string]: any;
+      };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;

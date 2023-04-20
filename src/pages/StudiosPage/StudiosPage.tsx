@@ -103,7 +103,7 @@ const StudioItem = ({
   access,
 }: TStudioItem) => {
   return (
-    <List.Item className="route-result-list_item" role='routeitem-studio'>
+    <List.Item className="route-result-list_item" role="routeitem-studio">
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -147,11 +147,13 @@ const StudioItem = ({
   );
 };
 export const useInfiniteStudiosQuery = ({
-  nexus, query, sort,
+  nexus,
+  query,
+  sort,
 }: {
-  nexus: NexusClient,
-  query: string,
-  sort: string
+  nexus: NexusClient;
+  query: string;
+  sort: string;
 }) => {
   return useInfiniteQuery({
     queryKey: ['fusion-studios', { query, sort }],
@@ -160,11 +162,11 @@ export const useInfiniteStudiosQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewPaginationList)._next
         ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-          'after'
-        )
+            'after'
+          )
         : undefined,
   });
-}
+};
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const dispatch = useDispatch();

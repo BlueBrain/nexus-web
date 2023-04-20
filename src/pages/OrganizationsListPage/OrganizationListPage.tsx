@@ -79,9 +79,9 @@ export const useInfiniteOrganizationQuery = ({
   query,
   sort,
 }: {
-  nexus: NexusClient,
-  query: string,
-  sort: string,
+  nexus: NexusClient;
+  query: string;
+  sort: string;
 }) => {
   const {
     data,
@@ -105,8 +105,8 @@ export const useInfiniteOrganizationQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewOrganizationList)._next
         ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get(
-          'from'
-        )
+            'from'
+          )
         : undefined,
   });
   return {
@@ -118,8 +118,8 @@ export const useInfiniteOrganizationQuery = ({
     status,
     isLoading,
     isFetching,
-  }
-}
+  };
+};
 const OrganizationItem = ({
   title,
   to,
@@ -136,7 +136,7 @@ const OrganizationItem = ({
     queryFn: () => nexus.Project.list(title),
   });
   return (
-    <List.Item className="route-result-list_item" role='routeitem-org'>
+    <List.Item className="route-result-list_item" role="routeitem-org">
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -160,7 +160,7 @@ const OrganizationItem = ({
     </List.Item>
   );
 };
-const OrganizationListView: React.FC<Props> = ({ }) => {
+const OrganizationListView: React.FC<Props> = ({}) => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -188,8 +188,10 @@ const OrganizationListView: React.FC<Props> = ({ }) => {
     isLoading,
     isFetching,
   } = useInfiniteOrganizationQuery({
-    nexus, query, sort
-  })
+    nexus,
+    query,
+    sort,
+  });
   // @ts-ignore
   const total = data?.pages?.[0]?._total as number;
   const dataSource: OrgResponseCommon[] = flatten<OrgResponseCommon>(
@@ -244,7 +246,9 @@ const OrganizationListView: React.FC<Props> = ({ }) => {
         <PinnedMenu />
         <RouteHeader
           title="Organizations"
-          extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
+          extra={
+            total ? `Total of ${total} ${pluralize('Project', total)}` : ''
+          }
           alt="sscx"
           bg={require('../../shared/images/sscx-by-layers-v3.png')}
           createLabel="Create Orgnanization"
@@ -261,7 +265,7 @@ const OrganizationListView: React.FC<Props> = ({ }) => {
                   value={query}
                   onChange={handleOnOrgSearch}
                   placeholder="Search Organization"
-                  role='search'
+                  role="search"
                 />
               </div>
               <div className="action-sort">

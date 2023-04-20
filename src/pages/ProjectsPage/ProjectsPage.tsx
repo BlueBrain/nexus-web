@@ -95,7 +95,7 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item" role='routeitem-project'>
+    <List.Item className="route-result-list_item" role="routeitem-project">
       <div className="route-result-list_item_wrapper">
         <div className="org">
           <Link to={to}>
@@ -139,11 +139,13 @@ const ProjectItem = ({
   );
 };
 export const useInfiniteProjectsQuery = ({
-  nexus, query, sort,
+  nexus,
+  query,
+  sort,
 }: {
-  nexus: NexusClient, 
-  query: string, 
-  sort: string
+  nexus: NexusClient;
+  query: string;
+  sort: string;
 }) => {
   const {
     data,
@@ -172,9 +174,9 @@ export const useInfiniteProjectsQuery = ({
     status,
     isLoading,
     isFetching,
-  }
-}
-const ProjectsPage: React.FC<TProps> = ({ }) => {
+  };
+};
+const ProjectsPage: React.FC<TProps> = ({}) => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -200,8 +202,10 @@ const ProjectsPage: React.FC<TProps> = ({ }) => {
     isLoading,
     isFetching,
   } = useInfiniteProjectsQuery({
-    nexus, query, sort,
-  })
+    nexus,
+    query,
+    sort,
+  });
 
   // @ts-ignore
   const total = (data?.pages?.[0]?._total as number) || 0;
