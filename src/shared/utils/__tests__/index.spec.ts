@@ -777,7 +777,7 @@ describe('utils functions', () => {
       const deltaUrl =
         'https://delta.bbp.epfl.ch/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c';
       const fusionUrl =
-        '/web/admin/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Ffiles%2Fbbp%2Fsomatosensorycortex%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+        '/web/orgs/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Ffiles%2Fbbp%2Fsomatosensorycortex%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
       expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
     });
     it('returns the fusion url from a delta resource url', () => {
@@ -785,13 +785,13 @@ describe('utils functions', () => {
       const deltaUrl =
         'https://delta.bbp.epfl.ch/v1/resources/bbp/somatosensorycortex/_/f53c7f5e-ce6d-4211-ad75-cf524de4e57c';
       const fusionUrl =
-        '/web/admin/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Fresources%2Fbbp%2Fsomatosensorycortex%2F_%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
+        '/web/orgs/bbp/somatosensorycortex/https%3A%2F%2Fdelta.bbp.epfl.ch%2Fv1%2Fresources%2Fbbp%2Fsomatosensorycortex%2F_%2Ff53c7f5e-ce6d-4211-ad75-cf524de4e57c';
       expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
     });
     it('returns the fusion url from a delta project url', () => {
       const base = '/web';
       const deltaUrl = 'http://localhost:8080/v1/projects/myorg/myproject';
-      const fusionUrl = '/web/admin/myorg/myproject';
+      const fusionUrl = '/web/orgs/myorg/myproject';
       expect(deltaUrlToFusionUrl(deltaUrl, base)).toEqual(fusionUrl);
     });
     it('does not modify non delta url', () => {
