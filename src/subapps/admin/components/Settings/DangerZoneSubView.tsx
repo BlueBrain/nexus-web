@@ -100,6 +100,7 @@ const DangerZoneSubView = ({ project }: Props) => {
         onCancel={handleCloseModal}
         maskClosable={false}
         footer={null}
+        centered
       >
         <Form onFinish={handleDeprecateProject}>
           <Row>

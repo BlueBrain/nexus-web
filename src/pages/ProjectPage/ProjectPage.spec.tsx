@@ -1,23 +1,23 @@
 import '@testing-library/jest-dom';
 import * as React from 'react';
-import { rest } from 'msw';
 import fetch from 'node-fetch';
+import { rest } from 'msw';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import ProjectView from '../ProjectPage/ProjectPage';
-import { render, server, screen } from '../../../../utils/testUtil';
+import { render, server, screen } from '../../utils/testUtil';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { Route, MemoryRouter } from 'react-router-dom';
+import configureStore from 'redux-mock-store';
 import {
   getNotificationContextValue,
   NotificationContext,
   NotificationContextType,
-} from '../../../../shared/hooks/useNotification';
+} from '../../shared/hooks/useNotification';
+import ProjectPage from './ProjectPage';
 
-describe('ProjectView', () => {
+describe('ProjectPage', () => {
   // establish API mocking before all tests
   beforeAll(() => {
     server.listen();
@@ -493,7 +493,7 @@ describe('ProjectView', () => {
               <NotificationContext.Provider value={notificationData}>
                 <QueryClientProvider client={queryClient}>
                   <NexusProvider nexusClient={nexus}>
-                    <ProjectView></ProjectView>
+                    <ProjectPage/>
                   </NexusProvider>
                 </QueryClientProvider>
               </NotificationContext.Provider>
@@ -918,7 +918,7 @@ describe('ProjectView', () => {
               <NotificationContext.Provider value={notificationData}>
                 <QueryClientProvider client={queryClient}>
                   <NexusProvider nexusClient={nexus}>
-                    <ProjectView></ProjectView>
+                    <ProjectPage/>
                   </NexusProvider>
                 </QueryClientProvider>
               </NotificationContext.Provider>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
 import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
-import ProjectView from './views/ProjectPage/ProjectPage';
+import ProjectView from '../../pages/ProjectPage/ProjectPage';
 import { SubApp } from '..';
 
 const subAppType = 'internal';
