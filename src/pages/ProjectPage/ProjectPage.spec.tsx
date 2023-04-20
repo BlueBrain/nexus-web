@@ -493,7 +493,7 @@ describe('ProjectPage', () => {
               <NotificationContext.Provider value={notificationData}>
                 <QueryClientProvider client={queryClient}>
                   <NexusProvider nexusClient={nexus}>
-                    <ProjectPage/>
+                    <ProjectPage />
                   </NexusProvider>
                 </QueryClientProvider>
               </NotificationContext.Provider>
@@ -918,7 +918,7 @@ describe('ProjectPage', () => {
               <NotificationContext.Provider value={notificationData}>
                 <QueryClientProvider client={queryClient}>
                   <NexusProvider nexusClient={nexus}>
-                    <ProjectPage/>
+                    <ProjectPage />
                   </NexusProvider>
                 </QueryClientProvider>
               </NotificationContext.Provider>
