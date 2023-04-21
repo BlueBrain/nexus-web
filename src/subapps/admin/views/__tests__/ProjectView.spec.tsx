@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ProjectView from '../ProjectView';
 import { rest } from 'msw';
-import { render, server, screen } from '../../../../utils/testUtil';
+import { render, server, screen, waitFor } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
@@ -932,7 +932,10 @@ describe('ProjectView', () => {
       await render(<App />);
     });
 
-    const jiraTab = screen.queryByText(/Jira/);
+    const jiraTab = await waitFor(() => {
+      return screen.findByText(/Jira/i);
+    });
+
     expect(jiraTab).toBeInTheDocument();
   });
 });
