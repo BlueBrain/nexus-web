@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 import { Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useAdminSubappContext } from '../../../../subapps/admin';
-import './SettingsView.less';
+import './styles.less';
 
 type Props = {};
 type DataType = {

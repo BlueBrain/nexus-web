@@ -51,6 +51,7 @@ const Search: SubApp = () => {
         path: '/',
         exact: true,
         component: SearchSubappProviderHOC(SearchPage),
+        protected: true,
       },
     ],
   };

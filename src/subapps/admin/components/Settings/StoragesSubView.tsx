@@ -7,7 +7,7 @@ import { useQuery } from 'react-query';
 import { NexusClient, Storage } from '@bbp/nexus-sdk';
 import * as moment from 'moment';
 
-import './SettingsView.less';
+import './styles.less';
 
 type Props = {};
 type StorageData = {

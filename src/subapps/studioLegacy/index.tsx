@@ -52,15 +52,18 @@ const StudioLegacy: SubApp = () => {
         path: '/',
         exact: true,
         component: StudioLegacySubappProviderHOC(StudioListView),
+        protected: false,
       },
       {
         path: '/:orgLabel/:projectLabel/studios',
         exact: true,
         component: StudioLegacySubappProviderHOC(StudioAdminView),
+        protected: false,
       },
       {
         path: '/:orgLabel/:projectLabel/studios/:studioId',
         component: StudioLegacySubappProviderHOC(StudioView),
+        protected: false,
       },
     ],
   };

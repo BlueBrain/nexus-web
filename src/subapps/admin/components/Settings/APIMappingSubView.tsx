@@ -4,8 +4,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useRouteMatch } from 'react-router';
 import useNotification from '../../../../shared/hooks/useNotification';
-import './SettingsView.less';
-
+import './styles.less';
 export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;

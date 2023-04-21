@@ -110,6 +110,7 @@ async function downloadArchive({
   }: { payload: ArchivePayload; archiveId: string } = makePayload(
     resourcesPayload
   );
+  console.log('@@resourcesPayload', resourcesPayload);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
   } catch (error) {}
@@ -341,7 +342,12 @@ const DataPanel: React.FC<Props> = ({}) => {
             contentType,
             distribution: resource.distribution,
             _self: resource._self,
-            '@type': resource.type === 'File' ? 'File' : 'Resource',
+            '@type':
+              Boolean(resource.distribution) &&
+              Boolean(resource.distribution?.contentSize)
+                ? 'File'
+                : 'Resource',
+            // resource.type === 'File' ? 'File' : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
             path: `/${parsedSelf.project}/${parsedSelf.id}`,
@@ -510,3 +516,13 @@ const DataPanel: React.FC<Props> = ({}) => {
 };
 
 export default DataPanel;
+
+const withDataPanel = ({
+  allowDataPanel,
+}: {
+  allowDataPanel: boolean;
+}) => () => {
+  return allowDataPanel ? <DataPanel /> : null;
+};
+
+export { withDataPanel };

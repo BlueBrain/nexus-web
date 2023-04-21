@@ -13,7 +13,7 @@ import {
   NotificationContextType,
 } from './hooks/useNotification';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { DataPanelDetailsBar } from './organisms';
+import DataPanel, { withDataPanel } from './organisms/DataPanel/DataPanel';
 import CreateProject from './modals/CreateProject/CreateProject';
 import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
@@ -28,26 +28,32 @@ const App: React.FC = () => {
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
   const notificationData: NotificationContextType = getNotificationContextValue();
-  const showDataPanel =
-    authenticated &&
-    token &&
+  const userAuthenticated = Boolean(authenticated) && Boolean(token);
+  const allowDataPanel =
+    userAuthenticated &&
     (location.pathname === '/' ||
       location.pathname === '/search' ||
       location.pathname === '/my-data');
 
   // Apply Subapp routes
   const routesWithSubApps = [...routes, ...subAppRoutes];
+  console.log('@@routesWithSubApps', routesWithSubApps);
+  const DataPanel = withDataPanel({ allowDataPanel });
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
         <ReactQueryDevtools initialIsOpen={false} />
         <FusionMainLayout subApps={subAppProps}>
           <SubAppsView routesWithSubApps={routesWithSubApps} />
-          <GalleryView />
-          <CreateProject />
-          <CreateOrganization />
-          <CreateStudio />
-          {showDataPanel && <DataPanelDetailsBar />}
+          {userAuthenticated && (
+            <>
+              <GalleryView />
+              <CreateProject />
+              <CreateOrganization />
+              <CreateStudio />
+              <DataPanel />
+            </>
+          )}
         </FusionMainLayout>
       </NotificationContext.Provider>
     </CartContext.Provider>

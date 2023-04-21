@@ -93,8 +93,6 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
-    // align-items: center;
-    // justify-content: center;
   }
 }
 
@@ -172,5 +170,21 @@
     input:nth-child(2) {
       flex: 1 1 60%;
     }
+  }
+}
+
+.resolver-search {
+  &-bar {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 400px max-content;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  &-results {
+    margin-top: 20px;
+    max-width: 800px;
+    width: 100%;
   }
 }

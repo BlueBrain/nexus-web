@@ -57,7 +57,16 @@ const LandingPage: React.FC<TProps> = ({
         <div className="title">Nexus.Fusion</div>
         <div className="actions">
           <div className="home-authentication-content-connect">
-            {realmsFilter.length === 1 ? (
+            {!realmsFilter.length ? (
+              <Button
+                size="large"
+                className="no-realms-btn"
+                disabled
+                onClick={onPopoverVisibleChange}
+              >
+                Connect
+              </Button>
+            ) : realmsFilter.length === 1 ? (
               <Button
                 onClick={e => {
                   e.preventDefault();

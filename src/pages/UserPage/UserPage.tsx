@@ -2,10 +2,9 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Button, Descriptions, List, Typography } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-
-import { RootState } from '../store/reducers';
 import { useHistory } from 'react-router';
-import useNotification from '../hooks/useNotification';
+import { RootState } from '../../shared/store/reducers';
+import useNotification from '../../shared/hooks/useNotification';
 
 export type UserPageData = {
   user?: string;
@@ -14,7 +13,7 @@ export type UserPageData = {
   groups?: string[];
 };
 
-const UserView: React.FunctionComponent<{}> = props => {
+const UserPage: React.FunctionComponent<{}> = props => {
   const name = useSelector(
     ({ oidc }: RootState) =>
       oidc.user && oidc.user.profile && oidc.user.profile.name
@@ -100,4 +99,4 @@ const UserView: React.FunctionComponent<{}> = props => {
   );
 };
 
-export default UserView;
+export default UserPage;

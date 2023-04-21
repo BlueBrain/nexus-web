@@ -44,37 +44,40 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-const Admin: SubApp = () => {
-  return {
-    ...adminSubappProps,
-    routes: [
-      {
-        path: '/',
-        exact: true,
-        component: AdminSubappProviderHOC(OrganizationListPage),
-      },
-      {
-        path: '/:orgLabel',
-        exact: true,
-        component: AdminSubappProviderHOC(OrganizationProjectsPage),
-      },
-      {
-        path: [
-          '/:orgLabel/:projectLabel',
-          '/:orgLabel/:projectLabel/browse',
-          '/:orgLabel/:projectLabel/query/:viewId?',
-          '/:orgLabel/:projectLabel/create',
-          '/:orgLabel/:projectLabel/statistics',
-          '/:orgLabel/:projectLabel/settings',
-          '/:orgLabel/:projectLabel/graph-analytics',
-          '/:orgLabel/:projectLabel/jira',
-        ],
-        exact: true,
-        component: AdminSubappProviderHOC(ProjectView),
-      },
-    ],
-  };
-};
+// const Admin: SubApp = () => {
+//   return {
+//     ...adminSubappProps,
+//     routes: [
+//       {
+//         path: '/',
+//         exact: true,
+//         component: AdminSubappProviderHOC(OrganizationListPage),
+//         protected: true,
+//       },
+//       {
+//         path: '/:orgLabel',
+//         exact: true,
+//         component: AdminSubappProviderHOC(OrganizationProjectsPage),
+//         protected: true,
+//       },
+//       {
+//         path: [
+//           '/:orgLabel/:projectLabel',
+//           '/:orgLabel/:projectLabel/browse',
+//           '/:orgLabel/:projectLabel/query/:viewId?',
+//           '/:orgLabel/:projectLabel/create',
+//           '/:orgLabel/:projectLabel/statistics',
+//           '/:orgLabel/:projectLabel/settings',
+//           '/:orgLabel/:projectLabel/graph-analytics',
+//           '/:orgLabel/:projectLabel/jira',
+//         ],
+//         exact: true,
+//         component: AdminSubappProviderHOC(ProjectView),
+//         protected: true,
+//       },
+//     ],
+//   };
+// };
 
 // -----
 
@@ -111,11 +114,13 @@ export const Organizations: SubApp = () => {
         path: '/',
         exact: true,
         component: OrganizationsSubappProviderHOC(OrganizationListPage),
+        protected: true,
       },
       {
         path: '/:orgLabel',
         exact: true,
         component: OrganizationsSubappProviderHOC(OrganizationProjectsPage),
+        protected: true,
       },
       {
         path: [
@@ -130,9 +135,10 @@ export const Organizations: SubApp = () => {
         ],
         exact: true,
         component: AdminSubappProviderHOC(ProjectView),
+        protected: true,
       },
     ],
   };
 };
 
-export default Admin;
+// export default Admin;

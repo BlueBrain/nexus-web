@@ -13,4 +13,13 @@ function isValidUrl(url: string) {
   return urlPattern.test(url);
 }
 
+function easyValidURL(url: string) {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+export { easyValidURL };
 export default isValidUrl;

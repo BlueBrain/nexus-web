@@ -45,7 +45,7 @@ export interface HeaderProps {
   handleLogout: MenuItemProps['onClick'];
   environment: EnvironmentInfo;
 }
-
+const headerIconStyle = { marginRight: 4 };
 const Header: React.FunctionComponent<HeaderProps> = ({
   name,
   token,
@@ -79,17 +79,24 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       });
     }
   };
+
   const menu = (
     <Menu mode="inline" className="ant-menu-inline">
+      <Menu.Item className="link-menu-item" key="header-menu-my-profile">
+        <Link to="/user">
+          <UserOutlined style={headerIconStyle} />
+          My Profile
+        </Link>
+      </Menu.Item>
       <Menu.Item className="link-menu-item" key="header-menu-my-date">
         <Link to="/my-data">
-          <MenuOutlined style={{ marginRight: 3 }} />
+          <MenuOutlined style={headerIconStyle} />
           My data
         </Link>
       </Menu.Item>
       {token && (
         <Menu.Item onClick={copyTokenCmd} key="header-menu-my-token">
-          <CopyOutlined style={{ marginRight: 3 }} />
+          <CopyOutlined style={headerIconStyle} />
           Copy token
         </Menu.Item>
       )}
@@ -99,7 +106,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         popupClassName="submenu-overlay-custom-popup"
         title={
           <>
-            <BookOutlined style={{ marginRight: 3 }} />
+            <BookOutlined style={headerIconStyle} />
             <span>Resources</span>
           </>
         }
@@ -110,7 +117,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://bluebrainnexus.io/docs/index.html"
           >
-            <FileTextOutlined style={{ marginRight: 3 }} />
+            <FileTextOutlined style={headerIconStyle} />
             <span>Documentation</span>
           </a>
         </Menu.Item>
@@ -120,7 +127,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://bluebrainnexus.io/"
           >
-            <LinkOutlined style={{ marginRight: 3 }} />
+            <LinkOutlined style={headerIconStyle} />
             <span>Web Protégé</span>
           </a>
         </Menu.Item>
@@ -130,7 +137,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             target="_blank"
             href="https://portal.bluebrain.epfl.ch/resources/models/cell-atlas/"
           >
-            <LinkOutlined style={{ marginRight: 3 }} />
+            <LinkOutlined style={headerIconStyle} />
             <span>Atlas</span>
           </a>
         </Menu.Item>
@@ -139,7 +146,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         className="link-menu-item"
         onClick={() => setModalVisible(() => true)}
       >
-        <SettingOutlined style={{ marginRight: 3 }} />
+        <SettingOutlined style={headerIconStyle} />
         About
       </Menu.Item>
       <Menu.Item
@@ -147,7 +154,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         className="menu-item-logout"
         key={'logout'}
       >
-        <LogoutOutlined style={{ marginRight: 3 }} />
+        <LogoutOutlined style={headerIconStyle} />
         Logout
       </Menu.Item>
     </Menu>

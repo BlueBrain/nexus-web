@@ -1,13 +1,15 @@
-import React from 'react';
-import { orderBy } from 'lodash';
-import { Table, Button } from 'antd';
+import React, { useState } from 'react';
+import { isObject, orderBy } from 'lodash';
+import { Table, Button, Row, Input, Col, notification, Alert } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
-import './SettingsView.less';
+import ReactJson from 'react-json-view';
+import { easyValidURL } from '../../../../utils/validUrl';
+import './styles.less';
 
 type Props = {};
 type TDataType = {
@@ -57,13 +59,38 @@ const fetchResolvers = async ({
     throw new Error('Can not find resolvers', { cause: error });
   }
 };
+const fetchResourceByResolver = async ({
+  nexus,
+  resourceId,
+  orgLabel,
+  projectLabel,
+}: {
+  nexus: NexusClient;
+  resourceId: string;
+  orgLabel: string;
+  projectLabel: string;
+}) => {
+  try {
+    return await nexus.Resolver.getResource(
+      orgLabel,
+      projectLabel,
+      '_',
+      resourceId
+    );
+  } catch (error) {
+    // @ts-ignore
+    throw new Error(`Can not resolve the resources with ${resourceId}`, {
+      cause: error,
+    });
+  }
+};
 const ResolversSubView = (props: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
+  const [query, setQuery] = useState<string>('');
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
-    viewId?: string;
   }>();
   const {
     params: { orgLabel, projectLabel },
@@ -124,6 +151,37 @@ const ResolversSubView = (props: Props) => {
     queryFn: () => fetchResolvers({ nexus, orgLabel, projectLabel }),
   });
 
+  const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = e =>
+    setQuery(e.target.value);
+  const {
+    mutateAsync: resolveResourceByID,
+    error,
+    data,
+    status: resolving,
+  } = useMutation(fetchResourceByResolver);
+  const handleSubmitResolve: React.FormEventHandler<HTMLFormElement> = event => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const resourceId = data.get('resourceId') as string;
+    resolveResourceByID(
+      {
+        nexus,
+        orgLabel,
+        projectLabel,
+        resourceId: easyValidURL(resourceId)
+          ? encodeURIComponent(resourceId)
+          : resourceId,
+      },
+      {
+        onError: error => {
+          // @ts-ignore
+          console.log('@@error', error.message);
+          // @ts-ignore
+          console.log('@@error', error.cause.message);
+        },
+      }
+    );
+  };
   return (
     <div className="settings-view settings-resolvers-view">
       <h2>Resolvers</h2>
@@ -147,6 +205,67 @@ const ResolversSubView = (props: Props) => {
           size="middle"
           pagination={false}
         />
+      </div>
+      <h2 style={{ marginTop: 20 }}>Resolve an ID</h2>
+      <div className="settings-view-container">
+        <form onSubmit={handleSubmitResolve} className="resolver-search-bar">
+          <Input
+            name="resourceId"
+            allowClear
+            placeholder="ID"
+            // value={query}
+            // onChange={handleQueryChange}
+            role="search"
+          />
+          <Button
+            type="ghost"
+            htmlType="submit"
+            loading={resolving === 'loading'}
+          >
+            Resolve
+          </Button>
+        </form>
+        <div className="resolver-search-results">
+          {resolving === 'success' && (
+            <>
+              <Alert
+                type="success"
+                message="Resource resolved successfully"
+                style={{ marginBottom: 10 }}
+              />
+              <ReactJson
+                name={data!['@id']}
+                src={data as object}
+                enableClipboard={false}
+                displayObjectSize={false}
+                displayDataTypes={false}
+              />
+            </>
+          )}
+          {error && (
+            <>
+              <Alert
+                type="error"
+                // @ts-ignore
+                message={error.message}
+                // @ts-ignore
+                description={error.cause.message}
+                style={{ marginBottom: 10 }}
+              />
+              {// @ts-ignore
+              isObject(error.cause) && (
+                <ReactJson
+                  name="Error"
+                  // @ts-ignore
+                  src={error.cause}
+                  enableClipboard={false}
+                  displayObjectSize={false}
+                  displayDataTypes={false}
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
-import './SettingsView.less';
+import './styles.less';
 
 type Props = {
   project: {

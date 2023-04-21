@@ -7,7 +7,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
 
 import useNotification from '../../../../shared/hooks/useNotification';
-import './SettingsView.less';
+import './styles.less';
 
 type TProps = {
   project: {
