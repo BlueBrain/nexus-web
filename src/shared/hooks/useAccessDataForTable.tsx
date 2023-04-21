@@ -2,22 +2,19 @@ import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   ColumnType,
-  ColumnsType,
-  FilterDropdownProps,
 } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import { isNil, isString, pick } from 'lodash';
+import { isNil, isString, pick, toNumber } from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { Projection } from '../components/EditTableForm';
-import { ColumnFilterDropDown } from '../components/ColumnFilterDropDown';
 import { download } from '../utils/download';
-import { parseJsonMaybe } from '../utils/index';
+import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import { FilterFilled, SearchOutlined } from '@ant-design/icons';
+import { FilterFilled } from '@ant-design/icons';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -108,28 +105,29 @@ const sorter = (dataIndex: string): ColumnSorter => {
       [key: string]: any;
     }
   ) => {
-    const sortA = isString(a[dataIndex])
-      ? normalizeString(a[dataIndex])
-      : a[dataIndex];
-    const sortB = isString(b[dataIndex])
-      ? normalizeString(b[dataIndex])
-      : b[dataIndex];
-
-    if (sortA < sortB) {
-      return -1;
-    }
-    if (sortA > sortB) {
-      return 1;
-    }
-    return 0;
+    return sortFn(a[dataIndex], b[dataIndex])
   };
 };
+
+const sortFn = (datumA: any, datumB: any) => {
+  const normalizedA = isNumeric(datumA) ? toNumber(datumA) : isString(datumA) ? normalizeString(datumA) : datumA;
+  const normalizedB = isNumeric(datumB) ? toNumber(datumB) : isString(datumB) ? normalizeString(datumB) : datumB;
+  if (normalizedA < normalizedB) {
+    return -1;
+  }
+  if (normalizedA > normalizedB) {
+    return 1;
+  }
+  return 0;
+
+}
+
 
 type Row = Record<string, any>;
 
 type TableFilterConfig<T> = Pick<
   ColumnType<T>,
-  'filters' | 'filterDropdown' | 'onFilter' | 'filterIcon'
+  'filters' | 'onFilter' | 'filterIcon'
 >;
 
 export type FusionColumnType<T> = ColumnType<T> & {
@@ -152,9 +150,6 @@ type FilterConfigFn = (tableItems: Row[]) => FilterConfigByColumnFn;
 export const antTableFilterConfig: FilterConfigFn = rows => columnHeader => {
   const filters = uniqueFilters(rows, columnHeader.dataIndex);
 
-  const filterDropdown = (props: FilterDropdownProps) =>
-    ColumnFilterDropDown({ ...props, label: columnHeader.title });
-
   const onFilter = (value: string | number | boolean, row: Row) => {
     const cellValue = row[columnHeader.dataIndex]?.toString() ?? '';
     return normalizeString(cellValue).includes(
@@ -164,7 +159,7 @@ export const antTableFilterConfig: FilterConfigFn = rows => columnHeader => {
 
   const filterIcon = <FilterFilled data-testid="filter-icon" />;
 
-  return { filters, filterDropdown, onFilter, filterIcon };
+  return { filters, onFilter, filterIcon };
 };
 
 const uniqueFilters = (items: Record<string, any>[], dataIndex: string) => {
@@ -173,7 +168,7 @@ const uniqueFilters = (items: Record<string, any>[], dataIndex: string) => {
       return i[dataIndex];
     })
   );
-  return Array.from(uniqueItems).map(i => ({ text: i, value: i }));
+  return Array.from(uniqueItems).sort((a, b) => sortFn(a, b)).map(i => ({ text: i, value: i }));
 };
 
 export async function querySparql(

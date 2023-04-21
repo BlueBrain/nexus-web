@@ -5,19 +5,20 @@ import { RenderResult, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
-  MOCK_VAR,
-  ORIGINAL_1_SORTED_2,
-  ORIGINAL_2_SORTED_1,
-  ORIGINAL_3_SORTED_3,
-  ORIGINAL_4_SORTED_4,
-  ORIGINAL_5_SORTED_6,
-  ORIGINAL_6_SORTED_5,
-  dashboardResource,
-  dashboardVocabulary,
-  sparqlViewSingleResult,
+    MOCK_VAR,
+    ORIGINAL_1_SORTED_2,
+    ORIGINAL_2_SORTED_1,
+    ORIGINAL_3_SORTED_3,
+    ORIGINAL_4_SORTED_4,
+    ORIGINAL_5_SORTED_6,
+    ORIGINAL_6_SORTED_5,
+    dashboardResource,
+    dashboardVocabulary,
+    sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { createMemoryHistory } from 'history';
+import { Simulate } from 'react-dom/test-utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Router } from 'react-router-dom';
 import { cleanup, render, screen, server, waitFor } from '../../utils/testUtil';
@@ -178,18 +179,18 @@ describe('DataTableContainer.spec.tsx', () => {
     expect(familyNameFilter).not.toBeInTheDocument();
   });
 
-  it('filters rows based on user input', async () => {
+  it('filters rows based on user input, ignoring case', async () => {
     const givenNameFilter = await filterButtonForColumn('Given Name');
     await user.click(givenNameFilter!);
 
-    const filterInput = await waitFor(() => {
-      return screen.findByPlaceholderText('Filter Given Name');
+    const filterMenuOption = await waitFor(() => {
+      return within(screen.getByRole('menu')).getByText('sterling')
     });
+    // NOTE: unfortunately using `userEvent.click(filterMenuOption` does not work because antd dropdown does not have the right css rules to allow pointer events.
+    Simulate.click(filterMenuOption)
 
-    await user.type(filterInput, 'sterling');
-
-    const submitFilter = screen.getByRole('button', { name: 'Filter' });
-    await user.click(submitFilter);
+    const submitFilter = screen.getByRole('button', { name: 'OK' });
+    Simulate.click(submitFilter)
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_4_SORTED_4,

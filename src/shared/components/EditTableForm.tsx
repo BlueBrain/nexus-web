@@ -35,6 +35,7 @@ import {
   UnsavedTableResource,
 } from '../containers/DataTableContainer';
 import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
+import { isNil } from 'lodash';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -283,7 +284,9 @@ const EditTableForm: React.FC<{
     },
     {
       onSuccess: data => {
-        setConfiguration(data);
+        if (isNil(configuration)) {
+          setConfiguration(data);
+        }
       },
       onError: error => {
         console.error(error);
@@ -406,7 +409,6 @@ const EditTableForm: React.FC<{
       );
 
       currentConfig[columnIndex] = updatedColumn;
-
       setConfiguration(currentConfig);
     },
     [configuration]
@@ -418,7 +420,6 @@ const EditTableForm: React.FC<{
         ...configuration,
         ...data,
       };
-
       setConfiguration(updatedColumn);
     },
     [configuration]
