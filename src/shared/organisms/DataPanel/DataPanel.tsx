@@ -18,10 +18,10 @@ import {
   groupBy,
   flatMap,
   omit,
-  filter,
+  slice,
 } from 'lodash';
 import { animate, spring } from 'motion';
-import { Button, Checkbox, Table, Tag, notification } from 'antd';
+import { Button, Checkbox, Dropdown, Table, Tag, notification } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
 import { useMutation } from 'react-query';
@@ -32,6 +32,7 @@ import {
   CloseOutlined,
   CloseSquareOutlined,
   FileZipOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import {
   makeOrgProjectTuple,
@@ -113,7 +114,7 @@ async function downloadArchive({
   console.log('@@resourcesPayload', resourcesPayload);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+  } catch (error) { }
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -136,7 +137,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -344,7 +345,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             // resource.type === 'File' ? 'File' : 'Resource',
@@ -358,7 +359,37 @@ const DataPanel: React.FC<Props> = ({}) => {
       });
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
+  const handleFileTypeChange = (e: CheckboxChangeEvent) => {
+    if (e.target.checked) {
+      setTypes(state => [...state, e.target.value]);
+    } else {
+      setTypes(types.filter(t => t !== e.target.value));
+    }
+  };
   const existedTypes = compact(Object.keys(resourcesGrouped));
+  const typesCounter = compact(
+    Object.entries(resourcesGrouped)
+      .map(([key, value]) => key ? ({ [key]: value.length }) : null)
+  );
+  const displayedTypes = slice(typesCounter, 0, 1);
+  const dropdownTypes = slice(typesCounter, 1);
+  const typesMenu = dropdownTypes.map(item => {
+    const key = Object.keys(item)[0];
+    const value = item[key];
+    return ({
+      key: `type-${key}`,
+      label: (
+        <Checkbox
+          value={key}
+          checked={types.includes(key)}
+          onChange={handleFileTypeChange}
+          className='types-extra-checkbox'
+        >
+          {`${toUpper(key)} (${value})`}
+        </Checkbox>
+      )
+    })
+  });
   const resultsObject = useMemo(() => {
     if (types.length) {
       return flatMap(
@@ -378,13 +409,7 @@ const DataPanel: React.FC<Props> = ({}) => {
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
   );
-  const handleFileTypeChange = (e: CheckboxChangeEvent) => {
-    if (e.target.checked) {
-      setTypes(state => [...state, e.target.value]);
-    } else {
-      setTypes(types.filter(t => t !== e.target.value));
-    }
-  };
+
   const parsedData: ParsedNexusUrl | undefined = resourcesPayload.length
     ? parseURL(resourcesPayload.find(item => !!item._self)?._self as string)
     : undefined;
@@ -479,11 +504,35 @@ const DataPanel: React.FC<Props> = ({}) => {
         >
           {Boolean(existedTypes.length) && (
             <div className="download-filetypes">
-              {existedTypes.map(ext => (
-                <Checkbox value={ext} onChange={handleFileTypeChange}>
-                  {toUpper(ext)}
-                </Checkbox>
-              ))}
+              <div className='download-filetypes-first'>
+                {displayedTypes.map((item) => {
+                  const key = Object.keys(item)[0];
+                  const value = item[key];
+                  return (
+                    <Checkbox
+                      key={`type-${key}`}
+                      value={key}
+                      checked={types.includes(key)}
+                      onChange={handleFileTypeChange}
+                    >
+                      {`${toUpper(key)} (${value})`}
+                    </Checkbox>
+                  )
+                })}
+                {dropdownTypes.length && <Dropdown
+                  placement="topRight"
+                  arrow={false}
+                  trigger={['click']}
+                  menu={{ items: typesMenu }}
+                  overlayClassName='types-dropdown'
+                  destroyPopupOnHide={true}
+                >
+                  <Button
+                    type='link'
+                    icon={<PlusOutlined style={{ color: 'white' }} />}
+                  />
+                </Dropdown>}
+              </div>
             </div>
           )}
           {Boolean(totalSize) && (

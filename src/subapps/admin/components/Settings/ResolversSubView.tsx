@@ -4,12 +4,13 @@ import { Table, Button, Row, Input, Col, notification, Alert } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import ReactJson from 'react-json-view';
 import { easyValidURL } from '../../../../utils/validUrl';
 import './styles.less';
+import { Link } from 'react-router-dom';
 
 type Props = {};
 type TDataType = {
@@ -87,7 +88,8 @@ const fetchResourceByResolver = async ({
 const ResolversSubView = (props: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const [query, setQuery] = useState<string>('');
+  const location = useLocation();
+  const [selectedResource, setSelctedResource] = useState<string>('');
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -151,8 +153,6 @@ const ResolversSubView = (props: Props) => {
     queryFn: () => fetchResolvers({ nexus, orgLabel, projectLabel }),
   });
 
-  const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = e =>
-    setQuery(e.target.value);
   const {
     mutateAsync: resolveResourceByID,
     error,
@@ -162,15 +162,17 @@ const ResolversSubView = (props: Props) => {
   const handleSubmitResolve: React.FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const resourceId = data.get('resourceId') as string;
+    const resourceUri = data.get('resourceId') as string;
+    const resourceId = easyValidURL(resourceUri)
+      ? encodeURIComponent(resourceUri)
+      : resourceUri;
+    setSelctedResource(resourceId);
     resolveResourceByID(
       {
         nexus,
         orgLabel,
         projectLabel,
-        resourceId: easyValidURL(resourceId)
-          ? encodeURIComponent(resourceId)
-          : resourceId,
+        resourceId,
       },
       {
         onError: error => {
@@ -231,9 +233,13 @@ const ResolversSubView = (props: Props) => {
               <Alert
                 type="success"
                 message="Resource resolved successfully"
+                description={<Button type='link' onClick={() => {
+                  history.push(`/${orgLabel}/${projectLabel}/resources/${selectedResource}`, { background: location });
+                }}>open resource</Button>}
                 style={{ marginBottom: 10 }}
               />
               <ReactJson
+                collapsed
                 name={data!['@id']}
                 src={data as object}
                 enableClipboard={false}
@@ -253,16 +259,16 @@ const ResolversSubView = (props: Props) => {
                 style={{ marginBottom: 10 }}
               />
               {// @ts-ignore
-              isObject(error.cause) && (
-                <ReactJson
-                  name="Error"
-                  // @ts-ignore
-                  src={error.cause}
-                  enableClipboard={false}
-                  displayObjectSize={false}
-                  displayDataTypes={false}
-                />
-              )}
+                isObject(error.cause) && (
+                  <ReactJson
+                    name="Error"
+                    // @ts-ignore
+                    src={error.cause}
+                    enableClipboard={false}
+                    displayObjectSize={false}
+                    displayDataTypes={false}
+                  />
+                )}
             </>
           )}
         </div>

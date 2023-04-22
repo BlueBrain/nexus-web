@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { AutoComplete } from 'antd';
+import { AutoComplete, Tooltip } from 'antd';
 
 import { TypesIcon } from '../Types/TypesIcon';
 
@@ -12,12 +12,14 @@ export const TypeDropdownItem: React.FunctionComponent<{
 }> = ({ count, key, label }) => {
   return (
     <Option key={key} value={key} title={label}>
-      <div className="drop-option">
-        <div className="label">
-          <span className="count">({count})</span> {label}
+      <Tooltip title={key} placement='topRight'>
+        <div className="drop-option">
+          <div className="label">
+            <span className="count">({count})</span> {label}
+          </div>
+          {/* <TypesIcon type={label} /> */}
         </div>
-        <TypesIcon type={label} />
-      </div>
+      </Tooltip>
     </Option>
   );
 };
