@@ -179,7 +179,7 @@ export const useInfiniteProjectsQuery = ({
     isFetching,
   };
 };
-const ProjectsPage: React.FC<TProps> = ({ }) => {
+const ProjectsPage: React.FC<TProps> = ({}) => {
   const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -244,11 +244,13 @@ const ProjectsPage: React.FC<TProps> = ({ }) => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  const LoadMore = <LoadMoreFooter
-    {... { hasNextPage, fetchNextPage }}
-    loading={isFetchingNextPage || isFetching || isLoading}
-    ref={loadMoreRef}
-  />
+  const LoadMore = (
+    <LoadMoreFooter
+      {...{ hasNextPage, fetchNextPage }}
+      loading={isFetchingNextPage || isFetching || isLoading}
+      ref={loadMoreRef}
+    />
+  );
   return (
     <div className="main-route">
       <PinnedMenu />
@@ -257,7 +259,7 @@ const ProjectsPage: React.FC<TProps> = ({ }) => {
         extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
         alt="hippocampus"
         bg={require('../../shared/images/hippocampus.png')}
-        createLabel='Create Project'
+        createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}
       />

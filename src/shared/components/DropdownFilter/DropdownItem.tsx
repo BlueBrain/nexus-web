@@ -12,7 +12,7 @@ export const TypeDropdownItem: React.FunctionComponent<{
 }> = ({ count, key, label }) => {
   return (
     <Option key={key} value={key} title={label}>
-      <Tooltip title={key} placement='topRight'>
+      <Tooltip title={key} placement="topRight">
         <div className="drop-option">
           <div className="label">
             <span className="count">({count})</span> {label}

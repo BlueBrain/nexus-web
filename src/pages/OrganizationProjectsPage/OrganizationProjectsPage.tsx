@@ -227,7 +227,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
+const OrganizationProjectsPage: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
@@ -311,11 +311,13 @@ const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
       });
     }
   }, []);
-  const LoadMore = <LoadMoreFooter
-    {... { hasNextPage, fetchNextPage }}
-    loading={isFetchingNextPage || isFetching || isLoading}
-    ref={loadMoreRef}
-  />
+  const LoadMore = (
+    <LoadMoreFooter
+      {...{ hasNextPage, fetchNextPage }}
+      loading={isFetchingNextPage || isFetching || isLoading}
+      ref={loadMoreRef}
+    />
+  );
 
   return (
     <Fragment>

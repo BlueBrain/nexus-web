@@ -210,11 +210,13 @@ const FusionStudiosPage: React.FC = () => {
     isFetching,
   } = useInfiniteStudiosQuery({ nexus, query, sort });
 
-  const LoadMore = <LoadMoreFooter
-    {... { hasNextPage, fetchNextPage }}
-    loading={isFetchingNextPage || isFetching || isLoading}
-    ref={loadMoreRef}
-  />
+  const LoadMore = (
+    <LoadMoreFooter
+      {...{ hasNextPage, fetchNextPage }}
+      loading={isFetchingNextPage || isFetching || isLoading}
+      ref={loadMoreRef}
+    />
+  );
   const dataSource = flatten(
     // @ts-ignore
     data?.pages.map((page: ResourceList<{}>) =>

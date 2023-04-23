@@ -64,14 +64,15 @@ const TypeDropdownFilterContainer: React.FunctionComponent<{
     queryFn: () => fetchESVTypes({ nexus, orgLabel, projectLabel, deprecated }),
     refetchOnWindowFocus: true,
   });
-  const buckets = (data &&
-    data.aggregations.types.filteredByDeprecation.buckets.map(
-      ({ doc_count, key }: { doc_count: number; key: string }) => ({
-        key,
-        count: doc_count,
-      })
-    )) ||
-    []
+  const buckets =
+    (data &&
+      data.aggregations.types.filteredByDeprecation.buckets.map(
+        ({ doc_count, key }: { doc_count: number; key: string }) => ({
+          key,
+          count: doc_count,
+        })
+      )) ||
+    [];
   return (
     <DropdownFilter
       buckets={buckets}

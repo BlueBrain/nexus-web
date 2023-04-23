@@ -114,7 +114,7 @@ async function downloadArchive({
   console.log('@@resourcesPayload', resourcesPayload);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) { }
+  } catch (error) {}
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -137,7 +137,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -345,7 +345,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-                Boolean(resource.distribution?.contentSize)
+              Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             // resource.type === 'File' ? 'File' : 'Resource',
@@ -368,27 +368,28 @@ const DataPanel: React.FC<Props> = ({ }) => {
   };
   const existedTypes = compact(Object.keys(resourcesGrouped));
   const typesCounter = compact(
-    Object.entries(resourcesGrouped)
-      .map(([key, value]) => key ? ({ [key]: value.length }) : null)
+    Object.entries(resourcesGrouped).map(([key, value]) =>
+      key ? { [key]: value.length } : null
+    )
   );
   const displayedTypes = slice(typesCounter, 0, 1);
   const dropdownTypes = slice(typesCounter, 1);
   const typesMenu = dropdownTypes.map(item => {
     const key = Object.keys(item)[0];
     const value = item[key];
-    return ({
+    return {
       key: `type-${key}`,
       label: (
         <Checkbox
           value={key}
           checked={types.includes(key)}
           onChange={handleFileTypeChange}
-          className='types-extra-checkbox'
+          className="types-extra-checkbox"
         >
           {`${toUpper(key)} (${value})`}
         </Checkbox>
-      )
-    })
+      ),
+    };
   });
   const resultsObject = useMemo(() => {
     if (types.length) {
@@ -504,8 +505,8 @@ const DataPanel: React.FC<Props> = ({ }) => {
         >
           {Boolean(existedTypes.length) && (
             <div className="download-filetypes">
-              <div className='download-filetypes-first'>
-                {displayedTypes.map((item) => {
+              <div className="download-filetypes-first">
+                {displayedTypes.map(item => {
                   const key = Object.keys(item)[0];
                   const value = item[key];
                   return (
@@ -517,21 +518,23 @@ const DataPanel: React.FC<Props> = ({ }) => {
                     >
                       {`${toUpper(key)} (${value})`}
                     </Checkbox>
-                  )
+                  );
                 })}
-                {dropdownTypes.length && <Dropdown
-                  placement="topRight"
-                  arrow={false}
-                  trigger={['click']}
-                  menu={{ items: typesMenu }}
-                  overlayClassName='types-dropdown'
-                  destroyPopupOnHide={true}
-                >
-                  <Button
-                    type='link'
-                    icon={<PlusOutlined style={{ color: 'white' }} />}
-                  />
-                </Dropdown>}
+                {dropdownTypes.length && (
+                  <Dropdown
+                    placement="topRight"
+                    arrow={false}
+                    trigger={['click']}
+                    menu={{ items: typesMenu }}
+                    overlayClassName="types-dropdown"
+                    destroyPopupOnHide={true}
+                  >
+                    <Button
+                      type="link"
+                      icon={<PlusOutlined style={{ color: 'white' }} />}
+                    />
+                  </Dropdown>
+                )}
               </div>
             </div>
           )}

@@ -106,8 +106,8 @@ export const useInfiniteOrganizationQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewOrganizationList)._next
         ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get(
-          'from'
-        )
+            'from'
+          )
         : undefined,
   });
   return {
@@ -162,11 +162,11 @@ const OrganizationItem = ({
   );
 };
 
-export const LoadMoreFooter = forwardRef<HTMLDivElement, { hasNextPage?: boolean, loading: boolean, fetchNextPage(): void }>(
-  (
-    { hasNextPage, loading, fetchNextPage, },
-    ref
-  ) => hasNextPage ? (
+export const LoadMoreFooter = forwardRef<
+  HTMLDivElement,
+  { hasNextPage?: boolean; loading: boolean; fetchNextPage(): void }
+>(({ hasNextPage, loading, fetchNextPage }, ref) =>
+  hasNextPage ? (
     <div
       className="infinitfetch-loader"
       ref={ref}
@@ -178,7 +178,7 @@ export const LoadMoreFooter = forwardRef<HTMLDivElement, { hasNextPage?: boolean
   ) : null
 );
 
-const OrganizationListView: React.FC<Props> = ({ }) => {
+const OrganizationListView: React.FC<Props> = ({}) => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -248,11 +248,13 @@ const OrganizationListView: React.FC<Props> = ({ }) => {
       });
     }
   }, []);
-  const LoadMore = <LoadMoreFooter
-    {... { hasNextPage, fetchNextPage }}
-    loading={isFetchingNextPage || isFetching || isLoading}
-    ref={loadMoreRef}
-  />
+  const LoadMore = (
+    <LoadMoreFooter
+      {...{ hasNextPage, fetchNextPage }}
+      loading={isFetchingNextPage || isFetching || isLoading}
+      ref={loadMoreRef}
+    />
+  );
   return (
     <Fragment>
       <div className="main-route">

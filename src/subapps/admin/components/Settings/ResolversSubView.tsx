@@ -233,9 +233,19 @@ const ResolversSubView = (props: Props) => {
               <Alert
                 type="success"
                 message="Resource resolved successfully"
-                description={<Button type='link' onClick={() => {
-                  history.push(`/${orgLabel}/${projectLabel}/resources/${selectedResource}`, { background: location });
-                }}>open resource</Button>}
+                description={
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      history.push(
+                        `/${orgLabel}/${projectLabel}/resources/${selectedResource}`,
+                        { background: location }
+                      );
+                    }}
+                  >
+                    open resource
+                  </Button>
+                }
                 style={{ marginBottom: 10 }}
               />
               <ReactJson
@@ -259,16 +269,16 @@ const ResolversSubView = (props: Props) => {
                 style={{ marginBottom: 10 }}
               />
               {// @ts-ignore
-                isObject(error.cause) && (
-                  <ReactJson
-                    name="Error"
-                    // @ts-ignore
-                    src={error.cause}
-                    enableClipboard={false}
-                    displayObjectSize={false}
-                    displayDataTypes={false}
-                  />
-                )}
+              isObject(error.cause) && (
+                <ReactJson
+                  name="Error"
+                  // @ts-ignore
+                  src={error.cause}
+                  enableClipboard={false}
+                  displayObjectSize={false}
+                  displayDataTypes={false}
+                />
+              )}
             </>
           )}
         </div>
