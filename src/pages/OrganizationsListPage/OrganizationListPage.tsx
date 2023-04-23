@@ -1,5 +1,6 @@
 import React, {
   Fragment,
+  forwardRef,
   useEffect,
   useReducer,
   useRef,
@@ -105,8 +106,8 @@ export const useInfiniteOrganizationQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewOrganizationList)._next
         ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get(
-            'from'
-          )
+          'from'
+        )
         : undefined,
   });
   return {
@@ -160,7 +161,24 @@ const OrganizationItem = ({
     </List.Item>
   );
 };
-const OrganizationListView: React.FC<Props> = ({}) => {
+
+export const LoadMoreFooter = forwardRef<HTMLDivElement, { hasNextPage?: boolean, loading: boolean, fetchNextPage(): void }>(
+  (
+    { hasNextPage, loading, fetchNextPage, },
+    ref
+  ) => hasNextPage ? (
+    <div
+      className="infinitfetch-loader"
+      ref={ref}
+      onClick={() => fetchNextPage()}
+    >
+      <Spin spinning={loading} />
+      <span>Loading more</span>
+    </div>
+  ) : null
+);
+
+const OrganizationListView: React.FC<Props> = ({ }) => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -230,16 +248,11 @@ const OrganizationListView: React.FC<Props> = ({}) => {
       });
     }
   }, []);
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
+  const LoadMore = <LoadMoreFooter
+    {... { hasNextPage, fetchNextPage }}
+    loading={isFetchingNextPage || isFetching || isLoading}
+    ref={loadMoreRef}
+  />
   return (
     <Fragment>
       <div className="main-route">
@@ -297,7 +310,7 @@ const OrganizationListView: React.FC<Props> = ({}) => {
                   <div className="route-result-list">
                     <List
                       itemLayout="horizontal"
-                      loadMore={loadMoreFooter}
+                      loadMore={LoadMore}
                       dataSource={dataSource}
                       renderItem={(item: OrgResponseCommon) => {
                         const to = `/orgs/${item._label}/`;

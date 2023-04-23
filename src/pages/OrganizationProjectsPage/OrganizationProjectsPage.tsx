@@ -34,6 +34,7 @@ import timeago from '../../utils//timeago';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
 import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
 import formatNumber from '../../utils/formatNumber';
+import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
 
 import '../../shared/styles/route-layout.less';
 
@@ -226,7 +227,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<Props> = ({}) => {
+const OrganizationProjectsPage: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
@@ -310,16 +311,12 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
       });
     }
   }, []);
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
+  const LoadMore = <LoadMoreFooter
+    {... { hasNextPage, fetchNextPage }}
+    loading={isFetchingNextPage || isFetching || isLoading}
+    ref={loadMoreRef}
+  />
+
   return (
     <Fragment>
       <div className="main-route">
@@ -330,8 +327,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
             total ? `Total of ${total} ${pluralize('Project', total)}` : ''
           }
           alt="hippocampus"
-          bg={require('../../shared/images/projects-bg.png')}
-          imgCss={{ width: '75.4%' }}
+          bg={require('../../shared/images/hippocampus.png')}
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}
@@ -381,7 +377,7 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
                   <Spin spinning={isLoading}>
                     <List
                       itemLayout="horizontal"
-                      loadMore={loadMoreFooter}
+                      loadMore={LoadMore}
                       dataSource={dataSource}
                       renderItem={(item: ProjectResponseCommon) => {
                         const to = `/orgs/${item._organizationLabel}/${item._label}`;

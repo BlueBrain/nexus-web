@@ -27,6 +27,8 @@ import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
+import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
+
 import timeago from '../../utils/timeago';
 import '../../shared/styles/route-layout.less';
 
@@ -207,17 +209,12 @@ const FusionStudiosPage: React.FC = () => {
     isLoading,
     isFetching,
   } = useInfiniteStudiosQuery({ nexus, query, sort });
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
 
+  const LoadMore = <LoadMoreFooter
+    {... { hasNextPage, fetchNextPage }}
+    loading={isFetchingNextPage || isFetching || isLoading}
+    ref={loadMoreRef}
+  />
   const dataSource = flatten(
     // @ts-ignore
     data?.pages.map((page: ResourceList<{}>) =>
@@ -254,8 +251,7 @@ const FusionStudiosPage: React.FC = () => {
           title="Studios"
           extra={total ? `Total of ${total} ${pluralize('Studio', total)}` : ''}
           alt="hippocampus"
-          bg={require('../../shared/images/studios-bg.png')}
-          imgCss={{ width: '77.65%' }}
+          bg={require('../../shared/images/neocortex.png')}
           createLabel="Create Studio"
           onCreateClick={() => dispatch(updateStudioModalVisibility(true))}
         />
@@ -299,7 +295,7 @@ const FusionStudiosPage: React.FC = () => {
                   <div className="route-result-list">
                     <List
                       itemLayout="horizontal"
-                      loadMore={loadMoreFooter}
+                      loadMore={LoadMore}
                       dataSource={dataSource}
                       renderItem={item => {
                         const { orgLabel, projectLabel, id } = item;

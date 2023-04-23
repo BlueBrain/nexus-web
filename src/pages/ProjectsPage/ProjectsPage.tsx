@@ -1,6 +1,7 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   RightSquareOutlined,
@@ -17,12 +18,14 @@ import { flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import * as pluralize from 'pluralize';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
+import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils/timeago';
 import formatNumber from '../../utils/formatNumber';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
 
 import '../../shared/styles/route-layout.less';
 
@@ -176,7 +179,8 @@ export const useInfiniteProjectsQuery = ({
     isFetching,
   };
 };
-const ProjectsPage: React.FC<TProps> = ({}) => {
+const ProjectsPage: React.FC<TProps> = ({ }) => {
+  const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -192,6 +196,12 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
       sort: TSort[0],
     }
   );
+  const updateCreateModelVisibility = (payload?: boolean) => {
+    dispatch({
+      payload,
+      type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+    });
+  };
   const {
     data,
     error,
@@ -234,16 +244,11 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  const loadMoreFooter = hasNextPage && (
-    <div
-      className="infinitfetch-loader"
-      ref={loadMoreRef}
-      onClick={() => fetchNextPage()}
-    >
-      <Spin spinning={isFetchingNextPage || isFetching || isLoading} />
-      <span>Loading more</span>
-    </div>
-  );
+  const LoadMore = <LoadMoreFooter
+    {... { hasNextPage, fetchNextPage }}
+    loading={isFetchingNextPage || isFetching || isLoading}
+    ref={loadMoreRef}
+  />
   return (
     <div className="main-route">
       <PinnedMenu />
@@ -252,7 +257,9 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
         extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
         alt="hippocampus"
         bg={require('../../shared/images/hippocampus.png')}
-        imgCss={{ width: '75.4%' }}
+        createLabel='Create Project'
+        onCreateClick={() => updateCreateModelVisibility(true)}
+        permissions={['projects/create']}
       />
       <div className="route-body">
         <div className="route-body-container">
@@ -295,7 +302,7 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
                 <div className="route-result-list">
                   <List
                     itemLayout="horizontal"
-                    loadMore={loadMoreFooter}
+                    loadMore={LoadMore}
                     dataSource={dataSource}
                     renderItem={(item: ProjectResponseCommon) => {
                       const to = `/orgs/${item._organizationLabel}/${item._label}`;
