@@ -210,8 +210,7 @@ const ImagePreview: React.FC<Props> = ({
           pagination: {
             pageSize: 3,
             current: currentListPage,
-            onChange: (page: number) =>
-              setCurrentListPage(page),
+            onChange: (page: number) => setCurrentListPage(page),
           },
         }
       : {
@@ -292,7 +291,6 @@ const ImagePreview: React.FC<Props> = ({
               {status === 'success' && (
                 <List
                   {...type}
-                  
                   dataSource={dataSource}
                   renderItem={item =>
                     displayOption === 'list' ? (
@@ -334,7 +332,7 @@ const ImagePreview: React.FC<Props> = ({
                             }}
                             style={{
                               maxWidth: '100%',
-                              width: '100%'
+                              width: '100%',
                             }}
                           />
                           <Button

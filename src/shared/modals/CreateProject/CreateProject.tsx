@@ -111,7 +111,7 @@ const createProjectMutation = async ({
   }
 };
 
-const CreateProject: React.FC<{}> = ({ }) => {
+const CreateProject: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();
@@ -215,7 +215,14 @@ const CreateProject: React.FC<{}> = ({ }) => {
   const apiMappingsItems = prefixMappingKeys.activeKeys.map(
     (key: number, index: number) => (
       <Form.Item key={key}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 10,
+          }}
+        >
           <PrefixMappingGroupInput
             groupId={key}
             value={{
@@ -258,7 +265,11 @@ const CreateProject: React.FC<{}> = ({ }) => {
           initialValue={orgLabel}
           required
         >
-          <Select placeholder="Select organization" loading={isLoading} defaultValue={orgLabel}>
+          <Select
+            placeholder="Select organization"
+            loading={isLoading}
+            defaultValue={orgLabel}
+          >
             {organizations?._results.map(org => (
               <Select.Option value={org._label} key={org['@id']}>
                 {org._label}
