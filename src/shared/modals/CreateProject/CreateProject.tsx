@@ -111,7 +111,7 @@ const createProjectMutation = async ({
   }
 };
 
-const CreateProject: React.FC<{}> = ({}) => {
+const CreateProject: React.FC<{}> = ({ }) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();
@@ -215,7 +215,7 @@ const CreateProject: React.FC<{}> = ({}) => {
   const apiMappingsItems = prefixMappingKeys.activeKeys.map(
     (key: number, index: number) => (
       <Form.Item key={key}>
-        <div className="project-form__form-item">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
           <PrefixMappingGroupInput
             groupId={key}
             value={{
@@ -255,10 +255,10 @@ const CreateProject: React.FC<{}> = ({}) => {
           {...formItemLayout}
           label="Orgnanization"
           name="organization"
-          initialValue={''}
+          initialValue={orgLabel}
           required
         >
-          <Select placeholder="Select organization" loading={isLoading}>
+          <Select placeholder="Select organization" loading={isLoading} defaultValue={orgLabel}>
             {organizations?._results.map(org => (
               <Select.Option value={org._label} key={org['@id']}>
                 {org._label}
@@ -316,7 +316,7 @@ const CreateProject: React.FC<{}> = ({}) => {
         <Collapse style={{ margin: '0 -24px' }} bordered={false} ghost>
           <Collapse.Panel header="Advanced settings" key="1">
             <h4>
-              API Mappings{' '}
+              API Mappings
               <PlusCircleOutlined
                 onClick={add}
                 style={{ marginLeft: 20, color: 'blue' }}
@@ -325,19 +325,17 @@ const CreateProject: React.FC<{}> = ({}) => {
             {apiMappingsItems}
           </Collapse.Panel>
         </Collapse>
-        <Form.Item>
-          <Row justify="end" gutter={16}>
-            <Col>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={status === 'loading'}
-              >
-                Create
-              </Button>
-            </Col>
-          </Row>
-        </Form.Item>
+        <Row justify="end" gutter={16}>
+          <Col>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={status === 'loading'}
+            >
+              Create
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );

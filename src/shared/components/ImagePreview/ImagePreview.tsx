@@ -210,20 +210,12 @@ const ImagePreview: React.FC<Props> = ({
           pagination: {
             pageSize: 3,
             current: currentListPage,
-            onChange: (page: number, pageSize?: number | undefined) =>
+            onChange: (page: number) =>
               setCurrentListPage(page),
           },
         }
       : {
-          grid: {
-            gutter: 16,
-            xs: 1,
-            sm: 2,
-            md: 4,
-            lg: 4,
-            xl: 6,
-            xxl: 3,
-          },
+          grid: { gutter: 16 },
           pagination: {
             pageSize: 6,
             current: currentListPage,
@@ -300,6 +292,7 @@ const ImagePreview: React.FC<Props> = ({
               {status === 'success' && (
                 <List
                   {...type}
+                  
                   dataSource={dataSource}
                   renderItem={item =>
                     displayOption === 'list' ? (
@@ -338,6 +331,10 @@ const ImagePreview: React.FC<Props> = ({
                               maskStyle: {
                                 'background-color': 'rgba(0, 0, 0, 0.75)',
                               },
+                            }}
+                            style={{
+                              maxWidth: '100%',
+                              width: '100%'
                             }}
                           />
                           <Button

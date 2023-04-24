@@ -21,7 +21,7 @@ import {
   slice,
 } from 'lodash';
 import { animate, spring } from 'motion';
-import { Button, Checkbox, Dropdown, Table, Tag, notification } from 'antd';
+import { Button, Checkbox, Dropdown, Table, Tag, message, notification } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
 import { useMutation } from 'react-query';
@@ -114,7 +114,7 @@ async function downloadArchive({
   console.log('@@resourcesPayload', resourcesPayload);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+  } catch (error) { }
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -137,7 +137,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -290,13 +290,13 @@ const DataPanel: React.FC<Props> = ({}) => {
       animate(
         datapanelRef.current,
         {
-          height: '500px',
+          height: 'calc(100vh/2 - 100px)',
           display: 'flex',
           opacity: 1,
         },
         {
-          duration: 2,
-          easing: spring(),
+          duration: .3,
+          easing: 'ease-out',
         }
       );
     }
@@ -345,7 +345,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             // resource.type === 'File' ? 'File' : 'Resource',
@@ -417,6 +417,7 @@ const DataPanel: React.FC<Props> = ({}) => {
   const { mutateAsync: downloadSelectedResource, status } = useMutation(
     downloadArchive
   );
+  const archivePermissionPath = `${parsedData?.org}/${parsedData?.project}`;
   const handleDownloadResourcesArchive = () => {
     if (parsedData) {
       downloadSelectedResource(
@@ -550,15 +551,23 @@ const DataPanel: React.FC<Props> = ({}) => {
             noAccessComponent={() => <div>Have not access</div>}
           >
             <div className="download-btn">
-              <Button
-                type="link"
-                onClick={handleDownloadResourcesArchive}
-                loading={status === 'loading'}
-                download={`data-cart-${uuidv4()}.tar`}
+              <AccessControl
+                permissions={['archives/write']}
+                path={archivePermissionPath}
+                noAccessComponent={() =>
+                  message.error('You do not have permissions to download archive')
+                }
               >
-                <DownloadOutlined />
-                Download
-              </Button>
+                <Button
+                  type="link"
+                  onClick={handleDownloadResourcesArchive}
+                  loading={status === 'loading'}
+                  download={`data-cart-${uuidv4()}.tar`}
+                >
+                  <DownloadOutlined />
+                  Download
+                </Button>
+              </AccessControl>
             </div>
           </AccessControl>
         </div>

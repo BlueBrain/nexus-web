@@ -145,7 +145,6 @@ const CreateStudio = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { data: pluginManifest } = usePlugins();
-  const formRef = React.createRef<FormInstance>();
   const [form] = useForm();
   const basePath = useSelector((state: RootState) => state.config.basePath);
   const { identities } = useSelector((state: RootState) => state.auth);

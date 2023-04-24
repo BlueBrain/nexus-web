@@ -1,6 +1,6 @@
 import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
-import { Table, Tag } from 'antd';
-import { Link, useHistory } from 'react-router-dom';
+import { Button, Table, Tag, Tooltip } from 'antd';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { difference, differenceBy, union } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
@@ -12,22 +12,23 @@ import {
 } from '../../organisms/DataPanel/DataPanel';
 import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
+import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
 
 type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
+  | string
+  | (
     | string
-    | (
-        | string
-        | {
-            [key: string]: any;
-          }
-      )[]
     | {
-        [key: string]: any;
-      };
+      [key: string]: any;
+    }
+  )[]
+  | {
+    [key: string]: any;
+  };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -98,6 +99,7 @@ const MyDataTable: React.FC<TProps> = ({
   total,
 }) => {
   const history = useHistory();
+  const location = useLocation();
   const [{ selectedRowKeys }, updateTableData] = useReducer(
     (
       previous: TResourceTableData,
@@ -127,20 +129,23 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'Name',
         dataIndex: 'name',
         fixed: true,
-        sorter: (a, b) => a.name.length - b.name.length,
         render: (text, record) => {
+          const showedText = isValidUrl(text) ? text.split('/').pop() : text;
           if (text && record.resource?._project) {
             const { org, project } = makeOrgProjectTuple(
               record.resource._project
             );
-            const uri = makeResourceUri(org, project, text);
             return (
-              <Fragment>
-                <Link to={uri}>{text}</Link>
-              </Fragment>
+              <Tooltip title={text}>
+                <Button style={{ padding: 0 }} type='link' onClick={() => goToResource(org, project, text)}>
+                  {showedText}
+                </Button>
+              </Tooltip>
             );
           }
-          return text;
+          return (<Tooltip title={text}>
+            {showedText}
+          </Tooltip>)
         },
       },
       {
