@@ -20,16 +20,16 @@ type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
-  | string
-  | (
     | string
+    | (
+        | string
+        | {
+            [key: string]: any;
+          }
+      )[]
     | {
-      [key: string]: any;
-    }
-  )[]
-  | {
-    [key: string]: any;
-  };
+        [key: string]: any;
+      };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -97,18 +97,23 @@ export const getLocalStorageSize = () => {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     const value = localStorage.getItem(key!);
-    size += (key!.length + value!.length) * 2; // Multiply by 2 to account for UTF-16 encoding
+    size = size + (key!.length + value!.length) * 2; // Multiply by 2 to account for UTF-16 encoding
   }
   size = size / 1048576;
   return size;
-}
+};
 export const notifyTotalSizeExeeced = () => {
   return notification.warning({
-    message: <div>The selected items has exceed the maximum size allowed or <br/> local storage size will reduce the performance of your app</div>,
+    message: (
+      <div>
+        The selected items has exceed the maximum size allowed or <br /> local
+        storage size will reduce the performance of your app
+      </div>
+    ),
     description: <em>Maximum size must be lower or equal than 1GB</em>,
-    key: 'data-panel-size-exceeded'
+    key: 'data-panel-size-exceeded',
   });
-}
+};
 const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
   isLoading,
@@ -267,7 +272,10 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
       selectedRows = selectedRows.filter(t => t.key !== record.key);
     }
-    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    const size = selectedRows.reduce(
+      (acc, item) => acc + (item.distribution?.contentSize || 0),
+      0
+    );
     if (
       size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -316,7 +324,10 @@ const MyDataTable: React.FC<TProps> = ({
         changeRows.map(t => t.key)
       );
     }
-    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    const size = selectedRows.reduce(
+      (acc, item) => acc + (item.distribution?.contentSize || 0),
+      0
+    );
     console.log('@@size select multiple rows', size);
     if (
       size > MAX_DATA_SELECTED_ALLOWED_SIZE ||

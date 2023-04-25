@@ -161,7 +161,10 @@ const SearchContainer: React.FC = () => {
       selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
       selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
-    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    const size = selectedRows.reduce(
+      (acc, item) => acc + (item.distribution?.contentSize || 0),
+      0
+    );
     if (
       size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -222,7 +225,10 @@ const SearchContainer: React.FC = () => {
         changeRowsFormatted.map(t => t.key)
       );
     }
-    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    const size = selectedRows.reduce(
+      (acc, item) => acc + (item.distribution?.contentSize || 0),
+      0
+    );
     if (
       size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
