@@ -97,7 +97,7 @@ export const getLocalStorageSize = () => {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     const value = localStorage.getItem(key!);
-    size = size + (key!.length + value!.length) * 2; // Multiply by 2 to account for UTF-16 encoding
+    size = size + (key!.length + value!.length) * 2; //UTF-16
   }
   size = size / 1048576;
   return size;
