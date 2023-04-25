@@ -269,6 +269,7 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
             <div className="action-search">
               <Input.Search
                 allowClear
+                autoFocus
                 ref={queryInputRef}
                 value={query}
                 onChange={handleOnOrgSearch}

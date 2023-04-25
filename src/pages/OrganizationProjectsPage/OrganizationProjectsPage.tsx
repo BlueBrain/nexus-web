@@ -26,15 +26,15 @@ import { useDispatch } from 'react-redux';
 import * as pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
+import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
-import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
 import formatNumber from '../../utils/formatNumber';
-import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
 
 import '../../shared/styles/route-layout.less';
 
@@ -46,7 +46,6 @@ type NewOrg = {
   description?: string;
 };
 
-type Props = {};
 type TOrganizationOptions = {
   orgLabel: string;
 };
@@ -227,7 +226,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<Props> = ({}) => {
+const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
@@ -340,10 +339,11 @@ const OrganizationProjectsPage: React.FC<Props> = ({}) => {
               <div className="action-search">
                 <Input.Search
                   allowClear
+                  autoFocus
                   ref={queryInputRef}
                   value={query}
                   onChange={handleOnOrgSearch}
-                  placeholder="Search Organisation"
+                  placeholder="Search Project"
                   role="search"
                 />
               </div>

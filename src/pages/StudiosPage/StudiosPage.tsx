@@ -263,9 +263,10 @@ const FusionStudiosPage: React.FC = () => {
               <div className="action-search">
                 <Input.Search
                   allowClear
+                  autoFocus
                   value={query}
                   onChange={handleQueryStringChange}
-                  placeholder="Search studios"
+                  placeholder="Search studio"
                 />
               </div>
               <div className="action-sort">

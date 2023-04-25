@@ -64,12 +64,12 @@ const CreateOrganization: React.FC<{}> = () => {
       },
       {
         onSuccess: data => {
+          form.resetFields();
           notification.success({
             message: <strong>{data._label}</strong>,
             description: `Organisation has been created Successfully`,
-            duration: 5,
+            duration: 2,
             onClose: () => {
-              form.resetFields();
               history.push(`/${subapp.namespace}/${data._label}`);
             },
           });

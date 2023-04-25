@@ -276,6 +276,7 @@ const OrganizationListView: React.FC<Props> = ({}) => {
               <div className="action-search">
                 <Input.Search
                   allowClear
+                  autoFocus
                   ref={queryInputRef}
                   value={query}
                   onChange={handleOnOrgSearch}

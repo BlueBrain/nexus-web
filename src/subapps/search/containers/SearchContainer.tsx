@@ -17,8 +17,12 @@ import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfigContainer from './SortConfigContainer';
 import {
+  MAX_DATA_SELECTED_ALLOWED_SIZE,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
   TResourceTableData,
+  getLocalStorageSize,
+  notifyTotalSizeExeeced,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -157,6 +161,13 @@ const SearchContainer: React.FC = () => {
       selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
       selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    if (
+      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
+    }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
       JSON.stringify({
@@ -210,6 +221,13 @@ const SearchContainer: React.FC = () => {
         selectedRowKeys,
         changeRowsFormatted.map(t => t.key)
       );
+    }
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    if (
+      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

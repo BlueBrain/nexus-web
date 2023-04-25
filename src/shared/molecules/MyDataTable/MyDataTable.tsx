@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
-import { Button, Table, Tag, Tooltip } from 'antd';
+import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import { difference, differenceBy, union } from 'lodash';
@@ -14,21 +14,22 @@ import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
-
+export const MAX_DATA_SELECTED_ALLOWED_SIZE = 1073741824;
+export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
 type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
+  | string
+  | (
     | string
-    | (
-        | string
-        | {
-            [key: string]: any;
-          }
-      )[]
     | {
-        [key: string]: any;
-      };
+      [key: string]: any;
+    }
+  )[]
+  | {
+    [key: string]: any;
+  };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -42,6 +43,10 @@ type TResource = {
   _createdBy: string;
   _updatedAt: string;
   _updatedBy: string;
+};
+export type TResourceTableData = {
+  selectedRowKeys: React.Key[];
+  selectedRows: TDataSource[];
 };
 export type TDataSource = {
   source?: string;
@@ -77,10 +82,7 @@ export const makeOrgProjectTuple = (text: string) => {
     project,
   };
 };
-export type TResourceTableData = {
-  selectedRowKeys: React.Key[];
-  selectedRows: TDataSource[];
-};
+
 const makeResourceUri = (
   orgLabel: string,
   projectLabel: string,
@@ -90,6 +92,23 @@ const makeResourceUri = (
     resourceId
   )}`;
 };
+export const getLocalStorageSize = () => {
+  let size = 0;
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    const value = localStorage.getItem(key!);
+    size += (key!.length + value!.length) * 2; // Multiply by 2 to account for UTF-16 encoding
+  }
+  size = size / 1048576;
+  return size;
+}
+export const notifyTotalSizeExeeced = () => {
+  return notification.warning({
+    message: <div>The selected items has exceed the maximum size allowed or <br/> local storage size will reduce the performance of your app</div>,
+    description: <em>Maximum size must be lower or equal than 1GB</em>,
+    key: 'data-panel-size-exceeded'
+  });
+}
 const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
   isLoading,
@@ -248,6 +267,13 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
       selectedRows = selectedRows.filter(t => t.key !== record.key);
     }
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    if (
+      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
+    }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
       JSON.stringify({
@@ -289,6 +315,14 @@ const MyDataTable: React.FC<TProps> = ({
         selectedRowKeys,
         changeRows.map(t => t.key)
       );
+    }
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
+    console.log('@@size select multiple rows', size);
+    if (
+      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

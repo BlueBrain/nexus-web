@@ -7,6 +7,7 @@ import { useMutation, useQuery } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
+import { EventSourcePolyfill } from 'event-source-polyfill';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import './styles.less';
@@ -26,10 +27,12 @@ const fetchViewsList = async ({
   nexus,
   orgLabel,
   projectLabel,
+  apiRoot
 }: {
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
+  apiRoot: string;
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
@@ -58,7 +61,7 @@ const fetchViewsList = async ({
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
-            iViewStats.processedEvents / iViewStats.totalEvents
+          iViewStats.processedEvents / iViewStats.totalEvents
           : 0;
         return {
           ...view,
@@ -140,7 +143,7 @@ const ViewsSubView = () => {
   };
   const { data: views, status } = useQuery({
     queryKey: [`views-${orgLabel}-${projectLabel}`],
-    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel }),
+    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel, apiRoot: apiEndpoint }),
     refetchInterval: 30 * 1000, // 30s
   });
   const { mutateAsync: handleReindexingOneView } = useMutation(
@@ -228,7 +231,7 @@ const ViewsSubView = () => {
       },
     },
   ];
-
+  
   return (
     <div className="settings-view settings-views-view">
       <h2>Views</h2>
