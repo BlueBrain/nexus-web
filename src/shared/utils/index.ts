@@ -704,7 +704,7 @@ export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
 };
 
 export function isNumeric(str: string | number) {
-  if (typeof str != 'string') return false; // we only process strings!
+  if (typeof str !== 'string') return false; // we only process strings!
   return (
     !isNaN(str as any) && !isNaN(parseFloat(str)) // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
   ); // ...and ensure strings of whitespace fail

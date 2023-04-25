@@ -1,8 +1,6 @@
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  ColumnType,
-} from 'antd/lib/table/interface';
+import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import { isNil, isString, pick, toNumber } from 'lodash';
@@ -105,13 +103,21 @@ const sorter = (dataIndex: string): ColumnSorter => {
       [key: string]: any;
     }
   ) => {
-    return sortFn(a[dataIndex], b[dataIndex])
+    return sortFn(a[dataIndex], b[dataIndex]);
   };
 };
 
 const sortFn = (datumA: any, datumB: any) => {
-  const normalizedA = isNumeric(datumA) ? toNumber(datumA) : isString(datumA) ? normalizeString(datumA) : datumA;
-  const normalizedB = isNumeric(datumB) ? toNumber(datumB) : isString(datumB) ? normalizeString(datumB) : datumB;
+  const normalizedA = isNumeric(datumA)
+    ? toNumber(datumA)
+    : isString(datumA)
+    ? normalizeString(datumA)
+    : datumA;
+  const normalizedB = isNumeric(datumB)
+    ? toNumber(datumB)
+    : isString(datumB)
+    ? normalizeString(datumB)
+    : datumB;
   if (normalizedA < normalizedB) {
     return -1;
   }
@@ -119,9 +125,7 @@ const sortFn = (datumA: any, datumB: any) => {
     return 1;
   }
   return 0;
-
-}
-
+};
 
 type Row = Record<string, any>;
 
@@ -168,7 +172,9 @@ const uniqueFilters = (items: Record<string, any>[], dataIndex: string) => {
       return i[dataIndex];
     })
   );
-  return Array.from(uniqueItems).sort((a, b) => sortFn(a, b)).map(i => ({ text: i, value: i }));
+  return Array.from(uniqueItems)
+    .sort((a, b) => sortFn(a, b))
+    .map(i => ({ text: i, value: i }));
 };
 
 export async function querySparql(

@@ -18,6 +18,7 @@
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
+    "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook"
   },
