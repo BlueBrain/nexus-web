@@ -1,18 +1,21 @@
-import { SparqlView, Resource, View, NexusClient } from '@bbp/nexus-sdk';
-import { sparqlQueryExecutor } from '../utils/querySparqlView';
-import { useQuery } from 'react-query';
-import * as bodybuilder from 'bodybuilder';
+import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { addColumnsForES, rowRender } from '../utils/parseESResults';
-import { parseJsonMaybe } from '../utils/index';
-import { download } from '../utils/download';
+import { ColumnType } from 'antd/lib/table/interface';
+import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
+import { isNil, isString, pick, toNumber } from 'lodash';
 import * as React from 'react';
+import { useQuery } from 'react-query';
+import { Projection } from '../components/EditTableForm';
+import { download } from '../utils/download';
+import { isNumeric, parseJsonMaybe } from '../utils/index';
+import { addColumnsForES, rowRender } from '../utils/parseESResults';
+import { sparqlQueryExecutor } from '../utils/querySparqlView';
+import { CartContext } from './useDataCart';
+import { FilterFilled } from '@ant-design/icons';
+
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
-import { CartContext } from './useDataCart';
-import { pick, isString } from 'lodash';
-import { Projection } from '../components/EditTableForm';
 
 export type TableResource = Resource<{
   '@type': string;
@@ -100,21 +103,78 @@ const sorter = (dataIndex: string): ColumnSorter => {
       [key: string]: any;
     }
   ) => {
-    const sortA = isString(a[dataIndex])
-      ? normalizeString(a[dataIndex])
-      : a[dataIndex];
-    const sortB = isString(b[dataIndex])
-      ? normalizeString(b[dataIndex])
-      : b[dataIndex];
-
-    if (sortA < sortB) {
-      return -1;
-    }
-    if (sortA > sortB) {
-      return 1;
-    }
-    return 0;
+    return sortFn(a[dataIndex], b[dataIndex]);
   };
+};
+
+const sortFn = (datumA: any, datumB: any) => {
+  const normalizedA = isNumeric(datumA)
+    ? toNumber(datumA)
+    : isString(datumA)
+    ? normalizeString(datumA)
+    : datumA;
+  const normalizedB = isNumeric(datumB)
+    ? toNumber(datumB)
+    : isString(datumB)
+    ? normalizeString(datumB)
+    : datumB;
+  if (normalizedA < normalizedB) {
+    return -1;
+  }
+  if (normalizedA > normalizedB) {
+    return 1;
+  }
+  return 0;
+};
+
+type Row = Record<string, any>;
+
+type TableFilterConfig<T> = Pick<
+  ColumnType<T>,
+  'filters' | 'onFilter' | 'filterIcon'
+>;
+
+export type FusionColumnType<T> = ColumnType<T> & {
+  dataIndex: string;
+  title: string;
+};
+
+export type FilterConfigByColumnFn = (
+  columnHeader: FusionColumnType<Row>
+) => TableFilterConfig<Row>;
+
+type FilterConfigFn = (tableItems: Row[]) => FilterConfigByColumnFn;
+
+/**
+ * Generates the filtering configuration for antd tables for a given column.
+ *
+ * @param rows - All the rows of the table
+ * @returns - A function that accepts a column header and returns the filter configuration for that column.
+ */
+export const antTableFilterConfig: FilterConfigFn = rows => columnHeader => {
+  const filters = uniqueFilters(rows, columnHeader.dataIndex);
+
+  const onFilter = (value: string | number | boolean, row: Row) => {
+    const cellValue = row[columnHeader.dataIndex]?.toString() ?? '';
+    return normalizeString(cellValue).includes(
+      normalizeString(value as string)
+    );
+  };
+
+  const filterIcon = <FilterFilled data-testid="filter-icon" />;
+
+  return { filters, onFilter, filterIcon };
+};
+
+const uniqueFilters = (items: Record<string, any>[], dataIndex: string) => {
+  const uniqueItems = new Set(
+    items.map(i => {
+      return i[dataIndex];
+    })
+  );
+  return Array.from(uniqueItems)
+    .sort((a, b) => sortFn(a, b))
+    .map(i => ({ text: i, value: i }));
 };
 
 export async function querySparql(
@@ -247,13 +307,14 @@ const accessData = async (
             key: x.name,
             displayIndex: index,
             sortable: x.enableSort,
+            filterable: x.enableFilter,
           }))
         : DEFAULT_FIELDS;
 
     const headerProperties = fields
       .map((field: any) =>
         // Enrich certain fields with custom rendering
-        addColumnsForES(field, sorter)
+        addColumnsForES(field, sorter, antTableFilterConfig(items))
       )
       .sort((a, b) => (a.title > b.title ? 1 : 0));
 
@@ -269,21 +330,25 @@ const accessData = async (
       ? undefined
       : tableResource.projection?.['@id']
   );
-  const headerProperties: {
-    title: string;
-    dataIndex: string;
-    sorter?: ColumnSorter;
-  }[] = result.headerProperties.map(headerProp => {
+
+  const headerProperties = result.headerProperties.map(headerProp => {
     const currentConfig = columnConfig.find(
       c => c.name === headerProp.dataIndex
     );
-    if (currentConfig && currentConfig.enableSort) {
-      return {
-        ...headerProp,
-        sorter: sorter(headerProp.dataIndex),
-      };
+
+    if (isNil(currentConfig)) {
+      return headerProp;
     }
-    return headerProp;
+
+    return {
+      ...headerProp,
+      className: `testid-${headerProp.dataIndex}`,
+      ...(currentConfig.enableSort && {
+        sorter: sorter(headerProp.dataIndex),
+      }),
+      ...(currentConfig.enableFilter &&
+        antTableFilterConfig(result.items)(headerProp)),
+    };
   });
 
   return { ...result, headerProperties, tableResource };
