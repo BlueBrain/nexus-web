@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Table, Button, Row, Col, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
@@ -60,7 +60,7 @@ const fetchViewsList = async ({
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
-            iViewStats.processedEvents / iViewStats.totalEvents
+          iViewStats.processedEvents / iViewStats.totalEvents
           : 0;
         return {
           ...view,
@@ -210,21 +210,27 @@ const ViewsSubView = () => {
             >
               Query
             </Button>
-            <Button
-              type="link"
-              htmlType="button"
-              onClick={() =>
-                handleReindexingOneView({
-                  nexus,
-                  apiEndpoint,
-                  orgLabel,
-                  projectLabel,
-                  viewId: id,
-                })
-              }
+            <AccessControl
+              permissions={['view/query', 'view/write']}
+              path={[`${orgLabel}/${projectLabel}`]}
+              noAccessComponent={() => <></>}
             >
-              Reindexing
-            </Button>
+              <Button
+                type="link"
+                htmlType="button"
+                onClick={() =>
+                  handleReindexingOneView({
+                    nexus,
+                    apiEndpoint,
+                    orgLabel,
+                    projectLabel,
+                    viewId: id,
+                  })
+                }
+              >
+                Reindexing
+              </Button>
+            </AccessControl>
           </div>
         );
       },
@@ -247,26 +253,32 @@ const ViewsSubView = () => {
             </Button>
           </Col>
           <Col>
-            <Button
-              disabled={
-                isLoading ||
-                status === 'loading' ||
-                (status === 'success' && !Boolean(views?.results))
-              }
-              loading={isLoading}
-              type="ghost"
-              style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-              htmlType="button"
-              onClick={() => {
-                handleReindexingAllViews({
-                  nexus,
-                  apiEndpoint,
-                  views: views?.results || [],
-                });
-              }}
+            <AccessControl
+              permissions={['view/query', 'view/write']}
+              path={[`${orgLabel}/${projectLabel}`]}
+              noAccessComponent={() => <></>}
             >
-              Reindex All Views
-            </Button>
+              <Button
+                disabled={
+                  isLoading ||
+                  status === 'loading' ||
+                  (status === 'success' && !Boolean(views?.results))
+                }
+                loading={isLoading}
+                type="ghost"
+                style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
+                htmlType="button"
+                onClick={() => {
+                  handleReindexingAllViews({
+                    nexus,
+                    apiEndpoint,
+                    views: views?.results || [],
+                  });
+                }}
+              >
+                Reindex All Views
+              </Button>
+            </AccessControl>
           </Col>
         </Row>
 

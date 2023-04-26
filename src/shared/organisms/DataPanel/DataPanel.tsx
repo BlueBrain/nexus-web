@@ -125,21 +125,39 @@ async function downloadArchive({
   );
   console.log('@@resourcesPayload', resourcesPayload);
   try {
-    await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+    await nexus.Archive.create(
+        parsedData.org,
+        parsedData.project,
+        payload
+      );
+    // httpPost({
+    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}`,
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     "@id": archiveId,
+    //     resources: payload.resources,
+    //   })
+    // })
+    
+    // console.log('@@ss', ss);
+  } catch (error) {
+    // console.log('@@error1', error);
+  }
   try {
-    const archive = await nexus.httpGet({
-      path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}/${archiveId}`,
-      headers: {
-        accept: ' application/x-tar',
-      },
-    });
-    // const archive = await nexus.Archive.get(
-    //   parsedData.org,
-    //   parsedData.project,
-    //   archiveId,
-    //   { as: format || 'x-tar' }
-    // );
+    // const archive = await nexus.httpGet({
+    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}/${archiveId}`,
+    //   headers: {
+    //     accept: ' application/x-tar',
+    //   },
+    // });
+    const archive = await nexus.Archive.get(
+      parsedData.org,
+      parsedData.project,
+      archiveId,
+      { as: format || 'x-tar' }
+    );
     const blob =
       !format || format === 'x-tar'
         ? (archive as Blob)
@@ -155,7 +173,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -364,7 +382,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
