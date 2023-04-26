@@ -123,13 +123,8 @@ async function downloadArchive({
   }: { payload: ArchivePayload; archiveId: string } = makePayload(
     resourcesPayload
   );
-  console.log('@@resourcesPayload', resourcesPayload);
   try {
-    await nexus.Archive.create(
-        parsedData.org,
-        parsedData.project,
-        payload
-      );
+    await nexus.Archive.create(parsedData.org, parsedData.project, payload);
     // httpPost({
     //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}`,
     //   headers: {
@@ -140,7 +135,7 @@ async function downloadArchive({
     //     resources: payload.resources,
     //   })
     // })
-    
+
     // console.log('@@ss', ss);
   } catch (error) {
     // console.log('@@error1', error);
@@ -173,7 +168,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -382,7 +377,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-                Boolean(resource.distribution?.contentSize)
+              Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,

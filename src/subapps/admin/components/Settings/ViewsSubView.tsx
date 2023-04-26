@@ -60,7 +60,7 @@ const fetchViewsList = async ({
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
-          iViewStats.processedEvents / iViewStats.totalEvents
+            iViewStats.processedEvents / iViewStats.totalEvents
           : 0;
         return {
           ...view,
