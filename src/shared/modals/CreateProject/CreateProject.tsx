@@ -258,26 +258,28 @@ const CreateProject: React.FC<{}> = ({}) => {
         form={form}
         autoComplete="off"
       >
-        {!orgLabel && <Form.Item
-          {...formItemLayout}
-          label="Orgnanization"
-          name="organization"
-          initialValue={orgLabel ?? ''}
-          required
-        >
-          <Select
-            placeholder="Select organization"
-            loading={isLoading}
-            defaultValue={orgLabel ?? ''}
+        {!orgLabel && (
+          <Form.Item
+            {...formItemLayout}
+            label="Orgnanization"
+            name="organization"
+            initialValue={orgLabel ?? ''}
+            required
           >
-            <Select.Option value={''}>{''}</Select.Option>
-            {organizations?._results.map(org => (
-              <Select.Option value={org._label} key={org['@id']}>
-                {org._label}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item> }
+            <Select
+              placeholder="Select organization"
+              loading={isLoading}
+              defaultValue={orgLabel ?? ''}
+            >
+              <Select.Option value={''}>{''}</Select.Option>
+              {organizations?._results.map(org => (
+                <Select.Option value={org._label} key={org['@id']}>
+                  {org._label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item
           {...formItemLayout}
           label="Label"
