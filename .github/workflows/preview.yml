@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       - name: Build
         run: |
-          docker build -t bluebrain/nexus-web-preview:latest .
+          docker build -t bluebrain/nexus-web:preview .
       - name: Publish To DockerHub
         run: |
           echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
