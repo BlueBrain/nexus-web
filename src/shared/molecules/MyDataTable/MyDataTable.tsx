@@ -328,7 +328,6 @@ const MyDataTable: React.FC<TProps> = ({
       (acc, item) => acc + (item.distribution?.contentSize || 0),
       0
     );
-    console.log('@@size select multiple rows', size);
     if (
       size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE

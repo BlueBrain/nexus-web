@@ -168,7 +168,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -296,48 +296,6 @@ const DataPanel: React.FC<Props> = ({}) => {
         }
       );
   };
-
-  useEffect(() => {
-    const dataPanelEventListner = (
-      event: DataPanelEvent<{ datapanel: TResourceTableData }>
-    ) => {
-      updateDataPanel({
-        resources: event.detail?.datapanel,
-        openDataPanel: false,
-      });
-    };
-    window.addEventListener(
-      DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner as EventListener
-    );
-    return () => {
-      window.removeEventListener(
-        DATA_PANEL_STORAGE_EVENT,
-        dataPanelEventListner as EventListener
-      );
-    };
-  }, []);
-  useEffect(() => {
-    if (openDataPanel && datapanelRef.current) {
-      animate(
-        datapanelRef.current,
-        {
-          height: '500px',
-          display: 'flex',
-          opacity: 1,
-        },
-        {
-          duration: 0.3,
-          easing: 'ease-out',
-        }
-      );
-    }
-  }, [datapanelRef.current, openDataPanel]);
-  useOnClickOutside(datapanelRef, () => {
-    if (openDataPanel) {
-      handleCloseDataPanel();
-    }
-  });
   const resourceProjectPaths = useMemo(
     () => [
       ...new Set(
@@ -377,7 +335,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
@@ -481,7 +439,47 @@ const DataPanel: React.FC<Props> = ({}) => {
       );
     }
   };
-
+  useEffect(() => {
+    const dataPanelEventListner = (
+      event: DataPanelEvent<{ datapanel: TResourceTableData }>
+    ) => {
+      updateDataPanel({
+        resources: event.detail?.datapanel,
+        openDataPanel: false,
+      });
+    };
+    window.addEventListener(
+      DATA_PANEL_STORAGE_EVENT,
+      dataPanelEventListner as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+    };
+  }, []);
+  useEffect(() => {
+    if (openDataPanel && datapanelRef.current) {
+      animate(
+        datapanelRef.current,
+        {
+          height: '500px',
+          display: 'flex',
+          opacity: 1,
+        },
+        {
+          duration: 0.3,
+          easing: 'ease-out',
+        }
+      );
+    }
+  }, [datapanelRef.current, openDataPanel]);
+  useOnClickOutside(datapanelRef, () => {
+    if (openDataPanel) {
+      handleCloseDataPanel();
+    }
+  });
   return Boolean(dataSource.length) ? (
     <div className="datapanel">
       <div ref={datapanelRef} className="datapanel-content">
