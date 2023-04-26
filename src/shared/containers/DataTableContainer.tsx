@@ -402,8 +402,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               },
             })}
             pagination={{
-              pageSize:
-                tableData.tableResult.data.tableResource['resultsPerPage'],
+              pageSize: 50,
               responsive: true,
               showLessItems: true,
             }}

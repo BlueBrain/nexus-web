@@ -614,6 +614,181 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             t98
                           </td>
                         </tr>
+                        <tr
+                          class="ant-table-row ant-table-row-level-0 data-table-row"
+                          data-row-key="tr_5"
+                        >
+                          <td
+                            class="ant-table-cell ant-table-selection-column"
+                          >
+                            <label
+                              class="ant-checkbox-wrapper"
+                            >
+                              <span
+                                class="ant-checkbox"
+                              >
+                                <input
+                                  class="ant-checkbox-input"
+                                  type="checkbox"
+                                  value=""
+                                />
+                                <span
+                                  class="ant-checkbox-inner"
+                                />
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            class="ant-table-cell testid-p"
+                          >
+                            https://bluebrain.github.io/nexus/vocabulary/apiMappings
+                          </td>
+                          <td
+                            class="ant-table-cell testid-o"
+                          >
+                            t100
+                          </td>
+                        </tr>
+                        <tr
+                          class="ant-table-row ant-table-row-level-0 data-table-row"
+                          data-row-key="tr_6"
+                        >
+                          <td
+                            class="ant-table-cell ant-table-selection-column"
+                          >
+                            <label
+                              class="ant-checkbox-wrapper"
+                            >
+                              <span
+                                class="ant-checkbox"
+                              >
+                                <input
+                                  class="ant-checkbox-input"
+                                  type="checkbox"
+                                  value=""
+                                />
+                                <span
+                                  class="ant-checkbox-inner"
+                                />
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            class="ant-table-cell testid-p"
+                          >
+                            https://bluebrain.github.io/nexus/vocabulary/apiMappings
+                          </td>
+                          <td
+                            class="ant-table-cell testid-o"
+                          >
+                            t114
+                          </td>
+                        </tr>
+                        <tr
+                          class="ant-table-row ant-table-row-level-0 data-table-row"
+                          data-row-key="tr_7"
+                        >
+                          <td
+                            class="ant-table-cell ant-table-selection-column"
+                          >
+                            <label
+                              class="ant-checkbox-wrapper"
+                            >
+                              <span
+                                class="ant-checkbox"
+                              >
+                                <input
+                                  class="ant-checkbox-input"
+                                  type="checkbox"
+                                  value=""
+                                />
+                                <span
+                                  class="ant-checkbox-inner"
+                                />
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            class="ant-table-cell testid-p"
+                          >
+                            https://bluebrain.github.io/nexus/vocabulary/apiMappings
+                          </td>
+                          <td
+                            class="ant-table-cell testid-o"
+                          >
+                            t120
+                          </td>
+                        </tr>
+                        <tr
+                          class="ant-table-row ant-table-row-level-0 data-table-row"
+                          data-row-key="tr_8"
+                        >
+                          <td
+                            class="ant-table-cell ant-table-selection-column"
+                          >
+                            <label
+                              class="ant-checkbox-wrapper"
+                            >
+                              <span
+                                class="ant-checkbox"
+                              >
+                                <input
+                                  class="ant-checkbox-input"
+                                  type="checkbox"
+                                  value=""
+                                />
+                                <span
+                                  class="ant-checkbox-inner"
+                                />
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            class="ant-table-cell testid-p"
+                          >
+                            https://bluebrain.github.io/nexus/vocabulary/apiMappings
+                          </td>
+                          <td
+                            class="ant-table-cell testid-o"
+                          >
+                            t127
+                          </td>
+                        </tr>
+                        <tr
+                          class="ant-table-row ant-table-row-level-0 data-table-row"
+                          data-row-key="tr_9"
+                        >
+                          <td
+                            class="ant-table-cell ant-table-selection-column"
+                          >
+                            <label
+                              class="ant-checkbox-wrapper"
+                            >
+                              <span
+                                class="ant-checkbox"
+                              >
+                                <input
+                                  class="ant-checkbox-input"
+                                  type="checkbox"
+                                  value=""
+                                />
+                                <span
+                                  class="ant-checkbox-inner"
+                                />
+                              </span>
+                            </label>
+                          </td>
+                          <td
+                            class="ant-table-cell testid-p"
+                          >
+                            https://bluebrain.github.io/nexus/vocabulary/base
+                          </td>
+                          <td
+                            class="ant-table-cell testid-o"
+                          >
+                            https://bbp.epfl.ch/neurosciencegraph/data/
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -666,24 +841,13 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                   </a>
                 </li>
                 <li
-                  class="ant-pagination-item ant-pagination-item-2"
-                  tabindex="0"
-                  title="2"
-                >
-                  <a
-                    rel="nofollow"
-                  >
-                    2
-                  </a>
-                </li>
-                <li
-                  aria-disabled="false"
-                  class="ant-pagination-next"
-                  tabindex="0"
+                  aria-disabled="true"
+                  class="ant-pagination-next ant-pagination-disabled"
                   title="Next Page"
                 >
                   <button
                     class="ant-pagination-item-link"
+                    disabled=""
                     tabindex="-1"
                     type="button"
                   >
