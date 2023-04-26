@@ -40,7 +40,7 @@ const App: React.FC = () => {
     authenticated,
     userAuthenticated,
     allowDataPanel,
-  })
+  });
   const routesWithSubApps = [...routes, ...subAppRoutes];
   const DataPanel = withDataPanel({ allowDataPanel });
   return (

@@ -168,7 +168,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -335,7 +335,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-                Boolean(resource.distribution?.contentSize)
+              Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
