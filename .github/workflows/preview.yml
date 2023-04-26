@@ -20,4 +20,4 @@ jobs:
       - name: Publish To DockerHub
         run: |
           echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
-          docker push bluebrain/nexus-web-preview:latest
+          docker push bluebrain/nexus-web:preview
