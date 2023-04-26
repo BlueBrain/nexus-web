@@ -28,6 +28,7 @@ export type ResultTableFields = {
   title: string;
   dataIndex: string;
   sortable?: boolean;
+  filterable?: boolean;
   key: string;
   displayIndex: number;
 };

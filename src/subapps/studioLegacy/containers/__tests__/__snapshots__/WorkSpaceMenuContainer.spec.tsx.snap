@@ -391,12 +391,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </div>
                           </th>
                           <th
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             P
                           </th>
                           <th
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             O
                           </th>
@@ -463,12 +463,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </label>
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             https://bluebrain.github.io/nexus/vocabulary/apiMappings
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             t78
                           </td>
@@ -498,12 +498,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </label>
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             https://bluebrain.github.io/nexus/vocabulary/apiMappings
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             t87
                           </td>
@@ -533,12 +533,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </label>
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             https://bluebrain.github.io/nexus/vocabulary/apiMappings
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             t91
                           </td>
@@ -568,12 +568,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </label>
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             https://bluebrain.github.io/nexus/vocabulary/apiMappings
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             t97
                           </td>
@@ -603,12 +603,12 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                             </label>
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-p"
                           >
                             https://bluebrain.github.io/nexus/vocabulary/apiMappings
                           </td>
                           <td
-                            class="ant-table-cell"
+                            class="ant-table-cell testid-o"
                           >
                             t98
                           </td>

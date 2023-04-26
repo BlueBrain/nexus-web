@@ -5,7 +5,8 @@ import { rest } from 'msw';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { render, server, screen } from '../../utils/testUtil';
+import { render, server, screen, waitFor} from '../../utils/testUtil';
+import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import { Route, MemoryRouter } from 'react-router-dom';
@@ -932,7 +933,10 @@ describe('ProjectPage', () => {
       await render(<App />);
     });
 
-    const jiraTab = screen.queryByText(/Jira/);
+    const jiraTab = await waitFor(() => {
+      return screen.findByText(/Jira/i);
+    });
+
     expect(jiraTab).toBeInTheDocument();
   });
 });

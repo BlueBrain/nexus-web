@@ -50,7 +50,6 @@ const TypeDropdownFilterContainer: React.FunctionComponent<{
   onChange(value: string): void;
 }> = ({ orgLabel, projectLabel, onChange, deprecated, value }) => {
   const nexus = useNexusContext();
-
   const { data } = useQuery({
     queryKey: [
       'resource-list-query-types',
