@@ -14,6 +14,7 @@ import { ResultTableFields } from '../../types/search';
 
 import './../../styles/result-table.less';
 import { parseESResults, addColumnsForES } from '../../utils/parseESResults';
+import { antTableFilterConfig } from '../../../shared/hooks/useAccessDataForTable';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -99,7 +100,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   const columns: ColumnsType<any> = fields.map(field => {
     // Enrich certain fields with custom rendering
-    return addColumnsForES(field, sorter);
+    return addColumnsForES(field, sorter, antTableFilterConfig(results));
   });
 
   const [selectedColumns, setSelectedColumns] = React.useState(columns);
