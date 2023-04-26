@@ -22,7 +22,6 @@ import {
 import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as pluralize from 'pluralize';
-import { Partial, flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
@@ -35,22 +34,16 @@ import '../../shared/styles/route-layout.less';
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
 
-type NewOrg = {
-  label: string;
-  description?: string;
-};
-
-type Props = {};
-const TSort = ['asc', 'desc'] as const;
+export type TSort = 'asc' | 'desc' | undefined;
 interface TPageOptions {
-  sort: typeof TSort[number];
+  sort: TSort;
 }
 type TNewOrganizationList = OrganizationList & { _next: string };
 type TOrganizationOptions = {
   from: number;
   size: number;
   query: string;
-  sort: string;
+  sort: TSort;
 };
 type TFetchOrganizationListProps = TOrganizationOptions & {
   nexus: NexusClient;
@@ -82,7 +75,7 @@ export const useInfiniteOrganizationQuery = ({
 }: {
   nexus: NexusClient;
   query: string;
-  sort: string;
+  sort: TSort;
 }) => {
   const {
     data,
@@ -177,24 +170,19 @@ export const LoadMoreFooter = forwardRef<
     </div>
   ) : null
 );
-
-const OrganizationListView: React.FC<Props> = ({}) => {
+const OrganizationListView: React.FC<{}> = () => {
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const nexus: NexusClient = useNexusContext();
   const [query, setQueryString] = useState<string>('');
-
   const [{ sort }, setOptions] = useReducer(
-    // @ts-ignore
-    (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
+    (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
       ...previous,
-      ...partialData,
+      ...newPartialState,
     }),
-    {
-      sort: TSort[0],
-    }
+    { sort: 'asc' }
   );
   const {
     data,
@@ -210,12 +198,14 @@ const OrganizationListView: React.FC<Props> = ({}) => {
     query,
     sort,
   });
-  // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
-  const dataSource: OrgResponseCommon[] = flatten<OrgResponseCommon>(
-    // @ts-ignore
-    data?.pages?.map((page: OrganizationList) => page._results)
-  );
+  const total =
+    data && data.pages
+      ? ((data.pages[0] as OrganizationList)?._total as number)
+      : 0;
+  const dataSource: OrgResponseCommon[] =
+    data && data.pages
+      ? data.pages.map(page => (page as OrganizationList)._results).flat()
+      : [];
   const updateCreateModelVisibility = (payload?: boolean) => {
     dispatch({
       payload,
@@ -225,7 +215,7 @@ const OrganizationListView: React.FC<Props> = ({}) => {
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
-    setOptions({ sort: value });
+    setOptions({ sort: value as TSort });
     if (dataContainerRef.current) {
       const containerTop = dataContainerRef.current.getBoundingClientRect().top;
       const topPosition = containerTop + window.pageYOffset - 80;

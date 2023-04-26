@@ -32,7 +32,6 @@ const fetchResolvers = async ({
   try {
     const response = await nexus.Resolver.list(orgLabel, projectLabel);
     const resolvers = response._results.map(item => ({
-      // @ts-ignore
       type: item['@type'].filter(t => t !== 'Resolver'),
       priority: item.priority,
       id: item['@id'],
@@ -174,14 +173,7 @@ const ResolversSubView = (props: Props) => {
         projectLabel,
         resourceId,
       },
-      {
-        onError: error => {
-          // @ts-ignore
-          console.log('@@error', error.message);
-          // @ts-ignore
-          console.log('@@error', error.cause.message);
-        },
-      }
+      { onError: error => {} }
     );
   };
   return (

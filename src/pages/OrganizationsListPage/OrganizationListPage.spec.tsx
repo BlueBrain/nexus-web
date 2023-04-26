@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk';
+import { OrganizationList, createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -71,15 +71,16 @@ describe('OrganizationListPage', () => {
         useInfiniteOrganizationQuery({
           nexus,
           query: '',
-          sort: '',
+          sort: 'asc',
         }),
       { wrapper }
     );
 
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
-    // @ts-ignore
-    expect(result.current.data?.pages?.[0]._total).toEqual(3);
+    expect(
+      (result.current.data?.pages?.[0] as OrganizationList)._total
+    ).toEqual(3);
   });
 
   // it('check if search (orgs) functionality is working', async () => {

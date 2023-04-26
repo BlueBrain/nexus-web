@@ -29,8 +29,11 @@ const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
 };
 
 const StudioView: React.FunctionComponent<{}> = () => {
-  // @ts-ignore
-  const { orgLabel, projectLabel, studioId } = useParams();
+  const { orgLabel, projectLabel, studioId } = useParams<{
+    orgLabel: string;
+    projectLabel: string;
+    studioId: string;
+  }>();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId, dashboardId } = queryParams;

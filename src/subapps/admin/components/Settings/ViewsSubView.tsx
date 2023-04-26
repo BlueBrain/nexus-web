@@ -4,14 +4,13 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Table, Button, Row, Col, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient, PaginatedList, Statistics } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import './styles.less';
 
-type Props = {};
 type TDataType = {
   key: string;
   id: string;
@@ -57,6 +56,7 @@ const fetchViewsList = async ({
           projectLabel,
           encodeURIComponent(view.key)
         );
+        //  TODO: we should update the type in nexus-sdk! as the response is not the same from delta!
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
@@ -153,7 +153,6 @@ const ViewsSubView = () => {
     restartIndexingAllViews,
     {
       onError: error => {
-        console.log('@@error', error);
         notification.error({
           message: `Error when restarting indexing the views`,
           description: '',

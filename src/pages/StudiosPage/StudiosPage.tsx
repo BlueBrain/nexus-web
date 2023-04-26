@@ -27,8 +27,10 @@ import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
-import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
-
+import {
+  LoadMoreFooter,
+  TSort,
+} from '../OrganizationsListPage/OrganizationListPage';
 import timeago from '../../utils/timeago';
 import '../../shared/styles/route-layout.less';
 
@@ -36,9 +38,8 @@ const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
 
-const TSort = ['asc', 'desc'] as const;
 interface TPageOptions {
-  sort: typeof TSort[number];
+  sort: TSort;
 }
 export type StudioItem = {
   id: string;
@@ -51,7 +52,7 @@ export type StudioItem = {
 type TStudiosOptions = {
   from?: number;
   size: number;
-  sort?: string;
+  sort: TSort;
   query?: string;
 };
 type TStudioItem = {
@@ -69,7 +70,7 @@ type TFetchStudiosListProps = TStudiosOptions & {
   after?: string;
 };
 type TNewPaginationList = PaginatedList & { _next: string };
-export const sortBackgroundColor = (sort: string, value: string) =>
+export const sortBackgroundColor = (sort: TSort, value: TSort) =>
   sort === value ? '#003A8C' : '#BFBFBF';
 const fetchStudios = async ({
   nexus,
@@ -155,7 +156,7 @@ export const useInfiniteStudiosQuery = ({
 }: {
   nexus: NexusClient;
   query: string;
-  sort: string;
+  sort: TSort;
 }) => {
   return useInfiniteQuery({
     queryKey: ['fusion-studios', { query, sort }],
@@ -178,18 +179,14 @@ const FusionStudiosPage: React.FC = () => {
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value.toLowerCase());
   const [{ sort }, setOptions] = React.useReducer(
-    // @ts-ignore
-    (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
+    (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
       ...previous,
-      ...partialData,
+      ...newPartialState,
     }),
-    {
-      sort: TSort[0],
-    }
+    { sort: 'asc' }
   );
   const handleUpdateSorting = (value: string) => {
-    // @ts-ignore
-    setOptions({ sort: value });
+    setOptions({ sort: value as TSort });
     if (dataContainerRef.current) {
       const containerTop = dataContainerRef.current.getBoundingClientRect().top;
       const topPosition = containerTop + window.pageYOffset - 80;
@@ -217,28 +214,33 @@ const FusionStudiosPage: React.FC = () => {
       ref={loadMoreRef}
     />
   );
-  const dataSource = flatten(
-    // @ts-ignore
-    data?.pages.map((page: ResourceList<{}>) =>
-      page?._results.map((item: Resource) => {
-        const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-          item._project
-        )!;
-        return {
-          orgLabel,
-          projectLabel,
-          id: item['@id'],
-          label: item.label,
-          deprecated: item._deprecated,
-          createdAt: item._createdAt,
-          description: item.description,
-          access: '',
-        };
-      })
-    )
-  );
-  // @ts-ignore
-  const total = data?.pages?.[0]?._total as number;
+  const total =
+    data && data.pages
+      ? ((data?.pages?.[0] as ResourceList<{}>)?._total as number)
+      : 0;
+  const dataSource =
+    data && data.pages
+      ? data?.pages
+          .map(page =>
+            (page as ResourceList<{}>)?._results.map((item: Resource) => {
+              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
+                item._project
+              )!;
+              return {
+                orgLabel,
+                projectLabel,
+                id: item['@id'],
+                label: item.label,
+                deprecated: item._deprecated,
+                createdAt: item._createdAt,
+                description: item.description,
+                access: '',
+              };
+            })
+          )
+          .flat()
+      : [];
+
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -328,68 +330,6 @@ const FusionStudiosPage: React.FC = () => {
         </div>
       </div>
     </React.Fragment>
-    // <div className="view-container">
-    //   <div className="global-studio-list">
-    //     <div className={'studio-header'}>
-    //       <h1>Studios</h1>
-    //       <Input.Search
-    //         className={'studio-search'}
-    //         placeholder={'Type to filter'}
-    //         value={query}
-    //         onChange={handleQueryStringChange}
-    //       ></Input.Search>
-    //     </div>
-    //     <div className={'studio-description'}>
-    //       <p>
-    //         You can see all the studios in Nexus projects where you have read
-    //         access. The list is alphabetically sorted.
-    //       </p>
-    //     </div>
-
-    //     {status === 'error' ? (
-    //       <>A Error Occured</>
-    //     ) : (
-    //       <Spin
-    //         spinning={status === 'loading'}
-    //         size={'large'}
-    //         style={{ display: 'flex' }}
-    //         data-testid={'studio-spinner'}
-    //       >
-    //         <List
-    //           pagination={{
-    //             total: studioList.length,
-    //             showTotal: total => ` ${total} results`,
-    //             pageSize: 10,
-    //           }}
-    //           className={'studio-list'}
-    //           dataSource={studioList}
-    //           renderItem={item => {
-    //             return (
-    //               <List.Item
-    //                 role="listitem"
-    //                 onClick={() => {
-    //                   const { orgLabel, projectLabel, id } = item;
-    //                   const studioUri = makeStudioUri(
-    //                     orgLabel,
-    //                     projectLabel,
-    //                     id
-    //                   );
-    //                   goToStudio(studioUri);
-    //                 }}
-    //                 className={'studio-list-item'}
-    //               >
-    //                 <div className={'studio'}>
-    //                   {`${item.orgLabel}/${item.projectLabel}/`}
-    //                   <span className={'studio-name'}>{item.label}</span>
-    //                 </div>
-    //               </List.Item>
-    //             );
-    //           }}
-    //         ></List>
-    //       </Spin>
-    //     )}
-    //   </div>
-    // </div>
   );
 };
 

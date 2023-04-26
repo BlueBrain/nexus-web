@@ -16,19 +16,20 @@ import {
 } from '@ant-design/icons';
 import {
   NexusClient,
-  Organization,
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { flatten } from 'lodash';
 import { useDispatch } from 'react-redux';
 import * as pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
 import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
-import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
+import {
+  LoadMoreFooter,
+  TSort,
+} from '../OrganizationsListPage/OrganizationListPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
@@ -41,17 +42,11 @@ import '../../shared/styles/route-layout.less';
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
 
-type NewOrg = {
-  label: string;
-  description?: string;
-};
-
 type TOrganizationOptions = {
   orgLabel: string;
 };
-const TSort = ['asc', 'desc'] as const;
 interface TPageOptions {
-  sort: typeof TSort[number];
+  sort: TSort;
 }
 type TOrganizationProjectsOptions = {
   orgLabel: string;
@@ -67,7 +62,17 @@ type TFetchOrganizationProjectsListProps = TOrganizationProjectsOptions & {
   nexus: NexusClient;
 };
 type TNewProjectList = ProjectList & { _next: string };
-
+type TProjectItem = {
+  title: string;
+  to: string;
+  description?: string;
+  deprected: boolean;
+  access?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  organization: string;
+  nexus: NexusClient;
+};
 const fetchOrganizationDetails = async ({
   nexus,
   orgLabel,
@@ -112,7 +117,7 @@ export const useInfiniteOrganizationProjectsQuery = ({
   nexus: NexusClient;
   orgLabel?: string;
   query: string;
-  sort: string;
+  sort: TSort;
   enabled: boolean;
 }) => {
   const {
@@ -152,17 +157,6 @@ export const useInfiniteOrganizationProjectsQuery = ({
   };
 };
 
-type TProjectItem = {
-  title: string;
-  to: string;
-  description?: string;
-  deprected: boolean;
-  access?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  organization: string;
-  nexus: NexusClient;
-};
 const ProjectItem = ({
   title,
   to,
@@ -233,21 +227,17 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [query, setQueryString] = useState<string>('');
-  // const subapp = useAdminSubappContext();
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
   const orgLabel = match?.params.orgLabel;
   const [{ sort }, setOptions] = useReducer(
-    // @ts-ignore
-    (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
+    (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
       ...previous,
-      ...partialData,
+      ...newPartialState,
     }),
-    {
-      sort: TSort[0],
-    }
+    { sort: 'asc' }
   );
   const { data: organization, error: organisationError } = useQuery({
     enabled: !!orgLabel,
@@ -291,12 +281,13 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     sort,
     enabled: !!orgLabel && !!organization?.['@id'],
   });
-  // @ts-ignore
-  const total = (data?.pages?.[0]?._total as number) || 0;
-  const dataSource: ProjectResponseCommon[] = flatten(
-    // @ts-ignore
-    data?.pages.map(page => page._results)
-  );
+  const total =
+    data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
+  const dataSource: ProjectResponseCommon[] =
+    data && data.pages
+      ? data.pages.map(page => (page as ProjectList)._results).flat()
+      : [];
+
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,

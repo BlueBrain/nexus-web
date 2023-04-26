@@ -54,6 +54,8 @@ import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
 import formatBytes from '../../../utils/formatBytesUnit';
 
 import './styles.less';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 type Props = {
   authenticated?: boolean;
@@ -107,11 +109,13 @@ async function downloadArchive({
   parsedData,
   resourcesPayload,
   format,
+  apiRoot,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
   resourcesPayload: any;
   format?: 'x-tar' | 'json';
+  apiRoot: string;
 }) {
   const {
     payload,
@@ -124,12 +128,18 @@ async function downloadArchive({
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
   } catch (error) {}
   try {
-    const archive = await nexus.Archive.get(
-      parsedData.org,
-      parsedData.project,
-      archiveId,
-      { as: format || 'x-tar' }
-    );
+    const archive = await nexus.httpGet({
+      path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}/${archiveId}`,
+      headers: {
+        accept: ' application/x-tar',
+      },
+    });
+    // const archive = await nexus.Archive.get(
+    //   parsedData.org,
+    //   parsedData.project,
+    //   archiveId,
+    //   { as: format || 'x-tar' }
+    // );
     const blob =
       !format || format === 'x-tar'
         ? (archive as Blob)
@@ -149,6 +159,7 @@ const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
+  const apiRoot = useSelector((state: RootState) => state.config.apiEndpoint);
   const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
   const [{ openDataPanel, resources }, updateDataPanel] = useReducer(
     (previous: TDataPanel, newPartialState: Partial<TDataPanel>) => ({
@@ -298,7 +309,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       animate(
         datapanelRef.current,
         {
-          height: 'calc(100vh/2 - 100px)',
+          height: '500px',
           display: 'flex',
           opacity: 1,
         },
@@ -356,7 +367,6 @@ const DataPanel: React.FC<Props> = ({}) => {
               Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
-            // resource.type === 'File' ? 'File' : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
             path: `/${parsedSelf.project}/${parsedSelf.id}`,
@@ -392,7 +402,6 @@ const DataPanel: React.FC<Props> = ({}) => {
           value={key}
           checked={types.includes(key)}
           onChange={handleFileTypeChange}
-          className="types-extra-checkbox"
         >
           {`${toUpper(key)} (${value})`}
         </Checkbox>
@@ -425,12 +434,12 @@ const DataPanel: React.FC<Props> = ({}) => {
   const { mutateAsync: downloadSelectedResource, status } = useMutation(
     downloadArchive
   );
-  const archivePermissionPath = `${parsedData?.org}/${parsedData?.project}`;
   const handleDownloadResourcesArchive = () => {
     if (parsedData) {
       downloadSelectedResource(
         {
           nexus,
+          apiRoot,
           parsedData,
           resourcesPayload: resourcesPayload.map(i => omit(i, '_self')),
         },
@@ -559,25 +568,15 @@ const DataPanel: React.FC<Props> = ({}) => {
             noAccessComponent={() => <div>Have not access</div>}
           >
             <div className="download-btn">
-              <AccessControl
-                permissions={['archives/write']}
-                path={archivePermissionPath}
-                noAccessComponent={() =>
-                  message.error(
-                    'You do not have permissions to download archive'
-                  )
-                }
+              <Button
+                type="link"
+                onClick={handleDownloadResourcesArchive}
+                loading={status === 'loading'}
+                download={`data-cart-${uuidv4()}.tar`}
               >
-                <Button
-                  type="link"
-                  onClick={handleDownloadResourcesArchive}
-                  loading={status === 'loading'}
-                  download={`data-cart-${uuidv4()}.tar`}
-                >
-                  <DownloadOutlined />
-                  Download
-                </Button>
-              </AccessControl>
+                <DownloadOutlined />
+                Download
+              </Button>
             </div>
           </AccessControl>
         </div>

@@ -25,9 +25,7 @@ export default defineConfig({
       ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
     },
     setupNodeEvents(on, config) {
-      // @ts-ignore
-      on('before:browser:launch', (browser = {}, launchOptions) => {
-        console.log(launchOptions.args);
+      on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
         }

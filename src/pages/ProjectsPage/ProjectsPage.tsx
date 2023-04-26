@@ -14,11 +14,13 @@ import {
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
 import { Alert, Input, InputRef, List, Spin } from 'antd';
-import { flatten } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
 import * as pluralize from 'pluralize';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
-import { LoadMoreFooter } from '../OrganizationsListPage/OrganizationListPage';
+import {
+  LoadMoreFooter,
+  TSort,
+} from '../OrganizationsListPage/OrganizationListPage';
 import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
@@ -26,10 +28,8 @@ import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils/timeago';
 import formatNumber from '../../utils/formatNumber';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-
 import '../../shared/styles/route-layout.less';
 
-type TProps = {};
 type TProjectOptions = {
   from: number;
   size: number;
@@ -59,10 +59,9 @@ const fetchProjectsList = async ({
   }
 };
 
-const TSort = ['asc', 'desc'] as const;
 export const DATA_SET_TYPE = 'http://schema.org/Dataset';
 interface TPageOptions {
-  sort: typeof TSort[number];
+  sort: TSort;
 }
 type TProjectItem = {
   title: string;
@@ -141,6 +140,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
+
 export const useInfiniteProjectsQuery = ({
   nexus,
   query,
@@ -148,7 +148,7 @@ export const useInfiniteProjectsQuery = ({
 }: {
   nexus: NexusClient;
   query: string;
-  sort: string;
+  sort: TSort;
 }) => {
   const {
     data,
@@ -179,7 +179,7 @@ export const useInfiniteProjectsQuery = ({
     isFetching,
   };
 };
-const ProjectsPage: React.FC<TProps> = ({}) => {
+const ProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -187,14 +187,11 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
   const [query, setQueryString] = useState<string>('');
   const nexus: NexusClient = useNexusContext();
   const [{ sort }, setOptions] = useReducer(
-    // @ts-ignore
-    (previous: TPageOptions, partialData: Partial<TPageOptions>) => ({
+    (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
       ...previous,
-      ...partialData,
+      ...newPartialState,
     }),
-    {
-      sort: TSort[0],
-    }
+    { sort: 'asc' }
   );
   const updateCreateModelVisibility = (payload?: boolean) => {
     dispatch({
@@ -217,16 +214,15 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
     sort,
   });
 
-  // @ts-ignore
-  const total = (data?.pages?.[0]?._total as number) || 0;
-  const dataSource: ProjectResponseCommon[] = flatten<ProjectResponseCommon>(
-    // @ts-ignore
-    data?.pages?.map((page: ProjectList) => page._results)
-  );
+  const total =
+    data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
+  const dataSource: ProjectResponseCommon[] =
+    data && data.pages
+      ? data.pages.map(page => (page as ProjectList)._results).flat()
+      : [];
 
   const handleUpdateSorting = (value: string) => {
-    // @ts-ignore
-    setOptions({ sort: value });
+    setOptions({ sort: value as TSort });
     if (dataContainerRef.current) {
       const containerTop = dataContainerRef.current.getBoundingClientRect().top;
       const topPosition = containerTop + window.pageYOffset - 80;
@@ -336,53 +332,6 @@ const ProjectsPage: React.FC<TProps> = ({}) => {
         </div>
       </div>
     </div>
-    // <div className='projects-view view-container'>
-    //     <div className='projects-view-title'>
-    //         <Breadcrumb>
-    //             <Breadcrumb.Item>
-    //                 <Link to={'/'}>Home</Link>
-    //             </Breadcrumb.Item>
-    //             <Breadcrumb.Item>
-    //                 <Link to={location.pathname}>Projects List</Link>
-    //             </Breadcrumb.Item>
-    //         </Breadcrumb>
-    //         <h2>Projects List</h2>
-    //     </div>
-    //     <div>
-    //         {status === 'error' && <div className='projects-view-error'>⛔️ Error loading the organizations list</div>}
-    //         {status === 'success' && <div className='projects-view-list'>
-    //             <Spin spinning={isLoading} >
-    //                 <List
-    //                     itemLayout="horizontal"
-    //                     loadMore={loadMoreFooter}
-    //                     dataSource={dataSource}
-    //                     renderItem={item => {
-    //                         const to = `/orgs/${item._organizationLabel}/${item._label}`;
-    //                         const orgTo = `/orgs/${item._organizationLabel}`;
-    //                         return (
-    //                             <List.Item className='projects-view-list-item' actions={[<Button type='link' href={to}>More</Button>]} >
-    //                                 <List.Item.Meta
-    //                                     avatar={<Avatar className='project-initial'>{item._label.substring(0, 2)}</Avatar>}
-    //                                     title={
-    //                                         <Fragment>
-    //                                             <Tag color="#003A8C">
-    //                                                 <Link to={orgTo}>
-    //                                                     {item._organizationLabel}
-    //                                                 </Link>
-    //                                             </Tag>
-    //                                             <Link to={to} className='project-link'>{item._label}</Link>
-    //                                         </Fragment>
-    //                                     }
-    //                                     description={item.description}
-    //                                 />
-    //                             </List.Item>
-    //                         )
-    //                     }}
-    //                 />
-    //             </Spin>
-    //         </div>}
-    //     </div>
-    // </div>
   );
 };
 

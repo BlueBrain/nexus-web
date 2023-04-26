@@ -94,7 +94,7 @@ const makeResourceUri = (
 };
 export const getLocalStorageSize = () => {
   let size = 0;
-  for (let i = 0; i < localStorage.length; i++) {
+  for (let i = 0; i < localStorage.length; i += 1) {
     const key = localStorage.key(i);
     const value = localStorage.getItem(key!);
     size = size + (key!.length + value!.length) * 2; // UTF-16

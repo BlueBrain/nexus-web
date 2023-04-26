@@ -3,7 +3,11 @@ import { renderHook } from '@testing-library/react-hooks';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider, useNexusContext } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk';
+import {
+  ProjectList,
+  ProjectResponseCommon,
+  createNexusClient,
+} from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -74,7 +78,7 @@ describe('OrganizationProjectsPage', () => {
           nexus,
           orgLabel,
           query: '',
-          sort: '',
+          sort: 'asc',
           enabled: true,
         }),
       { wrapper }
@@ -82,11 +86,11 @@ describe('OrganizationProjectsPage', () => {
 
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
-    // @ts-ignore
-    expect(result.current.data?.pages?.[0]._total).toEqual(2);
+    expect((result.current.data?.pages?.[0] as ProjectList)._total).toEqual(2);
     expect(
-      // @ts-ignore
-      result.current.data?.pages?.[0]._results.map(item => item._label)
+      (result.current.data?.pages?.[0] as ProjectList)._results.map(
+        (item: ProjectResponseCommon) => item._label
+      )
     ).toContain(orgLabel);
   });
 });

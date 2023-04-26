@@ -87,19 +87,16 @@ const subViewsMapper = new Map<string, TMenuItem>([
     },
   ],
 ]);
-// @ts-ignore
 
 const SettingsContainer: React.FunctionComponent<Props> = ({
   project,
   apiMappings,
   mode,
 }) => {
-  // const menuItems = Object.entries(subViewsMapper).map(([key, value]) => value);
   const menuItems = Array.from(subViewsMapper.entries()).map(
     ([, value]) => value
   );
   const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
-  // @ts-ignore
   const handleOnSelectSubMenuItem: OnSelectHandler = info =>
     setSelectedKey(info.key);
   const subViewSelectedComponenet = (props: Props) => {

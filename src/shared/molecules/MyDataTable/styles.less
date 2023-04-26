@@ -3,10 +3,12 @@
 .my-data-table {
   margin-top: 30px;
   margin-bottom: 56px;
+
   .ant-table-column-sorters {
     justify-content: space-between !important;
     width: 100%;
   }
+
   .ant-table-thead {
     th {
       text-transform: uppercase;
@@ -19,9 +21,11 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: @fusion-neutral-7;
+
       &:hover {
         background-color: @fusion-component-background-color !important;
       }
+
       &:first-child {
         .ant-table-column-sorters {
           padding-left: 0 !important;
@@ -29,22 +33,49 @@
       }
     }
   }
+
   .my-data-table-row {
+    &.ant-table-row-selected {
+      td {
+        background-color: @fusion-daybreak-10 !important;
+        color: white !important;
+
+        button {
+          color: white !important;
+        }
+      }
+
+      &:hover {
+        td {
+          background: #fafafa !important;
+          color: @fusion-daybreak-10 !important;
+
+          button {
+            color: @fusion-daybreak-10 !important;
+          }
+        }
+      }
+    }
+
     td {
       &:first-child {
         padding-left: 0 !important;
       }
+
       background-color: @fusion-main-bg !important;
       border-bottom: 1px solid @fusion-neutral-5 !important;
       color: @fusion-daybreak-9 !important;
     }
+
     &:hover {
       td {
-        background: #fafafa !important;
+        background: #cbefff !important;
+        color: @fusion-daybreak-10 !important;
       }
     }
   }
 }
+
 .org-project-tag {
   color: @fusion-main-color !important;
 }
