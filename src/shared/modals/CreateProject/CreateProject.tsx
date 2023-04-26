@@ -246,9 +246,9 @@ const CreateProject: React.FC<{}> = ({}) => {
     <Modal
       centered
       closable
+      destroyOnClose
       open={createProjectModel}
       onCancel={updateVisibility}
-      destroyOnClose
       footer={null}
       title={<strong>Create Project</strong>}
     >
@@ -258,25 +258,26 @@ const CreateProject: React.FC<{}> = ({}) => {
         form={form}
         autoComplete="off"
       >
-        <Form.Item
+        {!orgLabel && <Form.Item
           {...formItemLayout}
           label="Orgnanization"
           name="organization"
-          initialValue={orgLabel}
+          initialValue={orgLabel ?? ''}
           required
         >
           <Select
             placeholder="Select organization"
             loading={isLoading}
-            defaultValue={orgLabel}
+            defaultValue={orgLabel ?? ''}
           >
+            <Select.Option value={''}>{''}</Select.Option>
             {organizations?._results.map(org => (
               <Select.Option value={org._label} key={org['@id']}>
                 {org._label}
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
+        </Form.Item> }
         <Form.Item
           {...formItemLayout}
           label="Label"

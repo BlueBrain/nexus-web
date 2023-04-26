@@ -119,7 +119,7 @@ const ProjectItem = ({
           </div>
           <div className="statistics_item">
             <div>Your access</div>
-            <div>{access || 'Read Write'}</div>
+            <div>{access || ''}</div>
           </div>
           <div className="statistics_item">
             <div>Created</div>

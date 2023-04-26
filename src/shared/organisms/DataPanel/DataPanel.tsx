@@ -390,8 +390,8 @@ const DataPanel: React.FC<Props> = ({}) => {
       key ? { [key]: value.length } : null
     )
   );
-  const displayedTypes = slice(typesCounter, 0, 1);
-  const dropdownTypes = slice(typesCounter, 1);
+  const displayedTypes = slice(typesCounter, 0, 3);
+  const dropdownTypes = slice(typesCounter, 3);
   const typesMenu = dropdownTypes.map(item => {
     const key = Object.keys(item)[0];
     const value = item[key];
@@ -572,7 +572,6 @@ const DataPanel: React.FC<Props> = ({}) => {
                 type="link"
                 onClick={handleDownloadResourcesArchive}
                 loading={status === 'loading'}
-                download={`data-cart-${uuidv4()}.tar`}
               >
                 <DownloadOutlined />
                 Download

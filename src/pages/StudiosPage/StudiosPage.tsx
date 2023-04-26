@@ -132,7 +132,7 @@ const StudioItem = ({
           </div>
           <div className="statistics_item">
             <div>Datasets</div>
-            <div>{datasets || '2M'}</div>
+            <div>{datasets || ''}</div>
           </div>
           <div className="statistics_item">
             <div>Created</div>
