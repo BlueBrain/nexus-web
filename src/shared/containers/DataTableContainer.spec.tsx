@@ -93,7 +93,7 @@ describe('DataTableContainer.spec.tsx', () => {
     return container.querySelectorAll(`td.testid-${name}`);
   };
 
-  const waitForTableRows = async (expectedRowsCount = 5) => {
+  const waitForTableRows = async (expectedRowsCount = 6) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
       expect(rows.length).toEqual(expectedRowsCount);
@@ -135,6 +135,7 @@ describe('DataTableContainer.spec.tsx', () => {
         ORIGINAL_3_SORTED_3,
         ORIGINAL_4_SORTED_4,
         ORIGINAL_5_SORTED_6,
+        ORIGINAL_6_SORTED_5,
       ]);
     });
   });
@@ -145,7 +146,7 @@ describe('DataTableContainer.spec.tsx', () => {
     // Click on sort button once to sort in ascending order
     await user.click(sortableHeader!);
 
-    await waitForTableRows(5);
+    await waitForTableRows(6);
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_2_SORTED_1,
@@ -153,6 +154,7 @@ describe('DataTableContainer.spec.tsx', () => {
       ORIGINAL_3_SORTED_3,
       ORIGINAL_4_SORTED_4,
       ORIGINAL_6_SORTED_5,
+      ORIGINAL_5_SORTED_6,
     ]);
   });
 
@@ -163,7 +165,7 @@ describe('DataTableContainer.spec.tsx', () => {
     await user.click(sortableHeader!);
     await user.click(sortableHeader!);
 
-    await waitForTableRows(5);
+    await waitForTableRows(6);
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_5_SORTED_6,
@@ -171,6 +173,7 @@ describe('DataTableContainer.spec.tsx', () => {
       ORIGINAL_6_SORTED_5,
       ORIGINAL_3_SORTED_3,
       ORIGINAL_1_SORTED_2,
+      ORIGINAL_2_SORTED_1,
     ]);
   });
 

@@ -212,7 +212,7 @@ describe('workSpaceMenu', () => {
         const text = await screen.getAllByText(
           'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
         );
-        expect(text.length).toBe(5);
+        expect(text.length).toBe(9);
       });
       expect(container).toMatchSnapshot();
     });

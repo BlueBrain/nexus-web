@@ -616,25 +616,6 @@ const EditTableForm: React.FC<{
             <br />
           </div>
         </div>
-        <Row>
-          <Col xs={6} sm={6} md={6}>
-            <h3>Results per page</h3>
-          </Col>
-          <Col>
-            <Select
-              value={resultsPerPage}
-              onChange={value => {
-                setResultsPerPage(value);
-              }}
-            >
-              {PAGES_OPTIONS.map(pages => (
-                <Option key={pages} value={pages}>
-                  {pages}
-                </Option>
-              ))}
-            </Select>
-          </Col>
-        </Row>
         <div className="edit-table-form__query">
           <h3>Query</h3>
           <div className="code">
