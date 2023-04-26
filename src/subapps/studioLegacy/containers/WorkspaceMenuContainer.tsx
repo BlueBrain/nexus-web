@@ -328,6 +328,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<EditOutlined />}
+              data-testid="edit-dashboard"
               onClick={e => {
                 if (selectedDashboard && 'dataTable' in selectedDashboard) {
                   setShowDataTableEdit(true);
