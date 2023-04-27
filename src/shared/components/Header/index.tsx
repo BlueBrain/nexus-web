@@ -15,14 +15,12 @@ import {
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk';
-import useNotification from '../../../shared/hooks/useNotification';
 import { UISettingsActionTypes } from '../../../shared/store/actions/ui-settings';
-import { ConsentType } from '../../layouts/FusionMainLayout';
 import { triggerCopy as copyCmd } from '../../utils/copy';
-import { AppInfo } from '../../../shared/modals';
 import { RootState } from '../../../shared/store/reducers';
+import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
+import useNotification from '../../../shared/hooks/useNotification';
 import './Header.less';
-import { EnvironmentInfo } from 'shared/modals/AppInfo/AppInfo';
 
 export interface HeaderProps {
   githubIssueURL: string;
@@ -34,16 +32,12 @@ export interface HeaderProps {
   serviceAccountsRealm: string;
   displayLogin?: boolean;
   children?: React.ReactChild;
-  consent?: ConsentType;
-  commitHash?: string;
-  dataCart?: React.ReactNode;
   onClickRemoveConsent?(): void;
   performLogin(realmName: string): void;
   subApps: any;
   authenticated: boolean;
   logoImg: string;
   handleLogout: MenuItemProps['onClick'];
-  environment: EnvironmentInfo;
 }
 const headerIconStyle = { marginRight: 4 };
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -51,25 +45,13 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   token,
   logoImg,
   handleLogout,
-  environment,
-  githubIssueURL,
-  forgeLink,
-  consent,
-  commitHash,
-  dataCart,
-  onClickRemoveConsent,
-  performLogin,
-  subApps,
-  authenticated,
 }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const notification = useNotification();
-  const [visible, setModalVisible] = useState<boolean>(false);
   const { openCreationPanel } = useSelector(
     (state: RootState) => state.uiSettings
   );
-  const onModalStateChange = () => setModalVisible(() => false);
   const copyTokenCmd = () => {
     if (token) {
       copyCmd(token);
@@ -79,7 +61,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       });
     }
   };
-
+  const openAboutModal = () => dispatch(updateAboutModalVisibility(true))
   const menu = (
     <Menu mode="inline" className="ant-menu-inline">
       <Menu.Item className="link-menu-item" key="header-menu-my-profile">
@@ -125,7 +107,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://bluebrainnexus.io/"
+            href='https://bbp.epfl.ch/nexus/webprotege/'
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Web Protégé</span>
@@ -135,7 +117,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://portal.bluebrain.epfl.ch/resources/models/cell-atlas/"
+            href="https://bbp.epfl.ch/nexus/cell-atlas/"
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Atlas</span>
@@ -144,7 +126,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </Menu.SubMenu>
       <Menu.Item
         className="link-menu-item"
-        onClick={() => setModalVisible(() => true)}
+        onClick={openAboutModal}
       >
         <SettingOutlined style={headerIconStyle} />
         About
@@ -202,17 +184,6 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           )}
         </div>
       </header>
-      <AppInfo
-        {...{
-          githubIssueURL,
-          commitHash,
-          consent,
-          visible,
-          onClickRemoveConsent,
-          onModalStateChange,
-          environment,
-        }}
-      />
     </Fragment>
   );
 };

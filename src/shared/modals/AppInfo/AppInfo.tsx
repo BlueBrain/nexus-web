@@ -22,7 +22,7 @@ interface Props {
   consent?: ConsentType;
   visible: boolean;
   environment: EnvironmentInfo;
-  onModalStateChange(): void;
+  onCloseModal(): void;
   onClickRemoveConsent?(): void;
 }
 
@@ -44,12 +44,12 @@ const AppInfo = ({
   environment,
   githubIssueURL,
   visible,
-  onModalStateChange,
+  onCloseModal,
 }: Props) => {
   return (
     <Modal
       open={visible}
-      onCancel={onModalStateChange}
+      onCancel={onCloseModal}
       centered
       closable
       destroyOnClose

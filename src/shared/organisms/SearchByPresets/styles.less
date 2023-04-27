@@ -13,8 +13,12 @@
   }
 
   &-container {
-    display: flex;
-    flex-flow: row wrap;
+    // display: flex;
+    // flex-flow: row wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-flow: row dense;
+    grid-auto-columns: max-content;
     column-gap: 10px;
     row-gap: 5px;
   }
@@ -25,7 +29,7 @@
     padding: 20px 10px;
 
     .searchby-presets-container {
-      max-width: 1240px;
+      // max-width: 1240px;
       width: 100%;
       margin: 0 auto;
       column-gap: 5px;

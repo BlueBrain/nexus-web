@@ -10,7 +10,7 @@ describe.only('AppInfo', () => {
           githubIssueURL: 'https://mock-issues-url',
           environment: MOCK_ENVIRONMENT,
           visible: true,
-          onModalStateChange: () => true,
+          onCloseModal: () => true,
         }}
       />
     );

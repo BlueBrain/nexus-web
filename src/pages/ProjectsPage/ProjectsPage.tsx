@@ -21,7 +21,7 @@ import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
@@ -118,8 +118,8 @@ const ProjectItem = ({
             <div>{(datasets && formatNumber(datasets)) || '0'}</div>
           </div>
           <div className="statistics_item">
-            <div>Your access</div>
-            <div>{access || ''}</div>
+            {/* <div>Your access</div>
+            <div>{access || ''}</div> */}
           </div>
           <div className="statistics_item">
             <div>Created</div>
@@ -258,6 +258,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
         createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}
+        path={['/']}
       />
       <div className="route-body">
         <div className="route-body-container">

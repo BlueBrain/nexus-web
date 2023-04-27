@@ -19,6 +19,7 @@ import {
   flatMap,
   omit,
   slice,
+  isString,
 } from 'lodash';
 import { animate, spring } from 'motion';
 import {
@@ -27,6 +28,7 @@ import {
   Dropdown,
   Table,
   Tag,
+  Tooltip,
   message,
   notification,
 } from 'antd';
@@ -56,6 +58,7 @@ import formatBytes from '../../../utils/formatBytesUnit';
 import './styles.less';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
+import { type } from 'os';
 
 type Props = {
   authenticated?: boolean;
@@ -168,7 +171,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -223,6 +226,21 @@ const DataPanel: React.FC<Props> = ({}) => {
       key: 'type',
       title: 'type',
       dataIndex: 'type',
+      render: (text) => {
+        let types = "";
+        let fullText = "";
+        if (isArray(text)) {
+          types = text.map(item => isValidUrl(item) ? item.split('/').pop() : item).join('\n');
+          fullText = text.join('\n');
+        } else if (isString(text)) {
+          types = isValidUrl(text) ? (text.split('/').pop() ?? '') : '';
+        } else {
+          types = text;
+        }
+        return <Tooltip title={text}>
+          <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
+        </Tooltip>
+      }
     },
     {
       key: 'actions',
@@ -335,7 +353,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,

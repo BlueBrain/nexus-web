@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Table, Button, Row, Col, notification } from 'antd';
+import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
+import Icon from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
 import { NexusClient, PaginatedList, Statistics } from '@bbp/nexus-sdk';
@@ -9,6 +10,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
+import IndexingIcon from '../../../../shared/components/Icons/IndexingIcon';
 import './styles.less';
 
 type TDataType = {
@@ -60,7 +62,7 @@ const fetchViewsList = async ({
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
-            iViewStats.processedEvents / iViewStats.totalEvents
+          iViewStats.processedEvents / iViewStats.totalEvents
           : 0;
         return {
           ...view,
@@ -211,9 +213,15 @@ const ViewsSubView = () => {
               Query
             </Button>
             <AccessControl
-              permissions={['view/query', 'view/write']}
+              permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
-              noAccessComponent={() => <></>}
+              noAccessComponent={() =>
+                <Tooltip title='Permission'>
+                  <Button
+                    icon={<Icon component={IndexingIcon} />}>
+                  </Button>
+                </Tooltip>
+              }
             >
               <Button
                 type="link"
@@ -254,7 +262,7 @@ const ViewsSubView = () => {
           </Col>
           <Col>
             <AccessControl
-              permissions={['view/query', 'view/write']}
+              permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
               noAccessComponent={() => <></>}
             >

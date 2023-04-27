@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input, Alert } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   NexusClient,
   ResourceList,
@@ -16,15 +16,15 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import { flatten } from 'lodash';
 import * as pluralize from 'pluralize';
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../shared/utils';
+import { RootState } from '../../shared/store/reducers';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
 import {
@@ -33,6 +33,7 @@ import {
 } from '../OrganizationsListPage/OrganizationListPage';
 import timeago from '../../utils/timeago';
 import '../../shared/styles/route-layout.less';
+
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -68,6 +69,8 @@ type TStudioItem = {
 type TFetchStudiosListProps = TStudiosOptions & {
   nexus: NexusClient;
   after?: string;
+  orgLabel?: string, 
+  projectLabel?: string,
 };
 type TNewPaginationList = PaginatedList & { _next: string };
 export const sortBackgroundColor = (sort: TSort, value: TSort) =>
@@ -78,9 +81,11 @@ const fetchStudios = async ({
   sort,
   size,
   after,
+  orgLabel, 
+  projectLabel
 }: TFetchStudiosListProps) => {
   try {
-    const response = await nexus.Resource.list(undefined, undefined, {
+    const response = await nexus.Resource.list(orgLabel, projectLabel, {
       after,
       q: query,
       size: size ?? STUDIO_RESULTS_DEFAULT_SIZE,
@@ -126,14 +131,14 @@ const StudioItem = ({
             <div>Project</div>
             <div>{project}</div>
           </div>
-          <div className="statistics_item">
+          {/* <div className="statistics_item">
             <div>Access</div>
             <div>{access}</div>
           </div>
           <div className="statistics_item">
             <div>Datasets</div>
             <div>{datasets || ''}</div>
-          </div>
+          </div> */}
           <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
@@ -153,27 +158,39 @@ export const useInfiniteStudiosQuery = ({
   nexus,
   query,
   sort,
+  orgLabel, 
+  projectLabel
 }: {
   nexus: NexusClient;
   query: string;
   sort: TSort;
+  orgLabel?: string, 
+  projectLabel?: string,
 }) => {
   return useInfiniteQuery({
-    queryKey: ['fusion-studios', { query, sort }],
+    queryKey: ['fusion-studios', { query, sort, orgLabel, projectLabel }],
     queryFn: ({ pageParam = undefined }) =>
-      fetchStudios({ nexus, query, sort, after: pageParam, size: 10 }),
+      fetchStudios({ nexus, query, sort, orgLabel, projectLabel, after: pageParam, size: 10 }),
     getNextPageParam: lastPage =>
       (lastPage as TNewPaginationList)._next
         ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-            'after'
-          )
+          'after'
+        )
         : undefined,
   });
 };
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const dispatch = useDispatch();
+  const { orgLabel, projectLabel } = useParams<{
+    orgLabel: string, 
+    projectLabel: string,
+  }>();
   const loadMoreRef = React.useRef(null);
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const authenticated = !!oidc.user;
+  const token = oidc.user && oidc.user.access_token;
+  const userAuthenticated = Boolean(authenticated) && Boolean(token);
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
   const [query, setQueryString] = React.useState<string>('');
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
@@ -205,7 +222,7 @@ const FusionStudiosPage: React.FC = () => {
     status,
     isLoading,
     isFetching,
-  } = useInfiniteStudiosQuery({ nexus, query, sort });
+  } = useInfiniteStudiosQuery({ nexus, query, sort, orgLabel, projectLabel });
 
   const LoadMore = (
     <LoadMoreFooter
@@ -221,24 +238,24 @@ const FusionStudiosPage: React.FC = () => {
   const dataSource =
     data && data.pages
       ? data?.pages
-          .map(page =>
-            (page as ResourceList<{}>)?._results.map((item: Resource) => {
-              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-                item._project
-              )!;
-              return {
-                orgLabel,
-                projectLabel,
-                id: item['@id'],
-                label: item.label,
-                deprecated: item._deprecated,
-                createdAt: item._createdAt,
-                description: item.description,
-                access: '',
-              };
-            })
-          )
-          .flat()
+        .map(page =>
+          (page as ResourceList<{}>)?._results.map((item: Resource) => {
+            const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
+              item._project
+            )!;
+            return {
+              orgLabel,
+              projectLabel,
+              id: item['@id'],
+              label: item.label,
+              deprecated: item._deprecated,
+              createdAt: item._createdAt,
+              description: item.description,
+              access: '',
+            };
+          })
+        )
+        .flat()
       : [];
 
   useIntersectionObserver({
@@ -256,8 +273,11 @@ const FusionStudiosPage: React.FC = () => {
           extra={total ? `Total of ${total} ${pluralize('Studio', total)}` : ''}
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
-          createLabel="Create Studio"
-          onCreateClick={() => dispatch(updateStudioModalVisibility(true))}
+          permissions={['resources/write']}
+          {... (userAuthenticated ? {
+            createLabel: "Create Studio",
+            onCreateClick: () => dispatch(updateStudioModalVisibility(true))
+          } : {})}
         />
         <div className="route-body">
           <div className="route-body-container">

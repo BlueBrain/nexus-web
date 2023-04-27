@@ -553,7 +553,7 @@ function useGlobalSearchData({
       queryFn: () => nexus.Search.config(),
     },
     {
-      queryKey: ['fusion-search-query', { query: JSON.stringify(esQuery) }],
+      queryKey: ['fusion-search-query', { query: JSON.stringify(esQuery), page, pageSize }],
       queryFn: () => nexus.Search.query(esQuery),
       onSuccess: (data: any) => onSuccess(data),
     },
@@ -561,7 +561,7 @@ function useGlobalSearchData({
   const data = React.useMemo(() => {
     if (queryResult && queryResult.hits && queryResult.hits.hits) {
       return queryResult.hits.hits.map((hit: any) => {
-        return { ...hit._source, key: hit._source['@id'] };
+        return { ...hit._source, key: hit._source._self };
       });
     }
     return [];

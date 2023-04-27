@@ -9,11 +9,13 @@ export const DEFAULT_MODALS_STATE = {
   createOrganizationModel: false,
   createProjectModel: false,
   createStudioModel: false,
+  aboutModel: false,
 };
 export type modalsState = {
   createOrganizationModel: boolean;
   createProjectModel: boolean;
   createStudioModel: boolean;
+  aboutModel: boolean;
 };
 
 export default function modalsReducer(
@@ -38,6 +40,12 @@ export default function modalsReducer(
       return {
         ...state,
         createStudioModel: action.payload ?? !state.createStudioModel,
+      };
+    }
+    case ModalsActionsEnum.OPEN_ABOUT_MODAL: {
+      return {
+        ...state,
+        aboutModel: action.payload ?? !state.aboutModel,
       };
     }
   }

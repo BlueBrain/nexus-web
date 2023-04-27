@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "main": "dist/server.js",
   "repository": "github:bluebrain/nexus-explorer",
-  "url": "https://github.com/BlueBrain/nexus/issues/new?labels=frontend,nexus-web",
+  "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion",
   "scripts": {
     "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",

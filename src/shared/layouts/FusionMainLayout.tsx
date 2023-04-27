@@ -105,41 +105,11 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   const history = useHistory();
   const dispatch = useDispatch();
   const notification = useNotification();
-  //   TODO: collapsed version https://github.com/BlueBrain/nexus/issues/1322
-  const [collapsed, setCollapsed] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState<SubAppProps>(
     subApps.find(({ route }) => {
       return `/${location.pathname.split('/')[1]}` === route;
     }) || subApps[0]
   );
-
-  const versions: any = useNexus<any>((nexus: NexusClient) =>
-    nexus.httpGet({
-      path: `${apiBase}/v1/version`,
-      context: { as: 'json' },
-    })
-  );
-
-  const deltaVersion = React.useMemo(() => {
-    if (versions.data) {
-      return versions.data.delta as string;
-    }
-    return '';
-  }, [versions]);
-
-  const environmentName = React.useMemo(() => {
-    if (versions.data) {
-      return versions.data.environment as string;
-    }
-    return '';
-  }, [versions]);
-
-  const userPlatform = parseUserAgent(navigator.userAgent);
-  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
-    ?.version ?? ''}`;
-  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
-    ?.version ?? ''}`;
-
   React.useEffect(() => {
     const currentSubApp =
       subApps.find(({ route }) => {
@@ -204,8 +174,7 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   // Remove version from API URL
-  const splits = apiEndpoint.split('/');
-  const apiBase = splits.slice(0, splits.length - 1).join('/');
+  
 
   return (
     <>
@@ -223,23 +192,8 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
             githubIssueURL={githubIssueURL}
             forgeLink={layoutSettings.forgeLink}
             logoImg={layoutSettings.logoImg}
-            consent={consent}
-            commitHash={COMMIT_HASH}
-            onClickRemoveConsent={() => setConsent(undefined)}
-            dataCart={
-              <ErrorBoundary fallback={FallbackCart}>
-                <DataCartContainer />
-              </ErrorBoundary>
-            }
             subApps={subApps}
             authenticated={authenticated}
-            environment={{
-              deltaVersion,
-              operatingSystem,
-              browser,
-              environmentName,
-              fusionVersion: FUSION_VERSION,
-            }}
           />
         )}
         <ConsentContainer consent={consent} updateConsent={setConsent} />

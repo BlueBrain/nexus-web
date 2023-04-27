@@ -2,12 +2,14 @@ import * as React from 'react';
 import { useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { parseUserAgent } from 'react-device-detect';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
-import FusionMainLayout from './layouts/FusionMainLayout';
+import FusionMainLayout, { ConsentType } from './layouts/FusionMainLayout';
 import SubAppsView from './views/SubAppsView';
 import useSubApps from './hooks/useSubApps';
 import useDataCart, { CartContext, CartType } from './hooks/useDataCart';
+import { url as githubIssueURL } from '../../package.json';
 import {
   getNotificationContextValue,
   NotificationContext,
@@ -18,31 +20,78 @@ import CreateProject from './modals/CreateProject/CreateProject';
 import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
 import { RootState } from './store/reducers';
+import { Identity, NexusClient, Realm } from '@bbp/nexus-sdk';
 import './App.less';
+import { useNexus } from '@bbp/react-nexus';
+import useLocalStorage from './hooks/useLocalStorage';
+import { updateAboutModalVisibility } from './store/actions/modals';
+import AppInfo from './modals/AppInfo/AppInfo';
+import { useDispatch } from 'react-redux';
+
+declare var COMMIT_HASH: string;
+declare var FUSION_VERSION: string;
 
 const App: React.FC = () => {
   // TODO log the error in to sentry.
   const { subAppProps, subAppRoutes, subAppError } = useSubApps();
   const location = useLocation();
+  const dispatch = useDispatch();
   const cartData: CartType = useDataCart();
-  const oidc = useSelector((state: RootState) => state.oidc);
+  const { auth, oidc, config, modals } = useSelector((state: RootState) => ({
+    oidc: state.oidc,
+    auth: state.auth,
+    config: state.config,
+    modals: state.modals
+  }));
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
   const notificationData: NotificationContextType = getNotificationContextValue();
   const userAuthenticated = Boolean(authenticated) && Boolean(token);
+  const realms: Realm[] =
+    (auth.realms && auth.realms.data && auth.realms.data._results) || [];
+  const identities: Identity[] =
+    (auth.identities &&
+      auth.identities.data &&
+      auth.identities.data.identities) ||
+    [];
   const allowDataPanel =
     userAuthenticated &&
     (location.pathname === '/' ||
       location.pathname === '/search' ||
       location.pathname === '/my-data');
-  console.log('@@data at start:', {
-    location,
-    authenticated,
-    userAuthenticated,
-    allowDataPanel,
-  });
+
+  const [consent] = useLocalStorage<ConsentType>(
+    'consentToTracking'
+  );
+  const splits = config.apiEndpoint.split('/');
+  const apiBase = splits.slice(0, splits.length - 1).join('/');
+  const versions: any = useNexus<any>((nexus: NexusClient) =>
+    nexus.httpGet({
+      path: `${apiBase}/v1/version`,
+      context: { as: 'json' },
+    })
+  );
+  const deltaVersion = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.delta as string;
+    }
+    return '';
+  }, [versions]);
+
+  const environmentName = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.environment as string;
+    }
+    return '';
+  }, [versions]);
+  const userPlatform = parseUserAgent(navigator.userAgent);
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
+    ?.version ?? ''}`;
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
+    ?.version ?? ''}`;
   const routesWithSubApps = [...routes, ...subAppRoutes];
   const DataPanel = withDataPanel({ allowDataPanel });
+  const onAboutModalClose = () => dispatch(updateAboutModalVisibility(false));
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
@@ -58,6 +107,22 @@ const App: React.FC = () => {
               <DataPanel />
             </>
           )}
+          <AppInfo
+            {...{
+              githubIssueURL,
+              consent,
+            }}
+            visible={modals.aboutModel}
+            onCloseModal={onAboutModalClose}
+            commitHash={COMMIT_HASH}
+            environment={{
+              deltaVersion,
+              operatingSystem,
+              browser,
+              environmentName,
+              fusionVersion: FUSION_VERSION,
+            }}
+          />
         </FusionMainLayout>
       </NotificationContext.Provider>
     </CartContext.Provider>

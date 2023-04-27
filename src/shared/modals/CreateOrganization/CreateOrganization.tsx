@@ -65,10 +65,11 @@ const CreateOrganization: React.FC<{}> = () => {
       {
         onSuccess: data => {
           form.resetFields();
+          dispatch(updateOrganizationModalVisibility(false));
           notification.success({
+            duration: 1,
             message: <strong>{data._label}</strong>,
             description: `Organisation has been created Successfully`,
-            duration: 2,
             onClose: () => {
               history.push(`/${subapp.namespace}/${data._label}`);
             },

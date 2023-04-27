@@ -259,6 +259,7 @@ const OrganizationListView: React.FC<{}> = () => {
           createLabel="Create Orgnanization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}
+          path={['/']}
         />
         <div className="route-body">
           <div className="route-body-container">

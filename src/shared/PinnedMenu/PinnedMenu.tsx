@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import {
   SearchOutlined,
   FolderOutlined,
   WalletOutlined,
   HomeOutlined,
 } from '@ant-design/icons';
+import { RootState } from '../../shared/store/reducers';
 import './styles.less';
 
 type Props = {};
@@ -71,14 +73,16 @@ const PinnedItem: React.FC<TMenuItem> = ({ title, url, icon, bg }) => {
     </Link>
   );
 };
-const PinnedMenu: React.FC<Props> = ({}) => {
-  return (
-    <div className="pinned-menu">
-      {Array.from(Menu).map(([_, item]) => (
-        <PinnedItem key={item.id} {...item} />
-      ))}
-    </div>
-  );
+const PinnedMenu: React.FC<Props> = ({ }) => {
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const authenticated = !!oidc.user;
+  const token = oidc.user && oidc.user.access_token;
+  const userAuthenticated = Boolean(authenticated) && Boolean(token);
+  return userAuthenticated ? <div className="pinned-menu">
+    {Array.from(Menu).map(([_, item]) => (
+      <PinnedItem key={item.id} {...item} />
+    ))}
+  </div> : null;
 };
 
 export default PinnedMenu;

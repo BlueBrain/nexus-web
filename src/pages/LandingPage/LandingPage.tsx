@@ -1,15 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { Button, Divider } from 'antd';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
-import useClickOutside from '../../shared/hooks/useClickOutside';
+import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
+import useClickOutside from '../../shared/hooks/useClickOutside';
 import * as authActions from '../../shared/store/actions/auth';
 import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
-import { useHistory } from 'react-router';
+
 
 type TProps = {
   realms: Realm[];
@@ -40,11 +42,13 @@ const LandingPage: React.FC<TProps> = ({
 }) => {
   const popoverRef = useRef(null);
   const history = useHistory();
+  const dispatch = useDispatch();
   const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
   const onPopoverVisibleChange = () => setConnectBtnState(state => !state);
   const realmsFilter = realms.filter(
     r => r._label !== serviceAccountsRealm && !r._deprecated
   );
+  const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, onPopoverVisibleChange);
   return (
     <div className="home-authentication">
@@ -116,8 +120,15 @@ const LandingPage: React.FC<TProps> = ({
           <Button size="large" onClick={() => history.push('/studios')}>
             View Studios
           </Button>
-          <Button size="large">Documentation</Button>
-          <Button size="large">About</Button>
+          <Button
+            type="link"
+            size="large"
+            rel="noopener noreferrer"
+            target="_blank"
+            href="https://bluebrainnexus.io/docs/index.html"
+            className='documentation-btn'
+          >Documentation</Button>
+          <Button size="large" onClick={openAboutModal}>About</Button>
         </div>
       </div>
     </div>

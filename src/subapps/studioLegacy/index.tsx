@@ -3,6 +3,7 @@ import { SubApp } from '..';
 import StudioView from './views/StudioView';
 import StudioAdminView from './views/StudioAdminView';
 import StudioListView from '../../pages/StudiosPage/StudiosPage';
+import FusionStudiosPage from '../../pages/StudiosPage/StudiosPage';
 
 const subAppType = 'internal';
 const title = 'Studios';
@@ -57,7 +58,7 @@ const StudioLegacy: SubApp = () => {
       {
         path: '/:orgLabel/:projectLabel/studios',
         exact: true,
-        component: StudioLegacySubappProviderHOC(StudioAdminView),
+        component: StudioLegacySubappProviderHOC(FusionStudiosPage),
         protected: false,
       },
       {
