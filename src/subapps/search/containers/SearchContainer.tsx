@@ -116,7 +116,7 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-            lastPageOfResults !== 0
+          lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -143,7 +143,7 @@ const SearchContainer: React.FC = () => {
       id: record['@id'],
       createdAt: record.createdAt,
       description: record.description,
-      name: record.name ?? (record['@id'] ?? record._self),
+      name: record.name ?? record['@id'] ?? record._self,
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
@@ -198,7 +198,7 @@ const SearchContainer: React.FC = () => {
       key: record._self,
       createdAt: record.createdAt,
       description: record.description,
-      name: record.name ?? (record['@id'] ?? record._self),
+      name: record.name ?? record['@id'] ?? record._self,
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
@@ -255,7 +255,8 @@ const SearchContainer: React.FC = () => {
     onSelectAll: onSelectAllChange,
     columnWidth: 70,
     renderCell: (checked: any, record: any, index: number) => {
-      const rowIndex = ((pagination.currentPage - 1) * pagination.pageSize + index) + 1;
+      const rowIndex =
+        (pagination.currentPage - 1) * pagination.pageSize + index + 1;
       // console.log('@@pagination', {
       //   index,
       //   rowIndex,
@@ -271,9 +272,7 @@ const SearchContainer: React.FC = () => {
           }}
         >
           <Checkbox className="row-select" checked={checked} />
-          <span className="row-index">
-            {rowIndex}
-          </span>
+          <span className="row-index">{rowIndex}</span>
         </div>
       );
     },
@@ -328,8 +327,7 @@ const SearchContainer: React.FC = () => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
     const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
     if (dataLs && dataLs.length) {
-      const selectedRows = dataLsObject.selectedRows
-        .map(o => o.key);
+      const selectedRows = dataLsObject.selectedRows.map(o => o.key);
       setSelectedRowKeys(selectedRows);
     }
   }, [layout, pagination]);
@@ -338,10 +336,12 @@ const SearchContainer: React.FC = () => {
     const dataPanelEventListner = (
       event: DataPanelEvent<{ datapanel: TResourceTableData }>
     ) => {
-      console.log('@@layout changed', event.detail?.datapanel.selectedRows.map(item => item.key))
+      console.log(
+        '@@layout changed',
+        event.detail?.datapanel.selectedRows.map(item => item.key)
+      );
       setSelectedRowKeys(
-        event.detail?.datapanel.selectedRows
-          .map(item => item.key)
+        event.detail?.datapanel.selectedRows.map(item => item.key)
       );
     };
     window.addEventListener(
@@ -375,10 +375,10 @@ const SearchContainer: React.FC = () => {
               selectedLayout={selectedSearchLayout}
               onChangeLayout={layoutName => {
                 handleChangeSearchLayout(layoutName);
-                setPagination((state) => ({
+                setPagination(state => ({
                   ...state,
                   currentPage: 1,
-                }))
+                }));
               }}
             />
           )}

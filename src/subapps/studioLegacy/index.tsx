@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { SubApp } from '..';
 import StudioView from './views/StudioView';
-import StudioAdminView from './views/StudioAdminView';
-import StudioListView from '../../pages/StudiosPage/StudiosPage';
 import FusionStudiosPage from '../../pages/StudiosPage/StudiosPage';
+// import StudioAdminView from './views/StudioAdminView';
 
 const subAppType = 'internal';
 const title = 'Studios';
@@ -52,7 +51,7 @@ const StudioLegacy: SubApp = () => {
       {
         path: '/',
         exact: true,
-        component: StudioLegacySubappProviderHOC(StudioListView),
+        component: StudioLegacySubappProviderHOC(FusionStudiosPage),
         protected: false,
       },
       {

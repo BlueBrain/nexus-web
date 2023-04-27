@@ -61,7 +61,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       });
     }
   };
-  const openAboutModal = () => dispatch(updateAboutModalVisibility(true))
+  const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   const menu = (
     <Menu mode="inline" className="ant-menu-inline">
       <Menu.Item className="link-menu-item" key="header-menu-my-profile">
@@ -107,7 +107,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href='https://bbp.epfl.ch/nexus/webprotege/'
+            href="https://bbp.epfl.ch/nexus/webprotege/"
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Web Protégé</span>
@@ -124,10 +124,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           </a>
         </Menu.Item>
       </Menu.SubMenu>
-      <Menu.Item
-        className="link-menu-item"
-        onClick={openAboutModal}
-      >
+      <Menu.Item className="link-menu-item" onClick={openAboutModal}>
         <SettingOutlined style={headerIconStyle} />
         About
       </Menu.Item>

@@ -171,7 +171,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -226,21 +226,25 @@ const DataPanel: React.FC<Props> = ({ }) => {
       key: 'type',
       title: 'type',
       dataIndex: 'type',
-      render: (text) => {
-        let types = "";
-        let fullText = "";
+      render: text => {
+        let types = '';
+        let fullText = '';
         if (isArray(text)) {
-          types = text.map(item => isValidUrl(item) ? item.split('/').pop() : item).join('\n');
+          types = text
+            .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+            .join('\n');
           fullText = text.join('\n');
         } else if (isString(text)) {
-          types = isValidUrl(text) ? (text.split('/').pop() ?? '') : '';
+          types = isValidUrl(text) ? text.split('/').pop() ?? '' : '';
         } else {
           types = text;
         }
-        return <Tooltip title={text}>
-          <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
-        </Tooltip>
-      }
+        return (
+          <Tooltip title={text}>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
+          </Tooltip>
+        );
+      },
     },
     {
       key: 'actions',
@@ -353,7 +357,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-                Boolean(resource.distribution?.contentSize)
+              Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,

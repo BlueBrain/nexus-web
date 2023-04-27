@@ -12,7 +12,6 @@ import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 
-
 type TProps = {
   realms: Realm[];
   serviceAccountsRealm: string;
@@ -126,9 +125,13 @@ const LandingPage: React.FC<TProps> = ({
             rel="noopener noreferrer"
             target="_blank"
             href="https://bluebrainnexus.io/docs/index.html"
-            className='documentation-btn'
-          >Documentation</Button>
-          <Button size="large" onClick={openAboutModal}>About</Button>
+            className="documentation-btn"
+          >
+            Documentation
+          </Button>
+          <Button size="large" onClick={openAboutModal}>
+            About
+          </Button>
         </div>
       </div>
     </div>

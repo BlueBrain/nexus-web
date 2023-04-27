@@ -553,7 +553,10 @@ function useGlobalSearchData({
       queryFn: () => nexus.Search.config(),
     },
     {
-      queryKey: ['fusion-search-query', { query: JSON.stringify(esQuery), page, pageSize }],
+      queryKey: [
+        'fusion-search-query',
+        { page, pageSize, query: JSON.stringify(esQuery) },
+      ],
       queryFn: () => nexus.Search.query(esQuery),
       onSuccess: (data: any) => onSuccess(data),
     },

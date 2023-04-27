@@ -85,15 +85,21 @@ const HomeMyData = (props: Props) => {
         // type: dataType,
       }),
     retry: false,
-    onError: (error) => {
+    onError: error => {
       notification.error({
         message: 'Error loading data from the server',
-        description: isString(error) ? error : isObject(error) ? <div>
-          <strong>{ (error as any)['@type'] }</strong>
-          <div>{ (error as any)['details'] }</div>
-        </div> : ''
-      })
-    }
+        description: isString(error) ? (
+          error
+        ) : isObject(error) ? (
+          <div>
+            <strong>{(error as any)['@type']}</strong>
+            <div>{(error as any)['details']}</div>
+          </div>
+        ) : (
+          ''
+        ),
+      });
+    },
   });
   const total = resources?._total;
   return (

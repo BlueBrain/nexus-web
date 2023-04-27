@@ -20,16 +20,16 @@ type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
-  | string
-  | (
     | string
+    | (
+        | string
+        | {
+            [key: string]: any;
+          }
+      )[]
     | {
-      [key: string]: any;
-    }
-  )[]
-  | {
-    [key: string]: any;
-  };
+        [key: string]: any;
+      };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -164,7 +164,7 @@ const MyDataTable: React.FC<TProps> = ({
             return (
               <Tooltip title={text}>
                 <Button
-                  style={{ padding: 0, }}
+                  style={{ padding: 0 }}
                   type="link"
                   onClick={() => goToResource(org, project, text)}
                 >
@@ -174,9 +174,11 @@ const MyDataTable: React.FC<TProps> = ({
                       whiteSpace: 'nowrap',
                       textOverflow: 'ellipsis',
                     }}
-                  >{showedText}</span>
+                  >
+                    {showedText}
+                  </span>
                 </Button>
-              </Tooltip >
+              </Tooltip>
             );
           }
           return <Tooltip title={text}>{showedText}</Tooltip>;

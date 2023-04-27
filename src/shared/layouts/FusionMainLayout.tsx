@@ -174,7 +174,6 @@ const FusionMainLayout: React.FC<FusionMainLayoutProps> = ({
   };
 
   // Remove version from API URL
-  
 
   return (
     <>

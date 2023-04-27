@@ -73,16 +73,18 @@ const PinnedItem: React.FC<TMenuItem> = ({ title, url, icon, bg }) => {
     </Link>
   );
 };
-const PinnedMenu: React.FC<Props> = ({ }) => {
+const PinnedMenu: React.FC<Props> = ({}) => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
   const userAuthenticated = Boolean(authenticated) && Boolean(token);
-  return userAuthenticated ? <div className="pinned-menu">
-    {Array.from(Menu).map(([_, item]) => (
-      <PinnedItem key={item.id} {...item} />
-    ))}
-  </div> : null;
+  return userAuthenticated ? (
+    <div className="pinned-menu">
+      {Array.from(Menu).map(([_, item]) => (
+        <PinnedItem key={item.id} {...item} />
+      ))}
+    </div>
+  ) : null;
 };
 
 export default PinnedMenu;

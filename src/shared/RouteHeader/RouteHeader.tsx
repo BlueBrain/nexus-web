@@ -24,7 +24,7 @@ const RouteHeader = ({
   createLabel,
   onCreateClick,
   permissions = [],
-  path = ["/"]
+  path = ['/'],
 }: TProps) => {
   return (
     <div className="route-header">
@@ -33,9 +33,7 @@ const RouteHeader = ({
         <h2>{title}</h2>
         <p>{extra}</p>
       </div>
-      <AccessControl
-        {... { permissions, path }}
-      >
+      <AccessControl {...{ permissions, path }}>
         {createLabel && (
           <div className="action">
             <button className="create-btn" onClick={onCreateClick}>

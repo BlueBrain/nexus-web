@@ -10,7 +10,6 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
-import IndexingIcon from '../../../../shared/components/Icons/IndexingIcon';
 import './styles.less';
 
 type TDataType = {
@@ -62,7 +61,7 @@ const fetchViewsList = async ({
         // @ts-ignore
         const percentage = iViewStats.totalEvents
           ? // @ts-ignore
-          iViewStats.processedEvents / iViewStats.totalEvents
+            iViewStats.processedEvents / iViewStats.totalEvents
           : 0;
         return {
           ...view,
@@ -215,13 +214,12 @@ const ViewsSubView = () => {
             <AccessControl
               permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
-              noAccessComponent={() =>
-                <Tooltip title='Permission'>
-                  <Button
-                    icon={<Icon component={IndexingIcon} />}>
-                  </Button>
-                </Tooltip>
-              }
+              noAccessComponent={() => (
+                <></>
+                // <Tooltip title="Permission">
+                //   <Button icon={<Icon component={IndexingIcon} />}></Button>
+                // </Tooltip>
+              )}
             >
               <Button
                 type="link"

@@ -34,7 +34,6 @@ import {
 import timeago from '../../utils/timeago';
 import '../../shared/styles/route-layout.less';
 
-
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
@@ -69,8 +68,8 @@ type TStudioItem = {
 type TFetchStudiosListProps = TStudiosOptions & {
   nexus: NexusClient;
   after?: string;
-  orgLabel?: string, 
-  projectLabel?: string,
+  orgLabel?: string;
+  projectLabel?: string;
 };
 type TNewPaginationList = PaginatedList & { _next: string };
 export const sortBackgroundColor = (sort: TSort, value: TSort) =>
@@ -81,8 +80,8 @@ const fetchStudios = async ({
   sort,
   size,
   after,
-  orgLabel, 
-  projectLabel
+  orgLabel,
+  projectLabel,
 }: TFetchStudiosListProps) => {
   try {
     const response = await nexus.Resource.list(orgLabel, projectLabel, {
@@ -158,24 +157,32 @@ export const useInfiniteStudiosQuery = ({
   nexus,
   query,
   sort,
-  orgLabel, 
-  projectLabel
+  orgLabel,
+  projectLabel,
 }: {
   nexus: NexusClient;
   query: string;
   sort: TSort;
-  orgLabel?: string, 
-  projectLabel?: string,
+  orgLabel?: string;
+  projectLabel?: string;
 }) => {
   return useInfiniteQuery({
     queryKey: ['fusion-studios', { query, sort, orgLabel, projectLabel }],
     queryFn: ({ pageParam = undefined }) =>
-      fetchStudios({ nexus, query, sort, orgLabel, projectLabel, after: pageParam, size: 10 }),
+      fetchStudios({
+        nexus,
+        query,
+        sort,
+        orgLabel,
+        projectLabel,
+        after: pageParam,
+        size: 10,
+      }),
     getNextPageParam: lastPage =>
       (lastPage as TNewPaginationList)._next
         ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-          'after'
-        )
+            'after'
+          )
         : undefined,
   });
 };
@@ -183,8 +190,8 @@ const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const dispatch = useDispatch();
   const { orgLabel, projectLabel } = useParams<{
-    orgLabel: string, 
-    projectLabel: string,
+    orgLabel: string;
+    projectLabel: string;
   }>();
   const loadMoreRef = React.useRef(null);
   const oidc = useSelector((state: RootState) => state.oidc);
@@ -238,24 +245,24 @@ const FusionStudiosPage: React.FC = () => {
   const dataSource =
     data && data.pages
       ? data?.pages
-        .map(page =>
-          (page as ResourceList<{}>)?._results.map((item: Resource) => {
-            const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-              item._project
-            )!;
-            return {
-              orgLabel,
-              projectLabel,
-              id: item['@id'],
-              label: item.label,
-              deprecated: item._deprecated,
-              createdAt: item._createdAt,
-              description: item.description,
-              access: '',
-            };
-          })
-        )
-        .flat()
+          .map(page =>
+            (page as ResourceList<{}>)?._results.map((item: Resource) => {
+              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
+                item._project
+              )!;
+              return {
+                orgLabel,
+                projectLabel,
+                id: item['@id'],
+                label: item.label,
+                deprecated: item._deprecated,
+                createdAt: item._createdAt,
+                description: item.description,
+                access: '',
+              };
+            })
+          )
+          .flat()
       : [];
 
   useIntersectionObserver({
@@ -274,10 +281,13 @@ const FusionStudiosPage: React.FC = () => {
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
           permissions={['resources/write']}
-          {... (userAuthenticated ? {
-            createLabel: "Create Studio",
-            onCreateClick: () => dispatch(updateStudioModalVisibility(true))
-          } : {})}
+          {...(userAuthenticated
+            ? {
+                createLabel: 'Create Studio',
+                onCreateClick: () =>
+                  dispatch(updateStudioModalVisibility(true)),
+              }
+            : {})}
         />
         <div className="route-body">
           <div className="route-body-container">

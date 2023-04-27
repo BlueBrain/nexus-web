@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { useLocation } from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { parseUserAgent } from 'react-device-detect';
+import { useNexus } from '@bbp/react-nexus';
+import { Identity, NexusClient, Realm } from '@bbp/nexus-sdk';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout, { ConsentType } from './layouts/FusionMainLayout';
@@ -16,17 +18,14 @@ import {
   NotificationContextType,
 } from './hooks/useNotification';
 import { withDataPanel } from './organisms/DataPanel/DataPanel';
+import { RootState } from './store/reducers';
+import { updateAboutModalVisibility } from './store/actions/modals';
+import useLocalStorage from './hooks/useLocalStorage';
 import CreateProject from './modals/CreateProject/CreateProject';
 import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
-import { RootState } from './store/reducers';
-import { Identity, NexusClient, Realm } from '@bbp/nexus-sdk';
-import './App.less';
-import { useNexus } from '@bbp/react-nexus';
-import useLocalStorage from './hooks/useLocalStorage';
-import { updateAboutModalVisibility } from './store/actions/modals';
 import AppInfo from './modals/AppInfo/AppInfo';
-import { useDispatch } from 'react-redux';
+import './App.less';
 
 declare var COMMIT_HASH: string;
 declare var FUSION_VERSION: string;
@@ -41,7 +40,7 @@ const App: React.FC = () => {
     oidc: state.oidc,
     auth: state.auth,
     config: state.config,
-    modals: state.modals
+    modals: state.modals,
   }));
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
@@ -60,9 +59,7 @@ const App: React.FC = () => {
       location.pathname === '/search' ||
       location.pathname === '/my-data');
 
-  const [consent] = useLocalStorage<ConsentType>(
-    'consentToTracking'
-  );
+  const [consent] = useLocalStorage<ConsentType>('consentToTracking');
   const splits = config.apiEndpoint.split('/');
   const apiBase = splits.slice(0, splits.length - 1).join('/');
   const versions: any = useNexus<any>((nexus: NexusClient) =>
