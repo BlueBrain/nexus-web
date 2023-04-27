@@ -409,6 +409,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             rowKey={r => {
               return r['s'] || `tr_${r['id']}`;
             }}
+            data-testid="dashboard-table"
           />
           <Modal
             open={showEditForm}
