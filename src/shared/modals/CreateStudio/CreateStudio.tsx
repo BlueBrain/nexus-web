@@ -20,7 +20,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useForm } from 'antd/lib/form/Form';
@@ -152,7 +152,10 @@ const CreateStudio = () => {
     t => t['@type'] === 'User'
   )?.['@id'];
   const { createStudioModel } = useSelector((state: RootState) => state.modals);
-
+  const { orgLabel, projectLabel } = useParams<{
+    orgLabel: string;
+    projectLabel: string;
+  }>();
   const goToStudio = (resourceId: string) =>
     history.push(makeStudioUri(resourceId));
   const { mutateAsync: mutateStudioResource, status } = useMutation(
@@ -330,6 +333,16 @@ const CreateStudio = () => {
       footer={null}
       width={800}
       bodyStyle={{ padding: '10px 24px' }}
+      afterClose={() => {
+        form.resetFields();
+        updateState({
+          isPluginsCustomised: false,
+          selectAllPlugin: false,
+          organization: undefined,
+          project: undefined,
+          plugins: [],
+        });
+      }}
     >
       <Form<TCreationStudioForm>
         {...formItemLayout}
@@ -339,57 +352,64 @@ const CreateStudio = () => {
       >
         <Row gutter={4}>
           <Col span={isPluginsCustomised ? 12 : 24}>
+            {!(orgLabel && projectLabel) && (
+              <React.Fragment>
+                <Form.Item
+                  key="studio-Orgnanization"
+                  style={{ marginBottom: 5 }}
+                  label={<span> Organization </span>}
+                  name="orgLabel"
+                  initialValue={orgLabel}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select an organization!',
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select organization"
+                    loading={orgStatus === 'loading'}
+                    onSelect={handleChangeOrganization}
+                  >
+                    <Select.Option value={''}>{''}</Select.Option>
+                    {organizations?._results.map(org => (
+                      <Select.Option value={org._label} key={org['@id']}>
+                        {org._label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  key="studio-project"
+                  style={{ marginBottom: 5 }}
+                  label={<span> Project </span>}
+                  name="projectLabel"
+                  initialValue={''}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select a project!',
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select project"
+                    loading={projStatus === 'loading'}
+                    onSelect={handleChangeProject}
+                  >
+                    <Select.Option value={''}>{''}</Select.Option>
+                    {projects?._results.map(proj => (
+                      <Select.Option value={proj._label} key={proj['@id']}>
+                        {proj._label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </React.Fragment>
+            )}
             <Form.Item
-              style={{ marginBottom: 5 }}
-              label={<span> Organization </span>}
-              name="orgLabel"
-              initialValue={''}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select an organization!',
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select organization"
-                loading={orgStatus === 'loading'}
-                onSelect={handleChangeOrganization}
-              >
-                <Select.Option value={''}>{''}</Select.Option>
-                {organizations?._results.map(org => (
-                  <Select.Option value={org._label} key={org['@id']}>
-                    {org._label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              style={{ marginBottom: 5 }}
-              label={<span> Project </span>}
-              name="projectLabel"
-              initialValue={''}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select a project!',
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select project"
-                loading={projStatus === 'loading'}
-                onSelect={handleChangeProject}
-              >
-                <Select.Option value={''}>{''}</Select.Option>
-                {projects?._results.map(proj => (
-                  <Select.Option value={proj._label} key={proj['@id']}>
-                    {proj._label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
+              key="studio-name"
               style={{ marginBottom: 5 }}
               label={
                 <span>
@@ -411,6 +431,7 @@ const CreateStudio = () => {
               <Input aria-label="Label" className="ui-studio-label-input" />
             </Form.Item>
             <Form.Item
+              key="studio-description"
               style={{ marginBottom: 5 }}
               label={
                 <span>
@@ -436,7 +457,7 @@ const CreateStudio = () => {
                 markdownViewer={MarkdownViewerContainer}
               />
             </Form.Item>
-            <Form.Item style={{ marginBottom: 5 }}>
+            <Form.Item key="studio-has-plugins" style={{ marginBottom: 5 }}>
               <label className="customise-studio-plugins-label">
                 Customise Studio Plugins
                 <Switch
@@ -471,6 +492,7 @@ const CreateStudio = () => {
                 style={{ marginLeft: 14, marginBottom: 15 }}
               >
                 <Switch
+                  key="studio-plugin-all"
                   title="select all plugin"
                   size="small"
                   checked={selectAllPlugin}

@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import * as React from 'react';
 import * as moment from 'moment';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -13,14 +13,12 @@ import { MyDataHeader, MyDataTable } from '../../molecules';
 
 import './styles.less';
 
-type Props = {};
-
-const HomeMyData = (props: Props) => {
+const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const [
     { dataType, dateField, query, dateType, date, offset, size },
     setFilterOptions,
-  ] = useReducer(
+  ] = React.useReducer(
     (previous: TFilterOptions, newPartialState: Partial<TFilterOptions>) => ({
       ...previous,
       ...newPartialState,
@@ -32,7 +30,7 @@ const HomeMyData = (props: Props) => {
       dataType: [],
       query: '',
       offset: 0,
-      size: 10,
+      size: 50,
     }
   );
   const makeDatetimePattern = ({
@@ -84,7 +82,7 @@ const HomeMyData = (props: Props) => {
         [dateField]: makeDatetimePattern({ dateType, date }),
         // type: dataType,
       }),
-    retry: false,
+    retry: 2,
     onError: error => {
       notification.error({
         message: 'Error loading data from the server',

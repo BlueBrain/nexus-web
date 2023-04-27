@@ -14,30 +14,19 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { Realm } from '@bbp/nexus-sdk';
 import { UISettingsActionTypes } from '../../../shared/store/actions/ui-settings';
-import { triggerCopy as copyCmd } from '../../utils/copy';
 import { RootState } from '../../../shared/store/reducers';
 import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
+import { triggerCopy as copyCmd } from '../../utils/copy';
 import useNotification from '../../../shared/hooks/useNotification';
 import './Header.less';
 
 export interface HeaderProps {
-  githubIssueURL: string;
-  forgeLink: string;
   name?: string;
   token?: string;
-  links?: React.ReactNode[];
-  realms: Realm[];
-  serviceAccountsRealm: string;
-  displayLogin?: boolean;
-  children?: React.ReactChild;
-  onClickRemoveConsent?(): void;
-  performLogin(realmName: string): void;
-  subApps: any;
-  authenticated: boolean;
   logoImg: string;
   handleLogout: MenuItemProps['onClick'];
+  children?: React.ReactChild;
 }
 const headerIconStyle = { marginRight: 4 };
 const Header: React.FunctionComponent<HeaderProps> = ({

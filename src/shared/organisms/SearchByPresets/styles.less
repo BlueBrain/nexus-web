@@ -16,11 +16,17 @@
     // display: flex;
     // flex-flow: row wrap;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    // grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     grid-auto-flow: row dense;
-    grid-auto-columns: max-content;
+    // grid-auto-columns: max-content;
     column-gap: 10px;
     row-gap: 5px;
+    @media screen and (min-width: 980px) and (max-width: 1240px) {
+      grid-template-columns: repeat(auto-fit, minmax(35%, 1fr));
+    }
+    @media (min-width: 1240px) {
+      grid-template-columns: repeat(auto-fit, minmax(23%, 1fr));
+    }
   }
 
   &.compact {

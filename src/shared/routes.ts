@@ -4,6 +4,7 @@ import ResourceView from './views/ResourceView';
 import UserPage from '../pages/UserPage/UserPage';
 import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
 import Home from '../pages/HomePage/HomePage';
+import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import StudioRedirectView from './views/StudioRedirectView';
 import MyDataView from './views/MyDataView';
 
@@ -13,11 +14,11 @@ const routes: TRoutePropsExtended[] = [
     path: '/',
     exact: true,
     component: Home,
-    protected: false,
+    protected: true,
   },
   {
     path: '/login',
-    component: Login,
+    component: IdentityPage,
     protected: false,
   },
   {
@@ -44,7 +45,7 @@ const routes: TRoutePropsExtended[] = [
     path: '/:orgLabel/:projectLabel/studios/:studioId',
     exact: true,
     component: StudioRedirectView,
-    protected: true,
+    protected: false,
   },
   {
     path: '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId',

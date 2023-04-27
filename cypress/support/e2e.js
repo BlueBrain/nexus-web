@@ -5,12 +5,12 @@ import { loginPage } from './index';
 Cypress.Commands.add('login', (realm, username, password) => {
   return cy.session(username, () => {
     cy.visit(loginPage);
-    cy.get('.ant-dropdown-trigger.realm').click();
+    cy.get('[role="button"][aria-label="identity-login"]').click();
     cy.get('ul')
       .contains(realm.name)
       .click();
 
-    cy.get('.login-button').click();
+    cy.get('.connect-btn').click();
     cy.origin(
       realm.baseUrl,
       { args: [username, password] },

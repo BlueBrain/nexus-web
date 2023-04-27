@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { InputRef, Input, Spin, Alert, List } from 'antd';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -221,11 +222,12 @@ const ProjectItem = ({
   );
 };
 const OrganizationProjectsPage: React.FC<{}> = ({}) => {
+  const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
+  const totalProjectsRef = useRef<number>(0);
   const [query, setQueryString] = useState<string>('');
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
@@ -287,7 +289,9 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
-
+  if (!query) {
+    totalProjectsRef.current = total;
+  }
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -308,7 +312,6 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-
   return (
     <Fragment>
       <div className="main-route">
@@ -316,7 +319,18 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
         <RouteHeader
           title="Projects"
           extra={
-            total ? `Total of ${total} ${pluralize('Project', total)}` : ''
+            total && !query ? (
+              `Total of ${total} ${pluralize('Project', total)}`
+            ) : total && query ? (
+              `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
+                'Project',
+                total
+              )}`
+            ) : isLoading ? (
+              <LoadingOutlined />
+            ) : (
+              'No projects found'
+            )
           }
           alt="hippocampus"
           bg={require('../../shared/images/hippocampus.png')}

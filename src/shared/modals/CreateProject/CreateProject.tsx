@@ -14,7 +14,7 @@ import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import {
@@ -134,6 +134,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     currentId,
     activeKeys,
   });
+
   const add = (k: any) => {
     const { currentId, activeKeys } = prefixMappingKeys;
     const newId: number = currentId + 1;
@@ -251,6 +252,9 @@ const CreateProject: React.FC<{}> = ({}) => {
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Project</strong>}
+      afterClose={() => {
+        form.resetFields();
+      }}
     >
       <Form<TProject>
         className="project-form"

@@ -5,7 +5,7 @@ import { AccessControl } from '@bbp/react-nexus';
 
 type TProps = {
   title: string;
-  extra: string;
+  extra: string | React.ReactNode;
   bg: string;
   alt: string;
   imgCss?: CSSProperties;

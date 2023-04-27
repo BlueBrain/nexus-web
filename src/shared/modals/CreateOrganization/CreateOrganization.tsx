@@ -99,6 +99,9 @@ const CreateOrganization: React.FC<{}> = () => {
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Organization</strong>}
+      afterClose={() => {
+        form.resetFields();
+      }}
     >
       <Form form={form} onFinish={handleSubmit} autoComplete="off">
         <Form.Item

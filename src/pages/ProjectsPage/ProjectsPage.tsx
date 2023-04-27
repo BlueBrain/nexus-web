@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -183,6 +184,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const totalProjectsRef = useRef<number>(0);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [query, setQueryString] = useState<string>('');
   const nexus: NexusClient = useNexusContext();
@@ -220,7 +222,9 @@ const ProjectsPage: React.FC<{}> = ({}) => {
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
-
+  if (!query) {
+    totalProjectsRef.current = total;
+  }
   const handleUpdateSorting = (value: string) => {
     setOptions({ sort: value as TSort });
     if (dataContainerRef.current) {
@@ -247,12 +251,26 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
+  console.log('@@total', total);
   return (
     <div className="main-route">
       <PinnedMenu />
       <RouteHeader
         title="Projects"
-        extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
+        extra={
+          total && !query ? (
+            `Total of ${total} ${pluralize('Project', total)}`
+          ) : total && query ? (
+            `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
+              'Project',
+              total
+            )}`
+          ) : isLoading ? (
+            <LoadingOutlined />
+          ) : (
+            'No projects found'
+          )
+        }
         alt="hippocampus"
         bg={require('../../shared/images/hippocampus.png')}
         createLabel="Create Project"

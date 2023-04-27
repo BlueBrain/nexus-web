@@ -12,6 +12,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { match as pmatch } from 'ts-pattern';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -194,6 +195,7 @@ const FusionStudiosPage: React.FC = () => {
     projectLabel: string;
   }>();
   const loadMoreRef = React.useRef(null);
+  const totalStudiosRef = React.useRef<number>(0);
   const oidc = useSelector((state: RootState) => state.oidc);
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
@@ -264,7 +266,9 @@ const FusionStudiosPage: React.FC = () => {
           )
           .flat()
       : [];
-
+  if (!query) {
+    totalStudiosRef.current = total;
+  }
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -277,7 +281,20 @@ const FusionStudiosPage: React.FC = () => {
         <PinnedMenu />
         <RouteHeader
           title="Studios"
-          extra={total ? `Total of ${total} ${pluralize('Studio', total)}` : ''}
+          extra={
+            total && !query ? (
+              `Total of ${total} ${pluralize('Studio', total)}`
+            ) : total && query ? (
+              `Filtering ${total} of ${totalStudiosRef.current}  ${pluralize(
+                'Studio',
+                total
+              )}`
+            ) : isLoading ? (
+              <LoadingOutlined />
+            ) : (
+              'No studios found'
+            )
+          }
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
           permissions={['resources/write']}

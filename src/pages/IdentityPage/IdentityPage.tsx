@@ -62,9 +62,11 @@ const LandingPage: React.FC<TProps> = ({
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
               <Button
+                disabled
+                role="button"
+                aria-label="identity-login"
                 size="large"
                 className="no-realms-btn"
-                disabled
                 onClick={onPopoverVisibleChange}
               >
                 Connect
@@ -75,6 +77,8 @@ const LandingPage: React.FC<TProps> = ({
                   e.preventDefault();
                   performLogin(realmsFilter?.[0].name);
                 }}
+                role="button"
+                aria-label="identity-login"
                 className="connect-btn"
                 size="large"
                 type="link"
@@ -82,7 +86,12 @@ const LandingPage: React.FC<TProps> = ({
                 Connect
               </Button>
             ) : (
-              <Button size="large" onClick={onPopoverVisibleChange}>
+              <Button
+                size="large"
+                role="button"
+                aria-label="identity-login"
+                onClick={onPopoverVisibleChange}
+              >
                 Connect
                 {connectBtnState ? (
                   <UpOutlined size={13} />
@@ -92,13 +101,13 @@ const LandingPage: React.FC<TProps> = ({
               </Button>
             )}
             {connectBtnState && realmsFilter.length > 1 && (
-              <div
+              <ul
                 ref={popoverRef}
                 className="home-authentication-content-connect-popover"
               >
                 {realmsFilter.length > 1 &&
                   realmsFilter.map(item => (
-                    <div className="realm-connect">
+                    <li className="realm-connect">
                       <Button
                         onClick={e => {
                           e.preventDefault();
@@ -111,9 +120,9 @@ const LandingPage: React.FC<TProps> = ({
                         {item.name}
                       </Button>
                       <Divider />
-                    </div>
+                    </li>
                   ))}
-              </div>
+              </ul>
             )}
           </div>
           <Button size="large" onClick={() => history.push('/studios')}>
