@@ -58,7 +58,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
-
       await nexus.Resource.update(
         orgLabel,
         projectLabel,

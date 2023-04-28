@@ -13,6 +13,7 @@ import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
 import { FilterFilled } from '@ant-design/icons';
+import { TableError } from 'shared/containers/DataTableContainer';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -216,7 +217,7 @@ export function parseESResults(result: any) {
 }
 
 export const queryES = async (
-  query: Object,
+  query: string,
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
@@ -229,7 +230,15 @@ export const queryES = async (
   const TOTAL_HITS_TRACKING = 1000000;
   const PAGE_SIZE = 10000;
   const PAGE_START = 0;
-
+  let esQuery;
+  try {
+    esQuery = JSON.parse(query);
+  } catch (err) {
+    // @ts-ignore TODO: Remove ts-ignore once we support es2022 in ts (or above).
+    throw new Error('ES Query is an invalid JSON', {
+      cause: { details: `Query submitted is an invalid JSON: ${query}` },
+    });
+  }
   /* removed as causing issues */
   body
     .filter('term', '_deprecated', false)
@@ -256,7 +265,7 @@ export const queryES = async (
       encodeURIComponent(projectionId || '_'), // _ for all projections
       {
         ...bodyQuery,
-        ...query,
+        ...esQuery,
       }
     );
   }
@@ -266,7 +275,7 @@ export const queryES = async (
     encodeURIComponent(viewId),
     {
       ...bodyQuery,
-      ...query,
+      ...esQuery,
     }
   );
 };
@@ -287,7 +296,7 @@ const accessData = async (
     tableResource.projection?.['@type']?.includes('ElasticSearchProjection')
   ) {
     const result = await queryES(
-      JSON.parse(dataQuery),
+      dataQuery,
       nexus,
       orgLabel,
       projectLabel,
@@ -360,6 +369,7 @@ export const useAccessDataForTable = (
   projectLabel: string,
   tableResourceId: string,
   basePath: string,
+  onError: (err: Error) => void,
   tableResource?: Resource
 ) => {
   const revision = tableResource ? tableResource._rev : 0;
@@ -394,7 +404,7 @@ export const useAccessDataForTable = (
     }
   };
 
-  const tableResult = useQuery<any, Error>(
+  const tableResult = useQuery<any, TableError>(
     [tableResourceId, revision],
     async () => {
       const tableResource = (await nexus.Resource.get(
@@ -409,6 +419,9 @@ export const useAccessDataForTable = (
         encodeURIComponent(tableResource.view)
       )) as View;
       return { tableResource, view };
+    },
+    {
+      retry: false,
     }
   );
 
@@ -432,6 +445,12 @@ export const useAccessDataForTable = (
     {
       cacheTime: 100000,
       retry: false,
+      onError: (err: any) => {
+        const message =
+          err.reason ?? err.message ?? err.name ?? 'Failed to fetch for table';
+        // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
+        onError(new Error(message, { cause: err.cause ?? err.details }));
+      },
       select: data => {
         const table = data.tableResource as TableResource;
         if (table) {

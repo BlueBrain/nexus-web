@@ -25,6 +25,7 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { find } from 'lodash';
+import { ErrorComponent } from '../../../shared/components/ErrorComponent';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -205,7 +206,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     false
   );
   const [isBusy, setIsBusy] = React.useState(false);
-
+  const [tableDataError, setTableDataError] = React.useState<Error | null>(
+    null
+  );
   const saveDashboardAndDataTable = async (
     table: TableResource | UnsavedTableResource
   ) => {
@@ -474,6 +477,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         notification.error({
           message: 'Failed to fetch dashboards',
         });
+        setDashboardSpinner(false);
       });
     setDashboardSpinner(false);
   };
@@ -497,7 +501,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           description: data.description,
           label: data['name'],
         }
-      );
+      ).catch(err => {
+        throw err;
+      });
       onListUpdate();
     }
   };
@@ -720,6 +726,13 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       </Menu>
       <div>
         {renderResults()}
+        {tableDataError && (
+          <ErrorComponent
+            message={tableDataError.message}
+            // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
+            details={(tableDataError.cause as any)?.details}
+          />
+        )}
         <AddWorkspaceContainer
           key={studioResource['@id']}
           orgLabel={orgLabel}
@@ -776,6 +789,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             onSave={data => {
               saveDashboardAndDataTable(data);
             }}
+            onError={err => setTableDataError(err)}
             onClose={() => setShowEditTableForm(false)}
             busy={isBusy}
             orgLabel={orgLabel}

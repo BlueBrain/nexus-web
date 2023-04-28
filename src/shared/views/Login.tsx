@@ -44,6 +44,7 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
           const redirectUri = destination
             ? `${window.location.origin}/${destination}`
             : null;
+
           props.userManager &&
             (await props.userManager.signinRedirect({
               redirect_uri: redirectUri,
