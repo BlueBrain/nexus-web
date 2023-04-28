@@ -75,7 +75,7 @@ const AppInfo: React.FC<{}> = () => {
     environmentName,
     fusionVersion: FUSION_VERSION,
   };
-  const open = modals.aboutModel;
+  const open = modals.isAboutModelVisible;
   const onCancel = () => dispatch(updateAboutModalVisibility(false));
   return (
     <Modal

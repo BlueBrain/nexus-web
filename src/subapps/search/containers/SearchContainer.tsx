@@ -257,11 +257,6 @@ const SearchContainer: React.FC = () => {
     renderCell: (checked: any, record: any, index: number) => {
       const rowIndex =
         (pagination.currentPage - 1) * pagination.pageSize + index + 1;
-      // console.log('@@pagination', {
-      //   index,
-      //   rowIndex,
-      //   ...pagination,
-      // })
       return (
         <div
           className="row-selection-checkbox"
@@ -336,10 +331,6 @@ const SearchContainer: React.FC = () => {
     const dataPanelEventListner = (
       event: DataPanelEvent<{ datapanel: TResourceTableData }>
     ) => {
-      console.log(
-        '@@layout changed',
-        event.detail?.datapanel.selectedRows.map(item => item.key)
-      );
       setSelectedRowKeys(
         event.detail?.datapanel.selectedRows.map(item => item.key)
       );

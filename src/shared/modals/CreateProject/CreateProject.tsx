@@ -124,7 +124,7 @@ const CreateProject: React.FC<{}> = ({}) => {
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
-  const { createProjectModel } = useSelector(
+  const { isCreateProjectModelVisible } = useSelector(
     (state: RootState) => state.modals
   );
   const orgLabel = match?.params.orgLabel;
@@ -248,7 +248,7 @@ const CreateProject: React.FC<{}> = ({}) => {
       centered
       closable
       destroyOnClose
-      open={createProjectModel}
+      open={isCreateProjectModelVisible}
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Project</strong>}

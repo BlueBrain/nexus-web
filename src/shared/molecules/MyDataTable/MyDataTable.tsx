@@ -168,15 +168,7 @@ const MyDataTable: React.FC<TProps> = ({
                   type="link"
                   onClick={() => goToResource(org, project, text)}
                 >
-                  <span
-                    style={{
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
-                    {showedText}
-                  </span>
+                  {showedText}
                 </Button>
               </Tooltip>
             );

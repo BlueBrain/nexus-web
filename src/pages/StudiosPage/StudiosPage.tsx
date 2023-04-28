@@ -131,14 +131,6 @@ const StudioItem = ({
             <div>Project</div>
             <div>{project}</div>
           </div>
-          {/* <div className="statistics_item">
-            <div>Access</div>
-            <div>{access}</div>
-          </div>
-          <div className="statistics_item">
-            <div>Datasets</div>
-            <div>{datasets || ''}</div>
-          </div> */}
           <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
@@ -267,7 +259,7 @@ const FusionStudiosPage: React.FC = () => {
           )
           .flat()
       : [];
-  if (!query) {
+  if (!query.trim().length) {
     totalStudiosRef.current = total;
   }
   useIntersectionObserver({

@@ -152,7 +152,9 @@ const CreateStudio = () => {
   const userUri = identities?.data?.identities.find(
     t => t['@type'] === 'User'
   )?.['@id'];
-  const { createStudioModel } = useSelector((state: RootState) => state.modals);
+  const { isCreateStudioModelVisible } = useSelector(
+    (state: RootState) => state.modals
+  );
   const { namespace } = useStudioLegacySubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${namespace}/:orgLabel/:projectLabel/studios`
@@ -330,7 +332,7 @@ const CreateStudio = () => {
       closable
       destroyOnClose
       forceRender
-      open={createStudioModel}
+      open={isCreateStudioModelVisible}
       onCancel={updateVisibility}
       title={<strong>Create Studio</strong>}
       footer={null}
@@ -360,7 +362,7 @@ const CreateStudio = () => {
                 <Form.Item
                   key="studio-Orgnanization"
                   style={{ marginBottom: 5 }}
-                  label={<span> Organization </span>}
+                  label="Organization"
                   name="organizationName"
                   initialValue={orgLabel ?? undefined}
                   rules={[

@@ -118,10 +118,7 @@ const ProjectItem = ({
             <div>Datasets</div>
             <div>{(datasets && formatNumber(datasets)) || '0'}</div>
           </div>
-          <div className="statistics_item">
-            {/* <div>Your access</div>
-            <div>{access || ''}</div> */}
-          </div>
+          <div className="statistics_item" />
           <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
@@ -222,7 +219,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
-  if (!query) {
+  if (!query.trim().length) {
     totalProjectsRef.current = total;
   }
   const handleUpdateSorting = (value: string) => {
@@ -251,7 +248,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-  console.log('@@total', total);
+
   return (
     <div className="main-route">
       <PinnedMenu />

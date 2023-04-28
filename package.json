@@ -207,7 +207,10 @@
     "testPathIgnorePatterns": [
       "<rootDir>/cypress/",
       "<rootDir>/migrations/"
-    ]
+    ],
+    "globals": {
+      "FUSION_VERSION": "1.0.0"
+    }
   },
   "prettier": {
     "singleQuote": true,

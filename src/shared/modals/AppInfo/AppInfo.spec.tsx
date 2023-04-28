@@ -8,11 +8,6 @@ import { rest } from 'msw';
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
 import AppInfo, { EnvironmentInfo } from './AppInfo';
 
-declare global {
-  var FUSION_VERSION: string;
-}
-// @ts-ignore
-global.FUSION_VERSION = '1.0.0';
 describe.only('AppInfo', () => {
   // beforeEach(() => {
   beforeAll(() => {
@@ -66,10 +61,10 @@ describe.only('AppInfo', () => {
       },
     },
     modals: {
-      createOrganizationModel: false,
-      createProjectModel: false,
-      createStudioModel: false,
-      aboutModel: true,
+      isCreateOrganizationModelVisible: false,
+      isCreateProjectModelVisible: false,
+      isCreateStudioModelVisible: false,
+      isAboutModelVisible: true,
     },
   };
   const store = mockStore(mockState);

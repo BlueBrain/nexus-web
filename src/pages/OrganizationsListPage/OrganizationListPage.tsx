@@ -204,7 +204,7 @@ const OrganizationListView: React.FC<{}> = () => {
     data && data.pages
       ? ((data.pages[0] as OrganizationList)?._total as number)
       : 0;
-  if (!query) {
+  if (!query.trim().length) {
     totalOrganizationRef.current = total;
   }
   const dataSource: OrgResponseCommon[] =
@@ -243,7 +243,6 @@ const OrganizationListView: React.FC<{}> = () => {
       });
     }
   }, []);
-  console.log('@@totalOrganizationRef', totalOrganizationRef.current);
   const LoadMore = (
     <LoadMoreFooter
       {...{ hasNextPage, fetchNextPage }}

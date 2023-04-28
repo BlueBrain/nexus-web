@@ -50,7 +50,7 @@ const CreateOrganization: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const subapp = useOrganisationsSubappContext();
   const dispatch = useDispatch();
-  const { createOrganizationModel } = useSelector(
+  const { isCreateOrganizationModelVisible } = useSelector(
     (state: RootState) => state.modals
   );
   const [form] = Form.useForm<{ label: string; description: string }>();
@@ -95,7 +95,7 @@ const CreateOrganization: React.FC<{}> = () => {
       centered
       closable
       destroyOnClose
-      open={createOrganizationModel}
+      open={isCreateOrganizationModelVisible}
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Organization</strong>}
