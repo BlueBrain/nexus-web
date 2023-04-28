@@ -1,4 +1,8 @@
+import { StudioDetailsPage } from '../support/Studios/StudioDetails';
+
 describe('Studios', () => {
+  let studioDetailsPage: StudioDetailsPage;
+
   before(() => {
     if (
       !Cypress.env('use_existing_delta_instance') ||
@@ -37,54 +41,45 @@ describe('Studios', () => {
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     );
+    studioDetailsPage = new StudioDetailsPage();
   });
 
-  //   after(function() {
-  //     cy.task('project:teardown', {
-  //       nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //       authToken: this.nexusToken,
-  //       orgLabel: Cypress.env('ORG_LABEL'),
-  //       projectLabel: this.projectLabel,
-  //     });
-  //   });
-
-  const addMinimalDashboard = (name: string) => {
-    cy.findByRole('button', { name: /Dashboard/ }).click();
-    cy.findByRole('button', { name: /Add/ }).click();
-    cy.get('.ant-form-item-control-input-content > .ant-input').type(name);
-
-    cy.get(
-      '.ant-form-item-control-input-content > .ant-select > .ant-select-selector'
-    ).click();
-    cy.wait(3000);
-    cy.findByTitle(
-      'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
-    ).click();
-    cy.findByRole('button', { name: /Save/ }).click();
-    cy.wait(3000);
-  };
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
   it('user can create a studio with a workspace and dashboard', function() {
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );
 
-    cy.findByRole('button', { name: /Create Studio/i }).click();
-    cy.findByRole('textbox', { name: /Label/ }).type('Test Studio 1');
-    cy.findByRole('button', { name: /Save/ }).click();
-    cy.wait(5000);
+    studioDetailsPage.createStudio('Test Studio 1');
 
-    cy.url().as('studioUrl');
+    studioDetailsPage.createWorkspace('Test Workspace 1');
 
-    // add workspace
-    cy.findByRole('button', { name: /Workspace/ }).click();
-    cy.findByRole('button', { name: /Add/ }).click();
-    cy.findByRole('textbox', { name: /Label/ }).type('Test Workspace 1');
-    cy.findByRole('button', { name: /Save/ }).click();
-    cy.wait(3000);
+    studioDetailsPage.createDashboard('Test Workspace 1', 'Test Dashboard 1');
+  });
 
-    addMinimalDashboard('Test Dashboard 1');
-    cy.wait(3000);
+  it('saves changes made by user to table columns and shows them correctly', function() {
+    studioDetailsPage
+      .getAnyDashboard(Cypress.env('ORG_LABEL'), this.projectLabel)
+      .then(() => {
+        studioDetailsPage.openEditDashboard();
+
+        cy.findByText('Enable Filter').click();
+
+        return cy.findByRole('button', { name: /Save/ }).click();
+      })
+      .then(() => {
+        studioDetailsPage.openEditDashboard();
+
+        cy.findByLabelText(/Enable Filter/i).should('be.checked');
+      });
   });
 
   //   it('user can add several more dashboards to existing Studio and they are ordered in the menu from oldest to newest', function() {

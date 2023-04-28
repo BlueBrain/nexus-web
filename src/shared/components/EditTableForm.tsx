@@ -1,40 +1,41 @@
-import * as React from 'react';
+import { View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
+  Button,
+  Checkbox,
+  Col,
   Form,
   Input,
-  Button,
-  Spin,
-  Checkbox,
   Row,
-  Col,
   Select,
+  Spin,
   Tooltip,
 } from 'antd';
-import { Controlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
-import 'codemirror/mode/sparql/sparql';
-import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/sparql/sparql';
 import 'codemirror/theme/base16-light.css';
-import { View } from '@bbp/nexus-sdk';
+import * as React from 'react';
+import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useQuery } from 'react-query';
-import ColumnConfig from './ColumnConfig';
+import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
 import {
-  queryES,
-  parseESResults,
-  querySparql,
-} from '../hooks/useAccessDataForTable';
-import './EditTableForm.less';
-import {
-  TableResource,
   TableColumn,
+  TableResource,
   UnsavedTableResource,
 } from '../containers/DataTableContainer';
-import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
+import {
+  parseESResults,
+  queryES,
+  querySparql,
+} from '../hooks/useAccessDataForTable';
+import ColumnConfig from './ColumnConfig';
+import './EditTableForm.less';
+import { isNil } from 'lodash';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -283,12 +284,19 @@ const EditTableForm: React.FC<{
     },
     {
       onSuccess: data => {
-        setConfiguration(data);
+        if (
+          isNil(configuration) ||
+          (configuration as TableColumn[]).length === 0
+        ) {
+          setConfiguration(data);
+        }
       },
       onError: error => {
         console.error(error);
       },
       enabled: preview,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
     }
   );
 
@@ -406,7 +414,6 @@ const EditTableForm: React.FC<{
       );
 
       currentConfig[columnIndex] = updatedColumn;
-
       setConfiguration(currentConfig);
     },
     [configuration]
@@ -503,6 +510,7 @@ const EditTableForm: React.FC<{
             >
               <Select
                 value={viewName}
+                aria-label="View"
                 style={{ width: 650 }}
                 onChange={value => {
                   onChangeViewDropDown(value);

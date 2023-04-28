@@ -214,6 +214,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
             >
               <div
                 class="ant-table ant-table-bordered ant-table-scroll-horizontal"
+                data-testid="dashboard-table"
               >
                 <div
                   class="ant-table-title"
