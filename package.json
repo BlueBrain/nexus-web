@@ -210,7 +210,8 @@
     ],
     "globals": {
       "FUSION_VERSION": "1.0.0"
-    }
+    },
+    "watchPathIgnorePatterns": ["node_modules"]
   },
   "prettier": {
     "singleQuote": true,

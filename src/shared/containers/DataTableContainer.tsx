@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Col,
@@ -28,6 +28,7 @@ import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
+import { ErrorComponent } from '../../shared/components/ErrorComponent';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 
@@ -93,6 +94,11 @@ type DataTableProps = {
   toggledEdit?: (show: boolean) => void;
 };
 
+export interface TableError {
+  reason?: string;
+  '@type'?: string;
+}
+
 const { Title } = Typography;
 
 const DataTableContainer: React.FC<DataTableProps> = ({
@@ -107,22 +113,18 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 }) => {
   const basePath =
     useSelector((state: RootState) => state.config.basePath) || '';
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(
-    showEdit || false
-  );
-
-  React.useEffect(() => {
+  const [showEditForm, setShowEditForm] = useState<boolean>(showEdit || false);
+  const [tableDataError, setTableDataError] = useState<null | Error>(null);
+  useEffect(() => {
     setShowEditForm(showEdit || false);
   }, [showEdit]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     toggledEdit && toggledEdit(showEditForm);
   }, [showEditForm]);
 
-  const [searchboxValue, setSearchboxValue] = React.useState<string>('');
-  const [searchboxFocused, setSearchboxFocused] = React.useState<boolean>(
-    false
-  );
+  const [searchboxValue, setSearchboxValue] = useState<string>('');
+  const [searchboxFocused, setSearchboxFocused] = useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -222,6 +224,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       onSave && onSave(data);
     },
     onSuccess: data => {
+      setTableDataError(null);
       setShowEditForm(false);
     },
     onError: error => {
@@ -236,6 +239,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     projectLabel,
     tableResourceId,
     basePath,
+    err => setTableDataError(err),
     changeTableResource.data
   );
 
@@ -382,13 +386,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   return (
     <div>
+      {/* Error when the table resource itself failed to fetch */}
       {tableData.tableResult.isError ? (
-        tableData.tableResult.error.message
+        <ErrorComponent
+          message={
+            tableData.tableResult.error.reason ?? 'Table failed to fetch'
+          }
+          details={tableData.tableResult.error['@type']}
+        />
       ) : tableData.tableResult.isSuccess ? (
         <>
           <Table
             bordered
-            loading={!tableData.dataResult.data?.headerProperties}
+            loading={
+              tableData.dataResult.isLoading || tableData.tableResult.isLoading
+            }
             rowClassName={'data-table-row'}
             title={() => renderTitle(options)}
             columns={tableData.dataResult.data?.headerProperties}
@@ -425,12 +437,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             <EditTableForm
               onSave={changeTableResource.mutate}
               onClose={() => setShowEditForm(false)}
+              onError={err => setTableDataError(err)}
               table={tableData.tableResult.data.tableResource}
               busy={changeTableResource.isLoading}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
             />
           </Modal>
+          {/* Error when the data within the table resource failed */}
+          {tableDataError && (
+            <ErrorComponent
+              message={tableDataError.message}
+              // @ts-ignore - TODO: Remove ts-ignore once we support es2022 in ts.
+              details={(tableDataError.cause as any)?.details}
+            />
+          )}
         </>
       ) : (
         <Spin></Spin>
