@@ -194,6 +194,7 @@ const FusionStudiosPage: React.FC = () => {
     orgLabel: string;
     projectLabel: string;
   }>();
+
   const loadMoreRef = React.useRef(null);
   const totalStudiosRef = React.useRef<number>(0);
   const oidc = useSelector((state: RootState) => state.oidc);

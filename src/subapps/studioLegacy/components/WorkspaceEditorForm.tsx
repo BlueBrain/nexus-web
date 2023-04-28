@@ -59,7 +59,7 @@ const WorkspaceEditorForm: React.FC<{
           },
         ]}
       >
-        <Input className="ui-workspace-label-input" />
+        <Input aria-label="Label" className="ui-workspace-label-input" />
       </Form.Item>
       <Form.Item
         label={

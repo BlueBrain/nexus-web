@@ -10,7 +10,7 @@ Cypress.Commands.add('login', (realm, username, password) => {
       .contains(realm.name)
       .click();
 
-    cy.get('.connect-btn').click();
+    // cy.get('.connect-btn').click();
     cy.origin(
       realm.baseUrl,
       { args: [username, password] },

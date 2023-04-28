@@ -31,6 +31,7 @@ import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import usePlugins from '../../../shared/hooks/usePlugins';
 import STUDIO_CONTEXT from '../../../subapps/studioLegacy/components/StudioContext';
+import { useStudioLegacySubappContext } from '../../../subapps/studioLegacy';
 
 type StudioResource = Resource<{
   label: string;
@@ -58,8 +59,8 @@ type TCreationStudio = {
   }[];
 };
 type TCreationStudioForm = {
-  orgLabel: string;
-  projectLabel: string;
+  organizationName: string;
+  projectName: string;
   label: string;
   description: string;
 };
@@ -152,10 +153,12 @@ const CreateStudio = () => {
     t => t['@type'] === 'User'
   )?.['@id'];
   const { createStudioModel } = useSelector((state: RootState) => state.modals);
-  const { orgLabel, projectLabel } = useParams<{
-    orgLabel: string;
-    projectLabel: string;
-  }>();
+  const { namespace } = useStudioLegacySubappContext();
+  const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
+    `/${namespace}/:orgLabel/:projectLabel/studios`
+  );
+  const orgLabel = match?.params.orgLabel;
+  const projectLabel = match?.params.projectLabel;
   const goToStudio = (resourceId: string) =>
     history.push(makeStudioUri(resourceId));
   const { mutateAsync: mutateStudioResource, status } = useMutation(
@@ -164,8 +167,8 @@ const CreateStudio = () => {
   const handleSubmit = ({
     description,
     label,
-    orgLabel,
-    projectLabel,
+    organizationName,
+    projectName,
   }: TCreationStudioForm) => {
     const visiblePlugins = plugins
       .filter(p => p.visible)
@@ -177,8 +180,8 @@ const CreateStudio = () => {
         nexus,
         label,
         description,
-        organization: orgLabel,
-        project: projectLabel,
+        organization: organizationName ?? orgLabel,
+        project: projectName ?? projectLabel,
         plugins: {
           customise: isPluginsCustomised,
           plugins: visiblePlugins,
@@ -191,7 +194,8 @@ const CreateStudio = () => {
         },
         onError: error => {
           notification.error({
-            message: `An error occured when creating a new studio for ${organization}/${project}`,
+            message: `An error occured when creating a new studio for ${organizationName ??
+              orgLabel}/${projectName ?? projectLabel}`,
             // @ts-ignore
             description: error.cause?.message,
           });
@@ -217,9 +221,8 @@ const CreateStudio = () => {
     }
   );
   const makeStudioUri = (resourceId: string) => {
-    const path = `${basePath}/studios/${organization}/${project}/studios/${encodeURIComponent(
-      resourceId
-    )}`;
+    const path = `${basePath}/studios/${organization ?? orgLabel}/${project ??
+      projectLabel}/studios/${encodeURIComponent(resourceId)}`;
     return path;
   };
   const customisePlugin = (value: boolean) =>
@@ -358,8 +361,8 @@ const CreateStudio = () => {
                   key="studio-Orgnanization"
                   style={{ marginBottom: 5 }}
                   label={<span> Organization </span>}
-                  name="orgLabel"
-                  initialValue={orgLabel}
+                  name="organizationName"
+                  initialValue={orgLabel ?? undefined}
                   rules={[
                     {
                       required: true,
@@ -371,6 +374,8 @@ const CreateStudio = () => {
                     placeholder="Select organization"
                     loading={orgStatus === 'loading'}
                     onSelect={handleChangeOrganization}
+                    defaultValue={orgLabel ?? undefined}
+                    aria-label="select-organization"
                   >
                     <Select.Option value={''}>{''}</Select.Option>
                     {organizations?._results.map(org => (
@@ -384,8 +389,8 @@ const CreateStudio = () => {
                   key="studio-project"
                   style={{ marginBottom: 5 }}
                   label={<span> Project </span>}
-                  name="projectLabel"
-                  initialValue={''}
+                  name="projectName"
+                  initialValue={projectLabel ?? undefined}
                   rules={[
                     {
                       required: true,
@@ -396,6 +401,7 @@ const CreateStudio = () => {
                   <Select
                     placeholder="Select project"
                     loading={projStatus === 'loading'}
+                    defaultValue={projectLabel ?? undefined}
                     onSelect={handleChangeProject}
                   >
                     <Select.Option value={''}>{''}</Select.Option>

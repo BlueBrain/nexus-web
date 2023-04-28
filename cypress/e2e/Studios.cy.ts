@@ -51,7 +51,7 @@ describe('Studios', () => {
   const addMinimalDashboard = (name: string) => {
     cy.findByRole('button', { name: /Dashboard/ }).click();
     cy.findByRole('button', { name: /Add/ }).click();
-    cy.get('.ant-form-item-control-input-content > .ant-input').type(name);
+    cy.findByRole('textbox', { name: /Label/ }).type(name);
 
     cy.get(
       '.ant-form-item-control-input-content > .ant-select > .ant-select-selector'
@@ -68,7 +68,6 @@ describe('Studios', () => {
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );
-
     cy.findByRole('button', { name: /Create Studio/i }).click();
     cy.findByRole('textbox', { name: /Label/ }).type('Test Studio 1');
     cy.findByRole('button', { name: /Save/ }).click();

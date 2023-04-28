@@ -476,7 +476,12 @@ const EditTableForm: React.FC<{
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a name'}
             >
-              <Input value={name} onChange={onChangeName} placeholder="Name" />
+              <Input
+                aria-label="Label"
+                value={name}
+                onChange={onChangeName}
+                placeholder="Name"
+              />
             </Item>
           </Col>
         </Row>

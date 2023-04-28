@@ -16,6 +16,7 @@ type TProps = {
   realms: Realm[];
   serviceAccountsRealm: string;
   performLogin(realmName: string): void;
+  setPreferredRealm(realmName: string): void;
 };
 const LandingVideo = () => (
   <video
@@ -34,10 +35,11 @@ const LandingVideo = () => (
   </video>
 );
 
-const LandingPage: React.FC<TProps> = ({
+const IdentityPage: React.FC<TProps> = ({
   realms,
   serviceAccountsRealm,
   performLogin,
+  setPreferredRealm,
 }) => {
   const popoverRef = useRef(null);
   const history = useHistory();
@@ -75,6 +77,7 @@ const LandingPage: React.FC<TProps> = ({
               <Button
                 onClick={e => {
                   e.preventDefault();
+                  setPreferredRealm(realmsFilter?.[0].name);
                   performLogin(realmsFilter?.[0].name);
                 }}
                 role="button"
@@ -111,6 +114,7 @@ const LandingPage: React.FC<TProps> = ({
                       <Button
                         onClick={e => {
                           e.preventDefault();
+                          setPreferredRealm(item.name);
                           performLogin(item.name);
                         }}
                         className="connect-btn"
@@ -163,9 +167,9 @@ const mapDispatchToProps = (dispatch: any) => ({
   setPreferredRealm: (name: string) => {
     dispatch(configActions.setPreferredRealm(name));
   },
-  performLogin: () => {
-    dispatch(authActions.performLogin());
+  performLogin: (realm: string) => {
+    dispatch(authActions.performLogin(realm));
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LandingPage);
+export default connect(mapStateToProps, mapDispatchToProps)(IdentityPage);
