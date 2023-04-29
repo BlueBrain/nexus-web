@@ -85,7 +85,7 @@ const AnalysisPlugin = ({
       footer={false}
       onCancel={() => dispatch(closeFileUploadDialog())}
       className="file-upload-modal"
-      destroyOnClose={true}
+      destroyOnClose={true} 
     >
       {FileUpload(currentlyBeingEditedAnalysisReportId)}
     </Modal>

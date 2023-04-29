@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useLocation, useHistory, useParams, matchPath } from 'react-router';
+import { useLocation, useHistory, useParams, matchPath, useRouteMatch } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -88,8 +88,16 @@ const ResourceViewContainer: React.FunctionComponent<{
     fetchDeltaVersion();
   }, []);
 
-  // @ts-ignore
-  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
+  const match = useRouteMatch<{
+    orgLabel: string,
+    projectLabel: string,
+    resourceId: string,
+  }>(
+    `/:orgLabel/:projectLabel/resources/:resourceId`
+  );
+  const orgLabel = match?.params.orgLabel!;
+  const projectLabel = match?.params.projectLabel!;
+  const resourceId = match?.params.resourceId!;
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;

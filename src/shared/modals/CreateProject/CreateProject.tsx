@@ -153,6 +153,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     });
   };
   const { data: organizations, isLoading } = useQuery({
+    enabled: isCreateProjectModelVisible,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({

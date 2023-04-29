@@ -251,6 +251,7 @@ const CreateStudio = () => {
     }
   };
   const { data: organizations, status: orgStatus } = useQuery({
+    enabled: isCreateStudioModelVisible,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({

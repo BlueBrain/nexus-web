@@ -127,34 +127,16 @@ async function downloadArchive({
     resourcesPayload
   );
   try {
+    // if the resource is a file, when we added it to the cart, it will be downloaded
+    // if the resource is not file but has distribution, the download not working
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-    // httpPost({
-    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}`,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     "@id": archiveId,
-    //     resources: payload.resources,
-    //   })
-    // })
-
-    // console.log('@@ss', ss);
-  } catch (error) {
-    // console.log('@@error1', error);
-  }
+  } catch (error) { }
   try {
-    // const archive = await nexus.httpGet({
-    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}/${archiveId}`,
-    //   headers: {
-    //     accept: ' application/x-tar',
-    //   },
-    // });
     const archive = await nexus.Archive.get(
       parsedData.org,
       parsedData.project,
       archiveId,
-      { as: format || 'x-tar' }
+      { as: 'x-tar' }
     );
     const blob =
       !format || format === 'x-tar'
@@ -171,7 +153,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -357,7 +339,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
@@ -469,10 +451,10 @@ const DataPanel: React.FC<Props> = ({}) => {
         resources: event.detail?.datapanel,
         openDataPanel: false,
       });
-    };
+    }
     window.addEventListener(
       DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner as EventListener
+      dataPanelEventListner  as EventListener
     );
     return () => {
       window.removeEventListener(
@@ -498,9 +480,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   }, [datapanelRef.current, openDataPanel]);
   useOnClickOutside(datapanelRef, () => {
-    if (openDataPanel) {
-      handleCloseDataPanel();
-    }
+    return openDataPanel && handleCloseDataPanel();
   });
   return Boolean(dataSource.length) ? (
     <div className="datapanel">
@@ -571,7 +551,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                     </Checkbox>
                   );
                 })}
-                {dropdownTypes.length && (
+                {Boolean(dropdownTypes.length) && (
                   <Dropdown
                     placement="topRight"
                     arrow={false}
@@ -598,7 +578,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           <AccessControl
             path={resourceProjectPaths}
             permissions={['archives/write']}
-            noAccessComponent={() => <div>Have not access</div>}
+            noAccessComponent={() => <></>}
           >
             <div className="download-btn">
               <Button
