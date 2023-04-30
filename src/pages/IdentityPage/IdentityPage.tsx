@@ -33,10 +33,13 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
-  const  { auth, config: { serviceAccountsRealm } } = useSelector((state: RootState) => ({
-      auth: state.auth,
-      config: state.config
-  }))
+  const {
+    auth,
+    config: { serviceAccountsRealm },
+  } = useSelector((state: RootState) => ({
+    auth: state.auth,
+    config: state.config,
+  }));
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 

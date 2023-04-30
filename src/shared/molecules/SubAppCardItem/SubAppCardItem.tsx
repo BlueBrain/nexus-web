@@ -38,10 +38,7 @@ const SubAppCardItem: React.FC<TProps> = ({
             <div className="subapp-link-container-title" style={titleStyle}>
               {title}
             </div>
-            <p
-              className="subapp-link-container-subtitle"
-              style={subtitleStyle}
-            >
+            <p className="subapp-link-container-subtitle" style={subtitleStyle}>
               {subtitle}
             </p>
           </div>
