@@ -84,7 +84,9 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.findByRole('button', { name: /Analysis/ }).click();
 
     cy.findByText(/Drag and drop files/i).click();
-    cy.get('input[type=file]').attachFile('sample1.png');
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample1.png'
+    );
 
     cy.wait(5000);
     cy.screenshot('with-file-attached');
@@ -115,8 +117,12 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.screenshot('updated-text');
     cy.findByRole('button', { name: 'Add Files to Report' }).click();
     cy.findByText(/Drag and drop files/i).click();
-    cy.get('input[type=file]').attachFile('sample2.png');
-    cy.get('input[type=file]').attachFile('sample_pdf.pdf');
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample2.png'
+    );
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample_pdf.pdf'
+    );
     cy.wait(5000);
     cy.screenshot('with-pdf-file-attached');
     cy.findByRole('button', { name: 'Close' }).click();
@@ -128,74 +134,74 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.findAllByLabelText('Report File').should('have.length', 3);
   });
 
-  // it('user can open preview of existing image asset and edit its name and description', function() {
-  //   cy.visit(
-  //     `${Cypress.env('ORG_LABEL')}/${
-  //       this.projectLabel
-  //     }/resources/${encodeURIComponent(this.fullResourceId)}`
-  //   );
-  //   // Open report plugin
-  //   cy.findByRole('button', { name: /Report/i }).click();
-  //   cy.findByText(/Cell density O1.v6-RC2/i).click();
-  //   cy.findAllByLabelText('Report Assets');
-  //   cy.wait(3000);
-  //   cy.findAllByRole('listitem', { name: /sample2/ })
-  //     .first()
-  //     .findByLabelText(/Report File/)
-  //     .click();
-  //   cy.wait(3000);
-  //   cy.screenshot('Opened Report File');
-  //   cy.findByRole('button', { name: 'Edit name and description' }).click();
-  //   cy.findByRole('textbox', { name: 'Asset Name' }).should(
-  //     'contain.value',
-  //     'sample'
-  //   );
-  //   cy.findByRole('textbox', { name: 'Asset Description' }).should(
-  //     'have.text',
-  //     ''
-  //   );
-  //   cy.findByRole('textbox', { name: 'Asset Name' })
-  //     .clear()
-  //     .type('Better name');
-  //   cy.findByRole('textbox', { name: 'Asset Description' }).type(
-  //     'This is the asset description'
-  //   );
-  //   cy.findByRole('button', { name: /Save/i }).click();
-  //   cy.screenshot('Saved asset');
-  //   expect(cy.findByText('This is the asset description')).to.exist;
-  // });
+  it('user can open preview of existing image asset and edit its name and description', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open report plugin
+    cy.findByRole('button', { name: /Report/i }).click();
+    cy.findByText(/Cell density O1.v6-RC2/i).click();
+    cy.findAllByLabelText('Report Assets');
+    cy.wait(3000);
+    cy.findAllByRole('listitem', { name: /sample2/ })
+      .first()
+      .findByLabelText(/Report File/)
+      .click();
+    cy.wait(3000);
+    cy.screenshot('Opened Report File');
+    cy.findByRole('button', { name: 'Edit name and description' }).click();
+    cy.findByRole('textbox', { name: 'Asset Name' }).should(
+      'contain.value',
+      'sample'
+    );
+    cy.findByRole('textbox', { name: 'Asset Description' }).should(
+      'have.text',
+      ''
+    );
+    cy.findByRole('textbox', { name: 'Asset Name' })
+      .clear()
+      .type('Better name');
+    cy.findByRole('textbox', { name: 'Asset Description' }).type(
+      'This is the asset description'
+    );
+    cy.findByRole('button', { name: /Save/i }).click();
+    cy.screenshot('Saved asset');
+    expect(cy.findByText('This is the asset description')).to.exist;
+  });
 
-  // it('user can open preview of existing pdf asset', function() {
-  //   cy.visit(
-  //     `${Cypress.env('ORG_LABEL')}/${
-  //       this.projectLabel
-  //     }/resources/${encodeURIComponent(this.fullResourceId)}`
-  //   );
-  //   // Open anlaysis plugin
-  //   cy.findByRole('button', { name: /Report/i }).click();
-  //   cy.findByText(/Cell density O1.v6-RC2-V2/i).click();
-  //   cy.wait(3000);
-  //   cy.findByRole('listitem', { name: /sample_pdf/ })
-  //     .findByLabelText(/Report File/)
-  //     .find('.ant-image-mask')
-  //     .first()
-  //     .click();
-  //   cy.findByRole('button', { name: 'Edit name and description' }).click();
-  //   cy.findByRole('textbox', { name: 'Asset Name' }).should(
-  //     'contain.value',
-  //     'sample'
-  //   );
-  //   cy.findByRole('textbox', { name: 'Asset Description' }).should(
-  //     'have.text',
-  //     ''
-  //   );
-  //   cy.findByRole('textbox', { name: 'Asset Name' })
-  //     .clear()
-  //     .type('Better name');
-  //   cy.findByRole('textbox', { name: 'Asset Description' }).type(
-  //     'This is the asset description'
-  //   );
-  // });
+  it('user can open preview of existing pdf asset', function() {
+    cy.visit(
+      `${Cypress.env('ORG_LABEL')}/${
+        this.projectLabel
+      }/resources/${encodeURIComponent(this.fullResourceId)}`
+    );
+    // Open anlaysis plugin
+    cy.findByRole('button', { name: /Report/i }).click();
+    cy.findByText(/Cell density O1.v6-RC2-V2/i).click();
+    cy.wait(3000);
+    cy.findByRole('listitem', { name: /sample_pdf/ })
+      .findByLabelText(/Report File/)
+      .find('.ant-image-mask')
+      .first()
+      .click();
+    cy.findByRole('button', { name: 'Edit name and description' }).click();
+    cy.findByRole('textbox', { name: 'Asset Name' }).should(
+      'contain.value',
+      'sample'
+    );
+    cy.findByRole('textbox', { name: 'Asset Description' }).should(
+      'have.text',
+      ''
+    );
+    cy.findByRole('textbox', { name: 'Asset Name' })
+      .clear()
+      .type('Better name');
+    cy.findByRole('textbox', { name: 'Asset Description' }).type(
+      'This is the asset description'
+    );
+  });
 
   //TODO: investigate why this test is failing in CI
   // it('user can navigate to report resource and update it directly on the resource', function() {

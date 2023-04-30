@@ -186,16 +186,16 @@ const CreateProject: React.FC<{}> = ({}) => {
       },
       {
         onSuccess: data => {
+          form.resetFields();
+          dispatch({
+            type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+            payload: false,
+          });
           notification.success({
             duration: 2,
             message: <strong>{data._label}</strong>,
             description: `Project has been created Successfully`,
             onClose: () => {
-              form.resetFields();
-              dispatch({
-                type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
-                payload: false,
-              });
               history.push(`/orgs/${orgLabel ?? organization}/${data._label}`);
             },
           });

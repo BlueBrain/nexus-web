@@ -191,8 +191,16 @@ const CreateStudio = () => {
       },
       {
         onSuccess: (data: any) => {
+          form.resetFields();
           dispatch(updateStudioModalVisibility(false));
-          goToStudio(data['@id']);
+          notification.success({
+            duration: 2,
+            message: <strong>{data._label}</strong>,
+            description: `Project has been created Successfully`,
+            onClose: () => {
+              goToStudio(data['@id']);
+            },
+          });
         },
         onError: error => {
           notification.error({
