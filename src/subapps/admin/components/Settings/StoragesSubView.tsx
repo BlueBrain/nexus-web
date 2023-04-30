@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
-import { Table, Button, Spin } from 'antd';
+import { Table, Button, Spin, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useQuery } from 'react-query';
 import { NexusClient, Storage } from '@bbp/nexus-sdk';
 import * as moment from 'moment';
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 
 import './styles.less';
 
@@ -168,21 +169,24 @@ const StoragesSubView = (props: Props) => {
     <div className="settings-view settings-storages-view">
       <h2>Storages</h2>
       <div className="settings-view-container">
-        {/* <AccessControl
-          key={`access-control-${i['@id']}`}
-          path={`/${i._label}`}
-          permissions={['']}
-        > */}
-        <Button
-          style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
-          type="primary"
-          // disabled={true} // TODO: write premission to be enabled
-          htmlType="button"
-          onClick={createNewStorageHandler}
+        <AccessControl
+          path={[`${orgLabel}/${projectLabel}`]}
+          permissions={['storages/write']}
+          noAccessComponent={() => (
+            <Tooltip title="You have no permissions to create storage in this project">
+              <HasNoPermission />
+            </Tooltip>
+          )}
         >
-          Create Storage
-        </Button>
-        {/* </AccessControl> */}
+          <Button
+            style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
+            type="primary"
+            htmlType="button"
+            onClick={createNewStorageHandler}
+          >
+            Create Storage
+          </Button>
+        </AccessControl>
         <Spin spinning={status === 'loading'}>
           {status === 'success' && (
             <Table<TDataType>

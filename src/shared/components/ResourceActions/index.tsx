@@ -72,7 +72,9 @@ const makeActionButtons = async (
   );
   return actionTypes
     .filter((action, index) => appliedActions[index])
-    .map(action => makeButton(action)(resource, actionDispatchers[action.name]));
+    .map(action =>
+      makeButton(action)(resource, actionDispatchers[action.name])
+    );
 };
 
 const ResourceActions: React.FunctionComponent<{
