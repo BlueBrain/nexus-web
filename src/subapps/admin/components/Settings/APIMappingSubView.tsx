@@ -94,7 +94,6 @@ const APIMappingSubView = ({ apiMappings, project }: Props) => {
     });
   };
   const handleOnSubmitApiMapping = (data: any) => {
-    console.log('newProject.apiMappings', data.apiMappings);
     const mappingObject = data.apiMappings ? data.apiMappings : {};
     const apiMappings = Object.keys(mappingObject).map(
       (mapping: any) => data.apiMappings[mapping]

@@ -13,10 +13,15 @@ import { useOrganisationsSubappContext } from '../../subapps/admin';
 import Copy from '../components/Copy';
 import {
   MAX_DATA_SELECTED_ALLOWED_SIZE,
-  TResourceTableData, MAX_LOCAL_STORAGE_ALLOWED_SIZE,
-  getLocalStorageSize, notifyTotalSizeExeeced
+  TResourceTableData,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  getLocalStorageSize,
+  notifyTotalSizeExeeced,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
-import { DATA_PANEL_STORAGE, DATA_PANEL_STORAGE_EVENT } from '../../shared/organisms/DataPanel/DataPanel';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+} from '../../shared/organisms/DataPanel/DataPanel';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -42,17 +47,22 @@ const ResourceViewActionsContainer: React.FC<{
       type: resource['@type'],
       createdAt: resource._createdAt,
       updatedAt: resource._updatedAt,
-      distribution: has(resource, 'distribution') ? {
-        contentSize: (resource.distribution?.contentSize?.value ?? resource.distribution?.contentSize) ?? 0,
-        encodingFormat: resource.distribution?.encodingFormat ?? '',
-        label: resource.distribution?.name ?? '',
-      } : {
-        contentSize: resource._bytes ?? 0,
-        encodingFormat: resource._mediaType ?? '',
-        label: resource._filename ?? '',
-      },
+      distribution: has(resource, 'distribution')
+        ? {
+            contentSize:
+              resource.distribution?.contentSize?.value ??
+              resource.distribution?.contentSize ??
+              0,
+            encodingFormat: resource.distribution?.encodingFormat ?? '',
+            label: resource.distribution?.name ?? '',
+          }
+        : {
+            contentSize: resource._bytes ?? 0,
+            encodingFormat: resource._mediaType ?? '',
+            label: resource._filename ?? '',
+          },
       source: 'resource-view',
-    }
+    };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -94,10 +104,10 @@ const ResourceViewActionsContainer: React.FC<{
     );
     notification.success({
       message: <strong>{resource['@id'].split('/').pop()}</strong>,
-      description: isRemoved ?
-        'Resource removed from the data cart' :
-        'Resource added to your cart',
-    })
+      description: isRemoved
+        ? 'Resource removed from the data cart'
+        : 'Resource added to your cart',
+    });
     if (isRemoved) {
       setIsInCart(false);
     } else {
@@ -197,17 +207,15 @@ const ResourceViewActionsContainer: React.FC<{
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
-    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
-    console.log('@@test', selectedRowKeys, resource._self);
+    const selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     if (selectedRowKeys.find(item => item === resource._self)) {
       return setIsInCart(true);
-    } else {
-      setIsInCart(false)
     }
+    setIsInCart(false);
     return () => {
-      setIsInCart(false)
-    }
-  }, [resource._self])
+      setIsInCart(false);
+    };
+  }, [resource._self]);
   return (
     <Row>
       <Col>
@@ -237,7 +245,8 @@ const ResourceViewActionsContainer: React.FC<{
 
                   if (!isLatest) {
                     triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
+                      `${window.location.origin.toString()}${pathToResource}?rev=${
+                        resource._rev
                       }`
                     );
                   } else {
@@ -278,7 +287,8 @@ const ResourceViewActionsContainer: React.FC<{
                         )}`;
 
                         triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
+                          `${window.location.origin.toString()}${pathToResource}?rev=${
+                            resource._rev
                           }`
                         );
                       }}
@@ -319,7 +329,9 @@ const ResourceViewActionsContainer: React.FC<{
         ></Copy>
       </Col>
       <Col>
-        <Button onClick={handleAddToCart}>{isInCart ? 'Remove from' : 'Add to'} Cart</Button>
+        <Button onClick={handleAddToCart}>
+          {isInCart ? 'Remove from' : 'Add to'} Cart
+        </Button>
       </Col>
       {view && (
         <Col>

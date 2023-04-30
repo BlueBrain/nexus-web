@@ -1,7 +1,6 @@
-import * as React from "react"
-import { SVGProps } from "react"
+import * as React from 'react';
 
-const HasPermission = (props: SVGProps<SVGSVGElement>) => (
+const HasPermission = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -21,5 +20,5 @@ const HasPermission = (props: SVGProps<SVGSVGElement>) => (
       clipRule="evenodd"
     />
   </svg>
-)
+);
 export default HasPermission;

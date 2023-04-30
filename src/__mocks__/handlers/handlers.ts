@@ -1159,7 +1159,6 @@ export const handlers = [
   }),
   rest.get(deltaPath('/org/:label'), (req, res, ctx) => {
     const { label } = req.params;
-    console.log('@@label', label);
     const mockResponse = [
       {
         '@id':

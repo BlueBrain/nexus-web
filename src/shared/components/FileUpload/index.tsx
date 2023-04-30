@@ -85,7 +85,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
       });
   };
 
-  const draggerProps: UploadProps<any>= {
+  const draggerProps: UploadProps<any> = {
     fileList,
     name: 'file',
     multiple: true,
@@ -112,7 +112,11 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   return (
     <div>
-      <Dragger {...draggerProps} directory={directoryMode} data-label='report-upload-file'>
+      <Dragger
+        {...draggerProps}
+        directory={directoryMode}
+        data-label="report-upload-file"
+      >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>

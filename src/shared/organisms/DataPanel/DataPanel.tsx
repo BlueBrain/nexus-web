@@ -130,7 +130,7 @@ async function downloadArchive({
     // if the resource is a file, when we added it to the cart, it will be downloaded
     // if the resource is not file but has distribution, the download not working
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) { }
+  } catch (error) {}
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -153,7 +153,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -339,7 +339,7 @@ const DataPanel: React.FC<Props> = ({ }) => {
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-                Boolean(resource.distribution?.contentSize)
+              Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
@@ -451,10 +451,10 @@ const DataPanel: React.FC<Props> = ({ }) => {
         resources: event.detail?.datapanel,
         openDataPanel: false,
       });
-    }
+    };
     window.addEventListener(
       DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner  as EventListener
+      dataPanelEventListner as EventListener
     );
     return () => {
       window.removeEventListener(

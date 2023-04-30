@@ -70,13 +70,9 @@ const makeActionButtons = async (
       return await action.predicate(resource);
     })
   );
-  console.log('@@appliedActions', appliedActions, resource);
   return actionTypes
     .filter((action, index) => appliedActions[index])
-    .map(action => {
-      console.log('@@appliedActions @€action', action);
-      return makeButton(action)(resource, actionDispatchers[action.name]);
-    });
+    .map(action => makeButton(action)(resource, actionDispatchers[action.name]));
 };
 
 const ResourceActions: React.FunctionComponent<{
@@ -91,7 +87,6 @@ const ResourceActions: React.FunctionComponent<{
     React.ReactElement[]
   >([]);
   const notification = useNotification();
-  console.log('@@actionButtons', actionButtons);
   React.useEffect(() => {
     makeActionButtons(resource, actions, actionTypes)
       .then(setActionButtons)
