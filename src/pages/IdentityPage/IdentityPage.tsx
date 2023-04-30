@@ -44,12 +44,12 @@ const IdentityPage: React.FC<{}> = () => {
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
   const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
-  const onPopoverVisibleChange = () => setConnectBtnState(state => !state);
+  const onPopoverVisibleChange = (state: boolean) => setConnectBtnState(state);
   const realmsFilter = realms.filter(
     r => r._label !== serviceAccountsRealm && !r._deprecated
   );
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
-  useClickOutside(popoverRef, onPopoverVisibleChange);
+  useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
   return (
     <div className="home-authentication">
       <img
@@ -65,7 +65,6 @@ const IdentityPage: React.FC<{}> = () => {
               <Button
                 disabled
                 role="button"
-                aria-label="identity-login"
                 size="large"
                 className="no-realms-btn"
               >
@@ -76,7 +75,7 @@ const IdentityPage: React.FC<{}> = () => {
                 size="large"
                 role="button"
                 aria-label="identity-login"
-                onClick={onPopoverVisibleChange}
+                onClick={() => onPopoverVisibleChange(true)}
               >
                 Connect
                 {connectBtnState ? (
