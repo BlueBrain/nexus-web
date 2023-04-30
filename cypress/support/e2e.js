@@ -5,12 +5,11 @@ import { loginPage } from './index';
 Cypress.Commands.add('login', (realm, username, password) => {
   return cy.session(username, () => {
     cy.visit(loginPage);
-    cy.get('[role="button"][aria-label="identity-login"]').click();
+    cy.findByRole('button', { name: /identity-login/i  }).click();
     cy.get('ul')
       .contains(realm.name)
       .click();
 
-    // cy.get('.connect-btn').click();
     cy.origin(
       realm.baseUrl,
       { args: [username, password] },

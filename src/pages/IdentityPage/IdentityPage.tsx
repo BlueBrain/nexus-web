@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Button, Divider } from 'antd';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
@@ -12,12 +12,6 @@ import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 
-type TProps = {
-  realms: Realm[];
-  serviceAccountsRealm: string;
-  performLogin(realmName: string): void;
-  setPreferredRealm(realmName: string): void;
-};
 const LandingVideo = () => (
   <video
     loop
@@ -35,15 +29,17 @@ const LandingVideo = () => (
   </video>
 );
 
-const IdentityPage: React.FC<TProps> = ({
-  realms,
-  serviceAccountsRealm,
-  performLogin,
-  setPreferredRealm,
-}) => {
+const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<any>();
+  const  { auth, config: { serviceAccountsRealm } } = useSelector((state: RootState) => ({
+      auth: state.auth,
+      config: state.config
+  }))
+  const realms: Realm[] =
+    (auth.realms && auth.realms.data && auth.realms.data._results) || [];
+
   const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
   const onPopoverVisibleChange = () => setConnectBtnState(state => !state);
   const realmsFilter = realms.filter(
@@ -69,22 +65,6 @@ const IdentityPage: React.FC<TProps> = ({
                 aria-label="identity-login"
                 size="large"
                 className="no-realms-btn"
-                onClick={onPopoverVisibleChange}
-              >
-                Connect
-              </Button>
-            ) : realmsFilter.length === 1 ? (
-              <Button
-                onClick={e => {
-                  e.preventDefault();
-                  setPreferredRealm(realmsFilter?.[0].name);
-                  performLogin(realmsFilter?.[0].name);
-                }}
-                role="button"
-                aria-label="identity-login"
-                className="connect-btn"
-                size="large"
-                type="link"
               >
                 Connect
               </Button>
@@ -103,29 +83,28 @@ const IdentityPage: React.FC<TProps> = ({
                 )}
               </Button>
             )}
-            {connectBtnState && realmsFilter.length > 1 && (
+            {connectBtnState && realmsFilter.length && (
               <ul
                 ref={popoverRef}
                 className="home-authentication-content-connect-popover"
               >
-                {realmsFilter.length > 1 &&
-                  realmsFilter.map(item => (
-                    <li className="realm-connect">
-                      <Button
-                        onClick={e => {
-                          e.preventDefault();
-                          setPreferredRealm(item.name);
-                          performLogin(item.name);
-                        }}
-                        className="connect-btn"
-                        size="large"
-                        type="link"
-                      >
-                        {item.name}
-                      </Button>
-                      <Divider />
-                    </li>
-                  ))}
+                {realmsFilter.map(item => (
+                  <li className="realm-connect">
+                    <Button
+                      onClick={e => {
+                        e.preventDefault();
+                        dispatch(configActions.setPreferredRealm(item.name));
+                        dispatch(authActions.performLogin(item.name));
+                      }}
+                      className="connect-btn"
+                      size="large"
+                      type="link"
+                    >
+                      {item.name}
+                    </Button>
+                    <Divider />
+                  </li>
+                ))}
               </ul>
             )}
           </div>
@@ -151,25 +130,4 @@ const IdentityPage: React.FC<TProps> = ({
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const { auth, config } = state;
-  const realms: Realm[] =
-    (auth.realms && auth.realms.data && auth.realms.data._results) || [];
-  const { serviceAccountsRealm } = config;
-
-  return {
-    realms,
-    serviceAccountsRealm,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => ({
-  setPreferredRealm: (name: string) => {
-    dispatch(configActions.setPreferredRealm(name));
-  },
-  performLogin: (realm: string) => {
-    dispatch(authActions.performLogin(realm));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(IdentityPage);
+export default IdentityPage;
