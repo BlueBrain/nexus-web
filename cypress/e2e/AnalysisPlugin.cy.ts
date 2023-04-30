@@ -23,7 +23,9 @@ describe('Report (formerly Analysis) Plugin', () => {
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
         cy.task(
           'log',
-          `${orgLabel} ${projectLabelBase} ${Cypress.env('NEXUS_API_URL')}`
+          `SESSION: ${orgLabel} ${projectLabelBase} ${Cypress.env(
+            'NEXUS_API_URL'
+          )}`
         );
         cy.task('project:setup', {
           nexusApiUrl: Cypress.env('NEXUS_API_URL'),
