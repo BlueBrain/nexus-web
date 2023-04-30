@@ -13,12 +13,8 @@
   }
 
   &-container {
-    // display: flex;
-    // flex-flow: row wrap;
     display: grid;
-    // grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     grid-auto-flow: row dense;
-    // grid-auto-columns: max-content;
     column-gap: 10px;
     row-gap: 5px;
     @media screen and (min-width: 980px) and (max-width: 1240px) {
@@ -35,7 +31,6 @@
     padding: 20px 10px;
 
     .searchby-presets-container {
-      // max-width: 1240px;
       width: 100%;
       margin: 0 auto;
       column-gap: 5px;
@@ -66,5 +61,4 @@
   z-index: 10;
   opacity: 0;
   user-select: none;
-  // transform: rotate(270deg) translate(-70px, -80px);
 }

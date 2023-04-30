@@ -9,6 +9,9 @@ import React, {
 import { Link } from 'react-router-dom';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
+import { clsx } from 'clsx';
 import {
   isArray,
   toUpper,
@@ -29,13 +32,11 @@ import {
   Table,
   Tag,
   Tooltip,
-  message,
   notification,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
-import { useMutation } from 'react-query';
-import { clsx } from 'clsx';
+
 import {
   FileDoneOutlined,
   DownloadOutlined,
@@ -49,16 +50,14 @@ import {
   TDataSource,
   TResourceTableData,
 } from '../../molecules/MyDataTable/MyDataTable';
-import useOnClickOutside from '../../../shared/hooks/useClickOutside';
-import isValidUrl from '../../../utils/validUrl';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
 import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
+import { RootState } from '../../../shared/store/reducers';
+import useOnClickOutside from '../../../shared/hooks/useClickOutside';
+import isValidUrl from '../../../utils/validUrl';
 import formatBytes from '../../../utils/formatBytesUnit';
 
 import './styles.less';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
-import { type } from 'os';
 
 type Props = {
   authenticated?: boolean;
