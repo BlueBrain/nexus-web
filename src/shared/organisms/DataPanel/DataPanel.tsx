@@ -8,10 +8,11 @@ import React, {
 } from 'react';
 import { Link } from 'react-router-dom';
 import { PromisePool } from '@supercharge/promise-pool';
+import * as Sentry from '@sentry/browser';
+
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
 import { useMutation } from 'react-query';
-import { useSelector } from 'react-redux';
 import { clsx } from 'clsx';
 import {
   isArray,
@@ -130,11 +131,13 @@ async function downloadArchive({
   parsedData,
   resourcesPayload,
   format,
+  size,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
   resourcesPayload: TResourceObscured;
   format?: 'x-tar' | 'json';
+  size: string;
 }) {
   const resourcesWithoutDistribution = resourcesPayload.filter(
     item => !has(item, 'distribution')
@@ -193,7 +196,11 @@ async function downloadArchive({
       format,
     };
   } catch (error) {
-    console.log('@@donwload error', error);
+    Sentry.captureException({
+      size,
+      items: payload.resources.length,
+      error,
+    });
     // @ts-ignore
     throw new Error('can not fetch archive', { cause: error });
   }
@@ -465,6 +472,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           nexus,
           parsedData,
           resourcesPayload: resourcesObscured as TResourceObscured,
+          size: formatBytes(totalSize),
         },
         {
           onSuccess: data => {
