@@ -19,26 +19,31 @@ const routes: TRoutePropsExtended[] = [
   {
     path: '/login',
     component: IdentityPage,
+    exact: true,
     protected: false,
   },
   {
     path: '/user',
     component: UserPage,
+    exact: true,
     protected: true,
   },
   {
     path: '/projects',
     component: ProjectsPage,
+    exact: true,
     protected: true,
   },
   {
     path: '/my-data',
     component: MyDataView,
+    exact: true,
     protected: true,
   },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
+    exact: true,
     protected: true,
   },
   {
