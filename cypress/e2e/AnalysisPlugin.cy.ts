@@ -76,7 +76,6 @@ describe('Report (formerly Analysis) Plugin', () => {
         this.projectLabel
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
-    cy.get('body').debug();
     cy.findByRole('button', { name: /Report/i }).click();
     cy.findByRole('button', { name: /Add Report/i }).click();
     cy.findByRole('textbox', { name: 'Report Name' }).type(
