@@ -23,7 +23,7 @@ import './App.less';
 
 const App: React.FC = () => {
   const location = useLocation();
-  const { subAppProps, subAppRoutes } = useSubApps();
+  const { subAppRoutes } = useSubApps();
   const cartData: CartType = useDataCart();
   const oidc = useSelector((state: RootState) => state.oidc);
   const authenticated = !!oidc.user;

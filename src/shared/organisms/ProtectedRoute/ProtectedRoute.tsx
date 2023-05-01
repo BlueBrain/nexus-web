@@ -11,7 +11,7 @@ const PrivateRoute = ({ children, ...rest }: Props) => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const userAuthenticated = oidc && !!oidc.user?.id_token;
   console.log('@@userAuthenticated', userAuthenticated);
-  console.log('@@user token', oidc.user?.id_token);
+  console.log('@@user token', JSON.stringify(rest, null, 2));
   return (
     <Route
       {...rest}

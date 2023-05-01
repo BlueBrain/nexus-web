@@ -19,14 +19,14 @@ const SubAppsView: React.FC<{
         ({ path, component: SubAppComponent, requireLogin, ...rest }) =>
           rest.protected ? (
             <PrivateRoute
-              {...rest}
-              path={path}
               key={`protected-${path as string}`}
+              path={path}
+              {...rest}
             >
               <SubAppComponent />
             </PrivateRoute>
           ) : (
-            <Route {...rest} path={path} key={`public-${path as string}`}>
+            <Route key={`public-${path as string}`} path={path} {...rest}>
               <SubAppComponent />
             </Route>
           )
