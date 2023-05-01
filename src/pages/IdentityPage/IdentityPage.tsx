@@ -116,7 +116,10 @@ const IdentityPage: React.FC<{}> = () => {
               </ul>
             )}
           </div>
-          <Button size="large" onClick={() => history.push('/studios')}>
+          <Button
+            size="large"
+            onClick={() => history.push('/studios')}
+          >
             View Studios
           </Button>
           <Button
