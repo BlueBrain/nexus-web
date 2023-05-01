@@ -50,6 +50,7 @@ const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
   const handleLogout: MenuItemProps['onClick'] = e => {
     e.domEvent.preventDefault();
     localStorage.removeItem('nexus__state');
+    localStorage.clear();
     userManager && userManager.signoutRedirect();
   };
   return (

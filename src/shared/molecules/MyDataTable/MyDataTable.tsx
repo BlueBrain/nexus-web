@@ -2,7 +2,7 @@ import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
-import { difference, differenceBy, union } from 'lodash';
+import { difference, differenceBy, union, has } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import {
@@ -245,6 +245,7 @@ const MyDataTable: React.FC<TProps> = ({
           contentSize: resource.distribution?.contentSize ?? 0,
           encodingFormat: resource.distribution?.encodingFormat ?? '',
           label: resource.distribution?.label ?? '',
+          hasDistribution: has(resource, 'distribution'),
         },
         source: 'my-data',
       };

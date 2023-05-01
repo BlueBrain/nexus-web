@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, union, uniq, uniqBy } from 'lodash';
+import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
@@ -147,7 +147,16 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: record.distribution,
+      distribution: {
+        ...(has(record, 'distribution')
+          ? record.distribution
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            }),
+        hasDistribution: has(record, 'distribution'),
+      },
     };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -202,7 +211,16 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: record.distribution,
+      distribution: {
+        ...(has(record, 'distribution')
+          ? record.distribution
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            }),
+        hasDistribution: has(record, 'distribution'),
+      },
     }));
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!

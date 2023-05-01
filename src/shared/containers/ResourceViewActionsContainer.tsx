@@ -55,11 +55,13 @@ const ResourceViewActionsContainer: React.FC<{
               0,
             encodingFormat: resource.distribution?.encodingFormat ?? '',
             label: resource.distribution?.name ?? '',
+            hasDistribution: true,
           }
         : {
             contentSize: resource._bytes ?? 0,
             encodingFormat: resource._mediaType ?? '',
             label: resource._filename ?? '',
+            hasDistribution: false,
           },
       source: 'resource-view',
     };

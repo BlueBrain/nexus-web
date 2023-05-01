@@ -117,6 +117,7 @@ type TResourceObscured = {
         contentSize: number;
         encodingFormat: string | string[];
         label: string | string[];
+        hasDistribution: boolean;
       }
     | undefined;
   _self: string;
@@ -140,12 +141,11 @@ async function downloadArchive({
   size: string;
 }) {
   const resourcesWithoutDistribution = resourcesPayload.filter(
-    item => !has(item, 'distribution')
+    item => !item.distribution?.hasDistribution
   );
-  const resourcesWithDistribution = resourcesPayload.filter(item =>
-    has(item, 'distribution')
+  const resourcesWithDistribution = resourcesPayload.filter(
+    item => has(item, 'distribution') && item.distribution?.hasDistribution
   );
-
   const { results } = await PromisePool.withConcurrency(4)
     .for(resourcesWithDistribution)
     .process(async item => {
@@ -155,25 +155,47 @@ async function downloadArchive({
         projectLabel,
         encodeURIComponent(item?.resourceId!)
       );
-      const resource = await nexus.httpGet({
+      const files: TResourceObscured[] = [];
+      // @ts-ignore
+      if (isArray(result.distribution)) {
         // @ts-ignore
-        path: result.distribution!.contentUrl!,
-        headers: {
-          accept: 'application/ld+json',
-        },
-      });
-      return {
-        ...item,
-        resourceId: resource['@id'],
-      };
+        for (const res of result.distribution) {
+          const resource = await nexus.httpGet({
+            path: res.contentUrl!,
+            headers: { accept: 'application/ld+json' },
+          });
+          files.push({
+            ...item,
+            // @ts-ignore
+            resourceId: resource['@id'],
+          });
+        }
+      } else {
+        const resource = await nexus.httpGet({
+          // @ts-ignore
+          path: result.distribution!.contentUrl!,
+          headers: {
+            accept: 'application/ld+json',
+          },
+        });
+        files.push({
+          ...item,
+          // @ts-ignore
+          resourceId: resource['@id'],
+        });
+      }
+      return files;
     });
-  const resources = [...resourcesWithoutDistribution, ...results].map(item =>
-    omit(item, ['distribution', 'size', 'contentType'])
+  const resources = [...resourcesWithoutDistribution, ...results.flat()].map(
+    item =>
+      // @ts-ignore
+      omit(item, ['distribution', 'size', 'contentType'])
   );
   const {
     payload,
     archiveId,
-  }: { payload: ArchivePayload; archiveId: string } = makePayload(resources);
+  }: // @ts-ignore
+  { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
     // TODO: if the resource is a file, when we added it to the cart, it will be downloaded
     // TODO: if the resource is not file but has distribution, the download not working
@@ -374,7 +396,9 @@ const DataPanel: React.FC<Props> = ({}) => {
           : resource._self;
         try {
           const parsedSelf = parseURL(url);
-          const pathId = resource.id.split('/').pop();
+          const pathId = isValidUrl(resource.id)
+            ? resource.id.split('/').pop()
+            : resource.id;
           const size = resource.distribution
             ? isArray(resource.distribution?.contentSize)
               ? sum(...resource.distribution.contentSize)
@@ -402,6 +426,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             }`,
           };
         } catch (error) {
+          console.log('@@error', resource.id, error);
           return;
         }
       });
@@ -414,10 +439,14 @@ const DataPanel: React.FC<Props> = ({}) => {
       setTypes(types.filter(t => t !== e.target.value));
     }
   };
-  const existedTypes = compact(Object.keys(resourcesGrouped));
+  const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
+    i => i !== 'undefined'
+  );
   const typesCounter = compact(
     Object.entries(resourcesGrouped).map(([key, value]) =>
-      key ? { [key]: value.length } : null
+      isEmpty(key) || isNil(key) || key === 'undefined' || key === ''
+        ? null
+        : { [key]: value.length }
     )
   );
   const displayedTypes = slice(typesCounter, 0, 3);
@@ -451,6 +480,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
     return flatMap(resourcesGrouped);
   }, [types, resourcesGrouped]);
+
   const resourcesObscured = filter(
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
