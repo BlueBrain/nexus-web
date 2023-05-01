@@ -198,8 +198,8 @@ async function downloadArchive({
   } catch (error) {
     Sentry.captureException({
       size,
-      items: payload.resources.length,
       error,
+      items: payload.resources.length,
     });
     // @ts-ignore
     throw new Error('can not fetch archive', { cause: error });
