@@ -15,7 +15,6 @@ Cypress.Commands.add('login', (realm, username, password) => {
       ([username, password]) => {
         cy.get('#username').type(username);
         cy.get('#password').type(password);
-        cy.screenshot('login');
         cy.get('input[name="login"]').click();
       }
     );
