@@ -42,6 +42,7 @@ describe('Report (formerly Analysis) Plugin', () => {
               projectLabel,
               resourcePayload,
             }).then((resource: Resource) => {
+              cy.url().then(url => cy.task('log', resource));
               cy.wrap(resource['@id']).as('fullResourceId');
             });
           });
