@@ -7,10 +7,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PrivateRoute = ({
-  children,
-  ...rest
-}: Props) => {
+const PrivateRoute = ({ children, ...rest }: Props) => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const userAuthenticated = oidc && !!oidc.user?.id_token;
   console.log('@@oidc', oidc);
@@ -18,7 +15,7 @@ const PrivateRoute = ({
   return (
     <Route
       {...rest}
-      render={(props) => {
+      render={props => {
         return Boolean(userAuthenticated) ? (
           children
         ) : (
