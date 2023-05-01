@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Layout } from 'antd';
+import { isEmpty } from 'lodash';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import { RootState } from '../store/reducers';
 import Header from '../components/Header';
@@ -45,7 +46,7 @@ const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
   const name =
     oidc.user && oidc.user.profile && oidc.user.profile.preferred_username;
   const userManager = getUserManager(state);
-  const authenticated = !!oidc.user;
+  const authenticated = !isEmpty(oidc.user);
 
   const handleLogout: MenuItemProps['onClick'] = e => {
     e.domEvent.preventDefault();
