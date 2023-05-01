@@ -10,12 +10,10 @@ type Props = {
 const PrivateRoute = ({ children, ...rest }: Props) => {
   const oidc = useSelector((state: RootState) => state.oidc);
   let userAuthenticated = oidc && !!oidc.user?.id_token;
+  console.log('@@userAuthenticated', userAuthenticated);
+  console.log('@@localstorage-token', localStorage.getItem('nexus__token'));
   console.log('@@oidc', JSON.stringify(oidc, null, 2));
   console.log('@@route', JSON.stringify(rest, null, 2));
-  if (window.Cypress) {
-    userAuthenticated = Boolean(localStorage.getItem('nexus__token'));
-    console.log('@@cypress', userAuthenticated);
-  }
   return (
     <Route
       {...rest}

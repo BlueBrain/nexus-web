@@ -17,18 +17,13 @@ describe('Report (formerly Analysis) Plugin', () => {
     ).then(session => {
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
-        cy.task('log', `@@AnalysisPluginLogin succeeded: ${authToken}`);
         cy.wrap(authToken).as('nexusToken');
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
         cy.task(
           'log',
-          `DATA: ${orgLabel} ${projectLabelBase} ${Cypress.env(
-            'NEXUS_API_URL'
-          )},
-          SESSION: ${session}
-          `
+          `${orgLabel} ${projectLabelBase} ${Cypress.env('NEXUS_API_URL')}`
         );
         cy.task('project:setup', {
           nexusApiUrl: Cypress.env('NEXUS_API_URL'),
