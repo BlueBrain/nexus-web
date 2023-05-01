@@ -15,7 +15,6 @@ describe('Report (formerly Analysis) Plugin', () => {
       Cypress.env('users').morty.password
     ).then(session => {
       cy.window().then(win => {
-        console.log('@@Login successful');
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
 
@@ -33,7 +32,6 @@ describe('Report (formerly Analysis) Plugin', () => {
           orgLabel,
           projectLabelBase,
         }).then(({ projectLabel }: { projectLabel: string }) => {
-          console.log('@@Project created successfully');
           cy.wrap(projectLabel).as('projectLabel');
           cy.fixture('AnalysisResource.json').then(resourcePayload => {
             cy.task('resource:create', {
@@ -43,7 +41,6 @@ describe('Report (formerly Analysis) Plugin', () => {
               projectLabel,
               resourcePayload,
             }).then((resource: Resource) => {
-              console.log('@@Resource created successfully');
               cy.wrap(resource['@id']).as('fullResourceId');
             });
           });
