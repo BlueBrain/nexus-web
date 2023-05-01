@@ -9,12 +9,13 @@ type Props = {
 
 const PrivateRoute = ({ children, ...rest }: Props) => {
   const oidc = useSelector((state: RootState) => state.oidc);
-  const userAuthenticated = oidc && !!oidc.user;
+  const userAuthenticated = oidc && !!oidc.user?.id_token;
+  console.log('@@userAuthenticated', userAuthenticated);
   return (
     <Route
       {...rest}
       render={({ location }) => {
-        return userAuthenticated ? (
+        return Boolean(userAuthenticated) ? (
           children
         ) : (
           <Redirect

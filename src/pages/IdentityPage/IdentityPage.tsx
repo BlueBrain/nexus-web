@@ -106,6 +106,7 @@ const IdentityPage: React.FC<{}> = () => {
                       className="connect-btn"
                       size="large"
                       type="link"
+                      role="button"
                     >
                       {item.name}
                     </Button>

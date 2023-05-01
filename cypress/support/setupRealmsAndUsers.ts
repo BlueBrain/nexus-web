@@ -206,7 +206,7 @@ async function setup(users: { [key: string]: User }) {
         );
         await createDeltaRealm(testRealm).then(response => {
           if (response.status === 201) {
-            console.log(`Realm ${testRealm} successfully created`);
+            console.log(`Realm ${testRealm.name} successfully created`);
           } else {
             response.text().then(json => {
               throw Error(`Error occured creating realm in Delta\n\n${json}`);
