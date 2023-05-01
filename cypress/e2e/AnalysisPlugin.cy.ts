@@ -2,6 +2,7 @@ import { Resource } from '@bbp/nexus-sdk';
 
 describe('Report (formerly Analysis) Plugin', () => {
   before(() => {
+    Cypress.Cookies.debug(true);
     if (
       !Cypress.env('use_existing_delta_instance') ||
       Cypress.env('use_existing_delta_instance') === false
@@ -16,10 +17,8 @@ describe('Report (formerly Analysis) Plugin', () => {
     ).then(session => {
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
+        cy.task('log', `@@AnalysisPluginLogin succeeded: ${authToken}`);
         cy.wrap(authToken).as('nexusToken');
-        cy.url().then(url =>
-          cy.task('log', `@@AnalysisPluginLogin succeeded: ${authToken}`)
-        );
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');

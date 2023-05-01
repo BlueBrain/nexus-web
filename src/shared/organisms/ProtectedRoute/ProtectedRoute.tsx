@@ -7,22 +7,25 @@ type Props = {
   children: React.ReactNode;
 };
 
-const PrivateRoute = ({ children, ...rest }: Props) => {
+const PrivateRoute = ({
+  children,
+  ...rest
+}: Props) => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const userAuthenticated = oidc && !!oidc.user?.id_token;
-  console.log('@@userAuthenticated', userAuthenticated);
-  console.log('@@user token', JSON.stringify(rest, null, 2));
+  console.log('@@oidc', oidc);
+  console.log('@@route', rest);
   return (
     <Route
       {...rest}
-      render={({ location }) => {
+      render={(props) => {
         return Boolean(userAuthenticated) ? (
           children
         ) : (
           <Redirect
             to={{
               pathname: '/login',
-              // state: { from: location },
+              state: { from: props.location },
             }}
           />
         );
