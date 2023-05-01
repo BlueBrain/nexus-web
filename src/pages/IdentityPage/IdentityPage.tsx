@@ -63,6 +63,7 @@ const IdentityPage: React.FC<{}> = () => {
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
               <Button
+                key="no-realms"
                 disabled
                 role="button"
                 size="large"
@@ -72,6 +73,7 @@ const IdentityPage: React.FC<{}> = () => {
               </Button>
             ) : (
               <Button
+                key="realm-selector"
                 size="large"
                 role="button"
                 aria-label="identity-login"
@@ -91,7 +93,10 @@ const IdentityPage: React.FC<{}> = () => {
                 className="home-authentication-content-connect-popover"
               >
                 {realmsFilter.map(item => (
-                  <li className="realm-connect">
+                  <li
+                    key={`realm-btn-${item['@id']}`}
+                    className="realm-connect"
+                  >
                     <Button
                       onClick={e => {
                         e.preventDefault();

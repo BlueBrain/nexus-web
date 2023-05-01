@@ -77,9 +77,9 @@ describe('Report (formerly Analysis) Plugin', () => {
     );
     console.log(
       '@@Visit page',
-      `ORG: ${Cypress.env('ORG_LABEL')}`,
-      `PROJECT: ${this.projectLabel}`,
-      `RESOURCE ${this.fullResourceId}`
+      `ORG: ${Cypress.env('ORG_LABEL')}
+      PROJECT: ${this.projectLabel}
+      RESOURCE ${this.fullResourceId}`
     );
     // Open report plugin
     cy.screenshot('resource-page');

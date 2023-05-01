@@ -343,7 +343,9 @@ const DataPanel: React.FC<Props> = ({}) => {
                 : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${parsedSelf.id}`,
+            path: `/${parsedSelf.project}/${parsedSelf.id}${
+              contentType ? `.${contentType}` : ''
+            }`,
           };
         } catch (error) {
           return;
@@ -351,6 +353,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       });
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
+  console.log('@@resourcesGrouped', resourcesGrouped);
   const handleFileTypeChange = (e: CheckboxChangeEvent) => {
     if (e.target.checked) {
       setTypes(state => [...state, e.target.value]);

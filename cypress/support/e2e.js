@@ -9,7 +9,6 @@ Cypress.Commands.add('login', (realm, username, password) => {
     cy.get('ul')
       .contains(realm.name)
       .click();
-    cy.screenshot('login-realms');
     cy.origin(
       realm.baseUrl,
       { args: [username, password] },
