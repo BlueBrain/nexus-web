@@ -14,10 +14,12 @@ describe('Report (formerly Analysis) Plugin', () => {
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     ).then(session => {
-      cy.url().then(url => cy.task('log', `@@AnalysisPluginLogin succeeded`));
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
+        cy.url().then(url =>
+          cy.task('log', `@@AnalysisPluginLogin succeeded: ${authToken}`)
+        );
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
