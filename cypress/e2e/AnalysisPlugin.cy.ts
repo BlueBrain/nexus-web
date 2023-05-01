@@ -75,14 +75,7 @@ describe('Report (formerly Analysis) Plugin', () => {
         this.projectLabel
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
-    console.log(
-      '@@Visit page',
-      `ORG: ${Cypress.env('ORG_LABEL')}
-      PROJECT: ${this.projectLabel}
-      RESOURCE ${this.fullResourceId}`
-    );
-    // Open report plugin
-    cy.screenshot('resource-page');
+    cy.url().then(url => cy.task('log', url));
     cy.findByRole('button', { name: /Report/i }).click();
     cy.findByRole('button', { name: /Add Report/i }).click();
     cy.findByRole('textbox', { name: 'Report Name' }).type(
@@ -111,7 +104,6 @@ describe('Report (formerly Analysis) Plugin', () => {
   });
 
   it('user can edit an existing report updating its name, description, categories, types, and adding another image and pdf file', function() {
-    console.clear();
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
