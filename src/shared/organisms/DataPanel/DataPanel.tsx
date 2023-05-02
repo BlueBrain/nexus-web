@@ -146,7 +146,7 @@ async function downloadArchive({
   const resourcesWithDistribution = resourcesPayload.filter(
     item => has(item, 'distribution') && item.distribution?.hasDistribution
   );
-  const { results } = await PromisePool.withConcurrency(4)
+  const { results, errors } = await PromisePool.withConcurrency(4)
     .for(resourcesWithDistribution)
     .process(async item => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
@@ -666,7 +666,10 @@ const DataPanel: React.FC<Props> = ({}) => {
           <AccessControl
             path={resourceProjectPaths}
             permissions={['archives/write']}
-            noAccessComponent={() => <></>}
+            noAccessComponent={() => {
+              console.log('@@no permissions');
+              return <></>;
+            }}
           >
             <div className="download-btn">
               <Button

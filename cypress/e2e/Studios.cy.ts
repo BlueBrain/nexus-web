@@ -42,6 +42,12 @@ describe('Studios', () => {
       Cypress.env('users').morty.password
     );
     studioDetailsPage = new StudioDetailsPage();
+    cy.window().then(win => {
+      const authToken = win.localStorage.getItem('nexus__token');
+      cy.wrap(authToken)
+        .as('nexusToken')
+        .should('exist');
+    });
   });
 
   after(function() {
