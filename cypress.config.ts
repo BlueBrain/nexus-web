@@ -19,7 +19,8 @@ export default defineConfig({
     fileServerFolder: '/cypress',
     defaultCommandTimeout: 10000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-    // testIsolation: false,
+    // @ts-ignore
+    experimentalSessionAndOrigin: true,
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
