@@ -175,8 +175,8 @@ export const useInfiniteStudiosQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewPaginationList)._next
         ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-          'after'
-        )
+            'after'
+          )
         : undefined,
   });
 };
@@ -241,24 +241,24 @@ const FusionStudiosPage: React.FC = () => {
   const dataSource =
     data && data.pages
       ? data?.pages
-        .map(page =>
-          (page as ResourceList<{}>)?._results.map((item: Resource) => {
-            const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-              item._project
-            )!;
-            return {
-              orgLabel,
-              projectLabel,
-              id: item['@id'],
-              label: item.label,
-              deprecated: item._deprecated,
-              createdAt: item._createdAt,
-              description: item.description,
-              access: '',
-            };
-          })
-        )
-        .flat()
+          .map(page =>
+            (page as ResourceList<{}>)?._results.map((item: Resource) => {
+              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
+                item._project
+              )!;
+              return {
+                orgLabel,
+                projectLabel,
+                id: item['@id'],
+                label: item.label,
+                deprecated: item._deprecated,
+                createdAt: item._createdAt,
+                description: item.description,
+                access: '',
+              };
+            })
+          )
+          .flat()
       : [];
   if (!query.trim().length) {
     totalStudiosRef.current = total;
@@ -290,14 +290,16 @@ const FusionStudiosPage: React.FC = () => {
           }
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
-          path={orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']}
+          path={
+            orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
+          }
           permissions={['resources/write']}
           {...(userAuthenticated
             ? {
-              createLabel: 'Create Studio',
-              onCreateClick: () =>
-                dispatch(updateStudioModalVisibility(true)),
-            }
+                createLabel: 'Create Studio',
+                onCreateClick: () =>
+                  dispatch(updateStudioModalVisibility(true)),
+              }
             : {})}
         />
         <div className="route-body">
