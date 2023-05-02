@@ -207,7 +207,7 @@ const CreateStudio = () => {
             message: `An error occured when creating a new studio for ${organizationName ??
               orgLabel}/${projectName ?? projectLabel}`,
             // @ts-ignore
-            description: error.cause?.message,
+            description: error.cause?.reason,
           });
         },
       }

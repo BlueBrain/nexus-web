@@ -48,13 +48,13 @@ const App: React.FC = () => {
           <SubAppsView routesWithSubApps={routesWithSubApps} />
           <AppInfo />
           {userAuthenticated && (
-            <>
+            <React.Fragment>
               <GalleryView />
               <CreateProject />
               <CreateOrganization />
               <CreateStudio />
               <DataPanel />
-            </>
+            </React.Fragment>
           )}
         </FusionMainLayout>
       </NotificationContext.Provider>

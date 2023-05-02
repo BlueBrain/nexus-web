@@ -191,7 +191,6 @@ const FusionStudiosPage: React.FC = () => {
   const loadMoreRef = React.useRef(null);
   const totalStudiosRef = React.useRef<number>(0);
   const oidc = useSelector((state: RootState) => state.oidc);
-  const authenticated = oidc && !!oidc.user;
   const token = oidc && oidc.user ? oidc.user.access_token : undefined;
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
   const [query, setQueryString] = React.useState<string>('');
