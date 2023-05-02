@@ -50,12 +50,6 @@ describe('Report (formerly Analysis) Plugin', () => {
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     );
-    cy.window().then(win => {
-      const authToken = win.localStorage.getItem('nexus__token');
-      cy.wrap(authToken)
-        .as('nexusToken')
-        .should('exist');
-    });
   });
 
   after(function() {
