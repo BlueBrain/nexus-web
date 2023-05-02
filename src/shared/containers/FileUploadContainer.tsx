@@ -25,7 +25,6 @@ const FileUploadContainer: React.FunctionComponent<{
   };
 
   const onFileUpload = async (file: File, storageId?: string) => {
-    console.log('@@customFileRequest.file', file);
     const formData = new FormData();
     formData.append('file', file);
     const uploadedFile = await nexus.File.create(orgLabel, projectLabel, {

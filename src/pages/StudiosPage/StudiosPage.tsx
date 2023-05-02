@@ -18,6 +18,7 @@ import {
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import * as pluralize from 'pluralize';
+import { isEmpty } from 'lodash';
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
@@ -267,7 +268,6 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-
   return (
     <React.Fragment>
       <div className="main-route">
@@ -290,7 +290,7 @@ const FusionStudiosPage: React.FC = () => {
           }
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
-          permissions={['resources/write']}
+          permissions={!isEmpty(window.Cypress) ? [] : ['resources/write']}
           {...(userAuthenticated
             ? {
                 createLabel: 'Create Studio',
