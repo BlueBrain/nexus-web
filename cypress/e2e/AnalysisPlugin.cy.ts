@@ -2,7 +2,6 @@ import { Resource } from '@bbp/nexus-sdk';
 
 describe('Report (formerly Analysis) Plugin', () => {
   before(() => {
-    Cypress.Cookies.debug(true);
     if (
       !Cypress.env('use_existing_delta_instance') ||
       Cypress.env('use_existing_delta_instance') === false
@@ -21,10 +20,7 @@ describe('Report (formerly Analysis) Plugin', () => {
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
-        cy.task(
-          'log',
-          `${orgLabel} ${projectLabelBase} ${Cypress.env('NEXUS_API_URL')}`
-        );
+
         cy.task('project:setup', {
           nexusApiUrl: Cypress.env('NEXUS_API_URL'),
           authToken,
