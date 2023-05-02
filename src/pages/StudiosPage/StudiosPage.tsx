@@ -267,8 +267,6 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  console.log('@@orgLabel,projectLabel', orgLabel, projectLabel);
-  console.log('@@studio token', token);
   return (
     <React.Fragment>
       <div className="main-route">
