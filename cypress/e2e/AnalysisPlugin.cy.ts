@@ -44,13 +44,13 @@ describe('Report (formerly Analysis) Plugin', () => {
     });
   });
 
-  beforeEach(() => {
-    cy.login(
-      Cypress.env('users').morty.realm,
-      Cypress.env('users').morty.username,
-      Cypress.env('users').morty.password
-    );
-  });
+  // beforeEach(() => {
+  //   cy.login(
+  //     Cypress.env('users').morty.realm,
+  //     Cypress.env('users').morty.username,
+  //     Cypress.env('users').morty.password
+  //   );
+  // });
 
   after(function() {
     cy.task('project:teardown', {
@@ -62,6 +62,11 @@ describe('Report (formerly Analysis) Plugin', () => {
   });
 
   it('user can add a report with name, description and files, categories, types', function() {
+    cy.login(
+      Cypress.env('users').morty.realm,
+      Cypress.env('users').morty.username,
+      Cypress.env('users').morty.password
+    );
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
