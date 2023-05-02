@@ -9,6 +9,7 @@ import StudioRedirectView from './views/StudioRedirectView';
 import MyDataView from './views/MyDataView';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
+
 const routes: TRoutePropsExtended[] = [
   {
     path: '/',
