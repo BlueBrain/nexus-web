@@ -18,9 +18,8 @@ export default defineConfig({
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
     defaultCommandTimeout: 10000,
-    experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-
+    // testIsolation: false,
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
