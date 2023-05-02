@@ -33,7 +33,13 @@ const RouteHeader = ({
         <h2>{title}</h2>
         <p>{extra}</p>
       </div>
-      <AccessControl {...{ permissions, path }}>
+      <AccessControl
+        {...{ permissions, path }}
+        noAccessComponent={() => {
+          console.log('@@ no permission');
+          return <></>;
+        }}
+      >
         {createLabel && (
           <div className="action">
             <button className="create-btn" onClick={onCreateClick}>

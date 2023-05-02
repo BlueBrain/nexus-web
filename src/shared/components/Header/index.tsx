@@ -41,6 +41,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const { openCreationPanel } = useSelector(
     (state: RootState) => state.uiSettings
   );
+  const notShowDefaultHeader =
+    (!token && location.pathname === '/') || location.pathname === '/login';
   const copyTokenCmd = () => {
     if (token) {
       copyCmd(token);
@@ -130,19 +132,20 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const showCreationPanel = location.pathname === '/search';
   const handleOpenCreationPanel = () =>
     dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
+  if (notShowDefaultHeader) return null;
   return (
-    <Fragment>
-      <header id="header" className="Header">
-        <div className="logo-container">
-          <Link to="/">
-            <div className="logo-container__logo">
-              <img
-                src={logoImg || require('../../images/fusion_logo.png')}
-                alt="Logo"
-              />
-            </div>
-          </Link>
-        </div>
+    <header id="header" className="Header">
+      <div className="logo-container">
+        <Link to="/">
+          <div className="logo-container__logo">
+            <img
+              src={logoImg || require('../../images/fusion_logo.png')}
+              alt="Logo"
+            />
+          </div>
+        </Link>
+      </div>
+      {token ? (
         <div className="menu-block">
           {name && showCreationPanel && (
             <div
@@ -169,8 +172,15 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             </Dropdown>
           )}
         </div>
-      </header>
-    </Fragment>
+      ) : (
+        <div className="menu-block">
+          <Link to="/login" className="menu-dropdown ant-dropdown-link">
+            <UserOutlined />
+            <span>Login</span>
+          </Link>
+        </div>
+      )}
+    </header>
   );
 };
 

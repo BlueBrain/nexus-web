@@ -42,7 +42,7 @@ const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
     config: state.config,
   }));
   const { layoutSettings } = config;
-  const token = oidc.user && oidc.user.access_token;
+  const token = oidc && oidc.user && !!oidc.user.access_token;
   const name =
     oidc.user && oidc.user.profile && oidc.user.profile.preferred_username;
   const userManager = getUserManager(state);
@@ -58,14 +58,12 @@ const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
     <>
       <SeoHeaders />
       <Layout className={`fusion-main-layout ${token ? 'authed' : 'wall'}`}>
-        {token && (
-          <Header
-            name={authenticated ? name : undefined}
-            token={token}
-            handleLogout={handleLogout}
-            logoImg={layoutSettings.logoImg}
-          />
-        )}
+        <Header
+          name={authenticated ? name : undefined}
+          token={token ? oidc.user?.access_token : undefined}
+          handleLogout={handleLogout}
+          logoImg={layoutSettings.logoImg}
+        />
         <ConsentContainer consent={consent} updateConsent={setConsent} />
         <Content className="site-layout-background fusion-main-layout__content">
           {children}

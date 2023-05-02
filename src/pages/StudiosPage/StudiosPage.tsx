@@ -107,8 +107,8 @@ const StudioItem = ({
   description,
   deprected,
   project,
-  datasets,
   createdAt,
+  datasets,
   access,
 }: TStudioItem) => {
   return (
@@ -191,9 +191,8 @@ const FusionStudiosPage: React.FC = () => {
   const loadMoreRef = React.useRef(null);
   const totalStudiosRef = React.useRef<number>(0);
   const oidc = useSelector((state: RootState) => state.oidc);
-  const authenticated = !!oidc.user;
-  const token = oidc.user && oidc.user.access_token;
-  const userAuthenticated = Boolean(authenticated) && Boolean(token);
+  const authenticated = oidc && !!oidc.user;
+  const token = oidc && oidc.user ? oidc.user.access_token : undefined;
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
   const [query, setQueryString] = React.useState<string>('');
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
@@ -268,6 +267,8 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
+  console.log('@@orgLabel,projectLabel', orgLabel, projectLabel);
+  console.log('@@studio token', token);
   return (
     <React.Fragment>
       <div className="main-route">
@@ -294,7 +295,7 @@ const FusionStudiosPage: React.FC = () => {
             orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
           }
           permissions={['resources/write']}
-          {...(userAuthenticated
+          {...(token
             ? {
                 createLabel: 'Create Studio',
                 onCreateClick: () =>
