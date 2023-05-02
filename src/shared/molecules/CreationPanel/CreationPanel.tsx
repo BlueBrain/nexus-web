@@ -31,18 +31,17 @@ const creationButtons: TCreationButton[] = [
   {
     title: 'Create Organization',
     action: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
-    permissions: ['organizations/create']
-
+    permissions: ['organizations/create'],
   },
   {
     title: 'Create Project',
     action: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
-    permissions: ['projects/create']
+    permissions: ['projects/create'],
   },
   {
     title: 'Create Studio',
     action: ModalsActionsEnum.OPEN_STUDIO_CREATION_MODEL,
-    permissions: ['resources/write']
+    permissions: ['resources/write'],
   },
 ];
 
