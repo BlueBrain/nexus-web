@@ -10,6 +10,7 @@ describe('Studios', () => {
     }
 
     cy.login(
+      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
@@ -35,6 +36,7 @@ describe('Studios', () => {
 
   beforeEach(() => {
     cy.login(
+      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password

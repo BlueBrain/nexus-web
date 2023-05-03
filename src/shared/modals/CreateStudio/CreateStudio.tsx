@@ -136,6 +136,7 @@ const createStudioResource = async ({
       generateStudioResource(label, description, plugins)
     );
   } catch (error) {
+    console.log('@@error create studio', error);
     // @ts-ignore
     throw new Error('Can not process create studio request', { cause: error });
   }
@@ -258,8 +259,9 @@ const CreateStudio = () => {
       });
     }
   };
+  const noPrecollectedOrgProject = !(orgLabel && projectLabel);
   const { data: organizations, status: orgStatus } = useQuery({
-    enabled: isCreateStudioModelVisible,
+    enabled: isCreateStudioModelVisible && noPrecollectedOrgProject,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({
