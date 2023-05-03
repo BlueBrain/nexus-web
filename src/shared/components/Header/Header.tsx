@@ -14,11 +14,11 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { UISettingsActionTypes } from '../../../shared/store/actions/ui-settings';
-import { RootState } from '../../../shared/store/reducers';
-import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
+import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import { RootState } from '../../store/reducers';
+import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
-import useNotification from '../../../shared/hooks/useNotification';
+import useNotification from '../../hooks/useNotification';
 import './Header.less';
 
 export interface HeaderProps {
@@ -84,7 +84,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           </>
         }
       >
-        <Menu.Item key="header-menu-resources-docs">
+        <Menu.Item
+          key="header-menu-resources-docs"
+        >
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -94,7 +96,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <span>Documentation</span>
           </a>
         </Menu.Item>
-        <Menu.Item key="header-menu-resources-web">
+        <Menu.Item
+          key="header-menu-resources-web"
+        >
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -104,7 +108,9 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <span>Web Protégé</span>
           </a>
         </Menu.Item>
-        <Menu.Item key="header-menu-resources-atlas">
+        <Menu.Item
+          key="header-menu-resources-atlas"
+        >
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -115,14 +121,18 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           </a>
         </Menu.Item>
       </Menu.SubMenu>
-      <Menu.Item className="link-menu-item" onClick={openAboutModal}>
+      <Menu.Item
+        key='header-menu-about'
+        className="link-menu-item"
+        onClick={openAboutModal}
+      >
         <SettingOutlined style={headerIconStyle} />
         About
       </Menu.Item>
       <Menu.Item
+        key='logout'
         onClick={handleLogout}
         className="menu-item-logout"
-        key={'logout'}
       >
         <LogoutOutlined style={headerIconStyle} />
         Logout

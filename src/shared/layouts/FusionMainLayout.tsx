@@ -4,7 +4,7 @@ import { Layout } from 'antd';
 import { isEmpty } from 'lodash';
 import { MenuItemProps } from 'antd/lib/menu/MenuItem';
 import { RootState } from '../store/reducers';
-import Header from '../components/Header';
+import Header from '../components/Header/Header';
 import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
 import getUserManager from '../../client/userManager';
