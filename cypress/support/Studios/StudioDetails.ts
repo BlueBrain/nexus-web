@@ -6,7 +6,6 @@ export class StudioDetailsPage extends StudioListPage {
   }
 
   getAnyDashboard(orgLabel: string, projectLabel: string) {
-    cy.visit(`studios/${orgLabel}/${projectLabel}/studios`);
     const studioName = 'Random Studio ' + Date.now();
     const workspaceName = 'Random Workspace ' + Date.now();
     const dashboardName = 'Random Dashboard ' + Date.now();
