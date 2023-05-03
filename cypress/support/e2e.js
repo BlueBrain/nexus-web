@@ -19,7 +19,5 @@ Cypress.Commands.add('login', (id, realm, username, password) => {
       }
     );
     cy.wait(500);
-  }, { 
-    cacheAcrossSpecs: true,
   });
 });
