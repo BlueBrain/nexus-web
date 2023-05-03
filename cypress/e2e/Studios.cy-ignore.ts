@@ -1,6 +1,6 @@
 import { StudioDetailsPage } from '../support/Studios/StudioDetails';
 
-describe('Studios', () => {
+describe.only('Studios', () => {
   let studioDetailsPage: StudioDetailsPage;
   before(() => {
     if (
@@ -9,12 +9,12 @@ describe('Studios', () => {
     ) {
       cy.task('auth:createRealmsAndUsers', Cypress.env('users'));
     }
+
     cy.login(
-      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    ).then(() => {
+    ).then(session => {
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
@@ -36,24 +36,41 @@ describe('Studios', () => {
 
   beforeEach(() => {
     cy.login(
-      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    );
+    ).then(() => {
+      console.log(
+        'CYPRESS----NEXUS',
+        window.localStorage.getItem('nexus__token')
+      );
+      console.log(
+        'CYPRESS----NEXUS',
+        window.localStorage.getItem('nexus__realm')
+      );
+
+      cy.task(
+        'log',
+        'CYPRESS----NEXUS' + window.localStorage.getItem('nexus__token')
+      );
+      cy.task(
+        'log',
+        'CYPRESS----NEXUS' + window.localStorage.getItem('nexus__realm')
+      );
+    });
     studioDetailsPage = new StudioDetailsPage();
   });
 
-  // after(function() {
-  //   cy.task('project:teardown', {
-  //     nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //     authToken: this.nexusToken,
-  //     orgLabel: Cypress.env('ORG_LABEL'),
-  //     projectLabel: this.projectLabel,
-  //   });
-  // });
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
-  it('user can create a studio with a workspace and dashboard', function() {
+  it.only('user can create a studio with a workspace and dashboard', function() {
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );

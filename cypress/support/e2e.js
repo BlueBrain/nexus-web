@@ -2,8 +2,8 @@ import '@testing-library/cypress/add-commands';
 import 'cypress-file-upload';
 import { loginPage } from './index';
 
-Cypress.Commands.add('login', (id, realm, username, password) => {
-  return cy.session(id, () => {
+Cypress.Commands.add('login', (realm, username, password) => {
+  return cy.session(username, () => {
     cy.visit(loginPage);
     cy.findByRole('button', { name: /identity-login/i  }).click();
     cy.get('ul')
