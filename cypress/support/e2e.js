@@ -19,5 +19,7 @@ Cypress.Commands.add('login', (realm, username, password) => {
       }
     );
     cy.wait(500);
+  }, { 
+    cacheAcrossSpecs: true,
   });
 });

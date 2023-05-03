@@ -84,9 +84,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           </>
         }
       >
-        <Menu.Item
-          key="header-menu-resources-docs"
-        >
+        <Menu.Item key="header-menu-resources-docs">
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -96,9 +94,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <span>Documentation</span>
           </a>
         </Menu.Item>
-        <Menu.Item
-          key="header-menu-resources-web"
-        >
+        <Menu.Item key="header-menu-resources-web">
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -108,9 +104,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             <span>Web Protégé</span>
           </a>
         </Menu.Item>
-        <Menu.Item
-          key="header-menu-resources-atlas"
-        >
+        <Menu.Item key="header-menu-resources-atlas">
           <a
             rel="noopener noreferrer"
             target="_blank"
@@ -122,7 +116,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </Menu.Item>
       </Menu.SubMenu>
       <Menu.Item
-        key='header-menu-about'
+        key="header-menu-about"
         className="link-menu-item"
         onClick={openAboutModal}
       >
@@ -130,7 +124,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         About
       </Menu.Item>
       <Menu.Item
-        key='logout'
+        key="logout"
         onClick={handleLogout}
         className="menu-item-logout"
       >
