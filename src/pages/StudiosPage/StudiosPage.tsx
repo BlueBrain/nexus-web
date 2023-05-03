@@ -292,15 +292,13 @@ const FusionStudiosPage: React.FC = () => {
             orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
           }
           permissions={['resources/write']}
-          createLabel="Create Studio"
-          onCreateClick={() => dispatch(updateStudioModalVisibility(true))}
-          // {...(token
-          //   ? {
-          //       createLabel: 'Create Studio',
-          //       onCreateClick: () =>
-          //         dispatch(updateStudioModalVisibility(true)),
-          //     }
-          //   : {})}
+          {...(token
+            ? {
+                createLabel: 'Create Studio',
+                onCreateClick: () =>
+                  dispatch(updateStudioModalVisibility(true)),
+              }
+            : {})}
         />
         <div className="route-body">
           <div className="route-body-container">

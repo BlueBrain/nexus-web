@@ -10,6 +10,7 @@ describe('Report (formerly Analysis) Plugin', () => {
     }
 
     cy.login(
+      `${Cypress.env('users').morty.username}-report-plugin`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
@@ -46,6 +47,7 @@ describe('Report (formerly Analysis) Plugin', () => {
 
   beforeEach(() => {
     cy.login(
+      `${Cypress.env('users').morty.username}-report-plugin`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password

@@ -8,12 +8,12 @@ describe('Studios', () => {
     ) {
       cy.task('auth:createRealmsAndUsers', Cypress.env('users'));
     }
-
     cy.login(
+      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    ).then(session => {
+    ).then(() => {
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
@@ -35,6 +35,7 @@ describe('Studios', () => {
 
   beforeEach(() => {
     cy.login(
+      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
