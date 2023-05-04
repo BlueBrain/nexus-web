@@ -1,6 +1,11 @@
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { Simulate } from 'react-dom/test-utils';
+import { createMemoryHistory } from 'history';
+
 import { RenderResult, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
@@ -17,12 +22,10 @@ import {
   sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { createMemoryHistory } from 'history';
-import { Simulate } from 'react-dom/test-utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Router } from 'react-router-dom';
 import { cleanup, render, screen, server, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
+import configureStore from '../../shared/store';
 
 describe('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
@@ -42,24 +45,26 @@ describe('DataTableContainer.spec.tsx', () => {
       fetch,
       uri: deltaPath(),
     });
-
+    const store = configureStore(history, { nexus }, {});
     component = render(
-      <Router history={history}>
-        <QueryClientProvider client={queryClient}>
-          <NexusProvider nexusClient={nexus}>
-            <DataTableContainer
-              orgLabel="bbp"
-              projectLabel="agents"
-              tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
-              options={{
-                disableAddFromCart: true,
-                disableDelete: true,
-                disableEdit: true,
-              }}
-            />
-          </NexusProvider>
-        </QueryClientProvider>
-      </Router>
+      <Provider store={store}>
+        <Router history={history}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <DataTableContainer
+                orgLabel="bbp"
+                projectLabel="agents"
+                tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
+                options={{
+                  disableAddFromCart: true,
+                  disableDelete: true,
+                  disableEdit: true,
+                }}
+              />
+            </NexusProvider>
+          </QueryClientProvider>
+        </Router>
+      </Provider>
     );
 
     container = component.container;
