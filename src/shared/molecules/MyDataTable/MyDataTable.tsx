@@ -2,7 +2,7 @@ import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
-import { difference, differenceBy, union } from 'lodash';
+import { difference, differenceBy, union, has } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import {
@@ -51,7 +51,7 @@ export type TResourceTableData = {
 export type TDataSource = {
   source?: string;
   key: React.Key;
-  _self: string | string[];
+  _self: string;
   id: string;
   name: string;
   project: string;
@@ -153,6 +153,8 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'Name',
         dataIndex: 'name',
         fixed: true,
+        width: 250,
+        ellipsis: true,
         render: (text, record) => {
           const showedText = isValidUrl(text) ? text.split('/').pop() : text;
           if (text && record.resource?._project) {
@@ -178,6 +180,7 @@ const MyDataTable: React.FC<TProps> = ({
         key: 'project',
         title: 'project',
         dataIndex: 'project',
+        sorter: false,
         render: (text, record) => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
@@ -192,35 +195,35 @@ const MyDataTable: React.FC<TProps> = ({
           }
           return '';
         },
-        sorter: (a, b) => a.name.length - b.name.length,
       },
       {
         key: 'description',
         title: 'description',
         dataIndex: 'description',
-        sorter: (a, b) => a.name.length - b.name.length,
+        ellipsis: true,
+        sorter: false,
       },
       {
         key: 'type',
         title: 'type',
         dataIndex: 'type',
-        sorter: (a, b) => a.name.length - b.name.length,
+        sorter: false,
       },
       {
         key: 'updatedAt',
         title: 'updated date',
         dataIndex: 'updatedAt',
         width: 140,
+        sorter: false,
         render: text => timeago(new Date(text)),
-        sorter: (a, b) => a.name.length - b.name.length,
       },
       {
         key: 'createdAt',
         title: 'created date',
         dataIndex: 'createdAt',
         width: 140,
+        sorter: false,
         render: text => timeago(new Date(text)),
-        sorter: (a, b) => a.name.length - b.name.length,
       },
     ],
     []
@@ -232,7 +235,7 @@ const MyDataTable: React.FC<TProps> = ({
         key: resource._self,
         _self: resource._self,
         id: resource['@id'],
-        name: resource['@id'],
+        name: resource['@id'] ?? resource._self,
         project: resource._project,
         description: '',
         type: resource['@type'],
@@ -242,6 +245,7 @@ const MyDataTable: React.FC<TProps> = ({
           contentSize: resource.distribution?.contentSize ?? 0,
           encodingFormat: resource.distribution?.encodingFormat ?? '',
           label: resource.distribution?.label ?? '',
+          hasDistribution: has(resource, 'distribution'),
         },
         source: 'my-data',
       };
@@ -266,11 +270,11 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      selectedRowKeys = [...selectedRowKeys, record.key];
+      selectedRowKeys = [...selectedRowKeys, record._self];
       selectedRows = [...selectedRows, { ...record, source: 'my-data' }];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== record.key);
-      selectedRows = selectedRows.filter(t => t.key !== record.key);
+      selectedRowKeys = selectedRowKeys.filter(t => t !== record._self);
+      selectedRows = selectedRows.filter(t => t.key !== record._self);
     }
     const size = selectedRows.reduce(
       (acc, item) => acc + (item.distribution?.contentSize || 0),
@@ -321,7 +325,7 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRows = differenceBy(selectedRows, changeRows, 'key');
       selectedRowKeys = difference(
         selectedRowKeys,
-        changeRows.map(t => t.key)
+        changeRows.map(t => t._self)
       );
     }
     const size = selectedRows.reduce(

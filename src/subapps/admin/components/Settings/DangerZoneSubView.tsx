@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Button, Modal, Input, Form, Row, Col, notification } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
+import {
+  Button,
+  Modal,
+  Input,
+  Form,
+  Row,
+  Col,
+  notification,
+  Tooltip,
+} from 'antd';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { makeOrganizationUri } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.less';
 
 type Props = {
@@ -38,7 +46,6 @@ const deprecateProject = async ({
   }
 };
 const DangerZoneSubView = ({ project }: Props) => {
-  const { user } = useSelector((state: RootState) => state.oidc);
   const nexus = useNexusContext();
   const history = useHistory();
   const match = useRouteMatch<{
@@ -82,16 +89,25 @@ const DangerZoneSubView = ({ project }: Props) => {
         <h2>Danger Zone</h2>
         <div className="settings-view-container">
           <div className="danger-actions">
-            <Button
-              danger
-              style={{ margin: 0, marginRight: 10 }}
-              type="primary"
-              disabled={false} // TODO: write premission to be enabled
-              htmlType="submit"
-              onClick={handleOpenModal}
+            <AccessControl
+              path={[`${orgLabel}/${projectLabel}`]}
+              permissions={['projects/write']}
+              noAccessComponent={() => (
+                <Tooltip title="You have no permissions to deprecate this project">
+                  <HasNoPermission />
+                </Tooltip>
+              )}
             >
-              Deprecate Project
-            </Button>
+              <Button
+                danger
+                style={{ margin: 0, marginRight: 10 }}
+                type="primary"
+                htmlType="submit"
+                onClick={handleOpenModal}
+              >
+                Deprecate Project
+              </Button>
+            </AccessControl>
           </div>
         </div>
       </div>

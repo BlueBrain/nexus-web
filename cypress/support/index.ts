@@ -35,6 +35,7 @@ Cypress.on('uncaught:exception', err => {
   console.log(
     'There is an error that should not happen, but is being caught in Cypress.'
   );
+  console.error(err);
   /* returning false here prevents Cypress from failing the test */
   if (resizeObserverLoopErrRe.test(err.message)) {
     return false;
@@ -51,6 +52,7 @@ declare global {
        * @example cy.login('https://dev.nise/','notarealusername','1234')
        */
       login(
+        id: string,
         realm: { name: string; baseUrl: string },
         username: string,
         password: string

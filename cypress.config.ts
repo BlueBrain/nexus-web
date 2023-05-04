@@ -13,14 +13,17 @@ const fetch = require('node-fetch');
 export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
-  video: false,
+  video: true,
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
-    defaultCommandTimeout: 10000,
-    experimentalSessionAndOrigin: true,
+    defaultCommandTimeout: 50000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
+    // @ts-ignore
+    experimentalSessionAndOrigin: true,
+    // testIsolation: false,
     env: {
+      DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
       ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
     },

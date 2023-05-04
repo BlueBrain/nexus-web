@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { HomeSeachByPresets, HomeSearchByApps } from '../../shared/organisms';
-import { RootState } from '../../shared/store/reducers';
 import { MyData } from '../../shared/canvas';
-import AuthenticationPage from '../LandingPage/LandingPage';
+import { RootState } from '../../shared/store/reducers';
+import IdentityPage from '../../pages/IdentityPage/IdentityPage';
 
 const Home: React.FunctionComponent = () => {
-  const userLoggedIn = useSelector(
-    ({ oidc }: RootState) => oidc && !!oidc.user
-  );
-  if (!userLoggedIn) {
-    return <AuthenticationPage />;
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const userAuthenticated = oidc && !!oidc.user?.id_token;
+  if (!userAuthenticated) {
+    console.log('@@not authenticated');
+    return <IdentityPage />;
   }
+
   return (
     <div className="home-view view-container">
       <HomeSeachByPresets />

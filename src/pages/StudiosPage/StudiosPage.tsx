@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, List, Input, Alert } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   NexusClient,
   ResourceList,
@@ -12,19 +12,21 @@ import {
 } from '@bbp/nexus-sdk';
 import { match as pmatch } from 'ts-pattern';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import { flatten } from 'lodash';
 import * as pluralize from 'pluralize';
+import { isEmpty } from 'lodash';
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../shared/utils';
+import { RootState } from '../../shared/store/reducers';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
 import {
@@ -68,6 +70,8 @@ type TStudioItem = {
 type TFetchStudiosListProps = TStudiosOptions & {
   nexus: NexusClient;
   after?: string;
+  orgLabel?: string;
+  projectLabel?: string;
 };
 type TNewPaginationList = PaginatedList & { _next: string };
 export const sortBackgroundColor = (sort: TSort, value: TSort) =>
@@ -78,9 +82,11 @@ const fetchStudios = async ({
   sort,
   size,
   after,
+  orgLabel,
+  projectLabel,
 }: TFetchStudiosListProps) => {
   try {
-    const response = await nexus.Resource.list(undefined, undefined, {
+    const response = await nexus.Resource.list(orgLabel, projectLabel, {
       after,
       q: query,
       size: size ?? STUDIO_RESULTS_DEFAULT_SIZE,
@@ -101,8 +107,8 @@ const StudioItem = ({
   description,
   deprected,
   project,
-  datasets,
   createdAt,
+  datasets,
   access,
 }: TStudioItem) => {
   return (
@@ -127,14 +133,6 @@ const StudioItem = ({
             <div>{project}</div>
           </div>
           <div className="statistics_item">
-            <div>Access</div>
-            <div>{access}</div>
-          </div>
-          <div className="statistics_item">
-            <div>Datasets</div>
-            <div>{datasets || ''}</div>
-          </div>
-          <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
           </div>
@@ -153,15 +151,27 @@ export const useInfiniteStudiosQuery = ({
   nexus,
   query,
   sort,
+  orgLabel,
+  projectLabel,
 }: {
   nexus: NexusClient;
   query: string;
   sort: TSort;
+  orgLabel?: string;
+  projectLabel?: string;
 }) => {
   return useInfiniteQuery({
-    queryKey: ['fusion-studios', { query, sort }],
+    queryKey: ['fusion-studios', { query, sort, orgLabel, projectLabel }],
     queryFn: ({ pageParam = undefined }) =>
-      fetchStudios({ nexus, query, sort, after: pageParam, size: 10 }),
+      fetchStudios({
+        nexus,
+        query,
+        sort,
+        orgLabel,
+        projectLabel,
+        after: pageParam,
+        size: 10,
+      }),
     getNextPageParam: lastPage =>
       (lastPage as TNewPaginationList)._next
         ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
@@ -173,7 +183,15 @@ export const useInfiniteStudiosQuery = ({
 const FusionStudiosPage: React.FC = () => {
   const nexus = useNexusContext();
   const dispatch = useDispatch();
+  const { orgLabel, projectLabel } = useParams<{
+    orgLabel: string;
+    projectLabel: string;
+  }>();
+
   const loadMoreRef = React.useRef(null);
+  const totalStudiosRef = React.useRef<number>(0);
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const token = oidc && oidc.user ? oidc.user.access_token : undefined;
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
   const [query, setQueryString] = React.useState<string>('');
   const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
@@ -205,7 +223,7 @@ const FusionStudiosPage: React.FC = () => {
     status,
     isLoading,
     isFetching,
-  } = useInfiniteStudiosQuery({ nexus, query, sort });
+  } = useInfiniteStudiosQuery({ nexus, query, sort, orgLabel, projectLabel });
 
   const LoadMore = (
     <LoadMoreFooter
@@ -240,24 +258,47 @@ const FusionStudiosPage: React.FC = () => {
           )
           .flat()
       : [];
-
+  if (!query.trim().length) {
+    totalStudiosRef.current = total;
+  }
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-
   return (
     <React.Fragment>
       <div className="main-route">
         <PinnedMenu />
         <RouteHeader
           title="Studios"
-          extra={total ? `Total of ${total} ${pluralize('Studio', total)}` : ''}
+          extra={
+            total && !query ? (
+              `Total of ${total} ${pluralize('Studio', total)}`
+            ) : total && query ? (
+              `Filtering ${total} of ${totalStudiosRef.current}  ${pluralize(
+                'Studio',
+                total
+              )}`
+            ) : isLoading ? (
+              <LoadingOutlined />
+            ) : (
+              'No studios found'
+            )
+          }
           alt="hippocampus"
           bg={require('../../shared/images/neocortex.png')}
-          createLabel="Create Studio"
-          onCreateClick={() => dispatch(updateStudioModalVisibility(true))}
+          path={
+            orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
+          }
+          permissions={['resources/write']}
+          {...(token
+            ? {
+                createLabel: 'Create Studio',
+                onCreateClick: () =>
+                  dispatch(updateStudioModalVisibility(true)),
+              }
+            : {})}
         />
         <div className="route-body">
           <div className="route-body-container">

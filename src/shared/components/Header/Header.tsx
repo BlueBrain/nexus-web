@@ -14,36 +14,19 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { Realm } from '@bbp/nexus-sdk';
-import useNotification from '../../../shared/hooks/useNotification';
-import { UISettingsActionTypes } from '../../../shared/store/actions/ui-settings';
-import { ConsentType } from '../../layouts/FusionMainLayout';
+import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import { RootState } from '../../store/reducers';
+import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
-import { AppInfo } from '../../../shared/modals';
-import { RootState } from '../../../shared/store/reducers';
+import useNotification from '../../hooks/useNotification';
 import './Header.less';
-import { EnvironmentInfo } from 'shared/modals/AppInfo/AppInfo';
 
 export interface HeaderProps {
-  githubIssueURL: string;
-  forgeLink: string;
   name?: string;
   token?: string;
-  links?: React.ReactNode[];
-  realms: Realm[];
-  serviceAccountsRealm: string;
-  displayLogin?: boolean;
-  children?: React.ReactChild;
-  consent?: ConsentType;
-  commitHash?: string;
-  dataCart?: React.ReactNode;
-  onClickRemoveConsent?(): void;
-  performLogin(realmName: string): void;
-  subApps: any;
-  authenticated: boolean;
   logoImg: string;
   handleLogout: MenuItemProps['onClick'];
-  environment: EnvironmentInfo;
+  children?: React.ReactChild;
 }
 const headerIconStyle = { marginRight: 4 };
 const Header: React.FunctionComponent<HeaderProps> = ({
@@ -51,25 +34,15 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   token,
   logoImg,
   handleLogout,
-  environment,
-  githubIssueURL,
-  forgeLink,
-  consent,
-  commitHash,
-  dataCart,
-  onClickRemoveConsent,
-  performLogin,
-  subApps,
-  authenticated,
 }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const notification = useNotification();
-  const [visible, setModalVisible] = useState<boolean>(false);
   const { openCreationPanel } = useSelector(
     (state: RootState) => state.uiSettings
   );
-  const onModalStateChange = () => setModalVisible(() => false);
+  const notShowDefaultHeader =
+    (!token && location.pathname === '/') || location.pathname === '/login';
   const copyTokenCmd = () => {
     if (token) {
       copyCmd(token);
@@ -79,7 +52,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       });
     }
   };
-
+  const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   const menu = (
     <Menu mode="inline" className="ant-menu-inline">
       <Menu.Item className="link-menu-item" key="header-menu-my-profile">
@@ -125,7 +98,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://bluebrainnexus.io/"
+            href="https://bbp.epfl.ch/nexus/webprotege/"
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Web Protégé</span>
@@ -135,7 +108,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://portal.bluebrain.epfl.ch/resources/models/cell-atlas/"
+            href="https://bbp.epfl.ch/nexus/cell-atlas/"
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Atlas</span>
@@ -143,16 +116,17 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </Menu.Item>
       </Menu.SubMenu>
       <Menu.Item
+        key="header-menu-about"
         className="link-menu-item"
-        onClick={() => setModalVisible(() => true)}
+        onClick={openAboutModal}
       >
         <SettingOutlined style={headerIconStyle} />
         About
       </Menu.Item>
       <Menu.Item
+        key="logout"
         onClick={handleLogout}
         className="menu-item-logout"
-        key={'logout'}
       >
         <LogoutOutlined style={headerIconStyle} />
         Logout
@@ -162,19 +136,20 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const showCreationPanel = location.pathname === '/search';
   const handleOpenCreationPanel = () =>
     dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
+  if (notShowDefaultHeader) return null;
   return (
-    <Fragment>
-      <header id="header" className="Header">
-        <div className="logo-container">
-          <Link to="/">
-            <div className="logo-container__logo">
-              <img
-                src={logoImg || require('../../images/fusion_logo.png')}
-                alt="Logo"
-              />
-            </div>
-          </Link>
-        </div>
+    <header id="header" className="Header">
+      <div className="logo-container">
+        <Link to="/">
+          <div className="logo-container__logo">
+            <img
+              src={logoImg || require('../../images/fusion_logo.png')}
+              alt="Logo"
+            />
+          </div>
+        </Link>
+      </div>
+      {token ? (
         <div className="menu-block">
           {name && showCreationPanel && (
             <div
@@ -201,19 +176,15 @@ const Header: React.FunctionComponent<HeaderProps> = ({
             </Dropdown>
           )}
         </div>
-      </header>
-      <AppInfo
-        {...{
-          githubIssueURL,
-          commitHash,
-          consent,
-          visible,
-          onClickRemoveConsent,
-          onModalStateChange,
-          environment,
-        }}
-      />
-    </Fragment>
+      ) : (
+        <div className="menu-block">
+          <Link to="/login" className="menu-dropdown ant-dropdown-link">
+            <UserOutlined />
+            <span>Login</span>
+          </Link>
+        </div>
+      )}
+    </header>
   );
 };
 

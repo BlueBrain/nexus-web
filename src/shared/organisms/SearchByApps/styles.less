@@ -11,11 +11,25 @@
     color: #bfbfbf;
   }
   &-container {
-    // display: grid;
-    // grid-template-columns: repeat(3, minmax(200px, 1fr));
-    // gap: 15px;
-    display: flex;
-    flex-flow: row wrap;
-    gap: 20px;
+    display: grid;
+    grid-auto-flow: row dense;
+    column-gap: 10px;
+    row-gap: 15px;
+    .subapp-link {
+      min-height: max-content;
+    }
+    .subapp-link-container p {
+      display: none;
+      height: auto;
+      flex: 0;
+    }
+    @media screen and (min-width: 670px) {
+      row-gap: 5px;
+      grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+      .subapp-link-container p {
+        display: block;
+        flex: inherit;
+      }
+    }
   }
 }

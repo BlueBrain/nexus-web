@@ -20,7 +20,7 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useForm } from 'antd/lib/form/Form';
@@ -31,6 +31,7 @@ import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import usePlugins from '../../../shared/hooks/usePlugins';
 import STUDIO_CONTEXT from '../../../subapps/studioLegacy/components/StudioContext';
+import { useStudioLegacySubappContext } from '../../../subapps/studioLegacy';
 
 type StudioResource = Resource<{
   label: string;
@@ -58,8 +59,8 @@ type TCreationStudio = {
   }[];
 };
 type TCreationStudioForm = {
-  orgLabel: string;
-  projectLabel: string;
+  organizationName: string;
+  projectName: string;
   label: string;
   description: string;
 };
@@ -135,6 +136,7 @@ const createStudioResource = async ({
       generateStudioResource(label, description, plugins)
     );
   } catch (error) {
+    console.log('@@error create studio', error);
     // @ts-ignore
     throw new Error('Can not process create studio request', { cause: error });
   }
@@ -151,8 +153,15 @@ const CreateStudio = () => {
   const userUri = identities?.data?.identities.find(
     t => t['@type'] === 'User'
   )?.['@id'];
-  const { createStudioModel } = useSelector((state: RootState) => state.modals);
-
+  const { isCreateStudioModelVisible } = useSelector(
+    (state: RootState) => state.modals
+  );
+  const { namespace } = useStudioLegacySubappContext();
+  const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
+    `/${namespace}/:orgLabel/:projectLabel/studios`
+  );
+  const orgLabel = match?.params.orgLabel;
+  const projectLabel = match?.params.projectLabel;
   const goToStudio = (resourceId: string) =>
     history.push(makeStudioUri(resourceId));
   const { mutateAsync: mutateStudioResource, status } = useMutation(
@@ -161,8 +170,8 @@ const CreateStudio = () => {
   const handleSubmit = ({
     description,
     label,
-    orgLabel,
-    projectLabel,
+    organizationName,
+    projectName,
   }: TCreationStudioForm) => {
     const visiblePlugins = plugins
       .filter(p => p.visible)
@@ -174,8 +183,8 @@ const CreateStudio = () => {
         nexus,
         label,
         description,
-        organization: orgLabel,
-        project: projectLabel,
+        organization: organizationName ?? orgLabel,
+        project: projectName ?? projectLabel,
         plugins: {
           customise: isPluginsCustomised,
           plugins: visiblePlugins,
@@ -183,14 +192,23 @@ const CreateStudio = () => {
       },
       {
         onSuccess: (data: any) => {
+          form.resetFields();
           dispatch(updateStudioModalVisibility(false));
-          goToStudio(data['@id']);
+          notification.success({
+            duration: 2,
+            message: <strong>{data._label}</strong>,
+            description: `Project has been created Successfully`,
+            onClose: () => {
+              goToStudio(data['@id']);
+            },
+          });
         },
         onError: error => {
           notification.error({
-            message: `An error occured when creating a new studio for ${organization}/${project}`,
+            message: `An error occured when creating a new studio for ${organizationName ??
+              orgLabel}/${projectName ?? projectLabel}`,
             // @ts-ignore
-            description: error.cause?.message,
+            description: error.cause?.reason,
           });
         },
       }
@@ -214,9 +232,8 @@ const CreateStudio = () => {
     }
   );
   const makeStudioUri = (resourceId: string) => {
-    const path = `${basePath}/studios/${organization}/${project}/studios/${encodeURIComponent(
-      resourceId
-    )}`;
+    const path = `${basePath}/studios/${organization ?? orgLabel}/${project ??
+      projectLabel}/studios/${encodeURIComponent(resourceId)}`;
     return path;
   };
   const customisePlugin = (value: boolean) =>
@@ -242,7 +259,9 @@ const CreateStudio = () => {
       });
     }
   };
+  const noPrecollectedOrgProject = !(orgLabel && projectLabel);
   const { data: organizations, status: orgStatus } = useQuery({
+    enabled: isCreateStudioModelVisible && noPrecollectedOrgProject,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({
@@ -324,12 +343,22 @@ const CreateStudio = () => {
       closable
       destroyOnClose
       forceRender
-      open={createStudioModel}
+      open={isCreateStudioModelVisible}
       onCancel={updateVisibility}
       title={<strong>Create Studio</strong>}
       footer={null}
       width={800}
       bodyStyle={{ padding: '10px 24px' }}
+      afterClose={() => {
+        form.resetFields();
+        updateState({
+          isPluginsCustomised: false,
+          selectAllPlugin: false,
+          organization: undefined,
+          project: undefined,
+          plugins: [],
+        });
+      }}
     >
       <Form<TCreationStudioForm>
         {...formItemLayout}
@@ -339,57 +368,67 @@ const CreateStudio = () => {
       >
         <Row gutter={4}>
           <Col span={isPluginsCustomised ? 12 : 24}>
+            {!(orgLabel && projectLabel) && (
+              <React.Fragment>
+                <Form.Item
+                  key="studio-Orgnanization"
+                  style={{ marginBottom: 5 }}
+                  label="Organization"
+                  name="organizationName"
+                  initialValue={orgLabel ?? undefined}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select an organization!',
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select organization"
+                    loading={orgStatus === 'loading'}
+                    onSelect={handleChangeOrganization}
+                    defaultValue={orgLabel ?? undefined}
+                    aria-label="select-organization"
+                  >
+                    <Select.Option value={''}>{''}</Select.Option>
+                    {organizations?._results.map(org => (
+                      <Select.Option value={org._label} key={org['@id']}>
+                        {org._label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  key="studio-project"
+                  style={{ marginBottom: 5 }}
+                  label={<span> Project </span>}
+                  name="projectName"
+                  initialValue={projectLabel ?? undefined}
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Please select a project!',
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select project"
+                    loading={projStatus === 'loading'}
+                    defaultValue={projectLabel ?? undefined}
+                    onSelect={handleChangeProject}
+                  >
+                    <Select.Option value={''}>{''}</Select.Option>
+                    {projects?._results.map(proj => (
+                      <Select.Option value={proj._label} key={proj['@id']}>
+                        {proj._label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </React.Fragment>
+            )}
             <Form.Item
-              style={{ marginBottom: 5 }}
-              label={<span> Organization </span>}
-              name="orgLabel"
-              initialValue={''}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select an organization!',
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select organization"
-                loading={orgStatus === 'loading'}
-                onSelect={handleChangeOrganization}
-              >
-                <Select.Option value={''}>{''}</Select.Option>
-                {organizations?._results.map(org => (
-                  <Select.Option value={org._label} key={org['@id']}>
-                    {org._label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              style={{ marginBottom: 5 }}
-              label={<span> Project </span>}
-              name="projectLabel"
-              initialValue={''}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select a project!',
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select project"
-                loading={projStatus === 'loading'}
-                onSelect={handleChangeProject}
-              >
-                <Select.Option value={''}>{''}</Select.Option>
-                {projects?._results.map(proj => (
-                  <Select.Option value={proj._label} key={proj['@id']}>
-                    {proj._label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Form.Item
+              key="studio-name"
               style={{ marginBottom: 5 }}
               label={
                 <span>
@@ -411,6 +450,7 @@ const CreateStudio = () => {
               <Input aria-label="Label" className="ui-studio-label-input" />
             </Form.Item>
             <Form.Item
+              key="studio-description"
               style={{ marginBottom: 5 }}
               label={
                 <span>
@@ -436,7 +476,7 @@ const CreateStudio = () => {
                 markdownViewer={MarkdownViewerContainer}
               />
             </Form.Item>
-            <Form.Item style={{ marginBottom: 5 }}>
+            <Form.Item key="studio-has-plugins" style={{ marginBottom: 5 }}>
               <label className="customise-studio-plugins-label">
                 Customise Studio Plugins
                 <Switch
@@ -471,6 +511,7 @@ const CreateStudio = () => {
                 style={{ marginLeft: 14, marginBottom: 15 }}
               >
                 <Switch
+                  key="studio-plugin-all"
                   title="select all plugin"
                   size="small"
                   checked={selectAllPlugin}

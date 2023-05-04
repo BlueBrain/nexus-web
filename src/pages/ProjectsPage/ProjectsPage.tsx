@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -21,7 +22,7 @@ import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
@@ -117,10 +118,7 @@ const ProjectItem = ({
             <div>Datasets</div>
             <div>{(datasets && formatNumber(datasets)) || '0'}</div>
           </div>
-          <div className="statistics_item">
-            <div>Your access</div>
-            <div>{access || ''}</div>
-          </div>
+          <div className="statistics_item" />
           <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
@@ -183,6 +181,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const totalProjectsRef = useRef<number>(0);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [query, setQueryString] = useState<string>('');
   const nexus: NexusClient = useNexusContext();
@@ -220,7 +219,9 @@ const ProjectsPage: React.FC<{}> = ({}) => {
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
-
+  if (!query.trim().length) {
+    totalProjectsRef.current = total;
+  }
   const handleUpdateSorting = (value: string) => {
     setOptions({ sort: value as TSort });
     if (dataContainerRef.current) {
@@ -247,17 +248,32 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
+
   return (
     <div className="main-route">
       <PinnedMenu />
       <RouteHeader
         title="Projects"
-        extra={total ? `Total of ${total} ${pluralize('Project', total)}` : ''}
+        extra={
+          total && !query ? (
+            `Total of ${total} ${pluralize('Project', total)}`
+          ) : total && query ? (
+            `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
+              'Project',
+              total
+            )}`
+          ) : isLoading ? (
+            <LoadingOutlined />
+          ) : (
+            'No projects found'
+          )
+        }
         alt="hippocampus"
         bg={require('../../shared/images/hippocampus.png')}
         createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}
+        path={['/']}
       />
       <div className="route-body">
         <div className="route-body-container">

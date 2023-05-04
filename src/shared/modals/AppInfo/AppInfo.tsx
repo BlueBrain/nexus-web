@@ -1,29 +1,26 @@
-import React from 'react';
+import * as React from 'react';
 import { Button, Divider, Modal, Tag, Tooltip } from 'antd';
-import { ConsentType } from '../../layouts/FusionMainLayout';
+import { parseUserAgent } from 'react-device-detect';
+import { useNexus } from '@bbp/react-nexus';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { useSelector, useDispatch } from 'react-redux';
 import { GithubOutlined } from '@ant-design/icons';
-import './styles.less';
 import { Subtitle } from '../../../shared/styled_components/typography/Subtitle/Subtitle';
-import Copy from '../../../shared/components/Copy';
 import { CopyIcon } from '../../../shared/components/Icons/CopyIcon';
+import { RootState } from '../../../shared/store/reducers';
+import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
+import { url as githubIssueURL } from '../../../../package.json';
+import Copy from '../../../shared/components/Copy';
 
+import './styles.less';
+
+declare var FUSION_VERSION: string;
 export interface EnvironmentInfo {
   deltaVersion: string;
   fusionVersion: string;
   environmentName: string;
-
   operatingSystem: string;
   browser: string;
-}
-
-interface Props {
-  githubIssueURL: string;
-  commitHash?: string;
-  consent?: ConsentType;
-  visible: boolean;
-  environment: EnvironmentInfo;
-  onModalStateChange(): void;
-  onClickRemoveConsent?(): void;
 }
 
 const envInfoForClipboard = (env: EnvironmentInfo) => {
@@ -40,23 +37,56 @@ const envInfoForClipboard = (env: EnvironmentInfo) => {
 
 const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
-const AppInfo = ({
-  environment,
-  githubIssueURL,
-  visible,
-  onModalStateChange,
-}: Props) => {
+const AppInfo: React.FC<{}> = () => {
+  const dispatch = useDispatch();
+  const { config, modals } = useSelector((state: RootState) => ({
+    config: state.config,
+    modals: state.modals,
+  }));
+
+  const versions: any = useNexus<any>((nexus: NexusClient) =>
+    nexus.httpGet({
+      path: `${config.apiEndpoint}/version`,
+      context: { as: 'json' },
+    })
+  );
+  const deltaVersion = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.delta as string;
+    }
+    return '';
+  }, [versions]);
+
+  const environmentName = React.useMemo(() => {
+    if (versions.data) {
+      return versions.data.environment as string;
+    }
+    return '';
+  }, [versions]);
+  const userPlatform = parseUserAgent(navigator.userAgent);
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
+    ?.version ?? ''}`;
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
+    ?.version ?? ''}`;
+  const environment = {
+    deltaVersion,
+    operatingSystem,
+    browser,
+    environmentName,
+    fusionVersion: FUSION_VERSION,
+  };
+  const open = modals.isAboutModelVisible;
+  const onCancel = () => dispatch(updateAboutModalVisibility(false));
   return (
     <Modal
-      open={visible}
-      onCancel={onModalStateChange}
       centered
       closable
       destroyOnClose
       maskClosable
       className="app-information-modal"
-      footer={null}
       maskStyle={{ background: '#002766' }}
+      footer={null}
+      {...{ open, onCancel }}
     >
       <div className="description">
         <h3>Information</h3>
@@ -72,7 +102,7 @@ const AppInfo = ({
         <div className="nexus-service-header">
           <Subtitle className="nexus-services">Nexus Services</Subtitle>
           <Tag color="blue" className="tag" data-testid="environment-name">
-            {environment.environmentName}
+            {environmentName}
           </Tag>
           <Copy
             render={(copySuccess, triggerCopy) => (
@@ -94,11 +124,11 @@ const AppInfo = ({
         <div className="versions-items">
           <div className="version-item" data-testid="delta-version">
             <div>Nexus Delta</div>
-            <p>{environment.deltaVersion}</p>
+            <p>{deltaVersion}</p>
           </div>
           <div className="version-item" data-testid="fusion-version">
             <div>Nexus Fusion</div>
-            <p>{environment.fusionVersion}</p>
+            <p>{FUSION_VERSION}</p>
           </div>
         </div>
       </div>

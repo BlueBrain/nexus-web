@@ -8,28 +8,28 @@ const SubAppsView: React.FC<{
   routesWithSubApps: any[];
 }> = ({ routesWithSubApps }) => {
   const location = useLocation();
-
   const background =
     location.state && (location.state as { background?: Location }).background;
+
+  // rest.protected ? (
+  //   <PrivateRoute
+  //     key={`protected-${path as string}`}
+  //     path={path}
+  //     {...rest}
+  //   >
+  //     <SubAppComponent />
+  //   </PrivateRoute>
+  // ) :
 
   return (
     // @ts-ignore
     <Switch location={background || location}>
       {routesWithSubApps.map(
-        ({ path, component: SubAppComponent, requireLogin, ...rest }) =>
-          rest.protected ? (
-            <PrivateRoute
-              path={path}
-              {...rest}
-              key={`protected-${path as string}`}
-            >
-              <SubAppComponent />
-            </PrivateRoute>
-          ) : (
-            <Route key={`public-${path as string}`} path={path} {...rest}>
-              <SubAppComponent />
-            </Route>
-          )
+        ({ path, component: SubAppComponent, requireLogin, ...rest }) => (
+          <Route key={`path-${path as string}`} path={path} {...rest}>
+            <SubAppComponent />
+          </Route>
+        )
       )}
       <Route component={NotFound} />
     </Switch>

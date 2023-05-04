@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { Alert, Input, Spin, List, InputRef } from 'antd';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -171,6 +172,7 @@ export const LoadMoreFooter = forwardRef<
   ) : null
 );
 const OrganizationListView: React.FC<{}> = () => {
+  const totalOrganizationRef = useRef<number>(0);
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
@@ -202,6 +204,9 @@ const OrganizationListView: React.FC<{}> = () => {
     data && data.pages
       ? ((data.pages[0] as OrganizationList)?._total as number)
       : 0;
+  if (!query.trim().length) {
+    totalOrganizationRef.current = total;
+  }
   const dataSource: OrgResponseCommon[] =
     data && data.pages
       ? data.pages.map(page => (page as OrganizationList)._results).flat()
@@ -252,13 +257,24 @@ const OrganizationListView: React.FC<{}> = () => {
         <RouteHeader
           title="Organizations"
           extra={
-            total ? `Total of ${total} ${pluralize('Project', total)}` : ''
+            total && !query ? (
+              `Total of ${total} ${pluralize('Project', total)}`
+            ) : total && query ? (
+              `Filtering ${total} of ${
+                totalOrganizationRef.current
+              }  ${pluralize('Project', total)}`
+            ) : isLoading ? (
+              <LoadingOutlined />
+            ) : (
+              'No organizations found'
+            )
           }
           alt="sscx"
           bg={require('../../shared/images/sscx-by-layers-v3.png')}
           createLabel="Create Orgnanization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}
+          path={['/']}
         />
         <div className="route-body">
           <div className="route-body-container">

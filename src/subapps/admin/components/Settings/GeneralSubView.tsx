@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useMutation } from 'react-query';
-import { Form, Input, Button, Spin } from 'antd';
+import { Form, Input, Button, Spin, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useNexusContext } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
-
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import useNotification from '../../../../shared/hooks/useNotification';
 import './styles.less';
 
@@ -263,15 +263,24 @@ const GeneralSubView = ({
             <div className="api-mappings-content">{apiMappingsItems}</div>
           </div>
           <Form.Item>
-            <Button
-              style={{ maxWidth: 120, margin: 0, right: 0 }}
-              type="primary"
-              disabled={false} // TODO: write premission to be enabled
-              htmlType="submit"
-              className="project-form__add-button"
+            <AccessControl
+              path={[`${orgLabel}/${projectLabel}`]}
+              permissions={['projects/write']}
+              noAccessComponent={() => () => (
+                <Tooltip title="You have no permissions to update this project">
+                  <HasNoPermission />
+                </Tooltip>
+              )}
             >
-              Save changes
-            </Button>
+              <Button
+                style={{ maxWidth: 120, margin: 0, right: 0 }}
+                type="primary"
+                htmlType="submit"
+                className="project-form__add-button"
+              >
+                Save changes
+              </Button>
+            </AccessControl>
           </Form.Item>
         </Spin>
       </Form>

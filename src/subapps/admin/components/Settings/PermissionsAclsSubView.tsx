@@ -6,7 +6,10 @@ import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
 import { Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useAdminSubappContext } from '../../../../subapps/admin';
+import {
+  useAdminSubappContext,
+  useOrganisationsSubappContext,
+} from '../../../../subapps/admin';
 import './styles.less';
 
 type Props = {};
@@ -65,7 +68,7 @@ const fetchPermissions = async ({
   }
 };
 const PermissionsAclsSubView = (props: Props) => {
-  const { namespace } = useAdminSubappContext();
+  const { namespace } = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${namespace}/:orgLabel/:projectLabel`
   );
