@@ -144,7 +144,7 @@ const EditTableForm: React.FC<{
 
   /* Available views for project */
   const [availableViews, setAvailableViews] = React.useState<View[]>();
-  console.log('@@availableViews', availableViews);
+  console.log('@@availableViews', orgLabel, projectLabel, availableViews);
   // call backs.
   const nexus = useNexusContext();
   const initializeAvailableViews = async () =>

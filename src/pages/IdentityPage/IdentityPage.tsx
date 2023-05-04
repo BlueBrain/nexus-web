@@ -101,7 +101,7 @@ const IdentityPage: React.FC<{}> = () => {
                       onClick={e => {
                         e.preventDefault();
                         dispatch(configActions.setPreferredRealm(item.name));
-                        dispatch(authActions.performLogin(item.name));
+                        dispatch(authActions.performLogin());
                       }}
                       className="connect-btn"
                       size="large"

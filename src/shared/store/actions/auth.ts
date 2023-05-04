@@ -135,7 +135,7 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   };
 };
 
-function performLogin(realm: string) {
+function performLogin() {
   return async (
     dispatch: Dispatch<any>,
     getState: () => RootState
