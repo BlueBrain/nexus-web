@@ -9,6 +9,7 @@ import { useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { InputRef, Input, Spin, Alert, List } from 'antd';
+import { capitalize } from 'lodash';
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -218,7 +219,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<{}> = ({}) => {
+const OrganizationProjectsPage: React.FC<{}> = ({ }) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
@@ -314,7 +315,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       <div className="main-route">
         <PinnedMenu />
         <RouteHeader
-          title="Projects"
+          title={orgLabel ? capitalize(orgLabel) : 'Projects'}
           extra={
             total && !query ? (
               `Total of ${total} ${pluralize('Project', total)}`
