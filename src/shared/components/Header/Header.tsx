@@ -24,6 +24,7 @@ import './Header.less';
 export interface HeaderProps {
   name?: string;
   token?: string;
+  environment: string;
   logoImg: string;
   handleLogout: MenuItemProps['onClick'];
   children?: React.ReactChild;
@@ -32,6 +33,7 @@ const headerIconStyle = { marginRight: 4 };
 const Header: React.FunctionComponent<HeaderProps> = ({
   name,
   token,
+  environment,
   logoImg,
   handleLogout,
 }) => {
@@ -108,7 +110,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href="https://bbp.epfl.ch/nexus/cell-atlas/"
+            href={environment === 'dev' ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/' : 'https://bbp.epfl.ch/nexus/cell-atlas/'}
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Atlas</span>
