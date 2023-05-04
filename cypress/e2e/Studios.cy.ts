@@ -39,14 +39,14 @@ describe('Studios', () => {
     );
   });
 
-  //   after(function() {
-  //     cy.task('project:teardown', {
-  //       nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //       authToken: this.nexusToken,
-  //       orgLabel: Cypress.env('ORG_LABEL'),
-  //       projectLabel: this.projectLabel,
-  //     });
-  //   });
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
   const addMinimalDashboard = (name: string) => {
     cy.findByRole('button', { name: /Dashboard/ }).click();
