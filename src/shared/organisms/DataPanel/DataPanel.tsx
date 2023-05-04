@@ -27,6 +27,7 @@ import {
   isString,
   has,
   filter,
+  toLower,
 } from 'lodash';
 import { animate, spring } from 'motion';
 import {
@@ -114,13 +115,13 @@ type TResourceObscured = {
   size: number;
   contentType: string | undefined;
   distribution:
-    | {
-        contentSize: number;
-        encodingFormat: string | string[];
-        label: string | string[];
-        hasDistribution: boolean;
-      }
-    | undefined;
+  | {
+    contentSize: number;
+    encodingFormat: string | string[];
+    label: string | string[];
+    hasDistribution: boolean;
+  }
+  | undefined;
   _self: string;
   '@type': string;
   resourceId: string;
@@ -196,12 +197,12 @@ async function downloadArchive({
     payload,
     archiveId,
   }: // @ts-ignore
-  { payload: ArchivePayload; archiveId: string } = makePayload(resources);
+    { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
     // TODO: if the resource is a file, when we added it to the cart, it will be downloaded
     // TODO: if the resource is not file but has distribution, the download not working
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+  } catch (error) { }
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -229,7 +230,7 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({}) => {
+const DataPanel: React.FC<Props> = ({ }) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
@@ -410,19 +411,18 @@ const DataPanel: React.FC<Props> = ({}) => {
             : '';
           return {
             size,
-            contentType,
+            contentType: contentType?.toLowerCase(),
             distribution: resource.distribution,
             _self: resource._self,
             '@type':
               Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
+                Boolean(resource.distribution?.contentSize)
                 ? 'File'
                 : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${pathId}${
-              contentType ? `.${contentType}` : ''
-            }`,
+            path: `/${parsedSelf.project}/${pathId}${contentType ? `.${contentType}` : ''
+              }`,
           };
         } catch (error) {
           console.log('@@error', resource.id, error);
@@ -431,6 +431,10 @@ const DataPanel: React.FC<Props> = ({}) => {
       });
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
+  const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
+    i => i !== 'undefined'
+  );
+ 
   const handleFileTypeChange = (e: CheckboxChangeEvent) => {
     if (e.target.checked) {
       setTypes(state => [...state, e.target.value]);
@@ -438,9 +442,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       setTypes(types.filter(t => t !== e.target.value));
     }
   };
-  const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
-    i => i !== 'undefined'
-  );
+  
   const typesCounter = compact(
     Object.entries(resourcesGrouped).map(([key, value]) =>
       isEmpty(key) || isNil(key) || key === 'undefined' || key === ''
@@ -487,7 +489,6 @@ const DataPanel: React.FC<Props> = ({}) => {
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
   );
-
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
     ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
     : undefined;
@@ -564,7 +565,6 @@ const DataPanel: React.FC<Props> = ({}) => {
       );
     }
   }, [datapanelRef.current, openDataPanel]);
-
   useOnClickOutside(
     datapanelRef,
     () => openDataPanel && handleCloseDataPanel()
@@ -622,7 +622,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           className={clsx(
             'download-options',
             Boolean(totalSize) && 'sized',
-            Boolean(existedTypes) && 'exts'
+            Boolean(existedTypes.length) && 'exts'
           )}
         >
           {Boolean(existedTypes.length) && (
@@ -669,10 +669,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           <AccessControl
             path={resourceProjectPaths}
             permissions={['archives/write']}
-            noAccessComponent={() => {
-              console.log('@@no permissions');
-              return <></>;
-            }}
+            noAccessComponent={() => <></>}
           >
             <div className="download-btn">
               <Button
