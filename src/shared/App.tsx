@@ -20,12 +20,18 @@ import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
 import './App.less';
+import { useQuery } from 'react-query';
+import { useNexusContext } from '@bbp/react-nexus';
 
 const App: React.FC = () => {
   const location = useLocation();
+  const nexus = useNexusContext();
   const { subAppRoutes } = useSubApps();
   const cartData: CartType = useDataCart();
-  const oidc = useSelector((state: RootState) => state.oidc);
+  const { oidc, config } = useSelector((state: RootState) => ({
+    oidc: state.oidc,
+    config: state.config,
+  }));
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
   const notificationData: NotificationContextType = getNotificationContextValue();
@@ -39,13 +45,22 @@ const App: React.FC = () => {
 
   const routesWithSubApps = [...routes, ...subAppRoutes];
   const DataPanel = withDataPanel({ allowDataPanel });
+
+  const { data: nexusEcosystem, } = useQuery({
+    queryKey: ['nexus-ecosystem'],
+    queryFn: () => nexus.httpGet({
+      path: `${config.apiEndpoint}/version`,
+      context: { as: 'json' },
+    })
+  })
+
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>
         <ReactQueryDevtools initialIsOpen={false} />
-        <FusionMainLayout>
+        <FusionMainLayout environment={nexusEcosystem?.environment}>
           <SubAppsView routesWithSubApps={routesWithSubApps} />
-          <AppInfo />
+          <AppInfo  { ... { ...nexusEcosystem } }/>
           {userAuthenticated && (
             <React.Fragment>
               <GalleryView />
