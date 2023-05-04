@@ -66,8 +66,7 @@ describe.only('AppInfo', () => {
     },
   };
   const nexusEcosystem = {
-    '@context':
-      'https://bluebrain.github.io/nexus/contexts/version.json',
+    '@context': 'https://bluebrain.github.io/nexus/contexts/version.json',
     delta: '1.0.0',
     dependencies: {
       blazegraph: '2.1.6-SNAPSHOT',
@@ -86,12 +85,12 @@ describe.only('AppInfo', () => {
       search: '1.8.0-M7',
       storage: '1.8.0-M7',
     },
-  }
+  };
   const store = mockStore(mockState);
   const App: React.FC = () => (
     <Provider store={store}>
       <NexusProvider nexusClient={nexus}>
-          <AppInfo {... { ...nexusEcosystem }} />
+        <AppInfo {...{ ...nexusEcosystem }} />
       </NexusProvider>
     </Provider>
   );

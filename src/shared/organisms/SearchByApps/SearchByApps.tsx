@@ -35,8 +35,7 @@ const AppsList = new Map<string, AppDetails>([
       id: 'applist/projects',
       key: 'applist/projects',
       title: 'Projects',
-      subtitle:
-        'All Projects you have access to across all Organizations',
+      subtitle: 'All Projects you have access to across all Organizations',
       tileColor: 'linear-gradient(90deg, #A7F4EB 1.19%, #66CABC 100%)',
       link: '/projects',
       createLabel: 'Create Project',
@@ -49,8 +48,7 @@ const AppsList = new Map<string, AppDetails>([
       id: 'applist/studios',
       key: 'applist/studios',
       title: 'Studios',
-      subtitle:
-        'Browse data organinsed by users of the plat',
+      subtitle: 'Browse data organinsed by users of the plat',
       tileColor: 'linear-gradient(90deg, #C6A3F6 1.19%, #706CE8 100%)',
       link: '/studios',
       createLabel: 'Create Studios',

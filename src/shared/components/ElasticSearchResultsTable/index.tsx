@@ -104,7 +104,12 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   const columns: ColumnsType<any> = fields.map(field => {
     // Enrich certain fields with custom rendering
-    return addColumnsForES(field, sorter, antTableFilterConfig(results), basePath);
+    return addColumnsForES(
+      field,
+      sorter,
+      antTableFilterConfig(results),
+      basePath
+    );
   });
 
   const [selectedColumns, setSelectedColumns] = React.useState(columns);

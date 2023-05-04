@@ -14,10 +14,10 @@ import './styles.less';
 
 declare var FUSION_VERSION: string;
 export type TNexusEco = {
-    delta: string;
-    environment: string;
-    [key: string]: any;
-}
+  delta: string;
+  environment: string;
+  [key: string]: any;
+};
 export interface EnvironmentInfo {
   deltaVersion: string;
   fusionVersion: string;

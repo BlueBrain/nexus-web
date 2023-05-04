@@ -29,13 +29,10 @@ export type SubAppProps = {
   description?: string;
 };
 
-const FusionMainLayout: React.FC<{ 
-  environment: string, 
-  children: React.ReactNode, 
-}> = ({
-  environment,
-  children,
-}) => {
+const FusionMainLayout: React.FC<{
+  environment: string;
+  children: React.ReactNode;
+}> = ({ environment, children }) => {
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );

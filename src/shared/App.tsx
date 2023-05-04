@@ -46,13 +46,14 @@ const App: React.FC = () => {
   const routesWithSubApps = [...routes, ...subAppRoutes];
   const DataPanel = withDataPanel({ allowDataPanel });
 
-  const { data: nexusEcosystem, } = useQuery({
+  const { data: nexusEcosystem } = useQuery({
     queryKey: ['nexus-ecosystem'],
-    queryFn: () => nexus.httpGet({
-      path: `${config.apiEndpoint}/version`,
-      context: { as: 'json' },
-    })
-  })
+    queryFn: () =>
+      nexus.httpGet({
+        path: `${config.apiEndpoint}/version`,
+        context: { as: 'json' },
+      }),
+  });
 
   return (
     <CartContext.Provider value={cartData}>
@@ -60,7 +61,7 @@ const App: React.FC = () => {
         <ReactQueryDevtools initialIsOpen={false} />
         <FusionMainLayout environment={nexusEcosystem?.environment}>
           <SubAppsView routesWithSubApps={routesWithSubApps} />
-          <AppInfo  { ... { ...nexusEcosystem } }/>
+          <AppInfo {...{ ...nexusEcosystem }} />
           {userAuthenticated && (
             <React.Fragment>
               <GalleryView />

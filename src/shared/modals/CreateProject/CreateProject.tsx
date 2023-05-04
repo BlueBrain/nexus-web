@@ -111,7 +111,7 @@ const createProjectMutation = async ({
   }
 };
 
-const CreateProject: React.FC<{}> = ({ }) => {
+const CreateProject: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();

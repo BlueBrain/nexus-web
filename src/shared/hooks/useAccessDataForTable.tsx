@@ -279,7 +279,6 @@ const accessData = async (
   nexus: NexusClient,
   basePath: string
 ) => {
-  
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig: TableColumn[] = [tableResource.configuration].flat();
   if (
@@ -361,7 +360,7 @@ export const useAccessDataForTable = (
   projectLabel: string,
   tableResourceId: string,
   basePath: string,
-  tableResource?: Resource,
+  tableResource?: Resource
 ) => {
   const revision = tableResource ? tableResource._rev : 0;
   const nexus = useNexusContext();

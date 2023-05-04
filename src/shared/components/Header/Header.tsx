@@ -110,7 +110,11 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href={environment === 'dev' ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/' : 'https://bbp.epfl.ch/nexus/cell-atlas/'}
+            href={
+              environment === 'dev'
+                ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/'
+                : 'https://bbp.epfl.ch/nexus/cell-atlas/'
+            }
           >
             <LinkOutlined style={headerIconStyle} />
             <span>Atlas</span>
