@@ -48,6 +48,7 @@ import {
   CloseSquareOutlined,
   FileZipOutlined,
   PlusOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import {
   makeOrgProjectTuple,
@@ -612,6 +613,10 @@ const DataPanel: React.FC<Props> = ({}) => {
             <FileDoneOutlined />
             <span>{totalSelectedResources} elements selected</span>
           </div>
+          <DeleteOutlined
+            style={{ marginLeft: 10, color: 'white' }}
+            onClick={handleClearSelectedItems}
+          />
         </div>
         <div
           className={clsx(
