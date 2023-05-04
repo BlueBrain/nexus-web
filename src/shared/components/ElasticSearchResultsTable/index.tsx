@@ -15,6 +15,8 @@ import { ResultTableFields } from '../../types/search';
 import './../../styles/result-table.less';
 import { parseESResults, addColumnsForES } from '../../utils/parseESResults';
 import { antTableFilterConfig } from '../../../shared/hooks/useAccessDataForTable';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -64,6 +66,8 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
   onClickItem,
   onSort,
 }) => {
+  const basePath =
+    useSelector((state: RootState) => state.config.basePath) || '';
   const [searchValue, setSearchValue] = React.useState<string>('');
 
   const results = parseESResults(searchResponse);
@@ -100,7 +104,7 @@ const ElasticSearchResultsTable: React.FC<ResultsGridProps> = ({
 
   const columns: ColumnsType<any> = fields.map(field => {
     // Enrich certain fields with custom rendering
-    return addColumnsForES(field, sorter, antTableFilterConfig(results));
+    return addColumnsForES(field, sorter, antTableFilterConfig(results), basePath);
   });
 
   const [selectedColumns, setSelectedColumns] = React.useState(columns);

@@ -17,10 +17,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { FilterConfigByColumnFn } from 'shared/hooks/useAccessDataForTable';
 
-export const rowRender = (value: string) => {
+export const rowRender = (value: string, basePath: string) => {
+  // const basePath =
+  //   useSelector((state: RootState) => state.config.basePath) || '';
   if (isURL(value)) {
-    const basePath =
-      useSelector((state: RootState) => state.config.basePath) || '';
     const sanitizedURL = deltaUrlToFusionUrl(value, basePath);
     return (
       <a href={sanitizedURL} target="_blank" rel="noopener noreferrer">
@@ -52,7 +52,8 @@ export function addColumnsForES(
   sorter: (
     dataIndex: string
   ) => (a: { [key: string]: any }, b: { [key: string]: any }) => 1 | -1 | 0,
-  filterConfig: FilterConfigByColumnFn
+  filterConfig: FilterConfigByColumnFn,
+  basePath: string
 ): {
   sorter:
     | false
@@ -129,7 +130,7 @@ export function addColumnsForES(
             const x = JSON.parse(text);
             return <pre>{JSON.stringify(x, null, 2)}</pre>;
           } catch {
-            return rowRender(text.toString());
+            return rowRender(text.toString(), basePath);
           }
         }
         return '';

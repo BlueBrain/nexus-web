@@ -312,7 +312,7 @@ const FusionStudiosPage: React.FC = () => {
                   placeholder="Search studio"
                 />
               </div>
-              <div className="action-sort">
+              {/* <div className="action-sort">
                 <span>Sort:</span>
                 <SortAscendingOutlined
                   style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
@@ -322,7 +322,7 @@ const FusionStudiosPage: React.FC = () => {
                   style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
                   onClick={() => handleUpdateSorting('desc')}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="route-data-container" ref={dataContainerRef}>
               {pmatch(status)

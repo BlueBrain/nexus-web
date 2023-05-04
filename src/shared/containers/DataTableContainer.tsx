@@ -28,6 +28,8 @@ import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 export type TableColumn = {
   '@type': string;
@@ -103,6 +105,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   showEdit,
   toggledEdit,
 }) => {
+  const basePath =
+    useSelector((state: RootState) => state.config.basePath) || '';
   const [showEditForm, setShowEditForm] = React.useState<boolean>(
     showEdit || false
   );
@@ -231,6 +235,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     orgLabel,
     projectLabel,
     tableResourceId,
+    basePath,
     changeTableResource.data
   );
 
@@ -407,7 +412,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               onChange: tableData.onSelect,
             }}
             rowKey={r => {
-              return r['s'] || `tr_${r['id']}`;
+              return r['s'] || `tr_${r['id'] ?? r._self}`;
             }}
             data-testid="dashboard-table"
           />

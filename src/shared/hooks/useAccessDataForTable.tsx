@@ -63,13 +63,13 @@ export type TableSort = {
   direction: SortDirection;
 };
 
-export const DEFAULT_FIELDS = [
+export const DEFAULT_FIELDS = (basePath: string) => [
   {
     title: 'Label',
     dataIndex: 'label',
     key: 'label',
     displayIndex: 0,
-    render: rowRender,
+    render: (value: string) => rowRender(value, basePath),
   },
   {
     title: 'Project',
@@ -276,8 +276,10 @@ const accessData = async (
   projectLabel: string,
   tableResource: TableResource,
   view: View,
-  nexus: NexusClient
+  nexus: NexusClient,
+  basePath: string
 ) => {
+  
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig: TableColumn[] = [tableResource.configuration].flat();
   if (
@@ -309,12 +311,12 @@ const accessData = async (
             sortable: x.enableSort,
             filterable: x.enableFilter,
           }))
-        : DEFAULT_FIELDS;
+        : DEFAULT_FIELDS(basePath);
 
     const headerProperties = fields
       .map((field: any) =>
         // Enrich certain fields with custom rendering
-        addColumnsForES(field, sorter, antTableFilterConfig(items))
+        addColumnsForES(field, sorter, antTableFilterConfig(items), basePath)
       )
       .sort((a, b) => (a.title > b.title ? 1 : 0));
 
@@ -358,7 +360,8 @@ export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
   tableResourceId: string,
-  tableResource?: Resource
+  basePath: string,
+  tableResource?: Resource,
 ) => {
   const revision = tableResource ? tableResource._rev : 0;
   const nexus = useNexusContext();
@@ -419,7 +422,8 @@ export const useAccessDataForTable = (
           projectLabel,
           tableResult.data.tableResource,
           tableResult.data.view,
-          nexus
+          nexus,
+          basePath
         );
 
         return result;
