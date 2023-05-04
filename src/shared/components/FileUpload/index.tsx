@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Upload, message, Select, Typography } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { UploadFile } from 'antd/lib/upload/interface';
+import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk';
 
 import { labelOf } from '../../utils';
@@ -85,7 +85,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
       });
   };
 
-  const draggerProps = {
+  const draggerProps: UploadProps<any> = {
     fileList,
     name: 'file',
     multiple: true,
@@ -112,7 +112,11 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   return (
     <div>
-      <Dragger {...draggerProps} directory={directoryMode}>
+      <Dragger
+        {...draggerProps}
+        directory={directoryMode}
+        data-label="report-upload-file"
+      >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>

@@ -10,6 +10,7 @@ describe('Report (formerly Analysis) Plugin', () => {
     }
 
     cy.login(
+      `${Cypress.env('users').morty.username}-report-plugin`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
@@ -20,10 +21,7 @@ describe('Report (formerly Analysis) Plugin', () => {
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
-        cy.task(
-          'log',
-          `${orgLabel} ${projectLabelBase} ${Cypress.env('NEXUS_API_URL')}`
-        );
+
         cy.task('project:setup', {
           nexusApiUrl: Cypress.env('NEXUS_API_URL'),
           authToken,
@@ -49,20 +47,21 @@ describe('Report (formerly Analysis) Plugin', () => {
 
   beforeEach(() => {
     cy.login(
+      `${Cypress.env('users').morty.username}-report-plugin`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     );
   });
 
-  after(function() {
-    cy.task('project:teardown', {
-      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-      authToken: this.nexusToken,
-      orgLabel: Cypress.env('ORG_LABEL'),
-      projectLabel: this.projectLabel,
-    });
-  });
+  // after(function() {
+  //   cy.task('project:teardown', {
+  //     nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+  //     authToken: this.nexusToken,
+  //     orgLabel: Cypress.env('ORG_LABEL'),
+  //     projectLabel: this.projectLabel,
+  //   });
+  // });
 
   it('user can add a report with name, description and files, categories, types', function() {
     cy.visit(
@@ -70,7 +69,6 @@ describe('Report (formerly Analysis) Plugin', () => {
         this.projectLabel
       }/resources/${encodeURIComponent(this.fullResourceId)}`
     );
-    // Open report plugin
     cy.findByRole('button', { name: /Report/i }).click();
     cy.findByRole('button', { name: /Add Report/i }).click();
     cy.findByRole('textbox', { name: 'Report Name' }).type(
@@ -84,7 +82,9 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.findByRole('button', { name: /Analysis/ }).click();
 
     cy.findByText(/Drag and drop files/i).click();
-    cy.get('input[type=file]').attachFile('sample1.png');
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample1.png'
+    );
 
     cy.wait(5000);
     cy.screenshot('with-file-attached');
@@ -114,8 +114,12 @@ describe('Report (formerly Analysis) Plugin', () => {
     cy.screenshot('updated-text');
     cy.findByRole('button', { name: 'Add Files to Report' }).click();
     cy.findByText(/Drag and drop files/i).click();
-    cy.get('input[type=file]').attachFile('sample2.png');
-    cy.get('input[type=file]').attachFile('sample_pdf.pdf');
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample2.png'
+    );
+    cy.get('input[type=file][data-label="report-upload-file"]').attachFile(
+      'sample_pdf.pdf'
+    );
     cy.wait(5000);
     cy.screenshot('with-pdf-file-attached');
     cy.findByRole('button', { name: 'Close' }).click();

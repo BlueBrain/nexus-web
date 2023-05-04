@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, union, uniq, uniqBy } from 'lodash';
+import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
@@ -39,7 +39,7 @@ type TRecord = {
   '@type': string;
   createdAt: string;
   updatedAt: string;
-  _self: string[];
+  _self: string;
   project: {
     identifier: string;
     label: string;
@@ -138,16 +138,25 @@ const SearchContainer: React.FC = () => {
   const handleSelect = (record: TRecord, selected: any) => {
     const newRecord: TDataSource = {
       source: layout,
+      key: record._self,
       _self: record._self,
       id: record['@id'],
-      key: record['@id'],
       createdAt: record.createdAt,
       description: record.description,
-      name: record.name,
+      name: record.name ?? record['@id'] ?? record._self,
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: record.distribution,
+      distribution: {
+        ...(has(record, 'distribution')
+          ? record.distribution
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            }),
+        hasDistribution: has(record, 'distribution'),
+      },
     };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -195,14 +204,23 @@ const SearchContainer: React.FC = () => {
       source: layout,
       _self: record._self,
       id: record['@id'],
-      key: record['@id'],
+      key: record._self,
       createdAt: record.createdAt,
       description: record.description,
-      name: record.name,
+      name: record.name ?? record['@id'] ?? record._self,
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: record.distribution,
+      distribution: {
+        ...(has(record, 'distribution')
+          ? record.distribution
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            }),
+        hasDistribution: has(record, 'distribution'),
+      },
     }));
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -255,6 +273,8 @@ const SearchContainer: React.FC = () => {
     onSelectAll: onSelectAllChange,
     columnWidth: 70,
     renderCell: (checked: any, record: any, index: number) => {
+      const rowIndex =
+        (pagination.currentPage - 1) * pagination.pageSize + index + 1;
       return (
         <div
           className="row-selection-checkbox"
@@ -265,9 +285,7 @@ const SearchContainer: React.FC = () => {
           }}
         >
           <Checkbox className="row-select" checked={checked} />
-          <span className="row-index">
-            {(pagination.currentPage - 1) * pagination.pageSize + index + 1}
-          </span>
+          <span className="row-index">{rowIndex}</span>
         </div>
       );
     },
@@ -322,9 +340,7 @@ const SearchContainer: React.FC = () => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
     const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
     if (dataLs && dataLs.length) {
-      const selectedRows = dataLsObject.selectedRows
-        .filter(t => t.source === layout)
-        .map(o => o.key);
+      const selectedRows = dataLsObject.selectedRows.map(o => o.key);
       setSelectedRowKeys(selectedRows);
     }
   }, [layout, pagination]);
@@ -334,9 +350,7 @@ const SearchContainer: React.FC = () => {
       event: DataPanelEvent<{ datapanel: TResourceTableData }>
     ) => {
       setSelectedRowKeys(
-        event.detail?.datapanel.selectedRows
-          .filter(item => item.source === layout)
-          .map(item => item.key)
+        event.detail?.datapanel.selectedRows.map(item => item.key)
       );
     };
     window.addEventListener(
@@ -370,6 +384,10 @@ const SearchContainer: React.FC = () => {
               selectedLayout={selectedSearchLayout}
               onChangeLayout={layoutName => {
                 handleChangeSearchLayout(layoutName);
+                setPagination(state => ({
+                  ...state,
+                  currentPage: 1,
+                }));
               }}
             />
           )}

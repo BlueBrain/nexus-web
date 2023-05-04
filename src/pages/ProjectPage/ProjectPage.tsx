@@ -376,7 +376,7 @@ const ProjectView: React.FunctionComponent = () => {
                 }
                 key="studios"
               ></TabPane>
-              <TabPane
+              {/* <TabPane
                 tab={
                   <span>
                     <Link
@@ -389,7 +389,7 @@ const ProjectView: React.FunctionComponent = () => {
                   </span>
                 }
                 key="workflows"
-              ></TabPane>
+              ></TabPane> */}
             </Tabs>
           </div>
         </>

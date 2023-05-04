@@ -93,7 +93,6 @@ const queryClient = new QueryClient();
 
 // create redux store
 const store = configureStore(history, { nexus }, initialState);
-
 /**
  * Sets up user token management events and
  * checks if we have a valid user token or not

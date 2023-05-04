@@ -144,7 +144,7 @@ const EditTableForm: React.FC<{
 
   /* Available views for project */
   const [availableViews, setAvailableViews] = React.useState<View[]>();
-
+  console.log('@@availableViews', orgLabel, projectLabel, availableViews);
   // call backs.
   const nexus = useNexusContext();
   const initializeAvailableViews = async () =>
@@ -459,9 +459,9 @@ const EditTableForm: React.FC<{
           setProjectionId(table.projection['@id']);
         } else {
           /* 
-          when no projection id it means search all of the
-          specified projection type
-          */
+            when no projection id it means search all of the
+            specified projection type
+            */
           setProjectionId(`All_${table.projection['@type']}`);
         }
       } else {
@@ -483,7 +483,12 @@ const EditTableForm: React.FC<{
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a name'}
             >
-              <Input value={name} onChange={onChangeName} placeholder="Name" />
+              <Input
+                aria-label="Label"
+                value={name}
+                onChange={onChangeName}
+                placeholder="Name"
+              />
             </Item>
           </Col>
         </Row>

@@ -57,7 +57,6 @@ const StudioView: React.FunctionComponent<{}> = () => {
     }),
     [orgLabel, projectLabel, workspaceId, dashboardId, studioId, isWritable]
   );
-
   return (
     <>
       <div

@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Table, Button, Row, Col, notification } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
-import { NexusClient, PaginatedList, Statistics } from '@bbp/nexus-sdk';
+import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
+import Icon from '@ant-design/icons';
+import { ColumnsType } from 'antd/es/table';
+import { NexusClient, Statistics } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.less';
 
 type TDataType = {
@@ -211,9 +213,13 @@ const ViewsSubView = () => {
               Query
             </Button>
             <AccessControl
-              permissions={['view/query', 'view/write']}
+              permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
-              noAccessComponent={() => <></>}
+              noAccessComponent={() => (
+                <Tooltip title="You have no permissions to re-index this view">
+                  <HasNoPermission />
+                </Tooltip>
+              )}
             >
               <Button
                 type="link"
@@ -228,7 +234,7 @@ const ViewsSubView = () => {
                   })
                 }
               >
-                Reindexing
+                Re-index
               </Button>
             </AccessControl>
           </div>
@@ -254,9 +260,13 @@ const ViewsSubView = () => {
           </Col>
           <Col>
             <AccessControl
-              permissions={['view/query', 'view/write']}
+              permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
-              noAccessComponent={() => <></>}
+              noAccessComponent={() => (
+                <Tooltip title="You have no permissions to re-index the views">
+                  <HasNoPermission />
+                </Tooltip>
+              )}
             >
               <Button
                 disabled={
@@ -276,7 +286,7 @@ const ViewsSubView = () => {
                   });
                 }}
               >
-                Reindex All Views
+                Re-index All Views
               </Button>
             </AccessControl>
           </Col>

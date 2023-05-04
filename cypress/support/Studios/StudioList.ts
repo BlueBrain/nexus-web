@@ -5,7 +5,7 @@ export class StudioListPage {
     cy.findByRole('button', { name: /Save/ }).click();
 
     const studioElement = cy.findByRole('heading', { name });
-    studioElement.should('exist');
+    studioElement.contains(name);
     return studioElement;
   }
 }

@@ -5,13 +5,14 @@ import { AccessControl } from '@bbp/react-nexus';
 
 type TProps = {
   title: string;
-  extra: string;
+  extra: string | React.ReactNode;
   bg: string;
   alt: string;
   imgCss?: CSSProperties;
   createLabel?: string;
   onCreateClick?(): void;
   permissions?: string[];
+  path?: string[];
 };
 
 const RouteHeader = ({
@@ -23,6 +24,7 @@ const RouteHeader = ({
   createLabel,
   onCreateClick,
   permissions = [],
+  path = ['/'],
 }: TProps) => {
   return (
     <div className="route-header">
@@ -31,16 +33,19 @@ const RouteHeader = ({
         <h2>{title}</h2>
         <p>{extra}</p>
       </div>
-      <AccessControl permissions={[...permissions]} path="/">
-        {createLabel && (
-          <div className="action">
-            <button className="create-btn" onClick={onCreateClick}>
-              {createLabel}
-              <PlusOutlined />
-            </button>
-          </div>
-        )}
-      </AccessControl>
+      {createLabel && (
+        <div className="action">
+          <button className="create-btn" onClick={onCreateClick}>
+            {createLabel}
+            <PlusOutlined />
+          </button>
+        </div>
+      )}
+      {/* <AccessControl
+        {...{ permissions, path }}
+        noAccessComponent={() => <></>}
+      >
+      </AccessControl> */}
     </div>
   );
 };

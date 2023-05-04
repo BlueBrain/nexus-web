@@ -7,8 +7,13 @@ import React, {
   useState,
 } from 'react';
 import { Link } from 'react-router-dom';
+import { PromisePool } from '@supercharge/promise-pool';
+import * as Sentry from '@sentry/browser';
+
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import { useMutation } from 'react-query';
+import { clsx } from 'clsx';
 import {
   isArray,
   toUpper,
@@ -19,6 +24,9 @@ import {
   flatMap,
   omit,
   slice,
+  isString,
+  has,
+  filter,
 } from 'lodash';
 import { animate, spring } from 'motion';
 import {
@@ -27,13 +35,12 @@ import {
   Dropdown,
   Table,
   Tag,
-  message,
+  Tooltip,
   notification,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
-import { useMutation } from 'react-query';
-import { clsx } from 'clsx';
+
 import {
   FileDoneOutlined,
   DownloadOutlined,
@@ -47,15 +54,14 @@ import {
   TDataSource,
   TResourceTableData,
 } from '../../molecules/MyDataTable/MyDataTable';
-import useOnClickOutside from '../../../shared/hooks/useClickOutside';
-import isValidUrl from '../../../utils/validUrl';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
 import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
+import { RootState } from '../../../shared/store/reducers';
+import useOnClickOutside from '../../../shared/hooks/useClickOutside';
+import isValidUrl from '../../../utils/validUrl';
 import formatBytes from '../../../utils/formatBytesUnit';
 
 import './styles.less';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 type Props = {
   authenticated?: boolean;
@@ -103,55 +109,104 @@ function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   };
   return { payload, archiveId };
 }
+type TResourceObscured = {
+  size: number;
+  contentType: string | undefined;
+  distribution:
+    | {
+        contentSize: number;
+        encodingFormat: string | string[];
+        label: string | string[];
+        hasDistribution: boolean;
+      }
+    | undefined;
+  _self: string;
+  '@type': string;
+  resourceId: string;
+  project: string;
+  path: string;
+}[];
 
 async function downloadArchive({
   nexus,
   parsedData,
   resourcesPayload,
   format,
-  apiRoot,
+  size,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
-  resourcesPayload: any;
+  resourcesPayload: TResourceObscured;
   format?: 'x-tar' | 'json';
-  apiRoot: string;
+  size: string;
 }) {
+  const resourcesWithoutDistribution = resourcesPayload.filter(
+    item => !item.distribution?.hasDistribution
+  );
+  const resourcesWithDistribution = resourcesPayload.filter(
+    item => has(item, 'distribution') && item.distribution?.hasDistribution
+  );
+  const { results, errors } = await PromisePool.withConcurrency(4)
+    .for(resourcesWithDistribution)
+    .process(async item => {
+      const [orgLabel, projectLabel] = item?.project.split('/')!;
+      const result = await nexus.Resource.get(
+        orgLabel,
+        projectLabel,
+        encodeURIComponent(item?.resourceId!)
+      );
+      const files: TResourceObscured[] = [];
+      // @ts-ignore
+      if (isArray(result.distribution)) {
+        // @ts-ignore
+        for (const res of result.distribution) {
+          const resource = await nexus.httpGet({
+            path: res.contentUrl!,
+            headers: { accept: 'application/ld+json' },
+          });
+          files.push({
+            ...item,
+            // @ts-ignore
+            resourceId: resource['@id'],
+          });
+        }
+      } else {
+        const resource = await nexus.httpGet({
+          // @ts-ignore
+          path: result.distribution!.contentUrl!,
+          headers: {
+            accept: 'application/ld+json',
+          },
+        });
+        files.push({
+          ...item,
+          // @ts-ignore
+          resourceId: resource['@id'],
+        });
+      }
+      return files;
+    });
+  const resources = [...resourcesWithoutDistribution, ...results.flat()].map(
+    item =>
+      // @ts-ignore
+      omit(item, ['distribution', 'size', 'contentType'])
+  );
   const {
     payload,
     archiveId,
-  }: { payload: ArchivePayload; archiveId: string } = makePayload(
-    resourcesPayload
-  );
+  }: // @ts-ignore
+  { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
+    // TODO: if the resource is a file, when we added it to the cart, it will be downloaded
+    // TODO: if the resource is not file but has distribution, the download not working
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-    // httpPost({
-    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}`,
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     "@id": archiveId,
-    //     resources: payload.resources,
-    //   })
-    // })
-
-    // console.log('@@ss', ss);
-  } catch (error) {
-    // console.log('@@error1', error);
-  }
+  } catch (error) {}
   try {
-    // const archive = await nexus.httpGet({
-    //   path: `${apiRoot}/archives/${parsedData.org}/${parsedData.project}/${archiveId}`,
-    //   headers: {
-    //     accept: ' application/x-tar',
-    //   },
-    // });
     const archive = await nexus.Archive.get(
       parsedData.org,
       parsedData.project,
       archiveId,
-      { as: format || 'x-tar' }
+      { as: 'x-tar' }
     );
     const blob =
       !format || format === 'x-tar'
@@ -163,6 +218,11 @@ async function downloadArchive({
       format,
     };
   } catch (error) {
+    Sentry.captureException({
+      size,
+      error,
+      items: payload.resources.length,
+    });
     // @ts-ignore
     throw new Error('can not fetch archive', { cause: error });
   }
@@ -172,7 +232,6 @@ const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
-  const apiRoot = useSelector((state: RootState) => state.config.apiEndpoint);
   const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
   const [{ openDataPanel, resources }, updateDataPanel] = useReducer(
     (previous: TDataPanel, newPartialState: Partial<TDataPanel>) => ({
@@ -223,6 +282,25 @@ const DataPanel: React.FC<Props> = ({}) => {
       key: 'type',
       title: 'type',
       dataIndex: 'type',
+      render: text => {
+        let types = '';
+        let fullText = '';
+        if (isArray(text)) {
+          types = text
+            .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+            .join('\n');
+          fullText = text.join('\n');
+        } else if (isString(text)) {
+          types = isValidUrl(text) ? text.split('/').pop() ?? '' : '';
+        } else {
+          types = text;
+        }
+        return (
+          <Tooltip title={text}>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
+          </Tooltip>
+        );
+      },
     },
     {
       key: 'actions',
@@ -318,6 +396,9 @@ const DataPanel: React.FC<Props> = ({}) => {
           : resource._self;
         try {
           const parsedSelf = parseURL(url);
+          const pathId = isValidUrl(resource.id)
+            ? resource.id.split('/').pop()
+            : resource.id;
           const size = resource.distribution
             ? isArray(resource.distribution?.contentSize)
               ? sum(...resource.distribution.contentSize)
@@ -340,9 +421,12 @@ const DataPanel: React.FC<Props> = ({}) => {
                 : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${parsedSelf.id}`,
+            path: `/${parsedSelf.project}/${pathId}${
+              contentType ? `.${contentType}` : ''
+            }`,
           };
         } catch (error) {
+          console.log('@@error', resource.id, error);
           return;
         }
       });
@@ -355,10 +439,14 @@ const DataPanel: React.FC<Props> = ({}) => {
       setTypes(types.filter(t => t !== e.target.value));
     }
   };
-  const existedTypes = compact(Object.keys(resourcesGrouped));
+  const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
+    i => i !== 'undefined'
+  );
   const typesCounter = compact(
     Object.entries(resourcesGrouped).map(([key, value]) =>
-      key ? { [key]: value.length } : null
+      isEmpty(key) || isNil(key) || key === 'undefined' || key === ''
+        ? null
+        : { [key]: value.length }
     )
   );
   const displayedTypes = slice(typesCounter, 0, 3);
@@ -392,15 +480,17 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
     return flatMap(resourcesGrouped);
   }, [types, resourcesGrouped]);
-  const resourcesPayload = flatMap(resultsObject)
-    .map(item => omit(item, ['distribution', 'size', 'contentType']))
-    .filter(i => !isEmpty(i) && !isNil(i));
+
+  const resourcesObscured = filter(
+    flatMap(resultsObject),
+    i => !isEmpty(i) && !isNil(i)
+  );
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
   );
 
-  const parsedData: ParsedNexusUrl | undefined = resourcesPayload.length
-    ? parseURL(resourcesPayload.find(item => !!item._self)?._self as string)
+  const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
+    ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
     : undefined;
   const { mutateAsync: downloadSelectedResource, status } = useMutation(
     downloadArchive
@@ -410,9 +500,9 @@ const DataPanel: React.FC<Props> = ({}) => {
       downloadSelectedResource(
         {
           nexus,
-          apiRoot,
           parsedData,
-          resourcesPayload: resourcesPayload.map(i => omit(i, '_self')),
+          resourcesPayload: resourcesObscured as TResourceObscured,
+          size: formatBytes(totalSize),
         },
         {
           onSuccess: data => {
@@ -475,11 +565,11 @@ const DataPanel: React.FC<Props> = ({}) => {
       );
     }
   }, [datapanelRef.current, openDataPanel]);
-  useOnClickOutside(datapanelRef, () => {
-    if (openDataPanel) {
-      handleCloseDataPanel();
-    }
-  });
+
+  useOnClickOutside(
+    datapanelRef,
+    () => openDataPanel && handleCloseDataPanel()
+  );
   return Boolean(dataSource.length) ? (
     <div className="datapanel">
       <div ref={datapanelRef} className="datapanel-content">
@@ -549,7 +639,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                     </Checkbox>
                   );
                 })}
-                {dropdownTypes.length && (
+                {Boolean(dropdownTypes.length) && (
                   <Dropdown
                     placement="topRight"
                     arrow={false}
@@ -576,7 +666,10 @@ const DataPanel: React.FC<Props> = ({}) => {
           <AccessControl
             path={resourceProjectPaths}
             permissions={['archives/write']}
-            noAccessComponent={() => <div>Have not access</div>}
+            noAccessComponent={() => {
+              console.log('@@no permissions');
+              return <></>;
+            }}
           >
             <div className="download-btn">
               <Button

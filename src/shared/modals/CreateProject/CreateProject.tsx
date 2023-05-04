@@ -14,7 +14,7 @@ import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory, useParams, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import {
@@ -124,7 +124,7 @@ const CreateProject: React.FC<{}> = ({}) => {
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
   );
-  const { createProjectModel } = useSelector(
+  const { isCreateProjectModelVisible } = useSelector(
     (state: RootState) => state.modals
   );
   const orgLabel = match?.params.orgLabel;
@@ -134,6 +134,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     currentId,
     activeKeys,
   });
+
   const add = (k: any) => {
     const { currentId, activeKeys } = prefixMappingKeys;
     const newId: number = currentId + 1;
@@ -152,6 +153,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     });
   };
   const { data: organizations, isLoading } = useQuery({
+    enabled: isCreateProjectModelVisible,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({
@@ -184,16 +186,16 @@ const CreateProject: React.FC<{}> = ({}) => {
       },
       {
         onSuccess: data => {
+          form.resetFields();
+          dispatch({
+            type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
+            payload: false,
+          });
           notification.success({
             duration: 2,
             message: <strong>{data._label}</strong>,
             description: `Project has been created Successfully`,
             onClose: () => {
-              form.resetFields();
-              dispatch({
-                type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
-                payload: false,
-              });
               history.push(`/orgs/${orgLabel ?? organization}/${data._label}`);
             },
           });
@@ -247,10 +249,13 @@ const CreateProject: React.FC<{}> = ({}) => {
       centered
       closable
       destroyOnClose
-      open={createProjectModel}
+      open={isCreateProjectModelVisible}
       onCancel={updateVisibility}
       footer={null}
       title={<strong>Create Project</strong>}
+      afterClose={() => {
+        form.resetFields();
+      }}
     >
       <Form<TProject>
         className="project-form"

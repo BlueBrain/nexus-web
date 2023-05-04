@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { InputRef, Input, Spin, Alert, List } from 'antd';
 import {
+  LoadingOutlined,
   RightSquareOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
@@ -30,7 +31,7 @@ import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import DeprecatedIcon from '../../shared/components/Icons/DepreactedIcon/DeprecatedIcon';
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
@@ -40,7 +41,7 @@ import formatNumber from '../../utils/formatNumber';
 import '../../shared/styles/route-layout.less';
 
 const DEFAULT_PAGE_SIZE = 10;
-const SHOULD_INCLUDE_DEPRECATED = false;
+const SHOULD_INCLUDE_DEPRECATED = true;
 
 type TOrganizationOptions = {
   orgLabel: string;
@@ -97,7 +98,7 @@ const fetchOrganizationProjectsList = async ({
       size,
       from,
       label: query,
-      deprecated: SHOULD_INCLUDE_DEPRECATED,
+      deprecated: undefined,
       sort: `${sort === 'asc' ? '' : '-'}_label`,
     });
   } catch (error) {
@@ -197,10 +198,7 @@ const ProjectItem = ({
             <div>Datasets</div>
             <div>{(datasets && formatNumber(datasets)) ?? '0'}</div>
           </div>
-          <div className="statistics_item">
-            <div>Your access</div>
-            <div>{access ?? ''}</div>
-          </div>
+          <div className="statistics_item" />
           <div className="statistics_item">
             <div>Created</div>
             <div>{timeago(createdAt)}</div>
@@ -221,11 +219,12 @@ const ProjectItem = ({
   );
 };
 const OrganizationProjectsPage: React.FC<{}> = ({}) => {
+  const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef(null);
   const dataContainerRef = useRef<HTMLDivElement>(null);
-  const dispatch = useDispatch();
+  const totalProjectsRef = useRef<number>(0);
   const [query, setQueryString] = useState<string>('');
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
@@ -287,7 +286,9 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
-
+  if (!query.trim().length) {
+    totalProjectsRef.current = total;
+  }
   useIntersectionObserver({
     target: loadMoreRef,
     onIntersect: fetchNextPage,
@@ -308,7 +309,6 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-
   return (
     <Fragment>
       <div className="main-route">
@@ -316,13 +316,25 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
         <RouteHeader
           title="Projects"
           extra={
-            total ? `Total of ${total} ${pluralize('Project', total)}` : ''
+            total && !query ? (
+              `Total of ${total} ${pluralize('Project', total)}`
+            ) : total && query ? (
+              `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
+                'Project',
+                total
+              )}`
+            ) : isLoading ? (
+              <LoadingOutlined />
+            ) : (
+              'No projects found'
+            )
           }
           alt="hippocampus"
           bg={require('../../shared/images/hippocampus.png')}
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}
+          path={[`/${orgLabel}`]}
         />
         <div className="route-body">
           <div className="route-body-container">

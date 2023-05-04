@@ -22,7 +22,7 @@ const SubApps: Map<string, SubApp> = new Map();
 
 SubApps.set('Search', Search);
 SubApps.set('StudioLegacy', StudioLegacy);
-SubApps.set('Workflow', Workflow);
+// SubApps.set('Workflow', Workflow);
 // SubApps.set('Admin', Admin);
 SubApps.set('Organizations', Organizations);
 
