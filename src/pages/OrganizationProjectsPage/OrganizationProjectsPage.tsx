@@ -219,7 +219,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<{}> = ({ }) => {
+const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
