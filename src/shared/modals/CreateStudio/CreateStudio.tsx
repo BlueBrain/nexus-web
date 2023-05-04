@@ -148,7 +148,6 @@ const CreateStudio = () => {
   const dispatch = useDispatch();
   const { data: pluginManifest } = usePlugins();
   const [form] = useForm();
-  const basePath = useSelector((state: RootState) => state.config.basePath);
   const { identities } = useSelector((state: RootState) => state.auth);
   const userUri = identities?.data?.identities.find(
     t => t['@type'] === 'User'
@@ -232,7 +231,7 @@ const CreateStudio = () => {
     }
   );
   const makeStudioUri = (resourceId: string) => {
-    const path = `${basePath}/studios/${organization ?? orgLabel}/${project ??
+    const path = `/studios/${organization ?? orgLabel}/${project ??
       projectLabel}/studios/${encodeURIComponent(resourceId)}`;
     return path;
   };
