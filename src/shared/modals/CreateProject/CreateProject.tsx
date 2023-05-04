@@ -29,7 +29,7 @@ type TProject = {
   description: string;
   base: string;
   vocab: string;
-  apiMappings: ProjectResponseCommon['apiMappings'];
+  apiMappings?: ProjectResponseCommon['apiMappings'];
 };
 type TCreateProject = TProject & {
   nexus: NexusClient;
@@ -38,11 +38,11 @@ type TCreateProject = TProject & {
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 5 },
+    sm: { span: 6 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 19 },
+    sm: { span: 18 },
   },
 };
 const PrefixMappingGroupInput: React.FC<{
@@ -111,7 +111,7 @@ const createProjectMutation = async ({
   }
 };
 
-const CreateProject: React.FC<{}> = ({}) => {
+const CreateProject: React.FC<{}> = ({ }) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const history = useHistory();
@@ -153,7 +153,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     });
   };
   const { data: organizations, isLoading } = useQuery({
-    enabled: isCreateProjectModelVisible,
+    enabled: isCreateProjectModelVisible && !!userUri,
     queryKey: ['user-organizations', { user: userUri! }],
     queryFn: () =>
       nexus.Organization.list({
@@ -170,7 +170,7 @@ const CreateProject: React.FC<{}> = ({}) => {
     vocab,
     apiMappings,
   }: TProject) => {
-    const mappingObject = apiMappings ?? {};
+    const mappingObject = apiMappings || {};
     const apiMappingsArray = Object.keys(mappingObject).map(
       (mapping: any) => apiMappings![mapping]
     );
@@ -181,7 +181,7 @@ const CreateProject: React.FC<{}> = ({}) => {
         vocab,
         label,
         description,
-        apiMappings: apiMappingsArray,
+        apiMappings: apiMappingsArray ?? undefined,
         orgLabel: orgLabel ?? organization,
       },
       {
@@ -201,14 +201,13 @@ const CreateProject: React.FC<{}> = ({}) => {
           });
         },
         onError: error => {
+          form.resetFields();
           notification.error({
             duration: 3,
             // @ts-ignore
             message: error.message,
             // @ts-ignore
             description: <strong>{error.cause['@type']}</strong>,
-            onClick: () => form.resetFields(),
-            onClose: () => form.resetFields(),
           });
         },
       }
