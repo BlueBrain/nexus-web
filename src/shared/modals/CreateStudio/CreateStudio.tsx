@@ -196,7 +196,7 @@ const CreateStudio = () => {
           notification.success({
             duration: 2,
             message: <strong>{data._label}</strong>,
-            description: `Project has been created Successfully`,
+            description: `Studio has been created Successfully`,
             onClose: () => {
               goToStudio(data['@id']);
             },

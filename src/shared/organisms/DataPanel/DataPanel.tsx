@@ -284,14 +284,12 @@ const DataPanel: React.FC<Props> = ({}) => {
       dataIndex: 'type',
       render: text => {
         let types = '';
-        let fullText = '';
         if (isArray(text)) {
           types = text
             .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
             .join('\n');
-          fullText = text.join('\n');
-        } else if (isString(text)) {
-          types = isValidUrl(text) ? text.split('/').pop() ?? '' : '';
+        } else if (isString(text) && isValidUrl(text)) {
+          types = text.split('/').pop() ?? '';
         } else {
           types = text;
         }

@@ -130,7 +130,7 @@ const ProjectItem = ({
         </div>
         <div className="redirection">
           <Link to={to}>
-            View organization projects
+            View project
             <RightSquareOutlined />
           </Link>
         </div>

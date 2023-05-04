@@ -2,7 +2,14 @@ import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
-import { difference, differenceBy, union, has } from 'lodash';
+import {
+  difference,
+  differenceBy,
+  union,
+  has,
+  isString,
+  isArray,
+} from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import {
@@ -208,6 +215,25 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'type',
         dataIndex: 'type',
         sorter: false,
+        render: text => {
+          let types = '';
+          if (isArray(text)) {
+            types = text
+              .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+              .join('\n');
+          } else if (isString(text) && isValidUrl(text)) {
+            types = text.split('/').pop() ?? '';
+          } else {
+            types = text;
+          }
+          return (
+            <Tooltip
+              title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}
+            >
+              <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
+            </Tooltip>
+          );
+        },
       },
       {
         key: 'updatedAt',

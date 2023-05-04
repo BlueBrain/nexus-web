@@ -147,7 +147,7 @@ const OrganizationItem = ({
         </div>
         <div className="redirection">
           <Link to={to}>
-            View organization projects
+            View projects
             <RightSquareOutlined />
           </Link>
         </div>

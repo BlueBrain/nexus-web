@@ -78,6 +78,7 @@ const HomeMyData: React.FC<{}> = () => {
       nexus.Resource.list(undefined, undefined, {
         size,
         from: offset,
+        // after: offset,
         q: query,
         [dateField]: makeDatetimePattern({ dateType, date }),
         // type: dataType,
