@@ -16,7 +16,6 @@ describe.only('Studios', () => {
       Cypress.env('users').morty.password
     ).then(session => {
       cy.visit('/');
-      cy.contains(Cypress.env('users').morty.username, { matchCase: false });
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
@@ -76,6 +75,15 @@ describe.only('Studios', () => {
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );
+    console.log(
+      'Checking this exists in page',
+      Cypress.env('users').morty.username
+    );
+    cy.task(
+      'log',
+      'Checking this exists in page' + Cypress.env('users').morty.username
+    );
+    cy.contains(new RegExp(Cypress.env('users').morty.username, 'i'));
     studioDetailsPage.createStudio('Test Studio 1');
     studioDetailsPage.createWorkspace('Test Workspace 1');
     studioDetailsPage.createDashboard('Test Workspace 1', 'Test Dashboard 1');
