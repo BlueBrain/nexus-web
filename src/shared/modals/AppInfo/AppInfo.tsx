@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { Button, Divider, Modal, Tag, Tooltip } from 'antd';
 import { parseUserAgent } from 'react-device-detect';
-import { useNexus } from '@bbp/react-nexus';
-import { NexusClient } from '@bbp/nexus-sdk';
 import { useSelector, useDispatch } from 'react-redux';
 import { GithubOutlined } from '@ant-design/icons';
 import { Subtitle } from '../../../shared/styled_components/typography/Subtitle/Subtitle';
@@ -15,6 +13,11 @@ import Copy from '../../../shared/components/Copy';
 import './styles.less';
 
 declare var FUSION_VERSION: string;
+export type TNexusEco = {
+    delta: string;
+    environment: string;
+    [key: string]: any;
+}
 export interface EnvironmentInfo {
   deltaVersion: string;
   fusionVersion: string;
@@ -37,32 +40,12 @@ const envInfoForClipboard = (env: EnvironmentInfo) => {
 
 const releaseNoteUrl = 'https://github.com/BlueBrain/nexus-web/releases';
 
-const AppInfo: React.FC<{}> = () => {
+const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
   const dispatch = useDispatch();
-  const { config, modals } = useSelector((state: RootState) => ({
-    config: state.config,
-    modals: state.modals,
-  }));
+  const modals = useSelector((state: RootState) => state.modals);
+  const deltaVersion = delta ?? '';
+  const environmentName = infraEnv ?? '';
 
-  const versions: any = useNexus<any>((nexus: NexusClient) =>
-    nexus.httpGet({
-      path: `${config.apiEndpoint}/version`,
-      context: { as: 'json' },
-    })
-  );
-  const deltaVersion = React.useMemo(() => {
-    if (versions.data) {
-      return versions.data.delta as string;
-    }
-    return '';
-  }, [versions]);
-
-  const environmentName = React.useMemo(() => {
-    if (versions.data) {
-      return versions.data.environment as string;
-    }
-    return '';
-  }, [versions]);
   const userPlatform = parseUserAgent(navigator.userAgent);
   const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
     ?.version ?? ''}`;

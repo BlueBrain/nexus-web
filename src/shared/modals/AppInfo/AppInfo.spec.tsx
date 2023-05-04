@@ -1,16 +1,14 @@
 import '@testing-library/jest-dom';
+import { rest } from 'msw';
 import { Provider } from 'react-redux';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import configureStore from 'redux-mock-store';
-import { rest } from 'msw';
-
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
-import AppInfo, { EnvironmentInfo } from './AppInfo';
+import AppInfo, { EnvironmentInfo, TNexusEco } from './AppInfo';
 
 describe.only('AppInfo', () => {
-  // beforeEach(() => {
-  beforeAll(() => {
+  beforeAll(async () => {
     server.listen();
   });
   afterEach(() => server.resetHandlers());
@@ -67,49 +65,41 @@ describe.only('AppInfo', () => {
       isAboutModelVisible: true,
     },
   };
+  const nexusEcosystem = {
+    '@context':
+      'https://bluebrain.github.io/nexus/contexts/version.json',
+    delta: '1.0.0',
+    dependencies: {
+      blazegraph: '2.1.6-SNAPSHOT',
+      elasticsearch: '7.17.1',
+      postgres: '15.2',
+      remoteStorage: '1.5.1',
+    },
+    environment: 'unit-test',
+    plugins: {
+      archive: '1.8.0-M7',
+      blazegraph: '1.8.0-M7',
+      'composite-views': '1.8.0-M7',
+      elasticsearch: '1.8.0-M7',
+      'graph-analytics': '1.8.0-M7',
+      jira: '1.8.0-M7',
+      search: '1.8.0-M7',
+      storage: '1.8.0-M7',
+    },
+  }
   const store = mockStore(mockState);
   const App: React.FC = () => (
     <Provider store={store}>
       <NexusProvider nexusClient={nexus}>
-        <AppInfo />
+          <AppInfo {... { ...nexusEcosystem }} />
       </NexusProvider>
     </Provider>
   );
 
   it('shows nexus environment information', async () => {
-    server.use(
-      rest.get('https://localhost:3000/version', (req, res, ctx) => {
-        return res(
-          ctx.status(200),
-          ctx.json({
-            '@context':
-              'https://bluebrain.github.io/nexus/contexts/version.json',
-            delta: '1.0.0',
-            dependencies: {
-              blazegraph: '2.1.6-SNAPSHOT',
-              elasticsearch: '7.17.1',
-              postgres: '15.2',
-              remoteStorage: '1.5.1',
-            },
-            environment: 'unit-test',
-            plugins: {
-              archive: '1.8.0-M7',
-              blazegraph: '1.8.0-M7',
-              'composite-views': '1.8.0-M7',
-              elasticsearch: '1.8.0-M7',
-              'graph-analytics': '1.8.0-M7',
-              jira: '1.8.0-M7',
-              search: '1.8.0-M7',
-              storage: '1.8.0-M7',
-            },
-          })
-        );
-      })
-    );
     await act(async () => {
       await render(<App />);
     });
-
     const fusionVersion = await screen.findByTestId('fusion-version');
     expect(fusionVersion.textContent).toContain(MOCK_ENVIRONMENT.fusionVersion);
 

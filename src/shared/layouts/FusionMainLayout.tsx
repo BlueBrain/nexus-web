@@ -29,7 +29,11 @@ export type SubAppProps = {
   description?: string;
 };
 
-const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
+const FusionMainLayout: React.FC<{ 
+  environment: string, 
+  children: React.ReactNode, 
+}> = ({
+  environment,
   children,
 }) => {
   const [consent, setConsent] = useLocalStorage<ConsentType>(
@@ -59,6 +63,7 @@ const FusionMainLayout: React.FC<{ children: React.ReactNode }> = ({
       <SeoHeaders />
       <Layout className={`fusion-main-layout ${token ? 'authed' : 'wall'}`}>
         <Header
+          environment={environment}
           name={authenticated ? name : undefined}
           token={token ? oidc.user?.access_token : undefined}
           handleLogout={handleLogout}
