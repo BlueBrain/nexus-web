@@ -15,6 +15,8 @@ describe.only('Studios', () => {
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     ).then(session => {
+      cy.visit('/');
+      cy.contains(Cypress.env('users').morty.username, { matchCase: false });
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');

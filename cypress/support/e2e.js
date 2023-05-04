@@ -17,7 +17,8 @@ Cypress.Commands.add('login', (realm, username, password) => {
         cy.get('#password').type(password);
         cy.get('input[name="login"]').click();
       }
-    )
+    );
+    
     cy.wait(500);
   });
 });
