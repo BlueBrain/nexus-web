@@ -106,7 +106,6 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   userManager.events.addUserLoaded(user => {
     loadUser(store, userManager);
     localStorage.setItem('nexus__token', user.access_token);
-    console.log('@@userManager.events', user.access_token);
   });
 
   // Raised prior to the access token expiring.

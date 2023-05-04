@@ -39,7 +39,6 @@ const App: React.FC = () => {
 
   const routesWithSubApps = [...routes, ...subAppRoutes];
   const DataPanel = withDataPanel({ allowDataPanel });
-
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>

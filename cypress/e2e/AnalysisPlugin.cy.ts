@@ -54,14 +54,14 @@ describe('Report (formerly Analysis) Plugin', () => {
     );
   });
 
-  after(function() {
-    cy.task('project:teardown', {
-      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-      authToken: this.nexusToken,
-      orgLabel: Cypress.env('ORG_LABEL'),
-      projectLabel: this.projectLabel,
-    });
-  });
+  // after(function() {
+  //   cy.task('project:teardown', {
+  //     nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+  //     authToken: this.nexusToken,
+  //     orgLabel: Cypress.env('ORG_LABEL'),
+  //     projectLabel: this.projectLabel,
+  //   });
+  // });
 
   it('user can add a report with name, description and files, categories, types', function() {
     cy.visit(
