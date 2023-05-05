@@ -116,7 +116,11 @@ const IdentityPage: React.FC<{}> = () => {
               </ul>
             )}
           </div>
-          <Button size="large" onClick={() => history.push('/studios')}>
+          <Button
+            className="nav-btn"
+            size="large"
+            onClick={() => history.push('/studios')}
+          >
             View Studios
           </Button>
           <Button
@@ -125,11 +129,11 @@ const IdentityPage: React.FC<{}> = () => {
             rel="noopener noreferrer"
             target="_blank"
             href="https://bluebrainnexus.io/docs/index.html"
-            className="documentation-btn"
+            className="nav-btn"
           >
             Documentation
           </Button>
-          <Button size="large" onClick={openAboutModal}>
+          <Button className="nav-btn" size="large" onClick={openAboutModal}>
             About
           </Button>
         </div>

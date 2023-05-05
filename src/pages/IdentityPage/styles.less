@@ -48,6 +48,7 @@
       align-items: center;
       justify-content: center;
       margin-top: 35px;
+
       button,
       a {
         border: 1px solid white;
@@ -87,11 +88,9 @@
         align-items: center;
         justify-content: center;
       }
-      button:not(:first-child) {
-        &:hover {
-          color: @fusion-daybreak-10;
-          background-color: #fff;
-        }
+      .nav-btn:hover {
+        color: @fusion-daybreak-10 !important;
+        background-color: #fff !important;
       }
       button:last-child {
         border-right: 1px solid white;

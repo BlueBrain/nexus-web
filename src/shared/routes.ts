@@ -1,5 +1,4 @@
 import { RouteProps } from 'react-router-dom';
-import Login from './views/Login';
 import ResourceView from './views/ResourceView';
 import UserPage from '../pages/UserPage/UserPage';
 import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
@@ -7,6 +6,7 @@ import Home from '../pages/HomePage/HomePage';
 import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import StudioRedirectView from './views/StudioRedirectView';
 import MyDataView from './views/MyDataView';
+import { RedirectAdmin } from '../subapps/admin';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
 

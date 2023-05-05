@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { Redirect, useLocation, useRouteMatch } from 'react-router';
+import { get } from 'lodash';
+
 import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
 import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
 import ProjectView from '../../pages/ProjectPage/ProjectPage';
@@ -44,42 +47,19 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-// const Admin: SubApp = () => {
-//   return {
-//     ...adminSubappProps,
-//     routes: [
-//       {
-//         path: '/',
-//         exact: true,
-//         component: AdminSubappProviderHOC(OrganizationListPage),
-//         protected: true,
-//       },
-//       {
-//         path: '/:orgLabel',
-//         exact: true,
-//         component: AdminSubappProviderHOC(OrganizationProjectsPage),
-//         protected: true,
-//       },
-//       {
-//         path: [
-//           '/:orgLabel/:projectLabel',
-//           '/:orgLabel/:projectLabel/browse',
-//           '/:orgLabel/:projectLabel/query/:viewId?',
-//           '/:orgLabel/:projectLabel/create',
-//           '/:orgLabel/:projectLabel/statistics',
-//           '/:orgLabel/:projectLabel/settings',
-//           '/:orgLabel/:projectLabel/graph-analytics',
-//           '/:orgLabel/:projectLabel/jira',
-//         ],
-//         exact: true,
-//         component: AdminSubappProviderHOC(ProjectView),
-//         protected: true,
-//       },
-//     ],
-//   };
-// };
-
-// -----
+export const RedirectAdmin: React.FunctionComponent = props => {
+  const location = useLocation();
+  const route = useRouteMatch();
+  console.log('@@location', get(route.params, '0'), route);
+  return (
+    <Redirect
+      to={{
+        pathname: `/orgs/${get(route.params, '0')}`,
+        search: location.search,
+      }}
+    />
+  );
+};
 
 export const OrganisationsSubappContext = React.createContext<{
   title: string;
