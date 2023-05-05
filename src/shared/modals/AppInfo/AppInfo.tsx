@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Divider, Modal, Tag, Tooltip } from 'antd';
+import { Button, Divider, Modal, Tooltip } from 'antd';
 import { parseUserAgent } from 'react-device-detect';
 import { useSelector, useDispatch } from 'react-redux';
 import { GithubOutlined } from '@ant-design/icons';
@@ -84,9 +84,6 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       <div className="versions">
         <div className="nexus-service-header">
           <Subtitle className="nexus-services">Nexus Services</Subtitle>
-          <Tag color="blue" className="tag" data-testid="environment-name">
-            {environmentName}
-          </Tag>
           <Copy
             render={(copySuccess, triggerCopy) => (
               <Tooltip
@@ -112,6 +109,10 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
           <div className="version-item" data-testid="fusion-version">
             <div>Nexus Fusion</div>
             <p>{FUSION_VERSION}</p>
+          </div>
+          <div className="version-item" data-testid="environment-name">
+            <div>Deployment</div>
+            <p>{environmentName}</p>
           </div>
         </div>
       </div>

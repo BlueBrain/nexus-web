@@ -42,7 +42,6 @@
     font-style: normal;
     font-weight: 300;
     font-size: 14px;
-    // line-height: 135%;
     letter-spacing: 0.03em;
     color: @fusion-neutral-8;
     display: flex;
@@ -77,7 +76,7 @@
 
     &-items {
       display: grid;
-      grid-template-columns: repeat(2, max-content);
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
     &-title {
@@ -99,10 +98,12 @@
       line-height: 125%;
       font-feature-settings: 'tnum' on, 'lnum' on;
       color: @fusion-daybreak-9;
-      padding: 15px 25px;
+      padding: 15px 15px;
       background: @fusion-blue-1;
       box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
       border-radius: 4px;
+      text-transform: capitalize;
+      word-wrap: break-word;
       div {
         font-weight: 700;
         margin-bottom: 5px;
