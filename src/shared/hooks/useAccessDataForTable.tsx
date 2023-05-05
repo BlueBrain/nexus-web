@@ -1,19 +1,47 @@
+import { FilterFilled } from '@ant-design/icons';
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as Sentry from '@sentry/browser';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import { isNil, isString, pick, toNumber } from 'lodash';
+import {
+  has,
+  isArray,
+  isNil,
+  isString,
+  pick,
+  sumBy,
+  toNumber,
+  uniq,
+  uniqBy,
+} from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
+import {
+  StudioTableRow,
+  TableError,
+  getStudioRowKey,
+} from '../../shared/containers/DataTableContainer';
+import {
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  TDataSource,
+  TResourceTableData,
+  getLocalStorageSize,
+  notifyTotalSizeExeeced,
+} from '../../shared/molecules/MyDataTable/MyDataTable';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import { Projection } from '../components/EditTableForm';
 import { download } from '../utils/download';
 import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import { FilterFilled } from '@ant-design/icons';
-import { TableError } from 'shared/containers/DataTableContainer';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -364,6 +392,79 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
+const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
+  let localStorageRow: TDataSource;
+  try {
+    const resourceName = resource.name ?? resource['@id'] ?? resource._self;
+    localStorageRow = {
+      key: resource._self,
+      _self: resource._self,
+      id: resource['@id'],
+      name: resourceName,
+      project: resource._project,
+      description: resource.description ?? '',
+      createdAt: resource._createdAt,
+      updatedAt: resource._updatedAt,
+      source: 'studios',
+      type: isArray(resource['@type'])
+        ? resource['@type']
+        : [resource['@type'] ?? ''],
+
+      distribution: {
+        contentSize: isArray(resource.distribution)
+          ? sumBy(
+              resource.distribution,
+              distItem => distItem.contentSize?.value ?? 0
+            )
+          : resource.distribution?.contentSize ?? 0,
+        encodingFormat: isArray(resource.distribution)
+          ? resource.distribution.find(distItem => distItem.encodingFormat)
+              ?.encodingFormat ?? ''
+          : resource.distribution?.encodingFormat ?? '',
+        label: isArray(resource.distribution)
+          ? resource.distribution.map(distItem => {
+              const itemLabel =
+                distItem.label ??
+                `${resourceName}.${fileExtensionFromResourceEncoding(
+                  distItem.encodingFormat
+                )}`;
+              return itemLabel;
+            })
+          : resource.distribution?.label ??
+            `${resourceName}.${fileExtensionFromResourceEncoding(
+              resource.distribution?.encodingFormat
+            )}`,
+        hasDistribution: has(resource, 'distribution'),
+      },
+    };
+  } catch (err) {
+    Sentry.captureException(err, {
+      extra: {
+        resource,
+        message: 'Failed to serialize resource for localStorage.',
+      },
+    });
+  }
+  return localStorageRow!;
+};
+
+const getTotalContentSize = (rows: TDataSource[]) => {
+  let size = 0;
+
+  rows.forEach(row => {
+    if (isArray(row.distribution)) {
+      size += sumBy(
+        row.distribution,
+        distItem => distItem.contentSize?.value ?? 0
+      );
+    } else {
+      size += row.distribution?.contentSize || 0;
+    }
+  });
+
+  return size;
+};
+
 export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
@@ -377,31 +478,130 @@ export const useAccessDataForTable = (
   const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
     []
   );
-  const [selectedRows, setSelectedRows] = React.useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
 
   const [searchValue, setSearchValue] = React.useState<string>('');
   const { addResourceCollectionToCart } = React.useContext(CartContext);
-  const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
-    setSelectedRows(selectedRowKeys);
-    if (
-      dataResult?.data?.view &&
-      (dataResult?.data?.view['@type']?.includes('ElasticSearchView') ||
-        dataResult?.data?.view['@type']?.includes(
-          'AggregateElasticSearchView'
-        ) ||
-        (tableResource?.projection &&
-          tableResource.projection['@type'].includes(
-            'ElasticSearchProjection'
-          )))
-    ) {
-      setSelectedResources(selectedRows);
+
+  const onSelectAll = async (
+    selected: boolean,
+    selectedRows: StudioTableRow[],
+    changedRows: StudioTableRow[]
+  ) => {
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+
+    let rowKeysForLS = dataPanelLS?.selectedRowKeys || [];
+    let rowsForLS = dataPanelLS?.selectedRows || [];
+
+    if (selected) {
+      const futureResources = changedRows.map(row =>
+        fetchResourceForDownload(getStudioRowKey(row))
+      );
+
+      Promise.allSettled(futureResources)
+        .then(result => {
+          result.forEach(res => {
+            if (res.status === 'fulfilled') {
+              const localStorageResource = resourceToLocalStorageResource(
+                res.value
+              );
+              rowKeysForLS = uniq([
+                ...rowKeysForLS,
+                localStorageResource._self,
+              ]);
+              rowsForLS = uniqBy([...rowsForLS, localStorageResource], 'key');
+            }
+          });
+          return;
+        })
+        .then(() => {
+          saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
+        })
+        .catch(err => {
+          console.log('@@error', err);
+        });
     } else {
-      const resources = selectedRows.map(s => ({
-        '@id': s.self['value'],
-        _self: decodeURIComponent(s.self['value']),
-      })) as Resource[];
-      setSelectedResources(resources);
+      const rowKeysToRemove = changedRows.map(row => getStudioRowKey(row));
+
+      rowKeysForLS = rowKeysForLS.filter(
+        lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
+      );
+      rowsForLS = rowsForLS.filter(
+        lsRow => !rowKeysToRemove.includes(lsRow.key.toString())
+      );
+
+      saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     }
+  };
+
+  const onSelectSingleRow = async (
+    record: StudioTableRow,
+    selected: boolean
+  ) => {
+    const recordKey = getStudioRowKey(record);
+
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+
+    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let selectedRows = dataPanelLS?.selectedRows || [];
+
+    if (selected) {
+      const deltaResource = await fetchResourceForDownload(recordKey);
+      const localStorageResource = resourceToLocalStorageResource(
+        deltaResource
+      );
+      selectedRowKeys = [...selectedRowKeys, recordKey];
+      selectedRows = uniqBy([...selectedRows, localStorageResource], 'key');
+    } else {
+      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRows = selectedRows.filter(t => t.key !== recordKey);
+    }
+
+    saveSelectedRowsToLocalStorage(selectedRowKeys, selectedRows);
+  };
+
+  const fetchResourceForDownload = (selfUrl: string): Promise<Resource> => {
+    return nexus.httpGet({
+      path: selfUrl,
+      headers: { Accept: 'application/json' },
+    });
+  };
+
+  const saveSelectedRowsToLocalStorage = (
+    rowKeys: React.Key[],
+    rows: TDataSource[]
+  ) => {
+    const currentLocalStorageSize = getLocalStorageSize();
+    const newLocalStorageSize = getTotalContentSize(rows);
+    if (
+      newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+      currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
+    }
+
+    localStorage.setItem(
+      DATA_PANEL_STORAGE,
+      JSON.stringify({
+        selectedRowKeys: rowKeys,
+        selectedRows: rows,
+      })
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: {
+            selectedRowKeys: rowKeys,
+            selectedRows: rows,
+          },
+        },
+      })
+    );
   };
 
   const tableResult = useQuery<any, TableError>(
@@ -445,6 +645,7 @@ export const useAccessDataForTable = (
     {
       cacheTime: 100000,
       retry: false,
+      refetchOnWindowFocus: false,
       onError: (err: any) => {
         const message =
           err.reason ?? err.message ?? err.name ?? 'Failed to fetch for table';
@@ -486,9 +687,9 @@ export const useAccessDataForTable = (
       // download only selected rows or,
       // download everything, when nothing is selected.
       const selectedItems =
-        selectedRows.length > 0
+        selectedRowKeys.length > 0
           ? dataResult.data.items.filter((item: any) => {
-              return selectedRows.includes(item.key);
+              return selectedRowKeys.includes(item.key);
             })
           : dataResult.data.items;
 
@@ -516,9 +717,10 @@ export const useAccessDataForTable = (
     downloadCSV,
     addToDataCart,
     addFromDataCart,
-    onSelect,
+    onSelectAll,
     setSearchValue,
     tableResult,
     dataResult,
+    onSelectSingleRow,
   };
 };

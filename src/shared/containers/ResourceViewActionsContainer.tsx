@@ -12,11 +12,12 @@ import { RootState } from '../store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import Copy from '../components/Copy';
 import {
-  MAX_DATA_SELECTED_ALLOWED_SIZE,
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
   TResourceTableData,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   getLocalStorageSize,
   notifyTotalSizeExeeced,
+  Distribution,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -81,11 +82,12 @@ const ResourceViewActionsContainer: React.FC<{
       isRemoved = false;
     }
     const size = selectedRows.reduce(
-      (acc, item) => acc + (item.distribution?.contentSize || 0),
+      (acc, item) =>
+        acc + ((item.distribution as Distribution)?.contentSize || 0),
       0
     );
     if (
-      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
       return notifyTotalSizeExeeced();

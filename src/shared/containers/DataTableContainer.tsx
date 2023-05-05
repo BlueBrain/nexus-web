@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   Table,
   Col,
@@ -31,6 +31,12 @@ import useNotification from '../hooks/useNotification';
 import { ErrorComponent } from '../../shared/components/ErrorComponent';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import { TResourceTableData } from '../../shared/molecules/MyDataTable/MyDataTable';
 
 export type TableColumn = {
   '@type': string;
@@ -99,6 +105,19 @@ export interface TableError {
   '@type'?: string;
 }
 
+export interface StudioTableRow {
+  self: { type: string; value: string };
+  entity: string;
+  name: string;
+  id: string;
+  key: string; // index in table;
+  _self?: string;
+  '@id'?: string;
+}
+
+export const getStudioRowKey = (row: StudioTableRow) =>
+  row.self?.value ?? row.id ?? row['@id'];
+
 const { Title } = Typography;
 
 const DataTableContainer: React.FC<DataTableProps> = ({
@@ -122,6 +141,53 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   useEffect(() => {
     toggledEdit && toggledEdit(showEditForm);
   }, [showEditForm]);
+
+  const [{ selectedRowKeys }, updateTableData] = useReducer(
+    (
+      previous: TResourceTableData,
+      partialData: Partial<TResourceTableData>
+    ) => ({
+      ...previous,
+      ...partialData,
+    }),
+    {
+      selectedRowKeys: [],
+      selectedRows: [],
+    }
+  );
+
+  useEffect(() => {
+    // Initialize the selected rows when window is reloaded.
+    const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
+    const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
+    if (dataLs && dataLs.length) {
+      updateTableData({
+        selectedRows: dataLsObject.selectedRows,
+        selectedRowKeys: dataLsObject.selectedRowKeys,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const dataPanelEventListner = (
+      event: DataPanelEvent<{ datapanel: TResourceTableData }>
+    ) => {
+      updateTableData({
+        selectedRows: event.detail?.datapanel.selectedRows,
+        selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
+      });
+    };
+    window.addEventListener(
+      DATA_PANEL_STORAGE_EVENT,
+      dataPanelEventListner as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+    };
+  }, []);
 
   const [searchboxValue, setSearchboxValue] = useState<string>('');
   const [searchboxFocused, setSearchboxFocused] = useState<boolean>(false);
@@ -384,8 +450,12 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
   };
 
+  // const [preparingDataDownload, setPreparingDataDownload] = React.useState(
+  //   false
+  // );
+
   return (
-    <div>
+    <div className="studio-table-container">
       {/* Error when the table resource itself failed to fetch */}
       {tableData.tableResult.isError ? (
         <ErrorComponent
@@ -419,12 +489,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               showLessItems: true,
             }}
             rowSelection={{
-              type: 'checkbox',
-              onChange: tableData.onSelect,
+              selectedRowKeys,
+              onSelect: tableData.onSelectSingleRow,
+              onSelectAll: tableData.onSelectAll,
             }}
-            rowKey={r => {
-              return r['s'] || `tr_${r['id'] ?? r._self}`;
-            }}
+            rowKey={r => getStudioRowKey(r)}
             data-testid="dashboard-table"
           />
           <Modal

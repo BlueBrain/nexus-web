@@ -601,7 +601,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien1'),
             },
           },
           {
@@ -612,7 +612,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien2'),
             },
           },
           {
@@ -623,7 +623,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien3'),
             },
           },
           {
@@ -634,7 +634,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien4'),
             },
           },
           {
@@ -645,7 +645,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien5'),
             },
           },
           {
@@ -656,7 +656,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien6'),
             },
           },
           {
@@ -667,7 +667,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien7'),
             },
           },
           {
@@ -678,7 +678,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien8'),
             },
           },
           {
@@ -689,7 +689,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien9'),
             },
           },
           {
@@ -703,7 +703,7 @@ export const handlers = [
             },
             self: {
               type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien'),
+              value: deltaPath('/nexus/v1/projects/nise/kerrien10'),
             },
           },
         ],
