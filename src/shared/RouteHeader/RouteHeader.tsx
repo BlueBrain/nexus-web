@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import './styles.less';
 import { AccessControl } from '@bbp/react-nexus';
+import './styles.less';
 
 type TProps = {
   title: string;
@@ -34,18 +34,18 @@ const RouteHeader = ({
         <p>{extra}</p>
       </div>
       {createLabel && (
-        <div className="action">
-          <button className="create-btn" onClick={onCreateClick}>
-            {createLabel}
-            <PlusOutlined />
-          </button>
-        </div>
+        <AccessControl
+          {...{ permissions, path }}
+          noAccessComponent={() => <></>}
+        >
+          <div className="action">
+            <button className="create-btn" onClick={onCreateClick}>
+              {createLabel}
+              <PlusOutlined />
+            </button>
+          </div>
+        </AccessControl>
       )}
-      {/* <AccessControl
-        {...{ permissions, path }}
-        noAccessComponent={() => <></>}
-      >
-      </AccessControl> */}
     </div>
   );
 };

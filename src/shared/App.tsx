@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { useQuery } from 'react-query';
+import { useNexusContext } from '@bbp/react-nexus';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout from './layouts/FusionMainLayout';
@@ -13,18 +15,15 @@ import {
   NotificationContext,
   NotificationContextType,
 } from './hooks/useNotification';
-import { withDataPanel } from './organisms/DataPanel/DataPanel';
 import { RootState } from './store/reducers';
+import DataPanel from './organisms/DataPanel/DataPanel';
 import CreateProject from './modals/CreateProject/CreateProject';
 import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
 import './App.less';
-import { useQuery } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus';
 
 const App: React.FC = () => {
-  const location = useLocation();
   const nexus = useNexusContext();
   const { subAppRoutes } = useSubApps();
   const cartData: CartType = useDataCart();
@@ -36,15 +35,7 @@ const App: React.FC = () => {
   const token = oidc.user && oidc.user.access_token;
   const notificationData: NotificationContextType = getNotificationContextValue();
   const userAuthenticated = Boolean(authenticated) && Boolean(token);
-
-  const allowDataPanel =
-    userAuthenticated &&
-    (location.pathname === '/' ||
-      location.pathname === '/search' ||
-      location.pathname === '/my-data');
-
   const routesWithSubApps = [...routes, ...subAppRoutes];
-  const DataPanel = withDataPanel({ allowDataPanel });
 
   const { data: nexusEcosystem } = useQuery({
     queryKey: ['nexus-ecosystem'],
