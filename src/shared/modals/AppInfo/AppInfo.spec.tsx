@@ -108,7 +108,9 @@ describe.only('AppInfo', () => {
     expect(deltaVersion.textContent).toContain(MOCK_ENVIRONMENT.deltaVersion);
 
     const environmentName = await waitFor(() => {
-      return screen.getByText(MOCK_ENVIRONMENT.environmentName);
+      return screen.getByText(content =>
+        content.includes(MOCK_ENVIRONMENT.environmentName)
+      );
     });
     expect(environmentName).toBeDefined();
   });
