@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { InputRef, Input, Spin, Alert, List } from 'antd';
 import { capitalize } from 'lodash';
+import clsx from 'clsx';
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -122,16 +123,7 @@ export const useInfiniteOrganizationProjectsQuery = ({
   sort: TSort;
   enabled: boolean;
 }) => {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status: projectStatus,
-    error: projectError,
-    isLoading,
-    isFetching,
-  } = useInfiniteQuery({
+  return useInfiniteQuery({
     enabled,
     queryKey: ['fusion-projects', { query, sort }],
     queryFn: ({ pageParam = 0 }) =>
@@ -147,16 +139,6 @@ export const useInfiniteOrganizationProjectsQuery = ({
         ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
         : undefined,
   });
-  return {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isFetching,
-    status: projectStatus,
-    error: projectError,
-  };
 };
 
 const ProjectItem = ({
@@ -274,6 +256,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     error: projectError,
     isLoading,
     isFetching,
+    isError,
   } = useInfiniteOrganizationProjectsQuery({
     nexus,
     orgLabel,
@@ -310,6 +293,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
+  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <Fragment>
       <div className="main-route">
@@ -339,7 +323,12 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div className="route-actions">
+            <div
+              className={clsx(
+                'route-actions',
+                notDisplayActionHeader && 'no-actions'
+              )}
+            >
               <div className="action-search">
                 <Input.Search
                   allowClear

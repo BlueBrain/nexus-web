@@ -9,6 +9,7 @@ import React, {
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { Alert, Input, Spin, List, InputRef } from 'antd';
+import clsx from 'clsx';
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -78,16 +79,7 @@ export const useInfiniteOrganizationQuery = ({
   query: string;
   sort: TSort;
 }) => {
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-    isFetching,
-  } = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['organizations', { query, sort }],
     queryFn: ({ pageParam = 0 }) =>
       fetchOrganizationList({
@@ -104,16 +96,6 @@ export const useInfiniteOrganizationQuery = ({
           )
         : undefined,
   });
-  return {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-    isFetching,
-  };
 };
 const OrganizationItem = ({
   title,
@@ -195,6 +177,7 @@ const OrganizationListView: React.FC<{}> = () => {
     status,
     isLoading,
     isFetching,
+    isError,
   } = useInfiniteOrganizationQuery({
     nexus,
     query,
@@ -250,6 +233,7 @@ const OrganizationListView: React.FC<{}> = () => {
       ref={loadMoreRef}
     />
   );
+  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <Fragment>
       <div className="main-route">
@@ -278,7 +262,12 @@ const OrganizationListView: React.FC<{}> = () => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div className="route-actions">
+            <div
+              className={clsx(
+                'route-actions',
+                notDisplayActionHeader && 'no-actions'
+              )}
+            >
               <div className="action-search">
                 <Input.Search
                   allowClear

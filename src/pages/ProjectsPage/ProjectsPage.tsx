@@ -17,6 +17,7 @@ import {
 import { Alert, Input, InputRef, List, Spin } from 'antd';
 import { match as pmatch } from 'ts-pattern';
 import * as pluralize from 'pluralize';
+import clsx from 'clsx';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import {
   LoadMoreFooter,
@@ -148,16 +149,7 @@ export const useInfiniteProjectsQuery = ({
   query: string;
   sort: TSort;
 }) => {
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-    isFetching,
-  } = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: ['fusion-projects', { query, sort }],
     queryFn: ({ pageParam = 0 }) =>
       fetchProjectsList({ nexus, query, sort, from: pageParam, size: 10 }),
@@ -166,16 +158,6 @@ export const useInfiniteProjectsQuery = ({
         ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
         : undefined,
   });
-  return {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    status,
-    isLoading,
-    isFetching,
-  };
 };
 const ProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
@@ -207,6 +189,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
     status,
     isLoading,
     isFetching,
+    isError,
   } = useInfiniteProjectsQuery({
     nexus,
     query,
@@ -248,7 +231,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-
+  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <div className="main-route">
       <PinnedMenu />
@@ -277,7 +260,12 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       />
       <div className="route-body">
         <div className="route-body-container">
-          <div className="route-actions">
+          <div
+            className={clsx(
+              'route-actions',
+              notDisplayActionHeader && 'no-actions'
+            )}
+          >
             <div className="action-search">
               <Input.Search
                 allowClear

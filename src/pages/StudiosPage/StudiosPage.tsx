@@ -18,7 +18,8 @@ import {
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import * as pluralize from 'pluralize';
-import { isEmpty } from 'lodash';
+import clsx from 'clsx';
+
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
@@ -223,6 +224,7 @@ const FusionStudiosPage: React.FC = () => {
     status,
     isLoading,
     isFetching,
+    isError,
   } = useInfiniteStudiosQuery({ nexus, query, sort, orgLabel, projectLabel });
 
   const LoadMore = (
@@ -266,6 +268,7 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
+  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <React.Fragment>
       <div className="main-route">
@@ -302,7 +305,12 @@ const FusionStudiosPage: React.FC = () => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div className="route-actions">
+            <div
+              className={clsx(
+                'route-actions',
+                notDisplayActionHeader && 'no-actions'
+              )}
+            >
               <div className="action-search">
                 <Input.Search
                   allowClear
