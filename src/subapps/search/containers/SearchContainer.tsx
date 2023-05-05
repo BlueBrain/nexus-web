@@ -17,7 +17,7 @@ import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import FiltersConfig from '../components/FiltersConfig';
 import SortConfigContainer from './SortConfigContainer';
 import {
-  MAX_DATA_SELECTED_ALLOWED_SIZE,
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
   TResourceTableData,
@@ -183,7 +183,7 @@ const SearchContainer: React.FC = () => {
       0
     );
     if (
-      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
       return notifyTotalSizeExeeced();
@@ -264,7 +264,7 @@ const SearchContainer: React.FC = () => {
       0
     );
     if (
-      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
       return notifyTotalSizeExeeced();

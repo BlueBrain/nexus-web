@@ -1,35 +1,17 @@
+import * as Sentry from '@sentry/browser';
+import { PromisePool } from '@supercharge/promise-pool';
 import React, {
   Fragment,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
-  useMemo,
   useState,
 } from 'react';
 import { Link } from 'react-router-dom';
-import { PromisePool } from '@supercharge/promise-pool';
-import * as Sentry from '@sentry/browser';
 
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk';
-import { useMutation } from 'react-query';
-import { clsx } from 'clsx';
-import {
-  isArray,
-  toUpper,
-  isEmpty,
-  isNil,
-  compact,
-  groupBy,
-  flatMap,
-  omit,
-  slice,
-  isString,
-  has,
-  filter,
-  toLower,
-} from 'lodash';
-import { animate, spring } from 'motion';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import {
   Button,
   Checkbox,
@@ -41,27 +23,44 @@ import {
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
+import { clsx } from 'clsx';
+import {
+  compact,
+  filter,
+  flatMap,
+  groupBy,
+  has,
+  isArray,
+  isEmpty,
+  isNil,
+  isString,
+  omit,
+  slice,
+  toUpper,
+  uniqBy,
+} from 'lodash';
+import { animate, spring } from 'motion';
+import { useMutation } from 'react-query';
 
 import {
-  FileDoneOutlined,
-  DownloadOutlined,
   CloseOutlined,
   CloseSquareOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  FileDoneOutlined,
   FileZipOutlined,
   PlusOutlined,
-  DeleteOutlined,
 } from '@ant-design/icons';
-import {
-  makeOrgProjectTuple,
-  TDataSource,
-  TResourceTableData,
-} from '../../molecules/MyDataTable/MyDataTable';
+import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
 import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
-import { RootState } from '../../../shared/store/reducers';
-import useOnClickOutside from '../../../shared/hooks/useClickOutside';
-import isValidUrl from '../../../utils/validUrl';
 import formatBytes from '../../../utils/formatBytesUnit';
+import isValidUrl from '../../../utils/validUrl';
+import {
+  TDataSource,
+  TResourceTableData,
+  makeOrgProjectTuple,
+} from '../../molecules/MyDataTable/MyDataTable';
 
 import './styles.less';
 
@@ -99,8 +98,28 @@ function findIndexes(arr: any[], predicate: any) {
   });
   return indexes;
 }
-function removeIndeces(arr: any[], indicesToRemove: number[]) {
-  return arr.filter((_, index) => !indicesToRemove.includes(index));
+
+function getPathForParentWithDistribution(parent: ResourceObscured) {
+  const pathWithoutExtension = parent.path.substring(
+    0,
+    parent.path.lastIndexOf('.')
+  );
+  const metadataName = `metadata-${uuidv4().substring(0, 6)}`;
+  return `${pathWithoutExtension}/${metadataName}.json`;
+}
+
+function getPathForChildResource(resource: any, parent: ResourceObscured) {
+  const extension = resource._filename?.split('.').pop() ?? '';
+
+  // Distributions within different resources can have same name. Add a unique id to avoid conflicts in paths and delta error.
+  const uniqueSuffix = uuidv4().substring(0, 6);
+
+  const resourceName = resource._filename
+    ? `${resource._filename.split('.')[0] ?? 'data'}-${uniqueSuffix}`
+    : uniqueSuffix;
+  const parentPath = parent.path.substring(0, parent.path.lastIndexOf('.'));
+
+  return `${parentPath}/${resourceName}.${extension}`;
 }
 
 function makePayload(resourcesPayload: DownloadResourcePayload[]) {
@@ -111,7 +130,8 @@ function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   };
   return { payload, archiveId };
 }
-type TResourceObscured = {
+
+type ResourceObscured = {
   size: number;
   contentType: string | undefined;
   distribution:
@@ -127,8 +147,11 @@ type TResourceObscured = {
   resourceId: string;
   project: string;
   path: string;
-}[];
+};
+
+type TResourceObscured = ResourceObscured[];
 type TResourceDistribution = Resource<{}> & { distribution: any };
+
 async function downloadArchive({
   nexus,
   parsedData,
@@ -148,6 +171,7 @@ async function downloadArchive({
   const resourcesWithDistribution = resourcesPayload.filter(
     item => has(item, 'distribution') && item.distribution?.hasDistribution
   );
+
   const { results, errors } = await PromisePool.withConcurrency(4)
     .for(resourcesWithDistribution)
     .process(async item => {
@@ -157,47 +181,62 @@ async function downloadArchive({
         projectLabel,
         encodeURIComponent(item?.resourceId!)
       )) as TResourceDistribution;
+
       const files: TResourceObscured[] = [];
+      // @ts-ignore
       if (isArray(result.distribution)) {
-        const results = await Promise.all(
-          result.distribution.map(item =>
-            nexus.httpGet({
-              path: item.contentUrl!,
-              headers: { accept: 'application/ld+json' },
-            })
-          )
-        )
-          .then(results => {
-            files.push(
-              // @ts-ignore
-              ...results.map((item: any) => ({
-                ...item,
-                resourceId: item['@id'],
-              }))
-            );
-          })
-          .catch((error: Error) => {
-            console.log('@@error', error);
-          });
-      } else {
-        const resource: TResourceDistribution = await nexus.httpGet({
-          path: result.distribution?.contentUrl!,
-          headers: {
-            accept: 'application/ld+json',
-          },
-        });
-        files.push({
+        // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
+        // To do that, first prepare the metadata for download.
+        resourcesWithoutDistribution.push({
           ...item,
-          // @ts-ignore
-          resourceId: resource['@id'],
+          path: getPathForParentWithDistribution(item),
+          contentType: 'json',
+          '@type': 'Resource',
         });
+
+        // 2. Now download each of the distribution(s) within that resource
+        for (const res of result.distribution) {
+          try {
+            const resource = await nexus.httpGet({
+              path: res.contentUrl!,
+              headers: { accept: 'application/ld+json' },
+            });
+            files.push({
+              ...item,
+              // @ts-ignore
+              path: getPathForChildResource(resource, item),
+              _self: resource._self ?? item._self,
+              resourceId: resource['@id'],
+            });
+          } catch (err) {
+            console.error('Error fetching resource for download', err);
+          }
+        }
+      } else {
+        try {
+          const resource: TResourceDistribution = await nexus.httpGet({
+            path: result.distribution?.contentUrl!,
+            headers: {
+              accept: 'application/ld+json',
+            },
+          });
+          files.push({
+            ...item,
+            // @ts-ignore
+            resourceId: resource['@id'],
+          });
+        } catch (err) {
+          console.error('Error fetching resource for download', err);
+        }
       }
       return files;
     });
-  const resources = [
-    ...resourcesWithoutDistribution,
-    ...results.flat(),
-  ].map(item => omit(item, ['distribution', 'size', 'contentType']));
+  const resources = uniqBy(
+    [...resourcesWithoutDistribution, ...results.flat()].map(item =>
+      omit(item, ['distribution', 'size', 'contentType'])
+    ),
+    '_self'
+  );
   const {
     payload,
     archiveId,
@@ -400,9 +439,12 @@ const DataPanel: React.FC<Props> = ({}) => {
           : resource._self;
         try {
           const parsedSelf = parseURL(url);
-          const pathId = isValidUrl(resource.id)
+          const resourceName = isValidUrl(resource.id)
             ? resource.id.split('/').pop()
             : resource.id;
+          const pathId = resourceName?.length
+            ? resourceName
+            : uuidv4().substring(0, 6);
           const size = resource.distribution
             ? isArray(resource.distribution?.contentSize)
               ? sum(...resource.distribution.contentSize)
@@ -436,6 +478,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       });
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
+
   const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
     i => i !== 'undefined'
   );
@@ -491,6 +534,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
   );
+
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
   );

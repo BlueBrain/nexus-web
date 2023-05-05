@@ -178,7 +178,9 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
       style="display: none;"
     />
     <div>
-      <div>
+      <div
+        class="studio-table-container"
+      >
         <div
           class="ant-table-wrapper"
         >
@@ -441,7 +443,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_0"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien1"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -476,7 +478,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_1"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien2"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -511,7 +513,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_2"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien3"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -546,7 +548,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_3"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien4"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -581,7 +583,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_4"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien5"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -616,7 +618,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_5"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien6"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -651,7 +653,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_6"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien7"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -686,7 +688,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_7"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien8"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -721,7 +723,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_8"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien9"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"
@@ -756,7 +758,7 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                         </tr>
                         <tr
                           class="ant-table-row ant-table-row-level-0 data-table-row"
-                          data-row-key="tr_9"
+                          data-row-key="https://localhost:3000/nexus/v1/projects/nise/kerrien10"
                         >
                           <td
                             class="ant-table-cell ant-table-selection-column"

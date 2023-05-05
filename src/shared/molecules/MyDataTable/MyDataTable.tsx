@@ -21,8 +21,10 @@ import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
-export const MAX_DATA_SELECTED_ALLOWED_SIZE = 1073741824;
+
+export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
+
 type TResource = {
   [key: string]: any;
 } & {
@@ -55,6 +57,14 @@ export type TResourceTableData = {
   selectedRowKeys: React.Key[];
   selectedRows: TDataSource[];
 };
+
+export type Distribution = {
+  contentSize: number;
+  encodingFormat: string | string[];
+  label: string | string[];
+  hasDistribution: boolean;
+};
+
 export type TDataSource = {
   source?: string;
   key: React.Key;
@@ -71,6 +81,7 @@ export type TDataSource = {
     contentSize: number;
     encodingFormat: string | string[];
     label: string | string[];
+    hasDistribution?: boolean;
   };
 };
 type TProps = {
@@ -99,6 +110,7 @@ const makeResourceUri = (
     resourceId
   )}`;
 };
+
 export const getLocalStorageSize = () => {
   let size = 0;
   for (let i = 0; i < localStorage.length; i += 1) {
@@ -109,6 +121,7 @@ export const getLocalStorageSize = () => {
   size = size / 1048576;
   return size;
 };
+
 export const notifyTotalSizeExeeced = () => {
   return notification.warning({
     message: (
@@ -117,10 +130,11 @@ export const notifyTotalSizeExeeced = () => {
         storage size will reduce the performance of your app
       </div>
     ),
-    description: <em>Maximum size must be lower or equal than 1GB</em>,
+    description: <em>Maximum size must be lower than or equal to 1GB</em>,
     key: 'data-panel-size-exceeded',
   });
 };
+
 const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
   isLoading,
@@ -320,7 +334,7 @@ const MyDataTable: React.FC<TProps> = ({
       0
     );
     if (
-      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
       return notifyTotalSizeExeeced();
@@ -372,7 +386,7 @@ const MyDataTable: React.FC<TProps> = ({
       0
     );
     if (
-      size > MAX_DATA_SELECTED_ALLOWED_SIZE ||
+      size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
       return notifyTotalSizeExeeced();
