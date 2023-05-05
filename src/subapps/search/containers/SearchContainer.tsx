@@ -147,16 +147,24 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: {
-        ...(has(record, 'distribution')
-          ? record.distribution
-          : {
-              contentSize: 0,
-              encodingFormat: '',
-              label: '',
-            }),
-        hasDistribution: has(record, 'distribution'),
-      },
+      distribution: has(record, 'distribution')
+        ? {
+            ...record.distribution,
+            hasDistribution: has(record, 'distribution'),
+          }
+        : record['@type'] === 'File'
+        ? {
+            contentSize: record._bytes,
+            encodingFormat: record._mediaType,
+            label: record._filename,
+            hasDistribution: has(record, 'distribution'),
+          }
+        : {
+            contentSize: 0,
+            encodingFormat: '',
+            label: '',
+            hasDistribution: false,
+          },
     };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -211,16 +219,24 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: {
-        ...(has(record, 'distribution')
-          ? record.distribution
-          : {
-              contentSize: 0,
-              encodingFormat: '',
-              label: '',
-            }),
-        hasDistribution: has(record, 'distribution'),
-      },
+      distribution: has(record, 'distribution')
+        ? {
+            ...record.distribution,
+            hasDistribution: has(record, 'distribution'),
+          }
+        : record['@type'] === 'File'
+        ? {
+            contentSize: record._bytes,
+            encodingFormat: record._mediaType,
+            label: record._filename,
+            hasDistribution: has(record, 'distribution'),
+          }
+        : {
+            contentSize: 0,
+            encodingFormat: '',
+            label: '',
+            hasDistribution: false,
+          },
     }));
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!

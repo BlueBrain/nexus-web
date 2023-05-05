@@ -11,7 +11,7 @@ import { PromisePool } from '@supercharge/promise-pool';
 import * as Sentry from '@sentry/browser';
 
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk';
 import { useMutation } from 'react-query';
 import { clsx } from 'clsx';
 import {
@@ -128,7 +128,7 @@ type TResourceObscured = {
   project: string;
   path: string;
 }[];
-
+type TResourceDistribution = Resource<{}> & { distribution: any };
 async function downloadArchive({
   nexus,
   parsedData,
@@ -152,30 +152,37 @@ async function downloadArchive({
     .for(resourcesWithDistribution)
     .process(async item => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
-      const result = await nexus.Resource.get(
+      const result = (await nexus.Resource.get<TResourceDistribution>(
         orgLabel,
         projectLabel,
         encodeURIComponent(item?.resourceId!)
-      );
+      )) as TResourceDistribution;
       const files: TResourceObscured[] = [];
-      // @ts-ignore
       if (isArray(result.distribution)) {
-        // @ts-ignore
-        for (const res of result.distribution) {
-          const resource = await nexus.httpGet({
-            path: res.contentUrl!,
-            headers: { accept: 'application/ld+json' },
-          });
-          files.push({
-            ...item,
+        const results = await Promise.all(
+          result.distribution.map(item =>
+            nexus.httpGet({
+              path: item.contentUrl!,
+              headers: { accept: 'application/ld+json' },
+            })
+          )
+        ).catch(error => {
+          console.log('@@error', {
+            error,
             // @ts-ignore
-            resourceId: resource['@id'],
+            path: item.contentUrl!,
           });
-        }
-      } else {
-        const resource = await nexus.httpGet({
+        });
+        files.push(
           // @ts-ignore
-          path: result.distribution!.contentUrl!,
+          ...results.map((item: any) => ({
+            ...item,
+            resourceId: item['@id'],
+          }))
+        );
+      } else {
+        const resource: TResourceDistribution = await nexus.httpGet({
+          path: result.distribution?.contentUrl!,
           headers: {
             accept: 'application/ld+json',
           },
@@ -188,19 +195,16 @@ async function downloadArchive({
       }
       return files;
     });
-  const resources = [...resourcesWithoutDistribution, ...results.flat()].map(
-    item =>
-      // @ts-ignore
-      omit(item, ['distribution', 'size', 'contentType'])
-  );
+  const resources = [
+    ...resourcesWithoutDistribution,
+    ...results.flat(),
+  ].map(item => omit(item, ['distribution', 'size', 'contentType']));
   const {
     payload,
     archiveId,
   }: // @ts-ignore
   { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
-    // TODO: if the resource is a file, when we added it to the cart, it will be downloaded
-    // TODO: if the resource is not file but has distribution, the download not working
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
   } catch (error) {}
   try {
@@ -215,6 +219,7 @@ async function downloadArchive({
         ? (archive as Blob)
         : new Blob([archive.toString()]);
     return {
+      errors,
       blob,
       archiveId,
       format,
@@ -514,6 +519,33 @@ const DataPanel: React.FC<Props> = ({}) => {
             document.body.appendChild(link);
             link.click();
             link.parentNode?.removeChild(link);
+            if (data.errors.length) {
+              notification.warning({
+                message: (
+                  <span>
+                    <strong>Archive: </strong>
+                    {data.archiveId}
+                  </span>
+                ),
+                description: (
+                  <em>{`Selected data downloaded with errors ${JSON.stringify(
+                    data.errors,
+                    null,
+                    2
+                  )}`}</em>
+                ),
+              });
+            } else {
+              notification.success({
+                message: (
+                  <span>
+                    <strong>Archive: </strong>
+                    {data.archiveId}
+                  </span>
+                ),
+                description: <em>Selected data downloaded successfully</em>,
+              });
+            }
           },
           onError: (error: any) => {
             notification.error({

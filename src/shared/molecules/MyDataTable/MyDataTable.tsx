@@ -267,17 +267,30 @@ const MyDataTable: React.FC<TProps> = ({
         type: resource['@type'],
         createdAt: resource._createdAt,
         updatedAt: resource._updatedAt,
-        distribution: {
-          contentSize: resource.distribution?.contentSize ?? 0,
-          encodingFormat: resource.distribution?.encodingFormat ?? '',
-          label: resource.distribution?.label ?? '',
-          hasDistribution: has(resource, 'distribution'),
-        },
+        distribution: has(resource, 'distribution')
+          ? {
+              contentSize: resource.distribution?.contentSize ?? 0,
+              encodingFormat: resource.distribution?.encodingFormat ?? '',
+              label: resource.distribution?.label ?? '',
+              hasDistribution: has(resource, 'distribution'),
+            }
+          : resource['@type'] === 'File'
+          ? {
+              contentSize: resource._bytes,
+              encodingFormat: resource._mediaType,
+              label: resource._filename,
+            }
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            },
         source: 'my-data',
       };
     }) || [];
+  const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
   const tablePaginationConfig: TablePaginationConfig = {
-    total,
+    total: allowedTotal,
     pageSize: size,
     defaultCurrent: 0,
     current: offset / size + 1,
