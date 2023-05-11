@@ -36,6 +36,13 @@ const layoutSettings = {
   docsLink: process.env.DOCS_LINK || '',
   logoImg: process.env.LOGO_IMG || '',
   forgeLink: process.env.FORGE_LINK || '',
+  organizationImg: process.env.ORGANIZATION_IMG || '',
+  projectsImg: process.env.PROJECTS_IMG || '',
+  studiosImg: process.env.STUDIOS_IMG || '',
+  projectImg: process.env.PROJECT_IMG || '',
+  landingVideo: process.env.LANDING_VIDEO || '',
+  landingPosterImg: process.env.LANDING_POSTER_IMG || '',
+  mainColor: process.env.MAIN_COLOR || '#062d68',
 };
 
 // configure search settings

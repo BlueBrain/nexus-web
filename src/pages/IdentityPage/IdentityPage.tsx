@@ -12,7 +12,7 @@ import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 
-const LandingVideo = () => (
+const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   <video
     loop
     muted
@@ -24,7 +24,7 @@ const LandingVideo = () => (
   >
     <source
       type="video/mp4"
-      src={require('../../shared/images/BrainRegionsNexusPage.mp4')}
+      src={videoUrl || require('../../shared/images/BrainRegionsNexusPage.mp4')}
     />
   </video>
 );
@@ -33,6 +33,7 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   const {
     auth,
     config: { serviceAccountsRealm },
@@ -51,12 +52,18 @@ const IdentityPage: React.FC<{}> = () => {
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
   return (
-    <div className="home-authentication">
+    <div
+      className="home-authentication"
+      style={{ backgroundColor: layoutSettings.mainColor }}
+    >
       <img
-        src={require('../../shared/images/EPFL_BBP_logo.png')}
+        src={
+          layoutSettings.landingPosterImg ||
+          require('../../shared/images/EPFL_BBP_logo.png')
+        }
         className="home-authentication-epfl"
       />
-      <LandingVideo />
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
         <div className="title">Nexus.Fusion</div>
         <div className="actions">
