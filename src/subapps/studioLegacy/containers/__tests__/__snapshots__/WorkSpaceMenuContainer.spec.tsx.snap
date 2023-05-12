@@ -320,6 +320,13 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
                               </span>
                             </span>
                           </span>
+                          <span
+                            class="table-row-count"
+                          >
+                            
+                            10 
+                            RESULTS
+                          </span>
                           <button
                             class="ant-btn ant-btn-round ant-btn-default ant-btn-icon-only"
                             type="button"
