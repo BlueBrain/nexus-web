@@ -246,7 +246,7 @@ const OrganizationListView: React.FC<{}> = () => {
             ) : total && query ? (
               `Filtering ${total} of ${
                 totalOrganizationRef.current
-              }  ${pluralize('Project', total)}`
+              }  ${pluralize('Organization', total)}`
             ) : isLoading ? (
               <LoadingOutlined />
             ) : (
