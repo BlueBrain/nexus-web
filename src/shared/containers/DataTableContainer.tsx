@@ -134,6 +134,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     useSelector((state: RootState) => state.config.basePath) || '';
   const [showEditForm, setShowEditForm] = useState<boolean>(showEdit || false);
   const [tableDataError, setTableDataError] = useState<null | Error>(null);
+  const [displayedRows, setDisplayedRows] = useState(0);
+
   useEffect(() => {
     setShowEditForm(showEdit || false);
   }, [showEdit]);
@@ -437,6 +439,14 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <Col span={8} className="table-options">
             <div className="table-options__inner">
               {tableResource?.enableSearch && search}
+              <span className="table-row-count">
+                {displayedRows &&
+                displayedRows !== tableData.dataResult.data?.items?.length
+                  ? `${displayedRows} / `
+                  : ''}
+                {`${tableData.dataResult.data?.items?.length ?? 0} `}
+                RESULTS
+              </span>
               {(!disableEdit ||
                 !disableAddFromCart ||
                 tableResource.enableDownload ||
@@ -449,10 +459,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       </div>
     );
   };
-
-  // const [preparingDataDownload, setPreparingDataDownload] = React.useState(
-  //   false
-  // );
 
   return (
     <div className="studio-table-container">
@@ -495,6 +501,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             }}
             rowKey={r => getStudioRowKey(r)}
             data-testid="dashboard-table"
+            onChange={(page, fileter, sorter, extra) => {
+              setDisplayedRows(extra.currentDataSource?.length ?? 0);
+            }}
           />
           <Modal
             open={showEditForm}
