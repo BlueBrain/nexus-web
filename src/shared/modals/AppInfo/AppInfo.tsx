@@ -13,6 +13,9 @@ import Copy from '../../../shared/components/Copy';
 import './styles.less';
 
 declare var FUSION_VERSION: string;
+declare var COMMIT_HASH: string;
+const repoUrl = 'https://github.com/BlueBrain/nexus-web';
+
 export type TNexusEco = {
   delta: string;
   environment: string;
@@ -84,6 +87,9 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       <div className="versions">
         <div className="nexus-service-header">
           <Subtitle className="nexus-services">Nexus Services</Subtitle>
+          <span style={{ color: '#A1A1A1' }}>
+            Deployment: {environmentName}
+          </span>
           <Copy
             render={(copySuccess, triggerCopy) => (
               <Tooltip
@@ -106,14 +112,16 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
             <div>Nexus Delta</div>
             <p>{deltaVersion}</p>
           </div>
-          <div className="version-item" data-testid="fusion-version">
+          <a
+            className="version-item"
+            data-testid="fusion-version"
+            href={`${repoUrl}/commits/${COMMIT_HASH}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <div>Nexus Fusion</div>
             <p>{FUSION_VERSION}</p>
-          </div>
-          <div className="version-item" data-testid="environment-name">
-            <div>Deployment</div>
-            <p>{environmentName}</p>
-          </div>
+          </a>
         </div>
       </div>
       <Divider />
