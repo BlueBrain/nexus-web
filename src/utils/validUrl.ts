@@ -14,5 +14,18 @@ function easyValidURL(url: string) {
     return false;
   }
 }
-export { easyValidURL };
+
+function isUrlCurieFormat(str: string) {
+  if (!str) {
+    return false;
+  }
+
+  // Regular expression pattern to match CURIE format
+  const curiePattern = /^[A-Za-z_][\w\-\.]*:?[\w\-\.]*$/;
+
+  // Test the string against the CURIE pattern
+  return curiePattern.test(str);
+}
+
+export { easyValidURL, isUrlCurieFormat };
 export default isValidUrl;

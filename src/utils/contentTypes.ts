@@ -5,6 +5,7 @@ import * as Sentry from '@sentry/browser';
  * Redacted list, adapted from - https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
  */
 export const MIME_TYPE_TO_EXTENSION: { [key: string]: string } = {
+  'application/asc': 'asc',
   'application/gzip': 'gz',
   'application/json': 'json',
   'application/ld+json': 'jsonld',
