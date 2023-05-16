@@ -38,10 +38,12 @@ import {
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import { Projection } from '../components/EditTableForm';
 import { download } from '../utils/download';
-import { isNumeric, parseJsonMaybe } from '../utils/index';
+import { isNumeric, parseJsonMaybe, uuidv4 } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
+import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
+import { notification } from 'antd';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -392,6 +394,34 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
+const fileNameForDistributionItem = (distItem: any, defaultName: string) => {
+  const distName: string = distItem?.label ?? distItem?.name ?? defaultName;
+  // Distribution name has an extension if  it's not a url & it has some text after a period.
+  const distNameHasExtension = Boolean(
+    !isValidUrl(distName) &&
+      distName.slice(
+        distName.includes('.') ? distName.lastIndexOf('.') : distName.length
+      )
+  );
+
+  if (!Boolean(distItem?.name) || !distNameHasExtension) {
+    Sentry.captureException(
+      'Distribution item does not have name or extension.',
+      {
+        extra: { distItem, defaultName },
+      }
+    );
+  }
+
+  const fileName = distNameHasExtension
+    ? distName
+    : `${distName}.${fileExtensionFromResourceEncoding(
+        distItem?.encodingFormat
+      )}`;
+
+  return fileName;
+};
+
 const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
   let localStorageRow: TDataSource;
   try {
@@ -423,21 +453,14 @@ const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
           : resource.distribution?.encodingFormat ?? '',
         label: isArray(resource.distribution)
           ? resource.distribution.map(distItem => {
-              const itemLabel =
-                distItem.label ??
-                `${resourceName}.${fileExtensionFromResourceEncoding(
-                  distItem.encodingFormat
-                )}`;
-              return itemLabel;
+              return fileNameForDistributionItem(distItem, resourceName);
             })
-          : resource.distribution?.label ??
-            `${resourceName}.${fileExtensionFromResourceEncoding(
-              resource.distribution?.encodingFormat
-            )}`,
+          : fileNameForDistributionItem(resource.distribution, resourceName),
         hasDistribution: has(resource, 'distribution'),
       },
     };
   } catch (err) {
+    console.log('@error Failed to serialize resource for localStorage.', err);
     Sentry.captureException(err, {
       extra: {
         resource,
@@ -564,11 +587,51 @@ export const useAccessDataForTable = (
     saveSelectedRowsToLocalStorage(selectedRowKeys, selectedRows);
   };
 
-  const fetchResourceForDownload = (selfUrl: string): Promise<Resource> => {
-    return nexus.httpGet({
-      path: selfUrl,
-      headers: { Accept: 'application/json' },
-    });
+  const fetchResourceForDownload = async (
+    selfUrl: string
+  ): Promise<Resource> => {
+    let compactResource;
+    let expandedResource;
+
+    try {
+      compactResource = await nexus.httpGet({
+        path: selfUrl,
+        headers: { Accept: 'application/json' },
+      });
+
+      const receivedExpandedId =
+        isValidUrl(compactResource['@id']) &&
+        !isUrlCurieFormat(compactResource['@id']);
+
+      if (receivedExpandedId) {
+        return compactResource;
+      }
+
+      expandedResource = await nexus.httpGet({
+        path: `${selfUrl}?format=expanded`,
+        headers: { Accept: 'application/json' },
+      });
+
+      return {
+        ...compactResource,
+        ['@id']:
+          expandedResource?.[0]?.['@id'] ??
+          expandedResource['@id'] ??
+          compactResource['@id'],
+      };
+    } catch (err) {
+      notification.warning({
+        message: (
+          <div>Could not fetch a resource with id for download {selfUrl}</div>
+        ),
+        description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
+        key: selfUrl,
+      });
+      // @ts-ignore TODO: Remove when we supprot es2022 in ts.
+      throw new Error(`Could not select resource ${selfUrl} for download`, {
+        cause: err,
+      });
+    }
   };
 
   const saveSelectedRowsToLocalStorage = (
