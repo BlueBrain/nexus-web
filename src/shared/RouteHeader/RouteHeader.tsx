@@ -1,6 +1,8 @@
 import React, { CSSProperties } from 'react';
+import { useSelector } from 'react-redux';
 import { PlusOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
+import { RootState } from '../../shared/store/reducers';
 import './styles.less';
 
 type TProps = {
@@ -26,8 +28,12 @@ const RouteHeader = ({
   permissions = [],
   path = ['/'],
 }: TProps) => {
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   return (
-    <div className="route-header">
+    <div
+      className="route-header"
+      style={{ background: layoutSettings.mainColor }}
+    >
       <img src={bg} alt={alt} style={{ ...imgCss }} />
       <div className="title">
         <h2>{title}</h2>

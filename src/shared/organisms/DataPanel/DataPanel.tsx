@@ -166,20 +166,19 @@ async function downloadArchive({
               headers: { accept: 'application/ld+json' },
             })
           )
-        ).catch(error => {
-          console.log('@@error', {
-            error,
-            // @ts-ignore
-            path: item.contentUrl!,
+        )
+          .then(results => {
+            files.push(
+              // @ts-ignore
+              ...results.map((item: any) => ({
+                ...item,
+                resourceId: item['@id'],
+              }))
+            );
+          })
+          .catch((error: Error) => {
+            console.log('@@error', error);
           });
-        });
-        files.push(
-          // @ts-ignore
-          ...results.map((item: any) => ({
-            ...item,
-            resourceId: item['@id'],
-          }))
-        );
       } else {
         const resource: TResourceDistribution = await nexus.httpGet({
           path: result.distribution?.contentUrl!,
@@ -527,13 +526,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                     {data.archiveId}
                   </span>
                 ),
-                description: (
-                  <em>{`Selected data downloaded with errors ${JSON.stringify(
-                    data.errors,
-                    null,
-                    2
-                  )}`}</em>
-                ),
+                description: <em>{`Selected data downloaded with errors`}</em>,
               });
             } else {
               notification.success({

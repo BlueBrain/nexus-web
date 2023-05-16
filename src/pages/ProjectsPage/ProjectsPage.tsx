@@ -1,7 +1,7 @@
 import React, { useReducer, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   LoadingOutlined,
@@ -30,6 +30,7 @@ import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils/timeago';
 import formatNumber from '../../utils/formatNumber';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
 import '../../shared/styles/route-layout.less';
 
 type TProjectOptions = {
@@ -166,6 +167,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
   const totalProjectsRef = useRef<number>(0);
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const [query, setQueryString] = useState<string>('');
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   const nexus: NexusClient = useNexusContext();
   const [{ sort }, setOptions] = useReducer(
     (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
@@ -252,7 +254,10 @@ const ProjectsPage: React.FC<{}> = ({}) => {
           )
         }
         alt="hippocampus"
-        bg={require('../../shared/images/hippocampus.png')}
+        bg={
+          layoutSettings.projectsImg ||
+          require('../../shared/images/hippocampus.png')
+        }
         createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}

@@ -35,7 +35,8 @@ import {
 } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
 import './EditTableForm.less';
-import { isNil } from 'lodash';
+import { isNil, isObject } from 'lodash';
+import { ErrorComponent } from './ErrorComponent';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -75,6 +76,7 @@ const { Option } = Select;
 const EditTableForm: React.FC<{
   onSave: (data: TableResource | UnsavedTableResource) => void;
   onClose: () => void;
+  onError: (err: Error | null) => void;
   table?: TableResource;
   busy: boolean;
   orgLabel: string;
@@ -84,6 +86,7 @@ const EditTableForm: React.FC<{
 }> = ({
   onSave,
   onClose,
+  onError,
   table,
   orgLabel,
   projectLabel,
@@ -94,6 +97,9 @@ const EditTableForm: React.FC<{
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [viewError, setViewError] = React.useState<boolean>(false);
+  const [tableDataError, setTableDataError] = React.useState<null | Error>(
+    null
+  );
   const [projectionError, setProjectionError] = React.useState<boolean>(false);
   const [description, setDescription] = React.useState<string>(
     table?.description || ''
@@ -118,6 +124,7 @@ const EditTableForm: React.FC<{
   const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<
     boolean
   >(table ? table.enableInteractiveRows : true);
+
   const [enableDownload, setEnableDownload] = React.useState<boolean>(
     table ? table.enableDownload : true
   );
@@ -234,17 +241,32 @@ const EditTableForm: React.FC<{
           projection?.['@type'].includes('ElasticSearchProjection') ||
           projectionId === 'All_ElasticSearchProjection')
       ) {
-        const result = await queryES(
-          JSON.parse(dataQuery),
-          nexus,
-          orgLabel,
-          projectLabel,
-          viewResource['@id'],
-          !!projectionId,
-          projectionId === 'All_ElasticSearchProjection'
-            ? undefined
-            : projectionId
-        );
+        let result;
+
+        try {
+          result = await queryES(
+            dataQuery,
+            nexus,
+            orgLabel,
+            projectLabel,
+            viewResource['@id'],
+            !!projectionId,
+            projectionId === 'All_ElasticSearchProjection'
+              ? undefined
+              : projectionId
+          );
+          // tslint:disable-next-line
+        } catch (error) {
+          const anyerror = error as any; // Hack until we migrate from tslint to typescript-eslint.
+          const message =
+            anyerror?.reason ??
+            anyerror?.message ??
+            anyerror?.name ??
+            'Failed to fetch elastic search table';
+          const cause = anyerror.cause ?? anyerror?.details;
+          // @ts-ignore - TODO: Remove ts-ignore once we support es2022 (or up).
+          throw new Error(message, { cause });
+        }
 
         const { items } = parseESResults(result);
         const mergedItem = items.reduce((result: any, current: any) => {
@@ -260,29 +282,46 @@ const EditTableForm: React.FC<{
           enableFilter: false,
         }));
       }
+
       const result = await querySparql(
         nexus,
         dataQuery,
         viewResource,
         !!projectionId,
         projectionId === 'All_SparqlProjection' ? undefined : projectionId
-      );
-
-      return result.headerProperties
-        .sort((a, b) => {
-          return a.title > b.title ? 1 : -1;
+      )
+        .then(result => {
+          return result.headerProperties
+            .sort((a, b) => {
+              return a.title > b.title ? 1 : -1;
+            })
+            .map(x => ({
+              '@type': 'text',
+              name: x.dataIndex,
+              format: '',
+              enableSearch: false,
+              enableSort: false,
+              enableFilter: false,
+            }));
         })
-        .map(x => ({
-          '@type': 'text',
-          name: x.dataIndex,
-          format: '',
-          enableSearch: false,
-          enableSort: false,
-          enableFilter: false,
-        }));
+        .catch(error => {
+          // Sometimes delta's error message can be in `name` or `reason` field.
+          const message =
+            error.message ??
+            error.reason ??
+            error.name ??
+            'Failed to fetch sparql table';
+          // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
+          throw new Error(message, {
+            cause: error.cause ?? error.details ?? error.stack,
+          });
+        });
+
+      return result;
     },
     {
       onSuccess: data => {
+        updateTableDataError(null);
         if (
           isNil(configuration) ||
           (configuration as TableColumn[]).length === 0
@@ -290,12 +329,13 @@ const EditTableForm: React.FC<{
           setConfiguration(data);
         }
       },
-      onError: error => {
-        console.error(error);
+      onError: (error: Error) => {
+        updateTableDataError(error);
       },
       enabled: preview,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
+      retry: false,
     }
   );
 
@@ -306,6 +346,11 @@ const EditTableForm: React.FC<{
 
   const onChangeDescription = (event: any) => {
     setDescription(event.target.value);
+  };
+
+  const updateTableDataError = (error: Error | null) => {
+    setTableDataError(error);
+    onError(error); // Notify parent of EditTableForm of the error.
   };
 
   const onClickSave = async () => {
@@ -651,6 +696,15 @@ const EditTableForm: React.FC<{
 
           {renderColumnConfig()}
         </div>
+        {tableDataError && (
+          <ErrorComponent
+            message={tableDataError.message}
+            details={
+              // @ts-ignore - TODO: Remove ts-ignore once we support es2022 in ts.
+              (tableDataError.cause as any)?.details
+            }
+          />
+        )}
         <div className="edit-table-form__buttons">
           <Button style={{ margin: '10px' }} onClick={onClose}>
             Cancel

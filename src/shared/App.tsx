@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { useQuery } from 'react-query';
