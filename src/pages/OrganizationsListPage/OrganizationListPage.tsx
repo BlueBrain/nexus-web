@@ -129,7 +129,7 @@ const OrganizationItem = ({
         </div>
         <div className="redirection">
           <Link to={to}>
-            View projects
+            View organization
             <RightSquareOutlined />
           </Link>
         </div>
@@ -242,7 +242,7 @@ const OrganizationListView: React.FC<{}> = () => {
           title="Organizations"
           extra={
             total && !query ? (
-              `Total of ${total} ${pluralize('Project', total)}`
+              `Total of ${total} ${pluralize('Organization', total)}`
             ) : total && query ? (
               `Filtering ${total} of ${
                 totalOrganizationRef.current
