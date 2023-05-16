@@ -209,7 +209,8 @@
       "<rootDir>/migrations/"
     ],
     "globals": {
-      "FUSION_VERSION": "1.0.0"
+      "FUSION_VERSION": "1.0.0",
+      "COMMIT_HASH": "9013fa343"
     },
     "watchPathIgnorePatterns": ["node_modules"]
   },
