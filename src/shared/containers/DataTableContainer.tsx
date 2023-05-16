@@ -440,11 +440,15 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             <div className="table-options__inner">
               {tableResource?.enableSearch && search}
               <span className="table-row-count">
+                {/* If the user filters a column (i.e. updates) or enters a serch term (i.e. update dataResult), show the total rows in format <rows shown to user>/<total rows>, otherwise only show total rows. */}
                 {displayedRows &&
                 displayedRows !== tableData.dataResult.data?.items?.length
                   ? `${displayedRows} / `
+                  : tableData.dataResult?.data?.items.length !==
+                    tableData.dataResult.data?.total
+                  ? `${tableData.dataResult.data?.items?.length} /`
                   : ''}
-                {`${tableData.dataResult.data?.items?.length ?? 0} `}
+                {`${tableData.dataResult?.data?.total ?? 0} `}
                 RESULTS
               </span>
               {(!disableEdit ||
