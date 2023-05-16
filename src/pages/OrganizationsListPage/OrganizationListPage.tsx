@@ -21,12 +21,13 @@ import {
   OrganizationList,
   OrgResponseCommon,
 } from '@bbp/nexus-sdk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as pluralize from 'pluralize';
 import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
@@ -160,6 +161,7 @@ const OrganizationListView: React.FC<{}> = () => {
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const nexus: NexusClient = useNexusContext();
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   const [query, setQueryString] = useState<string>('');
   const [{ sort }, setOptions] = useReducer(
     (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
@@ -254,7 +256,10 @@ const OrganizationListView: React.FC<{}> = () => {
             )
           }
           alt="sscx"
-          bg={require('../../shared/images/sscx-by-layers-v3.png')}
+          bg={
+            layoutSettings.organizationImg ||
+            require('../../shared/images/sscx-by-layers-v3.png')
+          }
           createLabel="Create Organization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}

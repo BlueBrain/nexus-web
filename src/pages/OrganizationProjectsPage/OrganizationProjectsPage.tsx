@@ -23,7 +23,7 @@ import {
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
@@ -33,6 +33,7 @@ import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
+import { RootState } from '../../shared/store/reducers';
 import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
@@ -209,6 +210,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const dataContainerRef = useRef<HTMLDivElement>(null);
   const totalProjectsRef = useRef<number>(0);
   const [query, setQueryString] = useState<string>('');
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{ orgLabel: string }>(
     `/${subapp.namespace}/:orgLabel`
@@ -315,7 +317,10 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
             )
           }
           alt="hippocampus"
-          bg={require('../../shared/images/hippocampus.png')}
+          bg={
+            layoutSettings.projectsImg ||
+            require('../../shared/images/hippocampus.png')
+          }
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}

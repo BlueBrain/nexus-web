@@ -191,6 +191,7 @@ const FusionStudiosPage: React.FC = () => {
 
   const loadMoreRef = React.useRef(null);
   const totalStudiosRef = React.useRef<number>(0);
+  const { layoutSettings } = useSelector((state: RootState) => state.config);
   const oidc = useSelector((state: RootState) => state.oidc);
   const token = oidc && oidc.user ? oidc.user.access_token : undefined;
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
@@ -290,7 +291,10 @@ const FusionStudiosPage: React.FC = () => {
             )
           }
           alt="hippocampus"
-          bg={require('../../shared/images/neocortex.png')}
+          bg={
+            layoutSettings.studiosImg ||
+            require('../../shared/images/neocortex.png')
+          }
           path={
             orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
           }
