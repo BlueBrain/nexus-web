@@ -17,7 +17,6 @@ import {
 import { Alert, Input, InputRef, List, Spin } from 'antd';
 import { match as pmatch } from 'ts-pattern';
 import * as pluralize from 'pluralize';
-import clsx from 'clsx';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import {
   LoadMoreFooter,
@@ -233,7 +232,6 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <div className="main-route">
       <PinnedMenu />
@@ -265,12 +263,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       />
       <div className="route-body">
         <div className="route-body-container">
-          <div
-            className={clsx(
-              'route-actions',
-              notDisplayActionHeader && 'no-actions'
-            )}
-          >
+          <div className="route-actions">
             <div className="action-search">
               <Input.Search
                 allowClear

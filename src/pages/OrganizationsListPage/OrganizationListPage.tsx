@@ -9,7 +9,6 @@ import React, {
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { Alert, Input, Spin, List, InputRef } from 'antd';
-import clsx from 'clsx';
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -33,6 +32,7 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import formatNumber from '../../utils/formatNumber';
 import '../../shared/styles/route-layout.less';
+import { isNil } from 'lodash';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -220,14 +220,14 @@ const OrganizationListView: React.FC<{}> = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  useEffect(() => {
-    setQueryString('');
-    if (queryInputRef.current) {
-      queryInputRef.current.focus({
-        cursor: 'end',
-      });
-    }
-  }, []);
+  // useEffect(() => {
+  //   setQueryString('');
+  //   if (queryInputRef.current) {
+  //     queryInputRef.current.focus({
+  //       cursor: 'end',
+  //     });
+  //   }
+  // }, []);
   const LoadMore = (
     <LoadMoreFooter
       {...{ hasNextPage, fetchNextPage }}
@@ -235,7 +235,6 @@ const OrganizationListView: React.FC<{}> = () => {
       ref={loadMoreRef}
     />
   );
-  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <Fragment>
       <div className="main-route">
@@ -267,12 +266,7 @@ const OrganizationListView: React.FC<{}> = () => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div
-              className={clsx(
-                'route-actions',
-                notDisplayActionHeader && 'no-actions'
-              )}
-            >
+            <div className="route-actions">
               <div className="action-search">
                 <Input.Search
                   allowClear

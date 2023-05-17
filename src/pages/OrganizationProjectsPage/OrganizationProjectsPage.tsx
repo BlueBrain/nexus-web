@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { InputRef, Input, Spin, Alert, List } from 'antd';
 import { capitalize } from 'lodash';
-import clsx from 'clsx';
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -295,7 +294,6 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       ref={loadMoreRef}
     />
   );
-  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <Fragment>
       <div className="main-route">
@@ -328,12 +326,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div
-              className={clsx(
-                'route-actions',
-                notDisplayActionHeader && 'no-actions'
-              )}
-            >
+            <div className="route-actions">
               <div className="action-search">
                 <Input.Search
                   allowClear

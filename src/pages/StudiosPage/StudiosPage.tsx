@@ -11,14 +11,8 @@ import {
   PaginatedList,
 } from '@bbp/nexus-sdk';
 import { match as pmatch } from 'ts-pattern';
-import {
-  LoadingOutlined,
-  RightSquareOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-} from '@ant-design/icons';
+import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
 import * as pluralize from 'pluralize';
-import clsx from 'clsx';
 
 import {
   getOrgAndProjectFromProjectId,
@@ -269,7 +263,6 @@ const FusionStudiosPage: React.FC = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  const notDisplayActionHeader = !dataSource.length || isError;
   return (
     <React.Fragment>
       <div className="main-route">
@@ -309,12 +302,7 @@ const FusionStudiosPage: React.FC = () => {
         />
         <div className="route-body">
           <div className="route-body-container">
-            <div
-              className={clsx(
-                'route-actions',
-                notDisplayActionHeader && 'no-actions'
-              )}
-            >
+            <div className="route-actions">
               <div className="action-search">
                 <Input.Search
                   allowClear
