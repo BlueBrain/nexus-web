@@ -453,7 +453,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           const contentType = resource.distribution
             ? isArray(resource.distribution?.label)
               ? resource.distribution?.label[0].split('.').pop()
-              : resource.distribution?.label.split('.').pop() ?? ''
+              : resource.distribution?.label?.split('.').pop() ?? ''
             : '';
           return {
             size,
