@@ -364,20 +364,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             </div>
           ) : null
         ) : null}
-        {tableResource ? (
-          tableResource.enableSave ? (
-            <div>
-              <Button
-                block
-                icon={<ShoppingCartOutlined />}
-                type="default"
-                onClick={tableData.addToDataCart}
-              >
-                Add To Cart
-              </Button>
-            </div>
-          ) : null
-        ) : null}
         {!disableDelete && (
           <div>
             <Button
@@ -449,7 +435,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                   ? `${tableData.dataResult.data?.items?.length} /`
                   : ''}
                 {`${tableData.dataResult?.data?.total ?? 0} `}
-                RESULTS
+                Results
               </span>
               {(!disableEdit ||
                 !disableAddFromCart ||
