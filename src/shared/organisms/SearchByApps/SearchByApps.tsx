@@ -48,7 +48,7 @@ const AppsList = new Map<string, AppDetails>([
       id: 'applist/studios',
       key: 'applist/studios',
       title: 'Studios',
-      subtitle: 'Browse data organinsed by users of the plat',
+      subtitle: 'Browse data organinsed by users of the platform',
       tileColor: 'linear-gradient(90deg, #C6A3F6 1.19%, #706CE8 100%)',
       link: '/studios',
       createLabel: 'Create Studios',

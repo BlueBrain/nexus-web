@@ -33,6 +33,7 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import formatNumber from '../../utils/formatNumber';
 import '../../shared/styles/route-layout.less';
+import { isNil } from 'lodash';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -235,7 +236,7 @@ const OrganizationListView: React.FC<{}> = () => {
       ref={loadMoreRef}
     />
   );
-  const notDisplayActionHeader = !dataSource.length || isError;
+  const notDisplayActionHeader = isNil(dataSource.length) || isError;
   return (
     <Fragment>
       <div className="main-route">
