@@ -1,4 +1,5 @@
 import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
+import * as moment from 'moment';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
@@ -201,8 +202,8 @@ const MyDataTable: React.FC<TProps> = ({
         key: 'project',
         title: 'project',
         dataIndex: 'project',
-        sorter: false,
-        render: (text, record) => {
+        sorter: (a, b) => a.project.localeCompare(b.project),
+        render: text => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
             return (
@@ -228,7 +229,7 @@ const MyDataTable: React.FC<TProps> = ({
         key: 'type',
         title: 'type',
         dataIndex: 'type',
-        sorter: false,
+        sorter: (a, b) => (a.type?.length || 0) - (b.type?.length || 0),
         render: text => {
           let types = '';
           if (isArray(text)) {
@@ -254,7 +255,8 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'updated date',
         dataIndex: 'updatedAt',
         width: 140,
-        sorter: false,
+        sorter: (a, b) =>
+          moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
         render: text => timeago(new Date(text)),
       },
       {
@@ -262,7 +264,8 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'created date',
         dataIndex: 'createdAt',
         width: 140,
-        sorter: false,
+        sorter: (a, b) =>
+          moment(a.createdAt).unix() - moment(b.createdAt).unix(),
         render: text => timeago(new Date(text)),
       },
     ],
@@ -305,13 +308,16 @@ const MyDataTable: React.FC<TProps> = ({
   const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
   const tablePaginationConfig: TablePaginationConfig = {
     total: allowedTotal,
-    pageSize: size,
+    defaultPageSize: size,
     defaultCurrent: 0,
     current: offset / size + 1,
     onChange: (page, _) => setFilterOptions({ offset: (page - 1) * size }),
     onShowSizeChange: (_, size) => setFilterOptions({ size, offset: 0 }),
+    showLessItems: true,
     showQuickJumper: true,
     showSizeChanger: true,
+    hideOnSinglePage: true,
+    pageSizeOptions: [10, 50, 100, 200],
   };
   const onSelectRowChange: SelectionSelectFn<TDataSource> = (
     record,
