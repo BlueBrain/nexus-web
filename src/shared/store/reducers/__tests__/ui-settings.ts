@@ -23,6 +23,7 @@ describe('UISettings Reducer', () => {
         ...DEFAULT_UI_SETTINGS.pageSizes,
         orgsListPageSize: 50,
       },
+      currentResourceView: null,
     });
   });
 });
