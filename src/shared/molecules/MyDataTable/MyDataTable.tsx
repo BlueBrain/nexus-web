@@ -10,6 +10,8 @@ import {
   isString,
   isArray,
 } from 'lodash';
+import { clsx } from 'clsx';
+import { useSelector } from 'react-redux';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import {
@@ -17,6 +19,7 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../organisms/DataPanel/DataPanel';
+import { RootState } from '../../../shared/store/reducers';
 import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
@@ -145,6 +148,9 @@ const MyDataTable: React.FC<TProps> = ({
 }) => {
   const history = useHistory();
   const location = useLocation();
+  const { currentResourceView } = useSelector(
+    (state: RootState) => state.uiSettings
+  );
   const [{ selectedRowKeys }, updateTableData] = useReducer(
     (
       previous: TResourceTableData,
@@ -158,6 +164,7 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRows: [],
     }
   );
+
   const goToResource = (
     orgLabel: string,
     projectLabel: string,
@@ -306,6 +313,7 @@ const MyDataTable: React.FC<TProps> = ({
   const tablePaginationConfig: TablePaginationConfig = {
     total: allowedTotal,
     pageSize: size,
+    defaultPageSize: size,
     defaultCurrent: 0,
     current: offset / size + 1,
     onChange: (page, _) => setFilterOptions({ offset: (page - 1) * size }),
@@ -451,7 +459,13 @@ const MyDataTable: React.FC<TProps> = ({
       bordered={false}
       showSorterTooltip={false}
       className="my-data-table"
-      rowClassName="my-data-table-row"
+      rowClassName={record =>
+        clsx(
+          `my-data-table-row`,
+          record._self === currentResourceView?._self &&
+            'ant-table-row-selected'
+        )
+      }
       scroll={{ x: 1300 }}
       rowSelection={{
         selectedRowKeys,

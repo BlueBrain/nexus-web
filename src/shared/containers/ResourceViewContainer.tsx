@@ -11,6 +11,8 @@ import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
+import { useSelector, useDispatch } from 'react-redux';
+import { intersection, isArray } from 'lodash';
 import AdminPlugin from '../containers/AdminPluginContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
@@ -34,12 +36,11 @@ import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import { intersection, isArray } from 'lodash';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -70,6 +71,8 @@ const ResourceViewContainer: React.FunctionComponent<{
   const history = useHistory();
   const nexus = useNexusContext();
   const notification = useNotification();
+  const dispatch = useDispatch();
+
   const location = useLocation<{ background: Location }>();
   const [{ ref }] = useMeasure();
   const { data: pluginManifest } = usePlugins();
@@ -257,7 +260,6 @@ const ResourceViewContainer: React.FunctionComponent<{
           )) as ExpandedResource[];
 
           const expandedResource = expandedResources[0];
-
           setResource({
             error,
             resource: {
@@ -317,7 +319,10 @@ const ResourceViewContainer: React.FunctionComponent<{
               options
             )) as Resource)
           : resource;
-
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
+        payload: resource,
+      });
       const expandedResources = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
@@ -602,13 +607,20 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
-
   React.useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    return () => {
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
+        payload: null,
+      });
+    };
   }, []);
+  // React.useEffect(() => {
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: 'smooth',
+  //   });
+  // }, []);
   return (
     <>
       <div className="resource-details">
