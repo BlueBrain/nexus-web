@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, List, Input, Alert } from 'antd';
+import { Spin, List, Input, Alert, Tag } from 'antd';
 import { Link, useParams } from 'react-router-dom';
 import { useInfiniteQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -56,6 +56,7 @@ type TStudioItem = {
   to: string;
   title: string;
   project: string;
+  organization: string;
   deprected: boolean;
   description?: string;
   datasets?: string;
@@ -102,6 +103,7 @@ const StudioItem = ({
   description,
   deprected,
   project,
+  organization,
   createdAt,
   datasets,
   access,
@@ -125,7 +127,10 @@ const StudioItem = ({
         <div className="statistics">
           <div className="statistics_item">
             <div>Project</div>
-            <div>{project}</div>
+            <Tag className="org-project-tag" color="blue">
+              {organization}
+            </Tag>
+            <span>{project}</span>
           </div>
           <div className="statistics_item">
             <div>Created</div>
@@ -312,17 +317,6 @@ const FusionStudiosPage: React.FC = () => {
                   placeholder="Search studio"
                 />
               </div>
-              {/* <div className="action-sort">
-                <span>Sort:</span>
-                <SortAscendingOutlined
-                  style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
-                  onClick={() => handleUpdateSorting('asc')}
-                />
-                <SortDescendingOutlined
-                  style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
-                  onClick={() => handleUpdateSorting('desc')}
-                />
-              </div> */}
             </div>
             <div className="route-data-container" ref={dataContainerRef}>
               {pmatch(status)
@@ -351,6 +345,7 @@ const FusionStudiosPage: React.FC = () => {
                             {...{
                               to,
                               project: projectLabel,
+                              organization: orgLabel,
                               title: item.label,
                               deprected: item.deprecated,
                               createdAt: new Date(item.createdAt),
