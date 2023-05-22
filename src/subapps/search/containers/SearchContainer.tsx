@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
+import { useSelector } from 'react-redux';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
+import { clsx } from 'clsx';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
 import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
@@ -29,6 +30,7 @@ import {
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
+import { RootState } from '../../../shared/store/reducers';
 import './SearchContainer.less';
 
 type TRecord = {
@@ -53,6 +55,9 @@ const SearchContainer: React.FC = () => {
   const filterMenuRef = React.useRef<HTMLDivElement>(null);
   const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
+  const { currentResourceView } = useSelector(
+    (state: RootState) => state.uiSettings
+  );
   const [queryParams] = useQueryString();
   const { query, layout } = queryParams;
   const makeResourceUri = (
@@ -457,7 +462,13 @@ const SearchContainer: React.FC = () => {
             className="result-table"
             loading={isLoading}
             rowSelection={rowSelection}
-            rowClassName="search-table-row"
+            rowClassName={record =>
+              clsx(
+                'search-table-row',
+                record._self === currentResourceView?._self &&
+                  'ant-table-row-selected'
+              )
+            }
             rowKey="key"
             columns={visibleColumns}
             dataSource={data}
