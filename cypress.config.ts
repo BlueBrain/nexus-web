@@ -21,6 +21,7 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     env: {
+      DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
       ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
     },
