@@ -206,7 +206,7 @@ const MyDataTable: React.FC<TProps> = ({
       },
       {
         key: 'project',
-        title: 'project',
+        title: 'organization / project',
         dataIndex: 'project',
         sorter: false,
         render: (text, record) => {

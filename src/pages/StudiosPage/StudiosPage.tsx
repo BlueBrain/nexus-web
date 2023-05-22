@@ -62,6 +62,7 @@ type TStudioItem = {
   datasets?: string;
   createdAt: Date;
   access?: string;
+  index: number;
 };
 type TFetchStudiosListProps = TStudiosOptions & {
   nexus: NexusClient;
@@ -107,6 +108,7 @@ const StudioItem = ({
   createdAt,
   datasets,
   access,
+  index,
 }: TStudioItem) => {
   return (
     <List.Item className="route-result-list_item" role="routeitem-studio">
@@ -124,16 +126,16 @@ const StudioItem = ({
           </Link>
           <p>{description}</p>
         </div>
-        <div className="statistics">
+        <div className="statistics studios-list-item">
           <div className="statistics_item">
-            <div>Project</div>
+            {index === 0 && <div>Organization / Project</div>}
             <Tag className="org-project-tag" color="blue">
               {organization}
             </Tag>
             <span>{project}</span>
           </div>
           <div className="statistics_item">
-            <div>Created</div>
+            {index === 0 && <div>Created</div>}
             <div>{timeago(createdAt)}</div>
           </div>
         </div>
@@ -337,13 +339,14 @@ const FusionStudiosPage: React.FC = () => {
                       itemLayout="horizontal"
                       loadMore={LoadMore}
                       dataSource={dataSource}
-                      renderItem={item => {
+                      renderItem={(item, index) => {
                         const { orgLabel, projectLabel, id } = item;
                         const to = makeStudioUri(orgLabel, projectLabel, id);
                         return (
                           <StudioItem
                             {...{
                               to,
+                              index,
                               project: projectLabel,
                               organization: orgLabel,
                               title: item.label,
