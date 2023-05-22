@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Button, Divider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
@@ -29,10 +29,16 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   </video>
 );
 
+export type TLocationState = {
+  from: string;
+  searchQuery: string;
+  [key: string]: any;
+};
 const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
+  const location = useLocation();
   const { layoutSettings } = useSelector((state: RootState) => state.config);
   const {
     auth,
@@ -108,7 +114,11 @@ const IdentityPage: React.FC<{}> = () => {
                       onClick={e => {
                         e.preventDefault();
                         dispatch(configActions.setPreferredRealm(item.name));
-                        dispatch(authActions.performLogin());
+                        dispatch(
+                          authActions.performLogin(
+                            location.state as TLocationState
+                          )
+                        );
                       }}
                       className="connect-btn"
                       size="large"

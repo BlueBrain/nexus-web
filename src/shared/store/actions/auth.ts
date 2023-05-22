@@ -4,6 +4,7 @@ import getUserManager from '../../../client/userManager';
 import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
+import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
@@ -135,20 +136,18 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   };
 };
 
-function performLogin() {
+function performLogin(state: TLocationState) {
   return async (
     dispatch: Dispatch<any>,
     getState: () => RootState
   ): Promise<any> => {
     const userManager = getUserManager(getState());
     try {
-      const destination = new URL(window.location.href).searchParams.get(
-        'destination'
-      );
-
-      const redirectUri = destination
-        ? `${window.location.origin}/${destination}`
-        : null;
+      const redirectUri = state.from
+        ? encodeURIComponent(
+            `${window.location.origin}/${state.from}${state.searchQuery}`
+          )
+        : '';
       userManager &&
         (await userManager.signinRedirect({
           redirect_uri: redirectUri,

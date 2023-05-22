@@ -11,25 +11,25 @@ const SubAppsView: React.FC<{
   const background =
     location.state && (location.state as { background?: Location }).background;
 
-  // rest.protected ? (
-  //   <PrivateRoute
-  //     key={`protected-${path as string}`}
-  //     path={path}
-  //     {...rest}
-  //   >
-  //     <SubAppComponent />
-  //   </PrivateRoute>
-  // ) :
-
   return (
     // @ts-ignore
     <Switch location={background || location}>
       {routesWithSubApps.map(
-        ({ path, component: SubAppComponent, requireLogin, ...rest }) => (
-          <Route key={`path-${path as string}`} path={path} {...rest}>
-            <SubAppComponent />
-          </Route>
-        )
+        ({ path, component: SubAppComponent, requireLogin, ...rest }) => {
+          return rest.protected ? (
+            <PrivateRoute
+              key={`protected-${path as string}`}
+              path={path}
+              {...rest}
+            >
+              <SubAppComponent />
+            </PrivateRoute>
+          ) : (
+            <Route key={`path-${path as string}`} path={path} {...rest}>
+              <SubAppComponent />
+            </Route>
+          );
+        }
       )}
       <Redirect
         from="/admin/:orgLabel/:projectLabel/browse"
