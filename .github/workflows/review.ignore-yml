@@ -17,19 +17,6 @@ jobs:
       - name: install dependencies 🚀
         run: |
           yarn install --frozen-lockfile # optional, --immutable
-      - name: linting ✨
-        run: |
-          yarn lint
-      - name: style 💅
-        run: |
-          yarn style
-      - name: running test 🛫🛬
-        run: |
-          yarn test --coverage src
-      - name: upload coverage to Codecov 💌
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
       - name: build fusion docker image
         run: |
           docker build . --tag=nexus-web:fresh

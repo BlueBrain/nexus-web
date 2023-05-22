@@ -44,14 +44,14 @@ describe('Studios', () => {
     studioDetailsPage = new StudioDetailsPage();
   });
 
-  // after(function() {
-  //   cy.task('project:teardown', {
-  //     nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //     authToken: this.nexusToken,
-  //     orgLabel: Cypress.env('ORG_LABEL'),
-  //     projectLabel: this.projectLabel,
-  //   });
-  // });
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
   it('user can create a studio with a workspace and dashboard', function() {
     cy.visit(
