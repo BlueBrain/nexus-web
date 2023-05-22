@@ -144,9 +144,7 @@ function performLogin(state: TLocationState) {
     const userManager = getUserManager(getState());
     try {
       const redirectUri = state.from
-        ? encodeURIComponent(
-            `${window.location.origin}/${state.from}${state.searchQuery}`
-          )
+        ? `${window.location.origin}/${state.from}${state.searchQuery}`
         : '';
       userManager &&
         (await userManager.signinRedirect({
