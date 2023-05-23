@@ -20,7 +20,6 @@ const routes: TRoutePropsExtended[] = [
   {
     path: '/login',
     component: IdentityPage,
-    // exact: true,
     protected: false,
   },
   {
