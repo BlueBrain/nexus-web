@@ -26,6 +26,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
       onClick={({ key, domEvent }) => {
         domEvent.preventDefault();
         domEvent.stopPropagation();
+        console.log('__________REALM___________', JSON.stringify(realms));
         const realm = realms.find(r => r === key);
         if (realm) {
           setRealm(realm);

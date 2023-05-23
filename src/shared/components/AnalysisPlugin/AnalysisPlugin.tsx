@@ -99,7 +99,7 @@ const AnalysisPlugin = ({
     uniq(flatten(map(analysisReports, 'types'))),
     allReportTypes.map(({ label }) => label)
   ) as string[]).map(l => {
-    const typeDescription = allReportTypes.find(t => t.label === l)
+    const typeDescription = allReportTypes?.find(t => t.label === l)
       ?.description as string;
     return { label: l, description: typeDescription };
   });
@@ -118,7 +118,7 @@ const AnalysisPlugin = ({
     uniq(flatten(map(analysisReports, 'categories'))),
     allReportCategoriesMatchingContainerType.map(({ label }) => label)
   ) as string[]).map(l => {
-    const categoryDescription = allReportCategoriesMatchingContainerType.find(
+    const categoryDescription = allReportCategoriesMatchingContainerType?.find(
       c => c.label === l
     )?.description as string;
     return { label: l, description: categoryDescription };
@@ -564,7 +564,9 @@ const AnalysisPlugin = ({
                         tools={(analysisReport.contribution?.filter(c =>
                           [c.agent]
                             .flat()
-                            .find(a => [a['@type']].flat().includes('Software'))
+                            ?.find(a =>
+                              [a['@type']].flat().includes('Software')
+                            )
                         ) as SoftwareContribution[])?.map(s => ({
                           scriptPath: s.repository,
                           description: s.description,

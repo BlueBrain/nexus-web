@@ -89,7 +89,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
             default:
               render = (value: string) => {
-                const item = items.find(item => item[dataIndex] === value);
+                const item = items?.find(item => item[dataIndex] === value);
                 const studioResourceViewLink = item
                   ? `/?_self=${item.self.value}`
                   : '';

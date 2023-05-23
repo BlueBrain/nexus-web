@@ -372,7 +372,7 @@ const accessData = async (
   );
 
   const headerProperties = result.headerProperties.map(headerProp => {
-    const currentConfig = columnConfig.find(
+    const currentConfig = columnConfig?.find(
       c => c.name === headerProp.dataIndex
     );
 

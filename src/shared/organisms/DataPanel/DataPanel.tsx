@@ -539,7 +539,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     ...compact(flatMap(resultsObject).map(item => item?.size))
   );
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
-    ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
+    ? parseURL(resourcesObscured?.find(item => !!item!._self)?._self as string)
     : undefined;
   const { mutateAsync: downloadSelectedResource, status } = useMutation(
     downloadArchive

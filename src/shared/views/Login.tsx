@@ -20,8 +20,9 @@ export interface LoginViewProps {
 
 const Login: React.FunctionComponent<LoginViewProps> = props => {
   const { realms, redirect } = props;
+  console.log('Old login', realms);
   const defaultRealm: Realm =
-    realms.find(r => r._label === props.preferredRealm) || props.realms[0];
+    realms?.find(r => r._label === props.preferredRealm) || props.realms[0];
 
   const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
   const notification = useNotification();

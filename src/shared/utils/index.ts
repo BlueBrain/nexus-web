@@ -167,7 +167,8 @@ export function getLogoutUrl(
   realms: { label: string; endSessionEndpoint: string }[]
 ): string {
   // find authenticated Identity and get realm name
-  const identity = identities.find(
+  console.log('GetLogoutURL', identities);
+  const identity = identities?.find(
     identity => identity['@type'] === 'Authenticated'
   );
   if (identity === undefined) {
@@ -175,7 +176,8 @@ export function getLogoutUrl(
   }
 
   // find realm with the matching label
-  const realm = realms.find(realm => realm.label === identity.realm);
+  console.log('GetLogioutURL realms', realms);
+  const realm = realms?.find(realm => realm.label === identity.realm);
   if (realm === undefined) {
     return '';
   }

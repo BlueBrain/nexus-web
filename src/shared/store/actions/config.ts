@@ -21,6 +21,7 @@ function setPreferredRealm(name: string) {
     };
     if (realms && realms.data && realms.data._results) {
       // find matching realm
+      console.log('setPreferredRealm', JSON.stringify(realms.data._results));
       const realm = realms.data._results.find(realm => realm.name === name);
       if (realm) {
         preferredRealmData = {

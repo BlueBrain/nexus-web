@@ -69,7 +69,7 @@ const Graph: React.FunctionComponent<{
 
   const onRecenter = () => {
     if (graph.current) {
-      const origin = elements.find(element => element.data.isOrigin);
+      const origin = elements?.find(element => element.data.isOrigin);
 
       if (origin && origin.data && origin.data.id) {
         graph.current.center(graph.current.getElementById(origin.data.id));
@@ -86,7 +86,7 @@ const Graph: React.FunctionComponent<{
     if (graph.current) {
       // Updating old elements
       graph.current.elements().forEach(graphElement => {
-        const match = elements.find(
+        const match = elements?.find(
           dataElement => graphElement.id() === dataElement.data.id
         );
         // update old elements
