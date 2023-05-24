@@ -6,7 +6,6 @@ import Home from '../pages/HomePage/HomePage';
 import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import StudioRedirectView from './views/StudioRedirectView';
 import MyDataView from './views/MyDataView';
-import { RedirectAdmin } from '../subapps/admin';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
 
