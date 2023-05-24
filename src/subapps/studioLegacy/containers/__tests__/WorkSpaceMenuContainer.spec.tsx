@@ -1,16 +1,16 @@
+import '@testing-library/jest-dom';
 import * as React from 'react';
-import StudioReactContext, {
-  StudioContextType,
-} from '../../contexts/StudioContext';
+import { rest } from 'msw';
+import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ConnectedRouter } from 'connected-react-router';
-import configureStore from '../../../../shared/store';
 import { Provider } from 'react-redux';
 import fetch from 'node-fetch';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ConnectedRouter } from 'connected-react-router';
+import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
+import configureStore from '../../../../shared/store';
 import {
   render,
   fireEvent,
@@ -18,10 +18,12 @@ import {
   screen,
   server,
 } from '../../../../utils/testUtil';
-import { rest } from 'msw';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
+import StudioReactContext, {
+  StudioContextType,
+} from '../../contexts/StudioContext';
+
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { ButtonHTMLType } from 'antd/lib/button/button';
 
 describe('workSpaceMenu', () => {
   const history = createBrowserHistory({ basename: '/' });
@@ -210,7 +212,7 @@ describe('workSpaceMenu', () => {
         const text = await screen.getAllByText(
           'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
         );
-        expect(text.length).toBe(5);
+        expect(text.length).toBe(9);
       });
       expect(container).toMatchSnapshot();
     });
@@ -325,7 +327,7 @@ describe('workSpaceMenu', () => {
           // wait for the workspace to load.
           await screen.getAllByText('No dashboards available');
           const buttons = await screen.findAllByRole('button');
-          expect(buttons).toHaveLength(1);
+          expect(buttons).toHaveLength(2);
         });
       });
   });
@@ -384,10 +386,12 @@ describe('workSpaceMenu', () => {
     });
 
     await waitFor(async () => {
-      await screen.findByText('Workspace');
+      await screen.getAllByText('Workspace');
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await waitFor(async () => {
@@ -425,11 +429,15 @@ describe('workSpaceMenu', () => {
     });
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Remove');
@@ -462,11 +470,15 @@ describe('workSpaceMenu', () => {
     );
 
     await waitFor(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     await act(async () => {
-      const workSpaceAction = await screen.findByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
       fireEvent.click(workSpaceAction);
     });
     const editButton = await screen.findByText('Edit');

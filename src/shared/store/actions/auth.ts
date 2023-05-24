@@ -4,6 +4,7 @@ import getUserManager from '../../../client/userManager';
 import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
+import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
@@ -135,20 +136,20 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   };
 };
 
-function performLogin() {
+function performLogin(state: TLocationState) {
   return async (
     dispatch: Dispatch<any>,
     getState: () => RootState
   ): Promise<any> => {
     const userManager = getUserManager(getState());
+    const baseURl = getState().config.basePath;
     try {
-      const destination = new URL(window.location.href).searchParams.get(
-        'destination'
-      );
-
-      const redirectUri = destination
-        ? `${window.location.origin}/${destination}`
-        : null;
+      // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
+      // use baseURl instead of window location to get the real location
+      const redirectUri =
+        state.from && state.from !== '/'
+          ? `${window.location.origin}/${baseURl}${state.from}${state.searchQuery}`
+          : undefined;
       userManager &&
         (await userManager.signinRedirect({
           redirect_uri: redirectUri,

@@ -1,0 +1,53 @@
+@import '../../../shared/lib.less';
+
+.creation-panel {
+  background: @fusion-daybreak-9;
+  height: 182px;
+  display: none;
+  &_container {
+    padding: 20px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    row-gap: 5px;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.creation-button {
+  flex: 1 1 30%;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 26px;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  background-color: transparent;
+  color: white;
+  &:hover {
+    background-color: white;
+    color: @fusion-daybreak-9;
+    svg {
+      color: @fusion-daybreak-9;
+      transform: scale(1.2);
+      transition: transform 0.2 ease-out;
+    }
+  }
+  span:firt-child {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    color: #ffffff;
+  }
+}

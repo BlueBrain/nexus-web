@@ -1,7 +1,10 @@
 import * as React from 'react';
-import OrgsListView from './views/OrgsListView';
-import ProjectsView from './views/ProjectsView';
-import ProjectView from './views/ProjectView';
+import { Redirect, useLocation, useRouteMatch } from 'react-router';
+import { get } from 'lodash';
+
+import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
+import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
+import ProjectView from '../../pages/ProjectPage/ProjectPage';
 import { SubApp } from '..';
 
 const subAppType = 'internal';
@@ -19,7 +22,15 @@ const adminSubappProps = {
   requireLogin,
   description,
 };
-
+const organisationSubappProps = {
+  subAppType: 'internal',
+  title: 'Organizations',
+  namespace: 'orgs',
+  icon: require('../../shared/images/dbIcon.svg'),
+  requireLogin: true,
+  description:
+    'Browse through different  group of datasets gather by those providing datas',
+};
 export const AdminSubappContext = React.createContext<{
   title: string;
   namespace: string;
@@ -27,13 +38,7 @@ export const AdminSubappContext = React.createContext<{
   requireLogin: boolean;
   description: string;
 }>(adminSubappProps);
-
-export function useAdminSubappContext() {
-  const adminSubappProps = React.useContext(AdminSubappContext);
-
-  return adminSubappProps;
-}
-
+export const useAdminSubappContext = () => React.useContext(AdminSubappContext);
 export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   return () => (
     <AdminSubappContext.Provider value={adminSubappProps}>
@@ -42,19 +47,60 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-const Admin: SubApp = () => {
+export const RedirectAdmin: React.FunctionComponent = props => {
+  const location = useLocation();
+  const route = useRouteMatch();
+  console.log('@@location', get(route.params, '0'), route);
+  return (
+    <Redirect
+      to={{
+        pathname: `/orgs/${get(route.params, '0')}`,
+        search: location.search,
+      }}
+    />
+  );
+};
+
+export const OrganisationsSubappContext = React.createContext<{
+  title: string;
+  namespace: string;
+  icon: string;
+  requireLogin: boolean;
+  description: string;
+}>(organisationSubappProps);
+export const useOrganisationsSubappContext = () =>
+  React.useContext(OrganisationsSubappContext);
+
+export const OrganizationsSubappProviderHOC = (
+  component: React.FunctionComponent
+) => {
+  return () => (
+    <OrganisationsSubappContext.Provider value={organisationSubappProps}>
+      {component({})}
+    </OrganisationsSubappContext.Provider>
+  );
+};
+export const Organizations: SubApp = () => {
   return {
-    ...adminSubappProps,
+    subAppType: 'internal',
+    title: 'Organizations',
+    namespace: 'orgs',
+    icon: require('../../shared/images/dbIcon.svg'),
+    requireLogin: true,
+    description:
+      'Browse through different  group of datasets gather by those providing datas',
     routes: [
       {
         path: '/',
         exact: true,
-        component: AdminSubappProviderHOC(OrgsListView),
+        component: OrganizationsSubappProviderHOC(OrganizationListPage),
+        protected: true,
       },
       {
         path: '/:orgLabel',
         exact: true,
-        component: AdminSubappProviderHOC(ProjectsView),
+        component: OrganizationsSubappProviderHOC(OrganizationProjectsPage),
+        protected: true,
       },
       {
         path: [
@@ -69,9 +115,10 @@ const Admin: SubApp = () => {
         ],
         exact: true,
         component: AdminSubappProviderHOC(ProjectView),
+        protected: true,
       },
     ],
   };
 };
 
-export default Admin;
+// export default Admin;

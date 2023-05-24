@@ -16,7 +16,7 @@ import TableViewerContainer from '../../containers/TableViewerContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 
-const parseResourceId = (url: string) => {
+export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
   if (fileUrlPattern.test(url)) {
     const [, , , resourceId] = url.match(fileUrlPattern) as string[];
@@ -30,7 +30,7 @@ const parseResourceId = (url: string) => {
   return '';
 };
 
-const parseProjectUrl = (projectUrl: string) => {
+export const parseProjectUrl = (projectUrl: string) => {
   const projectUrlR = /projects\/([\w-]+)\/([\w-]+)\/?$/;
   const [, org, proj] = projectUrl.match(projectUrlR) as string[];
   return [org, proj];
@@ -244,7 +244,6 @@ const Preview: React.FC<{
       contentUrl = url;
       options.rev = parseInt(rev, 10);
     }
-
     try {
       const rawData = await nexus.File.get(
         orgLabel,

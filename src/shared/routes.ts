@@ -1,49 +1,75 @@
 import { RouteProps } from 'react-router-dom';
-import Login from './views/Login';
 import ResourceView from './views/ResourceView';
-import UserView from './views/UserView';
+import UserPage from '../pages/UserPage/UserPage';
+import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
+import Home from '../pages/HomePage/HomePage';
+import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import StudioRedirectView from './views/StudioRedirectView';
-import Home from './views/Home';
+import MyDataView from './views/MyDataView';
 
-const routes: RouteProps[] = [
+type TRoutePropsExtended = RouteProps & { protected: boolean };
+
+const routes: TRoutePropsExtended[] = [
   {
     path: '/',
     exact: true,
     component: Home,
+    protected: true,
   },
   {
     path: '/login',
-    component: Login,
+    component: IdentityPage,
+    protected: false,
   },
   {
     path: '/user',
-    component: UserView,
+    component: UserPage,
+    exact: true,
+    protected: true,
+  },
+  {
+    path: '/projects',
+    component: ProjectsPage,
+    exact: true,
+    protected: true,
+  },
+  {
+    path: '/my-data',
+    component: MyDataView,
+    exact: true,
+    protected: true,
   },
   {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
+    exact: true,
+    protected: true,
   },
   {
     path: '/:orgLabel/:projectLabel/studios/:studioId',
     exact: true,
     component: StudioRedirectView,
+    protected: false,
   },
   {
     path: '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId',
     exact: true,
     component: StudioRedirectView,
+    protected: true,
   },
   {
     path:
       '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId',
     exact: true,
     component: StudioRedirectView,
+    protected: true,
   },
   {
     path:
       '/:orgLabel/:projectLabel/studios/:studioId/workspaces/:workspaceId/dashboards/:dashboardId/studioResource/:studioResourceId',
     exact: true,
     component: StudioRedirectView,
+    protected: true,
   },
 ];
 

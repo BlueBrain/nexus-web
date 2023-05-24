@@ -1,6 +1,11 @@
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
+import { createMemoryHistory } from 'history';
+import { Simulate } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+
 import { RenderResult, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
@@ -17,22 +22,30 @@ import {
   sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { createMemoryHistory } from 'history';
-import { Simulate } from 'react-dom/test-utils';
+import { rest } from 'msw';
+import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Router } from 'react-router-dom';
-import { cleanup, render, screen, server, waitFor } from '../../utils/testUtil';
+import configureStore from '../../shared/store';
+import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
 
 describe('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
+  let dataTableContainer: JSX.Element;
   let container: HTMLElement;
+  let rerender: (ui: React.ReactElement) => void;
   let user: UserEvent;
+  let server: ReturnType<typeof setupServer>;
   let component: RenderResult;
 
   beforeAll(() => {
+    server = setupServer(
+      dashboardResource,
+      dashboardVocabulary,
+      sparqlViewSingleResult
+    );
+
     server.listen();
-    server.use(dashboardResource, dashboardVocabulary, sparqlViewSingleResult);
   });
 
   beforeEach(async () => {
@@ -42,30 +55,35 @@ describe('DataTableContainer.spec.tsx', () => {
       fetch,
       uri: deltaPath(),
     });
-
-    component = render(
-      <Router history={history}>
-        <QueryClientProvider client={queryClient}>
-          <NexusProvider nexusClient={nexus}>
-            <DataTableContainer
-              orgLabel="bbp"
-              projectLabel="agents"
-              tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
-              options={{
-                disableAddFromCart: true,
-                disableDelete: true,
-                disableEdit: true,
-              }}
-            />
-          </NexusProvider>
-        </QueryClientProvider>
-      </Router>
+    const store = configureStore(history, { nexus }, {});
+    dataTableContainer = (
+      <Provider store={store}>
+        <Router history={history}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <DataTableContainer
+                orgLabel="bbp"
+                projectLabel="agents"
+                tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
+                options={{
+                  disableAddFromCart: true,
+                  disableDelete: true,
+                  disableEdit: true,
+                }}
+              />
+            </NexusProvider>
+          </QueryClientProvider>
+        </Router>
+      </Provider>
     );
 
+    component = render(dataTableContainer);
+
     container = component.container;
+    rerender = component.rerender;
     user = userEvent.setup();
 
-    await waitForTableRows();
+    await waitForTableRows(6);
   });
 
   // reset any request handlers that are declared as a part of our tests
@@ -88,7 +106,7 @@ describe('DataTableContainer.spec.tsx', () => {
     return container.querySelectorAll(`td.testid-${name}`);
   };
 
-  const waitForTableRows = async (expectedRowsCount = 5) => {
+  const waitForTableRows = async (expectedRowsCount: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
       expect(rows.length).toEqual(expectedRowsCount);
@@ -130,6 +148,7 @@ describe('DataTableContainer.spec.tsx', () => {
         ORIGINAL_3_SORTED_3,
         ORIGINAL_4_SORTED_4,
         ORIGINAL_5_SORTED_6,
+        ORIGINAL_6_SORTED_5,
       ]);
     });
   });
@@ -140,7 +159,7 @@ describe('DataTableContainer.spec.tsx', () => {
     // Click on sort button once to sort in ascending order
     await user.click(sortableHeader!);
 
-    await waitForTableRows(5);
+    await waitForTableRows(6);
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_2_SORTED_1,
@@ -148,6 +167,7 @@ describe('DataTableContainer.spec.tsx', () => {
       ORIGINAL_3_SORTED_3,
       ORIGINAL_4_SORTED_4,
       ORIGINAL_6_SORTED_5,
+      ORIGINAL_5_SORTED_6,
     ]);
   });
 
@@ -158,7 +178,7 @@ describe('DataTableContainer.spec.tsx', () => {
     await user.click(sortableHeader!);
     await user.click(sortableHeader!);
 
-    await waitForTableRows(5);
+    await waitForTableRows(6);
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_5_SORTED_6,
@@ -166,6 +186,7 @@ describe('DataTableContainer.spec.tsx', () => {
       ORIGINAL_6_SORTED_5,
       ORIGINAL_3_SORTED_3,
       ORIGINAL_1_SORTED_2,
+      ORIGINAL_2_SORTED_1,
     ]);
   });
 
@@ -197,4 +218,78 @@ describe('DataTableContainer.spec.tsx', () => {
       ORIGINAL_6_SORTED_5,
     ]);
   });
+
+  it('shows error when dashboard fails to load', async () => {
+    server.use(dashboardErrorHandler);
+
+    // Rerender the component, this time using a handler that sends an error.
+    component.unmount();
+    rerender(dataTableContainer);
+
+    await waitForTableRows(0);
+
+    const errorMsg = await screen.findByText(/Table failed to fetch/);
+    expect(errorMsg).toBeInTheDocument();
+
+    const expandIcon = screen.getByRole('img', { name: 'right' });
+    expandIcon.click();
+
+    const errorDetails = screen.getByText(dashboardErrorResponse['@type']);
+    expect(errorDetails).toBeInTheDocument();
+    server.resetHandlers();
+  });
+
+  it('shows table as well as error when sparql query is invalid', async () => {
+    server.use(invalidSparqlHandler);
+    // Rerender the component, this time using a handler that sends a sparql error.
+    component.unmount();
+    rerender(dataTableContainer);
+
+    // The table should is still be visible.
+    await waitForTableRows(6);
+
+    const errorMsg = await screen.findByText(invalidSparqlQueryResponse.reason);
+    expect(errorMsg).toBeInTheDocument();
+
+    server.resetHandlers();
+  });
 });
+
+const dashboardErrorResponse = {
+  '@context': 'https://bluebrain.github.io/nexus/contexts/error.json',
+  '@type': 'ResourceNotFound',
+  rejections: [
+    {
+      '@type': 'ResourceNotFound',
+      reason:
+        "File 'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/test/GithubRealmDinika/_/5e9dd7cd-f88d-4197-85e6-255bd5dfe3547' not found in project 'test/GithubRealmLocal'.",
+      status: 404,
+    },
+  ],
+};
+
+const dashboardErrorHandler = rest.get(
+  deltaPath(
+    `resources/bbp/agents/_/${encodeURIComponent(
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937'
+    )}`
+  ),
+  (req, res, ctx) => {
+    return res(ctx.status(404), ctx.json(dashboardErrorResponse));
+  }
+);
+
+const invalidSparqlQueryResponse = {
+  '@context': 'https://bluebrain.github.io/nexus/contexts/error.json',
+  '@type': 'SparqlClientError',
+  reason:
+    "an HTTP response to endpoint 'http://blazegraph.bbp-ou-nise-dev.svc/blazegraph/namespace/nexus_709e9644-a4c7-46fc-b683-be2d2ae963f1_1/sparql' with method 'HttpMethod(POST)' that should have been successful, returned the HTTP status code '400 Bad Request'",
+  details: 'Tsch. Tsch. You added a bad bad query.',
+};
+
+export const invalidSparqlHandler = rest.post(
+  deltaPath('/views/bbp/agents/graph/sparql'),
+  (req, res, ctx) => {
+    return res(ctx.status(400), ctx.json(invalidSparqlQueryResponse));
+  }
+);

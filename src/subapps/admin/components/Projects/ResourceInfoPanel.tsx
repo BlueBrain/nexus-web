@@ -78,7 +78,7 @@ const ResourceInfoPanel: React.FC<{
     <Drawer
       destroyOnClose={true}
       onClose={onClickClose}
-      visible={panelVisibility}
+      open={panelVisibility}
       title={title}
       mask={false}
       width={500}

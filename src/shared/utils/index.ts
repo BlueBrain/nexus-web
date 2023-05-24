@@ -541,7 +541,7 @@ export const makeStudioUri = (
  * @returns {string} project uri
  */
 export const makeProjectUri = (orgLabel: string, projectLabel: string) => {
-  return `/admin/${orgLabel}/${projectLabel}`;
+  return `/orgs/${orgLabel}/${projectLabel}`;
 };
 
 /*
@@ -551,7 +551,7 @@ export const makeProjectUri = (orgLabel: string, projectLabel: string) => {
  * @returns {string} organization uri
  */
 export const makeOrganizationUri = (orgLabel: string) => {
-  return `/admin/${orgLabel}`;
+  return `/orgs/${orgLabel}`;
 };
 
 /*
@@ -688,15 +688,15 @@ export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
   const fileUrl = fileUrlPattern.exec(url);
 
   if (projectUrl) {
-    return `${nexusWebBase}/admin/${projectUrl.groups?.org}/${projectUrl.groups?.project}`;
+    return `${nexusWebBase}/orgs/${projectUrl.groups?.org}/${projectUrl.groups?.project}`;
   }
   if (resourceUrl) {
-    return `${nexusWebBase}/admin/${resourceUrl.groups?.org}/${
+    return `${nexusWebBase}/orgs/${resourceUrl.groups?.org}/${
       resourceUrl.groups?.project
     }/${encodeURIComponent(url)}`;
   }
   if (fileUrl) {
-    return `${nexusWebBase}/admin/${fileUrl.groups?.org}/${
+    return `${nexusWebBase}/orgs/${fileUrl.groups?.org}/${
       fileUrl.groups?.project
     }/${encodeURIComponent(url)}`;
   }

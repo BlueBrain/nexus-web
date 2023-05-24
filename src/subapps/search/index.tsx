@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SubApp } from '..';
-import GlobalSearchView from './views/GlobalSearchView';
+import SearchPage from '../../pages/SearchPage/SearchPage';
 
 const title = 'Search';
 const namespace = 'search';
@@ -50,7 +50,8 @@ const Search: SubApp = () => {
       {
         path: '/',
         exact: true,
-        component: SearchSubappProviderHOC(GlobalSearchView),
+        component: SearchSubappProviderHOC(SearchPage),
+        protected: true,
       },
     ],
   };

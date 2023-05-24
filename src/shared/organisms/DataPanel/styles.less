@@ -1,0 +1,274 @@
+@import '../../lib.less';
+
+.datapanel {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 4;
+
+  &-bar {
+    width: calc(100vw - 100px);
+    margin: 0 auto;
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    // align-items: center;
+    background: @fusion-daybreak-10;
+    padding: 0 0 0 10px;
+
+    .left {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      gap: 10px;
+      align-items: center;
+      padding: 10px 20px;
+      .selected-items {
+        cursor: pointer;
+        color: white;
+
+        span {
+          margin-left: 5px;
+        }
+      }
+
+      button {
+        color: @fusion-daybreak-4;
+      }
+    }
+
+    .download-options {
+      display: grid;
+      grid-template-columns: repeat(1, max-content);
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      &.sized.exts {
+        grid-template-columns: repeat(3, max-content);
+      }
+      &.exts,
+      &.sized {
+        grid-template-columns: repeat(2, max-content);
+      }
+      .download-size {
+        color: @fusion-active-link-color;
+        border-left: 2px solid @fusion-daybreak-7;
+        padding: 0 20px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        svg {
+          margin-right: 5px;
+        }
+      }
+      .download-filetypes {
+        position: relative;
+        &-first {
+          padding: 10px 20px;
+        }
+        &-extra {
+          padding: 0 20px;
+        }
+      }
+      .download-btn {
+        background: #0050b3;
+        height: 100%;
+        button {
+          color: white;
+          height: 100%;
+        }
+      }
+      .ant-checkbox-wrapper {
+        color: white !important;
+        font-family: 'Titillium Web';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 125%;
+      }
+
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: @fusion-daybreak-10 !important;
+        border-color: white !important;
+      }
+
+      .ant-checkbox-inner {
+        background-color: @fusion-daybreak-10 !important;
+        border-radius: 4px !important;
+      }
+
+      .ant-checkbox-checked::after {
+        border-color: white !important;
+        border-radius: 4px !important;
+      }
+    }
+  }
+
+  &-content {
+    height: 0px;
+    width: calc(100vw - 100px);
+    margin: 0 auto;
+    display: none;
+
+    &-wrapper {
+      width: 100%;
+      height: 100%;
+      // height: inherit;
+      background: @fusion-daybreak-10;
+      padding: 20px;
+      margin-bottom: 60px;
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .title {
+          margin-right: 10px;
+          font-family: 'Titillium Web';
+          font-style: normal;
+          font-weight: 700;
+          font-size: 20px;
+          line-height: 140%;
+          color: @fusion-daybreak-5;
+        }
+
+        .clear-data {
+          &:hover {
+            color: white;
+          }
+        }
+      }
+
+      .items {
+        padding: 20px 0;
+      }
+    }
+  }
+
+  .btn-icon-trigger {
+    svg {
+      color: white;
+    }
+  }
+}
+
+.my-data-panel-table {
+  margin-bottom: 70px;
+  border: 1px solid @fusion-daybreak-10;
+  .ant-table-thead {
+    th {
+      text-transform: uppercase;
+      background-color: @fusion-daybreak-10 !important;
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 130%;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: white;
+      border-bottom: 1px solid @fusion-daybreak-8 !important;
+
+      &:hover {
+        background-color: @fusion-component-background-color !important;
+      }
+
+      &:first-child {
+        .ant-table-column-sorters {
+          padding-left: 0 !important;
+        }
+      }
+    }
+  }
+
+  .my-data-panel-table-row {
+    td {
+      &:first-child {
+        padding-left: 0 !important;
+        font-weight: 600;
+      }
+
+      background-color: @fusion-daybreak-10 !important;
+      border-bottom: 1px solid @fusion-daybreak-8 !important;
+      color: white !important;
+    }
+
+    &:last-child {
+      td {
+        border-color: @fusion-daybreak-10 !important;
+      }
+    }
+
+    &:hover {
+      td {
+        background: rgba(#333, 0.12) !important;
+      }
+    }
+
+    .ant-table-cell-fix-left,
+    .ant-table-cell-fix-right {
+      background: @fusion-daybreak-10 !important;
+    }
+  }
+
+  .ant-table-body {
+    background-color: @fusion-daybreak-10 !important;
+
+    &::-webkit-scrollbar-thumb {
+      width: 5px;
+      background: @fusion-daybreak-4;
+      border-radius: 5px;
+      -webkit-box-shadow: inset 0 0 px @fusion-daybreak-4;
+      max-height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgb(0, 0, 0);
+      border: 4px solid transparent;
+      background-clip: content-box;
+    }
+
+    &::-webkit-scrollbar {
+      width: 5px;
+      background-color: @fusion-daybreak-10;
+    }
+  }
+
+  .org-project-tag {
+    background-color: @fusion-daybreak-8 !important;
+    color: white !important;
+  }
+
+  .remove-data-item {
+    background-color: @fusion-daybreak-10;
+    color: @fusion-daybreak-4;
+    border: none;
+
+    &:hover {
+      background-color: @fusion-daybreak-10;
+      border: none;
+      color: white;
+    }
+  }
+}
+
+.types-dropdown {
+  .ant-dropdown-menu {
+    background-color: @fusion-daybreak-10;
+    padding: 0 !important;
+    bottom: 8px !important;
+    border-radius: 0px !important;
+  }
+  .ant-dropdown-menu-item {
+    span:nth-child(2) {
+      color: white;
+    }
+    &:hover {
+      span:nth-child(2) {
+        color: @fusion-daybreak-10;
+      }
+    }
+  }
+}

@@ -58,7 +58,6 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const handleSubmit = async (dashboardPayload: DashboardPayload) => {
     try {
       setBusy(true);
-
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
@@ -98,7 +97,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   return (
     <Modal
       title={`Edit ${label || 'Dashboard'}`}
-      visible={showEditModal}
+      open={showEditModal}
       onCancel={() => setShowEditModal(false)}
       style={{ minWidth: '75%' }}
       confirmLoading={busy}

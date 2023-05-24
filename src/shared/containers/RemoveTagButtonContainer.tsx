@@ -95,7 +95,7 @@ const RemoveTagButton: React.FunctionComponent<{
           onCancel={() =>
             setConfirm({ visible: false, tagName: '', busy: false })
           }
-          visible={confirm.visible}
+          open={confirm.visible}
         >
           <Dropdown disabled={!hasTags} overlay={menu}>
             <Button icon={<DeleteOutlined />}>

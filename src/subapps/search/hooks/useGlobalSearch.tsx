@@ -1,5 +1,12 @@
+import * as React from 'react';
+import { NexusClient } from '@bbp/nexus-sdk';
+import { Button, Tooltip } from 'antd';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { useQueries } from 'react-query';
+import { useNexusContext } from '@bbp/react-nexus';
 import {
-  DownOutlined,
+  CaretDownOutlined,
   EyeInvisibleOutlined,
   FunnelPlotOutlined,
   SortAscendingOutlined,
@@ -11,11 +18,9 @@ import {
   addPagination,
   addSorting,
 } from '../utils';
-import { useSelector } from 'react-redux';
+
 import { RootState } from '../../../shared/store/reducers';
-import { NexusClient } from '@bbp/nexus-sdk';
-import * as React from 'react';
-import { Button, Tooltip } from 'antd';
+
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
 import FilterOptions, {
   createKeyWord,
@@ -23,9 +28,9 @@ import FilterOptions, {
 } from '../containers/FilterOptions';
 import DateFilterOptions from '../containers/DateFilterOptions';
 import NumberFilterOptions from '../containers/NumberFilterOptions';
-import '../containers/SearchContainer.less';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
+import '../containers/SearchContainer.less';
 
 export type SearchConfigField =
   | {
@@ -191,7 +196,7 @@ export type SearchLayout = {
   sort: { field: string; order: 'asc' | 'desc' }[];
 };
 
-type SearchConfig = {
+export type SearchConfig = {
   fields: ConfigField[];
   layouts: SearchLayout[];
 };
@@ -228,7 +233,7 @@ function renderColumnTitle(
               <SortDescendingOutlined />
             )}
             {hasFilterApplied && <FunnelPlotOutlined />}
-            <DownOutlined />
+            <CaretDownOutlined style={{ color: '#888' }} />
           </div>
         </Tooltip>
       </div>
@@ -236,7 +241,7 @@ function renderColumnTitle(
   };
 }
 
-function rowRenderer(field: ConfigField) {
+function rowRenderer(field: ConfigField, basePath: string) {
   return (value: any | any[]) => {
     // cases :
     // 1. value is text.
@@ -274,8 +279,6 @@ function rowRenderer(field: ConfigField) {
       if (value) {
         const fields = field.fields as any[];
         const link = value[fields[0].name];
-        const basePath =
-          useSelector((state: RootState) => state.config.basePath) || '';
         const sanitizedLink = deltaUrlToFusionUrl(link, basePath);
         const labels = [value[fields[1].name]].flat().sort();
 
@@ -315,7 +318,8 @@ function makeColumnConfig(
   searchConfig: SearchConfig,
   filterMenu: (field: ConfigField) => JSX.Element,
   filteredFields: string[],
-  sortedFields: ESSortField[]
+  sortedFields: ESSortField[],
+  basePath: string
 ) {
   return searchConfig.fields.map((field: ConfigField) => {
     const sorted = sortedFields.find(s => s.fieldName === field.name);
@@ -330,7 +334,7 @@ function makeColumnConfig(
       ),
       dataIndex: field.name,
       key: field.name,
-      render: rowRenderer(field),
+      render: rowRenderer(field, basePath),
       label: field.label,
     };
   });
@@ -343,32 +347,58 @@ export type ESSortField = {
   direction: SortDirection;
   format?: string;
 };
-
-function useGlobalSearchData(
-  query: string,
-  page: number,
-  pageSize: number,
-  onSuccess: (queryResponse: any) => void,
-  onSortOptionsChanged: () => void,
-  nexus: NexusClient
-) {
-  const [searchError, setSearchError] = React.useState<Error | null>(null);
-  const [result, setResult] = React.useState<any>({});
-  const [config, setConfig] = React.useState<SearchConfig>();
+const fetchNexusSearchConfig = async ({ nexus }: { nexus: NexusClient }) => {
+  try {
+    const response = await nexus.Search.config();
+    const searchConfig = response as SearchConfig;
+    return searchConfig;
+  } catch (error) {
+    return error;
+  }
+};
+const fetchNexusSearchQuery = async ({
+  nexus,
+  esQuery,
+}: {
+  nexus: NexusClient;
+  esQuery: any;
+}) => {
+  try {
+    const queryResponse = await nexus.Search.query(esQuery);
+    return queryResponse;
+  } catch (error) {
+    return error;
+  }
+};
+type TGlobalSearch = {
+  query: string;
+  page: number;
+  pageSize: number;
+  queryLayout: string;
+  onSuccess: (queryResponse: any) => void;
+  onSortOptionsChanged: () => void;
+};
+function useGlobalSearchData({
+  query,
+  page,
+  pageSize,
+  queryLayout,
+  onSuccess,
+  onSortOptionsChanged,
+}: TGlobalSearch) {
+  const history = useHistory();
+  const location = useLocation();
+  const nexus = useNexusContext();
   const defaultFilter: FilterState[] = [];
+  const basePath =
+    useSelector((state: RootState) => state.config.basePath) || '';
   const [filterState, dispatchFilter] = React.useReducer(
     filterReducer,
     defaultFilter
   );
   const [selectedSearchLayout, setSelectedSearchLayout] = React.useState<
     string
-  >();
-
-  React.useEffect(() => {
-    if (!(config && config.layouts && config.layouts.length > 0)) return;
-    // default to first search layout
-    setSelectedSearchLayout(config.layouts[0].name);
-  }, [config]);
+  >(() => queryLayout);
 
   const [sortState, setSortState] = React.useState<ESSortField[]>([]);
 
@@ -391,9 +421,7 @@ function useGlobalSearchData(
     }
     onSortOptionsChanged();
   };
-
   const filteredFields = filterState.map(el => extractFieldName(el.filterTerm));
-
   const filtersWithMissing = filterState.map(el => {
     const isMissing =
       el.filterType === 'missing' && el.filters.includes('isMissing')
@@ -401,7 +429,6 @@ function useGlobalSearchData(
         : false;
     return { isMissing, filterTerm: el.filterTerm };
   });
-
   const fieldVisibilityInitialState = React.useMemo(() => {
     const fieldVisibilityFromStorage = localStorage.getItem(
       'search-field-visibility'
@@ -417,19 +444,17 @@ function useGlobalSearchData(
       fields: [],
     };
   }, []);
-
   const [fieldsVisibilityState, dispatchFieldVisibility] = React.useReducer(
     fieldVisibilityReducer,
     fieldVisibilityInitialState
   );
 
-  function checkDisabled(field: ConfigField) {
+  const checkDisabled = (field: ConfigField) => {
     const res = filtersWithMissing.find(
       f => f.filterTerm === field.name && f.isMissing
     );
     return !!res;
-  }
-
+  };
   const onFilterSubmit = (values: FilterState) => {
     if (values.filters.length === 0) {
       dispatchFilter({ type: 'remove', payload: values });
@@ -439,7 +464,6 @@ function useGlobalSearchData(
 
     onSortOptionsChanged();
   };
-
   const fieldMenu = (field: ConfigField) => {
     return (
       <div className="field-menu">
@@ -513,7 +537,6 @@ function useGlobalSearchData(
       </div>
     );
   };
-
   const esQuery = React.useMemo(() => {
     const baseQuery = constructQuery(query);
     const withFilter = constructFilterSet(baseQuery, filterState);
@@ -521,14 +544,42 @@ function useGlobalSearchData(
     const withSorting = addSorting(withPagination, sortState);
     return withSorting.build();
   }, [query, filterState, page, pageSize, sortState]);
-
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [
+    { data: searchConfig, isLoading: loadingConfig },
+    { data: queryResult, isLoading: loadingQuery, error: searchError },
+  ] = useQueries<[{ data: SearchConfig }, { data: any; error: Error }]>([
+    {
+      queryKey: ['fusion-search-config'],
+      queryFn: () => nexus.Search.config(),
+    },
+    {
+      queryKey: [
+        'fusion-search-query',
+        { page, pageSize, query: JSON.stringify(esQuery) },
+      ],
+      queryFn: () => nexus.Search.query(esQuery),
+      onSuccess: (data: any) => onSuccess(data),
+    },
+  ]);
+  const data = React.useMemo(() => {
+    if (queryResult && queryResult.hits && queryResult.hits.hits) {
+      return queryResult.hits.hits.map((hit: any) => {
+        return { ...hit._source, key: hit._source._self };
+      });
+    }
+    return [];
+  }, [queryResult]);
   const columns: SearchConfigField = React.useMemo(() => {
-    return config
-      ? makeColumnConfig(config, fieldMenu, filteredFields, sortState)
+    return searchConfig
+      ? makeColumnConfig(
+          searchConfig,
+          fieldMenu,
+          filteredFields,
+          sortState,
+          basePath
+        )
       : undefined;
-  }, [config, fieldsVisibilityState, filteredFields, sortState]);
-
+  }, [searchConfig, fieldsVisibilityState, filteredFields, sortState]);
   const visibleColumns = React.useMemo(
     () =>
       columns &&
@@ -551,86 +602,27 @@ function useGlobalSearchData(
         }), // sort by the order of the columns
     [columns, fieldsVisibilityState]
   );
-
-  React.useEffect(() => {
-    if (fieldsVisibilityState.isPersistent) {
-      localStorage.setItem(
-        'search-field-visibility',
-        JSON.stringify(fieldsVisibilityState.fields)
-      );
-    } else {
-      localStorage.removeItem('search-field-visibility');
-    }
-  }, [fieldsVisibilityState]);
-
-  const data = React.useMemo(() => {
-    if (result.hits && result.hits.hits) {
-      return result.hits.hits.map((hit: any, ix: number) => {
-        return { ...hit._source, key: ix };
-      });
-    }
-    return [];
-  }, [result]);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    nexus.Search.config()
-      .then((response: any) => {
-        const searchConfig = response as SearchConfig;
-        setConfig(searchConfig);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  React.useEffect(() => {
-    setIsLoading(true);
-    nexus.Search.query(esQuery)
-      .then((queryResponse: any) => {
-        setResult(queryResponse);
-        onSuccess(queryResponse);
-        setSearchError(null);
-      })
-      .catch(e => {
-        setSearchError(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [esQuery]);
-
   const clearAllFilters = () => {
     filterState.forEach(filter => {
       dispatchFilter({ type: 'remove', payload: filter });
     });
   };
-
   const clearSort = () => {
     sortState.forEach(sort => {
       removeSortOption(sort);
     });
   };
-
   const resetAll = () => {
-    if (config?.layouts && config.layouts.length > 0) {
-      const layout = config.layouts.find(l => l.name === selectedSearchLayout);
+    if (searchConfig?.layouts && searchConfig.layouts.length > 0) {
+      const layout = searchConfig.layouts.find(
+        l => l.name === selectedSearchLayout
+      );
       layout && applyLayout(layout, columns);
       return;
     }
     clearAllFilters();
     clearSort();
   };
-
-  /**
-   *
-   * @param operator
-   * @returns Search Config Layout operator name
-   */
   const mapFilterOperator = (operator: 'and' | 'or' | 'none' | 'missing') => {
     switch (operator) {
       case 'and':
@@ -642,11 +634,10 @@ function useGlobalSearchData(
         return 'and';
     }
   };
-
   const handleChangeSearchLayout = (layoutName: string) => {
+    history.replace(`${location.pathname}?layout=${layoutName}`);
     setSelectedSearchLayout(layoutName);
   };
-
   const applyLayout = (layout: SearchLayout, columns: SearchConfigField) => {
     if (!columns) return;
 
@@ -664,7 +655,7 @@ function useGlobalSearchData(
     if (layout.sort) {
       const sorting = layout.sort
         .map(sort => {
-          const field = config?.fields.find(f => f.name === sort.field);
+          const field = searchConfig?.fields.find(f => f.name === sort.field);
           if (!field) return;
           return {
             fieldName: field.name,
@@ -684,7 +675,7 @@ function useGlobalSearchData(
     if (layout.filters) {
       const filters = layout.filters
         .map(filter => {
-          const field = config?.fields.find(f => f.name === filter.field);
+          const field = searchConfig?.fields.find(f => f.name === filter.field);
           if (!field) return;
           return {
             filters: filter.values,
@@ -700,29 +691,55 @@ function useGlobalSearchData(
   };
 
   React.useEffect(() => {
-    const layout = config?.layouts.find(l => l.name === selectedSearchLayout);
+    if (fieldsVisibilityState.isPersistent) {
+      localStorage.setItem(
+        'search-field-visibility',
+        JSON.stringify(fieldsVisibilityState.fields)
+      );
+    } else {
+      localStorage.removeItem('search-field-visibility');
+    }
+  }, [fieldsVisibilityState]);
+  React.useEffect(() => {
+    if (
+      !(searchConfig && searchConfig.layouts && searchConfig.layouts.length > 0)
+    ) {
+      return;
+    }
+    setSelectedSearchLayout(queryLayout ?? searchConfig.layouts[0].name);
+  }, [searchConfig, queryLayout]);
+  React.useEffect(() => {
+    const layout = searchConfig?.layouts.find(
+      l => l.name === selectedSearchLayout
+    );
     if (!layout) return;
 
     applyLayout(layout, columns);
   }, [selectedSearchLayout]);
+  React.useEffect(() => {
+    const layout = searchConfig?.layouts.find(l => l.name === queryLayout);
+    if (!layout) return;
+
+    applyLayout(layout, columns);
+  }, [queryLayout, searchConfig?.layouts]);
 
   return {
-    isLoading,
-    searchError,
-    columns,
     data,
-    dispatchFilter,
-    fieldsVisibilityState,
-    visibleColumns,
-    filterState,
+    columns,
+    resetAll,
     sortState,
+    filterState,
+    searchError,
+    dispatchFilter,
+    visibleColumns,
     removeSortOption,
     changeSortOption,
-    resetAll,
     dispatchFieldVisibility,
-    config,
     handleChangeSearchLayout,
     selectedSearchLayout,
+    fieldsVisibilityState,
+    config: searchConfig,
+    isLoading: loadingQuery || loadingConfig,
   };
 }
 

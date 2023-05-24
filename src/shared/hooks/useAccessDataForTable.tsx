@@ -1,18 +1,49 @@
+import { FilterFilled } from '@ant-design/icons';
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as Sentry from '@sentry/browser';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import { isNil, isString, pick, toNumber } from 'lodash';
+import {
+  has,
+  isArray,
+  isNil,
+  isString,
+  pick,
+  sumBy,
+  toNumber,
+  uniq,
+  uniqBy,
+} from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
+import {
+  StudioTableRow,
+  TableError,
+  getStudioRowKey,
+} from '../../shared/containers/DataTableContainer';
+import {
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  TDataSource,
+  TResourceTableData,
+  getLocalStorageSize,
+  notifyTotalSizeExeeced,
+} from '../../shared/molecules/MyDataTable/MyDataTable';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import { Projection } from '../components/EditTableForm';
 import { download } from '../utils/download';
-import { isNumeric, parseJsonMaybe } from '../utils/index';
+import { isNumeric, parseJsonMaybe, uuidv4 } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import { FilterFilled } from '@ant-design/icons';
+import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
+import { notification } from 'antd';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -63,13 +94,13 @@ export type TableSort = {
   direction: SortDirection;
 };
 
-export const DEFAULT_FIELDS = [
+export const DEFAULT_FIELDS = (basePath: string) => [
   {
     title: 'Label',
     dataIndex: 'label',
     key: 'label',
     displayIndex: 0,
-    render: rowRender,
+    render: (value: string) => rowRender(value, basePath),
   },
   {
     title: 'Project',
@@ -216,7 +247,7 @@ export function parseESResults(result: any) {
 }
 
 export const queryES = async (
-  query: Object,
+  query: string,
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string,
@@ -229,7 +260,15 @@ export const queryES = async (
   const TOTAL_HITS_TRACKING = 1000000;
   const PAGE_SIZE = 10000;
   const PAGE_START = 0;
-
+  let esQuery;
+  try {
+    esQuery = JSON.parse(query);
+  } catch (err) {
+    // @ts-ignore TODO: Remove ts-ignore once we support es2022 in ts (or above).
+    throw new Error('ES Query is an invalid JSON', {
+      cause: { details: `Query submitted is an invalid JSON: ${query}` },
+    });
+  }
   /* removed as causing issues */
   body
     .filter('term', '_deprecated', false)
@@ -256,7 +295,7 @@ export const queryES = async (
       encodeURIComponent(projectionId || '_'), // _ for all projections
       {
         ...bodyQuery,
-        ...query,
+        ...esQuery,
       }
     );
   }
@@ -266,7 +305,7 @@ export const queryES = async (
     encodeURIComponent(viewId),
     {
       ...bodyQuery,
-      ...query,
+      ...esQuery,
     }
   );
 };
@@ -276,7 +315,8 @@ const accessData = async (
   projectLabel: string,
   tableResource: TableResource,
   view: View,
-  nexus: NexusClient
+  nexus: NexusClient,
+  basePath: string
 ) => {
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig: TableColumn[] = [tableResource.configuration].flat();
@@ -286,7 +326,7 @@ const accessData = async (
     tableResource.projection?.['@type']?.includes('ElasticSearchProjection')
   ) {
     const result = await queryES(
-      JSON.parse(dataQuery),
+      dataQuery,
       nexus,
       orgLabel,
       projectLabel,
@@ -309,12 +349,12 @@ const accessData = async (
             sortable: x.enableSort,
             filterable: x.enableFilter,
           }))
-        : DEFAULT_FIELDS;
+        : DEFAULT_FIELDS(basePath);
 
     const headerProperties = fields
       .map((field: any) =>
         // Enrich certain fields with custom rendering
-        addColumnsForES(field, sorter, antTableFilterConfig(items))
+        addColumnsForES(field, sorter, antTableFilterConfig(items), basePath)
       )
       .sort((a, b) => (a.title > b.title ? 1 : 0));
 
@@ -354,10 +394,106 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
+const fileNameForDistributionItem = (distItem: any, defaultName: string) => {
+  const distName: string = distItem?.label ?? distItem?.name ?? defaultName;
+  // Distribution name has an extension if  it's not a url & it has some text after a period.
+  const distNameHasExtension = Boolean(
+    !isValidUrl(distName) &&
+      distName.slice(
+        distName.includes('.') ? distName.lastIndexOf('.') : distName.length
+      )
+  );
+
+  if (!Boolean(distItem?.name) || !distNameHasExtension) {
+    Sentry.captureException(
+      'Distribution item does not have name or extension.',
+      {
+        extra: { distItem, defaultName },
+      }
+    );
+  }
+
+  const fileName = distNameHasExtension
+    ? distName
+    : `${distName}.${fileExtensionFromResourceEncoding(
+        distItem?.encodingFormat
+      )}`;
+
+  return fileName;
+};
+
+const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
+  let localStorageRow: TDataSource;
+  try {
+    const resourceName = resource.name ?? resource['@id'] ?? resource._self;
+    localStorageRow = {
+      key: resource._self,
+      _self: resource._self,
+      id: resource['@id'],
+      name: resourceName,
+      project: resource._project,
+      description: resource.description ?? '',
+      createdAt: resource._createdAt,
+      updatedAt: resource._updatedAt,
+      source: 'studios',
+      type: isArray(resource['@type'])
+        ? resource['@type']
+        : [resource['@type'] ?? ''],
+
+      distribution: {
+        contentSize: isArray(resource.distribution)
+          ? sumBy(
+              resource.distribution,
+              distItem => distItem.contentSize?.value ?? 0
+            )
+          : resource.distribution?.contentSize ?? 0,
+        encodingFormat: isArray(resource.distribution)
+          ? resource.distribution.find(distItem => distItem.encodingFormat)
+              ?.encodingFormat ?? ''
+          : resource.distribution?.encodingFormat ?? '',
+        label: isArray(resource.distribution)
+          ? resource.distribution.map(distItem => {
+              return fileNameForDistributionItem(distItem, resourceName);
+            })
+          : fileNameForDistributionItem(resource.distribution, resourceName),
+        hasDistribution: has(resource, 'distribution'),
+      },
+    };
+  } catch (err) {
+    console.log('@error Failed to serialize resource for localStorage.', err);
+    Sentry.captureException(err, {
+      extra: {
+        resource,
+        message: 'Failed to serialize resource for localStorage.',
+      },
+    });
+  }
+  return localStorageRow!;
+};
+
+const getTotalContentSize = (rows: TDataSource[]) => {
+  let size = 0;
+
+  rows.forEach(row => {
+    if (isArray(row.distribution)) {
+      size += sumBy(
+        row.distribution,
+        distItem => distItem.contentSize?.value ?? 0
+      );
+    } else {
+      size += row.distribution?.contentSize || 0;
+    }
+  });
+
+  return size;
+};
+
 export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
   tableResourceId: string,
+  basePath: string,
+  onError: (err: Error) => void,
   tableResource?: Resource
 ) => {
   const revision = tableResource ? tableResource._rev : 0;
@@ -365,34 +501,173 @@ export const useAccessDataForTable = (
   const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
     []
   );
-  const [selectedRows, setSelectedRows] = React.useState<React.Key[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
 
   const [searchValue, setSearchValue] = React.useState<string>('');
   const { addResourceCollectionToCart } = React.useContext(CartContext);
-  const onSelect = (selectedRowKeys: React.Key[], selectedRows: Resource[]) => {
-    setSelectedRows(selectedRowKeys);
-    if (
-      dataResult?.data?.view &&
-      (dataResult?.data?.view['@type']?.includes('ElasticSearchView') ||
-        dataResult?.data?.view['@type']?.includes(
-          'AggregateElasticSearchView'
-        ) ||
-        (tableResource?.projection &&
-          tableResource.projection['@type'].includes(
-            'ElasticSearchProjection'
-          )))
-    ) {
-      setSelectedResources(selectedRows);
+
+  const onSelectAll = async (
+    selected: boolean,
+    selectedRows: StudioTableRow[],
+    changedRows: StudioTableRow[]
+  ) => {
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+
+    let rowKeysForLS = dataPanelLS?.selectedRowKeys || [];
+    let rowsForLS = dataPanelLS?.selectedRows || [];
+
+    if (selected) {
+      const futureResources = changedRows.map(row =>
+        fetchResourceForDownload(getStudioRowKey(row))
+      );
+
+      Promise.allSettled(futureResources)
+        .then(result => {
+          result.forEach(res => {
+            if (res.status === 'fulfilled') {
+              const localStorageResource = resourceToLocalStorageResource(
+                res.value
+              );
+              rowKeysForLS = uniq([
+                ...rowKeysForLS,
+                localStorageResource._self,
+              ]);
+              rowsForLS = uniqBy([...rowsForLS, localStorageResource], 'key');
+            }
+          });
+          return;
+        })
+        .then(() => {
+          saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
+        })
+        .catch(err => {
+          console.log('@@error', err);
+        });
     } else {
-      const resources = selectedRows.map(s => ({
-        '@id': s.self['value'],
-        _self: decodeURIComponent(s.self['value']),
-      })) as Resource[];
-      setSelectedResources(resources);
+      const rowKeysToRemove = changedRows.map(row => getStudioRowKey(row));
+
+      rowKeysForLS = rowKeysForLS.filter(
+        lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
+      );
+      rowsForLS = rowsForLS.filter(
+        lsRow => !rowKeysToRemove.includes(lsRow.key.toString())
+      );
+
+      saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     }
   };
 
-  const tableResult = useQuery<any, Error>(
+  const onSelectSingleRow = async (
+    record: StudioTableRow,
+    selected: boolean
+  ) => {
+    const recordKey = getStudioRowKey(record);
+
+    const dataPanelLS: TResourceTableData = JSON.parse(
+      localStorage.getItem(DATA_PANEL_STORAGE)!
+    );
+
+    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let selectedRows = dataPanelLS?.selectedRows || [];
+
+    if (selected) {
+      const deltaResource = await fetchResourceForDownload(recordKey);
+      const localStorageResource = resourceToLocalStorageResource(
+        deltaResource
+      );
+      selectedRowKeys = [...selectedRowKeys, recordKey];
+      selectedRows = uniqBy([...selectedRows, localStorageResource], 'key');
+    } else {
+      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRows = selectedRows.filter(t => t.key !== recordKey);
+    }
+
+    saveSelectedRowsToLocalStorage(selectedRowKeys, selectedRows);
+  };
+
+  const fetchResourceForDownload = async (
+    selfUrl: string
+  ): Promise<Resource> => {
+    let compactResource;
+    let expandedResource;
+
+    try {
+      compactResource = await nexus.httpGet({
+        path: selfUrl,
+        headers: { Accept: 'application/json' },
+      });
+
+      const receivedExpandedId =
+        isValidUrl(compactResource['@id']) &&
+        !isUrlCurieFormat(compactResource['@id']);
+
+      if (receivedExpandedId) {
+        return compactResource;
+      }
+
+      expandedResource = await nexus.httpGet({
+        path: `${selfUrl}?format=expanded`,
+        headers: { Accept: 'application/json' },
+      });
+
+      return {
+        ...compactResource,
+        ['@id']:
+          expandedResource?.[0]?.['@id'] ??
+          expandedResource['@id'] ??
+          compactResource['@id'],
+      };
+    } catch (err) {
+      notification.warning({
+        message: (
+          <div>Could not fetch a resource with id for download {selfUrl}</div>
+        ),
+        description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
+        key: selfUrl,
+      });
+      // @ts-ignore TODO: Remove when we supprot es2022 in ts.
+      throw new Error(`Could not select resource ${selfUrl} for download`, {
+        cause: err,
+      });
+    }
+  };
+
+  const saveSelectedRowsToLocalStorage = (
+    rowKeys: React.Key[],
+    rows: TDataSource[]
+  ) => {
+    const currentLocalStorageSize = getLocalStorageSize();
+    const newLocalStorageSize = getTotalContentSize(rows);
+    if (
+      newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+      currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+    ) {
+      return notifyTotalSizeExeeced();
+    }
+
+    localStorage.setItem(
+      DATA_PANEL_STORAGE,
+      JSON.stringify({
+        selectedRowKeys: rowKeys,
+        selectedRows: rows,
+      })
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+        detail: {
+          datapanel: {
+            selectedRowKeys: rowKeys,
+            selectedRows: rows,
+          },
+        },
+      })
+    );
+  };
+
+  const tableResult = useQuery<any, TableError>(
     [tableResourceId, revision],
     async () => {
       const tableResource = (await nexus.Resource.get(
@@ -407,6 +682,9 @@ export const useAccessDataForTable = (
         encodeURIComponent(tableResource.view)
       )) as View;
       return { tableResource, view };
+    },
+    {
+      retry: false,
     }
   );
 
@@ -419,7 +697,8 @@ export const useAccessDataForTable = (
           projectLabel,
           tableResult.data.tableResource,
           tableResult.data.view,
-          nexus
+          nexus,
+          basePath
         );
 
         return result;
@@ -429,6 +708,13 @@ export const useAccessDataForTable = (
     {
       cacheTime: 100000,
       retry: false,
+      refetchOnWindowFocus: false,
+      onError: (err: any) => {
+        const message =
+          err.reason ?? err.message ?? err.name ?? 'Failed to fetch for table';
+        // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
+        onError(new Error(message, { cause: err.cause ?? err.details }));
+      },
       select: data => {
         const table = data.tableResource as TableResource;
         if (table) {
@@ -464,9 +750,9 @@ export const useAccessDataForTable = (
       // download only selected rows or,
       // download everything, when nothing is selected.
       const selectedItems =
-        selectedRows.length > 0
+        selectedRowKeys.length > 0
           ? dataResult.data.items.filter((item: any) => {
-              return selectedRows.includes(item.key);
+              return selectedRowKeys.includes(item.key);
             })
           : dataResult.data.items;
 
@@ -494,9 +780,10 @@ export const useAccessDataForTable = (
     downloadCSV,
     addToDataCart,
     addFromDataCart,
-    onSelect,
+    onSelectAll,
     setSearchValue,
     tableResult,
     dataResult,
+    onSelectSingleRow,
   };
 };

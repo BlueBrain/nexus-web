@@ -157,7 +157,7 @@ const ProjectMetaContaier: React.FC<{
   return (
     <div>
       <Drawer
-        visible={showForm}
+        open={showForm}
         destroyOnClose={true}
         onClose={closeForm}
         title="Edit Project Information"

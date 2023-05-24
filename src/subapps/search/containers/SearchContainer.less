@@ -6,7 +6,6 @@
   justify-content: space-between;
   height: 43px;
   padding: 0 24px 0 1em;
-  position: fixed;
   top: 55px;
   left: 0;
   width: 100%;
@@ -14,7 +13,10 @@
   transition: all 0.2s ease-out;
   /* background-color set here to prevent table overflow
   on scroll being seen above table header */
-  background-color: @fusion-background-color;
+  // background-color: @fusion-background-color;
+  // max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
 
   &__paginator {
     margin-left: auto !important;
@@ -33,14 +35,55 @@
 
 .search-table {
   padding-top: 32px;
+  width: 100%;
+  margin: 0 auto;
+  margin-bottom: 60px;
+  .result-table {
+    .search-table-row {
+      td {
+        color: @fusion-daybreak-9 !important;
+        border: none !important;
+        border-bottom: 1px solid @fusion-gray-4 !important;
+        background-color: #f5f5f5;
+      }
+    }
+    .search-table-row {
+      &.ant-table-row-selected {
+        td {
+          background-color: @fusion-daybreak-10 !important;
+          color: white !important;
 
-  thead {
-    position: sticky;
-    top: 32px;
-    z-index: 20;
+          button {
+            color: white !important;
+          }
+        }
+
+        &:hover {
+          td {
+            background: #fafafa !important;
+            color: @fusion-daybreak-10 !important;
+
+            button {
+              color: @fusion-daybreak-10 !important;
+            }
+          }
+        }
+      }
+    }
+    thead {
+      position: sticky;
+      // top: 32px;
+      z-index: 20;
+    }
   }
 }
-
+.result-table
+  .ant-table-tbody
+  > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+  > td {
+  background: #cbefff !important;
+  color: @fusion-daybreak-10 !important;
+}
 .column-header {
   display: flex;
 
@@ -50,9 +93,10 @@
 
   &__options {
     min-width: 50px;
-    margin-left: auto !important;
+    margin-left: 10px !important;
     display: flex;
-    justify-content: right;
+    cursor: pointer;
+    // justify-content: right;
   }
 }
 
@@ -63,9 +107,11 @@
     letter-spacing: 3px;
     color: #888;
   }
+
   .sort-menu-options {
     margin-bottom: 10px;
   }
+
   .field-filter-menu .ant-row.ant-form-item {
     margin-bottom: 10px;
   }

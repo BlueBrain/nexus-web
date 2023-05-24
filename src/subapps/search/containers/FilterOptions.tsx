@@ -1,10 +1,10 @@
 import { Form, Select, Checkbox, Row, Input } from 'antd';
-import { labelOf } from '../../../shared/utils';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
-import './FilterOptions.less';
 import { constructFilterSet, constructQuery } from '../utils';
+import { labelOf } from '../../../shared/utils';
+import './FilterOptions.less';
 
 type ConfigField =
   | {
@@ -148,7 +148,6 @@ const FilterOptions: React.FC<{
       }
     );
   }, [field]);
-
   const changeFilterSelection = (filterValue: string, selected: boolean) => {
     const aggs = aggregations.map(a => ({
       ...a,

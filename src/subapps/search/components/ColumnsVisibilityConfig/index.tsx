@@ -54,7 +54,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
       {isColumnsVisiblilityConfigVisible && (
         <Modal
           onCancel={() => setIsColumnsVisiblilityConfigVisible(false)}
-          visible={isColumnsVisiblilityConfigVisible}
+          open={isColumnsVisiblilityConfigVisible}
           style={{ ...positionModal(), position: 'fixed' }}
           mask={false}
           footer={null}

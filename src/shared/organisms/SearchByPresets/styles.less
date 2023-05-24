@@ -1,0 +1,64 @@
+@import '../../../shared/lib.less';
+
+.searchby-presets {
+  &-title {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #bfbfbf;
+  }
+
+  &-container {
+    display: grid;
+    grid-auto-flow: row dense;
+    column-gap: 10px;
+    row-gap: 5px;
+    @media screen and (min-width: 980px) and (max-width: 1240px) {
+      grid-template-columns: repeat(auto-fit, minmax(35%, 1fr));
+    }
+    @media (min-width: 1240px) {
+      grid-template-columns: repeat(auto-fit, minmax(23%, 1fr));
+    }
+  }
+
+  &.compact {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px 10px;
+
+    .searchby-presets-container {
+      width: 100%;
+      margin: 0 auto;
+      column-gap: 5px;
+      row-gap: 5px;
+    }
+  }
+}
+
+.searchby-presets-opener {
+  width: max-content;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 4px;
+  background: @fusion-daybreak-7;
+  box-shadow: 0px 20px 16px -16px rgba(0, 0, 0, 0.2);
+}
+.floated-preset-card {
+  cursor: pointer;
+  width: max-content;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 4px;
+  background: @fusion-daybreak-7;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  z-index: 10;
+  opacity: 0;
+  user-select: none;
+}

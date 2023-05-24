@@ -81,7 +81,7 @@ const AnalysisPlugin = ({
   };
   const fileUploadModal = (
     <Modal
-      visible={isUploadAssetDialogOpen}
+      open={isUploadAssetDialogOpen}
       footer={false}
       onCancel={() => dispatch(closeFileUploadDialog())}
       className="file-upload-modal"

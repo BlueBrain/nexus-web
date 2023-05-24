@@ -354,7 +354,7 @@ const WorkflowStepView: React.FC = () => {
 
               <Modal
                 title="Add Data Set"
-                visible={showDataSetForm}
+                open={showDataSetForm}
                 onCancel={() => setShowDataSetForm(false)}
                 footer={null}
                 width={600}
@@ -371,7 +371,7 @@ const WorkflowStepView: React.FC = () => {
           )}
         </StepsBoard>
         <Modal
-          visible={showStepForm}
+          open={showStepForm}
           footer={null}
           onCancel={() => setShowStepForm(false)}
           width={800}
@@ -388,7 +388,7 @@ const WorkflowStepView: React.FC = () => {
           />
         </Modal>
         <Modal
-          visible={showNewTableForm}
+          open={showNewTableForm}
           footer={null}
           onCancel={() => setShowNewTableForm(false)}
           width={400}

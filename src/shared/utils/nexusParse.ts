@@ -18,6 +18,8 @@ const nexusEntities = [
   'resolvers',
   'storages',
   'files',
+  // need schemas
+  'schemas',
 ];
 
 export const nexusUrlRegex = new RegExp(

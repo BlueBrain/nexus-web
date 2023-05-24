@@ -186,7 +186,7 @@ const NumberFilterOptions: React.FC<{
                 max={rangeMax}
                 value={rangeStart || rangeMin}
                 onChange={value => {
-                  setRangeStart(value);
+                  setRangeStart(value as number);
                 }}
               />
             </Row>
@@ -216,6 +216,7 @@ const NumberFilterOptions: React.FC<{
                 }}
                 value={rangeEnd || rangeMax}
                 onChange={value => {
+                  // @ts-ignore
                   setRangeStart(value);
                 }}
               />

@@ -110,7 +110,10 @@ const GalleryView: React.FC = () => {
           className="gallery-drawer"
           maskClosable={false}
           destroyOnClose={false}
-          visible={drawerVisible}
+          open={drawerVisible}
+          // placement="right"
+          // getContainer={false}
+          // style={{ position: 'absolute' }}
           width="" // intentionally blank, specified in css
         >
           <Route

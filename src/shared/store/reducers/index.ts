@@ -4,6 +4,7 @@ import auth, { AuthState } from './auth';
 import config, { ConfigState } from './config';
 import searchReducer, { SearchState } from './search';
 import uiSettingsReducer, { UISettingsState } from './ui-settings';
+import modalsReducer, { modalsState } from './modals';
 import analysisUIReducer from '../../slices/plugins/report';
 
 export interface RootState {
@@ -13,6 +14,7 @@ export interface RootState {
   uiSettings: UISettingsState;
   oidc: UserState;
   search: SearchState;
+  modals: modalsState;
 }
 
 export default {
@@ -21,4 +23,5 @@ export default {
   analysisUIReducer,
   uiSettings: uiSettingsReducer,
   search: searchReducer,
+  modals: modalsReducer,
 };

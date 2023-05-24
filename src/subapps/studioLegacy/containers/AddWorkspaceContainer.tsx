@@ -109,7 +109,7 @@ const AddWorkspaceContainer: React.FC<{
     <>
       <Modal
         title="Create a new Workspace"
-        visible={showModal}
+        open={showModal}
         footer={null}
         onCancel={onCancel}
         destroyOnClose={true}

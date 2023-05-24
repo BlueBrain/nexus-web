@@ -62,7 +62,7 @@ const ConsentContainer: React.FunctionComponent<{
   if (!consent || !consent.hasSetPreferences) {
     return (
       <Modal
-        visible={true}
+        open={true}
         onOk={onClickAllow}
         onCancel={onClickDontAllow}
         okText="Allow"

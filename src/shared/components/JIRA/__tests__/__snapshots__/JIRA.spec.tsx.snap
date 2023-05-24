@@ -291,10 +291,10 @@ exports[`JIRA renders with issues 1`] = `
                       class="ant-table-cell"
                     >
                       <div
-                        class="ant-btn-group ant-btn-group-sm ant-dropdown-button"
+                        class="ant-space-compact ant-space-compact-block ant-dropdown-button"
                       >
                         <button
-                          class="ant-btn ant-btn-default"
+                          class="ant-btn ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
                           type="button"
                         >
                           <span>
@@ -302,7 +302,7 @@ exports[`JIRA renders with issues 1`] = `
                           </span>
                         </button>
                         <button
-                          class="ant-btn ant-btn-default ant-btn-icon-only ant-dropdown-trigger"
+                          class="ant-btn ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
                           type="button"
                         >
                           <span
@@ -334,8 +334,7 @@ exports[`JIRA renders with issues 1`] = `
           </div>
         </div>
         <ul
-          class="ant-pagination mini ant-table-pagination ant-table-pagination-right"
-          unselectable="unselectable"
+          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right"
         >
           <li
             aria-disabled="true"
@@ -557,10 +556,10 @@ exports[`JIRA renders with projects 1`] = `
                       class="ant-table-cell"
                     >
                       <div
-                        class="ant-btn-group ant-btn-group-sm ant-dropdown-button"
+                        class="ant-space-compact ant-space-compact-block ant-dropdown-button"
                       >
                         <button
-                          class="ant-btn ant-btn-default"
+                          class="ant-btn ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
                           type="button"
                         >
                           <span>
@@ -568,7 +567,7 @@ exports[`JIRA renders with projects 1`] = `
                           </span>
                         </button>
                         <button
-                          class="ant-btn ant-btn-default ant-btn-icon-only ant-dropdown-trigger"
+                          class="ant-btn ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
                           type="button"
                         >
                           <span
@@ -600,8 +599,7 @@ exports[`JIRA renders with projects 1`] = `
           </div>
         </div>
         <ul
-          class="ant-pagination mini ant-table-pagination ant-table-pagination-right"
-          unselectable="unselectable"
+          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right"
         >
           <li
             aria-disabled="true"
@@ -691,6 +689,8 @@ exports[`JIRA shows loading spinner 1`] = `
     style="width: 100%; display: flex; margin-bottom: 10px; margin-top: 10px; height: 200px; justify-content: center; align-items: center;"
   >
     <div
+      aria-busy="true"
+      aria-live="polite"
       class="ant-spin ant-spin-lg ant-spin-spinning ant-spin-show-text"
     >
       <span

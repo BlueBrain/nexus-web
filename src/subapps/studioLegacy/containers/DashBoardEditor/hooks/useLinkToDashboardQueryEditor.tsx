@@ -37,7 +37,7 @@ const useLinkToDashboardQueryEditor = (
               <QuestionCircleOutlined />
             </Tooltip>{' '}
             <Link
-              to={`/admin/${orgLabel}/${projectLabel}/${viewId}/_search?query=${encodeURIComponent(
+              to={`/orgs/${orgLabel}/${projectLabel}/${viewId}/_search?query=${encodeURIComponent(
                 dataQuery
               )}`}
               target="_blank"
@@ -58,7 +58,7 @@ const useLinkToDashboardQueryEditor = (
             <QuestionCircleOutlined />
           </Tooltip>{' '}
           <Link
-            to={`/admin/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
+            to={`/orgs/${orgLabel}/${projectLabel}/${viewId}/sparql?query=${encodeURIComponent(
               dataQuery
             )}`}
             target="_blank"

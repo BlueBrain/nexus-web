@@ -1,20 +1,25 @@
+import { Resource } from '@bbp/nexus-sdk';
+import { AnyAction } from 'redux';
 import {
   UISettingsActions,
   UISettingsActionTypes,
 } from '../actions/ui-settings';
-import { AnyAction } from 'redux';
 
 export const DEFAULT_UI_SETTINGS = {
+  openCreationPanel: false,
   pageSizes: {
     orgsListPageSize: 5,
     projectsListPageSize: 5,
     resourcesListPageSize: 20,
     linksListPageSize: 10,
   },
+  currentResourceView: null,
 };
 
 export interface UISettingsState {
+  openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
+  currentResourceView: Resource | null;
 }
 
 export default function uiSettingsReducer(
@@ -30,7 +35,19 @@ export default function uiSettingsReducer(
           [action.filterKey]: action.payload.pageSize,
         },
       };
-      break;
+    case UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL: {
+      return {
+        ...state,
+        openCreationPanel: action.payload ?? !state.openCreationPanel,
+      };
+    }
+    case UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW: {
+      return {
+        ...state,
+        currentResourceView: action.payload,
+      };
+    }
+    default:
+      return state;
   }
-  return state;
 }

@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import * as queryString from 'query-string';
+import { Button, Col, Row, Select } from 'antd';
+import { Link } from 'react-router-dom';
 import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
+import * as queryString from 'query-string';
+import { useOrganisationsSubappContext } from '..';
+import { getResourceLabel } from '../../../shared/utils';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import useNotification from '../../../shared/hooks/useNotification';
-import { Button, Col, Row, Select } from 'antd';
-import { getResourceLabel } from '../../../shared/utils';
-import { useAdminSubappContext } from '..';
-import { isNil } from 'lodash';
-import { Link } from 'react-router-dom';
 
 const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
@@ -21,7 +19,7 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
   }>();
   const location = useLocation();
   const history = useHistory();
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const notification = useNotification();
   const {
     params: { orgLabel, projectLabel, viewId },
@@ -46,7 +44,12 @@ const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {
     );
   }, [selectedView]);
   const menu = (
-    <Row gutter={3} justify="space-between" align="middle">
+    <Row
+      gutter={3}
+      justify="space-between"
+      align="middle"
+      style={{ marginBottom: 10 }}
+    >
       <Col flex="auto">
         <Select
           value={selectedView as string}

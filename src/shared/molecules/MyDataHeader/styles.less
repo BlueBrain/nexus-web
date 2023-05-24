@@ -1,0 +1,200 @@
+@import '../../lib.less';
+
+.my-data-table-header {
+  // margin: 20px auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  &-title {
+    margin: 20px 0 10px;
+    margin-right: 20px;
+
+    span:first-child {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 700;
+      font-size: 28px;
+      line-height: 110%;
+      color: @fusion-main-color;
+    }
+
+    span:last-child {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+      letter-spacing: 0.01em;
+      color: #8c8c8c;
+      padding-left: 10px;
+    }
+  }
+
+  &-actions {
+    margin: 20px 0 10px;
+    display: grid;
+    // grid-template-columns: max-content repeat(3, minmax(250px, 1fr));
+    // gap: 5px;
+    grid-template-columns: 1fr;
+    margin-left: auto;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+
+.my-data-date {
+  &-container {
+    position: relative;
+  }
+
+  &-type-popover {
+    background-color: #fff !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 2px 8px rgb(#333, 0.15) !important;
+    padding: 0px !important;
+  }
+
+  &-popover {
+    // position: absolute;
+    // width: calc(100% + 1px);
+    // top: 35px;
+    // left: 0;
+    background-color: #fff;
+    border: 1px solid #fff;
+    z-index: 10;
+    padding: 20px 10px;
+    box-shadow: 0 2px 8px rgb(#333, 0.15);
+
+    .ant-popover-arrow {
+      display: none;
+    }
+  }
+
+  &-content {
+    margin-top: 10px;
+
+    p {
+      font-size: 10px;
+      color: red;
+    }
+  }
+
+  &-range {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: space-between;
+    // grid-template-rows: repeat(2, 1fr);
+    gap: 3px;
+  }
+
+  &-input {
+    border: none !important;
+    border-bottom: 1px solid;
+    width: 100%;
+    letter-spacing: 1.3px;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &:nth-child(2) {
+      text-align: right;
+    }
+  }
+}
+
+.my-data-date-picker,
+.my-data-type-filter,
+.my-data-type-picker {
+  background-color: @fusion-main-bg !important;
+  border-color: @fusion-neutral-5 !important;
+
+  .ant-input::placeholder,
+  .ant-select-selection-placeholder {
+    color: @fusion-daybreak-10 !important;
+  }
+}
+
+.my-data-type-filter {
+  &-popover {
+    background-color: white !important;
+    padding: 0 !important;
+  }
+}
+
+.my-data-search {
+  border-bottom: 1px solid @fusion-neutral-5 !important;
+  min-width: 350px;
+  width: 100%;
+  .ant-btn {
+    border: none;
+  }
+}
+
+.my-data-type-filter {
+  &-overlay {
+    background-color: white;
+    box-shadow: 0 2px 8px rgb(#333, 0.15) !important;
+    padding: 10px 10px;
+    height: 100%;
+  }
+
+  &-content {
+    max-height: inherit;
+    height: 100%;
+    max-height: 200px;
+    overflow-y: scroll;
+    padding: 2px;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+.my-data-type-filter-search-container {
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  .count {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 125%;
+    color: #8c8c8c;
+    align-self: flex-end;
+  }
+}
+
+.my-data-type-filter-search {
+  background-color: white !important;
+  border-bottom: 1px solid @fusion-neutral-5 !important;
+
+  .ant-input,
+  .ant-btn {
+    border: none !important;
+    background-color: white !important;
+  }
+
+  .ant-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.my-data-type-picker {
+  width: 100%;
+
+  &::placeholder {
+    color: @fusion-daybreak-10 !important;
+  }
+}
