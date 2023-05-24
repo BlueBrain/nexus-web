@@ -16,6 +16,9 @@ describe('Studios', () => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
         cy.task('log', `AUTH TOKEN ------ ${authToken}`);
+        cy.task('log', `AUTH TOKEN ------ ${authToken}`);
+        cy.task('log', `AUTH TOKEN ------ ${authToken}`);
+        cy.task('log', `AUTH TOKEN ------ ${authToken}`);
 
         const orgLabel = Cypress.env('ORG_LABEL');
         const projectLabelBase = Cypress.env('PROJECT_LABEL_BASE');
