@@ -69,9 +69,13 @@ describe('Studios', () => {
   };
 
   it('user can create a studio with a workspace and dashboard', function() {
+    cy.task('log', `NEXUS TOKEN BEFORE ${this.nexusToken}`);
+    console.log('NEXUS TOKEN BEFORE TEST', this.nexusToken);
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );
+    console.log('NEXUS TOKEN AFTER TEST', this.nexusToken);
+    cy.task('log', `NEXUS TOKEN AFTER ${this.nexusToken}`);
 
     cy.findByRole('button', { name: /Create Studio/i }).click();
     cy.findByRole('textbox', { name: /Label/ }).type('Test Studio 1');
