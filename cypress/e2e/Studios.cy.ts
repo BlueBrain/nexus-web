@@ -2,6 +2,24 @@ import { StudioDetailsPage } from '../support/Studios/StudioDetails';
 
 describe('Studios', () => {
   let studioDetailsPage: StudioDetailsPage;
+  Cypress.Cookies.debug(true);
+
+  let LOCAL_STORAGE_MEMORY = {};
+
+  const saveLocalStorage = window => {
+    Object.keys(window.localStorage).forEach(key => {
+      LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+    });
+    console.log('SAVED LCOAL STORAGE', JSON.stringify(LOCAL_STORAGE_MEMORY));
+  };
+
+  const restoreLocalStorage = window => {
+    Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+      window.localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+    });
+    console.log('RESTORED LCOAL STORAGE', JSON.stringify(LOCAL_STORAGE_MEMORY));
+  };
+
   before(() => {
     if (
       !Cypress.env('use_existing_delta_instance') ||
@@ -16,7 +34,10 @@ describe('Studios', () => {
       Cypress.env('users').morty.password
     ).then(() => {
       cy.window().then(win => {
+        saveLocalStorage(win);
         const authToken = win.localStorage.getItem('nexus__token');
+
+        console.log('Auth Token', authToken);
         cy.wrap(authToken).as('nexusToken');
 
         const orgLabel = Cypress.env('ORG_LABEL');
@@ -40,7 +61,11 @@ describe('Studios', () => {
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    );
+    ).then(() => {
+      cy.window().then(window => {
+        restoreLocalStorage(window);
+      });
+    });
     studioDetailsPage = new StudioDetailsPage();
   });
 
