@@ -140,18 +140,21 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised when the automatic silent renew has failed.
   userManager.events.addSilentRenewError((error: Error) => {
     store.dispatch(silentRenewError(error));
+    console.log('$$$ SILTENT RENEW ERROR', error);
     localStorage.removeItem('nexus__token');
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
+    console.log('$$$ USER Signed out');
     localStorage.removeItem('nexus__token');
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
     store.dispatch(sessionTerminated());
+    console.log('$$$ User unloaded');
     localStorage.removeItem('nexus__token');
   });
 
@@ -214,6 +217,7 @@ if (module.hot) {
 // to prevent nasty problems like White-screen-of-deathing
 async function main() {
   // remove old token if any
+  console.log('$$$ Clearning in main');
   localStorage.removeItem('nexus__token');
   // configure user manager
   await store.dispatch<any>(fetchRealms());
