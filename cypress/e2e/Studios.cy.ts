@@ -96,6 +96,7 @@ describe('Studios', () => {
 
     addMinimalDashboard('Test Dashboard 1');
     cy.wait(3000);
+    cy.visit('/');
   });
 
   //   it('user can add several more dashboards to existing Studio and they are ordered in the menu from oldest to newest', function() {
