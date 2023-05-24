@@ -21,3 +21,4 @@ jobs:
         run: |
           echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
           docker push bluebrain/nexus-web:preview
+
