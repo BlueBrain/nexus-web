@@ -36,7 +36,11 @@ describe('Studios', () => {
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    );
+    ).then(() => {
+      cy.getCookies().then(cookies => {
+        console.log('All COOKIES IN BEFORE', JSON.stringify(cookies, null, 4));
+      });
+    });
   });
 
   after(function() {
@@ -65,6 +69,10 @@ describe('Studios', () => {
   };
 
   it('user can create a studio with a workspace and dashboard', function() {
+    cy.getCookies().then(cookies => {
+      console.log('All COOKIES IN TEST', JSON.stringify(cookies, null, 4));
+    });
+
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );

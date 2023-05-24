@@ -22,5 +22,8 @@ Cypress.Commands.add('login', (realm, username, password) => {
       }
     );
     cy.wait(500);
+    cy.getCookies().then(cookies => {
+      console.log('All COOKIES IN LOGIN', JSON.stringify(cookies, null, 4));
+    });
   });
 });
