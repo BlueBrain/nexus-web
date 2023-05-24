@@ -43,14 +43,14 @@ describe('Studios', () => {
     );
   });
 
-  //   after(function() {
-  //     cy.task('project:teardown', {
-  //       nexusApiUrl: Cypress.env('NEXUS_API_URL'),
-  //       authToken: this.nexusToken,
-  //       orgLabel: Cypress.env('ORG_LABEL'),
-  //       projectLabel: this.projectLabel,
-  //     });
-  //   });
+  after(function() {
+    cy.task('project:teardown', {
+      nexusApiUrl: Cypress.env('NEXUS_API_URL'),
+      authToken: this.nexusToken,
+      orgLabel: Cypress.env('ORG_LABEL'),
+      projectLabel: this.projectLabel,
+    });
+  });
 
   const addMinimalDashboard = (name: string) => {
     cy.findByRole('button', { name: /Dashboard/ }).click();
@@ -76,6 +76,11 @@ describe('Studios', () => {
     );
     console.log('NEXUS TOKEN AFTER TEST', this.nexusToken);
     cy.task('log', `NEXUS TOKEN AFTER ${this.nexusToken}`);
+    console.log(
+      '$$$ is null ? ',
+      this.nexusToken == null,
+      this.nexusToken == undefined
+    );
 
     cy.findByRole('button', { name: /Create Studio/i }).click();
     cy.findByRole('textbox', { name: /Label/ }).type('Test Studio 1');
