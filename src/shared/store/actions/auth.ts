@@ -148,7 +148,7 @@ function performLogin(state: TLocationState) {
       // use baseURl instead of window location to get the real location
       const redirectUri =
         state.from && state.from !== '/'
-          ? `${baseURl}/${state.from}${state.searchQuery}`
+          ? `${window.location.origin}/${baseURl}${state.from}${state.searchQuery}`
           : undefined;
       userManager &&
         (await userManager.signinRedirect({
