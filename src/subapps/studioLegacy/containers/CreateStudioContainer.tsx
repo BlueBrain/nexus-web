@@ -22,7 +22,7 @@ const CreateStudioContainer: React.FC<{
   const nexus = useNexusContext();
   const [showModal, setShowModal] = React.useState(false);
   const notification = useNotification();
-
+  console.log('$$$ Container');
   const generateStudioResource = (
     label: string,
     description?: string,
