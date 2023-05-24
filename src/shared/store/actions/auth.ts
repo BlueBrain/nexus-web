@@ -142,10 +142,14 @@ function performLogin(state: TLocationState) {
     getState: () => RootState
   ): Promise<any> => {
     const userManager = getUserManager(getState());
+    const baseURl = getState().config.basePath;
     try {
-      const redirectUri = state.from
-        ? `${window.location.origin}/${state.from}${state.searchQuery}`
-        : '';
+      // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
+      // use baseURl instead of window location to get the real location
+      const redirectUri =
+        state.from && state.from !== '/'
+          ? `${baseURl}/${state.from}${state.searchQuery}`
+          : undefined;
       userManager &&
         (await userManager.signinRedirect({
           redirect_uri: redirectUri,
