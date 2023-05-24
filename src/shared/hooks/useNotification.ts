@@ -1,11 +1,28 @@
 import * as React from 'react';
 import { notification as antdNotification } from 'antd';
+import { NotificationPlacement } from 'antd/es/notification';
 
 export type NotificationContextType = {
-  error: (args: { message: string; description?: React.ReactNode }) => void;
-  success: (args: { message: string; description?: React.ReactNode }) => void;
-  info: (args: { message: string; description?: React.ReactNode }) => void;
-  warning: (args: { message: string; description?: React.ReactNode }) => void;
+  error: (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => void;
+  success: (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => void;
+  info: (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => void;
+  warning: (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => void;
 };
 
 export const NotificationContext = React.createContext<NotificationContextType>(
@@ -67,6 +84,7 @@ interface NotificationDict {
     type: MessageType;
     description?: React.ReactNode;
     number: number;
+    position?: NotificationPlacement;
   };
 }
 
@@ -91,6 +109,7 @@ export const getNotificationContextValue = () => {
         key: `${message}_${notificationMessage.number}`,
         description: notificationMessage.description,
         duration: messageDuration(notificationMessage.type),
+        placement: notificationMessage.position ?? 'topRight',
         onClose: () => {
           setNotifications(notification => {
             const { [message]: _, ...withoutMessageState } = notifications;
@@ -105,7 +124,8 @@ export const getNotificationContextValue = () => {
   const notify = (
     type: MessageType,
     message: string,
-    description?: React.ReactNode
+    description?: React.ReactNode,
+    position?: NotificationPlacement
   ) => {
     setNotifications(notifications => {
       const { ...notificationsToUpdate } = notifications;
@@ -115,6 +135,7 @@ export const getNotificationContextValue = () => {
         notificationsToUpdate[message] = {
           type,
           description,
+          position,
           number: 0,
         };
       }
@@ -123,23 +144,33 @@ export const getNotificationContextValue = () => {
     });
   };
 
-  const error = (args: { message: string; description?: React.ReactNode }) => {
-    notify('error', args.message, args.description);
+  const error = (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => {
+    notify('error', args.message, args.description, args.position);
   };
   const success = (args: {
     message: string;
     description?: React.ReactNode;
+    position?: NotificationPlacement;
   }) => {
-    notify('success', args.message, args.description);
+    notify('success', args.message, args.description, args.position);
   };
-  const info = (args: { message: string; description?: React.ReactNode }) => {
-    notify('info', args.message, args.description);
+  const info = (args: {
+    message: string;
+    description?: React.ReactNode;
+    position?: NotificationPlacement;
+  }) => {
+    notify('info', args.message, args.description, args.position);
   };
   const warning = (args: {
     message: string;
     description?: React.ReactNode;
+    position?: NotificationPlacement;
   }) => {
-    notify('warning', args.message, args.description);
+    notify('warning', args.message, args.description, args.position);
   };
 
   return {

@@ -104,7 +104,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
   return (
     <Modal
       title="Create Dashboard"
-      visible={showCreateModal}
+      open={showCreateModal}
       onCancel={onCancel}
       style={{ minWidth: '75%' }}
       confirmLoading={busy}

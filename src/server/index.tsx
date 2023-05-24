@@ -14,6 +14,7 @@ import {
   DEFAULT_SERVICE_ACCOUNTS_REALM,
 } from '../shared/store/reducers/config';
 import { DEFAULT_SEARCH_STATE } from '../shared/store/reducers/search';
+import { DEFAULT_MODALS_STATE } from '../shared/store/reducers/modals';
 import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
   DEFAULT_REPORT_CATEGORIES,
@@ -35,6 +36,13 @@ const layoutSettings = {
   docsLink: process.env.DOCS_LINK || '',
   logoImg: process.env.LOGO_IMG || '',
   forgeLink: process.env.FORGE_LINK || '',
+  organizationImg: process.env.ORGANIZATION_IMG || '',
+  projectsImg: process.env.PROJECTS_IMG || '',
+  studiosImg: process.env.STUDIOS_IMG || '',
+  projectImg: process.env.PROJECT_IMG || '',
+  landingVideo: process.env.LANDING_VIDEO || '',
+  landingPosterImg: process.env.LANDING_POSTER_IMG || '',
+  mainColor: process.env.MAIN_COLOR || '#062d68',
 };
 
 // configure search settings
@@ -137,6 +145,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       isLoadingUser: false,
     },
     search: DEFAULT_SEARCH_STATE,
+    modals: DEFAULT_MODALS_STATE,
   };
 
   // render an HTML string of our app

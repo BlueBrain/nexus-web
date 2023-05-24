@@ -30,13 +30,14 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
   React.useEffect(() => {
     setSearchValue(defaultSearchValue);
     if (inputRef.current) {
+      // @ts-ignore
       inputRef.current.focus({
         cursor: 'end',
       });
     }
   }, [defaultSearchValue]);
 
-  const inputRef = React.useRef<Input>(null);
+  const inputRef = React.useRef(null);
 
   return (
     <div className="infinite-search" data-testid="infinite-search">

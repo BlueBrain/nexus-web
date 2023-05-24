@@ -69,8 +69,8 @@ describe('StudioAdminView', () => {
     });
     await act(async () => {
       const links = screen.getAllByRole('link');
-      expect(links[0]).toHaveAttribute('href', '/admin/org');
-      expect(links[1]).toHaveAttribute('href', '/admin/org/project');
+      expect(links[0]).toHaveAttribute('href', '/orgs/org');
+      expect(links[1]).toHaveAttribute('href', '/orgs/org/project');
     });
   });
 });

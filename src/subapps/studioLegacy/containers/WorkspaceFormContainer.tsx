@@ -335,7 +335,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       {workspace ? (
         <Modal
           title={`Edit ${workspace['label']}`}
-          visible={true}
+          open={true}
           footer={null}
           onCancel={() => onCancel()}
           width={700}

@@ -14,7 +14,6 @@ const FileUploadContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const history = useHistory();
   const [storages, setStorages] = React.useState<Storage[]>([]);
-
   const makeResourceUri = (resourceId: string) => {
     return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
       resourceId

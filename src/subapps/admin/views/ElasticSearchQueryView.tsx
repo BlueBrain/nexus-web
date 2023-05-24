@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router';
-import * as queryString from 'query-string';
+import { Link } from 'react-router-dom';
 import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-
-import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 import { Button, Col, Row, Select } from 'antd';
+import * as queryString from 'query-string';
+import { useOrganisationsSubappContext } from '..';
 import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';
-import { useAdminSubappContext } from '..';
-import { isNil } from 'lodash';
-import { Link } from 'react-router-dom';
+import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 
 const { Option } = Select;
 const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -51,7 +49,12 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     );
   }, [selectedView]);
   const menu = (
-    <Row gutter={3} justify="space-between" align="middle">
+    <Row
+      gutter={3}
+      justify="space-between"
+      align="middle"
+      style={{ marginBottom: 10 }}
+    >
       <Col flex="auto">
         <Select
           value={selectedView as string}

@@ -10,7 +10,6 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk';
-
 import reducers from './reducers';
 
 export type Services = {
@@ -52,7 +51,6 @@ export default function configureStore(
       )
     )
   );
-
   // DEVELOPMENT ONLY
   // if Hot module Replacement is enabled
   // replace store's reducers with new ones.

@@ -44,12 +44,13 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
           const redirectUri = destination
             ? `${window.location.origin}/${destination}`
             : null;
+
           props.userManager &&
             (await props.userManager.signinRedirect({
               redirect_uri: redirectUri,
             }));
         } catch (error) {
-          switch (error.message) {
+          switch ((error as Error).message) {
             case 'Network Error':
               notification.error({
                 message: 'We could not log you in',

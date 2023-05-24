@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactMde, { SaveImageHandler } from 'react-mde';
+import ReactMde, { SaveImageHandler, ReactMdeProps } from 'react-mde';
 import { Button, Spin } from 'antd';
 import { CloseCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
@@ -17,7 +17,9 @@ const MarkdownEditorComponent: React.FC<{
     template: string;
     data: object;
   }>;
+  rmeProps?: Partial<ReactMdeProps>;
 }> = ({
+  rmeProps,
   resource,
   loading,
   readOnly,
@@ -57,6 +59,7 @@ const MarkdownEditorComponent: React.FC<{
             saveImage: onSaveImage,
           }
         }
+        {...rmeProps}
       />
       <div style={{ padding: '1em 0' }}>
         <Button
@@ -90,7 +93,9 @@ export const MarkdownEditorFormItemComponent: React.FC<{
     template: string;
     data: object;
   }>;
+  rmeProps?: Partial<ReactMdeProps>;
 }> = ({
+  rmeProps,
   value,
   resource,
   onChange,
@@ -118,6 +123,7 @@ export const MarkdownEditorFormItemComponent: React.FC<{
         paste={{
           saveImage: onSaveImage,
         }}
+        {...rmeProps}
       />
     </div>
   );

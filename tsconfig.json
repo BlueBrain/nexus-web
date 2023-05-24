@@ -9,6 +9,7 @@
     "experimentalDecorators": true,
     "sourceMap": true,
     "strict": true,
+    "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noEmitOnError": true,

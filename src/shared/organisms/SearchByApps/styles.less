@@ -1,0 +1,35 @@
+.home-searchby-appslist {
+  margin: 30px 0;
+  &-title {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 140%;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #bfbfbf;
+  }
+  &-container {
+    display: grid;
+    grid-auto-flow: row dense;
+    column-gap: 10px;
+    row-gap: 15px;
+    .subapp-link {
+      min-height: max-content;
+    }
+    .subapp-link-container p {
+      display: none;
+      height: auto;
+      flex: 0;
+    }
+    @media screen and (min-width: 670px) {
+      row-gap: 5px;
+      grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+      .subapp-link-container p {
+        display: block;
+        flex: inherit;
+      }
+    }
+  }
+}

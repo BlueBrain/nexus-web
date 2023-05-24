@@ -42,7 +42,7 @@ const SortConfigContainer = ({
         )}
       </Button>
       <Modal
-        visible={isSortModalVisible}
+        open={isSortModalVisible}
         onCancel={() => setIsSortModalVisible(false)}
         style={{ ...positionModal() }}
         className="sort-modal"

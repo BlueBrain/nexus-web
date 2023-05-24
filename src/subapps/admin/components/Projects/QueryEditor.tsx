@@ -1,7 +1,4 @@
 import * as React from 'react';
-import SparqlQueryView from '../../views/SparqlQueryView';
-import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
-import './QueryEditor.less';
 import { Tabs } from 'antd';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
@@ -9,15 +6,18 @@ import {
   DEFAULT_SPARQL_VIEW_ID,
 } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
+import SparqlQueryView from '../../views/SparqlQueryView';
+import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
 import useNotification from '../../../../shared/hooks/useNotification';
-import { useAdminSubappContext } from '../..';
+import { useOrganisationsSubappContext } from '../..';
+import './QueryEditor.less';
 
 const QueryEditor: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onUpdate: () => void;
 }> = ({ orgLabel, projectLabel, onUpdate }) => {
-  const subapp = useAdminSubappContext();
+  const subapp = useOrganisationsSubappContext();
   const history = useHistory();
   const match = useRouteMatch<{
     orgLabel: string;

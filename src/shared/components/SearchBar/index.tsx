@@ -39,7 +39,7 @@ const SearchBar: React.FC<{
 }) => {
   const [value, setValue] = React.useState(query || '');
   const [focused, setFocused] = React.useState(false);
-  const inputRef = React.useRef<Input>(null);
+  const inputRef = React.useRef(null);
   const projectOptionValueSuffix = '______project';
   const studioOptionValueSuffix = '______studio';
 
@@ -63,6 +63,7 @@ const SearchBar: React.FC<{
 
   const handleSelect = (currentValue: string, option: any) => {
     onSubmit(currentValue, option);
+    // @ts-ignore
     inputRef.current?.blur();
   };
 

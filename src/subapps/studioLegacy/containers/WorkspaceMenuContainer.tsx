@@ -25,6 +25,7 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { find } from 'lodash';
+import { ErrorComponent } from '../../../shared/components/ErrorComponent';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -205,7 +206,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     false
   );
   const [isBusy, setIsBusy] = React.useState(false);
-
+  const [tableDataError, setTableDataError] = React.useState<Error | null>(
+    null
+  );
   const saveDashboardAndDataTable = async (
     table: TableResource | UnsavedTableResource
   ) => {
@@ -328,6 +331,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<EditOutlined />}
+              data-testid="edit-dashboard"
               onClick={e => {
                 if (selectedDashboard && 'dataTable' in selectedDashboard) {
                   setShowDataTableEdit(true);
@@ -399,18 +403,14 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          <Button
-            shape="round"
-            type="default"
-            icon={<EditOutlined />}
-            style={{
-              marginRight: '5px',
-            }}
-            role="button"
+          <Menu.Item
+            style={{ maxWidth: 'max-content', float: 'right', margin: '0 5px' }}
           >
-            {' '}
-            Workspace
-          </Button>
+            <Button shape="round" type="default" role="button">
+              <EditOutlined />
+              Workspace
+            </Button>
+          </Menu.Item>
         </Popover>
         {selectedWorkspace ? (
           <Popover
@@ -419,14 +419,12 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             content={editDhashBoardspaceWrapper}
             trigger="click"
           >
-            <Button
-              shape="round"
-              type="default"
-              icon={<EditOutlined />}
-              role="button"
-            >
-              Dashboard
-            </Button>
+            <Menu.Item style={{ maxWidth: 'max-content', float: 'right' }}>
+              <Button shape="round" type="default" role="button">
+                <EditOutlined />
+                Dashboard
+              </Button>
+            </Menu.Item>
           </Popover>
         ) : null}
       </>
@@ -479,6 +477,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         notification.error({
           message: 'Failed to fetch dashboards',
         });
+        setDashboardSpinner(false);
       });
     setDashboardSpinner(false);
   };
@@ -502,7 +501,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           description: data.description,
           label: data['name'],
         }
-      );
+      ).catch(err => {
+        throw err;
+      });
       onListUpdate();
     }
   };
@@ -694,7 +695,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           <Menu.SubMenu
             icon={<DownOutlined />}
             title={w.label}
-            key={w['@id']}
+            key={`workspace-${w['@id']}`}
             popupOffset={[0, 0]}
             className={selectKeysHighlight(w)}
             onTitleClick={() => setSelectedWorkspace(w)}
@@ -708,7 +709,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               dashboards.map((d: Resource) => {
                 return (
                   <Menu.Item
-                    key={`${w['@id']}-${d['@id']}`}
+                    key={`w${w['@id']}-d${d['@id']}`}
                     onClick={() => {
                       setSelectedKeys([`${w['@id']}*${d['@id']}`]);
                       setSelectedDashboard(d);
@@ -721,10 +722,17 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             )}
           </Menu.SubMenu>
         ))}
-        <div className="workspace-action">{actionButtons()}</div>
+        {actionButtons()}
       </Menu>
       <div>
         {renderResults()}
+        {tableDataError && (
+          <ErrorComponent
+            message={tableDataError.message}
+            // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
+            details={(tableDataError.cause as any)?.details}
+          />
+        )}
         <AddWorkspaceContainer
           key={studioResource['@id']}
           orgLabel={orgLabel}
@@ -739,7 +747,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         {selectedWorkspace ? (
           <Modal
             title="Delete Workspace"
-            visible={deleteConfirmation}
+            open={deleteConfirmation}
             onCancel={() => {
               setDeleteConfirmation(false);
             }}
@@ -760,7 +768,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
         <Modal
           title="Remove Dashboard"
-          visible={deleteDashBoardConfirmation}
+          open={deleteDashBoardConfirmation}
           onCancel={() => {
             setDeleteDashBoardConfirmation(false);
           }}
@@ -771,7 +779,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           </p>
         </Modal>
         <Modal
-          visible={showEditTableForm}
+          open={showEditTableForm}
           footer={null}
           onCancel={() => setShowEditTableForm(false)}
           width={950}
@@ -781,6 +789,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             onSave={data => {
               saveDashboardAndDataTable(data);
             }}
+            onError={err => setTableDataError(err)}
             onClose={() => setShowEditTableForm(false)}
             busy={isBusy}
             orgLabel={orgLabel}

@@ -18,17 +18,18 @@ const TableHeightWrapper: React.FC<{
         style={{
           display: 'flex',
           height: '100%',
+          minHeight: '100vh',
         }}
       >
         <div
           className="height-tester"
           ref={wrapperHeightRef}
-          style={{ margin: '0' }}
+          style={{ margin: '0 auto', maxWidth: 1240, width: '100%' }}
         >
           <div
             ref={resultTableHeightTestRef}
             className={'result-table heightTest'}
-            style={{ display: 'none', opacity: '0' }}
+            // style={{ display: 'none', opacity: '0' }}
           >
             <div className="search-table">
               <Table
@@ -58,10 +59,12 @@ const TableHeightWrapper: React.FC<{
           </div>
           <div
             className="result-table"
-            style={{
-              height: wrapperDOMProps.height,
-              overflow: 'auto',
-            }}
+            // style={{
+            //   height: wrapperDOMProps.height,
+            //   width: '100vw',
+            //   padding: '0 20px',
+            //   // overflow: 'auto',
+            // }}
           >
             {children}
           </div>

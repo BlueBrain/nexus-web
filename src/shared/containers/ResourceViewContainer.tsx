@@ -1,10 +1,18 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useLocation, useHistory, useParams, matchPath } from 'react-router';
+import {
+  useLocation,
+  useHistory,
+  useParams,
+  matchPath,
+  useRouteMatch,
+} from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
+import { useSelector, useDispatch } from 'react-redux';
+import { intersection, isArray } from 'lodash';
 import AdminPlugin from '../containers/AdminPluginContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
@@ -20,6 +28,7 @@ import {
 import { isDeprecated } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
@@ -27,17 +36,30 @@ import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+
+const containsImages = (distribution: any[]) => {
+  const encodingFormat = distribution.map(t => t.encodingFormat);
+  const formats = [
+    'image/png',
+    'image/webp',
+    'image/bmp',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+  ];
+  return intersection(encodingFormat, formats).length !== 0;
+};
 
 const ResourceViewContainer: React.FunctionComponent<{
   render?: (
@@ -46,6 +68,14 @@ const ResourceViewContainer: React.FunctionComponent<{
     }> | null
   ) => React.ReactElement | null;
 }> = ({ render }) => {
+  const history = useHistory();
+  const nexus = useNexusContext();
+  const notification = useNotification();
+  const dispatch = useDispatch();
+
+  const location = useLocation<{ background: Location }>();
+  const [{ ref }] = useMeasure();
+  const { data: pluginManifest } = usePlugins();
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   const [deltaPlugins, setDeltaPlugins] = React.useState<{
@@ -67,10 +97,14 @@ const ResourceViewContainer: React.FunctionComponent<{
     fetchDeltaVersion();
   }, []);
 
-  // @ts-ignore
-  const { orgLabel = '', projectLabel = '', resourceId = '' } = useParams();
-  const nexus = useNexusContext();
-  const location = useLocation<{ background: Location }>();
+  const match = useRouteMatch<{
+    orgLabel: string;
+    projectLabel: string;
+    resourceId: string;
+  }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
+  const orgLabel = match?.params.orgLabel!;
+  const projectLabel = match?.params.projectLabel!;
+  const resourceId = match?.params.resourceId!;
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
@@ -107,11 +141,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       }
     }
   }, []);
-
-  const history = useHistory();
-  const notification = useNotification();
-  const [{ ref }] = useMeasure();
-  const { data: pluginManifest } = usePlugins();
 
   const goToResource = (
     orgLabel: string,
@@ -231,7 +260,6 @@ const ResourceViewContainer: React.FunctionComponent<{
           )) as ExpandedResource[];
 
           const expandedResource = expandedResources[0];
-
           setResource({
             error,
             resource: {
@@ -291,7 +319,10 @@ const ResourceViewContainer: React.FunctionComponent<{
               options
             )) as Resource)
           : resource;
-
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
+        payload: resource,
+      });
       const expandedResources = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
@@ -434,6 +465,24 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
+  const resourceContainsImages =
+    resource &&
+    isArray(resource.distribution) &&
+    containsImages(resource.distribution);
+  const imagePreviewPlugin = resource &&
+    showPluginConsideringStudioContext('preview') &&
+    resource.distribution &&
+    resourceContainsImages && (
+      <ImagePreview
+        key="imagePreviewPlugin"
+        nexus={nexus}
+        resource={resource}
+        collapsed={openPlugins.includes('imagePreview')}
+        handleCollapseChanged={() => {
+          pluginCollapsedToggle('imagePreview');
+        }}
+      />
+    );
 
   const adminPlugin = resource &&
     latestResource &&
@@ -548,11 +597,30 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const builtInPlugins = [
     { key: 'preview', name: 'preview', pluginComponent: previewPlugin },
+    {
+      key: 'imagePreview',
+      name: 'imagePreview',
+      pluginComponent: imagePreviewPlugin,
+    },
     { key: 'admin', name: 'advanced', pluginComponent: adminPlugin },
     { key: 'video', name: 'video', pluginComponent: videoPlugin },
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
+  React.useEffect(() => {
+    return () => {
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
+        payload: null,
+      });
+    };
+  }, []);
+  // React.useEffect(() => {
+  //   window.scrollTo({
+  //     top: 0,
+  //     behavior: 'smooth',
+  //   });
+  // }, []);
   return (
     <>
       <div className="resource-details">

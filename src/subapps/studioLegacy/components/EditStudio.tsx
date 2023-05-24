@@ -55,7 +55,7 @@ const EditStudio: React.FC<{
       <Modal
         wrapClassName="studio-editor-wrapper"
         title="Edit Studio"
-        visible={showModal}
+        open={showModal}
         footer={null}
         onCancel={() => setShowModal(false)}
         width="50%"

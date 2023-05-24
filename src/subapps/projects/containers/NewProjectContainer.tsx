@@ -74,7 +74,7 @@ const NewProjectContainer: React.FC<{
         />
       </AccessControl>
       <Modal
-        visible={showForm}
+        open={showForm}
         footer={null}
         onCancel={handleCancel}
         width={600}

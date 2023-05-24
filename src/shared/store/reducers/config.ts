@@ -22,6 +22,13 @@ export interface ConfigState {
     docsLink: string;
     logoImg: string;
     forgeLink: string;
+    organizationImg: string;
+    projectsImg: string;
+    studiosImg: string;
+    projectImg: string;
+    landingVideo: string;
+    landingPosterImg: string;
+    mainColor: string;
   };
   dataModelsLocation: string;
   jiraUrl: string;
@@ -54,6 +61,13 @@ const initialState: ConfigState = {
     docsLink: '',
     logoImg: '',
     forgeLink: '',
+    projectImg: '',
+    projectsImg: '',
+    organizationImg: '',
+    studiosImg: '',
+    landingPosterImg: '',
+    landingVideo: '',
+    mainColor: '',
   },
   searchSettings: {
     searchConfigProject: DEFAULT_SEARCH_CONFIG_PROJECT,

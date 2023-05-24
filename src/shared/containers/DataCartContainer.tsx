@@ -249,7 +249,6 @@ const DataCartContainer = () => {
           refContainer
         );
       } catch (ex) {
-        console.log(ex);
         notification.error({
           message: `Download failed`,
           description: (ex as NexusError).reason,
@@ -320,7 +319,7 @@ const DataCartContainer = () => {
         title="Data Cart"
         placement="right"
         onClose={handleDrawerClose}
-        visible={showShoppingCart}
+        open={showShoppingCart}
       >
         {length && length > 0 ? (
           <>

@@ -119,7 +119,6 @@ const useSubApps = () => {
       version: subApp.version,
     }));
   }, [subAppsState]);
-
   return {
     subAppProps,
     subAppRoutes,

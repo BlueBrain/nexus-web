@@ -31,7 +31,7 @@ const makeButton = ({
   shortTitle: string;
   danger?: boolean;
 }) => (resource: Resource, actionToDispatch: () => void) => (
-  <div className="action" key={`${resource.id}-${title}`}>
+  <div className="action" key={`${resource['@id']}-${title}`}>
     {danger ? (
       <Popconfirm
         title={
@@ -89,7 +89,6 @@ const ResourceActions: React.FunctionComponent<{
     React.ReactElement[]
   >([]);
   const notification = useNotification();
-
   React.useEffect(() => {
     makeActionButtons(resource, actions, actionTypes)
       .then(setActionButtons)

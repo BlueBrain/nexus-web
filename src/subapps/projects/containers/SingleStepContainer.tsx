@@ -125,7 +125,7 @@ const SingleStepContainer: React.FC<{
         onNameChange={updateName}
       />
       <Modal
-        visible={showAddForm}
+        open={showAddForm}
         footer={null}
         onCancel={() => setShowAddForm(false)}
         width={800}

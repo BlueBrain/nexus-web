@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
-import * as React from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import {
   Table,
   Col,
@@ -28,6 +28,15 @@ import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
+import { ErrorComponent } from '../../shared/components/ErrorComponent';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import { TResourceTableData } from '../../shared/molecules/MyDataTable/MyDataTable';
 
 export type TableColumn = {
   '@type': string;
@@ -91,6 +100,24 @@ type DataTableProps = {
   toggledEdit?: (show: boolean) => void;
 };
 
+export interface TableError {
+  reason?: string;
+  '@type'?: string;
+}
+
+export interface StudioTableRow {
+  self: { type: string; value: string };
+  entity: string;
+  name: string;
+  id: string;
+  key: string; // index in table;
+  _self?: string;
+  '@id'?: string;
+}
+
+export const getStudioRowKey = (row: StudioTableRow) =>
+  row.self?.value ?? row.id ?? row['@id'];
+
 const { Title } = Typography;
 
 const DataTableContainer: React.FC<DataTableProps> = ({
@@ -103,22 +130,69 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   showEdit,
   toggledEdit,
 }) => {
-  const [showEditForm, setShowEditForm] = React.useState<boolean>(
-    showEdit || false
-  );
+  const basePath =
+    useSelector((state: RootState) => state.config.basePath) || '';
+  const [showEditForm, setShowEditForm] = useState<boolean>(showEdit || false);
+  const [tableDataError, setTableDataError] = useState<null | Error>(null);
+  const [displayedRows, setDisplayedRows] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setShowEditForm(showEdit || false);
   }, [showEdit]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     toggledEdit && toggledEdit(showEditForm);
   }, [showEditForm]);
 
-  const [searchboxValue, setSearchboxValue] = React.useState<string>('');
-  const [searchboxFocused, setSearchboxFocused] = React.useState<boolean>(
-    false
+  const [{ selectedRowKeys }, updateTableData] = useReducer(
+    (
+      previous: TResourceTableData,
+      partialData: Partial<TResourceTableData>
+    ) => ({
+      ...previous,
+      ...partialData,
+    }),
+    {
+      selectedRowKeys: [],
+      selectedRows: [],
+    }
   );
+
+  useEffect(() => {
+    // Initialize the selected rows when window is reloaded.
+    const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
+    const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
+    if (dataLs && dataLs.length) {
+      updateTableData({
+        selectedRows: dataLsObject.selectedRows,
+        selectedRowKeys: dataLsObject.selectedRowKeys,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const dataPanelEventListner = (
+      event: DataPanelEvent<{ datapanel: TResourceTableData }>
+    ) => {
+      updateTableData({
+        selectedRows: event.detail?.datapanel.selectedRows,
+        selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
+      });
+    };
+    window.addEventListener(
+      DATA_PANEL_STORAGE_EVENT,
+      dataPanelEventListner as EventListener
+    );
+    return () => {
+      window.removeEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+    };
+  }, []);
+
+  const [searchboxValue, setSearchboxValue] = useState<string>('');
+  const [searchboxFocused, setSearchboxFocused] = useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -218,6 +292,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       onSave && onSave(data);
     },
     onSuccess: data => {
+      setTableDataError(null);
       setShowEditForm(false);
     },
     onError: error => {
@@ -231,6 +306,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     orgLabel,
     projectLabel,
     tableResourceId,
+    basePath,
+    err => setTableDataError(err),
     changeTableResource.data
   );
 
@@ -283,20 +360,6 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 onClick={tableData.downloadCSV}
               >
                 Download CSV
-              </Button>
-            </div>
-          ) : null
-        ) : null}
-        {tableResource ? (
-          tableResource.enableSave ? (
-            <div>
-              <Button
-                block
-                icon={<ShoppingCartOutlined />}
-                type="default"
-                onClick={tableData.addToDataCart}
-              >
-                Add To Cart
               </Button>
             </div>
           ) : null
@@ -362,6 +425,18 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <Col span={8} className="table-options">
             <div className="table-options__inner">
               {tableResource?.enableSearch && search}
+              <span className="table-row-count">
+                {/* If the user filters a column (i.e. updates) or enters a serch term (i.e. update dataResult), show the total rows in format <rows shown to user>/<total rows>, otherwise only show total rows. */}
+                {displayedRows &&
+                displayedRows !== tableData.dataResult.data?.items?.length
+                  ? `${displayedRows} / `
+                  : tableData.dataResult?.data?.items.length !==
+                    tableData.dataResult.data?.total
+                  ? `${tableData.dataResult.data?.items?.length} /`
+                  : ''}
+                {`${tableData.dataResult?.data?.total ?? 0} `}
+                Results
+              </span>
               {(!disableEdit ||
                 !disableAddFromCart ||
                 tableResource.enableDownload ||
@@ -376,14 +451,22 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   };
 
   return (
-    <div>
+    <div className="studio-table-container">
+      {/* Error when the table resource itself failed to fetch */}
       {tableData.tableResult.isError ? (
-        tableData.tableResult.error.message
+        <ErrorComponent
+          message={
+            tableData.tableResult.error.reason ?? 'Table failed to fetch'
+          }
+          details={tableData.tableResult.error['@type']}
+        />
       ) : tableData.tableResult.isSuccess ? (
         <>
           <Table
             bordered
-            loading={!tableData.dataResult.data?.headerProperties}
+            loading={
+              tableData.dataResult.isLoading || tableData.tableResult.isLoading
+            }
             rowClassName={'data-table-row'}
             title={() => renderTitle(options)}
             columns={tableData.dataResult.data?.headerProperties}
@@ -397,21 +480,23 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               },
             })}
             pagination={{
-              pageSize:
-                tableData.tableResult.data.tableResource['resultsPerPage'],
+              pageSize: 50,
               responsive: true,
               showLessItems: true,
             }}
             rowSelection={{
-              type: 'checkbox',
-              onChange: tableData.onSelect,
+              selectedRowKeys,
+              onSelect: tableData.onSelectSingleRow,
+              onSelectAll: tableData.onSelectAll,
             }}
-            rowKey={r => {
-              return r['s'] || `tr_${r['id']}`;
+            rowKey={r => getStudioRowKey(r)}
+            data-testid="dashboard-table"
+            onChange={(page, fileter, sorter, extra) => {
+              setDisplayedRows(extra.currentDataSource?.length ?? 0);
             }}
           />
           <Modal
-            visible={showEditForm}
+            open={showEditForm}
             footer={null}
             onCancel={() => setShowEditForm(false)}
             width={950}
@@ -420,12 +505,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             <EditTableForm
               onSave={changeTableResource.mutate}
               onClose={() => setShowEditForm(false)}
+              onError={err => setTableDataError(err)}
               table={tableData.tableResult.data.tableResource}
               busy={changeTableResource.isLoading}
               orgLabel={orgLabel}
               projectLabel={projectLabel}
             />
           </Modal>
+          {/* Error when the data within the table resource failed */}
+          {tableDataError && (
+            <ErrorComponent
+              message={tableDataError.message}
+              // @ts-ignore - TODO: Remove ts-ignore once we support es2022 in ts.
+              details={(tableDataError.cause as any)?.details}
+            />
+          )}
         </>
       ) : (
         <Spin></Spin>

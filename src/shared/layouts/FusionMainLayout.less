@@ -1,6 +1,14 @@
 @import '../lib.less';
 
 .fusion-main-layout {
+  background: @fusion-main-bg !important;
+  height: 100%;
+  min-height: 100vh !important;
+  &.wall {
+    .fusion-main-layout__content {
+      margin-top: 0;
+    }
+  }
   .project-panel,
   .workflow-step-view__panel {
     left: 80px;
@@ -39,23 +47,5 @@
   .ant-menu-vertical .ant-menu-item:not(:last-child) {
     margin: 0;
     height: 50px;
-  }
-
-  .logo-container {
-    // overrides default `position: relative`
-    position: fixed !important;
-    z-index: 21;
-
-    &__logo {
-      padding: 0.6rem 1.7rem;
-      display: flex;
-      letter-spacing: 1px;
-      color: #ffffff;
-      height: 52px;
-
-      img {
-        height: 33px;
-      }
-    }
   }
 }

@@ -58,7 +58,7 @@ describe('Sort Config Container', () => {
 
     const showSortingModalBtn = screen.getByRole('button');
     fireEvent.click(showSortingModalBtn);
-    const sortList = screen.getByRole('document');
+    const sortList = screen.getByRole('dialog');
     expect(sortList).toBeInTheDocument();
   });
 
@@ -183,9 +183,9 @@ describe('Sort Config Container', () => {
 
     const showSortingModalBtn = screen.getByRole('button');
     fireEvent.click(showSortingModalBtn);
-    const modal = screen.getByRole('document', { hidden: false });
+    const modal = screen.getByRole('dialog', { hidden: false });
     expect(modal).toBeInTheDocument();
-    const hiddenModal = screen.getByRole('document', { hidden: true });
+    const hiddenModal = screen.getByRole('dialog', { hidden: true });
     expect(hiddenModal).toBeInTheDocument();
   });
 });

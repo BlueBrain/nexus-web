@@ -12,3 +12,6 @@ cypress/videos/
 cypress.env.json
 *.iml
 .idea
+*.sops*
+.sops-*.*
+*.key

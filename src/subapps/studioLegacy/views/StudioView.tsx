@@ -29,8 +29,11 @@ const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
 };
 
 const StudioView: React.FunctionComponent<{}> = () => {
-  // @ts-ignore
-  const { orgLabel, projectLabel, studioId } = useParams();
+  const { orgLabel, projectLabel, studioId } = useParams<{
+    orgLabel: string;
+    projectLabel: string;
+    studioId: string;
+  }>();
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [queryParams, setQueryString] = useQueryString();
   const { workspaceId, dashboardId } = queryParams;
@@ -54,7 +57,6 @@ const StudioView: React.FunctionComponent<{}> = () => {
     }),
     [orgLabel, projectLabel, workspaceId, dashboardId, studioId, isWritable]
   );
-
   return (
     <>
       <div
@@ -66,9 +68,9 @@ const StudioView: React.FunctionComponent<{}> = () => {
         <div className="label">
           <h1 className="name">
             <span>
-              <Link to={`/admin/${orgLabel}`}>{orgLabel}</Link>
+              <Link to={`/orgs/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/admin/${orgLabel}/${projectLabel}`}>
+              <Link to={`/orgs/${orgLabel}/${projectLabel}`}>
                 {projectLabel}
               </Link>
             </span>

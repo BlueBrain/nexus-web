@@ -18,7 +18,7 @@ const ResourceMetadata: React.FC<{
           <Col>
             <b>Organization:</b>{' '}
             <Link
-              to={`/admin/${orgLabel}`}
+              to={`/orgs/${orgLabel}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -30,7 +30,7 @@ const ResourceMetadata: React.FC<{
           <Col>
             <b>Project:</b>{' '}
             <Link
-              to={`/admin/${orgLabel}/${projectLabel}`}
+              to={`/orgs/${orgLabel}/${projectLabel}`}
               target="_blank"
               rel="noopener noreferrer"
             >
