@@ -11,6 +11,7 @@ import {
   isArray,
 } from 'lodash';
 import { clsx } from 'clsx';
+import * as moment from 'moment';
 import { useSelector } from 'react-redux';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
@@ -208,7 +209,23 @@ const MyDataTable: React.FC<TProps> = ({
         key: 'project',
         title: 'organization / project',
         dataIndex: 'project',
-        sorter: false,
+        sorter: (a, b) => {
+          if (!a.project) return -1;
+          if (!b.project) return -1;
+          const { project: projectA } = makeOrgProjectTuple(a.project);
+          const { project: projectB } = makeOrgProjectTuple(b.project);
+          return projectA
+            .trim()
+            .localeCompare(
+              projectB.trim(),
+              window.navigator.language || 'en-US',
+              {
+                sensitivity: 'base',
+                usage: 'sort',
+                ignorePunctuation: true,
+              }
+            );
+        },
         render: (text, record) => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
@@ -235,7 +252,13 @@ const MyDataTable: React.FC<TProps> = ({
         key: 'type',
         title: 'type',
         dataIndex: 'type',
-        sorter: false,
+        sorter: (a, b) => {
+          if (!Boolean(a.type)) return -1;
+          if (!Boolean(b.type)) return -1;
+          const lengthA = Array.isArray(a.type) ? a.type.length : 1;
+          const lengthB = Array.isArray(b.type) ? b.type.length : 1;
+          return lengthA - lengthB;
+        },
         render: text => {
           let types = '';
           if (isArray(text)) {
@@ -261,7 +284,8 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'updated date',
         dataIndex: 'updatedAt',
         width: 140,
-        sorter: false,
+        sorter: (a, b) =>
+          moment(a.updatedAt).unix() - moment(b.updatedAt).unix(),
         render: text => timeago(new Date(text)),
       },
       {
@@ -269,7 +293,8 @@ const MyDataTable: React.FC<TProps> = ({
         title: 'created date',
         dataIndex: 'createdAt',
         width: 140,
-        sorter: false,
+        sorter: (a, b) =>
+          moment(a.createdAt).unix() - moment(b.createdAt).unix(),
         render: text => timeago(new Date(text)),
       },
     ],
