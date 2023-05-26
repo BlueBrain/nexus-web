@@ -210,9 +210,14 @@
     ],
     "globals": {
       "FUSION_VERSION": "1.0.0",
-      "COMMIT_HASH": "9013fa343"
+      "COMMIT_HASH": "9013fa343",
+      "ts-jest": {
+        "isolatedModules": true
+      }
     },
-    "watchPathIgnorePatterns": ["node_modules"]
+    "watchPathIgnorePatterns": [
+      "node_modules"
+    ]
   },
   "prettier": {
     "singleQuote": true,
