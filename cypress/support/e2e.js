@@ -3,9 +3,11 @@ import 'cypress-file-upload';
 import { loginPage } from './index';
 
 Cypress.Commands.add('login', (id, realm, username, password) => {
-  return cy.session(id, () => {
+  return cy.session(username, () => {
+    console.log('$$$ User name', username)
+    cy.task('log', '$$$Username' + username)
     cy.visit(loginPage);
-    cy.findByRole('button', { name: /identity-login/i  }).click();
+    cy.findByRole('button', { name: /identity-login/i }).click();
     cy.get('ul')
       .contains(realm.name)
       .click();

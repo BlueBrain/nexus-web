@@ -24,6 +24,8 @@ services:
     image: nexus-web:fresh
     expose:
       - 8000
+    ports:
+      - 8000:8000
     networks:
       default:
         aliases:

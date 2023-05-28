@@ -34,7 +34,7 @@ describe('Studios', () => {
       Cypress.env('users').morty.password
     ).then(() => {
       cy.window().then(win => {
-        saveLocalStorage(win);
+        // saveLocalStorage(win);
         const authToken = win.localStorage.getItem('nexus__token');
 
         console.log('Auth Token', authToken);
@@ -62,9 +62,9 @@ describe('Studios', () => {
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
     ).then(() => {
-      cy.window().then(window => {
-        restoreLocalStorage(window);
-      });
+      // cy.window().then(window => {
+      //   restoreLocalStorage(window);
+      // });
     });
     studioDetailsPage = new StudioDetailsPage();
   });

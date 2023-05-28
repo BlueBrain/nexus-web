@@ -21,7 +21,7 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
-    testIsolation: 'off',
+    testIsolation: 'on',
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
@@ -67,6 +67,8 @@ export default defineConfig({
               'An project used for Cypress automated tests';
 
             try {
+              console.log('NEXUS API URL', nexusApiUrl);
+              console.log('Auth TOKEN', authToken);
               const nexus = createNexusClient({
                 uri: nexusApiUrl,
                 fetch,
