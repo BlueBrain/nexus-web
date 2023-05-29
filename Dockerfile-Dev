@@ -1,0 +1,8 @@
+FROM timbru31/node-alpine-git:16
+
+USER 1000
+WORKDIR /opt/nexus
+ENV GENERATE_SOURCEMAP=false
+ENV NODE_OPTIONS="--max_old_space_size=4096"
+EXPOSE 8000
+ENTRYPOINT ["sh", "-c", "yarn && yarn start "]

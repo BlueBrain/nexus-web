@@ -27,7 +27,7 @@ Browser-->>OIDC provider: loop: silent refresh token in iframe
 Note left of Browser: A Token is expired :-\
 Browser->Server: load Nexus Web please
 Note over Server: hmm! that token is expired
-Server-->Server: render HTML 
+Server-->Server: render HTML
 Server->Browser: here is the page
 Browser-->OIDC provider: try a silent refresh
 Note left of OIDC provider: OK

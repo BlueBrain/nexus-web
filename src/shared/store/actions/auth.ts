@@ -146,12 +146,16 @@ function performLogin(state: TLocationState) {
       const redirectUri = state.from
         ? `${window.location.origin}/${state.from}${state.searchQuery}`
         : '';
+      console.log('$$$ Perform login', state);
+      console.log('$$$ Perform login root state', getState());
+
       console.log('$$$ Redirect uri', redirectUri);
       userManager &&
         (await userManager.signinRedirect({
           redirect_uri: redirectUri,
         }));
     } catch (error) {
+      console.log('$$$ Auth failed', error);
       return dispatch(authFailedAction(error));
     }
   };

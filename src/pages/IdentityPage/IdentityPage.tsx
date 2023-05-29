@@ -114,6 +114,7 @@ const IdentityPage: React.FC<{}> = () => {
                       onClick={e => {
                         e.preventDefault();
                         dispatch(configActions.setPreferredRealm(item.name));
+                        console.log('$$$ UseLocation', location);
                         dispatch(
                           authActions.performLogin(
                             location.state as TLocationState

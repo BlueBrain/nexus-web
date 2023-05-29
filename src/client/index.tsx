@@ -111,6 +111,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised prior to the access token expiring.
   userManager.events.addAccessTokenExpiring(() => {
     store.dispatch(userExpiring());
+    console.log('$$$ Sient refresh in addToekn');
     userManager
       .signinSilent()
       .then(user => {
@@ -125,6 +126,7 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised after the access token has expired.
   userManager.events.addAccessTokenExpired(() => {
     store.dispatch(userExpired());
+    console.log('$$$ Silent refresh in addAccessToken ');
     userManager
       .signinSilent()
       .then(user => {
@@ -139,17 +141,21 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
   // Raised when the automatic silent renew has failed.
   userManager.events.addSilentRenewError((error: Error) => {
     store.dispatch(silentRenewError(error));
+    console.log('$$$ silent renew error');
     localStorage.removeItem('nexus__token');
   });
 
   //  Raised when the user's sign-in status at the OP has changed.
   userManager.events.addUserSignedOut(() => {
     store.dispatch(userSignedOut());
+    console.log('$$$ sign out');
+
     localStorage.removeItem('nexus__token');
   });
 
   // Raised when a user session has been terminated.
   userManager.events.addUserUnloaded(() => {
+    console.log('$$$ USer unloaded');
     store.dispatch(sessionTerminated());
     localStorage.removeItem('nexus__token');
   });
@@ -160,14 +166,16 @@ const setupUserSession = async (userManager: UserManager, store: Store) => {
     user = await userManager.getUser();
     if (user) {
       // we've loaded a user, refresh it
+      console.log('$$$$ Sieltn refresh in main');
       user = await userManager.signinSilent();
     }
     // nope, are we receiving a new token?
     else {
+      console.log('$$$ No User found');
       user = await userManager.signinRedirectCallback();
     }
   } catch (e) {
-    console.log('$$$ User not signed in');
+    console.log('$$$ User not signed in', e);
     // nothing to do, we are just not logged in
   }
 };

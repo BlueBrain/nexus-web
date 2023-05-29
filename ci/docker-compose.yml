@@ -21,6 +21,8 @@ services:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
       API_ENDPOINT: 'http://delta.test:8098/v1'
       CLIENT_ID: 'fusion'
+    volumes:
+      - ../:/opt/nexus
     image: nexus-web:fresh
     expose:
       - 8000
@@ -84,6 +86,7 @@ services:
       - --hostname-port=8080
       - --hostname-strict=false
       - --hostname-strict-backchannel=false
+      - --log-level=DEBUG
     ports:
       - 8080:8080
     networks:
