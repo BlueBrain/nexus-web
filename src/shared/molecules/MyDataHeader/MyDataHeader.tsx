@@ -101,7 +101,7 @@ const fetchGlobalSearchTypes = async (nexus: NexusClient) => {
       },
     },
   });
-  return data.aggregations.suggestions.buckets;
+  return data.aggregations?.suggestions.buckets;
 };
 const dateFieldName = {
   createdAt: 'Creation Date',

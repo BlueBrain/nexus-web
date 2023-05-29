@@ -57,6 +57,13 @@ declare global {
         username: string,
         password: string
       ): Chainable<Element>;
+
+      directlogin(
+        id: string,
+        realm: { name: string; baseUrl: string },
+        username: string,
+        password: string
+      ): Chainable<Element>;
     }
   }
 }

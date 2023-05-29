@@ -6,7 +6,7 @@ services:
       - fusion
       - delta
     environment:
-      - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
+      - CYPRESS_NEXUS_API_URL=http://delta.test:8098/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
 
     working_dir: /e2e
@@ -19,7 +19,7 @@ services:
       - delta
     environment:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
-      API_ENDPOINT: 'http://delta.test:8080/v1'
+      API_ENDPOINT: 'http://delta.test:8098/v1'
       CLIENT_ID: 'fusion'
     image: nexus-web:fresh
     expose:
@@ -58,9 +58,12 @@ services:
         './bin/delta-app',
         '-Xmx4G',
         '-Dapp.cluster.remote-interface=delta',
+        '-Dapp.http.port=8098',
       ]
     expose:
-      - 8080
+      - 8098
+    ports:
+      - 8098:8098
     volumes:
       - ./config:/config
       - /tmp:/default-volume

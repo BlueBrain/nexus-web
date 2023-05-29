@@ -69,7 +69,7 @@ export const fetchNexusSearchConfig = async (nexus: NexusClient) => {
   try {
     const config: SearchConfig = await nexus.Search.config();
     const layouts: TLayout[] =
-      config?.layouts.map(layout => ({
+      config?.layouts?.map(layout => ({
         id: layout.filters?.[0].values?.[0],
         name: layout.name,
       })) || [];

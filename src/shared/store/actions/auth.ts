@@ -146,6 +146,7 @@ function performLogin(state: TLocationState) {
       const redirectUri = state.from
         ? `${window.location.origin}/${state.from}${state.searchQuery}`
         : '';
+      console.log('$$$ Redirect uri', redirectUri);
       userManager &&
         (await userManager.signinRedirect({
           redirect_uri: redirectUri,
