@@ -80,6 +80,7 @@ export type TDataSource = {
   updatedAt: string;
   createdAt: string;
   resource?: TResource;
+  localStorageType?: 'resource' | 'distribution';
   distribution?: {
     contentSize: number;
     encodingFormat: string | string[];
