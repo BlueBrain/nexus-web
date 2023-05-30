@@ -17,11 +17,10 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
-    defaultCommandTimeout: 5000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
-    experimentalSessionAndOrigin: true,
-    testIsolation: 'off',
+    // experimentalSessionAndOrigin: true,
+    // testIsolation: false,
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
@@ -29,8 +28,14 @@ export default defineConfig({
     },
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
+        launchOptions.args.push(
+          '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
+        );
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push(
+            '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
+          );
         }
         return launchOptions;
       }),

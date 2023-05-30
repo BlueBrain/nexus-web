@@ -222,7 +222,7 @@ if (module.hot) {
 // to prevent nasty problems like White-screen-of-deathing
 async function main() {
   // remove old token if any
-  // localStorage.removeItem('nexus__token');
+  localStorage.removeItem('nexus__token');
   // configure user manager
   await store.dispatch<any>(fetchRealms());
   const userManager = getUserManager(store.getState());

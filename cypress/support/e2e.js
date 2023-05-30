@@ -22,11 +22,6 @@ Cypress.Commands.add('login', (id, realm, username, password) => {
     )
     cy.wait(5000);
   });
-
-  cy.visit('studios')
-  cy.visit(5000)
-  cy.task('log', '$$$ VIsiting studios');
-  console.log('$$$ Visiting Studios')
 });
 
 Cypress.Commands.add('directlogin', (id, realm, username, password) => {
@@ -49,4 +44,27 @@ Cypress.Commands.add('directlogin', (id, realm, username, password) => {
 
   cy.wait(500)
   return cy.wait(500);
+});
+
+Cypress.Commands.add("rewriteHeaders", () => {
+  cy.intercept("*", (req) => {
+    console.log('$$$ Req', req.url)
+    console.log('$$$ Req Cookie', req.headers["Cookie"])
+    return req
+    // return req.on("response", (res) => {
+    //   const setCookies = res.headers["set-cookie"]
+
+    //   res.headers["set-cookie"] = (
+    //     Array.isArray(setCookies) ? setCookies : [setCookies]
+    //   )
+    //     .filter((x) => x)
+    //     .map((headerContent) =>
+    //       headerContent.replace(
+    //         /samesite=(lax|strict)/gi,
+    //         "secure; samesite=none"
+    //       )
+    //     )
+    // })
+  }
+  )
 });

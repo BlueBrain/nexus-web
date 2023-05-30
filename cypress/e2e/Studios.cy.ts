@@ -21,6 +21,8 @@ describe('Studios', () => {
   };
 
   before(() => {
+    // @ts-ignore
+    cy.rewriteHeaders();
     if (
       !Cypress.env('use_existing_delta_instance') ||
       Cypress.env('use_existing_delta_instance') === false
@@ -56,16 +58,16 @@ describe('Studios', () => {
   });
 
   beforeEach(() => {
-    // cy.login(
-    //   `${Cypress.env('users').morty.username}-studio`,
-    //   Cypress.env('users').morty.realm,
-    //   Cypress.env('users').morty.username,
-    //   Cypress.env('users').morty.password
-    // ).then(() => {
-    //   // cy.window().then(window => {
-    //   //   restoreLocalStorage(window);
-    //   // });
-    // });
+    cy.login(
+      `${Cypress.env('users').morty.username}-studio`,
+      Cypress.env('users').morty.realm,
+      Cypress.env('users').morty.username,
+      Cypress.env('users').morty.password
+    ).then(() => {
+      // cy.window().then(window => {
+      //   restoreLocalStorage(window);
+      // });
+    });
     studioDetailsPage = new StudioDetailsPage();
   });
 
@@ -79,9 +81,9 @@ describe('Studios', () => {
   });
 
   it('user can create a studio with a workspace and dashboard', function() {
-    // cy.visit(
-    //   `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
-    // );
+    cy.visit(
+      `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
+    );
     studioDetailsPage.createStudio('Test Studio 1');
     studioDetailsPage.createWorkspace('Test Workspace 1');
     studioDetailsPage.createDashboard('Test Workspace 1', 'Test Dashboard 1');

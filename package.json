@@ -22,7 +22,7 @@
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
     "getvideo": "sudo docker cp cypress:/e2e/cypress/videos/Studios.cy.ts.mp4 .",
-    "runtest": "echo | sudo docker exec -e DEBUG=cypress:* -t cypress cypress run --config-file cypress.config.ts --browser chrome",
+    "runtest": "echo | sudo docker exec -e DEBUG=cypress:* -t cypress cypress run --config-file cypress.config.ts --browser /usr/bin/google-chrome",
     "cp": "for file in $(git st | grep modified: | cut -d: -f2); do sudo docker cp $file cypress:/e2e/$file; done"
   },
   "dependencies": {
