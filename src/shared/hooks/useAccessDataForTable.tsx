@@ -24,6 +24,7 @@ import {
   getStudioRowKey,
 } from '../../shared/containers/DataTableContainer';
 import {
+  Distribution,
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
@@ -422,10 +423,127 @@ const fileNameForDistributionItem = (distItem: any, defaultName: string) => {
   return fileName;
 };
 
+const getResourceName = (resource: Resource) =>
+  resource.name ?? resource['@id'] ?? resource._self;
+
+const parentDistributionProperties = (resource: Resource) => {
+  return {
+    contentSize: isArray(resource.distribution)
+      ? sumBy(
+          resource.distribution,
+          distItem => distItem.contentSize?.value ?? distItem.contentSize ?? 0
+        )
+      : resource.distribution?.contentSize ?? 0,
+    encodingFormat: resource.distribution?.encodingFormat ?? '',
+    label: fileNameForDistributionItem(
+      resource.distribution,
+      getResourceName(resource)
+    ),
+    hasDistribution: has(resource, 'distribution'),
+  };
+};
+
+const distributionItemProperties = (
+  distribution: Distribution,
+  parentResourceName: string
+) => {
+  return {
+    contentSize:
+      ((distribution.contentSize as unknown) as { value: number })?.value ?? // TODO: Verify
+      distribution.contentSize ??
+      0,
+    encodingFormat: distribution?.encodingFormat ?? '',
+    label: fileNameForDistributionItem(distribution, parentResourceName),
+    hasDistribution: true,
+  };
+};
+
+const baseLocalStorageObject = (
+  resource: Resource,
+  isDistributionItem: boolean
+): Omit<TDataSource, 'distribution'> => {
+  return {
+    key: resource._self,
+    _self: resource._self,
+    id: resource['@id'],
+    name: getResourceName(resource),
+    project: resource._project,
+    description: resource.description ?? '',
+    createdAt: resource._createdAt,
+    updatedAt: resource._updatedAt,
+    source: 'studios',
+    type: isArray(resource['@type'])
+      ? resource['@type']
+      : [resource['@type'] ?? ''],
+  };
+};
+
+const toLocalStorageResources = (resource: Resource): TDataSource[] => {
+  const resourceName = getResourceName(resource);
+
+  if (isNil(resource.distribution)) {
+    return [{ ...baseLocalStorageObject(resource, false) }];
+  } else if (isArray(resource.distribution)) {
+    // In case distribution is an array we have to store the main resource,
+    // but also an object for every item in the distribution array
+    const localStorageObjs: TDataSource[] = [];
+
+    // First store an object for the parent resource.
+    localStorageObjs.push({
+      ...baseLocalStorageObject(resource, false),
+      distribution: {
+        hasDistribution: true,
+        contentSize: 0, // So the size in not doubled
+        encodingFormat: '',
+        label: '',
+      },
+    });
+
+    // Now store an object for each distribution item
+    resource.distribution.forEach(distItem => {
+      localStorageObjs.push({
+        ...baseLocalStorageObject(resource, true),
+        distribution: {
+          hasDistribution: false, // So, we don't download the distribution twice
+          contentSize:
+            (distItem.contentSize as { value: number })?.value ?? // TODO: Verify
+            distItem.contentSize ??
+            0,
+          encodingFormat: distItem?.encodingFormat ?? '',
+          label: fileNameForDistributionItem(distItem, resourceName),
+        },
+      });
+    });
+
+    return localStorageObjs;
+  } else {
+    // resource.distribution is an object with key-value pairs.
+    return [
+      {
+        ...baseLocalStorageObject(resource, false),
+        distribution: {
+          hasDistribution: true,
+          contentSize:
+            (resource.distribution?.contentSize as { value: number })?.value ??
+            resource.distribution?.contentSize ?? // TODO: resource.distribution.contentSize can be an array
+            0,
+          encodingFormat: isArray(resource.distribution?.encodingFormat)
+            ? resource.distribution?.encodingFormat[0]
+            : resource.distribution?.encodingFormat ?? '',
+          label: fileNameForDistributionItem(
+            resource.distribution,
+            getResourceName(resource)
+          ),
+        },
+      },
+    ];
+  }
+};
+
 const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
   let localStorageRow: TDataSource;
   try {
-    const resourceName = resource.name ?? resource['@id'] ?? resource._self;
+    const resourceName = getResourceName(resource);
     localStorageRow = {
       key: resource._self,
       _self: resource._self,
@@ -574,11 +692,9 @@ export const useAccessDataForTable = (
 
     if (selected) {
       const deltaResource = await fetchResourceForDownload(recordKey);
-      const localStorageResource = resourceToLocalStorageResource(
-        deltaResource
-      );
+      const localStorageResource = toLocalStorageResources(deltaResource);
       selectedRowKeys = [...selectedRowKeys, recordKey];
-      selectedRows = uniqBy([...selectedRows, localStorageResource], 'key');
+      selectedRows = [...selectedRows, ...localStorageResource];
     } else {
       selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
       selectedRows = selectedRows.filter(t => t.key !== recordKey);

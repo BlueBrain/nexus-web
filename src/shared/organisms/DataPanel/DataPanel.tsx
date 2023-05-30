@@ -147,6 +147,7 @@ type ResourceObscured = {
   resourceId: string;
   project: string;
   path: string;
+  localStorageType?: 'resource' | 'distribution';
 };
 
 type TResourceObscured = ResourceObscured[];
@@ -166,7 +167,9 @@ async function downloadArchive({
   size: string;
 }) {
   const resourcesWithoutDistribution = resourcesPayload.filter(
-    item => !item.distribution?.hasDistribution
+    item =>
+      item?.localStorageType === 'resource' &&
+      !item.distribution?.hasDistribution
   );
   const resourcesWithDistribution = resourcesPayload.filter(
     item => has(item, 'distribution') && item.distribution?.hasDistribution
