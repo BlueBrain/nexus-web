@@ -90,16 +90,6 @@ function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0);
 }
 
-function findIndexes(arr: any[], predicate: any) {
-  const indexes: number[] = [];
-  arr.forEach((item, index) => {
-    if (predicate(item)) {
-      indexes.push(index);
-    }
-  });
-  return indexes;
-}
-
 function getPathForParentWithDistribution(parent: ResourceObscured) {
   const pathWithoutExtension = parent.path.substring(
     0,
@@ -189,9 +179,7 @@ async function downloadArchive({
   selectedTypes: string[];
 }) {
   const resourcesWithoutDistribution = resourcesPayload.filter(
-    item =>
-      item?.localStorageType === 'resource' && // TODO: Not needed if we are going to add hasDistribution = true to dist items too
-      !item.distribution?.hasDistribution
+    item => !item.distribution?.hasDistribution
   );
   const resourcesWithDistribution = resourcesPayload.filter(
     item => has(item, 'distribution') && item.distribution?.hasDistribution

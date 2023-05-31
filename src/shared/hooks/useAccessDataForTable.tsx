@@ -11,6 +11,7 @@ import {
   isNil,
   isString,
   pick,
+  sum,
   sumBy,
   toNumber,
   uniq,
@@ -429,41 +430,8 @@ export const fileNameForDistributionItem = (
 const getResourceName = (resource: Resource) =>
   resource.name ?? resource['@id'] ?? resource._self;
 
-const parentDistributionProperties = (resource: Resource) => {
-  return {
-    contentSize: isArray(resource.distribution)
-      ? sumBy(
-          resource.distribution,
-          distItem => distItem.contentSize?.value ?? distItem.contentSize ?? 0
-        )
-      : resource.distribution?.contentSize ?? 0,
-    encodingFormat: resource.distribution?.encodingFormat ?? '',
-    label: fileNameForDistributionItem(
-      resource.distribution,
-      getResourceName(resource)
-    ),
-    hasDistribution: has(resource, 'distribution'),
-  };
-};
-
-const distributionItemProperties = (
-  distribution: Distribution,
-  parentResourceName: string
-) => {
-  return {
-    contentSize:
-      ((distribution.contentSize as unknown) as { value: number })?.value ?? // TODO: Verify
-      distribution.contentSize ??
-      0,
-    encodingFormat: distribution?.encodingFormat ?? '',
-    label: fileNameForDistributionItem(distribution, parentResourceName),
-    hasDistribution: true,
-  };
-};
-
 const baseLocalStorageObject = (
-  resource: Resource,
-  isDistributionItem: boolean
+  resource: Resource
 ): Omit<TDataSource, 'distribution'> => {
   return {
     key: resource._self,
@@ -483,103 +451,65 @@ const baseLocalStorageObject = (
 
 const toLocalStorageResources = (resource: Resource): TDataSource[] => {
   const resourceName = getResourceName(resource);
+  try {
+    if (isNil(resource.distribution)) {
+      return [{ ...baseLocalStorageObject(resource) }];
+    } else if (isArray(resource.distribution)) {
+      // In case distribution is an array we have to store the main resource,
+      // but also an object for every item in the distribution array.
+      const localStorageObjs: TDataSource[] = [];
 
-  if (isNil(resource.distribution)) {
-    return [{ ...baseLocalStorageObject(resource, false) }];
-  } else if (isArray(resource.distribution)) {
-    // In case distribution is an array we have to store the main resource,
-    // but also an object for every item in the distribution array.
-    const localStorageObjs: TDataSource[] = [];
-
-    // First store an object for the parent resource.
-    localStorageObjs.push({
-      ...baseLocalStorageObject(resource, false),
-      distribution: {
-        hasDistribution: true,
-        contentSize: 0, // So the size in not doubled
-        encodingFormat: '',
-        label: '',
-      },
-    });
-
-    // Now store an object for each distribution item
-    resource.distribution.forEach(distItem => {
+      // First store an object for the parent resource.
       localStorageObjs.push({
-        ...baseLocalStorageObject(resource, true),
-        distribution: {
-          hasDistribution: true, // So, we don't download the distribution twice
-          contentSize:
-            (distItem.contentSize as { value: number })?.value ?? // TODO: Verify
-            distItem.contentSize ??
-            0,
-          encodingFormat: distItem?.encodingFormat ?? '',
-          label: fileNameForDistributionItem(distItem, resourceName),
-        },
-      });
-    });
-
-    return localStorageObjs;
-  } else {
-    // resource.distribution is an object with key-value pairs.
-    return [
-      {
-        ...baseLocalStorageObject(resource, false),
+        ...baseLocalStorageObject(resource),
         distribution: {
           hasDistribution: true,
-          contentSize:
-            (resource.distribution?.contentSize as { value: number })?.value ??
-            resource.distribution?.contentSize ?? // TODO: resource.distribution.contentSize can be an array
-            0,
-          encodingFormat: isArray(resource.distribution?.encodingFormat)
-            ? resource.distribution?.encodingFormat[0]
-            : resource.distribution?.encodingFormat ?? '',
-          label: fileNameForDistributionItem(
-            resource.distribution,
-            getResourceName(resource)
-          ),
+          contentSize: 0, // So the size in not doubled
+          encodingFormat: '',
+          label: '',
         },
-      },
-    ];
-  }
-};
+      });
 
-const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
-  let localStorageRow: TDataSource;
-  try {
-    const resourceName = getResourceName(resource);
-    localStorageRow = {
-      key: resource._self,
-      _self: resource._self,
-      id: resource['@id'],
-      name: resourceName,
-      project: resource._project,
-      description: resource.description ?? '',
-      createdAt: resource._createdAt,
-      updatedAt: resource._updatedAt,
-      source: 'studios',
-      type: isArray(resource['@type'])
-        ? resource['@type']
-        : [resource['@type'] ?? ''],
+      // Now store an object for each distribution item
+      resource.distribution.forEach(distItem => {
+        localStorageObjs.push({
+          ...baseLocalStorageObject(resource),
+          distribution: {
+            hasDistribution: true, // So, we don't download the distribution twice
+            contentSize:
+              (distItem.contentSize as { value: number })?.value ?? // TODO: Verify
+              distItem.contentSize ??
+              0,
+            encodingFormat: distItem?.encodingFormat ?? '',
+            label: fileNameForDistributionItem(distItem, resourceName),
+          },
+        });
+      });
 
-      distribution: {
-        contentSize: isArray(resource.distribution)
-          ? sumBy(
+      return localStorageObjs;
+    } else {
+      // resource.distribution is an object with key-value pairs.
+      return [
+        {
+          ...baseLocalStorageObject(resource),
+          distribution: {
+            hasDistribution: true,
+            contentSize:
+              (resource.distribution?.contentSize as { value: number })
+                ?.value ?? isArray(resource.distribution?.contentSize)
+                ? sum(resource.distribution?.contentSize)
+                : resource.distribution?.contentSize ?? 0,
+            encodingFormat: isArray(resource.distribution?.encodingFormat)
+              ? resource.distribution?.encodingFormat[0]
+              : resource.distribution?.encodingFormat ?? '',
+            label: fileNameForDistributionItem(
               resource.distribution,
-              distItem => distItem.contentSize?.value ?? 0
-            )
-          : resource.distribution?.contentSize ?? 0,
-        encodingFormat: isArray(resource.distribution)
-          ? resource.distribution.find(distItem => distItem.encodingFormat)
-              ?.encodingFormat ?? ''
-          : resource.distribution?.encodingFormat ?? '',
-        label: isArray(resource.distribution)
-          ? resource.distribution.map(distItem => {
-              return fileNameForDistributionItem(distItem, resourceName);
-            })
-          : fileNameForDistributionItem(resource.distribution, resourceName),
-        hasDistribution: has(resource, 'distribution'),
-      },
-    };
+              getResourceName(resource)
+            ),
+          },
+        },
+      ];
+    }
   } catch (err) {
     console.log('@error Failed to serialize resource for localStorage.', err);
     Sentry.captureException(err, {
@@ -588,8 +518,8 @@ const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
         message: 'Failed to serialize resource for localStorage.',
       },
     });
+    return [];
   }
-  return localStorageRow!;
 };
 
 const getTotalContentSize = (rows: TDataSource[]) => {
@@ -640,6 +570,11 @@ export const useAccessDataForTable = (
     let rowsForLS = dataPanelLS?.selectedRows || [];
 
     if (selected) {
+      rowKeysForLS = [
+        ...rowKeysForLS,
+        ...changedRows.map(row => getStudioRowKey(row)),
+      ];
+
       const futureResources = changedRows.map(row =>
         fetchResourceForDownload(getStudioRowKey(row))
       );
@@ -648,14 +583,8 @@ export const useAccessDataForTable = (
         .then(result => {
           result.forEach(res => {
             if (res.status === 'fulfilled') {
-              const localStorageResource = resourceToLocalStorageResource(
-                res.value
-              );
-              rowKeysForLS = uniq([
-                ...rowKeysForLS,
-                localStorageResource._self,
-              ]);
-              rowsForLS = uniqBy([...rowsForLS, localStorageResource], 'key');
+              const localStorageResource = toLocalStorageResources(res.value);
+              rowsForLS = [...rowsForLS, ...localStorageResource];
             }
           });
           return;
