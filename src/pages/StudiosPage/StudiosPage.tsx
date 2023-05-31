@@ -11,7 +11,12 @@ import {
   PaginatedList,
 } from '@bbp/nexus-sdk';
 import { match as pmatch } from 'ts-pattern';
-import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  RightSquareOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+} from '@ant-design/icons';
 import * as pluralize from 'pluralize';
 
 import {
@@ -89,7 +94,7 @@ const fetchStudios = async ({
       size: size ?? STUDIO_RESULTS_DEFAULT_SIZE,
       deprecated: false,
       type: DEFAULT_STUDIO_TYPE,
-      // sort: `${sort === 'asc' ? '' : '-'}label`,
+      sort: `${sort === 'asc' ? '' : '-'}label.raw`,
     });
     return response;
   } catch (error) {
@@ -317,6 +322,17 @@ const FusionStudiosPage: React.FC = () => {
                   value={query}
                   onChange={handleQueryStringChange}
                   placeholder="Search studio"
+                />
+              </div>
+              <div className="action-sort">
+                <span>Sort:</span>
+                <SortAscendingOutlined
+                  style={{ backgroundColor: sortBackgroundColor(sort, 'asc') }}
+                  onClick={() => handleUpdateSorting('asc')}
+                />
+                <SortDescendingOutlined
+                  style={{ backgroundColor: sortBackgroundColor(sort, 'desc') }}
+                  onClick={() => handleUpdateSorting('desc')}
                 />
               </div>
             </div>
