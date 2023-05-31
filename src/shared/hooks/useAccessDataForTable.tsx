@@ -431,10 +431,11 @@ const getResourceName = (resource: Resource) =>
   resource.name ?? resource['@id'] ?? resource._self;
 
 const baseLocalStorageObject = (
-  resource: Resource
+  resource: Resource,
+  keySuffix?: string
 ): Omit<TDataSource, 'distribution'> => {
   return {
-    key: resource._self,
+    key: keySuffix ? `${resource._self}-${keySuffix}` : resource._self,
     _self: resource._self,
     id: resource['@id'],
     name: getResourceName(resource),
@@ -471,9 +472,9 @@ const toLocalStorageResources = (resource: Resource): TDataSource[] => {
       });
 
       // Now store an object for each distribution item
-      resource.distribution.forEach(distItem => {
+      resource.distribution.forEach((distItem, index) => {
         localStorageObjs.push({
-          ...baseLocalStorageObject(resource),
+          ...baseLocalStorageObject(resource, `${index}`),
           distribution: {
             hasDistribution: true, // So, we don't download the distribution twice
             contentSize:
@@ -601,9 +602,7 @@ export const useAccessDataForTable = (
       rowKeysForLS = rowKeysForLS.filter(
         lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
       );
-      rowsForLS = rowsForLS.filter(
-        lsRow => !rowKeysToRemove.includes(lsRow.key.toString())
-      );
+      rowsForLS = removeLocalStorageRows(rowsForLS, rowKeysToRemove);
 
       saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     }
@@ -619,20 +618,32 @@ export const useAccessDataForTable = (
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
 
-    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
-    let selectedRows = dataPanelLS?.selectedRows || [];
+    let localStorageRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let localStorageRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
       const deltaResource = await fetchResourceForDownload(recordKey);
       const localStorageResource = toLocalStorageResources(deltaResource);
-      selectedRowKeys = [...selectedRowKeys, recordKey];
-      selectedRows = [...selectedRows, ...localStorageResource];
+      localStorageRowKeys = [...localStorageRowKeys, recordKey];
+      localStorageRows = [...localStorageRows, ...localStorageResource];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
-      selectedRows = selectedRows.filter(t => t.key !== recordKey);
+      localStorageRowKeys = localStorageRowKeys.filter(t => t !== recordKey);
+      localStorageRows = removeLocalStorageRows(localStorageRows, [recordKey]);
     }
 
-    saveSelectedRowsToLocalStorage(selectedRowKeys, selectedRows);
+    saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
+  };
+
+  const removeLocalStorageRows = (
+    rows: TDataSource[],
+    keysToRemove: string[]
+  ) => {
+    // In addition to removing all localStorage rows whose key match with any `rowKeysToRemove`,
+    // we also have to remove all localStorage rows that were saved for the distribution items.
+    // These rows have keys like `${_self from parent resource}-${a number}`
+    return rows.filter(
+      row => !keysToRemove.find(key => row.key.toString().startsWith(key))
+    );
   };
 
   const fetchResourceForDownload = async (

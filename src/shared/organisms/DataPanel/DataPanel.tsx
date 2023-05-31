@@ -691,8 +691,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           </div>
           <div className="items">
             <Table<TDataSource>
-              // TODO: Can we change key?
-              rowKey={(record, index) => `dp-${record.key}-${index}`}
+              rowKey={record => `dp-${record.key}`}
               columns={columns}
               dataSource={dataSource}
               bordered={false}
