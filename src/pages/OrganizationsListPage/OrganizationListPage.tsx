@@ -1,7 +1,6 @@
 import React, {
   Fragment,
   forwardRef,
-  useEffect,
   useReducer,
   useRef,
   useState,
@@ -32,7 +31,6 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import formatNumber from '../../utils/formatNumber';
 import '../../shared/styles/route-layout.less';
-import { isNil } from 'lodash';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -220,14 +218,7 @@ const OrganizationListView: React.FC<{}> = () => {
     onIntersect: fetchNextPage,
     enabled: !!hasNextPage,
   });
-  // useEffect(() => {
-  //   setQueryString('');
-  //   if (queryInputRef.current) {
-  //     queryInputRef.current.focus({
-  //       cursor: 'end',
-  //     });
-  //   }
-  // }, []);
+
   const LoadMore = (
     <LoadMoreFooter
       {...{ hasNextPage, fetchNextPage }}
