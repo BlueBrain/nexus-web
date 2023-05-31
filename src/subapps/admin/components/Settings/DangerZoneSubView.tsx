@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React, { useReducer } from 'react';
 import {
   Button,
-  Modal,
-  Input,
-  Form,
-  Row,
-  Col,
   notification,
   Tooltip,
+  List,
 } from 'antd';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
+import { useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { makeOrganizationUri } from '../../../../shared/utils';
+import { RootState } from '../../../../shared/store/reducers';
+import DangerZoneAction, { TDangerZoneActionProps } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.less';
 
+type TDangerZoneItem = {
+  key: React.Key;
+  title: string;
+  description: string;
+  action: React.ReactElement;
+}
 type Props = {
   project: {
     _label: string;
@@ -42,27 +47,58 @@ const deprecateProject = async ({
     await nexus.Project.deprecate(orgLabel, projectLabel, rev);
   } catch (error) {
     // @ts-ignore
-    throw new Error('Can not deprecate you project', { cause: error });
+    throw new Error('Can not deprecate your project', { cause: error });
   }
 };
+const deleteProject = async ({
+  nexus,
+  apiEndpoint,
+  orgLabel,
+  projectLabel,
+  rev,
+}: {
+  nexus: NexusClient;
+  apiEndpoint: string;
+  orgLabel: string;
+  projectLabel: string;
+  rev: number;
+}) => {
+  try {
+    await nexus.httpDelete({
+      path: `${apiEndpoint}/v1/projects/${orgLabel}/${projectLabel}?rev=${rev}&prune=true`,
+    });
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Can not delete your project', { cause: error });
+  }
+};
+type TDangerZoneActionState = Omit<TDangerZoneActionProps, 'onClose'>
 const DangerZoneSubView = ({ project }: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
+  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint);
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
     viewId?: string;
   }>();
-  const [depValue, setDepValue] = useState('');
-  const [openDepModal, setOpenDepModal] = useState<boolean>(false);
-  const handleCloseModal = () => setOpenDepModal(false);
-  const handleOpenModal = () => setOpenDepModal(true);
-  const handleOnDepProjectValueChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => setDepValue(e.target.value);
+
   const {
     params: { orgLabel, projectLabel },
   } = match;
+  const [{ open, matchTerm, title, description, action, handler }, updateModalState] = useReducer(
+    (previous: TDangerZoneActionState, nextState: Partial<TDangerZoneActionState>) => ({
+      ...previous,
+      ...nextState,
+    }), {
+    open: false,
+    matchTerm: `${orgLabel}/${projectLabel}`.toLowerCase(),
+    title: '',
+    description: '',
+    action: undefined,
+    handler: () => { }
+  });
+  const onClose = () => updateModalState({ open: false });
 
   const { mutateAsync: deprecateProjectAsync, status } = useMutation(
     deprecateProject,
@@ -80,113 +116,137 @@ const DangerZoneSubView = ({ project }: Props) => {
       },
     }
   );
-  const deprecateVerification = `${orgLabel}/${projectLabel}`.toLowerCase();
-  const handleDeprecateProject = () =>
+  const { mutateAsync: deleteProjectAsync, status: deletionStatus } = useMutation(
+    deleteProject,
+    {
+      onSuccess: () => {
+        history.push(makeOrganizationUri(orgLabel));
+        notification.success({ 
+          message: `Project ${projectLabel}`,
+          description: 'Project has been deprecated successfully',
+        });
+      },
+      onError: error => {
+        notification.error({
+          message: `Error deprecating project ${projectLabel}`,
+          // @ts-ignore
+          description: error.cause.message,
+        });
+      },
+    }
+  );
+  const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
+  const handleDeletion = () => 
+    deleteProjectAsync({ nexus, apiEndpoint, orgLabel, projectLabel, rev: project._rev });
+  const handleOpenDeprecationModal = () => updateModalState({
+    open: true,
+    title: 'Deprecate Project',
+    description: 'This action cannot be undone. This will permanently deprecate',
+    action: 'deprecate',
+    handler: handleDeprecation,
+  })
+  const handleOpenDeleteModal = () => updateModalState({
+    open: true,
+    title: 'Delete Project',
+    description: 'This action cannot be undone. This will permanently delete',
+    action: 'delete',
+    handler: handleDeletion,
+  })
+  const dangerZoneDataSource: TDangerZoneItem[] = [
+    {
+      key: 'deprecate-project-section',
+      title: 'Deprecte this project',
+      description: 'Mark this project as deprecated and read-only.',
+      action: (
+        <AccessControl
+          path={[`${orgLabel}/${projectLabel}`]}
+          permissions={['projects/write']}
+          noAccessComponent={() => (
+            <Tooltip title="You have no permissions to deprecate this project">
+              <HasNoPermission />
+            </Tooltip>
+          )}
+        >
+          <Button
+            danger
+            className='deprecate-btn'
+            style={{ margin: 0, marginRight: 10 }}
+            type='ghost'
+            htmlType="button"
+            onClick={handleOpenDeprecationModal}
+          >
+            Deprecate this Project
+          </Button>
+        </AccessControl>
+      )
+    },
+    {
+      key: 'delete-project-section',
+      title: 'Delete this project',
+      description: 'Once you delete a project, there is no going back. Please be certain. ',
+      action: (
+        <AccessControl
+          path={[`${orgLabel}/${projectLabel}`]}
+          permissions={['projects/write']}
+          noAccessComponent={() => (
+            <Tooltip title="You have no permissions to deprecate this project">
+              <HasNoPermission />
+            </Tooltip>
+          )}
+        >
+          <Button
+            danger
+            style={{ margin: 0, marginRight: 10 }}
+            type="primary"
+            htmlType="button"
+            onClick={handleOpenDeleteModal}
+          >
+            Delete this Project
+          </Button>
+        </AccessControl>
+      )
+    }
+  ];
+
+  
   return (
     <>
       <div className="settings-view settings-danger-zone-view">
         <h2>Danger Zone</h2>
         <div className="settings-view-container">
           <div className="danger-actions">
-            <AccessControl
-              path={[`${orgLabel}/${projectLabel}`]}
-              permissions={['projects/write']}
-              noAccessComponent={() => (
-                <Tooltip title="You have no permissions to deprecate this project">
-                  <HasNoPermission />
-                </Tooltip>
-              )}
-            >
-              <Button
-                danger
-                style={{ margin: 0, marginRight: 10 }}
-                type="primary"
-                htmlType="submit"
-                onClick={handleOpenModal}
-              >
-                Deprecate Project
-              </Button>
-            </AccessControl>
+            <List<TDangerZoneItem>
+              size="large"
+              bordered
+              className='danger-zone-container'
+              rowKey={(item) => item.key}
+              dataSource={dangerZoneDataSource}
+              renderItem={(item) => {
+                return (
+                  <List.Item
+                    key={item.key}
+                    extra={
+                      item.action
+                    }
+                  >
+                    <List.Item.Meta
+                      className='danger-zone-item'
+                      title={<div className='title'>{item.title}</div>}
+                      description={item.description}
+                    />
+                  </List.Item>
+                )
+              }}
+            />
           </div>
+
         </div>
       </div>
-      <Modal
-        open={openDepModal}
-        onCancel={handleCloseModal}
-        maskClosable={false}
-        footer={null}
-        centered
-      >
-        <Form onFinish={handleDeprecateProject}>
-          <Row>
-            <h4>Are you absolutely sure?</h4>
-            <p>
-              This action cannot be undone. This will permanently deprecate the{' '}
-              {deprecateVerification}.
-              <br />
-              Please type <strong>{deprecateVerification}</strong> to confirm.
-            </p>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <Form.Item
-                name="projectName"
-                rules={[
-                  {
-                    required: true,
-                    message: 'This is required field',
-                  },
-                  {
-                    validator: (_, value) => {
-                      if (value.toLowerCase() === deprecateVerification) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject();
-                    },
-                  },
-                ]}
-              >
-                <Input
-                  onPaste={e => {
-                    e.preventDefault();
-                    return false;
-                  }}
-                  onDrop={e => {
-                    e.preventDefault();
-                    return false;
-                  }}
-                  value={depValue}
-                  onChange={handleOnDepProjectValueChange}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24} style={{ textAlign: 'right' }}>
-              <Form.Item noStyle shouldUpdate>
-                {({ getFieldValue }) => {
-                  const projectName = getFieldValue('projectName');
-                  const disabled =
-                    (projectName as string)?.toLowerCase() !==
-                    deprecateVerification;
-                  return (
-                    <Button
-                      loading={status === 'loading'}
-                      disabled={disabled}
-                      type="primary"
-                      htmlType="submit"
-                      danger
-                    >
-                      I understand the consequences, deprecate this project
-                    </Button>
-                  );
-                }}
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
+      <DangerZoneAction
+        {... { open, matchTerm, title, description, action, handler }}
+        onClose={onClose}
+      />
     </>
   );
 };
