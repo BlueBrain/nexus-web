@@ -450,12 +450,16 @@ const baseLocalStorageObject = (
   };
 };
 
-const toLocalStorageResources = (resource: Resource): TDataSource[] => {
+export const toLocalStorageResources = (resource: Resource): TDataSource[] => {
   const resourceName = getResourceName(resource);
   try {
+    // Case 1 - Resource has no distribution
     if (isNil(resource.distribution)) {
       return [{ ...baseLocalStorageObject(resource) }];
-    } else if (isArray(resource.distribution)) {
+    }
+
+    // Case 2 - Resource has (multiple) distributions in an array
+    if (isArray(resource.distribution)) {
       // In case distribution is an array we have to store the main resource,
       // but also an object for every item in the distribution array.
       const localStorageObjs: TDataSource[] = [];
@@ -488,29 +492,29 @@ const toLocalStorageResources = (resource: Resource): TDataSource[] => {
       });
 
       return localStorageObjs;
-    } else {
-      // resource.distribution is an object with key-value pairs.
-      return [
-        {
-          ...baseLocalStorageObject(resource),
-          distribution: {
-            hasDistribution: true,
-            contentSize:
-              (resource.distribution?.contentSize as { value: number })
-                ?.value ?? isArray(resource.distribution?.contentSize)
-                ? sum(resource.distribution?.contentSize)
-                : resource.distribution?.contentSize ?? 0,
-            encodingFormat: isArray(resource.distribution?.encodingFormat)
-              ? resource.distribution?.encodingFormat[0]
-              : resource.distribution?.encodingFormat ?? '',
-            label: fileNameForDistributionItem(
-              resource.distribution,
-              getResourceName(resource)
-            ),
-          },
-        },
-      ];
     }
+
+    // Case 3 - resource.distribution is an object with key-value pairs.
+    return [
+      {
+        ...baseLocalStorageObject(resource),
+        distribution: {
+          hasDistribution: true,
+          contentSize: isArray(resource.distribution?.contentSize)
+            ? sum(resource.distribution?.contentSize)
+            : resource.distribution?.contentSize?.value ??
+              resource.distribution?.contentSize ??
+              0,
+          encodingFormat: isArray(resource.distribution?.encodingFormat)
+            ? resource.distribution?.encodingFormat[0]
+            : resource.distribution?.encodingFormat ?? '',
+          label: fileNameForDistributionItem(
+            resource.distribution,
+            getResourceName(resource)
+          ),
+        },
+      },
+    ];
   } catch (err) {
     console.log('@error Failed to serialize resource for localStorage.', err);
     Sentry.captureException(err, {
