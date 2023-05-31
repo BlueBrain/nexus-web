@@ -63,6 +63,7 @@ import {
 } from '../../molecules/MyDataTable/MyDataTable';
 
 import './styles.less';
+import { fileNameForDistributionItem } from '../../../shared/hooks/useAccessDataForTable';
 
 type Props = {
   authenticated?: boolean;
@@ -122,6 +123,25 @@ function getPathForChildResource(resource: any, parent: ResourceObscured) {
   return `${parentPath}/${resourceName}.${extension}`;
 }
 
+const distributionMatchesTypes = (
+  distItem: any,
+  fileExtenstions: string[]
+): boolean => {
+  if (fileExtenstions.length === 0) {
+    return true;
+  }
+
+  const distributionName = fileNameForDistributionItem(distItem, '');
+  const distributionExtension =
+    distributionName
+      .split('.')
+      .pop()
+      ?.trim()
+      .toLowerCase() ?? '';
+
+  return fileExtenstions.includes(distributionExtension);
+};
+
 function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   const archiveId = uuidv4();
   const payload: ArchivePayload = {
@@ -159,22 +179,27 @@ async function downloadArchive({
   resourcesPayload,
   format,
   size,
+  selectedTypes,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
   resourcesPayload: TResourceObscured;
   format?: 'x-tar' | 'json';
   size: string;
+  selectedTypes: string[];
 }) {
   const resourcesWithoutDistribution = resourcesPayload.filter(
     item =>
-      item?.localStorageType === 'resource' &&
+      item?.localStorageType === 'resource' && // TODO: Not needed if we are going to add hasDistribution = true to dist items too
       !item.distribution?.hasDistribution
   );
   const resourcesWithDistribution = resourcesPayload.filter(
     item => has(item, 'distribution') && item.distribution?.hasDistribution
   );
 
+  console.log('With distributions', resourcesWithDistribution);
+  console.log('Without distributions', resourcesWithoutDistribution);
+  console.log('Selected types', selectedTypes);
   const { results, errors } = await PromisePool.withConcurrency(4)
     .for(resourcesWithDistribution)
     .process(async item => {
@@ -198,7 +223,11 @@ async function downloadArchive({
         });
 
         // 2. Now download each of the distribution(s) within that resource
-        for (const res of result.distribution) {
+        const distMatchingSelectedTypes = result.distribution.filter(dist =>
+          distributionMatchesTypes(dist, selectedTypes)
+        );
+        for (const res of distMatchingSelectedTypes) {
+          console.log('Distribution item', result.distribution);
           try {
             const resource = await nexus.httpGet({
               path: res.contentUrl!,
@@ -234,12 +263,16 @@ async function downloadArchive({
       }
       return files;
     });
+  console.log('Results', results);
   const resources = uniqBy(
     [...resourcesWithoutDistribution, ...results.flat()].map(item =>
       omit(item, ['distribution', 'size', 'contentType'])
     ),
     '_self'
   );
+
+  console.log('Resources', resources);
+
   const {
     payload,
     archiveId,
@@ -482,6 +515,8 @@ const DataPanel: React.FC<Props> = ({}) => {
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
 
+  console.log('Resources Grouped', resourcesGrouped);
+
   const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
     i => i !== 'undefined'
   );
@@ -532,11 +567,12 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
     return flatMap(resourcesGrouped);
   }, [types, resourcesGrouped]);
-
+  console.log('Results Object', resultsObject);
   const resourcesObscured = filter(
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
   );
+  console.log('Resources Obscured', resourcesObscured);
 
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
@@ -555,6 +591,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           parsedData,
           resourcesPayload: resourcesObscured as TResourceObscured,
           size: formatBytes(totalSize),
+          selectedTypes: types,
         },
         {
           onSuccess: data => {
@@ -666,7 +703,8 @@ const DataPanel: React.FC<Props> = ({}) => {
           </div>
           <div className="items">
             <Table<TDataSource>
-              rowKey={record => `dp-${record.key}`}
+              // TODO: Can we change key?
+              rowKey={(record, index) => `dp-${record.key}-${index}`}
               columns={columns}
               dataSource={dataSource}
               bordered={false}

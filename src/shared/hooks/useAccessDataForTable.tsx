@@ -395,7 +395,10 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
-const fileNameForDistributionItem = (distItem: any, defaultName: string) => {
+export const fileNameForDistributionItem = (
+  distItem: any,
+  defaultName: string
+) => {
   const distName: string = distItem?.label ?? distItem?.name ?? defaultName;
   // Distribution name has an extension if  it's not a url & it has some text after a period.
   const distNameHasExtension = Boolean(
@@ -485,7 +488,7 @@ const toLocalStorageResources = (resource: Resource): TDataSource[] => {
     return [{ ...baseLocalStorageObject(resource, false) }];
   } else if (isArray(resource.distribution)) {
     // In case distribution is an array we have to store the main resource,
-    // but also an object for every item in the distribution array
+    // but also an object for every item in the distribution array.
     const localStorageObjs: TDataSource[] = [];
 
     // First store an object for the parent resource.
@@ -504,7 +507,7 @@ const toLocalStorageResources = (resource: Resource): TDataSource[] => {
       localStorageObjs.push({
         ...baseLocalStorageObject(resource, true),
         distribution: {
-          hasDistribution: false, // So, we don't download the distribution twice
+          hasDistribution: true, // So, we don't download the distribution twice
           contentSize:
             (distItem.contentSize as { value: number })?.value ?? // TODO: Verify
             distItem.contentSize ??
