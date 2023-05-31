@@ -1,10 +1,5 @@
 import React, { useReducer } from 'react';
-import {
-  Button,
-  notification,
-  Tooltip,
-  List,
-} from 'antd';
+import { Button, notification, Tooltip, List } from 'antd';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
@@ -12,7 +7,9 @@ import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
-import DangerZoneAction, { TDangerZoneActionProps } from '../../../../shared/modals/DangerZone/DangerZoneAction';
+import DangerZoneAction, {
+  TDangerZoneActionProps,
+} from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.less';
 
@@ -21,7 +18,7 @@ type TDangerZoneItem = {
   title: string;
   description: string;
   action: React.ReactElement;
-}
+};
 type Props = {
   project: {
     _label: string;
@@ -72,11 +69,16 @@ const deleteProject = async ({
     throw new Error('Can not delete your project', { cause: error });
   }
 };
-type TDangerZoneActionState = Omit<TDangerZoneActionProps, 'onClose'>
+type TDangerZoneActionState = Omit<
+  TDangerZoneActionProps,
+  'onClose' | 'status'
+>;
 const DangerZoneSubView = ({ project }: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
-  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint);
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -86,18 +88,26 @@ const DangerZoneSubView = ({ project }: Props) => {
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const [{ open, matchTerm, title, description, action, handler }, updateModalState] = useReducer(
-    (previous: TDangerZoneActionState, nextState: Partial<TDangerZoneActionState>) => ({
+  const [
+    { open, matchTerm, title, description, action, handler },
+    updateModalState,
+  ] = useReducer(
+    (
+      previous: TDangerZoneActionState,
+      nextState: Partial<TDangerZoneActionState>
+    ) => ({
       ...previous,
       ...nextState,
-    }), {
-    open: false,
-    matchTerm: `${orgLabel}/${projectLabel}`.toLowerCase(),
-    title: '',
-    description: '',
-    action: undefined,
-    handler: () => { }
-  });
+    }),
+    {
+      open: false,
+      matchTerm: `${orgLabel}/${projectLabel}`.toLowerCase(),
+      title: '',
+      description: '',
+      action: undefined,
+      handler: () => {},
+    }
+  );
   const onClose = () => updateModalState({ open: false });
 
   const { mutateAsync: deprecateProjectAsync, status } = useMutation(
@@ -116,43 +126,52 @@ const DangerZoneSubView = ({ project }: Props) => {
       },
     }
   );
-  const { mutateAsync: deleteProjectAsync, status: deletionStatus } = useMutation(
-    deleteProject,
-    {
-      onSuccess: () => {
-        history.push(makeOrganizationUri(orgLabel));
-        notification.success({ 
-          message: `Project ${projectLabel}`,
-          description: 'Project has been deprecated successfully',
-        });
-      },
-      onError: error => {
-        notification.error({
-          message: `Error deprecating project ${projectLabel}`,
-          // @ts-ignore
-          description: error.cause.message,
-        });
-      },
-    }
-  );
+  const {
+    mutateAsync: deleteProjectAsync,
+    status: deletionStatus,
+  } = useMutation(deleteProject, {
+    onSuccess: () => {
+      history.push(makeOrganizationUri(orgLabel));
+      notification.success({
+        message: `Project ${projectLabel}`,
+        description: 'Project has been deprecated successfully',
+      });
+    },
+    onError: error => {
+      notification.error({
+        message: `Error deprecating project ${projectLabel}`,
+        // @ts-ignore
+        description: error.cause.message,
+      });
+    },
+  });
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
-  const handleDeletion = () => 
-    deleteProjectAsync({ nexus, apiEndpoint, orgLabel, projectLabel, rev: project._rev });
-  const handleOpenDeprecationModal = () => updateModalState({
-    open: true,
-    title: 'Deprecate Project',
-    description: 'This action cannot be undone. This will permanently deprecate',
-    action: 'deprecate',
-    handler: handleDeprecation,
-  })
-  const handleOpenDeleteModal = () => updateModalState({
-    open: true,
-    title: 'Delete Project',
-    description: 'This action cannot be undone. This will permanently delete',
-    action: 'delete',
-    handler: handleDeletion,
-  })
+  const handleDeletion = () =>
+    deleteProjectAsync({
+      nexus,
+      apiEndpoint,
+      orgLabel,
+      projectLabel,
+      rev: project._rev,
+    });
+  const handleOpenDeprecationModal = () =>
+    updateModalState({
+      open: true,
+      title: 'Deprecate Project',
+      description:
+        'This action cannot be undone. This will permanently deprecate',
+      action: 'deprecate',
+      handler: handleDeprecation,
+    });
+  const handleOpenDeleteModal = () =>
+    updateModalState({
+      open: true,
+      title: 'Delete Project',
+      description: 'This action cannot be undone. This will permanently delete',
+      action: 'delete',
+      handler: handleDeletion,
+    });
   const dangerZoneDataSource: TDangerZoneItem[] = [
     {
       key: 'deprecate-project-section',
@@ -170,21 +189,22 @@ const DangerZoneSubView = ({ project }: Props) => {
         >
           <Button
             danger
-            className='deprecate-btn'
+            className="deprecate-btn"
             style={{ margin: 0, marginRight: 10 }}
-            type='ghost'
+            type="ghost"
             htmlType="button"
             onClick={handleOpenDeprecationModal}
           >
             Deprecate this Project
           </Button>
         </AccessControl>
-      )
+      ),
     },
     {
       key: 'delete-project-section',
       title: 'Delete this project',
-      description: 'Once you delete a project, there is no going back. Please be certain. ',
+      description:
+        'Once you delete a project, there is no going back. Please be certain. ',
       action: (
         <AccessControl
           path={[`${orgLabel}/${projectLabel}`]}
@@ -205,11 +225,10 @@ const DangerZoneSubView = ({ project }: Props) => {
             Delete this Project
           </Button>
         </AccessControl>
-      )
-    }
+      ),
+    },
   ];
 
-  
   return (
     <>
       <div className="settings-view settings-danger-zone-view">
@@ -219,32 +238,27 @@ const DangerZoneSubView = ({ project }: Props) => {
             <List<TDangerZoneItem>
               size="large"
               bordered
-              className='danger-zone-container'
-              rowKey={(item) => item.key}
+              className="danger-zone-container"
+              rowKey={item => item.key}
               dataSource={dangerZoneDataSource}
-              renderItem={(item) => {
+              renderItem={item => {
                 return (
-                  <List.Item
-                    key={item.key}
-                    extra={
-                      item.action
-                    }
-                  >
+                  <List.Item key={item.key} extra={item.action}>
                     <List.Item.Meta
-                      className='danger-zone-item'
-                      title={<div className='title'>{item.title}</div>}
+                      className="danger-zone-item"
+                      title={<div className="title">{item.title}</div>}
                       description={item.description}
                     />
                   </List.Item>
-                )
+                );
               }}
             />
           </div>
-
         </div>
       </div>
       <DangerZoneAction
-        {... { open, matchTerm, title, description, action, handler }}
+        {...{ open, matchTerm, title, description, action, handler }}
+        status={status === 'loading' || deletionStatus === 'loading'}
         onClose={onClose}
       />
     </>
