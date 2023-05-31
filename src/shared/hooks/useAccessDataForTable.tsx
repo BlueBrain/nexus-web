@@ -6,6 +6,7 @@ import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
+  get,
   has,
   isArray,
   isNil,
@@ -400,7 +401,12 @@ export const fileNameForDistributionItem = (
   distItem: any,
   defaultName: string
 ) => {
-  const distName: string = distItem?.label ?? distItem?.name ?? defaultName;
+  const distName: string =
+    distItem?.label ??
+    distItem?.name ??
+    distItem?._filename ??
+    distItem?.filename ??
+    defaultName;
   // Distribution name has an extension if  it's not a url & it has some text after a period.
   const distNameHasExtension = Boolean(
     !isValidUrl(distName) &&
@@ -482,7 +488,7 @@ export const toLocalStorageResources = (resource: Resource): TDataSource[] => {
           distribution: {
             hasDistribution: true, // So, we don't download the distribution twice
             contentSize:
-              (distItem.contentSize as { value: number })?.value ?? // TODO: Verify
+              get(distItem, 'contentSize.value', null) ??
               distItem.contentSize ??
               0,
             encodingFormat: distItem?.encodingFormat ?? '',
@@ -502,7 +508,7 @@ export const toLocalStorageResources = (resource: Resource): TDataSource[] => {
           hasDistribution: true,
           contentSize: isArray(resource.distribution?.contentSize)
             ? sum(resource.distribution?.contentSize)
-            : resource.distribution?.contentSize?.value ??
+            : get(resource, 'distribution.contentSize.value', null) ??
               resource.distribution?.contentSize ??
               0,
           encodingFormat: isArray(resource.distribution?.encodingFormat)

@@ -185,9 +185,6 @@ async function downloadArchive({
     item => has(item, 'distribution') && item.distribution?.hasDistribution
   );
 
-  console.log('With distributions', resourcesWithDistribution);
-  console.log('Without distributions', resourcesWithoutDistribution);
-  console.log('Selected types', selectedTypes);
   const { results, errors } = await PromisePool.withConcurrency(4)
     .for(resourcesWithDistribution)
     .process(async item => {
@@ -214,8 +211,8 @@ async function downloadArchive({
         const distMatchingSelectedTypes = result.distribution.filter(dist =>
           distributionMatchesTypes(dist, selectedTypes)
         );
+
         for (const res of distMatchingSelectedTypes) {
-          console.log('Distribution item', result.distribution);
           try {
             const resource = await nexus.httpGet({
               path: res.contentUrl!,
@@ -251,15 +248,12 @@ async function downloadArchive({
       }
       return files;
     });
-  console.log('Results', results);
   const resources = uniqBy(
     [...resourcesWithoutDistribution, ...results.flat()].map(item =>
       omit(item, ['distribution', 'size', 'contentType'])
     ),
     '_self'
   );
-
-  console.log('Resources', resources);
 
   const {
     payload,
@@ -455,6 +449,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     [dataSource]
   );
   const resourcesGrouped = useMemo(() => {
+    const paths = new Map<string, TDataSource[]>();
     const newDataSource = dataSource
       .filter(resource => !isNil(resource._self))
       .map(resource => {
@@ -491,7 +486,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                 : 'Resource',
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${pathId}${
+            path: `/${parsedSelf.project}/${parsedSelf.id}/${pathId}${
               contentType ? `.${contentType}` : ''
             }`,
           };
@@ -500,10 +495,9 @@ const DataPanel: React.FC<Props> = ({}) => {
           return;
         }
       });
+
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
-
-  console.log('Resources Grouped', resourcesGrouped);
 
   const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
     i => i !== 'undefined'
@@ -555,12 +549,10 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
     return flatMap(resourcesGrouped);
   }, [types, resourcesGrouped]);
-  console.log('Results Object', resultsObject);
   const resourcesObscured = filter(
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
   );
-  console.log('Resources Obscured', resourcesObscured);
 
   const totalSize = sum(
     ...compact(flatMap(resultsObject).map(item => item?.size))
