@@ -2,13 +2,14 @@ import {
   resourceWithDistributionArray,
   resourceWithDistributionObject,
   resourceWithoutDistrition,
-} from './__mocks__/data_panel_download_resource';
-import { toLocalStorageResources } from './useAccessDataForTable';
+} from '../__mocks__/data_panel_download_resource';
+import { toLocalStorageResources } from '../datapanel';
 
 describe('ToLocalStorageResources', () => {
   it('serializes resources with no distribution correctly to local storage object', () => {
     const actualLSResources = toLocalStorageResources(
-      resourceWithoutDistrition
+      resourceWithoutDistrition,
+      'studios'
     );
 
     expect(actualLSResources.length).toEqual(1);
@@ -26,7 +27,7 @@ describe('ToLocalStorageResources', () => {
 
   it('serializes resources with distribution array correctly to local storage object', () => {
     const resource = resourceWithDistributionArray;
-    const serializedItems = toLocalStorageResources(resource);
+    const serializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(serializedItems.length).toEqual(5);
     const actualParentDistributionValue = serializedItems[0].distribution;
@@ -44,7 +45,7 @@ describe('ToLocalStorageResources', () => {
 
   it('serializes correct distribution value for each distribution item in array', () => {
     const resource = resourceWithDistributionArray;
-    const serializedItems = toLocalStorageResources(resource);
+    const serializedItems = toLocalStorageResources(resource, 'studios');
 
     const originalDistItems = resource.distribution;
     const serializedDistItems = serializedItems.slice(1);
@@ -66,7 +67,7 @@ describe('ToLocalStorageResources', () => {
 
   it('serializes resources with distribution objects correctly', () => {
     const resource = resourceWithDistributionObject;
-    const actualSerializedItems = toLocalStorageResources(resource);
+    const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems.length).toEqual(1);
     const expectedDistributionValue = {
@@ -91,7 +92,7 @@ describe('ToLocalStorageResources', () => {
         contentSize: 123,
       },
     };
-    const actualSerializedItems = toLocalStorageResources(resource);
+    const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems[0].distribution?.contentSize).toEqual(123);
   });
@@ -104,14 +105,14 @@ describe('ToLocalStorageResources', () => {
         contentSize: [10, 20],
       },
     };
-    const actualSerializedItems = toLocalStorageResources(resource);
+    const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems[0].distribution?.contentSize).toEqual(30);
   });
 
   it('serializes resources when distribution is empty array', () => {
     const resource = { ...resourceWithoutDistrition, distribution: [] };
-    const actualSerializedItems = toLocalStorageResources(resource);
+    const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems.length).toEqual(1);
     const expectedDistributionValue = {
@@ -128,7 +129,7 @@ describe('ToLocalStorageResources', () => {
 
   it('serializes resources when distribution is empty object', () => {
     const resource = { ...resourceWithoutDistrition, distribution: {} };
-    const actualSerializedItems = toLocalStorageResources(resource);
+    const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems.length).toEqual(1);
     expect(actualSerializedItems[0].distribution).toBeDefined();
