@@ -23,6 +23,10 @@ describe('Studios', () => {
   before(() => {
     // @ts-ignore
     cy.rewriteHeaders();
+    // cy.visit('chrome://flags/');
+    // cy.get('#search').type('insecure origins');
+    // cy.get('h2.experiment-name').contains('Insecure origins');
+
     if (
       !Cypress.env('use_existing_delta_instance') ||
       Cypress.env('use_existing_delta_instance') === false

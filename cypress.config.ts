@@ -15,11 +15,11 @@ export default defineConfig({
   viewportWidth: 1200,
   video: true,
   e2e: {
-    baseUrl: 'http://localhost:8000',
+    baseUrl: 'http://localhost:8003',
     fileServerFolder: '/cypress',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
-    // experimentalSessionAndOrigin: true,
+    experimentalSessionAndOrigin: true,
     // testIsolation: false,
     env: {
       DEBUG: 'cypress:launcher:browsers',
@@ -31,6 +31,7 @@ export default defineConfig({
         launchOptions.args.push(
           '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
         );
+        launchOptions.args.push('--auto-open-devtools-for-tabs');
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push(
