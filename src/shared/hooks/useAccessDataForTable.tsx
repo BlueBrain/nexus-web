@@ -1,7 +1,7 @@
 import { FilterFilled } from '@ant-design/icons';
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as Sentry from '@sentry/browser';
+import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
@@ -26,7 +26,6 @@ import {
   getStudioRowKey,
 } from '../../shared/containers/DataTableContainer';
 import {
-  Distribution,
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
@@ -38,15 +37,17 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../shared/organisms/DataPanel/DataPanel';
-import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../shared/utils/datapanel';
+import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
 import { Projection } from '../components/EditTableForm';
 import { download } from '../utils/download';
-import { isNumeric, parseJsonMaybe, uuidv4 } from '../utils/index';
+import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
-import { notification } from 'antd';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -397,142 +398,6 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
-export const fileNameForDistributionItem = (
-  distItem: any,
-  defaultName: string
-) => {
-  const distName: string =
-    distItem?.label ??
-    distItem?.name ??
-    distItem?._filename ??
-    distItem?.filename ??
-    defaultName;
-  // Distribution name has an extension if  it's not a url & it has some text after a period.
-  const distNameHasExtension = Boolean(
-    !isValidUrl(distName) &&
-      distName.slice(
-        distName.includes('.') ? distName.lastIndexOf('.') : distName.length
-      )
-  );
-
-  if (!Boolean(distItem?.name) || !distNameHasExtension) {
-    Sentry.captureException(
-      'Distribution item does not have name or extension.',
-      {
-        extra: { distItem, defaultName },
-      }
-    );
-  }
-
-  const fileName = distNameHasExtension
-    ? distName
-    : `${distName}.${fileExtensionFromResourceEncoding(
-        distItem?.encodingFormat
-      )}`;
-
-  return fileName;
-};
-
-const getResourceName = (resource: Resource) =>
-  resource.name ?? resource['@id'] ?? resource._self;
-
-const baseLocalStorageObject = (
-  resource: Resource,
-  keySuffix?: string
-): Omit<TDataSource, 'distribution'> => {
-  return {
-    key: keySuffix ? `${resource._self}-${keySuffix}` : resource._self,
-    _self: resource._self,
-    id: resource['@id'],
-    name: getResourceName(resource),
-    project: resource._project,
-    description: resource.description ?? '',
-    createdAt: resource._createdAt,
-    updatedAt: resource._updatedAt,
-    source: 'studios',
-    type: isArray(resource['@type'])
-      ? resource['@type']
-      : [resource['@type'] ?? ''],
-  };
-};
-
-export const toLocalStorageResources = (resource: Resource): TDataSource[] => {
-  const resourceName = getResourceName(resource);
-  try {
-    // Case 1 - Resource has no distribution
-    if (isNil(resource.distribution)) {
-      return [{ ...baseLocalStorageObject(resource) }];
-    }
-
-    // Case 2 - Resource has (multiple) distributions in an array
-    if (isArray(resource.distribution)) {
-      // In case distribution is an array we have to store the main resource,
-      // but also an object for every item in the distribution array.
-      const localStorageObjs: TDataSource[] = [];
-
-      // First store an object for the parent resource.
-      localStorageObjs.push({
-        ...baseLocalStorageObject(resource),
-        distribution: {
-          hasDistribution: true,
-          contentSize: 0, // So the size in not doubled
-          encodingFormat: '',
-          label: '',
-        },
-      });
-
-      // Now store an object for each distribution item
-      resource.distribution.forEach((distItem, index) => {
-        localStorageObjs.push({
-          ...baseLocalStorageObject(resource, `${index}`),
-          distribution: {
-            hasDistribution: true, // So, we don't download the distribution twice
-            contentSize:
-              get(distItem, 'contentSize.value', null) ??
-              distItem.contentSize ??
-              0,
-            encodingFormat: distItem?.encodingFormat ?? '',
-            label: fileNameForDistributionItem(distItem, resourceName),
-          },
-        });
-      });
-
-      return localStorageObjs;
-    }
-
-    // Case 3 - resource.distribution is an object with key-value pairs.
-    return [
-      {
-        ...baseLocalStorageObject(resource),
-        distribution: {
-          hasDistribution: true,
-          contentSize: isArray(resource.distribution?.contentSize)
-            ? sum(resource.distribution?.contentSize)
-            : get(resource, 'distribution.contentSize.value', null) ??
-              resource.distribution?.contentSize ??
-              0,
-          encodingFormat: isArray(resource.distribution?.encodingFormat)
-            ? resource.distribution?.encodingFormat[0]
-            : resource.distribution?.encodingFormat ?? '',
-          label: fileNameForDistributionItem(
-            resource.distribution,
-            getResourceName(resource)
-          ),
-        },
-      },
-    ];
-  } catch (err) {
-    console.log('@error Failed to serialize resource for localStorage.', err);
-    Sentry.captureException(err, {
-      extra: {
-        resource,
-        message: 'Failed to serialize resource for localStorage.',
-      },
-    });
-    return [];
-  }
-};
-
 const getTotalContentSize = (rows: TDataSource[]) => {
   let size = 0;
 
@@ -594,7 +459,10 @@ export const useAccessDataForTable = (
         .then(result => {
           result.forEach(res => {
             if (res.status === 'fulfilled') {
-              const localStorageResource = toLocalStorageResources(res.value);
+              const localStorageResource = toLocalStorageResources(
+                res.value,
+                'studios'
+              );
               rowsForLS = [...rowsForLS, ...localStorageResource];
             }
           });
@@ -633,7 +501,10 @@ export const useAccessDataForTable = (
 
     if (selected) {
       const deltaResource = await fetchResourceForDownload(recordKey);
-      const localStorageResource = toLocalStorageResources(deltaResource);
+      const localStorageResource = toLocalStorageResources(
+        deltaResource,
+        'studios'
+      );
       localStorageRowKeys = [...localStorageRowKeys, recordKey];
       localStorageRows = [...localStorageRows, ...localStorageResource];
     } else {
@@ -642,18 +513,6 @@ export const useAccessDataForTable = (
     }
 
     saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
-  };
-
-  const removeLocalStorageRows = (
-    rows: TDataSource[],
-    keysToRemove: string[]
-  ) => {
-    // In addition to removing all localStorage rows whose key match with any `rowKeysToRemove`,
-    // we also have to remove all localStorage rows that were saved for the distribution items.
-    // These rows have keys like `${_self from parent resource}-${a number}`
-    return rows.filter(
-      row => !keysToRemove.find(key => row.key.toString().startsWith(key))
-    );
   };
 
   const fetchResourceForDownload = async (

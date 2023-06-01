@@ -63,7 +63,7 @@ import {
 } from '../../molecules/MyDataTable/MyDataTable';
 
 import './styles.less';
-import { fileNameForDistributionItem } from '../../../shared/hooks/useAccessDataForTable';
+import { fileNameForDistributionItem } from '../../../shared/utils/datapanel';
 
 type Props = {
   authenticated?: boolean;
@@ -80,6 +80,7 @@ type TDataPanel = {
   resources: TResourceTableData;
   openDataPanel: boolean;
 };
+
 export class DataPanelEvent<T> extends Event {
   detail: T | undefined;
 }
@@ -90,27 +91,46 @@ function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0);
 }
 
+// TODO: Add test for resource.type == `File`
 function getPathForParentWithDistribution(parent: ResourceObscured) {
-  const pathWithoutExtension = parent.path.substring(
-    0,
-    parent.path.lastIndexOf('.')
-  );
-  const metadataName = `metadata-${uuidv4().substring(0, 6)}`;
-  return `${pathWithoutExtension}/${metadataName}.json`;
+  const self = isArray(parent._self) ? parent._self[0] : parent._self;
+  const parsedSelf = parseURL(self);
+  const resourceName =
+    parent.name ?? isValidUrl(parent.id)
+      ? parent.id.split('/').pop()
+      : uuidv4().substring(0, 6);
+  const extension = parent.distribution?.label?.split('.').pop()?.length
+    ? parent.distribution?.label?.split('.').pop()
+    : 'json';
+  // TODO: Don't append path when reosurce is a File
+  const path = `/${parsedSelf.project}/${
+    parsedSelf.id
+  }/${resourceName}-metadata${extension ? `.${extension}` : ''}`;
+
+  if (path.length >= 100) {
+    const trimmedSelf = self.slice(-80);
+    return `/${trimmedSelf}.${extension}`;
+  }
+
+  return path;
 }
 
-function getPathForChildResource(resource: any, parent: ResourceObscured) {
-  const extension = resource._filename?.split('.').pop() ?? '';
+function getPathForChildResource(child: any, parent: ResourceObscured) {
+  const parentName =
+    parent.name ?? isValidUrl(parent.id)
+      ? parent.id.split('/').pop()
+      : uuidv4().substring(0, 6);
+  const childNameWithExtension = fileNameForDistributionItem(
+    child,
+    parentName ?? ''
+  );
+  const parentPath = getPathForParentWithDistribution(parent);
+  const parentPathWithoutExtension = parentPath.substring(
+    0,
+    parentPath.lastIndexOf('.')
+  );
 
-  // Distributions within different resources can have same name. Add a unique id to avoid conflicts in paths and delta error.
-  const uniqueSuffix = uuidv4().substring(0, 6);
-
-  const resourceName = resource._filename
-    ? `${resource._filename.split('.')[0] ?? 'data'}-${uniqueSuffix}`
-    : uniqueSuffix;
-  const parentPath = parent.path.substring(0, parent.path.lastIndexOf('.'));
-
-  return `${parentPath}/${resourceName}.${extension}`;
+  return `${parentPathWithoutExtension}/${childNameWithExtension}`;
 }
 
 const distributionMatchesTypes = (
@@ -148,7 +168,7 @@ type ResourceObscured = {
     | {
         contentSize: number;
         encodingFormat: string | string[];
-        label: string | string[];
+        label: string;
         hasDistribution: boolean;
       }
     | undefined;
@@ -158,6 +178,8 @@ type ResourceObscured = {
   project: string;
   path: string;
   localStorageType?: 'resource' | 'distribution';
+  id: string;
+  name: string;
 };
 
 type TResourceObscured = ResourceObscured[];
@@ -178,11 +200,15 @@ async function downloadArchive({
   size: string;
   selectedTypes: string[];
 }) {
+  // TODO: can be removed
   const resourcesWithoutDistribution = resourcesPayload.filter(
     item => !item.distribution?.hasDistribution
   );
   const resourcesWithDistribution = resourcesPayload.filter(
-    item => has(item, 'distribution') && item.distribution?.hasDistribution
+    item =>
+      has(item, 'distribution') &&
+      item.distribution?.hasDistribution &&
+      item.localStorageType === 'resource'
   );
 
   const { results, errors } = await PromisePool.withConcurrency(4)
@@ -195,51 +221,36 @@ async function downloadArchive({
         encodeURIComponent(item?.resourceId!)
       )) as TResourceDistribution;
 
+      // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
+      // To do that, first prepare the metadata for download.
+      resourcesWithoutDistribution.push({
+        ...item,
+        path: getPathForParentWithDistribution(item),
+        contentType: 'json',
+        '@type': 'Resource',
+      });
+
+      // 2. Now download each of the distribution(s) within that resource
       const files: TResourceObscured[] = [];
-      // @ts-ignore
-      if (isArray(result.distribution)) {
-        // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
-        // To do that, first prepare the metadata for download.
-        resourcesWithoutDistribution.push({
-          ...item,
-          path: getPathForParentWithDistribution(item),
-          contentType: 'json',
-          '@type': 'Resource',
-        });
+      const allDistributions = isArray(result.distribution)
+        ? result.distribution
+        : [result.distribution];
 
-        // 2. Now download each of the distribution(s) within that resource
-        const distMatchingSelectedTypes = result.distribution.filter(dist =>
-          distributionMatchesTypes(dist, selectedTypes)
-        );
+      const distMatchingSelectedTypes = allDistributions.filter(dist =>
+        distributionMatchesTypes(dist, selectedTypes)
+      );
 
-        for (const res of distMatchingSelectedTypes) {
-          try {
-            const resource = await nexus.httpGet({
-              path: res.contentUrl!,
-              headers: { accept: 'application/ld+json' },
-            });
-            files.push({
-              ...item,
-              // @ts-ignore
-              path: getPathForChildResource(resource, item),
-              _self: resource._self ?? item._self,
-              resourceId: resource['@id'],
-            });
-          } catch (err) {
-            console.error('Error fetching resource for download', err);
-          }
-        }
-      } else {
+      for (const res of distMatchingSelectedTypes) {
         try {
-          const resource: TResourceDistribution = await nexus.httpGet({
-            path: result.distribution?.contentUrl!,
-            headers: {
-              accept: 'application/ld+json',
-            },
+          const resource = await nexus.httpGet({
+            path: res.contentUrl!,
+            headers: { accept: 'application/ld+json' },
           });
           files.push({
             ...item,
             // @ts-ignore
+            path: getPathForChildResource(resource, item),
+            _self: resource._self ?? item._self,
             resourceId: resource['@id'],
           });
         } catch (err) {
@@ -268,7 +279,11 @@ async function downloadArchive({
       parsedData.org,
       parsedData.project,
       archiveId,
-      { as: 'x-tar' }
+      {
+        as: 'x-tar',
+        // @ts-ignore
+        ignoreNotFound: true,
+      }
     );
     const blob =
       !format || format === 'x-tar'
@@ -286,6 +301,7 @@ async function downloadArchive({
       error,
       items: payload.resources.length,
     });
+    console.log('Error', error);
     // @ts-ignore
     throw new Error('can not fetch archive', { cause: error });
   }
@@ -309,6 +325,9 @@ const DataPanel: React.FC<Props> = ({}) => {
 
   const totalSelectedResources = resources?.selectedRowKeys?.length;
   const dataSource: TDataSource[] = resources?.selectedRows || [];
+  const resourcesToDownload: TDataSource[] = dataSource.filter(
+    row => row.localStorageType === 'resource'
+  );
   const columns: ColumnsType<TDataSource> = [
     {
       key: 'name',
@@ -449,7 +468,6 @@ const DataPanel: React.FC<Props> = ({}) => {
     [dataSource]
   );
   const resourcesGrouped = useMemo(() => {
-    const paths = new Map<string, TDataSource[]>();
     const newDataSource = dataSource
       .filter(resource => !isNil(resource._self))
       .map(resource => {
@@ -469,21 +487,29 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? sum(...resource.distribution.contentSize)
               : resource.distribution.contentSize
             : 0;
+
+          const type =
+            Boolean(resource.distribution) &&
+            Boolean(resource.distribution?.contentSize)
+              ? 'File'
+              : 'Resource';
+          // TODO: Add this as part of localstorage object
           const contentType = resource.distribution
             ? isArray(resource.distribution?.label)
               ? resource.distribution?.label[0].split('.').pop()
               : resource.distribution?.label?.split('.').pop() ?? ''
+            : type === 'Resource'
+            ? 'json'
             : '';
           return {
             size,
             contentType: contentType?.toLowerCase(),
             distribution: resource.distribution,
+            localStorageType: resource.localStorageType,
+            id: resource.id,
             _self: resource._self,
-            '@type':
-              Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
-                ? 'File'
-                : 'Resource',
+            name: resource.name,
+            '@type': type,
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
             path: `/${parsedSelf.project}/${parsedSelf.id}/${pathId}${
@@ -537,18 +563,8 @@ const DataPanel: React.FC<Props> = ({}) => {
     };
   });
   const resultsObject = useMemo(() => {
-    if (types.length) {
-      return flatMap(
-        Object.entries(resourcesGrouped).map(([key, value]) => {
-          if (types.includes(key)) {
-            return value;
-          }
-          return null;
-        })
-      );
-    }
     return flatMap(resourcesGrouped);
-  }, [types, resourcesGrouped]);
+  }, [resourcesGrouped]);
   const resourcesObscured = filter(
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
@@ -685,7 +701,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             <Table<TDataSource>
               rowKey={record => `dp-${record.key}`}
               columns={columns}
-              dataSource={dataSource}
+              dataSource={resourcesToDownload}
               bordered={false}
               showSorterTooltip={false}
               showHeader={false}
