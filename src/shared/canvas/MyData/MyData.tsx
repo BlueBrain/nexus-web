@@ -81,7 +81,7 @@ const HomeMyData: React.FC<{}> = () => {
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
-      { size, offset, query, sort: JSON.stringify(sort), locate },
+      { size, offset, query, locate, sort: JSON.stringify(sort) },
     ],
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {

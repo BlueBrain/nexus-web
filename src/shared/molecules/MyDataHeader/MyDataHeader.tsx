@@ -234,8 +234,8 @@ const Filters = ({
             ref={ref}
             defaultValue={
               (dateType === 'before' || dateType === 'after') &&
-                date &&
-                isString(date)
+              date &&
+              isString(date)
                 ? date
                 : undefined
             }
@@ -251,8 +251,8 @@ const Filters = ({
     dateType === 'range' && date !== ''
       ? `${date?.[0]}  →  ${date?.[1]}`
       : moment(date, DATE_PATTERN).isValid()
-        ? `${capitalize(dateType)} ${date as string}`
-        : undefined;
+      ? `${capitalize(dateType)} ${date as string}`
+      : undefined;
   const DateFieldMenu = (
     <Menu
       onClick={handleDateFieldChange}
@@ -418,7 +418,15 @@ const MyDataHeader: React.FC<THeaderProps> = ({
         }).format(Number(total))}
       />
       <Filters
-        {...{ dataType, dateField, query, dateType, date, locate, setFilterOptions }}
+        {...{
+          dataType,
+          dateField,
+          query,
+          dateType,
+          date,
+          locate,
+          setFilterOptions,
+        }}
       />
     </div>
   );

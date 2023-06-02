@@ -1,5 +1,10 @@
 import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
-import { Button, Table, Tag, Tooltip, notification } from 'antd';
+import { Button, Empty, Table, Tag, Tooltip, notification } from 'antd';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  VerticalAlignMiddleOutlined,
+} from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList } from '@bbp/nexus-sdk';
 import {
@@ -24,11 +29,6 @@ import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-  VerticalAlignMiddleOutlined,
-} from '@ant-design/icons';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
@@ -101,6 +101,7 @@ type TProps = {
   total?: number;
   sort: string[];
   updateSort(value: string[]): void;
+  locate: boolean;
 };
 export const makeOrgProjectTuple = (text: string) => {
   const parts = text.split('/');
@@ -184,6 +185,7 @@ const MyDataTable: React.FC<TProps> = ({
   total,
   sort,
   updateSort,
+  locate,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -565,6 +567,26 @@ const MyDataTable: React.FC<TProps> = ({
         selectedRowKeys,
         onSelect: onSelectRowChange,
         onSelectAll: onSelectAllChange,
+      }}
+      locale={{
+        emptyText() {
+          return isLoading ? (
+            <></>
+          ) : locate && !dataSource.length ? (
+            <div className="no-resource-with-locate">
+              <strong>No resource with Id or self was found</strong>
+              <br /> If you want to look for the resource using full text search
+              <Button
+                type="link"
+                onClick={() => setFilterOptions({ locate: false })}
+              >
+                click here
+              </Button>
+            </div>
+          ) : (
+            <Empty />
+          );
+        },
       }}
     />
   );
