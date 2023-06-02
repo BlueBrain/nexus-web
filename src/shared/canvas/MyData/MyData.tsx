@@ -1,20 +1,37 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
-import { isArray, isObject, isString, omit } from 'lodash';
+import { isArray, isObject, isString } from 'lodash';
 import {
   DATE_PATTERN,
   TDateType,
   TFilterOptions,
 } from '../../molecules/MyDataHeader/MyDataHeader';
 import { MyDataHeader, MyDataTable } from '../../molecules';
+import { RootState } from '../../../shared/store/reducers';
 
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
+  const identities = useSelector(
+    (state: RootState) => state.auth.identities?.data?.identities
+  );
+  const issuerUri = identities?.find(item => item['@type'] === 'User')?.['@id'];
   const [
-    { dataType, dateField, query, dateType, date, offset, size, sort, locate },
+    {
+      dataType,
+      dateField,
+      query,
+      dateType,
+      date,
+      offset,
+      size,
+      sort,
+      locate,
+      issuer,
+    },
     setFilterOptions,
   ] = React.useReducer(
     (previous: TFilterOptions, newPartialState: Partial<TFilterOptions>) => ({
@@ -31,6 +48,7 @@ const HomeMyData: React.FC<{}> = () => {
       size: 50,
       sort: ['-_createdAt', '@id'],
       locate: false,
+      issuer: 'createdBy',
     }
   );
   const updateSort = (value: string[]) => {
@@ -81,12 +99,13 @@ const HomeMyData: React.FC<{}> = () => {
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
-      { size, offset, query, locate, sort: JSON.stringify(sort) },
+      { size, offset, query, locate, issuer, sort: JSON.stringify(sort) },
     ],
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {
         size,
         from: offset,
+        [issuer]: issuerUri,
         ...(locate && query.trim().length
           ? {
               locate: query,
@@ -131,6 +150,7 @@ const HomeMyData: React.FC<{}> = () => {
           total,
           setFilterOptions,
           locate,
+          issuer,
         }}
       />
       <MyDataTable
@@ -144,6 +164,7 @@ const HomeMyData: React.FC<{}> = () => {
           updateSort,
           setFilterOptions,
           locate,
+          issuer,
         }}
       />
     </div>
