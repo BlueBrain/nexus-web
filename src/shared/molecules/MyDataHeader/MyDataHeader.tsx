@@ -37,8 +37,9 @@ export type TFilterOptions = {
   offset: number;
   size: number;
   total?: number;
+  sort: string[];
 };
-type THeaderProps = Omit<TFilterOptions, 'size' | 'offset'> & {
+type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
 };
 
@@ -47,7 +48,7 @@ type TitleProps = {
   label: string;
   total?: string;
 };
-type THeaderFilterProps = Omit<THeaderProps, 'total'>;
+type THeaderFilterProps = Omit<THeaderProps, 'total' | 'sort'>;
 type THandleMenuSelect = MenuProps['onClick'];
 type TType = {
   key: string;
