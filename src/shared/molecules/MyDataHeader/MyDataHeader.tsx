@@ -27,6 +27,7 @@ import useClickOutside from '../../../shared/hooks/useClickOutside';
 import useMeasure from '../../../shared/hooks/useMeasure';
 import './styles.less';
 
+type TIssuer = 'createdBy' | 'updatedBy';
 type TDateField = 'createdAt' | 'updatedAt';
 export type TDateType = 'before' | 'after' | 'range';
 export type TFilterOptions = {
@@ -40,6 +41,7 @@ export type TFilterOptions = {
   total?: number;
   sort: string[];
   locate: boolean;
+  issuer: TIssuer;
 };
 type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
@@ -118,6 +120,7 @@ const Filters = ({
   date,
   setFilterOptions,
   locate,
+  issuer,
 }: THeaderFilterProps) => {
   const popoverRef = useRef(null);
   const nexus = useNexusContext();
@@ -129,6 +132,8 @@ const Filters = ({
       dateType: e.target.value,
       date: '',
     });
+  const onIssuerChange = (e: RadioChangeEvent) =>
+    setFilterOptions({ issuer: e.target.value });
   const onSearchLocateChange = (e: CheckboxChangeEvent) =>
     setFilterOptions({ locate: e.target.checked });
   const onDatePopoverVisibleChange = () =>
@@ -379,7 +384,10 @@ const Filters = ({
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
       </Dropdown> */}
-
+      <Radio.Group onChange={onIssuerChange} value={issuer}>
+        <Radio value="createdBy">Created by me</Radio>
+        <Radio value="updatedBy">Last updated by me</Radio>
+      </Radio.Group>
       <div className="search-container">
         <Input.Search
           allowClear
@@ -407,6 +415,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
   dateType,
   setFilterOptions,
   locate,
+  issuer,
 }) => {
   return (
     <div className="my-data-table-header">
@@ -426,6 +435,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
           date,
           locate,
           setFilterOptions,
+          issuer,
         }}
       />
     </div>
