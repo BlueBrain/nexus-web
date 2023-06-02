@@ -12,6 +12,7 @@ import {
   Col,
   Checkbox,
 } from 'antd';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CalendarOutlined, RightOutlined } from '@ant-design/icons';
 import { TagProps } from 'antd/lib/tag';
 import { useIMask } from 'react-imask';
@@ -38,6 +39,7 @@ export type TFilterOptions = {
   size: number;
   total?: number;
   sort: string[];
+  locate: boolean;
 };
 type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
@@ -115,6 +117,7 @@ const Filters = ({
   dateType,
   date,
   setFilterOptions,
+  locate,
 }: THeaderFilterProps) => {
   const popoverRef = useRef(null);
   const nexus = useNexusContext();
@@ -126,6 +129,8 @@ const Filters = ({
       dateType: e.target.value,
       date: '',
     });
+  const onSearchLocateChange = (e: CheckboxChangeEvent) =>
+    setFilterOptions({ locate: e.target.checked });
   const onDatePopoverVisibleChange = () =>
     setOpenDateFilterContainer(state => !state);
   const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = event =>
@@ -229,8 +234,8 @@ const Filters = ({
             ref={ref}
             defaultValue={
               (dateType === 'before' || dateType === 'after') &&
-              date &&
-              isString(date)
+                date &&
+                isString(date)
                 ? date
                 : undefined
             }
@@ -246,8 +251,8 @@ const Filters = ({
     dateType === 'range' && date !== ''
       ? `${date?.[0]}  →  ${date?.[1]}`
       : moment(date, DATE_PATTERN).isValid()
-      ? `${capitalize(dateType)} ${date as string}`
-      : undefined;
+        ? `${capitalize(dateType)} ${date as string}`
+        : undefined;
   const DateFieldMenu = (
     <Menu
       onClick={handleDateFieldChange}
@@ -375,14 +380,20 @@ const Filters = ({
         />
       </Dropdown> */}
 
-      <Input.Search
-        className="my-data-search"
-        placeholder="Search dataset"
-        bordered={false}
-        value={query}
-        onChange={handleQueryChange}
-        style={{ marginLeft: 'auto' }}
-      />
+      <div className="search-container">
+        <Input.Search
+          allowClear
+          className="my-data-search"
+          placeholder="Search dataset"
+          bordered={false}
+          value={query}
+          onChange={handleQueryChange}
+          style={{ marginLeft: 'auto' }}
+        />
+        <Checkbox checked={locate} onChange={onSearchLocateChange}>
+          <span className="locate-text">By resource id or self</span>
+        </Checkbox>
+      </div>
     </div>
   );
 };
@@ -395,6 +406,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
   query,
   dateType,
   setFilterOptions,
+  locate,
 }) => {
   return (
     <div className="my-data-table-header">
@@ -406,7 +418,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
         }).format(Number(total))}
       />
       <Filters
-        {...{ dataType, dateField, query, dateType, date, setFilterOptions }}
+        {...{ dataType, dateField, query, dateType, date, locate, setFilterOptions }}
       />
     </div>
   );
