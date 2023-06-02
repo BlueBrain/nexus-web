@@ -14,7 +14,7 @@ import { MyDataHeader, MyDataTable } from '../../molecules';
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const [
-    { dataType, dateField, query, dateType, date, offset, size },
+    { dataType, dateField, query, dateType, date, offset, size, sort },
     setFilterOptions,
   ] = React.useReducer(
     (previous: TFilterOptions, newPartialState: Partial<TFilterOptions>) => ({
@@ -29,8 +29,15 @@ const HomeMyData: React.FC<{}> = () => {
       query: '',
       offset: 0,
       size: 50,
+      sort: ['-_createdAt', '@id'],
     }
   );
+  const updateSort = (value: string[]) => {
+    setFilterOptions({
+      offset: 0,
+      sort: value,
+    });
+  };
   const makeDatetimePattern = ({
     dateType,
     date,
@@ -71,14 +78,18 @@ const HomeMyData: React.FC<{}> = () => {
   };
 
   const { data: resources, isLoading } = useQuery({
-    queryKey: ['my-data-resources', { size, offset, query }],
+    queryKey: [
+      'my-data-resources',
+      { size, offset, query, sort: JSON.stringify(sort) },
+    ],
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {
         size,
-        from: offset,
-        // after: offset,
+        sort,
         q: query,
+        from: offset,
         [dateField]: makeDatetimePattern({ dateType, date }),
+        // after: offset,
         // type: dataType,
       }),
     retry: 2,
@@ -113,7 +124,16 @@ const HomeMyData: React.FC<{}> = () => {
         }}
       />
       <MyDataTable
-        {...{ resources, isLoading, offset, size, total, setFilterOptions }}
+        {...{
+          resources,
+          isLoading,
+          offset,
+          size,
+          total,
+          sort,
+          updateSort,
+          setFilterOptions,
+        }}
       />
     </div>
   );
