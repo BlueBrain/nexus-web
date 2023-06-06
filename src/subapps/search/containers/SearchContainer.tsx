@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { useSelector } from 'react-redux';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
+import { difference, differenceBy, has, isArray, union, uniq, uniqBy } from 'lodash';
 import { clsx } from 'clsx';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
@@ -24,6 +24,7 @@ import {
   TResourceTableData,
   getLocalStorageSize,
   notifyTotalSizeExeeced,
+  sizeCalculator,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -121,7 +122,7 @@ const SearchContainer: React.FC = () => {
         numRowsFitOnPage: numRows,
         currentPage:
           prevPagination.currentPage > lastPageOfResults &&
-          lastPageOfResults !== 0
+            lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -152,24 +153,26 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: has(record, 'distribution')
-        ? {
+      distribution: isArray(record.distribution) ?
+        record.distribution.map(item => ({ ...item, hasDistribution: has(record, 'distribution') })) :
+        has(record, 'distribution')
+          ? {
             ...record.distribution,
             hasDistribution: has(record, 'distribution'),
           }
-        : record['@type'] === 'File'
-        ? {
-            contentSize: record._bytes,
-            encodingFormat: record._mediaType,
-            label: record._filename,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : {
-            contentSize: 0,
-            encodingFormat: '',
-            label: '',
-            hasDistribution: false,
-          },
+          : record['@type'] === 'File'
+            ? {
+              contentSize: record._bytes,
+              encodingFormat: record._mediaType,
+              label: record._filename,
+              hasDistribution: has(record, 'distribution'),
+            }
+            : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+              hasDistribution: false,
+            },
     };
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -184,8 +187,8 @@ const SearchContainer: React.FC = () => {
       selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
     }
     const size = selectedRows.reduce(
-      (acc, item) => acc + (item.distribution?.contentSize || 0),
-      0
+      (acc, item) => acc + sizeCalculator(item)
+      , 0
     );
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
@@ -224,24 +227,26 @@ const SearchContainer: React.FC = () => {
       project: record.project.identifier,
       updatedAt: record.updatedAt,
       type: record['@type'],
-      distribution: has(record, 'distribution')
-        ? {
+      distribution: isArray(record.distribution) ?
+        record.distribution.map(item => ({ ...item, hasDistribution: has(record, 'distribution') })) :
+        has(record, 'distribution')
+          ? {
             ...record.distribution,
             hasDistribution: has(record, 'distribution'),
           }
-        : record['@type'] === 'File'
-        ? {
-            contentSize: record._bytes,
-            encodingFormat: record._mediaType,
-            label: record._filename,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : {
-            contentSize: 0,
-            encodingFormat: '',
-            label: '',
-            hasDistribution: false,
-          },
+          : record['@type'] === 'File'
+            ? {
+              contentSize: record._bytes,
+              encodingFormat: record._mediaType,
+              label: record._filename,
+              hasDistribution: has(record, 'distribution'),
+            }
+            : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+              hasDistribution: false,
+            },
     }));
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -265,8 +270,8 @@ const SearchContainer: React.FC = () => {
       );
     }
     const size = selectedRows.reduce(
-      (acc, item) => acc + (item.distribution?.contentSize || 0),
-      0
+      (acc, item) => acc + sizeCalculator(item)
+      , 0
     );
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
@@ -466,7 +471,7 @@ const SearchContainer: React.FC = () => {
               clsx(
                 'search-table-row',
                 record._self === currentResourceView?._self &&
-                  'ant-table-row-selected'
+                'ant-table-row-selected'
               )
             }
             rowKey="key"
