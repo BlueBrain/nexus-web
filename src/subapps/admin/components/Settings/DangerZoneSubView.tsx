@@ -62,7 +62,7 @@ const deleteProject = async ({
 }) => {
   try {
     await nexus.httpDelete({
-      path: `${apiEndpoint}/v1/projects/${orgLabel}/${projectLabel}?rev=${rev}&prune=true`,
+      path: `${apiEndpoint}/projects/${orgLabel}/${projectLabel}?rev=${rev}&prune=true`,
     });
   } catch (error) {
     // @ts-ignore
