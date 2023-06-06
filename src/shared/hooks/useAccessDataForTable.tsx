@@ -479,12 +479,14 @@ const getTotalContentSize = (rows: TDataSource[]) => {
 
   rows.forEach(row => {
     if (isArray(row.distribution)) {
-      size += sumBy(
-        row.distribution,
-        distItem => isArray(distItem.contentSize) ? sum(distItem.contentSize) : get(distItem.contentSize, 'value') ?? 0
+      size += sumBy(row.distribution, distItem =>
+        isArray(distItem.contentSize)
+          ? sum(distItem.contentSize)
+          : get(distItem.contentSize, 'value') ?? 0
       );
     } else {
-      size += get((row.distribution as TDistribution), 'contentSize') as number || 0;
+      size +=
+        (get(row.distribution as TDistribution, 'contentSize') as number) || 0;
     }
   });
 

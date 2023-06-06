@@ -66,7 +66,6 @@ import {
 
 import './styles.less';
 
-
 type Props = {
   authenticated?: boolean;
   token?: string;
@@ -138,13 +137,13 @@ type ResourceObscured = {
   size: number;
   contentType: string | undefined;
   distribution:
-  | {
-    contentSize: number;
-    encodingFormat: string | string[];
-    label: string | string[];
-    hasDistribution: boolean;
-  }
-  | undefined;
+    | {
+        contentSize: number;
+        encodingFormat: string | string[];
+        label: string | string[];
+        hasDistribution: boolean;
+      }
+    | undefined;
   _self: string;
   '@type': string;
   resourceId: string;
@@ -246,12 +245,11 @@ async function downloadArchive({
     payload,
     archiveId,
   }: // @ts-ignore
-    { payload: ArchivePayload; archiveId: string } = makePayload(resources);
+  { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) { }
+  } catch (error) {}
   try {
-
     const archive = await nexus.Archive.get(
       parsedData.org,
       parsedData.project,
@@ -259,8 +257,8 @@ async function downloadArchive({
       {
         as: 'x-tar',
         // nexus-sdk must be updated (or use httpGet)
-        // @ts-ignore 
-        ignoreNotFound: true
+        // @ts-ignore
+        ignoreNotFound: true,
       }
     );
     const blob =
@@ -284,9 +282,11 @@ async function downloadArchive({
   }
 }
 
-const DataPanel: React.FC<Props> = ({ }) => {
+const DataPanel: React.FC<Props> = ({}) => {
   const nexus = useNexusContext();
-  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint);
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
   const [types, setTypes] = useState<string[]>([]);
   const datapanelRef = useRef<HTMLDivElement>(null);
   const dataLS = localStorage.getItem(DATA_PANEL_STORAGE);
@@ -459,21 +459,27 @@ const DataPanel: React.FC<Props> = ({ }) => {
             : uuidv4().substring(0, 6);
           const size = resource.distribution
             ? isArray((resource.distribution as TDistribution)?.contentSize)
-              ? sum(...((resource.distribution as TDistribution).contentSize as number[]))
+              ? sum(
+                  ...((resource.distribution as TDistribution)
+                    .contentSize as number[])
+                )
               : (resource.distribution as TDistribution).contentSize
             : 0;
           const contentType = resource.distribution
             ? isArray((resource.distribution as TDistribution).label)
-              ? (resource.distribution as TDistribution)?.label[0].split('.').pop()
-              : ((resource.distribution as TDistribution)?.label as string)?.split('.').pop() ?? ''
+              ? (resource.distribution as TDistribution)?.label[0]
+                  .split('.')
+                  .pop()
+              : ((resource.distribution as TDistribution)?.label as string)
+                  ?.split('.')
+                  .pop() ?? ''
             : '';
-          const type = Boolean(resource.distribution) &&
-            (
-              Boolean((resource.distribution as TDistribution)?.contentSize) ||
-              Boolean((resource.distribution as TDistribution[])?.length)
-            )
-            ? 'File'
-            : 'Resource';
+          const type =
+            Boolean(resource.distribution) &&
+            (Boolean((resource.distribution as TDistribution)?.contentSize) ||
+              Boolean((resource.distribution as TDistribution[])?.length))
+              ? 'File'
+              : 'Resource';
           return {
             size,
             contentType: contentType?.toLowerCase(),
@@ -482,7 +488,13 @@ const DataPanel: React.FC<Props> = ({ }) => {
             '@type': type,
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${pathId}${contentType ? `.${contentType}` : type === 'Resource' ? '.json' : ''}`,
+            path: `/${parsedSelf.project}/${pathId}${
+              contentType
+                ? `.${contentType}`
+                : type === 'Resource'
+                ? '.json'
+                : ''
+            }`,
           };
         } catch (error) {
           console.log('@@error', resource.id, error);
@@ -548,7 +560,15 @@ const DataPanel: React.FC<Props> = ({ }) => {
     i => !isEmpty(i) && !isNil(i)
   );
   const totalSize = sum(
-    ...compact(flatMap(resultsObject).map(item => item?.size ? isArray(item?.size as number[]) ? sum(...(item?.size as number[])) : item?.size as number : 0))
+    ...compact(
+      flatMap(resultsObject).map(item =>
+        item?.size
+          ? isArray(item?.size as number[])
+            ? sum(...(item?.size as number[]))
+            : (item?.size as number)
+          : 0
+      )
+    )
   );
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
     ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)

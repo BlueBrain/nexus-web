@@ -33,16 +33,16 @@ type TResource = {
   [key: string]: any;
 } & {
   '@context'?:
-  | string
-  | (
     | string
+    | (
+        | string
+        | {
+            [key: string]: any;
+          }
+      )[]
     | {
-      [key: string]: any;
-    }
-  )[]
-  | {
-    [key: string]: any;
-  };
+        [key: string]: any;
+      };
   '@type'?: string | string[];
   '@id': string;
   _incoming: string;
@@ -108,22 +108,21 @@ export const sizeCalculator = (record: TDataSource) => {
   let totalSize = 0;
   const distributions = record.distribution;
   if (isArray(distributions)) {
-    totalSize += sum(...distributions.map(item => isArray(((item as TDistribution)?.contentSize)) ?
-      sum(
-        ...((item as TDistribution)?.contentSize) as number[]
-      ) :
-      ((item as TDistribution)?.contentSize as number) || 0)
-    )
+    totalSize += sum(
+      ...distributions.map(item =>
+        isArray((item as TDistribution)?.contentSize)
+          ? sum(...((item as TDistribution)?.contentSize as number[]))
+          : ((item as TDistribution)?.contentSize as number) || 0
+      )
+    );
   } else {
-    totalSize += isArray(((distributions as TDistribution)?.contentSize)) ?
-      sum(
-        ...((distributions as TDistribution)?.contentSize) as number[]
-      ) :
-      ((distributions as TDistribution)?.contentSize as number) || 0
+    totalSize += isArray((distributions as TDistribution)?.contentSize)
+      ? sum(...((distributions as TDistribution)?.contentSize as number[]))
+      : ((distributions as TDistribution)?.contentSize as number) || 0;
   }
   console.log('@@total-size', totalSize);
   return totalSize;
-}
+};
 const makeResourceUri = (
   orgLabel: string,
   projectLabel: string,
@@ -308,26 +307,29 @@ const MyDataTable: React.FC<TProps> = ({
         type: resource['@type'],
         createdAt: resource._createdAt,
         updatedAt: resource._updatedAt,
-        distribution: isArray(resource.distribution) ?
-          resource.distribution.map(item => ({ ...item, hasDistribution: has(resource, 'distribution') })) :
-          has(resource, 'distribution')
-            ? {
+        distribution: isArray(resource.distribution)
+          ? resource.distribution.map(item => ({
+              ...item,
+              hasDistribution: has(resource, 'distribution'),
+            }))
+          : has(resource, 'distribution')
+          ? {
               contentSize: resource.distribution?.contentSize ?? 0,
               encodingFormat: resource.distribution?.encodingFormat ?? '',
               label: resource.distribution?.label ?? '',
               hasDistribution: has(resource, 'distribution'),
             }
-            : resource['@type'] === 'File'
-              ? {
-                contentSize: resource._bytes,
-                encodingFormat: resource._mediaType,
-                label: resource._filename,
-              }
-              : {
-                contentSize: 0,
-                encodingFormat: '',
-                label: '',
-              },
+          : resource['@type'] === 'File'
+          ? {
+              contentSize: resource._bytes,
+              encodingFormat: resource._mediaType,
+              label: resource._filename,
+            }
+          : {
+              contentSize: 0,
+              encodingFormat: '',
+              label: '',
+            },
         source: 'my-data',
       };
     }) || [];
@@ -360,8 +362,8 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRows = selectedRows.filter(t => t.key !== record._self);
     }
     const size = selectedRows.reduce(
-      (acc, item) => acc + sizeCalculator(item)
-      , 0
+      (acc, item) => acc + sizeCalculator(item),
+      0
     );
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
@@ -413,8 +415,8 @@ const MyDataTable: React.FC<TProps> = ({
     }
 
     const size = selectedRows.reduce(
-      (acc, item) => acc + sizeCalculator(item)
-      , 0
+      (acc, item) => acc + sizeCalculator(item),
+      0
     );
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
@@ -486,7 +488,7 @@ const MyDataTable: React.FC<TProps> = ({
         clsx(
           `my-data-table-row`,
           record._self === currentResourceView?._self &&
-          'ant-table-row-selected'
+            'ant-table-row-selected'
         )
       }
       scroll={{ x: 1300 }}
