@@ -115,13 +115,16 @@ const DangerZoneSubView = ({ project }: Props) => {
     {
       onSuccess: () => {
         history.push(makeOrganizationUri(orgLabel));
-        notification.success({ message: 'Project deprecated' });
+        notification.success({
+          message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
+          description: 'Project has been deprecated successfully',
+        });
       },
       onError: error => {
         notification.error({
-          message: 'Error deprecating project',
+          message: `Error deprecating project ${projectLabel}`,
           // @ts-ignore
-          description: error.cause.message,
+          description: <code>{error.cause.message}</code>,
         });
       },
     }
@@ -133,15 +136,15 @@ const DangerZoneSubView = ({ project }: Props) => {
     onSuccess: () => {
       history.push(makeOrganizationUri(orgLabel));
       notification.success({
-        message: `Project ${projectLabel}`,
-        description: 'Project has been deprecated successfully',
+        message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
+        description: 'Project has been deleted successfully',
       });
     },
     onError: error => {
       notification.error({
-        message: `Error deprecating project ${projectLabel}`,
+        message: `Error deleting project ${projectLabel}`,
         // @ts-ignore
-        description: error.cause.message,
+        description: <code>{error.cause.reason}</code>,
       });
     },
   });
@@ -160,7 +163,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       open: true,
       title: 'Deprecate Project',
       description:
-        'This action cannot be undone. This will permanently deprecate',
+        'This action cannot be undone. This will permanently deprecated',
       action: 'deprecate',
       handler: handleDeprecation,
     });
@@ -208,9 +211,9 @@ const DangerZoneSubView = ({ project }: Props) => {
       action: (
         <AccessControl
           path={[`${orgLabel}/${projectLabel}`]}
-          permissions={['projects/write']}
+          permissions={['projects/delete']}
           noAccessComponent={() => (
-            <Tooltip title="You have no permissions to deprecate this project">
+            <Tooltip title="You have no permissions to delete this project">
               <HasNoPermission />
             </Tooltip>
           )}
