@@ -6,11 +6,13 @@ import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
+  get,
   has,
   isArray,
   isNil,
   isString,
   pick,
+  sum,
   sumBy,
   toNumber,
   uniq,
@@ -27,6 +29,7 @@ import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
+  TDistribution,
   TResourceTableData,
   getLocalStorageSize,
   notifyTotalSizeExeeced,
@@ -478,10 +481,10 @@ const getTotalContentSize = (rows: TDataSource[]) => {
     if (isArray(row.distribution)) {
       size += sumBy(
         row.distribution,
-        distItem => distItem.contentSize?.value ?? 0
+        distItem => isArray(distItem.contentSize) ? sum(distItem.contentSize) : get(distItem.contentSize, 'value') ?? 0
       );
     } else {
-      size += row.distribution?.contentSize || 0;
+      size += get((row.distribution as TDistribution), 'contentSize') as number || 0;
     }
   });
 
