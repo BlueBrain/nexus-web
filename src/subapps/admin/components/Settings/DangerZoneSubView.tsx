@@ -27,6 +27,7 @@ type Props = {
     base?: string;
     vocab?: string;
     mode: string;
+    _deprecated: boolean;
   };
 };
 const deprecateProject = async ({
@@ -186,7 +187,7 @@ const DangerZoneSubView = ({ project }: Props) => {
           permissions={['projects/write']}
           noAccessComponent={() => (
             <Tooltip title="You have no permissions to deprecate this project">
-              <HasNoPermission />
+              <HasNoPermission style={{ width: 30 }} />
             </Tooltip>
           )}
         >
@@ -196,6 +197,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             style={{ margin: 0, marginRight: 10 }}
             type="ghost"
             htmlType="button"
+            disabled={project._deprecated}
             onClick={handleOpenDeprecationModal}
           >
             Deprecate this Project
@@ -214,7 +216,7 @@ const DangerZoneSubView = ({ project }: Props) => {
           permissions={['projects/delete']}
           noAccessComponent={() => (
             <Tooltip title="You have no permissions to delete this project">
-              <HasNoPermission />
+              <HasNoPermission style={{ width: 30 }} />
             </Tooltip>
           )}
         >
