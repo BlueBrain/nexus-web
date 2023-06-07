@@ -571,7 +571,13 @@ const DataPanel: React.FC<Props> = ({}) => {
   );
 
   const totalSize = sum(
-    ...compact(flatMap(resultsObject).map(item => item?.size))
+    ...compact(
+      flatMap(resultsObject)
+        .filter(item => {
+          return distributionMatchesTypes(item?.distribution, types);
+        })
+        .map(item => item?.size)
+    )
   );
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
     ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
