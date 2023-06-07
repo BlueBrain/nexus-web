@@ -42,12 +42,16 @@ import formatNumber from '../../utils/formatNumber';
 
 import '../../shared/styles/route-layout.less';
 
+
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = true;
 
 type TOrganizationOptions = {
   orgLabel: string;
 };
+type TProjectResponseCommonExtended = ProjectResponseCommon & {
+  _markedForDeletion: boolean;
+}
 interface TPageOptions {
   sort: TSort;
 }
@@ -75,6 +79,7 @@ type TProjectItem = {
   updatedAt: Date;
   organization: string;
   nexus: NexusClient;
+  toDelete: boolean;
 };
 const fetchOrganizationDetails = async ({
   nexus,
@@ -151,6 +156,7 @@ const ProjectItem = ({
   access,
   organization,
   nexus,
+  toDelete
 }: TProjectItem) => {
   const { data } = useQuery({
     queryKey: ['datesets', { orgLabel: organization, projectLabel: title }],
@@ -166,7 +172,13 @@ const ProjectItem = ({
         <div className="org">
           <Link to={to}>
             <h3>
-              {title}{' '}
+              {toDelete && (
+                <span style={{ verticalAlign: 'top', margin: '0 3px' }}>
+                  <LoadingOutlined style={{ fontSize: 12, color: "#dc7943", verticalAlign: 'middle' }} />
+                </span>
+              )}
+              {title}
+              {toDelete && <span className='deletion-tag'>Project being deleted</span>}
               {deprected && (
                 <span className="depreacted-tag">
                   <DeprecatedIcon /> deprecated
@@ -201,7 +213,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
-const OrganizationProjectsPage: React.FC<{}> = ({}) => {
+const OrganizationProjectsPage: React.FC<{}> = ({ }) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
@@ -267,7 +279,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   });
   const total =
     data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
-  const dataSource: ProjectResponseCommon[] =
+  const dataSource: TProjectResponseCommonExtended[] =
     data && data.pages
       ? data.pages.map(page => (page as ProjectList)._results).flat()
       : [];
@@ -372,13 +384,14 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
                       itemLayout="horizontal"
                       loadMore={LoadMore}
                       dataSource={dataSource}
-                      renderItem={(item: ProjectResponseCommon) => {
+                      renderItem={(item: TProjectResponseCommonExtended) => {
                         const to = `/orgs/${item._organizationLabel}/${item._label}`;
                         return (
                           <ProjectItem
                             {...{
                               to,
                               nexus,
+                              toDelete: item._markedForDeletion,
                               title: item._label,
                               organization: item._organizationLabel,
                               deprected: item._deprecated,
