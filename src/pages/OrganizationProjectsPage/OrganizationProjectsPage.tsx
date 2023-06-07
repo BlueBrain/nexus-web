@@ -335,6 +335,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({ }) => {
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}
           path={[`/${orgLabel}`]}
+          supTitle="Organization"
         />
         <div className="route-body">
           <div className="route-body-container">
