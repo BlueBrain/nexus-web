@@ -1,15 +1,8 @@
 import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { PaginatedList } from '@bbp/nexus-sdk';
-import {
-  difference,
-  differenceBy,
-  union,
-  has,
-  isString,
-  isArray,
-} from 'lodash';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { isString, isArray } from 'lodash';
 import { clsx } from 'clsx';
 import { useSelector } from 'react-redux';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
@@ -24,6 +17,10 @@ import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../../shared/utils/datapanel';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
@@ -56,6 +53,11 @@ type TResource = {
   _updatedAt: string;
   _updatedBy: string;
 };
+
+interface TMyDataTableRow extends Resource {
+  name: string;
+  description: string;
+}
 export type TResourceTableData = {
   selectedRowKeys: React.Key[];
   selectedRows: TDataSource[];
@@ -79,7 +81,9 @@ export type TDataSource = {
   type?: string | string[];
   updatedAt: string;
   createdAt: string;
-  resource?: TResource;
+  resource?: any; // TODO: Remove
+  localStorageType?: 'resource' | 'distribution';
+  distributionItemsLength?: number;
   distribution?: {
     contentSize: number;
     encodingFormat: string | string[];
@@ -90,7 +94,7 @@ export type TDataSource = {
 type TProps = {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
   isLoading: boolean;
-  resources: PaginatedList<TResource> | undefined;
+  resources: PaginatedList<Resource> | undefined;
   offset: number;
   size: number;
   total?: number;
@@ -174,7 +178,7 @@ const MyDataTable: React.FC<TProps> = ({
       background: location,
     });
   };
-  const columns: ColumnsType<TDataSource> = useMemo(
+  const columns: ColumnsType<TMyDataTableRow> = useMemo(
     () => [
       {
         key: 'name',
@@ -185,10 +189,8 @@ const MyDataTable: React.FC<TProps> = ({
         ellipsis: true,
         render: (text, record) => {
           const showedText = isValidUrl(text) ? text.split('/').pop() : text;
-          if (text && record.resource?._project) {
-            const { org, project } = makeOrgProjectTuple(
-              record.resource._project
-            );
+          if (text && record._project) {
+            const { org, project } = makeOrgProjectTuple(record._project);
             return (
               <Tooltip title={text}>
                 <Button
@@ -207,7 +209,7 @@ const MyDataTable: React.FC<TProps> = ({
       {
         key: 'project',
         title: 'organization / project',
-        dataIndex: 'project',
+        dataIndex: '_project',
         sorter: false,
         render: (text, record) => {
           if (text) {
@@ -234,7 +236,7 @@ const MyDataTable: React.FC<TProps> = ({
       {
         key: 'type',
         title: 'type',
-        dataIndex: 'type',
+        dataIndex: '@type',
         sorter: false,
         render: text => {
           let types = '';
@@ -259,7 +261,7 @@ const MyDataTable: React.FC<TProps> = ({
       {
         key: 'updatedAt',
         title: 'updated date',
-        dataIndex: 'updatedAt',
+        dataIndex: '_updatedAt',
         width: 140,
         sorter: false,
         render: text => timeago(new Date(text)),
@@ -267,7 +269,7 @@ const MyDataTable: React.FC<TProps> = ({
       {
         key: 'createdAt',
         title: 'created date',
-        dataIndex: 'createdAt',
+        dataIndex: '_createdAt',
         width: 140,
         sorter: false,
         render: text => timeago(new Date(text)),
@@ -275,38 +277,12 @@ const MyDataTable: React.FC<TProps> = ({
     ],
     []
   );
-  const dataSource: TDataSource[] =
-    resources?._results.map(resource => {
+  const dataSource: TMyDataTableRow[] =
+    resources?._results?.map(resource => {
       return {
-        resource,
-        key: resource._self,
-        _self: resource._self,
-        id: resource['@id'],
+        ...resource,
         name: resource['@id'] ?? resource._self,
-        project: resource._project,
-        description: '',
-        type: resource['@type'],
-        createdAt: resource._createdAt,
-        updatedAt: resource._updatedAt,
-        distribution: has(resource, 'distribution')
-          ? {
-              contentSize: resource.distribution?.contentSize ?? 0,
-              encodingFormat: resource.distribution?.encodingFormat ?? '',
-              label: resource.distribution?.label ?? '',
-              hasDistribution: has(resource, 'distribution'),
-            }
-          : resource['@type'] === 'File'
-          ? {
-              contentSize: resource._bytes,
-              encodingFormat: resource._mediaType,
-              label: resource._filename,
-            }
-          : {
-              contentSize: 0,
-              encodingFormat: '',
-              label: '',
-            },
-        source: 'my-data',
+        description: resource.discription ?? '',
       };
     }) || [];
   const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
@@ -321,22 +297,27 @@ const MyDataTable: React.FC<TProps> = ({
     showQuickJumper: true,
     showSizeChanger: true,
   };
-  const onSelectRowChange: SelectionSelectFn<TDataSource> = (
+  const onSelectRowChange: SelectionSelectFn<TMyDataTableRow> = (
     record,
     selected
   ) => {
+    const recordKey = record._self;
+
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
+    const localStorageRows = toLocalStorageResources(record, 'my-data');
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
+
     if (selected) {
-      selectedRowKeys = [...selectedRowKeys, record._self];
-      selectedRows = [...selectedRows, { ...record, source: 'my-data' }];
+      selectedRowKeys = [...selectedRowKeys, recordKey];
+      selectedRows = [...selectedRows, ...localStorageRows];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== record._self);
-      selectedRows = selectedRows.filter(t => t.key !== record._self);
+      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
     }
+
     const size = selectedRows.reduce(
       (acc, item) => acc + (item.distribution?.contentSize || 0),
       0
@@ -365,29 +346,31 @@ const MyDataTable: React.FC<TProps> = ({
 
   const onSelectAllChange = (
     selected: boolean,
-    tSelectedRows: TDataSource[],
-    changeRows: TDataSource[]
+    tSelectedRows: TMyDataTableRow[],
+    changeRows: TMyDataTableRow[]
   ) => {
+    const changedRowsLS: TDataSource[] = [];
+    changeRows.forEach(row => {
+      const localStorageRows = toLocalStorageResources(row, 'my-data');
+      changedRowsLS.push(...localStorageRows);
+    });
+
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
+
     if (selected) {
-      selectedRows = union(
-        selectedRows,
-        changeRows.map(t => ({ ...t, source: 'my-data' }))
-      );
-      selectedRowKeys = union(
-        selectedRowKeys,
-        changeRows.map(t => t.key)
-      );
+      selectedRows = [...selectedRows, ...changedRowsLS];
+      selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
     } else {
-      selectedRows = differenceBy(selectedRows, changeRows, 'key');
-      selectedRowKeys = difference(
-        selectedRowKeys,
-        changeRows.map(t => t._self)
+      const rowKeysToRemove = changeRows.map(r => r._self);
+
+      selectedRowKeys = selectedRowKeys.filter(
+        key => !rowKeysToRemove.includes(key.toString())
       );
+      selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
     }
     const size = selectedRows.reduce(
       (acc, item) => acc + (item.distribution?.contentSize || 0),
@@ -446,12 +429,12 @@ const MyDataTable: React.FC<TProps> = ({
     };
   }, []);
   return (
-    <Table<TDataSource>
+    <Table<TMyDataTableRow>
       sticky={{
         offsetHeader: 50,
         getContainer: () => window,
       }}
-      rowKey={record => record.key}
+      rowKey={record => record._self}
       loading={isLoading}
       columns={columns}
       dataSource={dataSource}

@@ -1,16 +1,18 @@
 import { FilterFilled } from '@ant-design/icons';
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as Sentry from '@sentry/browser';
+import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
+  get,
   has,
   isArray,
   isNil,
   isString,
   pick,
+  sum,
   sumBy,
   toNumber,
   uniq,
@@ -35,15 +37,17 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../shared/organisms/DataPanel/DataPanel';
-import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../shared/utils/datapanel';
+import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
 import { Projection } from '../components/EditTableForm';
 import { download } from '../utils/download';
-import { isNumeric, parseJsonMaybe, uuidv4 } from '../utils/index';
+import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
-import { notification } from 'antd';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -394,83 +398,6 @@ const accessData = async (
   return { ...result, headerProperties, tableResource };
 };
 
-const fileNameForDistributionItem = (distItem: any, defaultName: string) => {
-  const distName: string = distItem?.label ?? distItem?.name ?? defaultName;
-  // Distribution name has an extension if  it's not a url & it has some text after a period.
-  const distNameHasExtension = Boolean(
-    !isValidUrl(distName) &&
-      distName.slice(
-        distName.includes('.') ? distName.lastIndexOf('.') : distName.length
-      )
-  );
-
-  if (!Boolean(distItem?.name) || !distNameHasExtension) {
-    Sentry.captureException(
-      'Distribution item does not have name or extension.',
-      {
-        extra: { distItem, defaultName },
-      }
-    );
-  }
-
-  const fileName = distNameHasExtension
-    ? distName
-    : `${distName}.${fileExtensionFromResourceEncoding(
-        distItem?.encodingFormat
-      )}`;
-
-  return fileName;
-};
-
-const resourceToLocalStorageResource = (resource: Resource): TDataSource => {
-  let localStorageRow: TDataSource;
-  try {
-    const resourceName = resource.name ?? resource['@id'] ?? resource._self;
-    localStorageRow = {
-      key: resource._self,
-      _self: resource._self,
-      id: resource['@id'],
-      name: resourceName,
-      project: resource._project,
-      description: resource.description ?? '',
-      createdAt: resource._createdAt,
-      updatedAt: resource._updatedAt,
-      source: 'studios',
-      type: isArray(resource['@type'])
-        ? resource['@type']
-        : [resource['@type'] ?? ''],
-
-      distribution: {
-        contentSize: isArray(resource.distribution)
-          ? sumBy(
-              resource.distribution,
-              distItem => distItem.contentSize?.value ?? 0
-            )
-          : resource.distribution?.contentSize ?? 0,
-        encodingFormat: isArray(resource.distribution)
-          ? resource.distribution.find(distItem => distItem.encodingFormat)
-              ?.encodingFormat ?? ''
-          : resource.distribution?.encodingFormat ?? '',
-        label: isArray(resource.distribution)
-          ? resource.distribution.map(distItem => {
-              return fileNameForDistributionItem(distItem, resourceName);
-            })
-          : fileNameForDistributionItem(resource.distribution, resourceName),
-        hasDistribution: has(resource, 'distribution'),
-      },
-    };
-  } catch (err) {
-    console.log('@error Failed to serialize resource for localStorage.', err);
-    Sentry.captureException(err, {
-      extra: {
-        resource,
-        message: 'Failed to serialize resource for localStorage.',
-      },
-    });
-  }
-  return localStorageRow!;
-};
-
 const getTotalContentSize = (rows: TDataSource[]) => {
   let size = 0;
 
@@ -519,6 +446,11 @@ export const useAccessDataForTable = (
     let rowsForLS = dataPanelLS?.selectedRows || [];
 
     if (selected) {
+      rowKeysForLS = [
+        ...rowKeysForLS,
+        ...changedRows.map(row => getStudioRowKey(row)),
+      ];
+
       const futureResources = changedRows.map(row =>
         fetchResourceForDownload(getStudioRowKey(row))
       );
@@ -527,14 +459,11 @@ export const useAccessDataForTable = (
         .then(result => {
           result.forEach(res => {
             if (res.status === 'fulfilled') {
-              const localStorageResource = resourceToLocalStorageResource(
-                res.value
+              const localStorageResource = toLocalStorageResources(
+                res.value,
+                'studios'
               );
-              rowKeysForLS = uniq([
-                ...rowKeysForLS,
-                localStorageResource._self,
-              ]);
-              rowsForLS = uniqBy([...rowsForLS, localStorageResource], 'key');
+              rowsForLS = [...rowsForLS, ...localStorageResource];
             }
           });
           return;
@@ -551,9 +480,7 @@ export const useAccessDataForTable = (
       rowKeysForLS = rowKeysForLS.filter(
         lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
       );
-      rowsForLS = rowsForLS.filter(
-        lsRow => !rowKeysToRemove.includes(lsRow.key.toString())
-      );
+      rowsForLS = removeLocalStorageRows(rowsForLS, rowKeysToRemove);
 
       saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     }
@@ -569,22 +496,23 @@ export const useAccessDataForTable = (
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
 
-    let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
-    let selectedRows = dataPanelLS?.selectedRows || [];
+    let localStorageRowKeys = dataPanelLS?.selectedRowKeys || [];
+    let localStorageRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
       const deltaResource = await fetchResourceForDownload(recordKey);
-      const localStorageResource = resourceToLocalStorageResource(
-        deltaResource
+      const localStorageResource = toLocalStorageResources(
+        deltaResource,
+        'studios'
       );
-      selectedRowKeys = [...selectedRowKeys, recordKey];
-      selectedRows = uniqBy([...selectedRows, localStorageResource], 'key');
+      localStorageRowKeys = [...localStorageRowKeys, recordKey];
+      localStorageRows = [...localStorageRows, ...localStorageResource];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
-      selectedRows = selectedRows.filter(t => t.key !== recordKey);
+      localStorageRowKeys = localStorageRowKeys.filter(t => t !== recordKey);
+      localStorageRows = removeLocalStorageRows(localStorageRows, [recordKey]);
     }
 
-    saveSelectedRowsToLocalStorage(selectedRowKeys, selectedRows);
+    saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
   };
 
   const fetchResourceForDownload = async (
