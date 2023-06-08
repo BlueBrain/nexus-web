@@ -5,6 +5,7 @@ import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import isValidUrl from '../../utils/validUrl';
 import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
+import { getResourceLabel } from '.';
 
 const getResourceName = (resource: Resource) =>
   resource.name ?? resource['@id'] ?? resource._self;
@@ -19,7 +20,7 @@ const baseLocalStorageObject = (
     key: keySuffix ? `${resource._self}-${keySuffix}` : resource._self,
     _self: resource._self,
     id: resource['@id'],
-    name: getResourceName(resource),
+    name: getResourceLabel(resource),
     project: resource._project,
     description: resource.description ?? '',
     createdAt: resource._createdAt,
@@ -145,16 +146,22 @@ export const toLocalStorageResources = (
   }
 };
 
-export const fileNameForDistributionItem = (
-  distItem: any,
-  defaultName: string
-) => {
+export const distributionName = (distItem: any, defaultName: string) => {
   const distName: string =
     distItem?.label ??
     distItem?.name ??
     distItem?._filename ??
     distItem?.filename ??
     defaultName;
+  return distName;
+};
+
+export const fileNameForDistributionItem = (
+  distItem: any,
+  defaultName: string
+) => {
+  const distName = distributionName(distItem, defaultName);
+
   // Distribution name has an extension if  it's not a url & it has some text after the last period.
   const distNameHasExtension = Boolean(
     !isValidUrl(distName) &&
@@ -164,7 +171,7 @@ export const fileNameForDistributionItem = (
   );
 
   if (!Boolean(distItem?.name) || !distNameHasExtension) {
-    Sentry.captureException(
+    Sentry.captureMessage(
       'Distribution item does not have name or extension.',
       {
         extra: { distItem, defaultName },

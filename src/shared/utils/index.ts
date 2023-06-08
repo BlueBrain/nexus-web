@@ -297,7 +297,8 @@ export function getResourceLabel(
     resource.prefLabel ||
     resource.label ||
     resource.name ||
-    labelOf(resource['@id'])
+    labelOf(resource['@id']) ||
+    labelOf(resource._self)
   );
 }
 
