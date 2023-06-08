@@ -34,6 +34,7 @@ import {
   isEmpty,
   isNil,
   isString,
+  lastIndexOf,
   omit,
   slice,
   toUpper,
@@ -64,6 +65,7 @@ import {
 
 import './styles.less';
 import {
+  distributionName,
   distributionMatchesTypes,
   fileNameForDistributionItem,
   getSizeOfResourcesToDownload,
@@ -117,6 +119,65 @@ function getPathForParentWithDistribution(parent: ResourceObscured) {
   }
 
   return path;
+}
+
+type FilePath = { path: string; filename: string; extension: string };
+
+function pathForTopLevelResources(
+  resource: ResourceObscured,
+  existingPaths: Map<string, number>
+): FilePath {
+  const self = isArray(resource._self) ? resource._self[0] : resource._self;
+  const parsedSelf = parseURL(self);
+  const encodedName = encodeURIComponent(resource.name).slice(-20);
+
+  const fullPath = `/${parsedSelf.org}/${parsedSelf.project}/${encodedName}`;
+  const trimmedPath = fullPath.length > 60 ? `/${uuidv4()}` : fullPath;
+
+  let uniquePath: string;
+  if (existingPaths.has(trimmedPath)) {
+    const count = existingPaths.get(trimmedPath)!;
+    uniquePath = `${trimmedPath}-${count}`;
+    existingPaths.set(trimmedPath, count + 1);
+  } else {
+    uniquePath = trimmedPath;
+    existingPaths.set(trimmedPath, 1);
+  }
+
+  return {
+    path: uniquePath, // Max Length - 60
+    filename: resource['@type'] === 'File' ? encodedName : 'metadata', // Max Length - 20
+    extension:
+      resource['@type'] === 'File' && resource.contentType
+        ? resource.contentType
+        : 'json', // Max Length - 4
+  };
+}
+
+function pathForChildDistributions(
+  distItem: any,
+  parentPath: string,
+  existingPaths: Map<string, number>
+) {
+  const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
+  const fileName = fileNameForDistributionItem(distItem, defaultUniqueName);
+  const childDir = fileName.slice(0, fileName.lastIndexOf('.')); // Max Length 20
+  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
+
+  let uniquePath: string; // TODO de-deuplicate
+  if (existingPaths.has(pathToChildFile)) {
+    const count = existingPaths.get(pathToChildFile)!;
+    uniquePath = `${pathToChildFile}-${count}`;
+    existingPaths.set(pathToChildFile, count + 1);
+  } else {
+    uniquePath = pathToChildFile;
+    existingPaths.set(pathToChildFile, 1);
+  }
+
+  return {
+    path: uniquePath,
+    fileName: fileNameForDistributionItem(distItem, defaultUniqueName),
+  };
 }
 
 function getPathForChildResource(child: any, parent: ResourceObscured) {
@@ -185,19 +246,14 @@ async function downloadArchive({
   size: string;
   selectedTypes: string[];
 }) {
-  // TODO: can be removed
-  const resourcesWithoutDistribution = resourcesPayload.filter(
-    item => !item.distribution?.hasDistribution
-  );
-  const resourcesWithDistribution = resourcesPayload.filter(
-    item =>
-      has(item, 'distribution') &&
-      item.distribution?.hasDistribution &&
-      item.localStorageType === 'resource'
+  const existingPaths = new Map<string, number>();
+  const topLevelResources: ResourceObscured[] = [];
+  const resourcesForDownload = resourcesPayload.filter(
+    item => item.localStorageType === 'resource'
   );
 
   const { results, errors } = await PromisePool.withConcurrency(4)
-    .for(resourcesWithDistribution)
+    .for(resourcesForDownload)
     .process(async item => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
       const result = (await nexus.Resource.get<TResourceDistribution>(
@@ -206,13 +262,16 @@ async function downloadArchive({
         encodeURIComponent(item?.resourceId!)
       )) as TResourceDistribution;
 
+      const { path, filename, extension } = pathForTopLevelResources(
+        item,
+        existingPaths
+      );
+      const parentPath = `${path}/${filename}.${extension}`;
       // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
       // To do that, first prepare the metadata for download.
-      resourcesWithoutDistribution.push({
+      topLevelResources.push({
         ...item,
-        path: getPathForParentWithDistribution(item),
-        contentType: 'json',
-        '@type': 'Resource',
+        path: parentPath,
       });
 
       // 2. Now download each of the distribution(s) within that resource
@@ -221,22 +280,27 @@ async function downloadArchive({
         ? result.distribution
         : [result.distribution];
 
-      const distMatchingSelectedTypes = allDistributions.filter(dist =>
-        distributionMatchesTypes(dist, selectedTypes)
+      const distMatchingSelectedTypes = allDistributions.filter(
+        dist => dist && distributionMatchesTypes(dist, selectedTypes)
       );
 
       for (const res of distMatchingSelectedTypes) {
         try {
-          const resource = await nexus.httpGet({
+          const childResource = await nexus.httpGet({
             path: res.contentUrl!,
             headers: { accept: 'application/ld+json' },
           });
+          const childPath = pathForChildDistributions(
+            childResource,
+            path,
+            existingPaths
+          );
           files.push({
             ...item,
             // @ts-ignore
-            path: getPathForChildResource(resource, item),
-            _self: resource._self ?? item._self,
-            resourceId: resource['@id'],
+            path: `${childPath.path}/${childPath.fileName}`,
+            _self: childResource._self ?? item._self,
+            resourceId: childResource['@id'],
           });
         } catch (err) {
           console.error('Error fetching resource for download', err);
@@ -245,7 +309,7 @@ async function downloadArchive({
       return files;
     });
   const resources = uniqBy(
-    [...resourcesWithoutDistribution, ...results.flat()].map(item =>
+    [...topLevelResources, ...results.flat()].map(item =>
       omit(item, ['distribution', 'size', 'contentType'])
     ),
     '_self'
