@@ -1,9 +1,10 @@
 import { Resource } from '@bbp/nexus-sdk';
 import * as Sentry from '@sentry/browser';
-import { isArray, isNil, sum } from 'lodash';
+import { compact, flatMap, isArray, isNil, sum } from 'lodash';
 import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import isValidUrl from '../../utils/validUrl';
+import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
 
 const getResourceName = (resource: Resource) =>
   resource.name ?? resource['@id'] ?? resource._self;
@@ -41,12 +42,16 @@ export const toLocalStorageResources = (
         {
           ...baseLocalStorageObject(resource, source),
           localStorageType: 'resource',
-          ...(resource['@type'] === 'File' && {
-            contentSize: resource._bytes,
-            encodingFormat: resource._mediaType,
-            label: resource._filename,
+          distribution: {
             hasDistribution: false,
-          }),
+            contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+            encodingFormat:
+              resource['@type'] === 'File' ? resource._mediaType : 'json',
+            label:
+              resource['@type'] === 'File'
+                ? resource._filename
+                : 'metadata.json',
+          },
         },
       ];
     }
@@ -64,9 +69,11 @@ export const toLocalStorageResources = (
         distributionItemsLength: resource.distribution.length,
         distribution: {
           hasDistribution: true,
-          contentSize: 0, // So the size in not doubled
-          encodingFormat: '',
-          label: '',
+          contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+          encodingFormat:
+            resource['@type'] === 'File' ? resource._mediaType : 'json',
+          label:
+            resource['@type'] === 'File' ? resource._filename : 'metadata.json',
         },
       });
 
@@ -92,9 +99,23 @@ export const toLocalStorageResources = (
 
     // Case 3 - resource.distribution is an object with key-value pairs.
     return [
+      // First store an object for the parent resource.
       {
         ...baseLocalStorageObject(resource, source),
         localStorageType: 'resource',
+        distribution: {
+          hasDistribution: true,
+          contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+          encodingFormat:
+            resource['@type'] === 'File' ? resource._mediaType : 'json',
+          label:
+            resource['@type'] === 'File' ? resource._filename : 'metadata.json',
+        },
+      },
+      // Now store an object for the distribution item.
+      {
+        ...baseLocalStorageObject(resource, source),
+        localStorageType: 'distribution',
         distribution: {
           hasDistribution: true,
           contentSize: isArray(resource.distribution?.contentSize)
@@ -169,5 +190,41 @@ export const removeLocalStorageRows = (
   // These rows have keys like `${_self from parent resource}-${a number}`
   return rows.filter(
     row => !keysToRemove.find(key => row.key.toString().startsWith(key))
+  );
+};
+
+export const distributionMatchesTypes = (
+  distItem: any,
+  fileExtenstions: string[]
+): boolean => {
+  const distributionName = fileNameForDistributionItem(distItem, '');
+  const distributionExtension =
+    distributionName
+      .split('.')
+      .pop()
+      ?.trim()
+      .toLowerCase() ?? '';
+
+  return fileExtenstions.includes(distributionExtension);
+};
+
+export const getSizeOfResourcesToDownload = (
+  /* tslint:disable-next-line */
+  resultsObject: Array<ResourceObscured | undefined>,
+  types: string[]
+) => {
+  return sum(
+    compact(
+      flatMap(resultsObject).map(item => {
+        // If no types are selected, show the size of only the top level resources (i.e. don't include size of distribution).
+        if (types.length === 0) {
+          return item?.localStorageType === 'resource' ? item.size : 0;
+        }
+        // If user has selected types, show size of only the distribution that match the selected types.
+        return distributionMatchesTypes(item?.distribution, types)
+          ? item?.size
+          : 0;
+      })
+    )
   );
 };

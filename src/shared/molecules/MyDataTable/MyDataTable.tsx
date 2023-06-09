@@ -68,8 +68,8 @@ export type TDataSource = {
   distribution?: {
     contentSize: number;
     encodingFormat: string | string[];
-    label: string | string[];
-    hasDistribution?: boolean;
+    label: string;
+    hasDistribution: boolean;
   };
 };
 type TProps = {

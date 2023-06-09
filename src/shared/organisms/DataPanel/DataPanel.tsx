@@ -63,7 +63,11 @@ import {
 } from '../../molecules/MyDataTable/MyDataTable';
 
 import './styles.less';
-import { fileNameForDistributionItem } from '../../../shared/utils/datapanel';
+import {
+  distributionMatchesTypes,
+  fileNameForDistributionItem,
+  getSizeOfResourcesToDownload,
+} from '../../../shared/utils/datapanel';
 
 type Props = {
   authenticated?: boolean;
@@ -133,25 +137,6 @@ function getPathForChildResource(child: any, parent: ResourceObscured) {
   return `${parentPathWithoutExtension}/${childNameWithExtension}`;
 }
 
-const distributionMatchesTypes = (
-  distItem: any,
-  fileExtenstions: string[]
-): boolean => {
-  if (fileExtenstions.length === 0) {
-    return true;
-  }
-
-  const distributionName = fileNameForDistributionItem(distItem, '');
-  const distributionExtension =
-    distributionName
-      .split('.')
-      .pop()
-      ?.trim()
-      .toLowerCase() ?? '';
-
-  return fileExtenstions.includes(distributionExtension);
-};
-
 function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   const archiveId = uuidv4();
   const payload: ArchivePayload = {
@@ -161,7 +146,7 @@ function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   return { payload, archiveId };
 }
 
-type ResourceObscured = {
+export type ResourceObscured = {
   size: number;
   contentType: string | undefined;
   distribution:
@@ -493,14 +478,8 @@ const DataPanel: React.FC<Props> = ({}) => {
             Boolean(resource.distribution?.contentSize)
               ? 'File'
               : 'Resource';
-          // TODO: Add this as part of localstorage object
-          const contentType = resource.distribution
-            ? isArray(resource.distribution?.label)
-              ? resource.distribution?.label[0].split('.').pop()
-              : resource.distribution?.label?.split('.').pop() ?? ''
-            : type === 'Resource'
-            ? 'json'
-            : '';
+          const contentType =
+            resource.distribution?.label?.split('.').pop() ?? '';
           return {
             size,
             contentType: contentType?.toLowerCase(),
@@ -570,15 +549,8 @@ const DataPanel: React.FC<Props> = ({}) => {
     i => !isEmpty(i) && !isNil(i)
   );
 
-  const totalSize = sum(
-    ...compact(
-      flatMap(resultsObject)
-        .filter(item => {
-          return distributionMatchesTypes(item?.distribution, types);
-        })
-        .map(item => item?.size)
-    )
-  );
+  const totalSize = getSizeOfResourcesToDownload(resultsObject, types);
+
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
     ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
     : undefined;
