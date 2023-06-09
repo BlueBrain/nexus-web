@@ -415,6 +415,54 @@ const getTotalContentSize = (rows: TDataSource[]) => {
   return size;
 };
 
+export const fetchResourceForDownload = async (
+  selfUrl: string,
+  nexus: ReturnType<typeof useNexusContext>
+): Promise<Resource> => {
+  let compactResource;
+  let expandedResource;
+
+  try {
+    compactResource = await nexus.httpGet({
+      path: selfUrl,
+      headers: { Accept: 'application/json' },
+    });
+
+    const receivedExpandedId =
+      isValidUrl(compactResource['@id']) &&
+      !isUrlCurieFormat(compactResource['@id']);
+
+    if (receivedExpandedId) {
+      return compactResource;
+    }
+
+    expandedResource = await nexus.httpGet({
+      path: `${selfUrl}?format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+
+    return {
+      ...compactResource,
+      ['@id']:
+        expandedResource?.[0]?.['@id'] ??
+        expandedResource['@id'] ??
+        compactResource['@id'],
+    };
+  } catch (err) {
+    notification.warning({
+      message: (
+        <div>Could not fetch a resource with id for download {selfUrl}</div>
+      ),
+      description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
+      key: selfUrl,
+    });
+    // @ts-ignore TODO: Remove when we supprot es2022 in ts.
+    throw new Error(`Could not select resource ${selfUrl} for download`, {
+      cause: err,
+    });
+  }
+};
+
 export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
@@ -452,7 +500,7 @@ export const useAccessDataForTable = (
       ];
 
       const futureResources = changedRows.map(row =>
-        fetchResourceForDownload(getStudioRowKey(row))
+        fetchResourceForDownload(getStudioRowKey(row), nexus)
       );
 
       Promise.allSettled(futureResources)
@@ -500,7 +548,7 @@ export const useAccessDataForTable = (
     let localStorageRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      const deltaResource = await fetchResourceForDownload(recordKey);
+      const deltaResource = await fetchResourceForDownload(recordKey, nexus);
       const localStorageResource = toLocalStorageResources(
         deltaResource,
         'studios'
@@ -513,53 +561,6 @@ export const useAccessDataForTable = (
     }
 
     saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
-  };
-
-  const fetchResourceForDownload = async (
-    selfUrl: string
-  ): Promise<Resource> => {
-    let compactResource;
-    let expandedResource;
-
-    try {
-      compactResource = await nexus.httpGet({
-        path: selfUrl,
-        headers: { Accept: 'application/json' },
-      });
-
-      const receivedExpandedId =
-        isValidUrl(compactResource['@id']) &&
-        !isUrlCurieFormat(compactResource['@id']);
-
-      if (receivedExpandedId) {
-        return compactResource;
-      }
-
-      expandedResource = await nexus.httpGet({
-        path: `${selfUrl}?format=expanded`,
-        headers: { Accept: 'application/json' },
-      });
-
-      return {
-        ...compactResource,
-        ['@id']:
-          expandedResource?.[0]?.['@id'] ??
-          expandedResource['@id'] ??
-          compactResource['@id'],
-      };
-    } catch (err) {
-      notification.warning({
-        message: (
-          <div>Could not fetch a resource with id for download {selfUrl}</div>
-        ),
-        description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
-        key: selfUrl,
-      });
-      // @ts-ignore TODO: Remove when we supprot es2022 in ts.
-      throw new Error(`Could not select resource ${selfUrl} for download`, {
-        cause: err,
-      });
-    }
   };
 
   const saveSelectedRowsToLocalStorage = (

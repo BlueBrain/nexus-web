@@ -1,8 +1,14 @@
-import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
+import React, {
+  Fragment,
+  useMemo,
+  useReducer,
+  useEffect,
+  useState,
+} from 'react';
 import { Button, Table, Tag, Tooltip, notification } from 'antd';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
-import { isString, isArray } from 'lodash';
+import { isString, isArray, isNil } from 'lodash';
 import { clsx } from 'clsx';
 import { useSelector } from 'react-redux';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
@@ -22,38 +28,11 @@ import {
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
 import { getResourceLabel } from '../../../shared/utils';
+import { useNexusContext } from '@bbp/react-nexus';
+import { fetchResourceForDownload } from '../../../shared/hooks/useAccessDataForTable';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
-
-type TResource = {
-  [key: string]: any;
-} & {
-  '@context'?:
-    | string
-    | (
-        | string
-        | {
-            [key: string]: any;
-          }
-      )[]
-    | {
-        [key: string]: any;
-      };
-  '@type'?: string | string[];
-  '@id': string;
-  _incoming: string;
-  _outgoing: string;
-  _self: string;
-  _constrainedBy: string;
-  _project: string;
-  _rev: number;
-  _deprecated: boolean;
-  _createdAt: string;
-  _createdBy: string;
-  _updatedAt: string;
-  _updatedBy: string;
-};
 
 interface TMyDataTableRow extends Resource {
   name: string;
@@ -156,6 +135,7 @@ const MyDataTable: React.FC<TProps> = ({
   const { currentResourceView } = useSelector(
     (state: RootState) => state.uiSettings
   );
+  const nexus = useNexusContext();
   const [{ selectedRowKeys }, updateTableData] = useReducer(
     (
       previous: TResourceTableData,
@@ -169,6 +149,8 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRows: [],
     }
   );
+
+  const [fetchingResourcesForDownload, setFetchingResources] = useState(false);
 
   const goToResource = (
     orgLabel: string,
@@ -298,16 +280,27 @@ const MyDataTable: React.FC<TProps> = ({
     showQuickJumper: true,
     showSizeChanger: true,
   };
-  const onSelectRowChange: SelectionSelectFn<TMyDataTableRow> = (
+  const onSelectRowChange: SelectionSelectFn<TMyDataTableRow> = async (
     record,
     selected
   ) => {
     const recordKey = record._self;
-
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
-    const localStorageRows = toLocalStorageResources(record, 'my-data');
+
+    let localStorageRows;
+    if (selected && isNil(record.distribution)) {
+      // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
+      // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
+      setFetchingResources(true);
+      const expandedResource = await fetchResourceForDownload(recordKey, nexus);
+      setFetchingResources(false);
+      localStorageRows = toLocalStorageResources(expandedResource, 'my-data');
+    } else {
+      localStorageRows = toLocalStorageResources(record, 'my-data');
+    }
+    toLocalStorageResources(record, 'my-data');
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
 
@@ -345,16 +338,30 @@ const MyDataTable: React.FC<TProps> = ({
     );
   };
 
-  const onSelectAllChange = (
+  const onSelectAllChange = async (
     selected: boolean,
     tSelectedRows: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
     const changedRowsLS: TDataSource[] = [];
-    changeRows.forEach(row => {
-      const localStorageRows = toLocalStorageResources(row, 'my-data');
-      changedRowsLS.push(...localStorageRows);
-    });
+
+    setFetchingResources(true);
+    for (const row of changeRows) {
+      if (selected && isNil(row.distribution)) {
+        // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
+        // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
+        const expandedRow = await fetchResourceForDownload(row._self, nexus);
+        const localStorageRows = toLocalStorageResources(
+          expandedRow,
+          'my-data'
+        );
+        changedRowsLS.push(...localStorageRows);
+      } else {
+        const localStorageRows = toLocalStorageResources(row, 'my-data');
+        changedRowsLS.push(...localStorageRows);
+      }
+    }
+    setFetchingResources(false);
 
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -436,7 +443,7 @@ const MyDataTable: React.FC<TProps> = ({
         getContainer: () => window,
       }}
       rowKey={record => record._self}
-      loading={isLoading}
+      loading={isLoading || fetchingResourcesForDownload}
       columns={columns}
       dataSource={dataSource}
       pagination={tablePaginationConfig}
