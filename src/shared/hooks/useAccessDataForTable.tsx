@@ -419,7 +419,7 @@ export const fetchResourceForDownload = async (
 
     const receivedExpandedId =
       isValidUrl(compactResource['@id']) &&
-      !isUrlCurieFormat(compactResource['@id']);
+      compactResource['@id']?.startsWith('http');
 
     if (receivedExpandedId) {
       return compactResource;
@@ -485,7 +485,7 @@ export const useAccessDataForTable = (
         .for(changedRows)
         .handleError(async err => {
           console.log(
-            '@@error in selecting multiple resources for download',
+            '@@error in selecting multiple resources for download in studios',
             err
           );
           return;

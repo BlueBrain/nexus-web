@@ -30,6 +30,7 @@ import {
 import { getResourceLabel } from '../../../shared/utils';
 import { useNexusContext } from '@bbp/react-nexus';
 import { fetchResourceForDownload } from '../../../shared/hooks/useAccessDataForTable';
+import PromisePool from '@supercharge/promise-pool';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
@@ -343,26 +344,6 @@ const MyDataTable: React.FC<TProps> = ({
     tSelectedRows: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
-    const changedRowsLS: TDataSource[] = [];
-
-    setFetchingResources(true);
-    for (const row of changeRows) {
-      if (selected && isNil(row.distribution)) {
-        // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
-        // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
-        const expandedRow = await fetchResourceForDownload(row._self, nexus);
-        const localStorageRows = toLocalStorageResources(
-          expandedRow,
-          'my-data'
-        );
-        changedRowsLS.push(...localStorageRows);
-      } else {
-        const localStorageRows = toLocalStorageResources(row, 'my-data');
-        changedRowsLS.push(...localStorageRows);
-      }
-    }
-    setFetchingResources(false);
-
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -370,8 +351,38 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      selectedRows = [...selectedRows, ...changedRowsLS];
+      setFetchingResources(true);
+
+      const { results, errors } = await PromisePool.withConcurrency(4)
+        .for(changeRows)
+        .handleError(async err => {
+          console.log(
+            '@@error in selecting multiple resources for download in my-data',
+            err
+          );
+          return;
+        })
+        .process(async row => {
+          let localStorageResources: TDataSource[];
+          // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
+          // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
+
+          if (isNil(row.distribution)) {
+            const fetchedRow = await fetchResourceForDownload(row._self, nexus);
+            localStorageResources = toLocalStorageResources(
+              fetchedRow,
+              'my-data'
+            );
+          } else {
+            localStorageResources = toLocalStorageResources(row, 'my-data');
+          }
+          return localStorageResources;
+        });
+
+      selectedRows = [...selectedRows, ...results.flat()];
       selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+
+      setFetchingResources(false);
     } else {
       const rowKeysToRemove = changeRows.map(r => r._self);
 
