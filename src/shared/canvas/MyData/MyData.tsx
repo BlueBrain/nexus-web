@@ -31,6 +31,7 @@ const HomeMyData: React.FC<{}> = () => {
       sort,
       locate,
       issuer,
+      isAcrossProjects,
     },
     setFilterOptions,
   ] = React.useReducer(
@@ -49,6 +50,7 @@ const HomeMyData: React.FC<{}> = () => {
       sort: ['-_createdAt', '@id'],
       locate: false,
       issuer: 'createdBy',
+      isAcrossProjects: false,
     }
   );
   const updateSort = (value: string[]) => {
@@ -99,13 +101,25 @@ const HomeMyData: React.FC<{}> = () => {
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
-      { size, offset, query, locate, issuer, sort: JSON.stringify(sort) },
+      {
+        size,
+        offset,
+        query,
+        locate,
+        issuer,
+        isAcrossProjects,
+        sort: JSON.stringify(sort),
+      },
     ],
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {
         size,
         from: offset,
-        [issuer]: issuerUri,
+        ...(isAcrossProjects
+          ? {}
+          : {
+              [issuer]: issuerUri,
+            }),
         ...(locate && query.trim().length
           ? {
               locate: query,
@@ -151,6 +165,7 @@ const HomeMyData: React.FC<{}> = () => {
           setFilterOptions,
           locate,
           issuer,
+          isAcrossProjects,
         }}
       />
       <MyDataTable
