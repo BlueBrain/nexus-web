@@ -5,19 +5,7 @@ import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import {
-  get,
-  has,
-  isArray,
-  isNil,
-  isString,
-  pick,
-  sum,
-  sumBy,
-  toNumber,
-  uniq,
-  uniqBy,
-} from 'lodash';
+import { isArray, isNil, isString, pick, sumBy, toNumber } from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import {
@@ -48,6 +36,7 @@ import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
+import PromisePool from '@supercharge/promise-pool';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -450,9 +439,7 @@ export const fetchResourceForDownload = async (
     };
   } catch (err) {
     notification.warning({
-      message: (
-        <div>Could not fetch a resource with id for download {selfUrl}</div>
-      ),
+      message: <>Could not fetch a resource with id for download {selfUrl}</>,
       description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
       key: selfUrl,
     });
@@ -494,34 +481,31 @@ export const useAccessDataForTable = (
     let rowsForLS = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      rowKeysForLS = [
-        ...rowKeysForLS,
-        ...changedRows.map(row => getStudioRowKey(row)),
-      ];
-
-      const futureResources = changedRows.map(row =>
-        fetchResourceForDownload(getStudioRowKey(row), nexus)
-      );
-
-      Promise.allSettled(futureResources)
-        .then(result => {
-          result.forEach(res => {
-            if (res.status === 'fulfilled') {
-              const localStorageResource = toLocalStorageResources(
-                res.value,
-                'studios'
-              );
-              rowsForLS = [...rowsForLS, ...localStorageResource];
-            }
-          });
+      const { results, errors } = await PromisePool.withConcurrency(4)
+        .for(changedRows)
+        .handleError(async err => {
+          console.log(
+            '@@error in selecting multiple resources for download',
+            err
+          );
           return;
         })
-        .then(() => {
-          saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
-        })
-        .catch(err => {
-          console.log('@@error', err);
+        .process(async row => {
+          const fetchedRow = await fetchResourceForDownload(
+            getStudioRowKey(row),
+            nexus
+          );
+          const localStorageResources = toLocalStorageResources(
+            fetchedRow,
+            'studios'
+          );
+          rowKeysForLS.push(getStudioRowKey(row));
+
+          return localStorageResources;
         });
+
+      rowsForLS = [...rowsForLS, ...results.flat()];
+      saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     } else {
       const rowKeysToRemove = changedRows.map(row => getStudioRowKey(row));
 
