@@ -42,6 +42,7 @@ export type TFilterOptions = {
   sort: string[];
   locate: boolean;
   issuer: TIssuer;
+  isAcrossProjects: boolean;
 };
 type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
   setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
@@ -121,6 +122,7 @@ const Filters = ({
   setFilterOptions,
   locate,
   issuer,
+  isAcrossProjects,
 }: THeaderFilterProps) => {
   const popoverRef = useRef(null);
   const nexus = useNexusContext();
@@ -136,6 +138,8 @@ const Filters = ({
     setFilterOptions({ issuer: e.target.value });
   const onSearchLocateChange = (e: CheckboxChangeEvent) =>
     setFilterOptions({ locate: e.target.checked });
+  const onSearchAcrossProjectsChange = (e: CheckboxChangeEvent) =>
+    setFilterOptions({ isAcrossProjects: e.target.checked });
   const onDatePopoverVisibleChange = () =>
     setOpenDateFilterContainer(state => !state);
   const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = event =>
@@ -384,7 +388,11 @@ const Filters = ({
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
       </Dropdown> */}
-      <Radio.Group onChange={onIssuerChange} value={issuer}>
+      <Radio.Group
+        defaultValue={isAcrossProjects ? undefined : 'createdBy'}
+        value={isAcrossProjects ? undefined : issuer}
+        onChange={onIssuerChange}
+      >
         <Radio value="createdBy">Created by me</Radio>
         <Radio value="updatedBy">Last updated by me</Radio>
       </Radio.Group>
@@ -398,9 +406,17 @@ const Filters = ({
           onChange={handleQueryChange}
           style={{ marginLeft: 'auto' }}
         />
-        <Checkbox checked={locate} onChange={onSearchLocateChange}>
-          <span className="locate-text">By resource id or self</span>
-        </Checkbox>
+        <div className="filter-options">
+          <Checkbox checked={locate} onChange={onSearchLocateChange}>
+            <span className="locate-text">By resource id or self</span>
+          </Checkbox>
+          <Checkbox
+            checked={isAcrossProjects}
+            onChange={onSearchAcrossProjectsChange}
+          >
+            <span className="spread-text">Across Projects</span>
+          </Checkbox>
+        </div>
       </div>
     </div>
   );
@@ -416,6 +432,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
   setFilterOptions,
   locate,
   issuer,
+  isAcrossProjects,
 }) => {
   return (
     <div className="my-data-table-header">
@@ -436,6 +453,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
           locate,
           setFilterOptions,
           issuer,
+          isAcrossProjects,
         }}
       />
     </div>
