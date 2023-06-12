@@ -189,23 +189,22 @@ const MyDataTable: React.FC<TProps> = ({
         width: 250,
         ellipsis: true,
         render: (text, record) => {
-          const showedText = isValidUrl(text) ? text.split('/').pop() : text;
           const resourceId = record['@id'] ?? record._self;
           if (text && record._project) {
             const { org, project } = makeOrgProjectTuple(record._project);
             return (
-              <Tooltip title={text}>
+              <Tooltip title={resourceId}>
                 <Button
                   style={{ padding: 0 }}
                   type="link"
                   onClick={() => goToResource(org, project, resourceId)}
                 >
-                  {showedText}
+                  {text}
                 </Button>
               </Tooltip>
             );
           }
-          return <Tooltip title={text}>{showedText}</Tooltip>;
+          return <Tooltip title={resourceId}>{text}</Tooltip>;
         },
       },
       {
