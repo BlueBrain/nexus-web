@@ -44,6 +44,46 @@ export const resourceWithoutDistrition = {
     'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
 };
 
+export const fileResourceWithNoDistribution = {
+  '@context': [
+    'https://bluebrain.github.io/nexus/contexts/files.json',
+    'https://bluebrain.github.io/nexus/contexts/metadata.json',
+  ],
+  '@id':
+    'https://bbp.epfl.ch/neurosciencegraph/data/938fb28f-6e5c-434f-8d12-572e5c005f73',
+  '@type': 'File',
+  _bytes: 318076,
+  _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/files.json',
+  _createdAt: '2022-03-31T16:54:52.580Z',
+  _createdBy:
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+  _deprecated: false,
+  _digest: {
+    _algorithm: 'SHA-256',
+    _value: '84da895fdc949ae7b7bd55192a8fef3b1cd5721c06b0993339e0cc42997bd3a4',
+  },
+  _filename: 'C120501B1-MT-C1_IDRest.zip',
+  _incoming:
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/files/copies/sscx/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F938fb28f-6e5c-434f-8d12-572e5c005f73/incoming',
+  _mediaType: 'application/zip',
+  _origin: 'Client',
+  _outgoing:
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/files/copies/sscx/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F938fb28f-6e5c-434f-8d12-572e5c005f73/outgoing',
+  _project: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/sscx',
+  _rev: 1,
+  _self:
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/files/copies/sscx/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F938fb28f-6e5c-434f-8d12-572e5c005f73',
+  _storage: {
+    '@id': 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+    '@type': 'DiskStorage',
+    _rev: 1,
+  },
+  _updatedAt: '2022-03-31T16:54:52.580Z',
+  _updatedBy:
+    'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+  _uuid: '5673b3ae-bdd6-43b4-a3ca-aa6c771edbfa',
+};
+
 export const resourceWithDistributionArray = {
   '@context': [
     'https://bluebrain.github.io/nexus/contexts/metadata.json',

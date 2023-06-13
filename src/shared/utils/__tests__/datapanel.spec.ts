@@ -1,4 +1,5 @@
 import {
+  fileResourceWithNoDistribution,
   resourceWithDistributionArray,
   resourceWithDistributionObject,
   resourceWithoutDistrition,
@@ -11,9 +12,16 @@ describe('ToLocalStorageResources', () => {
       resourceWithoutDistrition,
       'studios'
     );
+    const expectedParentDistributionValue = {
+      hasDistribution: false,
+      contentSize: 0,
+      encodingFormat: 'json',
+      label: 'metadata.json',
+    };
 
     expect(actualLSResources.length).toEqual(1);
-    expect(actualLSResources[0].distribution).not.toBeDefined();
+
+    expect(actualLSResources[0].localStorageType).toEqual('resource');
     expect(actualLSResources[0]._self).toEqual(resourceWithoutDistrition._self);
     expect(actualLSResources[0].key).toEqual(resourceWithoutDistrition._self);
     expect(actualLSResources[0].project).toEqual(
@@ -23,6 +31,27 @@ describe('ToLocalStorageResources', () => {
       resourceWithoutDistrition['@type'],
     ]);
     expect(actualLSResources[0].source).toEqual('studios');
+    expect(actualLSResources[0].distribution).toEqual(
+      expectedParentDistributionValue
+    );
+  });
+
+  it('serializes resource of type file with no distribution correctly', () => {
+    const actualLSResources = toLocalStorageResources(
+      fileResourceWithNoDistribution,
+      'my-data'
+    );
+    expect(actualLSResources.length).toEqual(1);
+    const expectedParentDistributionValue = {
+      hasDistribution: false,
+      contentSize: fileResourceWithNoDistribution._bytes,
+      encodingFormat: fileResourceWithNoDistribution._mediaType,
+      label: fileResourceWithNoDistribution._filename,
+    };
+    expect(actualLSResources[0].distribution).toEqual(
+      expectedParentDistributionValue
+    );
+    expect(actualLSResources[0].source).toEqual('my-data');
   });
 
   it('serializes resources with distribution array correctly to local storage object', () => {
@@ -34,8 +63,8 @@ describe('ToLocalStorageResources', () => {
     const expectedParentDistributionValue = {
       hasDistribution: true,
       contentSize: 0,
-      encodingFormat: '',
-      label: '',
+      encodingFormat: 'json',
+      label: 'metadata.json',
     };
 
     expect(actualParentDistributionValue).toEqual(
@@ -59,6 +88,7 @@ describe('ToLocalStorageResources', () => {
         encodingFormat: originalDistItems[index].encodingFormat,
         label: originalDistItems[index].name,
       };
+      expect(actualDistItem.localStorageType).toEqual('distribution');
       expect(actualDistItem.distribution).toEqual(expectedDistributionValue);
       expect(actualDistItem._self).toEqual(resource._self);
       expect(actualDistItem.key).toEqual(`${resource._self}-${index}`);
@@ -69,19 +99,32 @@ describe('ToLocalStorageResources', () => {
     const resource = resourceWithDistributionObject;
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems.length).toEqual(1);
-    const expectedDistributionValue = {
+    expect(actualSerializedItems.length).toEqual(2);
+
+    const expectedDistributionValueForParent = {
+      hasDistribution: true,
+      contentSize: 0,
+      encodingFormat: 'json',
+      label: 'metadata.json',
+    };
+    expect(actualSerializedItems[0].distribution).toEqual(
+      expectedDistributionValueForParent
+    );
+    expect(actualSerializedItems[0].localStorageType).toEqual('resource');
+
+    const expectedDistributionValueForChild = {
       hasDistribution: true,
       contentSize: 15135,
       encodingFormat: 'text/turtle',
       label: 'molecular-systems.ttl',
     };
-    expect(actualSerializedItems[0].distribution).toEqual(
-      expectedDistributionValue
+    expect(actualSerializedItems[1].distribution).toEqual(
+      expectedDistributionValueForChild
     );
-    expect(actualSerializedItems[0]._self).toEqual(resource._self);
-    expect(actualSerializedItems[0].key).toEqual(resource._self);
-    expect(actualSerializedItems[0].project).toEqual(resource._project);
+    expect(actualSerializedItems[1]._self).toEqual(resource._self);
+    expect(actualSerializedItems[1].key).toEqual(resource._self);
+    expect(actualSerializedItems[1].project).toEqual(resource._project);
+    expect(actualSerializedItems[1].localStorageType).toEqual('distribution');
   });
 
   it('serializes resources with distribution object when content size is number', () => {
@@ -94,10 +137,10 @@ describe('ToLocalStorageResources', () => {
     };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems[0].distribution?.contentSize).toEqual(123);
+    expect(actualSerializedItems[1].distribution?.contentSize).toEqual(123);
   });
 
-  it('serializes resources with distribution object when content size is array', () => {
+  it('sums up content size for distribution item when it is an array', () => {
     const resource = {
       ...resourceWithDistributionObject,
       distribution: {
@@ -107,7 +150,7 @@ describe('ToLocalStorageResources', () => {
     };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems[0].distribution?.contentSize).toEqual(30);
+    expect(actualSerializedItems[1].distribution?.contentSize).toEqual(30);
   });
 
   it('serializes resources when distribution is empty array', () => {
@@ -118,8 +161,8 @@ describe('ToLocalStorageResources', () => {
     const expectedDistributionValue = {
       hasDistribution: true,
       contentSize: 0,
-      encodingFormat: '',
-      label: '',
+      encodingFormat: 'json',
+      label: 'metadata.json',
     };
 
     expect(actualSerializedItems[0].distribution).toEqual(
@@ -131,7 +174,7 @@ describe('ToLocalStorageResources', () => {
     const resource = { ...resourceWithoutDistrition, distribution: {} };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems.length).toEqual(1);
+    expect(actualSerializedItems.length).toEqual(2);
     expect(actualSerializedItems[0].distribution).toBeDefined();
   });
 });
