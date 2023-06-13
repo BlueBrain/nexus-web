@@ -65,10 +65,10 @@ import {
 
 import './styles.less';
 import {
-  distributionName,
   distributionMatchesTypes,
-  fileNameForDistributionItem,
   getSizeOfResourcesToDownload,
+  pathForChildDistributions,
+  pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
 
 type Props = {
@@ -95,107 +95,6 @@ export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
 function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0);
-}
-
-// TODO: Add test for resource.type == `File`
-function getPathForParentWithDistribution(parent: ResourceObscured) {
-  const self = isArray(parent._self) ? parent._self[0] : parent._self;
-  const parsedSelf = parseURL(self);
-  const resourceName =
-    parent.name ?? isValidUrl(parent.id)
-      ? parent.id.split('/').pop()
-      : uuidv4().substring(0, 6);
-  const extension = parent.distribution?.label?.split('.').pop()?.length
-    ? parent.distribution?.label?.split('.').pop()
-    : 'json';
-  // TODO: Don't append path when reosurce is a File
-  const path = `/${parsedSelf.project}/${
-    parsedSelf.id
-  }/${resourceName}-metadata${extension ? `.${extension}` : ''}`;
-
-  if (path.length >= 100) {
-    const trimmedSelf = self.slice(-80);
-    return `/${trimmedSelf}.${extension}`;
-  }
-
-  return path;
-}
-
-type FilePath = { path: string; filename: string; extension: string };
-
-function pathForTopLevelResources(
-  resource: ResourceObscured,
-  existingPaths: Map<string, number>
-): FilePath {
-  const self = isArray(resource._self) ? resource._self[0] : resource._self;
-  const parsedSelf = parseURL(self);
-  const encodedName = encodeURIComponent(resource.name).slice(-20);
-
-  const fullPath = `/${parsedSelf.org}/${parsedSelf.project}/${encodedName}`;
-  const trimmedPath = fullPath.length > 60 ? `/${uuidv4()}` : fullPath;
-
-  let uniquePath: string;
-  if (existingPaths.has(trimmedPath)) {
-    const count = existingPaths.get(trimmedPath)!;
-    uniquePath = `${trimmedPath}-${count}`;
-    existingPaths.set(trimmedPath, count + 1);
-  } else {
-    uniquePath = trimmedPath;
-    existingPaths.set(trimmedPath, 1);
-  }
-
-  return {
-    path: uniquePath, // Max Length - 60
-    filename: resource['@type'] === 'File' ? encodedName : 'metadata', // Max Length - 20
-    extension:
-      resource['@type'] === 'File' && resource.contentType
-        ? resource.contentType
-        : 'json', // Max Length - 4
-  };
-}
-
-function pathForChildDistributions(
-  distItem: any,
-  parentPath: string,
-  existingPaths: Map<string, number>
-) {
-  const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
-  const fileName = fileNameForDistributionItem(distItem, defaultUniqueName);
-  const childDir = fileName.slice(0, fileName.lastIndexOf('.')); // Max Length 20
-  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
-
-  let uniquePath: string; // TODO de-deuplicate
-  if (existingPaths.has(pathToChildFile)) {
-    const count = existingPaths.get(pathToChildFile)!;
-    uniquePath = `${pathToChildFile}-${count}`;
-    existingPaths.set(pathToChildFile, count + 1);
-  } else {
-    uniquePath = pathToChildFile;
-    existingPaths.set(pathToChildFile, 1);
-  }
-
-  return {
-    path: uniquePath,
-    fileName: fileNameForDistributionItem(distItem, defaultUniqueName),
-  };
-}
-
-function getPathForChildResource(child: any, parent: ResourceObscured) {
-  const parentName =
-    parent.name ?? isValidUrl(parent.id)
-      ? parent.id.split('/').pop()
-      : uuidv4().substring(0, 6);
-  const childNameWithExtension = fileNameForDistributionItem(
-    child,
-    parentName ?? ''
-  );
-  const parentPath = getPathForParentWithDistribution(parent);
-  const parentPathWithoutExtension = parentPath.substring(
-    0,
-    parentPath.lastIndexOf('.')
-  );
-
-  return `${parentPathWithoutExtension}/${childNameWithExtension}`;
 }
 
 function makePayload(resourcesPayload: DownloadResourcePayload[]) {

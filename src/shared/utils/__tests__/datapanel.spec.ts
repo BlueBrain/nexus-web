@@ -1,12 +1,22 @@
 import {
   fileResourceWithNoDistribution,
+  getMockDistribution,
+  getMockResource,
   resourceWithDistributionArray,
   resourceWithDistributionObject,
   resourceWithoutDistrition,
 } from '../__mocks__/data_panel_download_resource';
-import { toLocalStorageResources } from '../datapanel';
+import {
+  FilePath,
+  pathForChildDistributions,
+  pathForTopLevelResources,
+  toLocalStorageResources,
+} from '../datapanel';
 
-describe('ToLocalStorageResources', () => {
+describe('datapanel utilities', () => {
+  const orgName = 'orgA';
+  const projectName = 'projectA';
+
   it('serializes resources with no distribution correctly to local storage object', () => {
     const actualLSResources = toLocalStorageResources(
       resourceWithoutDistrition,
@@ -170,11 +180,158 @@ describe('ToLocalStorageResources', () => {
     );
   });
 
+  // TODO-NOW: Remove skip when rebased on latest develop
   it('serializes resources when distribution is empty object', () => {
     const resource = { ...resourceWithoutDistrition, distribution: {} };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
     expect(actualSerializedItems.length).toEqual(2);
     expect(actualSerializedItems[0].distribution).toBeDefined();
+  });
+
+  it('calculates path for top level resource based on its name', () => {
+    const resourceName = 'brain-region-1';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${resourceName}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('encodes path for top level resource when its name has special uri characters', () => {
+    const resourceName = 'brain#reg/ion';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${encodeURIComponent(resourceName)}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('trims path for top level resource when its name is too long', () => {
+    const namePrefix = Array(20)
+      .fill('A')
+      .join('');
+    const nameSuffix = Array(20)
+      .fill('B')
+      .join('');
+    const resourceName = `${namePrefix}${nameSuffix}`;
+
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${nameSuffix}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('gets correct name for top level resource when it is a File', () => {
+    const filename = 'awesome-file';
+    const mockResource = {
+      ...getMockResource(filename, 'resource', orgName, projectName, 'File'),
+      contentType: 'asc',
+    };
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      filename,
+      path: `/${orgName}/${projectName}/${filename}`,
+      extension: mockResource.contentType,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('suffixes index at the end when there are conflicting paths', () => {
+    const resourceName = 'brain-region';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+
+    const conflictingPath = `/${orgName}/${projectName}/${resourceName}`;
+    const pathFrequency = 2;
+
+    const actualPathProps = pathForTopLevelResources(
+      mockResource,
+      new Map([[conflictingPath, pathFrequency]])
+    );
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${resourceName}-${pathFrequency}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('gets correct path for distribution items', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+    const filename = 'awesome-file.asc';
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map()
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/awesome-file`,
+      fileName: filename,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('suffixes index at the end of the path when there is a conflict', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+
+    const conflictingName = 'awesome-file';
+
+    const filename = `${conflictingName}.asc`;
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map([[`${parentPath}/awesome-file`, 2]])
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/awesome-file-2`,
+      fileName: filename,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
   });
 });
