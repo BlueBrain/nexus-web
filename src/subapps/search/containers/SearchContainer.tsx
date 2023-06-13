@@ -32,8 +32,13 @@ import {
 } from '../../../shared/organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
 import './SearchContainer.less';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../../shared/utils/datapanel';
+import { Resource } from '@bbp/nexus-sdk';
 
-type TRecord = {
+type TRecord = Resource & {
   key: string;
   description: string;
   name: string;
@@ -43,6 +48,7 @@ type TRecord = {
   updatedAt: string;
   _self: string;
   project: {
+    // TODO Verify
     identifier: string;
     label: string;
   };
@@ -140,48 +146,20 @@ const SearchContainer: React.FC = () => {
     handlePaginationChange(1);
     resetAll();
   };
-  const handleSelect = (record: TRecord, selected: any) => {
-    const newRecord: TDataSource = {
-      source: layout,
-      key: record._self,
-      _self: record._self,
-      id: record['@id'],
-      createdAt: record.createdAt,
-      description: record.description,
-      name: record.name ?? record['@id'] ?? record._self,
-      project: record.project.identifier,
-      updatedAt: record.updatedAt,
-      type: record['@type'],
-      distribution: has(record, 'distribution')
-        ? {
-            ...record.distribution,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : record['@type'] === 'File'
-        ? {
-            contentSize: record._bytes,
-            encodingFormat: record._mediaType,
-            label: record._filename,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : {
-            contentSize: 0,
-            encodingFormat: '',
-            label: '',
-            hasDistribution: false,
-          },
-    };
+  const handleSelect = (record: Resource, selected: any) => {
+    const newRecords = toLocalStorageResources(record, layout);
+    const recordKey = record._self;
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      selectedRowKeys = uniq([...selectedRowKeys, newRecord.key]);
-      selectedRows = uniqBy([...selectedRows, newRecord], 'key');
+      selectedRowKeys = uniq([...selectedRowKeys, recordKey]);
+      selectedRows = [...selectedRows, ...newRecords];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== newRecord.key);
-      selectedRows = selectedRows.filter(t => t.key !== newRecord.key);
+      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
     }
     const size = selectedRows.reduce(
       (acc, item) => acc + (item.distribution?.contentSize || 0),
@@ -211,58 +189,29 @@ const SearchContainer: React.FC = () => {
   const onSelectAllChange = (
     selected: boolean,
     tSelectedRows: TRecord[],
-    changeRows: TRecord[]
+    changeRows: Resource[]
   ) => {
-    const changeRowsFormatted = changeRows.map(record => ({
-      source: layout,
-      _self: record._self,
-      id: record['@id'],
-      key: record._self,
-      createdAt: record.createdAt,
-      description: record.description,
-      name: record.name ?? record['@id'] ?? record._self,
-      project: record.project.identifier,
-      updatedAt: record.updatedAt,
-      type: record['@type'],
-      distribution: has(record, 'distribution')
-        ? {
-            ...record.distribution,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : record['@type'] === 'File'
-        ? {
-            contentSize: record._bytes,
-            encodingFormat: record._mediaType,
-            label: record._filename,
-            hasDistribution: has(record, 'distribution'),
-          }
-        : {
-            contentSize: 0,
-            encodingFormat: '',
-            label: '',
-            hasDistribution: false,
-          },
-    }));
+    const changedRowsLS: TDataSource[] = [];
+    changeRows.forEach(row => {
+      const localStorageRows = toLocalStorageResources(row, layout);
+      changedRowsLS.push(...localStorageRows);
+    });
+
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
-      selectedRows = union(
-        selectedRows,
-        changeRowsFormatted.map(t => ({ ...t, source: layout }))
-      );
-      selectedRowKeys = union(
-        selectedRowKeys,
-        changeRowsFormatted.map(t => t.key)
-      );
+      selectedRows = [...selectedRows, ...changedRowsLS];
+      selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
     } else {
-      selectedRows = differenceBy(selectedRows, changeRowsFormatted, 'key');
-      selectedRowKeys = difference(
-        selectedRowKeys,
-        changeRowsFormatted.map(t => t.key)
+      const rowKeysToRemove = changeRows.map(r => r._self);
+
+      selectedRowKeys = selectedRowKeys.filter(
+        key => !rowKeysToRemove.includes(key.toString())
       );
+      selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
     }
     const size = selectedRows.reduce(
       (acc, item) => acc + (item.distribution?.contentSize || 0),

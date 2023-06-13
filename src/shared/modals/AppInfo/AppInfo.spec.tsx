@@ -1,13 +1,12 @@
 import '@testing-library/jest-dom';
-import { rest } from 'msw';
 import { Provider } from 'react-redux';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import configureStore from 'redux-mock-store';
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
-import AppInfo, { EnvironmentInfo, TNexusEco } from './AppInfo';
+import AppInfo, { EnvironmentInfo } from './AppInfo';
 
-describe.only('AppInfo', () => {
+describe('AppInfo', () => {
   beforeAll(async () => {
     server.listen();
   });
