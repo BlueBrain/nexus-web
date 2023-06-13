@@ -70,6 +70,7 @@ import {
   pathForChildDistributions,
   pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
+import * as pluralize from 'pluralize';
 
 type Props = {
   authenticated?: boolean;
@@ -127,10 +128,10 @@ export type ResourceObscured = {
   name: string;
 };
 
-type TResourceObscured = ResourceObscured[];
+export type TResourceObscured = ResourceObscured[];
 type TResourceDistribution = Resource<{}> & { distribution: any };
 
-async function downloadArchive({
+export async function downloadArchive({
   nexus,
   parsedData,
   resourcesPayload,
@@ -151,8 +152,14 @@ async function downloadArchive({
     item => item.localStorageType === 'resource'
   );
 
-  const { results, errors } = await PromisePool.withConcurrency(4)
+  const resourcesNotFetched: Error[] = [];
+  const { results } = await PromisePool.withConcurrency(4)
     .for(resourcesForDownload)
+    .handleError(async resourceFetchError => {
+      resourcesNotFetched.push(resourceFetchError);
+
+      return;
+    })
     .process(async item => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
       const result = (await nexus.Resource.get<TResourceDistribution>(
@@ -203,6 +210,7 @@ async function downloadArchive({
             resourceId: childResource['@id'],
           });
         } catch (err) {
+          resourcesNotFetched.push(err as any);
           console.error('Error fetching resource for download', err);
         }
       }
@@ -222,7 +230,16 @@ async function downloadArchive({
   { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+  } catch (createCreateError) {
+    if (createCreateError instanceof SyntaxError) {
+      // The nexus sdk tries to parse the response of the above request (which is a binary) as json, which results in SyntaxError. Since we don't need this parsing, it is safe to ignore this error.
+    } else {
+      // @ts-ignore
+      throw new Error('Error when creating archive', {
+        cause: { errors: createCreateError, warnings: resourcesNotFetched },
+      });
+    }
+  }
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
@@ -239,20 +256,21 @@ async function downloadArchive({
         ? (archive as Blob)
         : new Blob([archive.toString()]);
     return {
-      errors,
       blob,
       archiveId,
       format,
+      errors: resourcesNotFetched,
     };
-  } catch (error) {
+  } catch (archiveFetchError) {
     Sentry.captureException({
       size,
-      error,
+      error: archiveFetchError,
       items: payload.resources.length,
     });
-    console.log('Error', error);
     // @ts-ignore
-    throw new Error('can not fetch archive', { cause: error });
+    throw new Error('Error when fetching archive', {
+      cause: { errors: archiveFetchError, warnings: resourcesNotFetched },
+    });
   }
 }
 
@@ -542,13 +560,20 @@ const DataPanel: React.FC<Props> = ({}) => {
             link.parentNode?.removeChild(link);
             if (data.errors.length) {
               notification.warning({
+                duration: null,
                 message: (
                   <span>
                     <strong>Archive: </strong>
                     {data.archiveId}
                   </span>
                 ),
-                description: <em>{`Selected data downloaded with errors`}</em>,
+                description: (
+                  <strong>
+                    {data.errors?.length}{' '}
+                    {pluralize('resource', data.errors?.length)} could not be
+                    fetched for download
+                  </strong>
+                ),
               });
             } else {
               notification.success({
@@ -564,13 +589,29 @@ const DataPanel: React.FC<Props> = ({}) => {
           },
           onError: (error: any) => {
             notification.error({
+              duration: null, // Don't remove the notification unless user clicks on it
               message: (
                 <div>
                   <strong>Error when downloading archive</strong>
-                  <div>{error.cause?.['@type']}</div>
+                  <div>{error.cause?.errors['@type']}</div>
                 </div>
               ),
-              description: <em>{error.cause?.reason}</em>,
+              description: (
+                <ul>
+                  {error.cause?.warnings?.length > 0 && (
+                    <li>
+                      <em>
+                        {error.cause.warnings?.length}{' '}
+                        {pluralize('resource', error.cause?.warnings?.length)}{' '}
+                        could not be fetched for download
+                      </em>
+                    </li>
+                  )}
+                  <li>
+                    <em>{error.cause?.errors?.reason}</em>
+                  </li>
+                </ul>
+              ),
             });
           },
         }
