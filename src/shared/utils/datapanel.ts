@@ -5,7 +5,8 @@ import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import isValidUrl from '../../utils/validUrl';
 import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
-import { getResourceLabel } from '.';
+import { getResourceLabel, uuidv4 } from '.';
+import { parseURL } from './nexusParse';
 
 const getResourceName = (resource: Resource) =>
   resource.name ?? resource['@id'] ?? resource._self;
@@ -161,7 +162,6 @@ export const fileNameForDistributionItem = (
   defaultName: string
 ) => {
   const distName = distributionName(distItem, defaultName);
-
   // Distribution name has an extension if  it's not a url & it has some text after the last period.
   const distNameHasExtension = Boolean(
     !isValidUrl(distName) &&
@@ -235,3 +235,62 @@ export const getSizeOfResourcesToDownload = (
     )
   );
 };
+
+export type FilePath = { path: string; filename: string; extension: string };
+
+export function pathForTopLevelResources(
+  resource: ResourceObscured,
+  existingPaths: Map<string, number>
+): FilePath {
+  const self = isArray(resource._self) ? resource._self[0] : resource._self;
+  const parsedSelf = parseURL(self);
+  const encodedName = encodeURIComponent(resource.name).slice(-20);
+
+  const fullPath = `/${parsedSelf.org}/${parsedSelf.project}/${encodedName}`;
+  const trimmedPath = fullPath.length > 60 ? `/${uuidv4()}` : fullPath;
+
+  let uniquePath: string;
+  if (existingPaths.has(trimmedPath)) {
+    const count = existingPaths.get(trimmedPath)!;
+    uniquePath = `${trimmedPath}-${count}`;
+    existingPaths.set(trimmedPath, count + 1);
+  } else {
+    uniquePath = trimmedPath;
+    existingPaths.set(trimmedPath, 1);
+  }
+
+  return {
+    path: uniquePath, // Max Length - 60
+    filename: resource['@type'] === 'File' ? encodedName : 'metadata', // Max Length - 20
+    extension:
+      resource['@type'] === 'File' && resource.contentType
+        ? resource.contentType
+        : 'json', // Max Length - 4
+  };
+}
+
+export function pathForChildDistributions(
+  distItem: any,
+  parentPath: string,
+  existingPaths: Map<string, number>
+) {
+  const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
+  const fileName = fileNameForDistributionItem(distItem, defaultUniqueName);
+  const childDir = fileName.slice(0, fileName.lastIndexOf('.')); // Max Length 20
+  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
+
+  let uniquePath: string; // TODO de-deuplicate
+  if (existingPaths.has(pathToChildFile)) {
+    const count = existingPaths.get(pathToChildFile)!;
+    uniquePath = `${pathToChildFile}-${count}`;
+    existingPaths.set(pathToChildFile, count + 1);
+  } else {
+    uniquePath = pathToChildFile;
+    existingPaths.set(pathToChildFile, 1);
+  }
+
+  return {
+    path: uniquePath,
+    fileName: fileNameForDistributionItem(distItem, defaultUniqueName),
+  };
+}
