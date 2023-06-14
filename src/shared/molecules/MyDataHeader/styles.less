@@ -33,16 +33,28 @@
   }
 
   &-actions {
-    margin: 0 0 10px;
+    margin: 0;
     display: grid;
     gap: 15px;
-    grid-template-columns: max-content 1fr;
-    margin-left: auto;
+    grid-template-columns: max-content max-content 300px 1fr;
     align-items: center;
     justify-content: center;
+    align-content: center;
   }
 }
-
+.radio-filter {
+  &.ant-radio-wrapper-checked {
+    span:nth-child(2) {
+      font-weight: 700;
+    }
+  }
+}
+.date-type-selector {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
 .my-data-date {
   &-container {
     position: relative;
@@ -73,10 +85,17 @@
 
   &-content {
     margin-top: 10px;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     p {
       font-size: 10px;
       color: red;
+    }
+    .range-born {
+      font-weight: 200;
+      color: #40a9ff;
     }
   }
 
