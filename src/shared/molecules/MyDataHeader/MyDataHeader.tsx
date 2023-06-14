@@ -160,7 +160,7 @@ const Filters = ({
     !dateFilterType ||
     !dateField ||
     (dateFilterType === 'range' && (!dateStart || !dateEnd)) ||
-    (dateFilterType != 'range' && !singleDate);
+    (dateFilterType !== 'range' && !singleDate);
 
   const DatePickerContainer = (
     <Fragment>
