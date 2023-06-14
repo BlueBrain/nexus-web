@@ -7,11 +7,12 @@ import {
 } from '@ant-design/icons';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import codemiror from 'codemirror';
+
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-
+import isValidUrl from '../../../utils/validUrl';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -84,6 +85,22 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     onMetadataChange?.(checked);
   };
+
+  const onLinksFound = () => {
+    const elements = document.getElementsByClassName('cm-string');
+    Array.from(elements).forEach(item => {
+      // @ts-ignore
+      if (isValidUrl(item.innerText.replace(/^"|"$/g, ''))) {
+        const a = document.createElement('a');
+        // @ts-ignore
+        a.href = item.innerText;
+        a.innerHTML = item.innerHTML;
+        a.className = 'cm-ghost-link';
+        a.onclick = () => false;
+        item.replaceWith(a);
+      }
+    });
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -107,8 +124,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             },
           }}
           onChange={handleChange}
+          onScroll={onLinksFound}
           editorDidMount={editor => {
             codeMirorRef.current = editor;
+            onLinksFound();
           }}
         />
       </Spin>
@@ -146,6 +165,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const handleSubmit = () => {
     if (onSubmit) {
       onSubmit(parsedValue);
+      onLinksFound();
     }
   };
 
