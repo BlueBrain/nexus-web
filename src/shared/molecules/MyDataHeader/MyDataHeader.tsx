@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useRef, useState } from 'react';
+import React, { Fragment, useReducer, useRef, useState } from 'react';
 import {
   Input,
   Radio,
@@ -7,61 +7,35 @@ import {
   Dropdown,
   Button,
   Menu,
-  MenuProps,
-  Row,
-  Col,
   Checkbox,
+  InputRef,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CalendarOutlined, RightOutlined } from '@ant-design/icons';
 import { TagProps } from 'antd/lib/tag';
-import { useIMask } from 'react-imask';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { capitalize, isString, startCase, pull as removeItem } from 'lodash';
 import { NexusClient } from '@bbp/nexus-sdk';
 import * as moment from 'moment';
-import IMask from 'imask';
 import * as pluralize from 'pluralize';
+import {
+  TDateField,
+  THandleMenuSelect,
+  THeaderFilterProps,
+  TDateOptions,
+  THeaderProps,
+  TTitleProps,
+  TTypeDateItem,
+  TCurrentDate,
+  DATE_PATTERN,
+} from '../../../shared/canvas/MyData/types';
 import useClickOutside from '../../../shared/hooks/useClickOutside';
 import useMeasure from '../../../shared/hooks/useMeasure';
+import DateSeparated from '../../components/DateSeparatedInputs/DateSeparated';
 import './styles.less';
 
-type TIssuer = 'createdBy' | 'updatedBy';
-type TDateField = 'createdAt' | 'updatedAt';
-export type TDateType = 'before' | 'after' | 'range';
-export type TFilterOptions = {
-  dateType: TDateType;
-  dateField: TDateField;
-  dataType: string[];
-  query: string;
-  date?: string | string[];
-  offset: number;
-  size: number;
-  total?: number;
-  sort: string[];
-  locate: boolean;
-  issuer: TIssuer;
-  isAcrossProjects: boolean;
-};
-type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
-  setFilterOptions: React.Dispatch<Partial<TFilterOptions>>;
-};
-
-type TitleProps = {
-  text: string;
-  label: string;
-  total?: string;
-};
-type THeaderFilterProps = Omit<THeaderProps, 'total' | 'sort'>;
-type THandleMenuSelect = MenuProps['onClick'];
-type TType = {
-  key: string;
-  value: string;
-  label: string;
-};
-export const DATE_PATTERN = 'DD/MM/YYYY';
-const Title = ({ text, label, total }: TitleProps) => {
+const Title = ({ text, label, total }: TTitleProps) => {
   return (
     <div className="my-data-table-header-title">
       <span> {text}</span>
@@ -117,8 +91,6 @@ const Filters = ({
   dataType,
   dateField,
   query,
-  dateType,
-  date,
   setFilterOptions,
   locate,
   issuer,
@@ -129,11 +101,44 @@ const Filters = ({
   const [dateFilterContainer, setOpenDateFilterContainer] = useState<boolean>(
     false
   );
-  const onChangeDateType = (e: RadioChangeEvent) =>
-    setFilterOptions({
-      dateType: e.target.value,
-      date: '',
+  const [
+    { dateEnd, dateFilterType, singleDate, dateStart },
+    updateCurrentDates,
+  ] = useReducer(
+    (previous: TCurrentDate, next: Partial<TCurrentDate>) => ({
+      ...previous,
+      ...next,
+    }),
+    {
+      singleDate: undefined,
+      dateEnd: undefined,
+      dateStart: undefined,
+      dateFilterType: undefined,
+    }
+  );
+  const onChangeDateType = (e: RadioChangeEvent) => {
+    updateCurrentDates({
+      dateFilterType: e.target.value,
+      singleDate: '',
+      dateStart: '',
+      dateEnd: '',
     });
+  };
+  const handleSubmitDates: React.FormEventHandler<HTMLFormElement> = e => {
+    e.preventDefault();
+    console.log('@@form', {
+      dateFilterType,
+      singleDate,
+      dateStart,
+      dateEnd,
+    });
+    setFilterOptions({
+      dateFilterType,
+      singleDate,
+      dateStart,
+      dateEnd,
+    });
+  };
   const onIssuerChange = (e: RadioChangeEvent) =>
     setFilterOptions({ issuer: e.target.value });
   const onSearchLocateChange = (e: CheckboxChangeEvent) =>
@@ -146,127 +151,86 @@ const Filters = ({
     setFilterOptions({ query: event.target.value });
   const handleDateFieldChange: THandleMenuSelect = ({ key }) =>
     setFilterOptions({ dateField: key as TDateField });
-  const [opts] = useState(() => ({
-    mask: Date,
-    pattern: DATE_PATTERN,
-    format: (date: Date) => moment(date).format(DATE_PATTERN),
-    parse: (str: string) => moment(str, DATE_PATTERN),
-    autofix: true,
-    lazy: false,
-    overwrite: true,
-    min: new Date(2000, 0, 1),
-    max: new Date(),
-    unmask: true,
-    blocks: {
-      YYYY: {
-        mask: IMask.MaskedRange,
-        from: 2000,
-        to: new Date().getFullYear() + 1,
-      },
-      MM: {
-        mask: IMask.MaskedRange,
-        from: 1,
-        to: 12,
-      },
-      DD: {
-        mask: IMask.MaskedRange,
-        from: 1,
-        to: 31,
-      },
-    },
-  }));
-  const [rangeError, setRangeError] = useState('');
-  const { ref } = useIMask(
-    { ...opts },
-    { onComplete: date => setFilterOptions({ date }) }
-  );
-  const { ref: rangeRefStart, value: rangeStartDate } = useIMask(
-    { ...opts },
-    {
-      onComplete: value => setFilterOptions({ date: [value, date?.[1] ?? ''] }),
-    }
-  );
-  const { ref: rangeRefEnd } = useIMask(
-    { ...opts },
-    {
-      onComplete: value => {
-        if (
-          moment(rangeStartDate, DATE_PATTERN).isBefore(
-            moment(value, DATE_PATTERN)
-          )
-        ) {
-          setFilterOptions({ date: [date?.[0] ?? '', value] });
-          setRangeError('');
-        } else {
-          setRangeError('Error in range');
-        }
-      },
-    }
-  );
+  const updateDate = (type: TDateOptions, date: string) =>
+    updateCurrentDates({
+      [type]: date,
+    });
+
+  const notValidForm =
+    !dateFilterType ||
+    !dateField ||
+    (dateFilterType === 'range' && (!dateStart || !dateEnd)) ||
+    (dateFilterType != 'range' && !singleDate);
+
   const DatePickerContainer = (
     <Fragment>
-      <Radio.Group
-        defaultValue="before"
-        size="small"
-        onChange={onChangeDateType}
-        value={dateType}
-      >
-        <Radio value="before">Before</Radio>
-        <Radio value="after">After</Radio>
-        <Radio value="range">Range</Radio>
-      </Radio.Group>
-      <div className="my-data-date-content">
-        {dateType === 'range' && (
+      <form className="my-data-date-content" onSubmit={handleSubmitDates}>
+        <Radio.Group
+          name="dateFilterType"
+          size="small"
+          onChange={onChangeDateType}
+          value={dateFilterType}
+          className="date-type-selector"
+        >
+          <Radio className="radio-filter" value="before">
+            Before
+          </Radio>
+          <Radio className="radio-filter" value="after">
+            After
+          </Radio>
+          <Radio className="radio-filter" value="range">
+            Range
+          </Radio>
+        </Radio.Group>
+        {dateFilterType === 'range' ? (
           <Fragment>
-            <div className="my-data-date-range">
-              <input
-                ref={rangeRefStart}
-                className="my-data-date-input"
-                defaultValue={
-                  dateType === 'range' && !!date?.[0] ? date[0] : undefined
-                }
-              />
-              <input
-                ref={rangeRefEnd}
-                className="my-data-date-input"
-                defaultValue={
-                  dateType === 'range' && !!date?.[1] ? date[1] : undefined
-                }
-                onBlur={() => setOpenDateFilterContainer(() => false)}
-              />
-            </div>
-            <p>{rangeError}</p>
+            <span className="range-born">From</span>
+            <DateSeparated
+              name="dateStart"
+              value={dateStart}
+              updateUpperDate={value => updateDate('dateStart', value)}
+            />
+            <span className="range-born">To</span>
+            <DateSeparated
+              name="dateStart"
+              value={dateEnd}
+              updateUpperDate={value => updateDate('dateEnd', value)}
+            />
           </Fragment>
-        )}
-        {dateType !== 'range' && (
-          <input
-            ref={ref}
-            defaultValue={
-              (dateType === 'before' || dateType === 'after') &&
-              date &&
-              isString(date)
-                ? date
-                : undefined
-            }
-            className="my-data-date-input"
-            onBlur={() => setOpenDateFilterContainer(() => false)}
+        ) : (
+          <DateSeparated
+            name="singleDate"
+            value={singleDate}
+            updateUpperDate={value => updateDate('singleDate', value)}
           />
         )}
-      </div>
+        <Button
+          type="ghost"
+          htmlType="submit"
+          disabled={notValidForm}
+          style={{ alignSelf: 'flex-end', margin: '10px 0 0' }}
+        >
+          Apply
+        </Button>
+      </form>
     </Fragment>
   );
-
   const selectedDate =
-    dateType === 'range' && date !== ''
-      ? `${date?.[0]}  →  ${date?.[1]}`
-      : moment(date, DATE_PATTERN).isValid()
-      ? `${capitalize(dateType)} ${date as string}`
+    dateFilterType === 'range' && dateStart !== '' && dateEnd !== ''
+      ? `${moment(dateStart).format(DATE_PATTERN)}  →  ${moment(dateEnd).format(
+          DATE_PATTERN
+        )}`
+      : singleDate
+      ? `${capitalize(dateFilterType)} ${moment(singleDate).format(
+          DATE_PATTERN
+        )}`
       : undefined;
+
   const DateFieldMenu = (
     <Menu
       onClick={handleDateFieldChange}
-      defaultSelectedKeys={[dateField]}
-      selectedKeys={[dateField]}
+      defaultSelectedKeys={['']}
+      selectedKeys={dateField ? [dateField] : undefined}
       className="my-data-date-type-popover"
     >
       <Menu.Item key="createdAt">{dateFieldName.createdAt}</Menu.Item>
@@ -277,7 +241,8 @@ const Filters = ({
     queryKey: ['global-search-types'],
     queryFn: () => fetchGlobalSearchTypes(nexus),
   });
-  const typesDataSources: TType[] =
+
+  const typesDataSources: TTypeDateItem[] =
     typesStatus === 'success' &&
     buckets &&
     buckets.map((bucket: any) => {
@@ -289,22 +254,38 @@ const Filters = ({
     });
   const handleOnCheckType = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
-    type: TType
+    type: TTypeDateItem
   ) => {
     e.preventDefault();
     e.stopPropagation();
     setFilterOptions({
-      dataType: dataType.includes(type.key)
+      dataType: dataType?.includes(type.key)
         ? removeItem(dataType, type.key)
-        : [...dataType, type.key],
+        : dataType
+        ? [...dataType, type.key]
+        : [type.key],
     });
   };
   const [typeInputRef, { width }] = useMeasure();
-  const [dateInputRef, { width: datePopWidth }] = useMeasure();
+  const [dateInputRef, { width: datePopWidth }] = useMeasure<
+    HTMLInputElement
+  >();
   useClickOutside(popoverRef, onDatePopoverVisibleChange);
   return (
     <div className="my-data-table-header-actions">
-      {/* <Dropdown
+      <Radio.Group
+        defaultValue={isAcrossProjects ? undefined : 'createdBy'}
+        value={isAcrossProjects ? undefined : issuer}
+        onChange={onIssuerChange}
+      >
+        <Radio className="radio-filter" value="createdBy">
+          Created by me
+        </Radio>
+        <Radio className="radio-filter" value="updatedBy">
+          Last updated by me
+        </Radio>
+      </Radio.Group>
+      <Dropdown
         placement="bottomLeft"
         trigger={['click']}
         overlay={DateFieldMenu}
@@ -313,8 +294,8 @@ const Filters = ({
           type="link"
           style={{ textAlign: 'left', padding: '4px 0px', color: '#333' }}
         >
-          {dateFieldName[dateField]}
-          <RightOutlined style={{ fontSize: 8 }} />
+          {dateField ? dateFieldName[dateField] : 'Date Field'}
+          <RightOutlined style={{ fontSize: 8, verticalAlign: 'middle' }} />
         </Button>
       </Dropdown>
       <Dropdown
@@ -332,6 +313,7 @@ const Filters = ({
         overlayStyle={{ width: datePopWidth }}
       >
         <Input
+          allowClear
           // @ts-ignore
           ref={dateInputRef}
           placeholder="Date"
@@ -339,9 +321,25 @@ const Filters = ({
           value={selectedDate}
           prefix={<CalendarOutlined />}
           onClick={() => setOpenDateFilterContainer(state => !state)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.type === 'click') {
+              updateCurrentDates({
+                dateFilterType: undefined,
+                singleDate: undefined,
+                dateStart: undefined,
+                dateEnd: undefined,
+              });
+              setFilterOptions({
+                dateFilterType: undefined,
+                singleDate: undefined,
+                dateStart: undefined,
+                dateEnd: undefined,
+              });
+            }
+          }}
         />
       </Dropdown>
-      <Dropdown
+      {/* <Dropdown
         placement="bottomLeft"
         trigger={['click']}
         overlayStyle={{ width }}
@@ -388,14 +386,7 @@ const Filters = ({
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
       </Dropdown> */}
-      <Radio.Group
-        defaultValue={isAcrossProjects ? undefined : 'createdBy'}
-        value={isAcrossProjects ? undefined : issuer}
-        onChange={onIssuerChange}
-      >
-        <Radio value="createdBy">Created by me</Radio>
-        <Radio value="updatedBy">Last updated by me</Radio>
-      </Radio.Group>
+
       <div className="search-container">
         <Input.Search
           allowClear
@@ -423,12 +414,10 @@ const Filters = ({
 };
 
 const MyDataHeader: React.FC<THeaderProps> = ({
-  date,
   total,
   dataType,
   dateField,
   query,
-  dateType,
   setFilterOptions,
   locate,
   issuer,
@@ -448,8 +437,6 @@ const MyDataHeader: React.FC<THeaderProps> = ({
           dataType,
           dateField,
           query,
-          dateType,
-          date,
           locate,
           setFilterOptions,
           issuer,
