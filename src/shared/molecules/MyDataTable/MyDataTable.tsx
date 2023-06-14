@@ -25,7 +25,7 @@ import {
   DATA_PANEL_STORAGE_EVENT,
 } from '../../organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
-import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
+import { TFilterOptions } from '../../../shared/canvas/MyData/types';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
@@ -575,13 +575,7 @@ const MyDataTable: React.FC<TProps> = ({
           ) : locate && !dataSource.length ? (
             <div className="no-resource-with-locate">
               <strong>No resource with Id or self was found</strong>
-              <br /> If you want to look for the resource using full text search
-              <Button
-                type="link"
-                onClick={() => setFilterOptions({ locate: false })}
-              >
-                click here
-              </Button>
+              <em> Please use the filter bar for more options</em>
             </div>
           ) : (
             <Empty />
