@@ -30,6 +30,25 @@ export interface ResourceEditorProps {
 }
 
 const switchMarginRight = { marginRight: 5 };
+const onLinksFound = (type?: string) => {
+  const elements = document.getElementsByClassName('cm-string');
+  console.log(`@@elements ${type}`, elements);
+  Array.from(elements).forEach(item => {
+    console.log('@@item.tagName', item.tagName);
+    // @ts-ignore
+    if (isValidUrl(item.innerText.replace(/^"|"$/g, ''))) {
+      // if(item.tagName !== 'a') {
+      const a = document.createElement('a');
+      // @ts-ignore
+      a.href = item.innerText;
+      a.innerHTML = item.innerHTML;
+      a.className = 'cm-ghost-link';
+      a.onclick = () => false;
+      item.replaceWith(a);
+      // }
+    }
+  });
+};
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -45,18 +64,16 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     showMetadataToggle = true,
   } = props;
 
-  const [isEditing, setEditing] = React.useState(editing);
-  const [valid, setValid] = React.useState(true);
+  const codeMirorRef = React.useRef<codemiror.Editor>();
+  const [isEditing, setEditing] = React.useState<boolean>(editing);
+  const [valid, setValid] = React.useState<boolean>(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
+  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
 
-  const keyFoldCode = (cm: any) => {
-    cm.foldCode(cm.getCursor());
-  };
-  const codeMirorRef = React.useRef<codemiror.Editor>();
-  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
+  const keyFoldCode = (cm: any) => cm.foldCode(cm.getCursor());
   const onFoldChange = () => {
     if (codeMirorRef.current) {
       if (foldCodeMiror) {
@@ -86,21 +103,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const onLinksFound = () => {
-    const elements = document.getElementsByClassName('cm-string');
-    Array.from(elements).forEach(item => {
-      // @ts-ignore
-      if (isValidUrl(item.innerText.replace(/^"|"$/g, ''))) {
-        const a = document.createElement('a');
-        // @ts-ignore
-        a.href = item.innerText;
-        a.innerHTML = item.innerHTML;
-        a.className = 'cm-ghost-link';
-        a.onclick = () => false;
-        item.replaceWith(a);
-      }
-    });
-  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -124,11 +126,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             },
           }}
           onChange={handleChange}
-          onScroll={onLinksFound}
           editorDidMount={editor => {
             codeMirorRef.current = editor;
-            onLinksFound();
           }}
+          onUpdate={() => onLinksFound('update')}
         />
       </Spin>
     );
@@ -160,6 +161,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     setStringValue(value);
     setEditing(value !== JSON.stringify(rawData, null, 2));
+    onLinksFound();
   };
 
   const handleSubmit = () => {
