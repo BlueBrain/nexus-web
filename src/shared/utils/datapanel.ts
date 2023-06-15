@@ -9,7 +9,9 @@ import { getResourceLabel, uuidv4 } from '.';
 import { parseURL } from './nexusParse';
 
 const getResourceName = (resource: Resource) =>
-  resource.name ?? resource['@id'] ?? resource._self;
+  isArray(resource.name)
+    ? resource.name.join('')
+    : resource.name ?? resource['@id'] ?? resource._self;
 
 const baseLocalStorageObject = (
   resource: Resource,
@@ -37,6 +39,7 @@ export const toLocalStorageResources = (
   source: string
 ): TDataSource[] => {
   const resourceName = getResourceName(resource);
+
   try {
     // Case 1 - Resource has no distribution
     if (isNil(resource.distribution)) {

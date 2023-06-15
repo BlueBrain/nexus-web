@@ -560,7 +560,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             link.parentNode?.removeChild(link);
             if (data.errors.length) {
               notification.warning({
-                duration: null,
+                duration: null, // Dont close the notification unless the user clicks it.
                 message: (
                   <span>
                     <strong>Archive: </strong>
