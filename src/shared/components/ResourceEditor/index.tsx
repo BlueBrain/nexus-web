@@ -159,13 +159,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     setStringValue(value);
     setEditing(value !== JSON.stringify(rawData, null, 2));
-    onLinksFound();
   };
 
   const handleSubmit = () => {
     if (onSubmit) {
       onSubmit(parsedValue);
-      onLinksFound();
     }
   };
 
