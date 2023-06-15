@@ -112,7 +112,11 @@ const HomeMyData: React.FC<{}> = () => {
       }),
     [dateFilterType, singleDate, dateStart, dateEnd]
   );
-
+  const date =
+    dateField && dateFilterRange && dateFilterType
+      ? `${dateField}-${dateFilterType}-${dateFilterRange}`
+      : undefined;
+  const order = sort.join('-');
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
@@ -123,10 +127,8 @@ const HomeMyData: React.FC<{}> = () => {
         locate,
         issuer,
         isAcrossProjects,
-        dateFilterRange,
-        dateField,
-        dateFilterType,
-        sort: JSON.stringify(sort),
+        date,
+        order,
       },
     ],
     retry: false,
