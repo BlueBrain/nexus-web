@@ -19,8 +19,10 @@ import {
   deltaUrlToFusionUrl,
   getFriendlyTimeAgoString,
   getDateString,
+  getResourceLabel,
 } from '..';
 import * as moment from 'moment';
+import { getMockResource } from '../__mocks__/data_panel_download_resource';
 
 const identities: Identity[] = [
   {
