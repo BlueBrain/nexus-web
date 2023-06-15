@@ -197,6 +197,7 @@ async function downloadArchive({
           files.push({
             ...item,
             // @ts-ignore
+            '@type': childResource['@type'] ?? 'File',
             path: `${childPath.path}/${childPath.fileName}`,
             _self: childResource._self ?? item._self,
             resourceId: childResource['@id'],
