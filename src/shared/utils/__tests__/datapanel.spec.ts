@@ -82,6 +82,18 @@ describe('datapanel utilities', () => {
     );
   });
 
+  it('serializes resources with arrays for name correctly', () => {
+    const resource = {
+      ...resourceWithDistributionArray,
+      label: undefined,
+      name: ['Sterling', 'Malory', 'Archer'],
+    };
+    const serializedItems = toLocalStorageResources(resource, 'studios');
+
+    expect(serializedItems.length).toEqual(5);
+    expect(serializedItems[0].name).toEqual('Sterling-Malory-Archer');
+  });
+
   it('serializes correct distribution value for each distribution item in array', () => {
     const resource = resourceWithDistributionArray;
     const serializedItems = toLocalStorageResources(resource, 'studios');

@@ -461,7 +461,7 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? 'File'
               : 'Resource';
           const contentType =
-            resource.distribution?.label?.split('.').pop() ?? '';
+            resource.distribution?.label?.split('.')?.pop() ?? '';
           return {
             size,
             contentType: contentType?.toLowerCase(),
