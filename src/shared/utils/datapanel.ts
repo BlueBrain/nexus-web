@@ -275,10 +275,18 @@ export function pathForChildDistributions(
   existingPaths: Map<string, number>
 ) {
   const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
-  const fileName = fileNameForDistributionItem(distItem, defaultUniqueName);
-  const childDir = fileName.slice(0, fileName.lastIndexOf('.')); // Max Length 20
-  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
 
+  const fullFileName = fileNameForDistributionItem(distItem, defaultUniqueName);
+  const nameWithoutExtension = fullFileName.slice(
+    0,
+    fullFileName.lastIndexOf('.')
+  );
+  const extension = fullFileName.slice(fullFileName.lastIndexOf('.') + 1);
+
+  const fileName = nameWithoutExtension.slice(-20);
+
+  const childDir = fileName; // Max Length 20
+  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
   let uniquePath: string; // TODO de-deuplicate
   if (existingPaths.has(pathToChildFile)) {
     const count = existingPaths.get(pathToChildFile)!;
@@ -291,6 +299,6 @@ export function pathForChildDistributions(
 
   return {
     path: uniquePath,
-    fileName: fileNameForDistributionItem(distItem, defaultUniqueName),
+    fileName: `${fileName}.${extension}`,
   };
 }
