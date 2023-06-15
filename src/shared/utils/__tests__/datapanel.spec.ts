@@ -334,4 +334,28 @@ describe('datapanel utilities', () => {
 
     expect(actualPathProps).toEqual(expectPathProps);
   });
+
+  it('trims distribution path if it is too long', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+    const namePrefix = Array(20)
+      .fill('A')
+      .join('');
+    const nameSuffix = Array(20)
+      .fill('B')
+      .join('');
+    const filename = `${namePrefix}${nameSuffix}.asc`;
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map()
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/${nameSuffix}`,
+      fileName: `${nameSuffix}.asc`,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
 });
