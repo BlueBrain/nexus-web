@@ -8,11 +8,6 @@ import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
 import { getResourceLabel, uuidv4 } from '.';
 import { parseURL } from './nexusParse';
 
-const getResourceName = (resource: Resource) =>
-  isArray(resource.name)
-    ? resource.name.join('')
-    : resource.name ?? resource['@id'] ?? resource._self;
-
 const baseLocalStorageObject = (
   resource: Resource,
   source: string,
@@ -38,8 +33,7 @@ export const toLocalStorageResources = (
   resource: Resource,
   source: string
 ): TDataSource[] => {
-  const resourceName = getResourceName(resource);
-
+  const resourceName = getResourceLabel(resource);
   try {
     // Case 1 - Resource has no distribution
     if (isNil(resource.distribution)) {
