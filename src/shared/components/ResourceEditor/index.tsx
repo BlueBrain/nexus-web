@@ -30,22 +30,20 @@ export interface ResourceEditorProps {
 }
 
 const switchMarginRight = { marginRight: 5 };
-const onLinksFound = (type?: string) => {
+const onLinksFound = () => {
   const elements = document.getElementsByClassName('cm-string');
-  console.log(`@@elements ${type}`, elements);
   Array.from(elements).forEach(item => {
-    console.log('@@item.tagName', item.tagName);
-    // @ts-ignore
-    if (isValidUrl(item.innerText.replace(/^"|"$/g, ''))) {
-      // if(item.tagName !== 'a') {
-      const a = document.createElement('a');
-      // @ts-ignore
-      a.href = item.innerText;
-      a.innerHTML = item.innerHTML;
-      a.className = 'cm-ghost-link';
-      a.onclick = () => false;
-      item.replaceWith(a);
-      // }
+    const itemSpan = item as HTMLSpanElement;
+    if (
+      isValidUrl(itemSpan.innerText.replace(/^"|"$/g, '')) &&
+      item.tagName !== 'a'
+    ) {
+      const anchor = document.createElement('a');
+      anchor.href = itemSpan.innerText;
+      anchor.innerHTML = itemSpan.innerText;
+      anchor.className = 'cm-ghost-link';
+      anchor.onclick = () => false;
+      item.replaceWith(anchor);
     }
   });
 };
@@ -129,7 +127,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           editorDidMount={editor => {
             codeMirorRef.current = editor;
           }}
-          onUpdate={() => onLinksFound('update')}
+          onUpdate={onLinksFound}
         />
       </Spin>
     );
