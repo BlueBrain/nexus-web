@@ -71,6 +71,8 @@ import {
 } from '../../../shared/utils/datapanel';
 import { getNormalizedFileExtension } from '../../../utils/contentTypes';
 import './styles.less';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 type Props = {
   authenticated?: boolean;
@@ -135,16 +137,16 @@ export async function downloadArchive({
   nexus,
   parsedData,
   resourcesPayload,
-  format,
   size,
   selectedTypes,
+  apiEndpoint,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
   resourcesPayload: TResourceObscured;
-  format?: 'x-tar' | 'json';
   size: string;
   selectedTypes: string[];
+  apiEndpoint?: string;
 }) {
   const existingPaths = new Map<string, number>();
   const topLevelResources: ResourceObscured[] = [];
@@ -241,24 +243,17 @@ export async function downloadArchive({
     }
   }
   try {
-    const archive = await nexus.Archive.get(
-      parsedData.org,
-      parsedData.project,
-      archiveId,
-      {
-        as: 'x-tar',
-        // @ts-ignore
-        ignoreNotFound: true,
-      }
-    );
-    const blob =
-      !format || format === 'x-tar'
-        ? (archive as Blob)
-        : new Blob([archive.toString()]);
+    const archive = await nexus.httpGet({
+      path: `${apiEndpoint}/archives/${parsedData.org}/${parsedData.project}/${archiveId}?ignoreNotFound=true`,
+      headers: { accept: 'application/zip' },
+      context: {
+        parseAs: 'blob',
+      },
+    });
+    const blob = archive as Blob;
     return {
       blob,
       archiveId,
-      format,
       errors: resourcesNotFetched,
     };
   } catch (archiveFetchError) {
@@ -289,6 +284,8 @@ const DataPanel: React.FC<Props> = ({}) => {
       openDataPanel: false,
     }
   );
+  const apiEndpoint =
+    useSelector((state: RootState) => state.config.apiEndpoint) || '';
 
   const totalSelectedResources = resources?.selectedRowKeys?.length;
   const dataSource: TDataSource[] = resources?.selectedRows || [];
@@ -561,6 +558,7 @@ const DataPanel: React.FC<Props> = ({}) => {
         {
           nexus,
           parsedData,
+          apiEndpoint,
           resourcesPayload: resourcesObscured as TResourceObscured,
           size: formatBytes(totalSize),
           selectedTypes: types,
@@ -570,7 +568,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             const url = window.URL.createObjectURL(new Blob([data.blob]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `data-${data.archiveId}.tar`);
+            link.setAttribute('download', `data-${data.archiveId}.zip`);
             document.body.appendChild(link);
             link.click();
             link.parentNode?.removeChild(link);
