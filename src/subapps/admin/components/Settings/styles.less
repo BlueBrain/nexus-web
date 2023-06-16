@@ -190,9 +190,14 @@
 }
 
 .danger-zone-item {
-  + button {
+  + button,
+  + span > button {
     width: 200px !important;
     font-weight: 700;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
 
     &.deprecate-btn {
       background: white !important;
