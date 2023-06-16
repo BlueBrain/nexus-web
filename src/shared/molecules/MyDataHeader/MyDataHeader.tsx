@@ -386,7 +386,6 @@ const Filters = ({
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
       </Dropdown> */}
-
       <div className="search-container">
         <Input.Search
           allowClear
