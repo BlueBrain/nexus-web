@@ -5,8 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row, notification } from 'antd';
 import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { has } from 'lodash';
-import { CartContext } from '../hooks/useDataCart';
+import { uniq } from 'lodash';
 import { makeResourceUri } from '../utils';
 import { RootState } from '../store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
@@ -23,6 +22,10 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../shared/organisms/DataPanel/DataPanel';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../shared/utils/datapanel';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;
@@ -37,35 +40,8 @@ const ResourceViewActionsContainer: React.FC<{
   const location = useLocation();
   const [isInCart, setIsInCart] = React.useState(() => false);
   const handleAddToCart = async () => {
-    const record = {
-      resource,
-      key: resource._self,
-      _self: resource._self,
-      id: resource['@id'],
-      name: resource['@id'] ?? resource._self,
-      project: resource._project,
-      description: '',
-      type: resource['@type'],
-      createdAt: resource._createdAt,
-      updatedAt: resource._updatedAt,
-      distribution: has(resource, 'distribution')
-        ? {
-            contentSize:
-              resource.distribution?.contentSize?.value ??
-              resource.distribution?.contentSize ??
-              0,
-            encodingFormat: resource.distribution?.encodingFormat ?? '',
-            label: resource.distribution?.name ?? '',
-            hasDistribution: true,
-          }
-        : {
-            contentSize: resource._bytes ?? 0,
-            encodingFormat: resource._mediaType ?? '',
-            label: resource._filename ?? '',
-            hasDistribution: false,
-          },
-      source: 'resource-view',
-    };
+    const recordKey = resource._self;
+
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -73,13 +49,17 @@ const ResourceViewActionsContainer: React.FC<{
     let selectedRows = dataPanelLS?.selectedRows || [];
     let isRemoved = false;
     if (selectedRows.find(item => item._self === resource._self)) {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== record._self);
-      selectedRows = selectedRows.filter(t => t.key !== record._self);
+      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
       isRemoved = true;
     } else {
-      selectedRowKeys = [...selectedRowKeys, resource._self];
-      selectedRows = [...selectedRows, { ...record, source: 'resource-view' }];
-      isRemoved = false;
+      const localStorageObjects = toLocalStorageResources(
+        resource,
+        'resource-view'
+      );
+
+      selectedRowKeys = uniq([...selectedRowKeys, recordKey]);
+      selectedRows = [...selectedRows, ...localStorageObjects];
     }
     const size = selectedRows.reduce(
       (acc, item) =>
