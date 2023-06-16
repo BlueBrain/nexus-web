@@ -338,6 +338,7 @@ const ProjectView: React.FunctionComponent = () => {
                     description: project.description || '',
                     base: project.base,
                     vocab: project.vocab,
+                    _deprecated: project._deprecated,
                   }}
                   apiMappings={project.apiMappings}
                   mode="edit"
