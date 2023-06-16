@@ -15,6 +15,7 @@ type TProps = {
   onCreateClick?(): void;
   permissions?: string[];
   path?: string[];
+  supTitle?: string;
 };
 
 const RouteHeader = ({
@@ -27,6 +28,7 @@ const RouteHeader = ({
   onCreateClick,
   permissions = [],
   path = ['/'],
+  supTitle,
 }: TProps) => {
   const { layoutSettings } = useSelector((state: RootState) => state.config);
   return (
@@ -36,6 +38,7 @@ const RouteHeader = ({
     >
       <img src={bg} alt={alt} style={{ ...imgCss }} />
       <div className="title">
+        {supTitle && <h4>{supTitle}</h4>}
         <h2>{title}</h2>
         <p>{extra}</p>
       </div>
