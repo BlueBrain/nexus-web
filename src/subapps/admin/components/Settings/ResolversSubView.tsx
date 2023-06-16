@@ -30,7 +30,9 @@ const fetchResolvers = async ({
   projectLabel: string;
 }) => {
   try {
-    const response = await nexus.Resolver.list(orgLabel, projectLabel);
+    const response = await nexus.Resolver.list(orgLabel, projectLabel, {
+      deprecated: false,
+    });
     const resolvers = response._results.map(item => ({
       type: item['@type'].filter(t => t !== 'Resolver'),
       priority: item.priority,

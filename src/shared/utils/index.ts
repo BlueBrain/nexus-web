@@ -5,6 +5,7 @@ import {
   isRegExp,
   isMatchWithCustomizer,
   pick,
+  isArray,
 } from 'lodash';
 import * as moment from 'moment';
 
@@ -140,8 +141,8 @@ export const stripBasename = (basename: string, path: string) => {
 
 // For getting the last part of a uri path as a title or label
 export const labelOf = (inputString: string) => {
-  const slash = inputString.substring(inputString.lastIndexOf('/') + 1);
-  const title = slash.substring(slash.lastIndexOf('#') + 1);
+  const slash = inputString?.substring(inputString?.lastIndexOf('/') + 1);
+  const title = slash?.substring(slash.lastIndexOf('#') + 1);
   return title;
 };
 
@@ -293,11 +294,15 @@ export function getResourceLabel(
     [key: string]: any;
   }
 ) {
+  const resourceName = isArray(resource.name)
+    ? resource.name.join('-')
+    : resource.name;
   return (
-    resource.prefLabel ||
-    resource.label ||
-    resource.name ||
-    labelOf(resource['@id'])
+    resource.prefLabel ??
+    resource.label ??
+    resourceName ??
+    labelOf(resource['@id']) ??
+    labelOf(resource._self)
   );
 }
 

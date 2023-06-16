@@ -34,6 +34,7 @@ import {
   isEmpty,
   isNil,
   isString,
+  lastIndexOf,
   omit,
   slice,
   toUpper,
@@ -63,6 +64,13 @@ import {
 } from '../../molecules/MyDataTable/MyDataTable';
 
 import './styles.less';
+import {
+  distributionMatchesTypes,
+  getSizeOfResourcesToDownload,
+  pathForChildDistributions,
+  pathForTopLevelResources,
+} from '../../../shared/utils/datapanel';
+import * as pluralize from 'pluralize';
 
 type Props = {
   authenticated?: boolean;
@@ -79,6 +87,7 @@ type TDataPanel = {
   resources: TResourceTableData;
   openDataPanel: boolean;
 };
+
 export class DataPanelEvent<T> extends Event {
   detail: T | undefined;
 }
@@ -87,39 +96,6 @@ export const DATA_PANEL_STORAGE = 'datapanel-storage';
 
 function sum(...args: number[]) {
   return args.reduce((a, b) => a + b, 0);
-}
-
-function findIndexes(arr: any[], predicate: any) {
-  const indexes: number[] = [];
-  arr.forEach((item, index) => {
-    if (predicate(item)) {
-      indexes.push(index);
-    }
-  });
-  return indexes;
-}
-
-function getPathForParentWithDistribution(parent: ResourceObscured) {
-  const pathWithoutExtension = parent.path.substring(
-    0,
-    parent.path.lastIndexOf('.')
-  );
-  const metadataName = `metadata-${uuidv4().substring(0, 6)}`;
-  return `${pathWithoutExtension}/${metadataName}.json`;
-}
-
-function getPathForChildResource(resource: any, parent: ResourceObscured) {
-  const extension = resource._filename?.split('.').pop() ?? '';
-
-  // Distributions within different resources can have same name. Add a unique id to avoid conflicts in paths and delta error.
-  const uniqueSuffix = uuidv4().substring(0, 6);
-
-  const resourceName = resource._filename
-    ? `${resource._filename.split('.')[0] ?? 'data'}-${uniqueSuffix}`
-    : uniqueSuffix;
-  const parentPath = parent.path.substring(0, parent.path.lastIndexOf('.'));
-
-  return `${parentPath}/${resourceName}.${extension}`;
 }
 
 function makePayload(resourcesPayload: DownloadResourcePayload[]) {
@@ -131,14 +107,14 @@ function makePayload(resourcesPayload: DownloadResourcePayload[]) {
   return { payload, archiveId };
 }
 
-type ResourceObscured = {
+export type ResourceObscured = {
   size: number;
   contentType: string | undefined;
   distribution:
     | {
         contentSize: number;
         encodingFormat: string | string[];
-        label: string | string[];
+        label: string;
         hasDistribution: boolean;
       }
     | undefined;
@@ -147,33 +123,43 @@ type ResourceObscured = {
   resourceId: string;
   project: string;
   path: string;
+  localStorageType?: 'resource' | 'distribution';
+  id: string;
+  name: string;
 };
 
-type TResourceObscured = ResourceObscured[];
+export type TResourceObscured = ResourceObscured[];
 type TResourceDistribution = Resource<{}> & { distribution: any };
 
-async function downloadArchive({
+export async function downloadArchive({
   nexus,
   parsedData,
   resourcesPayload,
   format,
   size,
+  selectedTypes,
 }: {
   nexus: NexusClient;
   parsedData: ParsedNexusUrl;
   resourcesPayload: TResourceObscured;
   format?: 'x-tar' | 'json';
   size: string;
+  selectedTypes: string[];
 }) {
-  const resourcesWithoutDistribution = resourcesPayload.filter(
-    item => !item.distribution?.hasDistribution
-  );
-  const resourcesWithDistribution = resourcesPayload.filter(
-    item => has(item, 'distribution') && item.distribution?.hasDistribution
+  const existingPaths = new Map<string, number>();
+  const topLevelResources: ResourceObscured[] = [];
+  const resourcesForDownload = resourcesPayload.filter(
+    item => item.localStorageType === 'resource'
   );
 
-  const { results, errors } = await PromisePool.withConcurrency(4)
-    .for(resourcesWithDistribution)
+  const resourcesNotFetched: Error[] = [];
+  const { results } = await PromisePool.withConcurrency(4)
+    .for(resourcesForDownload)
+    .handleError(async resourceFetchError => {
+      resourcesNotFetched.push(resourceFetchError);
+
+      return;
+    })
     .process(async item => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
       const result = (await nexus.Resource.get<TResourceDistribution>(
@@ -182,61 +168,61 @@ async function downloadArchive({
         encodeURIComponent(item?.resourceId!)
       )) as TResourceDistribution;
 
-      const files: TResourceObscured[] = [];
-      // @ts-ignore
-      if (isArray(result.distribution)) {
-        // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
-        // To do that, first prepare the metadata for download.
-        resourcesWithoutDistribution.push({
-          ...item,
-          path: getPathForParentWithDistribution(item),
-          contentType: 'json',
-          '@type': 'Resource',
-        });
+      const { path, filename, extension } = pathForTopLevelResources(
+        item,
+        existingPaths
+      );
+      const parentPath = `${path}/${filename}.${extension}`;
+      // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
+      // To do that, first prepare the metadata for download.
+      topLevelResources.push({
+        ...item,
+        path: parentPath,
+      });
 
-        // 2. Now download each of the distribution(s) within that resource
-        for (const res of result.distribution) {
-          try {
-            const resource = await nexus.httpGet({
-              path: res.contentUrl!,
-              headers: { accept: 'application/ld+json' },
-            });
-            files.push({
-              ...item,
-              // @ts-ignore
-              path: getPathForChildResource(resource, item),
-              _self: resource._self ?? item._self,
-              resourceId: resource['@id'],
-            });
-          } catch (err) {
-            console.error('Error fetching resource for download', err);
-          }
-        }
-      } else {
+      // 2. Now download each of the distribution(s) within that resource
+      const files: TResourceObscured[] = [];
+      const allDistributions = isArray(result.distribution)
+        ? result.distribution
+        : [result.distribution];
+
+      const distMatchingSelectedTypes = allDistributions.filter(
+        dist => dist && distributionMatchesTypes(dist, selectedTypes)
+      );
+
+      for (const res of distMatchingSelectedTypes) {
         try {
-          const resource: TResourceDistribution = await nexus.httpGet({
-            path: result.distribution?.contentUrl!,
-            headers: {
-              accept: 'application/ld+json',
-            },
+          const childResource = await nexus.httpGet({
+            path: res.contentUrl!,
+            headers: { accept: 'application/ld+json' },
           });
+          const childPath = pathForChildDistributions(
+            childResource,
+            path,
+            existingPaths
+          );
           files.push({
             ...item,
             // @ts-ignore
-            resourceId: resource['@id'],
+            '@type': childResource['@type'] ?? 'File',
+            path: `${childPath.path}/${childPath.fileName}`,
+            _self: childResource._self ?? item._self,
+            resourceId: childResource['@id'],
           });
         } catch (err) {
+          resourcesNotFetched.push(err as any);
           console.error('Error fetching resource for download', err);
         }
       }
       return files;
     });
   const resources = uniqBy(
-    [...resourcesWithoutDistribution, ...results.flat()].map(item =>
+    [...topLevelResources, ...results.flat()].map(item =>
       omit(item, ['distribution', 'size', 'contentType'])
     ),
     '_self'
   );
+
   const {
     payload,
     archiveId,
@@ -244,32 +230,47 @@ async function downloadArchive({
   { payload: ArchivePayload; archiveId: string } = makePayload(resources);
   try {
     await nexus.Archive.create(parsedData.org, parsedData.project, payload);
-  } catch (error) {}
+  } catch (createCreateError) {
+    if (createCreateError instanceof SyntaxError) {
+      // The nexus sdk tries to parse the response of the above request (which is a binary) as json, which results in SyntaxError. Since we don't need this parsing, it is safe to ignore this error.
+    } else {
+      // @ts-ignore
+      throw new Error('Error when creating archive', {
+        cause: { errors: createCreateError, warnings: resourcesNotFetched },
+      });
+    }
+  }
   try {
     const archive = await nexus.Archive.get(
       parsedData.org,
       parsedData.project,
       archiveId,
-      { as: 'x-tar' }
+      {
+        as: 'x-tar',
+        // @ts-ignore
+        ignoreNotFound: true,
+      }
     );
     const blob =
       !format || format === 'x-tar'
         ? (archive as Blob)
         : new Blob([archive.toString()]);
     return {
-      errors,
       blob,
       archiveId,
       format,
+      errors: resourcesNotFetched,
     };
-  } catch (error) {
+  } catch (archiveFetchError) {
     Sentry.captureException({
       size,
-      error,
+      error: archiveFetchError,
       items: payload.resources.length,
     });
     // @ts-ignore
-    throw new Error('can not fetch archive', { cause: error });
+    throw new Error('Error when fetching archive', {
+      cause: { errors: archiveFetchError, warnings: resourcesNotFetched },
+    });
   }
 }
 
@@ -291,6 +292,9 @@ const DataPanel: React.FC<Props> = ({}) => {
 
   const totalSelectedResources = resources?.selectedRowKeys?.length;
   const dataSource: TDataSource[] = resources?.selectedRows || [];
+  const resourcesToDownload: TDataSource[] = dataSource.filter(
+    row => row.localStorageType === 'resource'
+  );
   const columns: ColumnsType<TDataSource> = [
     {
       key: 'name',
@@ -450,24 +454,26 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? sum(...resource.distribution.contentSize)
               : resource.distribution.contentSize
             : 0;
-          const contentType = resource.distribution
-            ? isArray(resource.distribution?.label)
-              ? resource.distribution?.label[0].split('.').pop()
-              : resource.distribution?.label?.split('.').pop() ?? ''
-            : '';
+
+          const type =
+            Boolean(resource.distribution) &&
+            Boolean(resource.distribution?.contentSize)
+              ? 'File'
+              : 'Resource';
+          const contentType =
+            resource.distribution?.label?.split('.')?.pop() ?? '';
           return {
             size,
             contentType: contentType?.toLowerCase(),
             distribution: resource.distribution,
+            localStorageType: resource.localStorageType,
+            id: resource.id,
             _self: resource._self,
-            '@type':
-              Boolean(resource.distribution) &&
-              Boolean(resource.distribution?.contentSize)
-                ? 'File'
-                : 'Resource',
+            name: resource.name,
+            '@type': type,
             resourceId: resource.id,
             project: `${parsedSelf.org}/${parsedSelf.project}`,
-            path: `/${parsedSelf.project}/${pathId}${
+            path: `/${parsedSelf.project}/${parsedSelf.id}/${pathId}${
               contentType ? `.${contentType}` : ''
             }`,
           };
@@ -476,6 +482,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           return;
         }
       });
+
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
 
@@ -491,12 +498,25 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   };
 
-  const typesCounter = compact(
-    Object.entries(resourcesGrouped).map(([key, value]) =>
-      isEmpty(key) || isNil(key) || key === 'undefined' || key === ''
-        ? null
-        : { [key]: value.length }
-    )
+  const typesCounter: { [key: string]: number }[] = compact(
+    Object.entries(resourcesGrouped).map(([key, value]) => {
+      if (isEmpty(key) || isNil(key) || key === 'undefined' || key === '') {
+        return null;
+      }
+
+      if (key === 'json') {
+        const metadataFiles = value.filter(
+          v => v?.localStorageType === 'resource' && v['@type'] !== 'File'
+        ).length;
+
+        // We don't want to display `json` for metadata files since they are always downloaded.
+        return metadataFiles === value.length
+          ? null
+          : { [key]: value.length - metadataFiles };
+      }
+
+      return { [key]: value.length };
+    })
   );
   const displayedTypes = slice(typesCounter, 0, 3);
   const dropdownTypes = slice(typesCounter, 3);
@@ -517,27 +537,15 @@ const DataPanel: React.FC<Props> = ({}) => {
     };
   });
   const resultsObject = useMemo(() => {
-    if (types.length) {
-      return flatMap(
-        Object.entries(resourcesGrouped).map(([key, value]) => {
-          if (types.includes(key)) {
-            return value;
-          }
-          return null;
-        })
-      );
-    }
     return flatMap(resourcesGrouped);
-  }, [types, resourcesGrouped]);
-
+  }, [resourcesGrouped]);
   const resourcesObscured = filter(
     flatMap(resultsObject),
     i => !isEmpty(i) && !isNil(i)
   );
 
-  const totalSize = sum(
-    ...compact(flatMap(resultsObject).map(item => item?.size))
-  );
+  const totalSize = getSizeOfResourcesToDownload(resultsObject, types);
+
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
     ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
     : undefined;
@@ -552,6 +560,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           parsedData,
           resourcesPayload: resourcesObscured as TResourceObscured,
           size: formatBytes(totalSize),
+          selectedTypes: types,
         },
         {
           onSuccess: data => {
@@ -564,13 +573,20 @@ const DataPanel: React.FC<Props> = ({}) => {
             link.parentNode?.removeChild(link);
             if (data.errors.length) {
               notification.warning({
+                duration: null, // Dont close the notification unless the user clicks it.
                 message: (
                   <span>
                     <strong>Archive: </strong>
                     {data.archiveId}
                   </span>
                 ),
-                description: <em>{`Selected data downloaded with errors`}</em>,
+                description: (
+                  <strong>
+                    {data.errors?.length}{' '}
+                    {pluralize('resource', data.errors?.length)} could not be
+                    fetched for download
+                  </strong>
+                ),
               });
             } else {
               notification.success({
@@ -586,13 +602,29 @@ const DataPanel: React.FC<Props> = ({}) => {
           },
           onError: (error: any) => {
             notification.error({
+              duration: null, // Don't remove the notification unless user clicks on it
               message: (
                 <div>
                   <strong>Error when downloading archive</strong>
-                  <div>{error.cause?.['@type']}</div>
+                  <div>{error.cause?.errors['@type']}</div>
                 </div>
               ),
-              description: <em>{error.cause?.reason}</em>,
+              description: (
+                <ul>
+                  {error.cause?.warnings?.length > 0 && (
+                    <li>
+                      <em>
+                        {error.cause.warnings?.length}{' '}
+                        {pluralize('resource', error.cause?.warnings?.length)}{' '}
+                        could not be fetched for download
+                      </em>
+                    </li>
+                  )}
+                  <li>
+                    <em>{error.cause?.errors?.reason}</em>
+                  </li>
+                </ul>
+              ),
             });
           },
         }
@@ -665,7 +697,7 @@ const DataPanel: React.FC<Props> = ({}) => {
             <Table<TDataSource>
               rowKey={record => `dp-${record.key}`}
               columns={columns}
-              dataSource={dataSource}
+              dataSource={resourcesToDownload}
               bordered={false}
               showSorterTooltip={false}
               showHeader={false}
