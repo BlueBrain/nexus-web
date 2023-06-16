@@ -286,10 +286,9 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   });
   const total =
     data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
-  const dataSource: TProjectResponseCommonExtended[] =
-    data && data.pages
-      ? data.pages.map(page => (page as ProjectList)._results).flat()
-      : [];
+  const dataSource: TProjectResponseCommonExtended[] = (data && data.pages
+    ? data.pages.map(page => (page as ProjectList)._results).flat()
+    : []) as TProjectResponseCommonExtended[];
   if (!query.trim().length) {
     totalProjectsRef.current = total;
   }
