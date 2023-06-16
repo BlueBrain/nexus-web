@@ -5,7 +5,12 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { Button, Table, Tag, Tooltip, notification } from 'antd';
+import { Button, Empty, Table, Tag, Tooltip, notification } from 'antd';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  VerticalAlignMiddleOutlined,
+} from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import { isString, isArray, isNil } from 'lodash';
@@ -19,7 +24,7 @@ import {
   DATA_PANEL_STORAGE_EVENT,
 } from '../../organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
-import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
+import { TFilterOptions } from '../../../shared/canvas/MyData/types';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
@@ -79,6 +84,9 @@ type TProps = {
   offset: number;
   size: number;
   total?: number;
+  sort: string[];
+  updateSort(value: string[]): void;
+  locate: boolean;
 };
 export const makeOrgProjectTuple = (text: string) => {
   const parts = text.split('/');
@@ -122,6 +130,36 @@ export const notifyTotalSizeExeeced = () => {
     key: 'data-panel-size-exceeded',
   });
 };
+type TSorterProps = {
+  order?: string;
+  name: string;
+  onSortDescend(): void;
+  onSortAscend(): void;
+};
+
+const Sorter = ({ onSortDescend, onSortAscend, order, name }: TSorterProps) => {
+  if (!order) {
+    return (
+      <VerticalAlignMiddleOutlined
+        style={{ marginLeft: 5, fontSize: 13 }}
+        onClick={onSortDescend}
+      />
+    );
+  }
+  return order === 'asc' ? (
+    <CaretDownOutlined
+      style={{ marginLeft: 5, fontSize: 13 }}
+      name={`${name}-desc`}
+      onClick={onSortDescend}
+    />
+  ) : (
+    <CaretUpOutlined
+      style={{ marginLeft: 5, fontSize: 13 }}
+      name={`${name}-asc`}
+      onClick={onSortAscend}
+    />
+  );
+};
 
 const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
@@ -130,6 +168,9 @@ const MyDataTable: React.FC<TProps> = ({
   size,
   offset,
   total,
+  sort,
+  updateSort,
+  locate,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -192,9 +233,26 @@ const MyDataTable: React.FC<TProps> = ({
       },
       {
         key: 'project',
-        title: 'organization / project',
         dataIndex: '_project',
-        sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_project'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              organization / project
+              <Sorter
+                name="name"
+                order={orderDirection}
+                onSortAscend={() => updateSort(['_project'])}
+                onSortDescend={() => updateSort(['-_project'])}
+              />
+            </div>
+          );
+        },
         render: (text, record) => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
@@ -244,22 +302,58 @@ const MyDataTable: React.FC<TProps> = ({
       },
       {
         key: 'updatedAt',
-        title: 'updated date',
         dataIndex: '_updatedAt',
         width: 140,
         sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_updatedAt'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              updated date
+              <Sorter
+                name="name"
+                order={orderDirection}
+                onSortAscend={() => updateSort(['_updatedAt', '@id'])}
+                onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
+              />
+            </div>
+          );
+        },
         render: text => timeago(new Date(text)),
       },
       {
         key: 'createdAt',
-        title: 'created date',
         dataIndex: '_createdAt',
         width: 140,
         sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_createdAt'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              created date
+              <Sorter
+                name="name"
+                order={orderDirection}
+                onSortAscend={() => updateSort(['_createdAt', '@id'])}
+                onSortDescend={() => updateSort(['-_createdAt', '@id'])}
+              />
+            </div>
+          );
+        },
         render: text => timeago(new Date(text)),
       },
     ],
-    []
+    [sort]
   );
   const dataSource: TMyDataTableRow[] =
     resources?._results?.map(resource => {
@@ -447,6 +541,7 @@ const MyDataTable: React.FC<TProps> = ({
       );
     };
   }, []);
+
   return (
     <Table<TMyDataTableRow>
       sticky={{
@@ -473,6 +568,20 @@ const MyDataTable: React.FC<TProps> = ({
         selectedRowKeys,
         onSelect: onSelectRowChange,
         onSelectAll: onSelectAllChange,
+      }}
+      locale={{
+        emptyText() {
+          return isLoading ? (
+            <></>
+          ) : locate && !dataSource.length ? (
+            <div className="no-resource-with-locate">
+              <strong>No resource with Id or self was found</strong>
+              <em> Please use the filter bar for more options</em>
+            </div>
+          ) : (
+            <Empty />
+          );
+        },
       }}
     />
   );

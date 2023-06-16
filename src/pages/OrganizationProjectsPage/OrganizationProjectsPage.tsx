@@ -200,15 +200,15 @@ const ProjectItem = ({
             <div>Datasets</div>
             <div>{(datasets && formatNumber(datasets)) ?? '0'}</div>
           </div>
-          <div className="statistics_item" />
-          <div className="statistics_item">
-            <div>Created</div>
-            <div>{timeago(createdAt)}</div>
-          </div>
           <div className="statistics_item">
             <div>Last update</div>
             <div>{timeago(updatedAt)}</div>
           </div>
+          <div className="statistics_item">
+            <div>Created</div>
+            <div>{timeago(createdAt)}</div>
+          </div>
+          <div className="statistics_item" />
         </div>
         <div className="redirection">
           <Link to={to}>
