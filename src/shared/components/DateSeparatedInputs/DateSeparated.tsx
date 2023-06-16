@@ -17,6 +17,7 @@ type Props = {
 };
 
 const isValidYearLength = (value: string) => value.length === 4;
+const isValidYearStart = (value: string) => Number(value) > 2014;
 const makeDate = (value?: string) => {
   const newValue =
     !value || !moment(value).isValid()
@@ -65,8 +66,8 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
   const monthError = !!month && Number(month) > 12;
   const yearError =
     !!year &&
-    (Number(year) < 2014 ||
-      Number(year) > new Date().getFullYear() ||
+    (Number(year) > new Date().getFullYear() ||
+      !isValidYearStart(year) ||
       !isValidYearLength(year));
   const allError =
     (!!day &&
@@ -85,6 +86,7 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
       !!day &&
       !!month &&
       !!year &&
+      isValidYearLength(year) &&
       isValidYearLength(year) &&
       moment(`${day}/${month}/${year}`, 'DD/MM/YYYY').isValid()
     ) {
