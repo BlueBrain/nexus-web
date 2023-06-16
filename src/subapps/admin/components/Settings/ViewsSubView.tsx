@@ -3,9 +3,9 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useMutation, useQuery } from 'react-query';
 import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
-import Icon from '@ant-design/icons';
+import { isArray, isString } from 'lodash';
 import { ColumnsType } from 'antd/es/table';
-import { NexusClient, Statistics } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
@@ -13,11 +13,11 @@ import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.less';
 
-type TDataType = {
+type TViewType = {
   key: string;
   id: string;
   name: string;
-  type?: string;
+  type?: string | string[];
   status: string;
   orgLabel: string;
   projectLabel: string;
@@ -36,7 +36,7 @@ const fetchViewsList = async ({
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: TDataType[] = views._results.map(item => {
+    const result: TViewType[] = views._results.map(item => {
       const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
         item._project
       )!;
@@ -46,7 +46,7 @@ const fetchViewsList = async ({
         id: item['@id'],
         key: item['@id'] as string,
         name: (item['@id'] as string).split('/').pop() as string,
-        type: item['@type']?.[0],
+        type: item['@type'],
         status: '100%',
       };
     });
@@ -103,7 +103,7 @@ const restartIndexingAllViews = async ({
   views,
 }: {
   nexus: NexusClient;
-  views: TDataType[];
+  views: TViewType[];
   apiEndpoint: string;
 }) => {
   const { results, errors } = await PromisePool.withConcurrency(4)
@@ -163,7 +163,7 @@ const ViewsSubView = () => {
     }
   );
 
-  const columns: ColumnsType<TDataType> = [
+  const columns: ColumnsType<TViewType> = [
     {
       key: 'name',
       dataIndex: 'name',
@@ -175,7 +175,17 @@ const ViewsSubView = () => {
       dataIndex: 'type',
       title: 'Type',
       align: 'center',
-      render: text => <span>{text}</span>,
+      render: (text, record) => {
+        if (isString(text)) {
+          return <span>{text}</span>;
+        }
+        if (isArray(text)) {
+          return text.map((type, ind) => (
+            <div key={`${record.id}-type-${ind}`}>{type}</div>
+          ));
+        }
+        return null;
+      },
     },
     {
       key: 'status',
@@ -217,7 +227,10 @@ const ViewsSubView = () => {
               path={[`${orgLabel}/${projectLabel}`]}
               noAccessComponent={() => (
                 <Tooltip title="You have no permissions to re-index this view">
-                  <HasNoPermission />
+                  <Button disabled type="link">
+                    <span style={{ marginRight: 5 }}>Re-index</span>
+                    <HasNoPermission />
+                  </Button>
                 </Tooltip>
               )}
             >
@@ -263,8 +276,18 @@ const ViewsSubView = () => {
               permissions={['views/query', 'views/write']}
               path={[`${orgLabel}/${projectLabel}`]}
               noAccessComponent={() => (
-                <Tooltip title="You have no permissions to re-index the views">
-                  <HasNoPermission />
+                <Tooltip
+                  className="row-center"
+                  title="You have no permissions to re-index the views"
+                >
+                  <Button
+                    type="ghost"
+                    disabled
+                    style={{ margin: 0, marginTop: 20 }}
+                  >
+                    <span style={{ marginRight: 10 }}>Re-index All Views</span>
+                    <HasNoPermission />
+                  </Button>
                 </Tooltip>
               )}
             >
@@ -292,7 +315,7 @@ const ViewsSubView = () => {
           </Col>
         </Row>
 
-        <Table<TDataType>
+        <Table<TViewType>
           loading={status === 'loading'}
           className="views-table"
           rowClassName="view-item-row"
