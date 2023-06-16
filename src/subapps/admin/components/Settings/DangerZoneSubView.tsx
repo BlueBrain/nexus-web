@@ -187,7 +187,10 @@ const DangerZoneSubView = ({ project }: Props) => {
           permissions={['projects/write']}
           noAccessComponent={() => (
             <Tooltip title="You have no permissions to deprecate this project">
-              <HasNoPermission style={{ width: 30 }} />
+              <Button disabled danger style={{ margin: 0, marginRight: 10 }}>
+                <span>Deprecate this Project</span>
+                <HasNoPermission />
+              </Button>
             </Tooltip>
           )}
         >
@@ -216,7 +219,10 @@ const DangerZoneSubView = ({ project }: Props) => {
           permissions={['projects/delete']}
           noAccessComponent={() => (
             <Tooltip title="You have no permissions to delete this project">
-              <HasNoPermission style={{ width: 30 }} />
+              <Button disabled danger style={{ margin: 0, marginRight: 10 }}>
+                <span>Delete this Project</span>
+                <HasNoPermission />
+              </Button>
             </Tooltip>
           )}
         >
