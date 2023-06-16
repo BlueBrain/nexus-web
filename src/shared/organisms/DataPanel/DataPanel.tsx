@@ -498,12 +498,25 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   };
 
-  const typesCounter = compact(
-    Object.entries(resourcesGrouped).map(([key, value]) =>
-      isEmpty(key) || isNil(key) || key === 'undefined' || key === ''
-        ? null
-        : { [key]: value.length }
-    )
+  const typesCounter: { [key: string]: number }[] = compact(
+    Object.entries(resourcesGrouped).map(([key, value]) => {
+      if (isEmpty(key) || isNil(key) || key === 'undefined' || key === '') {
+        return null;
+      }
+
+      if (key === 'json') {
+        const metadataFiles = value.filter(
+          v => v?.localStorageType === 'resource' && v['@type'] !== 'File'
+        ).length;
+
+        // We don't want to display `json` for metadata files since they are always downloaded.
+        return metadataFiles === value.length
+          ? null
+          : { [key]: value.length - metadataFiles };
+      }
+
+      return { [key]: value.length };
+    })
   );
   const displayedTypes = slice(typesCounter, 0, 3);
   const dropdownTypes = slice(typesCounter, 3);
