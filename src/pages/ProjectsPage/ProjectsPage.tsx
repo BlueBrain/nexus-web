@@ -104,7 +104,7 @@ const ProjectItem = ({
         <div className="org">
           <Link to={to}>
             <h3>
-              {title}{' '}
+              {title} <span className="organization-tag">{orgLabel}</span>
               {deprected && (
                 <span className="depreacted-tag">
                   <DeprecatedIcon /> deprecated
