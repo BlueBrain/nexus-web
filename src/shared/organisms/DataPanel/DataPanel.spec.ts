@@ -105,7 +105,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
-    mockNexus.Archive.get = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.httpGet = jest.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -139,7 +139,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
-    mockNexus.Archive.get = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.httpGet = jest.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -170,7 +170,7 @@ describe('DataPanel', () => {
     mockNexus.Archive.create = jest
       .fn()
       .mockResolvedValue('Archive create passed');
-    mockNexus.Archive.get = jest.fn().mockResolvedValue(new Blob());
+    mockNexus.httpGet = jest.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
       nexus: mockNexus,
@@ -199,7 +199,7 @@ describe('DataPanel', () => {
     mockNexus.Archive.create = jest
       .fn()
       .mockResolvedValue('Archive create passed');
-    mockNexus.Archive.get = jest.fn().mockResolvedValue(new Blob());
+    mockNexus.httpGet = jest.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
       nexus: mockNexus,
@@ -225,14 +225,15 @@ describe('DataPanel', () => {
     mockNexus.httpGet = jest
       .fn()
       // Out of 4 distributions, 2 were not fetched
-      .mockRejectedValueOnce(new Error('Distribution 1 could not be found'))
-      .mockRejectedValueOnce(new Error('Distribution 2 could not be found'))
-      .mockReturnValue(getMockDistribution('mockfilename'));
+      .mockRejectedValueOnce(new Error('Distribution 1 could not be found')) // Error for 1st distribution
+      .mockRejectedValueOnce(new Error('Distribution 2 could not be found')) // Error for 2nd distribution
+      .mockReturnValueOnce(getMockDistribution('mockfilename')) // Successful response for 3rd distribution
+      .mockReturnValueOnce(getMockDistribution('mockfilename')) // Successful response for 4th distribution
+      .mockResolvedValueOnce(new Blob()); // Successful response for get archive
 
     mockNexus.Archive.create = jest
       .fn()
       .mockResolvedValue('Archive create passed');
-    mockNexus.Archive.get = jest.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
       nexus: mockNexus,
