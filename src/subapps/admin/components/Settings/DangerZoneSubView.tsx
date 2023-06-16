@@ -105,7 +105,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       matchTerm: `${orgLabel}/${projectLabel}`.toLowerCase(),
       title: '',
       description: '',
-      action: undefined,
+      action: 'deprecate',
       handler: () => {},
     }
   );

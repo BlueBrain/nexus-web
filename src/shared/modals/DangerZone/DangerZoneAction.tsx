@@ -6,7 +6,7 @@ export type TDangerZoneActionProps = {
   onClose(): void;
   matchTerm: string;
   handler(values: any): void;
-  action?: 'deprecate' | 'delete';
+  action: 'deprecate' | 'delete';
   title: string;
   description: string;
   status: boolean;
