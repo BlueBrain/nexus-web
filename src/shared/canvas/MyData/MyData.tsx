@@ -11,8 +11,6 @@ import {
 } from '../../molecules/MyDataHeader/MyDataHeader';
 import { MyDataHeader, MyDataTable } from '../../molecules';
 
-import './styles.less';
-
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const [

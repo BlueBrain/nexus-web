@@ -193,6 +193,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
 
   const [searchboxValue, setSearchboxValue] = useState<string>('');
   const [searchboxFocused, setSearchboxFocused] = useState<boolean>(false);
+  const [fetchingRowsForDownlaod, setFetchingRowsForDownload] = useState<
+    boolean
+  >(false);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -465,7 +468,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
           <Table
             bordered
             loading={
-              tableData.dataResult.isLoading || tableData.tableResult.isLoading
+              tableData.dataResult.isLoading ||
+              tableData.tableResult.isLoading ||
+              fetchingRowsForDownlaod
             }
             rowClassName={'data-table-row'}
             title={() => renderTitle(options)}
@@ -487,7 +492,19 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             rowSelection={{
               selectedRowKeys,
               onSelect: tableData.onSelectSingleRow,
-              onSelectAll: tableData.onSelectAll,
+              onSelectAll: async (
+                selected: boolean,
+                selectedRows: StudioTableRow[],
+                changedRows: StudioTableRow[]
+              ) => {
+                setFetchingRowsForDownload(true);
+                await tableData.onSelectAll(
+                  selected,
+                  selectedRows,
+                  changedRows
+                );
+                setFetchingRowsForDownload(false);
+              },
             }}
             rowKey={r => getStudioRowKey(r)}
             data-testid="dashboard-table"
