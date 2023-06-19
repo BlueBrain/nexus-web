@@ -160,6 +160,10 @@ const Filters = ({
     !dateFilterType ||
     !dateField ||
     (dateFilterType === 'range' && (!dateStart || !dateEnd)) ||
+    (dateFilterType === 'range' &&
+      dateStart &&
+      dateEnd &&
+      moment(dateEnd).isBefore(dateStart, 'days')) ||
     (dateFilterType !== 'range' && !singleDate);
 
   const DatePickerContainer = (
@@ -188,13 +192,37 @@ const Filters = ({
             <DateSeparated
               name="dateStart"
               value={dateStart}
-              updateUpperDate={value => updateDate('dateStart', value)}
+              updateUpperDate={value => {
+                if (
+                  dateEnd &&
+                  moment(dateEnd).isValid() &&
+                  moment(dateEnd).isBefore(dateStart, 'days')
+                ) {
+                  return updateCurrentDates({
+                    dateStart: dateEnd,
+                    dateEnd: value,
+                  });
+                }
+                return updateDate('dateStart', value);
+              }}
             />
             <span className="range-born">To</span>
             <DateSeparated
               name="dateStart"
               value={dateEnd}
-              updateUpperDate={value => updateDate('dateEnd', value)}
+              updateUpperDate={value => {
+                if (
+                  dateStart &&
+                  moment(dateStart).isValid() &&
+                  moment(dateStart).isAfter(dateEnd, 'days')
+                ) {
+                  return updateCurrentDates({
+                    dateStart: value,
+                    dateEnd: dateStart,
+                  });
+                }
+                return updateDate('dateEnd', value);
+              }}
             />
           </Fragment>
         ) : (
