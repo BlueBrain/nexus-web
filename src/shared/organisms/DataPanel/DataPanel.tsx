@@ -52,6 +52,7 @@ import {
   FileZipOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
+import * as pluralize from 'pluralize';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
 import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
@@ -62,15 +63,14 @@ import {
   TResourceTableData,
   makeOrgProjectTuple,
 } from '../../molecules/MyDataTable/MyDataTable';
-
-import './styles.less';
 import {
   distributionMatchesTypes,
   getSizeOfResourcesToDownload,
   pathForChildDistributions,
   pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
-import * as pluralize from 'pluralize';
+import { getCorrectFileExtension } from '../../../utils/contentTypes';
+import './styles.less';
 
 type Props = {
   authenticated?: boolean;
@@ -460,8 +460,13 @@ const DataPanel: React.FC<Props> = ({}) => {
             Boolean(resource.distribution?.contentSize)
               ? 'File'
               : 'Resource';
-          const contentType =
-            resource.distribution?.label?.split('.')?.pop() ?? '';
+          const contentType = getCorrectFileExtension(
+            resource.distribution?.label ?? '',
+            isArray(resource.distribution?.encodingFormat)
+              ? resource.distribution?.encodingFormat[0] ?? ''
+              : resource.distribution?.encodingFormat ?? ''
+          );
+
           return {
             size,
             contentType: contentType?.toLowerCase(),
