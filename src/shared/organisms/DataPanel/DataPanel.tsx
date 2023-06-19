@@ -620,9 +620,11 @@ const DataPanel: React.FC<Props> = ({}) => {
                       </em>
                     </li>
                   )}
-                  <li>
-                    <em>{error.cause?.errors?.reason}</em>
-                  </li>
+                  {error.cause?.errors?.reason && (
+                    <li>
+                      <em>{error.cause?.errors?.reason}</em>
+                    </li>
+                  )}
                 </ul>
               ),
             });
