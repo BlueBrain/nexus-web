@@ -368,6 +368,7 @@ const DataPanel: React.FC<Props> = ({}) => {
   ];
 
   const handleClearSelectedItems = () => {
+    setTypes([]);
     updateDataPanel({
       resources: { selectedRowKeys: [], selectedRows: [] },
     });
