@@ -463,8 +463,8 @@ const DataPanel: React.FC<Props> = ({}) => {
           const contentType = getCorrectFileExtension(
             resource.distribution?.label ?? '',
             isArray(resource.distribution?.encodingFormat)
-              ? resource.distribution?.encodingFormat[0] ?? ''
-              : resource.distribution?.encodingFormat ?? ''
+              ? resource.distribution?.encodingFormat[0]
+              : resource.distribution?.encodingFormat
           );
 
           return {
