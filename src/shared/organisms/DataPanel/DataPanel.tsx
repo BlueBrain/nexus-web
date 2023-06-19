@@ -383,10 +383,10 @@ const DataPanel: React.FC<Props> = ({}) => {
   };
   const handleRemoveItemFromDataPanel = (record: TDataSource) => {
     const selectedRowKeys = resources.selectedRowKeys.filter(
-      t => t !== record.key
+      t => t !== record._self
     );
     const selectedRows = resources.selectedRows.filter(
-      t => t.key !== record.key
+      t => t._self !== record._self
     );
     localStorage.setItem(
       DATA_PANEL_STORAGE,
