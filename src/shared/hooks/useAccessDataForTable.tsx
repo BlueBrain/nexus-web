@@ -5,13 +5,23 @@ import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import { isArray, isNil, isString, pick, sumBy, toNumber } from 'lodash';
+import {
+  isArray,
+  isNil,
+  isString,
+  pick,
+  sumBy,
+  toNumber,
+  uniq,
+  uniqBy,
+} from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import {
   StudioTableRow,
   TableError,
-  getStudioRowKey,
+  getStudioLocalStorageKey,
+  getStudioTableKey,
 } from '../../shared/containers/DataTableContainer';
 import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
@@ -424,7 +434,6 @@ export const fetchResourceForDownload = async (
     if (receivedExpandedId) {
       return compactResource;
     }
-
     expandedResource = await nexus.httpGet({
       path: `${selfUrl}?format=expanded`,
       headers: { Accept: 'application/json' },
@@ -492,14 +501,14 @@ export const useAccessDataForTable = (
         })
         .process(async row => {
           const fetchedRow = await fetchResourceForDownload(
-            getStudioRowKey(row),
+            getStudioLocalStorageKey(row),
             nexus
           );
           const localStorageResources = toLocalStorageResources(
             fetchedRow,
             'studios'
           );
-          rowKeysForLS.push(getStudioRowKey(row));
+          rowKeysForLS.push(getStudioLocalStorageKey(row));
 
           return localStorageResources;
         });
@@ -507,7 +516,9 @@ export const useAccessDataForTable = (
       rowsForLS = [...rowsForLS, ...results.flat()];
       saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     } else {
-      const rowKeysToRemove = changedRows.map(row => getStudioRowKey(row));
+      const rowKeysToRemove = changedRows.map(row =>
+        getStudioLocalStorageKey(row)
+      );
 
       rowKeysForLS = rowKeysForLS.filter(
         lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
@@ -522,8 +533,7 @@ export const useAccessDataForTable = (
     record: StudioTableRow,
     selected: boolean
   ) => {
-    const recordKey = getStudioRowKey(record);
-
+    const recordKey = getStudioLocalStorageKey(record);
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -551,8 +561,10 @@ export const useAccessDataForTable = (
     rowKeys: React.Key[],
     rows: TDataSource[]
   ) => {
+    const uniqueRows = uniqBy(rows, 'key');
+    const uniqueKeys = uniq(rowKeys);
     const currentLocalStorageSize = getLocalStorageSize();
-    const newLocalStorageSize = getTotalContentSize(rows);
+    const newLocalStorageSize = getTotalContentSize(uniqueRows);
     if (
       newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -563,8 +575,8 @@ export const useAccessDataForTable = (
     localStorage.setItem(
       DATA_PANEL_STORAGE,
       JSON.stringify({
-        selectedRowKeys: rowKeys,
-        selectedRows: rows,
+        selectedRowKeys: uniqueKeys,
+        selectedRows: uniqueRows,
       })
     );
 
@@ -572,8 +584,8 @@ export const useAccessDataForTable = (
       new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
         detail: {
           datapanel: {
-            selectedRowKeys: rowKeys,
-            selectedRows: rows,
+            selectedRowKeys: uniqueKeys,
+            selectedRows: uniqueRows,
           },
         },
       })
@@ -614,6 +626,10 @@ export const useAccessDataForTable = (
           basePath
         );
 
+        result.items.forEach(
+          (i: StudioTableRow, index: number) =>
+            (i.tableKey = getStudioTableKey(i, index))
+        );
         return result;
       }
       return {};
