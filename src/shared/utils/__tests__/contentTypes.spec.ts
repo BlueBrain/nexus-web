@@ -1,6 +1,6 @@
 import {
   fileExtensionFromResourceEncoding,
-  getCorrectFileExtension,
+  getNormalizedFileExtension,
 } from '../../../utils/contentTypes';
 
 describe('fileExtensionFromResourceEncoding', () => {
@@ -28,7 +28,7 @@ describe('getCorrectFileExtension', () => {
       filename: 'first-image.png',
       encodingFormat: 'image/jpeg',
     };
-    const extension = getCorrectFileExtension(
+    const extension = getNormalizedFileExtension(
       item.filename,
       item.encodingFormat
     );
@@ -40,7 +40,7 @@ describe('getCorrectFileExtension', () => {
       filename: 'first-image',
       encodingFormat: 'image/jpeg',
     };
-    const extension = getCorrectFileExtension(
+    const extension = getNormalizedFileExtension(
       item.filename,
       item.encodingFormat
     );
