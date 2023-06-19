@@ -65,15 +65,16 @@ export const fileExtensionFromResourceEncoding = (encodingType?: string) => {
 };
 
 export const getCorrectFileExtension = (
-  filename: string,
-  encodingFormat: string
+  filename?: string,
+  encodingFormat?: string
 ) => {
-  const lastDotIndex = filename.lastIndexOf('.');
-  if (lastDotIndex !== -1 && lastDotIndex !== 0) {
-    const extension = filename.slice(lastDotIndex + 1);
-    return extension;
-  } else if (encodingFormat) {
+  if (filename) {
+    const lastDotIndex = filename.lastIndexOf('.');
+    if (lastDotIndex !== -1 && lastDotIndex !== 0) {
+      const extension = filename.slice(lastDotIndex + 1);
+      return extension;
+    }
     return fileExtensionFromResourceEncoding(encodingFormat);
   }
-  return '';
+  return fileExtensionFromResourceEncoding(encodingFormat) ?? '';
 };
