@@ -467,7 +467,6 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? resource.distribution?.encodingFormat[0]
               : resource.distribution?.encodingFormat
           );
-
           return {
             size,
             contentType: contentType?.toLowerCase(),
@@ -491,7 +490,6 @@ const DataPanel: React.FC<Props> = ({}) => {
 
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
-
   const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
     i => i !== 'undefined'
   );
@@ -512,7 +510,10 @@ const DataPanel: React.FC<Props> = ({}) => {
 
       if (key === 'json') {
         const metadataFiles = value.filter(
-          v => v?.localStorageType === 'resource' && v['@type'] !== 'File'
+          v =>
+            v?.localStorageType === 'resource' &&
+            v['@type'] !== 'File' &&
+            v['@type'].includes('File')
         ).length;
 
         // We don't want to display `json` for metadata files since they are always downloaded.
