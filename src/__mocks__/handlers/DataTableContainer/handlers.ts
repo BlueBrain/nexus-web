@@ -263,3 +263,62 @@ export const sparqlViewSingleResult = rest.post(
     return res(ctx.status(200), ctx.json(mockResponse));
   }
 );
+
+export const getMockStudioResource = (givenName: string, self: string) => ({
+  familyName: {
+    type: 'literal',
+    value: 'Archer',
+  },
+  givenName: {
+    type: 'literal',
+    value: givenName,
+  },
+  id: {
+    type: 'uri',
+    value: self,
+  },
+  self: {
+    type: 'uri',
+    value: self,
+  },
+});
+
+export const sparqlViewResultHandler = (
+  studioRows: ReturnType<typeof getMockStudioResource>[]
+) => {
+  return rest.post(
+    deltaPath('/views/bbp/agents/graph/sparql'),
+    (req, res, ctx) => {
+      const mockResponse = {
+        head: {
+          vars: ['self', 'givenName', 'familyName', 'id'],
+        },
+        results: {
+          bindings: [...studioRows],
+        },
+      };
+
+      return res(ctx.status(200), ctx.json(mockResponse));
+    }
+  );
+};
+
+export const fetchResourceForDownload = rest.get(
+  deltaPath(
+    `/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g`
+  ),
+  (req, res, ctx) => {
+    const self = req.url.pathname.slice(req.url.pathname.lastIndexOf('/') + 1);
+    const mockResponse = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        'https://bluebrainnexus.io/workflowStep/table-context',
+      ],
+      '@id': `https://bbp.epfl.ch/neurosciencegraph/data/${self}`,
+      '@type': 'Resource',
+      _self: `https://localhost:3000/resources/bbp/agents/_/${self}`,
+    };
+
+    return res(ctx.status(200), ctx.json(mockResponse));
+  }
+);

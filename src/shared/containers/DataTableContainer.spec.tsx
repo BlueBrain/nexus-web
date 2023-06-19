@@ -19,6 +19,9 @@ import {
   ORIGINAL_6_SORTED_5,
   dashboardResource,
   dashboardVocabulary,
+  fetchResourceForDownload,
+  getMockStudioResource,
+  sparqlViewResultHandler,
   sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -28,6 +31,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import configureStore from '../../shared/store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
+import { notification } from 'antd';
 
 describe('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
@@ -42,7 +46,8 @@ describe('DataTableContainer.spec.tsx', () => {
     server = setupServer(
       dashboardResource,
       dashboardVocabulary,
-      sparqlViewSingleResult
+      sparqlViewSingleResult,
+      fetchResourceForDownload
     );
 
     server.listen();
@@ -91,6 +96,7 @@ describe('DataTableContainer.spec.tsx', () => {
   afterEach(() => {
     cleanup();
     queryClient.clear();
+    localStorage.clear();
   });
 
   afterAll(() => {
@@ -252,6 +258,166 @@ describe('DataTableContainer.spec.tsx', () => {
     expect(errorMsg).toBeInTheDocument();
 
     server.resetHandlers();
+  });
+});
+
+describe('DataTableContainer - Selection', () => {
+  const queryClient = new QueryClient();
+  let dataTableContainer: JSX.Element;
+  let container: HTMLElement;
+  let rerender: (ui: React.ReactElement) => void;
+  let user: UserEvent;
+  let server: ReturnType<typeof setupServer>;
+  let component: RenderResult;
+
+  beforeAll(() => {
+    server = setupServer(
+      dashboardResource,
+      dashboardVocabulary,
+      fetchResourceForDownload
+    );
+
+    server.listen();
+  });
+
+  beforeEach(async () => {
+    const history = createMemoryHistory({});
+
+    const nexus = createNexusClient({
+      fetch,
+      uri: deltaPath(),
+    });
+    const store = configureStore(history, { nexus }, {});
+    dataTableContainer = (
+      <Provider store={store}>
+        <Router history={history}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <DataTableContainer
+                orgLabel="bbp"
+                projectLabel="agents"
+                tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
+                options={{
+                  disableAddFromCart: true,
+                  disableDelete: true,
+                  disableEdit: true,
+                }}
+              />
+            </NexusProvider>
+          </QueryClientProvider>
+        </Router>
+      </Provider>
+    );
+
+    component = render(dataTableContainer);
+
+    container = component.container;
+    rerender = component.rerender;
+    user = userEvent.setup();
+  });
+
+  // reset any request handlers that are declared as a part of our tests
+  // (i.e. for testing one-time error scenarios)
+  afterEach(() => {
+    cleanup();
+    queryClient.clear();
+    localStorage.clear();
+  });
+
+  afterAll(() => {
+    server.resetHandlers();
+    server.close();
+  });
+
+  const visibleTableRows = () => {
+    return container.querySelectorAll('table tbody tr.data-table-row');
+  };
+
+  const waitForTableRows = async (expectedRowsCount: number) => {
+    return await waitFor(() => {
+      const rows = visibleTableRows();
+      expect(rows.length).toEqual(expectedRowsCount);
+      return rows;
+    });
+  };
+
+  const getSelectCheckboxForRow = async (index: number) => {
+    return await waitFor(() => {
+      const rows = visibleTableRows();
+      const checkbox = rows[index].querySelector('input[type="checkbox"');
+      return checkbox;
+    });
+  };
+
+  it('selects other rows with same self when user selects a row', async () => {
+    localStorage.clear();
+
+    const repeatedSelf =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
+
+    const resourcesWithRepeatedSelf = [
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Lana', 'not-a-repeated-self'),
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Malory', 'another-different-self'),
+      getMockStudioResource('Malory', 'totally-different-self'),
+    ];
+
+    // Rerender the component, this time using a handler that returns rows with same self.
+    server.use(sparqlViewResultHandler(resourcesWithRepeatedSelf));
+    component.unmount();
+    rerender(dataTableContainer);
+    await waitForTableRows(6);
+    const secondRowCheckbox = await getSelectCheckboxForRow(2);
+    await user.click(secondRowCheckbox!);
+
+    let checkedBoxesCount = 0;
+    for await (const [
+      index,
+      studioRow,
+    ] of resourcesWithRepeatedSelf.entries()) {
+      const rowCheckbox = await getSelectCheckboxForRow(index);
+      if (studioRow.self.value === repeatedSelf) {
+        expect(rowCheckbox as HTMLInputElement).toBeChecked();
+        checkedBoxesCount = checkedBoxesCount + 1;
+      } else {
+        expect(rowCheckbox as HTMLInputElement).not.toBeChecked();
+      }
+    }
+
+    expect(checkedBoxesCount).toEqual(3);
+  });
+
+  it('shows info to user if selecting one row automatically selected other rows', async () => {
+    localStorage.clear();
+
+    const repeatedSelf =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
+
+    const resourcesWithRepeatedSelf = [
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Lana', 'not-a-repeated-self'),
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Malory', repeatedSelf),
+      getMockStudioResource('Malory', 'another-different-self'),
+      getMockStudioResource('Malory', 'totally-different-self'),
+    ];
+    const spy = jest.spyOn(notification, 'info');
+
+    server.use(sparqlViewResultHandler(resourcesWithRepeatedSelf));
+    component.unmount();
+    rerender(dataTableContainer);
+    await waitForTableRows(6);
+
+    const secondRowCheckbox = await getSelectCheckboxForRow(2);
+    expect(secondRowCheckbox).toBeInTheDocument();
+
+    await user.click(secondRowCheckbox!);
+    expect(spy).toHaveBeenCalledWith({
+      duration: 5,
+      message: `2 other resources with same metadata have also been automatically selected for download.`,
+    });
   });
 });
 
