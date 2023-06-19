@@ -64,17 +64,14 @@ export const fileExtensionFromResourceEncoding = (encodingType?: string) => {
   return extension;
 };
 
-export const getCorrectFileExtension = (
-  filename?: string,
+export const getNormalizedFileExtension = (
+  filename: string,
   encodingFormat?: string
 ) => {
-  if (filename) {
-    const lastDotIndex = filename.lastIndexOf('.');
-    if (lastDotIndex !== -1 && lastDotIndex !== 0) {
-      const extension = filename.slice(lastDotIndex + 1);
-      return extension;
-    }
-    return fileExtensionFromResourceEncoding(encodingFormat);
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex !== -1 && lastDotIndex !== 0) {
+    const extension = filename.slice(lastDotIndex + 1);
+    return extension;
   }
   return fileExtensionFromResourceEncoding(encodingFormat) ?? '';
 };
