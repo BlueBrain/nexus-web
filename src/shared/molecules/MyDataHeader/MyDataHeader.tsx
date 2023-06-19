@@ -160,6 +160,10 @@ const Filters = ({
     !dateFilterType ||
     !dateField ||
     (dateFilterType === 'range' && (!dateStart || !dateEnd)) ||
+    (dateFilterType === 'range' &&
+      dateStart &&
+      dateEnd &&
+      moment(dateEnd).isBefore(dateStart, 'days')) ||
     (dateFilterType !== 'range' && !singleDate);
 
   const DatePickerContainer = (
