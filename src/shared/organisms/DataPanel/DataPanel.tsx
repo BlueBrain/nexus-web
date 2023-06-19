@@ -69,7 +69,7 @@ import {
   pathForChildDistributions,
   pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
-import { getCorrectFileExtension } from '../../../utils/contentTypes';
+import { getNormalizedFileExtension } from '../../../utils/contentTypes';
 import './styles.less';
 
 type Props = {
@@ -460,8 +460,8 @@ const DataPanel: React.FC<Props> = ({}) => {
             Boolean(resource.distribution?.contentSize)
               ? 'File'
               : 'Resource';
-          const contentType = getCorrectFileExtension(
-            resource.distribution?.label ?? '',
+          const contentType = getNormalizedFileExtension(
+            resource.distribution.label,
             isArray(resource.distribution?.encodingFormat)
               ? resource.distribution?.encodingFormat[0]
               : resource.distribution?.encodingFormat

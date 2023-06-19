@@ -70,7 +70,7 @@ export type TDataSource = {
   resource?: any; // TODO: Remove
   localStorageType?: 'resource' | 'distribution';
   distributionItemsLength?: number;
-  distribution?: {
+  distribution: {
     contentSize: number;
     encodingFormat: string | string[];
     label: string;
