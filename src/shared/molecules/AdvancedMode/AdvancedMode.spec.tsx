@@ -1,11 +1,10 @@
 import '@testing-library/jest-dom'
 import { Provider } from 'react-redux';
 import { act } from 'react-dom/test-utils';
-import { Router,  } from 'react-router-dom';
-import { History } from 'history';
+import { Router, } from 'react-router-dom';
 import { Store } from 'redux';
 
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory, History } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import AdvancedModeToggle from './AdvancedMode';
@@ -18,7 +17,10 @@ import {
 } from '../../../utils/testUtil';
 
 describe('AdvancedModeToggle', () => {
-  let history: History<unknown>, nexus, store: Store;
+  let history: History<unknown>;
+  let store: Store;
+  let nexus;
+
   beforeEach(() => {
     history = createBrowserHistory({ basename: '/' });
     nexus = createNexusClient({
@@ -28,12 +30,6 @@ describe('AdvancedModeToggle', () => {
     store = configureStore(history, { nexus }, {});
   })
   it('should toggle advanced mode be in the', async () => {
-    history = createBrowserHistory({ basename: '/' });
-    nexus = createNexusClient({
-      fetch,
-      uri: 'https://localhost:3000',
-    });
-    const store = configureStore(history, { nexus }, {});
     await act(async () => {
       await render(
         <Provider store={store}>

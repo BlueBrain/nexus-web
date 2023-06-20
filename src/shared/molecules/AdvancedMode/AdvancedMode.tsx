@@ -2,8 +2,7 @@
 import * as React from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { match as pmatch } from 'ts-pattern'
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Switch } from 'antd';
 import { RootState } from '../../store/reducers';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
@@ -14,7 +13,7 @@ export const advancedModeBlackList = [
     '/studio',
     '/data-explorer'
 ]
-export default function AdvancedModeToggle() {
+const AdvancedModeToggle = () => {
     const location = useLocation();
     const history = useHistory();
     const dispatch = useDispatch();
@@ -61,3 +60,5 @@ export default function AdvancedModeToggle() {
             () => <></>
         );
 }
+
+export default AdvancedModeToggle;
