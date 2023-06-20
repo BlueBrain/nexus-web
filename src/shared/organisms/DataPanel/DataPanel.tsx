@@ -512,8 +512,7 @@ const DataPanel: React.FC<Props> = ({}) => {
         const metadataFiles = value.filter(
           v =>
             v?.localStorageType === 'resource' &&
-            v['@type'] !== 'File' &&
-            v['@type'].includes('File')
+            (v['@type'] !== 'File' || v['@type'].includes('File'))
         ).length;
 
         // We don't want to display `json` for metadata files since they are always downloaded.
