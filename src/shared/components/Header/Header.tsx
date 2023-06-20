@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { Menu, Dropdown, MenuItemProps } from 'antd';
@@ -18,6 +18,7 @@ import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import { RootState } from '../../store/reducers';
 import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
+import { AdvancedModeToggle } from '../../molecules';
 import useNotification from '../../hooks/useNotification';
 import './Header.less';
 
@@ -157,6 +158,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       </div>
       {token ? (
         <div className="menu-block">
+          {name && <AdvancedModeToggle />}
           {name && showCreationPanel && (
             <div
               role="button"
