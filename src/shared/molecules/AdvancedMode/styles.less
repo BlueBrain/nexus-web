@@ -1,0 +1,35 @@
+@import '../../lib.less';
+
+
+.advanced-mode-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 15px;
+    .ant-switch {
+        background-color: white !important;
+        margin-right: 10px;
+    }
+
+    .ant-switch-handle::before {
+        background-color: @fusion-menu-color !important;
+    }
+    .advanced,
+    .beta {
+        user-select: none;
+        line-height: 130%;
+        letter-spacing: .01em;
+    }
+    .advanced {
+        color: white;
+        white-space: nowrap;
+        margin-right: 4px;
+        font-weight: 400;
+    }
+
+    .beta{
+        color: @fusion-global-red-1;
+        font-weight: 600;
+    }
+}
