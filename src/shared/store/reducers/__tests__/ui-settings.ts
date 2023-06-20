@@ -24,6 +24,7 @@ describe('UISettings Reducer', () => {
         orgsListPageSize: 50,
       },
       currentResourceView: null,
+      isAdvancedModeEnabled: false,
     });
   });
 });
