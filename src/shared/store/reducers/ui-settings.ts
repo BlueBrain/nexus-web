@@ -14,12 +14,14 @@ export const DEFAULT_UI_SETTINGS = {
     linksListPageSize: 10,
   },
   currentResourceView: null,
+  isAdvancedModeEnabled: false,
 };
 
 export interface UISettingsState {
   openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
   currentResourceView: Resource | null;
+  isAdvancedModeEnabled: boolean;
 }
 
 export default function uiSettingsReducer(
@@ -45,6 +47,12 @@ export default function uiSettingsReducer(
       return {
         ...state,
         currentResourceView: action.payload,
+      };
+    }
+    case UISettingsActionTypes.ENABLE_ADVANCED_MODE: {
+      return {
+        ...state,
+        isAdvancedModeEnabled: action.payload ?? !state.isAdvancedModeEnabled,
       };
     }
     default:
