@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { Key, useEffect, useReducer, useState } from 'react';
 import {
   Table,
   Col,
@@ -12,6 +12,7 @@ import {
   Spin,
   Modal,
   Popover,
+  notification as antnotifcation,
 } from 'antd';
 import {
   DownloadOutlined,
@@ -113,10 +114,17 @@ export interface StudioTableRow {
   key: string; // index in table;
   _self?: string;
   '@id'?: string;
+  tableKey: string;
 }
 
-export const getStudioRowKey = (row: StudioTableRow) =>
+export const getStudioLocalStorageKey = (row: StudioTableRow) =>
   row.self?.value ?? row.id ?? row['@id'];
+
+export const getStudioTableKey = (row: StudioTableRow, index: number) =>
+  `${getStudioLocalStorageKey(row)}-index${index}`;
+
+export const tableKeyToLocalStorageKey = (localStorageKey?: string) =>
+  localStorageKey?.replace(/-index[0-9]*/, '');
 
 const { Title } = Typography;
 
@@ -453,6 +461,19 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
   };
 
+  const getSelectedRowKeys = (
+    localStorageKeys: Key[],
+    allRows?: StudioTableRow[]
+  ) => {
+    return allRows
+      ?.filter(tRow => {
+        return localStorageKeys.includes(
+          tableKeyToLocalStorageKey(tRow.tableKey!) ?? ''
+        );
+      })
+      .map(row => row.tableKey!);
+  };
+
   return (
     <div className="studio-table-container">
       {/* Error when the table resource itself failed to fetch */}
@@ -490,23 +511,77 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               showLessItems: true,
             }}
             rowSelection={{
-              selectedRowKeys,
-              onSelect: tableData.onSelectSingleRow,
+              selectedRowKeys: getSelectedRowKeys(
+                selectedRowKeys,
+                tableData.dataResult.data?.items
+              ),
+              onSelect: async (record: StudioTableRow, selected: boolean) => {
+                const selectedStorageKey = getStudioLocalStorageKey(record);
+                await tableData.onSelectSingleRow(record, selected);
+
+                // If there are studio rows with self same as the self of `record`, then those rows are automatically "selected".
+                // Calculate the number of such rows and notify the user.
+                const additionalSelectedRows: number = tableData.dataResult?.data?.items?.filter(
+                  (item: StudioTableRow) =>
+                    getStudioLocalStorageKey(item) === selectedStorageKey
+                ).length;
+                if (additionalSelectedRows > 1) {
+                  antnotifcation.info({
+                    duration: 5,
+                    message: `${additionalSelectedRows -
+                      1} other resources with same metadata have also been automatically ${
+                      selected ? 'selected' : 'unselected'
+                    } for download.`,
+                  });
+                }
+              },
               onSelectAll: async (
                 selected: boolean,
                 selectedRows: StudioTableRow[],
                 changedRows: StudioTableRow[]
               ) => {
                 setFetchingRowsForDownload(true);
+
                 await tableData.onSelectAll(
                   selected,
                   selectedRows,
                   changedRows
                 );
+
+                // If there are studio rows with self same as the self of `changedRows`, then those rows are automatically "selected".
+                // Calculate the number of such rows and notify the user.
+                const uniqueKeysSelected = new Set<string>();
+                const selectedTableKeys = changedRows.map(r => r.tableKey);
+                let additionalSelectedRows = 0;
+
+                changedRows.forEach(row => {
+                  const localStorageKey = getStudioLocalStorageKey(row);
+
+                  if (!uniqueKeysSelected.has(localStorageKey)) {
+                    uniqueKeysSelected.add(localStorageKey);
+
+                    const matchingRows = tableData.dataResult?.data?.items.filter(
+                      (item: StudioTableRow) =>
+                        !selectedTableKeys.includes(item.tableKey) && // keys that were selected deliberately by the user should not be counted.
+                        getStudioLocalStorageKey(item) === localStorageKey
+                    ).length;
+
+                    additionalSelectedRows += matchingRows;
+                  }
+                });
+                if (additionalSelectedRows > 0) {
+                  antnotifcation.info({
+                    duration: 5,
+                    message: `${additionalSelectedRows} other resources with same metadata have also been automatically ${
+                      selected ? 'selected' : 'unselected'
+                    } for download.`,
+                  });
+                }
+
                 setFetchingRowsForDownload(false);
               },
             }}
-            rowKey={r => getStudioRowKey(r)}
+            rowKey={r => r.tableKey!}
             data-testid="dashboard-table"
             onChange={(page, fileter, sorter, extra) => {
               setDisplayedRows(extra.currentDataSource?.length ?? 0);
