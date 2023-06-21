@@ -14,12 +14,28 @@ export const DEFAULT_UI_SETTINGS = {
     linksListPageSize: 10,
   },
   currentResourceView: null,
+  urlEditorPopover: {
+    top: 0,
+    left: 0,
+    open: false,
+    urls: [],
+  },
 };
 
+type TEditorURL = {
+  url: string;
+  project: string;
+};
 export interface UISettingsState {
   openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
   currentResourceView: Resource | null;
+  urlEditorPopover: {
+    top: number;
+    left: number;
+    open: boolean;
+    urls: string | TEditorURL[];
+  };
 }
 
 export default function uiSettingsReducer(
@@ -45,6 +61,18 @@ export default function uiSettingsReducer(
       return {
         ...state,
         currentResourceView: action.payload,
+      };
+    }
+    case UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER: {
+      return {
+        ...state,
+        urlEditorPopover: {
+          ...state.urlEditorPopover,
+          top: action.payload.top ?? state.urlEditorPopover.top,
+          left: action.payload.left ?? state.urlEditorPopover.left,
+          open: action.payload.open ?? state.urlEditorPopover.open,
+          urls: action.payload.urls ?? state.urlEditorPopover.urls,
+        },
       };
     }
     default:
