@@ -12,7 +12,7 @@ import {
   StudioTableRow,
   TableError,
   getStudioRowKey,
-} from '../../shared/containers/DataTableContainer';
+} from '../containers/DataTableContainer';
 import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
