@@ -455,7 +455,7 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? sum(...resource.distribution.contentSize)
               : resource.distribution.contentSize
             : 0;
-          console.log('@@resource', resource);
+
           const type =
             resource.localStorageType === 'distribution' ||
             resource.type === 'File' ||
