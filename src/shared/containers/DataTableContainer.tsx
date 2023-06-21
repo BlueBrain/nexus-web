@@ -22,21 +22,20 @@ import {
 } from '@ant-design/icons';
 
 import '../styles/data-table.less';
-
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
 import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
-import { ErrorComponent } from '../../shared/components/ErrorComponent';
+import { ErrorComponent } from '../components/ErrorComponent';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
-} from '../../shared/organisms/DataPanel/DataPanel';
-import { TResourceTableData } from '../../shared/molecules/MyDataTable/MyDataTable';
+} from '../organisms/DataPanel/DataPanel';
+import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
 
 export type TableColumn = {
   '@type': string;

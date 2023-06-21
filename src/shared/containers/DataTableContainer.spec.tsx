@@ -25,7 +25,7 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import configureStore from '../../shared/store';
+import configureStore from '../store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
 
