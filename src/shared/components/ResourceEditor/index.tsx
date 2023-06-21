@@ -5,12 +5,15 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
+import { useDispatch } from 'react-redux';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import codemiror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
+import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import isValidUrl from '../../../utils/validUrl';
 
 import './ResourceEditor.less';
 
@@ -27,6 +30,9 @@ export interface ResourceEditorProps {
   showExpanded?: boolean;
   showMetadataToggle?: boolean;
 }
+type TToken = {
+  string: string;
+};
 
 const switchMarginRight = { marginRight: 5 };
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
@@ -50,7 +56,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
-
+  const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -84,6 +90,38 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     onMetadataChange?.(checked);
   };
+  const onLinkClick = (_: any, ev: MouseEvent) => {
+    const x = ev.pageX;
+    const y = ev.pageY;
+    const coords = { left: x, top: y };
+    const editorPosition = codeMirorRef.current?.coordsChar(coords);
+    const token = editorPosition
+      ? codeMirorRef.current?.getTokenAt(editorPosition)
+      : '';
+    const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
+    if (isValidUrl(url)) {
+      console.log('🎉 found one');
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+        payload: {
+          left: x - 10,
+          top: y - 55,
+          open: true,
+          link: url,
+        },
+      });
+    } else {
+      dispatch({
+        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+        payload: {
+          left: 0,
+          top: 0,
+          open: false,
+          link: '',
+        },
+      });
+    }
+  };
   const renderCodeMirror = (value: string) => {
     return (
       <Spin spinning={busy}>
@@ -110,6 +148,17 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           editorDidMount={editor => {
             codeMirorRef.current = editor;
           }}
+          onScroll={e => {
+            const cursor = e.cursorCoords();
+            dispatch({
+              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+              payload: {
+                left: cursor.left - 10,
+                top: cursor.top - 55,
+              },
+            });
+          }}
+          onMouseDown={onLinkClick}
         />
       </Spin>
     );
