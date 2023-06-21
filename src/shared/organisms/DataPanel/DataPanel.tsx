@@ -455,10 +455,11 @@ const DataPanel: React.FC<Props> = ({}) => {
               ? sum(...resource.distribution.contentSize)
               : resource.distribution.contentSize
             : 0;
-
+          console.log('@@resource', resource);
           const type =
-            Boolean(resource.distribution) &&
-            Boolean(resource.distribution?.contentSize)
+            resource.localStorageType === 'distribution' ||
+            resource.type === 'File' ||
+            resource.type?.includes('File')
               ? 'File'
               : 'Resource';
           const contentType = getNormalizedFileExtension(
@@ -509,12 +510,8 @@ const DataPanel: React.FC<Props> = ({}) => {
       }
 
       if (key === 'json') {
-        const metadataFiles = value.filter(
-          v =>
-            v?.localStorageType === 'resource' &&
-            (v['@type'] !== 'File' || v['@type'].includes('File'))
-        ).length;
-
+        const metadataFiles = value.filter(v => v?.['@type'] === 'Resource')
+          .length;
         // We don't want to display `json` for metadata files since they are always downloaded.
         return metadataFiles === value.length
           ? null
