@@ -2,12 +2,7 @@ import { DataExplorer } from '../../subapps/dataExplorer/DataExplorer';
 
 const DataExplorerPage = () => {
   return (
-    <div
-      className="view-container"
-      style={{
-        padding: '0 1em',
-      }}
-    >
+    <div className={'view-container data-explorer-container'}>
       <DataExplorer />
     </div>
   );

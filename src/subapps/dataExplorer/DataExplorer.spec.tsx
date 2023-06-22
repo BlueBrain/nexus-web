@@ -7,16 +7,25 @@ import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   dataExplorerPageHandler,
   defaultMockResult,
+  filterByProjectHandler,
   getMockResource,
+  getProjectHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { render, screen, waitFor } from '../../utils/testUtil';
 import { DataExplorer } from './DataExplorer';
+import { AllProjects } from './ProjectSelector';
+import { getColumnTitle } from './DataExplorerTable';
 
 describe('DataExplorer', () => {
-  const server = setupServer(dataExplorerPageHandler(defaultMockResult));
+  const server = setupServer(
+    dataExplorerPageHandler(defaultMockResult),
+    filterByProjectHandler(defaultMockResult),
+    getProjectHandler()
+  );
+
   let container: HTMLElement;
   let user: UserEvent;
   let component: RenderResult;
@@ -61,7 +70,7 @@ describe('DataExplorer', () => {
   };
 
   const expectColumHeaderToExist = async (name: string) => {
-    const nameReg = new RegExp(`^${name}`, 'i');
+    const nameReg = new RegExp(getColumnTitle(name), 'i');
     const header = await screen.getByText(nameReg, {
       selector: 'th',
       exact: false,
@@ -92,12 +101,52 @@ describe('DataExplorer', () => {
     const allCellsForRow = Array.from(selfCell[0].parentElement!.childNodes);
     const colIndex = Array.from(
       container.querySelectorAll('th')
-    ).findIndex(header => header.innerHTML.match(new RegExp(colName, 'i')));
+    ).findIndex(header =>
+      header.innerHTML.match(new RegExp(getColumnTitle(colName), 'i'))
+    );
     return allCellsForRow[colIndex].textContent;
+  };
+
+  const openProjectAutocomplete = async () => {
+    const projectAutocomplete = await getProjectAutocomplete();
+    await userEvent.click(projectAutocomplete);
+    return projectAutocomplete;
+  };
+
+  const selectProject = async (projectName: string) => {
+    await openProjectAutocomplete();
+    const unhcrProject = await getProjectOption(projectName);
+    await userEvent.click(unhcrProject, { pointerEventsCheck: 0 });
+  };
+
+  const searchForProject = async (searchTerm: string) => {
+    const projectAutocomplete = await openProjectAutocomplete();
+    await userEvent.clear(projectAutocomplete);
+    await userEvent.type(projectAutocomplete, searchTerm);
+    return projectAutocomplete;
+  };
+
+  const expectProjectOptionsToMatch = async (searchTerm: string) => {
+    const projectOptions = await screen.getAllByRole('option');
+    expect(projectOptions.length).toBeGreaterThan(0);
+    projectOptions.forEach(option => {
+      expect(option.innerHTML).toMatch(new RegExp(searchTerm, 'i'));
+    });
+  };
+
+  const projectFromRow = (row: Element) => {
+    const projectColumn = row.querySelector('td'); // first column is the project column
+    return projectColumn?.textContent;
   };
 
   const visibleTableRows = () => {
     return container.querySelectorAll('table tbody tr.data-explorer-row');
+  };
+
+  const getProjectAutocomplete = async () => {
+    return await screen.getByLabelText('project-filter', {
+      selector: 'input',
+    });
   };
 
   it('shows rows for all fetched resources', async () => {
@@ -259,5 +308,29 @@ describe('DataExplorer', () => {
     );
     expect(textForSpecialProperty).not.toMatch(/No data/i);
     expect(textForSpecialProperty).toEqual('{}');
+  });
+
+  const getProjectOption = async (projectName: string) =>
+    await screen.getByText(new RegExp(projectName, 'i'), {
+      selector: 'div.ant-select-item-option-content',
+    });
+
+  it('shows resources filtered by the selected project', async () => {
+    await selectProject('unhcr');
+
+    visibleTableRows().forEach(row =>
+      expect(projectFromRow(row)).toMatch(/unhcr/i)
+    );
+
+    await selectProject(AllProjects);
+    await expectRowCountToBe(10);
+  });
+
+  it('shows autocomplete options for project filter', async () => {
+    await searchForProject('bbp');
+    await expectProjectOptionsToMatch('bbp');
+
+    await searchForProject('bbc');
+    await expectProjectOptionsToMatch('bbc');
   });
 });

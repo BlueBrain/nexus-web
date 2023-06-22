@@ -1,7 +1,7 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-import { isArray, isString } from 'lodash';
+import { isArray, isString, startCase } from 'lodash';
 import React from 'react';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
@@ -49,10 +49,6 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   return (
     <>
       <Table<Resource>
-        sticky={{
-          offsetHeader: 50,
-          getContainer: () => window,
-        }}
         columns={dynamicColumnsForDataSource(dataSource)}
         dataSource={dataSource}
         rowKey={record => record._self}
@@ -93,10 +89,13 @@ const dynamicColumnsForDataSource = (
   return Array.from(colNameToConfig.values());
 };
 
+export const getColumnTitle = (colName: string) =>
+  startCase(colName).toUpperCase();
+
 const defaultColumnConfig = (colName: string): ColumnType<Resource> => {
   return {
     key: colName,
-    title: colName.toUpperCase(),
+    title: getColumnTitle(colName),
     dataIndex: colName,
     className: `data-explorer-column data-explorer-column-${colName}`,
     sorter: false,

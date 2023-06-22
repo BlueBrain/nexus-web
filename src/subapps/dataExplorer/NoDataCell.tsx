@@ -8,8 +8,7 @@ export const NoDataCell: React.FC<{}> = () => {
         backgroundColor: '#ffd9d9',
         fontWeight: 600,
         lineHeight: '17.5px',
-        padding: '5px',
-        paddingLeft: '10px',
+        padding: '5px 10px',
       }}
     >
       No data
