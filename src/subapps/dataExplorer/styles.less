@@ -2,9 +2,13 @@
 
 .container {
   margin-bottom: 52px;
-  padding-top: 72px;
   padding-left: 40px;
   background: @fusion-main-bg;
+}
+
+.data-explorer-table table {
+  width: auto;
+  min-width: unset !important;
 }
 
 .ant-table-thead > tr > th.data-explorer-column {
@@ -21,6 +25,14 @@
   min-width: 72px;
 }
 
+.ant-table-thead > tr > th::before {
+  font-size: 0px; // Removes the little vertical divider between table header cells
+}
+
+th.ant-table-cell.ant-table-cell-scrollbar {
+  background-color: #f5f5f5 !important;
+}
+
 .ant-table-body tr td {
   background-color: @fusion-main-bg;
   min-width: 72px;
@@ -29,4 +41,43 @@
 
 .ant-table-tbody > tr.data-explorer-row > td {
   border-bottom: 1px solid #d9d9d9;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  max-width: fit-content;
+
+  .label {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    color: @fusion-blue-8;
+  }
+
+  .search-input {
+    border-bottom: 1px solid @fusion-neutral-7;
+    margin-left: 8px !important;
+
+    input {
+      color: @fusion-blue-8 !important;
+      border: none;
+      background: @fusion-main-bg;
+      font-weight: 700;
+    }
+
+    button {
+      background: #f5f5f5;
+      border: unset;
+    }
+  }
+}
+
+.search-menu {
+  .ant-select-item-option-content {
+    color: @fusion-blue-8;
+  }
 }
