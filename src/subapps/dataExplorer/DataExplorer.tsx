@@ -7,28 +7,33 @@ import { useQuery } from 'react-query';
 import { getResourceLabel } from '../../shared/utils';
 import { DataExplorerTable } from './DataExplorerTable';
 import './styles.less';
+import { ProjectSelector } from './ProjectSelector';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
+  orgAndProject?: [string, string];
 }
 
 export const DataExplorer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
-  const [{ pageSize, offset }, updateTableConfiguration] = useReducer(
+  const [
+    { pageSize, offset, orgAndProject },
+    updateTableConfiguration,
+  ] = useReducer(
     (
       previous: DataExplorerConfiguration,
       next: Partial<DataExplorerConfiguration>
     ) => ({ ...previous, ...next }),
-    { pageSize: 50, offset: 0 }
+    { pageSize: 50, offset: 0, orgAndProject: undefined }
   );
 
   const { data: resources, isLoading } = useQuery({
-    queryKey: ['data-explorer', { pageSize, offset }],
+    queryKey: ['data-explorer', { pageSize, offset, orgAndProject }],
     retry: false,
     queryFn: () => {
-      return nexus.Resource.list(undefined, undefined, {
+      return nexus.Resource.list(orgAndProject?.[0], orgAndProject?.[1], {
         from: offset,
         size: pageSize,
       });
@@ -59,7 +64,20 @@ export const DataExplorer: React.FC<{}> = () => {
     }) || [];
 
   return (
-    <div className="container">
+    <div className="data-explorer-contents">
+      <div className="data-explorer-header">
+        <ProjectSelector
+          onSelect={(orgLabel?: string, projectLabel?: string) => {
+            if (orgLabel && projectLabel) {
+              updateTableConfiguration({
+                orgAndProject: [orgLabel, projectLabel],
+              });
+            } else {
+              updateTableConfiguration({ orgAndProject: undefined });
+            }
+          }}
+        />
+      </div>
       <DataExplorerTable
         isLoading={isLoading}
         dataSource={dataSource}
