@@ -114,6 +114,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const nexus = useNexusContext();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
+  const [fullScreen, setFullScreen] = React.useState(false);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
