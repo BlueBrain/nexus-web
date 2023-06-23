@@ -16,7 +16,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import { UISettingsActionTypes, TUpdateJSONEditorPopoverAction } from '../../store/actions/ui-settings';
 import isValidUrl, { externalLink } from '../../../utils/validUrl';
 import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
 import {
@@ -24,8 +24,6 @@ import {
   getResourceLabel,
 } from '../../utils';
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
-import { TUpdateJSONEditorPopoverAction } from '../../store/actions/ui-settings';
-import { RootState } from '../..//store/reducers';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -68,12 +66,12 @@ export const getNormalizedTypes = (types?: string | string[]) => {
         }
         return item;
       });
-    } else {
+    } 
       if (isValidUrl(types)) {
         return types.split('/').pop();
       }
       return [types];
-    }
+    
   }
   return [];
 };
@@ -293,8 +291,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
               payload: {
                 ...defaultPaylaod,
+                error,
                 resolvedAs: 'error',
-                error: error,
               },
             });
           }

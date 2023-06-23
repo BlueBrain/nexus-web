@@ -52,11 +52,11 @@ export const dataExplorerSlice = createSlice({
   reducers: {
     PopulateDataExplorerGraphFlow: (state, action) => {
       const digest = action.payload;
-      const _state: TDataExplorerState = JSON.parse(atob(digest));
+      const newState: TDataExplorerState = JSON.parse(atob(digest));
       try {
         return {
-          ..._state,
-          shrinked: isShrinkable(_state.links),
+          ...newState,
+          shrinked: isShrinkable(newState.links),
         };
       } catch (error) {
         return state;
@@ -68,14 +68,14 @@ export const dataExplorerSlice = createSlice({
     ) => {
       const newState = {
         ...state,
+        current,
+        limited,
         links:
           source && current
             ? source._self === current._self
               ? []
               : [source]
             : [],
-        current: current,
-        limited,
       };
       calculateNewDigest(newState);
       return newState;

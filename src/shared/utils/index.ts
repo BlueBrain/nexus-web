@@ -348,19 +348,19 @@ export function getOrgAndProjectFromProjectId(
   return null;
 }
 export function getOrgAndProjectFromResourceObject(resource: Resource) {
-  if (resource._project)
+  if (resource._project) {
     return getOrgAndProjectFromProjectId(resource._project);
-  else if (resource['@type'] === 'Project') {
+  }
+  if (resource['@type'] === 'Project') {
     return {
       orgLabel: resource._organizationLabel,
       projectLabel: resource._label,
     };
-  } else {
-    return {
-      orgLabel: '',
-      projectLabel: '',
-    };
   }
+  return {
+    orgLabel: '',
+    projectLabel: '',
+  };
 }
 
 /**
