@@ -61,7 +61,7 @@ const fetchResolvers = async ({
     throw new Error('Can not find resolvers', { cause: error });
   }
 };
-const fetchResourceByResolver = async ({
+export const fetchResourceByResolver = async ({
   nexus,
   resourceId,
   orgLabel,
