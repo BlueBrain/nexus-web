@@ -245,7 +245,7 @@ export async function downloadArchive({
   try {
     const archive = await nexus.httpGet({
       path: `${apiEndpoint}/archives/${parsedData.org}/${parsedData.project}/${archiveId}?ignoreNotFound=true`,
-      headers: { accept: 'application/zip' },
+      headers: { accept: 'application/zip, application/json' },
       context: {
         parseAs: 'blob',
       },
