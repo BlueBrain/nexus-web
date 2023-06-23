@@ -175,6 +175,10 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             onSubmit={handleSubmit}
             showExpanded={false}
             showMetadataToggle={false}
+            orgLabel=""
+            projectLabel=""
+            onFullScreen={() => {}}
+            showFullScreen={false}
           />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>

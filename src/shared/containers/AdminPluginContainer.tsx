@@ -41,6 +41,7 @@ type AdminProps = {
   refreshResource: () => void;
   collapsed: boolean;
   handleCollapseChanged: () => void;
+  showFullScreen: boolean;
 };
 
 const AdminPlugin: React.FunctionComponent<AdminProps> = ({
@@ -61,6 +62,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   refreshResource,
   collapsed,
   handleCollapseChanged,
+  showFullScreen,
 }) => {
   const [tabChange, setTabChange] = React.useState<boolean>(false);
 
@@ -112,6 +114,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
               onSubmit={handleEditFormSubmit}
               onExpanded={handleExpanded}
               tabChange={tabChange}
+              showFullScreen={showFullScreen}
             />
           </TabPane>
           <TabPane tab="Description" key="#mde">

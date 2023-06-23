@@ -5,9 +5,15 @@ import {
   Resource,
   NexusClient,
 } from '@bbp/nexus-sdk';
+import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceEditor from '../components/ResourceEditor';
+import ResourceEditor, {
+  getNormalizedTypes,
+} from '../components/ResourceEditor';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
+import { InitNewVisitDataExplorerGraphView } from '../store/reducers/data-explorer';
+import { getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -20,6 +26,9 @@ const ResourceEditorContainer: React.FunctionComponent<{
   onExpanded?: (expanded: boolean) => void;
   tabChange?: boolean;
   showMetadataToggle?: boolean;
+  showFullScreen: boolean;
+  showExpanded?: boolean;
+  showControlPanel?: boolean;
 }> = ({
   resourceId,
   orgLabel,
@@ -31,8 +40,13 @@ const ResourceEditorContainer: React.FunctionComponent<{
   onExpanded,
   tabChange,
   showMetadataToggle,
+  showFullScreen = false,
+  showControlPanel = true,
+  showExpanded,
 }) => {
   const nexus = useNexusContext();
+  const dispatch = useDispatch();
+  const navigate = useHistory();
   const notification = useNotification();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [editable, setEditable] = React.useState(defaultEditable);
@@ -96,7 +110,35 @@ const ResourceEditorContainer: React.FunctionComponent<{
   const handleMetaDataChange = () => {
     setShowMetadata(!showMetadata);
   };
-
+  const handleFullScreen = async () => {
+    console.log('@@resource [handleFullScreen]', resource);
+    const data = (await nexus.Resource.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(resourceId),
+      {
+        rev,
+      }
+    )) as Resource;
+    const orgProject = getOrgAndProjectFromResourceObject(data);
+    dispatch(
+      InitNewVisitDataExplorerGraphView({
+        current: {
+          _self: data._self,
+          types: getNormalizedTypes(data['@type']),
+          title: getResourceLabel(data),
+          resource: [
+            orgProject?.orgLabel ?? '',
+            orgProject?.projectLabel ?? '',
+            data['@id'],
+            data._rev,
+          ],
+        },
+        limited: true,
+      })
+    );
+    navigate.push('/data-explorer/graph-flow');
+  };
   async function getResourceSource(
     nexus: NexusClient,
     orgLabel: string,
@@ -162,6 +204,12 @@ const ResourceEditorContainer: React.FunctionComponent<{
         expanded={expanded}
         showMetadata={showMetadata}
         showMetadataToggle={showMetadataToggle}
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        showFullScreen={showFullScreen}
+        onFullScreen={handleFullScreen}
+        showExpanded={showExpanded}
+        showControlPanel={showControlPanel}
       />
     )
   );
