@@ -1,4 +1,5 @@
-import { FilterPayloadAction } from './utils';
+import { TEditorPopoverResolvedData } from '../reducers/ui-settings';
+import { FilterPayloadAction, PayloadAction } from './utils';
 
 export enum UISettingsActionTypes {
   CHANGE_PAGE_SIZE = 'CHANGE_PAGE_SIZE',
@@ -11,5 +12,8 @@ type ChangePageSizeAction = FilterPayloadAction<
   UISettingsActionTypes.CHANGE_PAGE_SIZE,
   { pageSize: number }
 >;
-
+export type TUpdateJSONEditorPopoverAction = PayloadAction<
+  UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+  TEditorPopoverResolvedData
+>;
 export type UISettingsActions = ChangePageSizeAction;
