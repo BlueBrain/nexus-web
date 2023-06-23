@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Switch } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
+import './styles.less';
 
 const DataExplorerGraphFlowContentLimitedHeader = () => {
   const { current } = useSelector((state: RootState) => state.dataExplorer);
