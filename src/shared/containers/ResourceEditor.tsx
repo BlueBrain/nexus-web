@@ -111,7 +111,6 @@ const ResourceEditorContainer: React.FunctionComponent<{
     setShowMetadata(!showMetadata);
   };
   const handleFullScreen = async () => {
-    console.log('@@resource [handleFullScreen]', resource);
     const data = (await nexus.Resource.get(
       orgLabel,
       projectLabel,
@@ -195,6 +194,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   return (
     resource && (
       <ResourceEditor
+        key={(resource as Resource)._self}
         busy={busy}
         rawData={resource}
         onSubmit={onSubmit}
