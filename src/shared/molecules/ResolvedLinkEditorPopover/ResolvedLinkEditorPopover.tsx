@@ -52,7 +52,6 @@ const PopoverContainer = ({
 };
 
 const ResolvedLinkEditorPopover = () => {
-  const ref = useRef<HTMLDivElement>(null);
   const navigate = useHistory();
   const dispatch = useDispatch();
   const nexus = useNexusContext();
