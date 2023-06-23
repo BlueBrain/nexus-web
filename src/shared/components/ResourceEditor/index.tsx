@@ -5,16 +5,27 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useDispatch } from 'react-redux';
+import { Dispatch } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNexusContext } from '@bbp/react-nexus';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import codemiror from 'codemirror';
+import { isArray } from 'lodash';
+import { clsx } from 'clsx';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
-import isValidUrl from '../../../utils/validUrl';
-
+import isValidUrl, { externalLink } from '../../../utils/validUrl';
+import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
+import {
+  getOrgAndProjectFromResourceObject,
+  getResourceLabel,
+} from '../../utils';
+import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
+import { TUpdateJSONEditorPopoverAction } from '../../store/actions/ui-settings';
+import { RootState } from '../..//store/reducers';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -29,12 +40,57 @@ export interface ResourceEditorProps {
   showMetadata?: boolean;
   showExpanded?: boolean;
   showMetadataToggle?: boolean;
+  orgLabel: string;
+  projectLabel: string;
+  showFullScreen: boolean;
+  showControlPanel?: boolean;
+  onFullScreen(): void;
 }
 type TToken = {
   string: string;
+  start: number;
+  end: number;
+};
+type TActionData = {
+  type: typeof UISettingsActionTypes['UPDATE_JSON_EDITOR_POPOVER'];
+  payload: TEditorPopoverResolvedData;
 };
 
+const INDENT_UNIT = 4;
+const LINE_HEIGHT = 50;
 const switchMarginRight = { marginRight: 5 };
+export const getNormalizedTypes = (types?: string | string[]) => {
+  if (types) {
+    if (isArray(types)) {
+      return types.map(item => {
+        if (isValidUrl(item)) {
+          return item.split('/').pop()!;
+        }
+        return item;
+      });
+    } else {
+      if (isValidUrl(types)) {
+        return types.split('/').pop();
+      }
+      return [types];
+    }
+  }
+  return [];
+};
+
+const dispatchEvent = (
+  dispatch: Dispatch<TUpdateJSONEditorPopoverAction>,
+  data: TActionData
+) => {
+  return dispatch<{
+    type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER;
+    payload: TEditorPopoverResolvedData;
+  }>({
+    type: data.type,
+    payload: data.payload,
+  });
+};
+
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -48,8 +104,15 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     showMetadata = false,
     showExpanded = true,
     showMetadataToggle = true,
+    orgLabel,
+    projectLabel,
+    showFullScreen,
+    onFullScreen,
+    showControlPanel = true,
   } = props;
 
+  const nexus = useNexusContext();
+  const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
@@ -74,6 +137,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       }
     }
   };
+
   const onFormatChangeFold = (expanded: boolean) => {
     if (codeMirorRef.current) {
       codeMirorRef.current.execCommand('foldAll');
@@ -90,37 +154,153 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     onMetadataChange?.(checked);
   };
-  const onLinkClick = (_: any, ev: MouseEvent) => {
+  const onLinksFound = () => {
+    const elements = document.getElementsByClassName('cm-string');
+    Array.from(elements).forEach(item => {
+      const itemSpan = item as HTMLSpanElement;
+      if (
+        isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))
+        // && item.tagName !== 'a'
+      ) {
+        itemSpan.style.textDecoration = 'underline';
+        // itemSpan.classList.add('cm-ghost-link');
+        // itemSpan.onclick = () => false;
+        // const anchor = document.createElement('a');
+        // anchor.href = itemSpan.innerText;
+        // anchor.innerHTML = itemSpan.innerText;
+        // anchor.className = 'cm-ghost-link';
+        // anchor.onclick = () => false;
+        // item.replaceWith(anchor);
+      }
+    });
+  };
+  const onLinkClick = async (_: any, ev: MouseEvent) => {
+    // ev.preventDefault();
+    ev.stopPropagation();
+    setLoadingResolution(true);
     const x = ev.pageX;
     const y = ev.pageY;
-    const coords = { left: x, top: y };
-    const editorPosition = codeMirorRef.current?.coordsChar(coords);
-    const token = editorPosition
+    const editorPosition = codeMirorRef.current?.coordsChar({
+      left: x,
+      top: y,
+    });
+    const token = (editorPosition
       ? codeMirorRef.current?.getTokenAt(editorPosition)
-      : '';
+      : { start: 0, end: 0, string: '' }) as TToken;
+    const tokenStart = editorPosition?.ch || 0;
+    // const left = x - ((tokenStart - token.start) * 8);
+    const left = x - LINE_HEIGHT;
+    const top = y - LINE_HEIGHT;
+    const defaultPaylaod = { top, left, open: true };
     const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
     if (isValidUrl(url)) {
-      console.log('🎉 found one');
-      dispatch({
-        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-        payload: {
-          left: x - 10,
-          top: y - 55,
-          open: true,
-          link: url,
-        },
-      });
-    } else {
-      dispatch({
-        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-        payload: {
-          left: 0,
-          top: 0,
-          open: false,
-          link: '',
-        },
-      });
+      let data;
+      try {
+        // case-1: link resolved by the project resolver
+        data = await fetchResourceByResolver({
+          nexus,
+          orgLabel,
+          projectLabel,
+          resourceId: encodeURIComponent(url),
+        });
+        const entity = getOrgAndProjectFromResourceObject(data);
+        dispatchEvent(dispatch, {
+          type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+          payload: {
+            ...defaultPaylaod,
+            error: null,
+            resolvedAs: 'resource',
+            results: {
+              _self: data._self,
+              title: getResourceLabel(data),
+              types: getNormalizedTypes(data['@type']),
+              resource: [
+                entity?.orgLabel,
+                entity?.projectLabel,
+                data['@id'],
+                data._rev,
+              ],
+            },
+          },
+        });
+      } catch (error) {
+        try {
+          // case-2: link can not be resolved by the project resolver
+          // then try to find it across all projects
+          // it may be single resource, multiple resources or external resource
+          // if no resource found then we consider it as an error
+          data = await nexus.Resource.list(undefined, undefined, {
+            locate: url,
+          });
+          dispatchEvent(dispatch, {
+            type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+            payload: {
+              ...defaultPaylaod,
+              ...(externalLink(url) && !data._total
+                ? {
+                    resolvedAs: 'external',
+                    results: {
+                      _self: url,
+                      title: url,
+                      types: [],
+                    },
+                  }
+                : !data._total
+                ? {
+                    error: 'No @id or _self has been resolved',
+                    resolvedAs: 'error',
+                  }
+                : {
+                    resolvedAs: 'resources',
+                    results: data._results.map(item => {
+                      const entity = getOrgAndProjectFromResourceObject(item);
+                      return {
+                        _self: item._self,
+                        title: getResourceLabel(item),
+                        types: getNormalizedTypes(item['@type']),
+                        resource: [
+                          entity?.orgLabel,
+                          entity?.projectLabel,
+                          item['@id'],
+                          item._rev,
+                        ],
+                      };
+                    }),
+                  }),
+            },
+          });
+        } catch (error) {
+          // case-3: if an error occured when tring both resolution method above
+          // we check if the resource is external
+          if (externalLink(url)) {
+            dispatchEvent(dispatch, {
+              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+              payload: {
+                ...defaultPaylaod,
+                resolvedAs: 'external',
+                results: {
+                  _self: url,
+                  title: url,
+                  types: [],
+                },
+              },
+            });
+          }
+          // case-4: if not an external url then it will be an error
+          else {
+            dispatchEvent(dispatch, {
+              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+              payload: {
+                ...defaultPaylaod,
+                resolvedAs: 'error',
+                error: error,
+              },
+            });
+          }
+        }
+      }
     }
+    setLoadingResolution(false);
   };
   const renderCodeMirror = (value: string) => {
     return (
@@ -139,26 +319,22 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             foldGutter: true,
             // @ts-ignore
             foldCode: true,
+            indentUnit: INDENT_UNIT,
             gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
             extraKeys: {
               'Ctrl-Q': keyFoldCode,
             },
           }}
+          className={clsx(
+            'code-mirror-editor',
+            loadingResolution && 'resolution-on-progress'
+          )}
           onChange={handleChange}
           editorDidMount={editor => {
             codeMirorRef.current = editor;
           }}
-          onScroll={e => {
-            const cursor = e.cursorCoords();
-            dispatch({
-              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-              payload: {
-                left: cursor.left - 10,
-                top: cursor.top - 55,
-              },
-            });
-          }}
           onMouseDown={onLinkClick}
+          onUpdate={onLinksFound}
         />
       </Spin>
     );
@@ -168,8 +344,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
-    // onFormatChange?.(false);
-    // onMetadataChange?.(false);
     return () => {
       setFoldCodeMiror(false);
     };
@@ -206,62 +380,73 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   return (
     <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
-      <div className="control-panel">
-        <div>
-          {editable && isEditing && valid && (
-            <div className="feedback _positive">
-              <CheckCircleOutlined /> Valid
-            </div>
-          )}
-          {editable && isEditing && !valid && (
-            <div className="feedback _negative">
-              <ExclamationCircleOutlined /> Invalid JSON-LD
-            </div>
-          )}
-        </div>
+      {showControlPanel && (
+        <div className="control-panel">
+          <div>
+            {editable && isEditing && valid && (
+              <div className="feedback _positive">
+                <CheckCircleOutlined /> Valid
+              </div>
+            )}
+            {editable && isEditing && !valid && (
+              <div className="feedback _negative">
+                <ExclamationCircleOutlined /> Invalid JSON-LD
+              </div>
+            )}
+          </div>
 
-        <div className="controls">
-          <Switch
-            checkedChildren="Unfold"
-            unCheckedChildren="Fold"
-            checked={foldCodeMiror}
-            onChange={onFoldChange}
-            style={switchMarginRight}
-          />
-          {!expanded && !isEditing && valid && showMetadataToggle && (
+          <div className="controls">
+            {showFullScreen && (
+              <Switch
+                checkedChildren="Standard Screen"
+                unCheckedChildren="Full Screen"
+                checked={fullScreen}
+                onChange={onFullScreen}
+                style={switchMarginRight}
+              />
+            )}
             <Switch
-              checkedChildren="Metadata"
-              unCheckedChildren="Show Metadata"
-              checked={showMetadata}
-              onChange={checked => onMetadataChangeFold(checked)}
+              checkedChildren="Unfold"
+              unCheckedChildren="Fold"
+              checked={foldCodeMiror}
+              onChange={onFoldChange}
               style={switchMarginRight}
             />
-          )}
-          {showExpanded && !isEditing && valid && (
-            <Switch
-              checkedChildren="Expanded"
-              unCheckedChildren="Expand"
-              checked={expanded}
-              onChange={expaned => onFormatChangeFold(expanded)}
-              style={switchMarginRight}
-            />
-          )}
-          <Button
-            icon={<SaveOutlined />}
-            type="primary"
-            size="small"
-            onClick={handleSubmit}
-            disabled={!valid || !editable || !isEditing}
-          >
-            Save
-          </Button>{' '}
-          {editable && isEditing && (
-            <Button danger size="small" onClick={handleCancel}>
-              Cancel
-            </Button>
-          )}
+            {!expanded && !isEditing && valid && showMetadataToggle && (
+              <Switch
+                checkedChildren="Metadata"
+                unCheckedChildren="Show Metadata"
+                checked={showMetadata}
+                onChange={checked => onMetadataChangeFold(checked)}
+                style={switchMarginRight}
+              />
+            )}
+            {showExpanded && !isEditing && valid && (
+              <Switch
+                checkedChildren="Expanded"
+                unCheckedChildren="Expand"
+                checked={expanded}
+                onChange={expaned => onFormatChangeFold(expanded)}
+                style={switchMarginRight}
+              />
+            )}
+            <Button
+              icon={<SaveOutlined />}
+              type="primary"
+              size="small"
+              onClick={handleSubmit}
+              disabled={!valid || !editable || !isEditing}
+            >
+              Save
+            </Button>{' '}
+            {editable && isEditing && (
+              <Button danger size="small" onClick={handleCancel}>
+                Cancel
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {renderCodeMirror(stringValue)}
     </div>
