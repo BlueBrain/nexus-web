@@ -11,10 +11,7 @@ const NavigationBack = () => {
   const onBack = () => dispatch(ReturnBackDataExplorerGraphFlow());
   if (links.length) {
     return (
-      <button
-        className="navigation-back-btn"
-        onClick={onBack}
-      >
+      <button className="navigation-back-btn" onClick={onBack}>
         <ArrowLeftOutlined />
         <span>Back</span>
       </button>
