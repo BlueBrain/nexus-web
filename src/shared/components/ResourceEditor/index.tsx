@@ -16,7 +16,10 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import { UISettingsActionTypes, TUpdateJSONEditorPopoverAction } from '../../store/actions/ui-settings';
+import {
+  UISettingsActionTypes,
+  TUpdateJSONEditorPopoverAction,
+} from '../../store/actions/ui-settings';
 import isValidUrl, { externalLink } from '../../../utils/validUrl';
 import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
 import {
@@ -66,12 +69,11 @@ export const getNormalizedTypes = (types?: string | string[]) => {
         }
         return item;
       });
-    } 
-      if (isValidUrl(types)) {
-        return types.split('/').pop();
-      }
-      return [types];
-    
+    }
+    if (isValidUrl(types)) {
+      return types.split('/').pop();
+    }
+    return [types];
   }
   return [];
 };
