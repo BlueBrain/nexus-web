@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode, useRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -13,43 +13,48 @@ import {
   InitNewVisitDataExplorerGraphView,
   AddNewNodeDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
-import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
+import {
+  TEditorPopoverResolvedData,
+  editorPopoverResolvedDataInitialValue,
+} from '../../store/reducers/ui-settings';
 import { getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
 import { getNormalizedTypes } from '../../components/ResourceEditor/editorUtils';
 import useOnClickOutside from '../../hooks/useClickOutside';
 import './styles.less';
 
 type TResultPattern = Pick<TEditorPopoverResolvedData, 'open' | 'resolvedAs'>;
-
-const PopoverContainer = ({
-  children,
-  onClickOutside,
-}: {
+type PopoverContainer = {
   children: ReactNode;
   onClickOutside(): void;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const {
-    editorPopoverResolvedData: { top, left, resolvedAs },
-  } = useSelector((state: RootState) => state.uiSettings);
-
-  useOnClickOutside(ref, onClickOutside);
-  return (
-    <div
-      data-testId="custom-link-popover"
-      ref={ref}
-      className={clsx(
-        'custom-popover-token',
-        resolvedAs === 'error' && 'error'
-      )}
-      style={{ top, left }}
-    >
-      {children}
-    </div>
-  );
 };
 
+const PopoverContainer = forwardRef<HTMLDivElement, PopoverContainer>(
+  ({ children, onClickOutside }, ref) => {
+    const {
+      editorPopoverResolvedData: { top, left, resolvedAs },
+    } = useSelector((state: RootState) => state.uiSettings);
+
+    useOnClickOutside(
+      ref as React.MutableRefObject<HTMLDivElement | null>,
+      onClickOutside
+    );
+    return (
+      <div
+        ref={ref}
+        className={clsx(
+          'custom-popover-token',
+          resolvedAs === 'error' && 'error'
+        )}
+        style={{ top, left }}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
 const ResolvedLinkEditorPopover = () => {
+  const ref = useRef<HTMLDivElement>(null);
   const navigate = useHistory();
   const dispatch = useDispatch();
   const nexus = useNexusContext();
@@ -67,14 +72,7 @@ const ResolvedLinkEditorPopover = () => {
   const onClickOutside = () => {
     dispatch({
       type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-      payload: {
-        open: false,
-        top: 0,
-        left: 0,
-        error: null,
-        results: [],
-        resolvedAs: undefined,
-      },
+      payload: editorPopoverResolvedDataInitialValue,
     });
   };
   const onClickLink = async (resource: TDELink) => {
@@ -109,14 +107,14 @@ const ResolvedLinkEditorPopover = () => {
 
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
-      <PopoverContainer {...{ onClickOutside }}>
+      <PopoverContainer {...{ onClickOutside, ref }}>
         <div className="popover-btn">{error}</div>
       </PopoverContainer>
     ))
     .with({ open: true, resolvedAs: 'resource' }, () => {
       const result = results as TDELink;
       return (
-        <PopoverContainer {...{ onClickOutside }}>
+        <PopoverContainer {...{ onClickOutside, ref }}>
           <div className="resource" key={result._self}>
             {result.resource?.[0] && result.resource?.[1] && (
               <Tag color="blue">{`${result.resource?.[0]}/${result.resource?.[1]}`}</Tag>
@@ -133,7 +131,7 @@ const ResolvedLinkEditorPopover = () => {
     })
     .with({ open: true, resolvedAs: 'resources' }, () => {
       return (
-        <PopoverContainer {...{ onClickOutside }}>
+        <PopoverContainer {...{ onClickOutside, ref }}>
           {(results as TDELink[]).map(item => (
             <div className="resource" key={item._self}>
               {item.resource?.[0] && item.resource?.[1] && (
@@ -153,7 +151,7 @@ const ResolvedLinkEditorPopover = () => {
     .with({ open: true, resolvedAs: 'external' }, () => {
       const result = results as TDELink;
       return (
-        <PopoverContainer {...{ onClickOutside }}>
+        <PopoverContainer {...{ onClickOutside, ref }}>
           <div className="resource external">
             <Tag color="yellow">External Link</Tag>
             <span>
