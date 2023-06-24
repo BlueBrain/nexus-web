@@ -2,9 +2,10 @@ import React, { ReactNode, useRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Tag } from 'antd';
+import { Tag, Divider } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import { RootState } from '../../store/reducers';
@@ -19,6 +20,8 @@ import {
 } from '../../store/reducers/ui-settings';
 import { getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
 import { getNormalizedTypes } from '../../components/ResourceEditor/editorUtils';
+import { download } from '../../utils/download';
+import { parseResourceId } from '../../components/Preview/Preview';
 import useOnClickOutside from '../../hooks/useClickOutside';
 import './styles.less';
 
@@ -26,6 +29,34 @@ type TResultPattern = Pick<TEditorPopoverResolvedData, 'open' | 'resolvedAs'>;
 type PopoverContainer = {
   children: ReactNode;
   onClickOutside(): void;
+};
+
+const downloadFile = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+  resourceId,
+  ext,
+  title,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  resourceId: string;
+  title: string;
+  ext?: string;
+}) => {
+  try {
+    const data = await nexus.File.get(
+      orgLabel,
+      projectLabel,
+      encodeURIComponent(parseResourceId(resourceId)),
+      { as: 'blob' }
+    );
+    return download(title, ext ?? 'json', data);
+  } catch (error) {
+    console.log('@@error', error);
+  }
 };
 
 const PopoverContainer = forwardRef<HTMLDivElement, PopoverContainer>(
@@ -105,10 +136,21 @@ const ResolvedLinkEditorPopover = () => {
     }
   };
 
+  const onDownload = async (data: TDELink) => {
+    await downloadFile({
+      nexus,
+      orgLabel: data.resource?.[0]!,
+      projectLabel: data.resource?.[1]!,
+      resourceId: data.resource?.[2]!,
+      ext: data.resource?.[4] ?? 'json',
+      title: data.title,
+    });
+  };
+
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
       <PopoverContainer {...{ onClickOutside, ref }}>
-        <div className="popover-btn">{error}</div>
+        <div className="popover-btn error">{error}</div>
       </PopoverContainer>
     ))
     .with({ open: true, resolvedAs: 'resource' }, () => {
@@ -125,6 +167,11 @@ const ResolvedLinkEditorPopover = () => {
             >
               <span>{result.title ?? result.resource?.[2]}</span>
             </button>
+            {result.isDownloadable && (
+              <div className="popover-download-btn">
+                <DownloadOutlined onClick={() => onDownload(result)} />
+              </div>
+            )}
           </div>
         </PopoverContainer>
       );
@@ -143,6 +190,11 @@ const ResolvedLinkEditorPopover = () => {
               >
                 <span>{item.title ?? item.resource?.[2]}</span>
               </button>
+              {item.isDownloadable && (
+                <div className="popover-download-btn">
+                  <DownloadOutlined onClick={() => onDownload(item)} />
+                </div>
+              )}
             </div>
           ))}
         </PopoverContainer>

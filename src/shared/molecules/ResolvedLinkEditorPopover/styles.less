@@ -1,9 +1,10 @@
+@import '../../lib.less';
+
 .custom-popover-token {
   position: absolute;
   background: white;
   box-shadow: 0px 2px 12px rgba(51, 51, 51, 0.12);
   border-radius: 6px;
-  padding: 10px 12px;
   z-index: 9999;
   max-width: 580px;
   display: flex;
@@ -16,11 +17,16 @@
     align-items: center;
     justify-content: flex-start;
     gap: 2px;
-    margin-bottom: 3px;
-    padding: 0 4px;
+    // margin-bottom: 3px;
+    // padding: 0 4px;
     width: 100%;
     overflow: hidden;
-    .link {
+
+    span.ant-tag {
+      margin: 10px 12px;
+    }
+
+    .popover-btn.link {
       border: none;
       margin: 0;
       padding: 0;
@@ -28,14 +34,20 @@
       overflow: visible;
       background: transparent;
       cursor: pointer;
-      color: blue;
+      color: @fusion-daybreak-7;
       white-space: pre-line;
       text-overflow: ellipsis;
       line-clamp: 1;
       white-space: nowrap;
       overflow: hidden;
       width: fit-content;
+      padding: 10px 10px 10px 0;
     }
+  }
+
+  .popover-btn.error {
+    padding: 10px;
+    user-select: none;
   }
 
   .external {
@@ -49,5 +61,29 @@
   &.error {
     background-color: rgba(255, 0, 0, 0.478);
     color: white;
+  }
+
+  .popover-download-btn {
+    position: relative;
+    /* top: -0.06em; */
+    display: inline-block;
+    height: auto;
+    align-self: stretch;
+    margin: 0 0 0 5px;
+    vertical-align: middle;
+    border-top: 0;
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: @fusion-main-color;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    padding: 4px 12px;
+
+    svg {
+      font-size: 18px;
+      color: white;
+    }
   }
 }
