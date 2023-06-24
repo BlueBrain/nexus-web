@@ -5,12 +5,18 @@ type TProject = string;
 type TOrganization = string;
 type TResourceID = string;
 type TVersionTag = number;
-export type TDEResource = [TOrganization, TProject, TResourceID, TVersionTag];
+type TMediaType = string;
+
+export type TDEResource =
+  | [TOrganization, TProject, TResourceID, TVersionTag]
+  | [TOrganization, TProject, TResourceID, TVersionTag, TMediaType];
+
 export type TDELink = {
   _self: string;
   title: string;
   types?: string | string[];
   resource?: TDEResource;
+  isDownloadable: boolean;
 };
 export type TDataExplorerState = {
   links: TDELink[];

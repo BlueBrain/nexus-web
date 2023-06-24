@@ -29,6 +29,7 @@ import {
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import CodeEditor from './CodeEditor';
 import './ResourceEditor.less';
+import { Resource } from '@bbp/nexus-sdk';
 
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
@@ -61,6 +62,12 @@ type TActionData = {
 const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
+
+const isDownloadableLink = (resource: Resource) => {
+  return Boolean(
+    resource['@type'] === 'File' || resource['@type']?.includes('File')
+  );
+};
 export const getNormalizedTypes = (types?: string | string[]) => {
   if (types) {
     if (isArray(types)) {
@@ -193,6 +200,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           resourceId: encodeURIComponent(url),
         });
         const entity = getOrgAndProjectFromResourceObject(data);
+        const isDownloadable = isDownloadableLink(data);
         dispatchEvent(dispatch, {
           type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
           payload: {
@@ -200,15 +208,24 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             error: null,
             resolvedAs: 'resource',
             results: {
+              isDownloadable,
               _self: data._self,
               title: getResourceLabel(data),
               types: getNormalizedTypes(data['@type']),
-              resource: [
-                entity?.orgLabel,
-                entity?.projectLabel,
-                data['@id'],
-                data._rev,
-              ],
+              resource: isDownloadable
+                ? [
+                    entity?.orgLabel,
+                    entity?.projectLabel,
+                    data['@id'],
+                    data._rev,
+                    data._mediaType,
+                  ]
+                : [
+                    entity?.orgLabel,
+                    entity?.projectLabel,
+                    data['@id'],
+                    data._rev,
+                  ],
             },
           },
         });
@@ -232,27 +249,39 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                       _self: url,
                       title: url,
                       types: [],
+                      isDownloadable: false,
                     },
                   }
                 : !data._total
                 ? {
-                    error: 'No @id or _self has been resolved',
+                    error: 'Resource can not be resolved',
                     resolvedAs: 'error',
+                    isDownloadable: false,
                   }
                 : {
                     resolvedAs: 'resources',
                     results: data._results.map(item => {
+                      const isDownloadable = isDownloadableLink(item);
                       const entity = getOrgAndProjectFromResourceObject(item);
                       return {
+                        isDownloadable,
                         _self: item._self,
                         title: getResourceLabel(item),
                         types: getNormalizedTypes(item['@type']),
-                        resource: [
-                          entity?.orgLabel,
-                          entity?.projectLabel,
-                          item['@id'],
-                          item._rev,
-                        ],
+                        resource: isDownloadable
+                          ? [
+                              entity?.orgLabel,
+                              entity?.projectLabel,
+                              item['@id'],
+                              item._rev,
+                              item._mediaType,
+                            ]
+                          : [
+                              entity?.orgLabel,
+                              entity?.projectLabel,
+                              item['@id'],
+                              item._rev,
+                            ],
                       };
                     }),
                   }),
@@ -271,6 +300,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   _self: url,
                   title: url,
                   types: [],
+                  isDownloadable: false,
                 },
               },
             });
@@ -281,7 +311,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
               payload: {
                 ...defaultPaylaod,
-                error,
+                error: `Resource can not be resolved ${JSON.stringify(error)}`,
                 resolvedAs: 'error',
               },
             });
