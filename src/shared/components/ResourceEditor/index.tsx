@@ -17,6 +17,7 @@ import 'codemirror/addon/fold/brace-fold';
 import isValidUrl from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { TToken, resolveLinkInEditor } from './editorUtils';
+import { Resource } from '@bbp/nexus-sdk';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -41,6 +42,12 @@ export interface ResourceEditorProps {
 export const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
+
+const isDownloadableLink = (resource: Resource) => {
+  return Boolean(
+    resource['@type'] === 'File' || resource['@type']?.includes('File')
+  );
+};
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
