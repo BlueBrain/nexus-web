@@ -32,8 +32,6 @@ const NavigationStackShrinkedItem = () => {
       </Tooltip>
       <div className="count">{count}</div>
       <MoreOutlined style={{ fontSize: 18, color: '#BFBFBF' }} />
-      {/* <div className='ellipsis'>
-            </div> */}
     </div>
   );
 };

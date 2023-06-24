@@ -166,8 +166,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     });
   };
   const onLinkClick = async (_: any, ev: MouseEvent) => {
-    // ev.preventDefault();
-    ev.stopPropagation();
     setLoadingResolution(true);
     const x = ev.pageX;
     const y = ev.pageY;
