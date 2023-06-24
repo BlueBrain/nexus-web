@@ -61,7 +61,6 @@ const ResolvedLinkEditorPopover = () => {
     projectLabel: string;
     resourceId: string;
   }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
-
   const {
     editorPopoverResolvedData: { open, error, resolvedAs, results },
   } = useSelector((state: RootState) => state.uiSettings);
@@ -113,7 +112,7 @@ const ResolvedLinkEditorPopover = () => {
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
       <PopoverContainer {...{ onClickOutside }}>
-        <div>{error}</div>
+        <div className="popover-btn">{error}</div>
       </PopoverContainer>
     ))
     .with({ open: true, resolvedAs: 'resource' }, () => {
@@ -122,7 +121,10 @@ const ResolvedLinkEditorPopover = () => {
         <PopoverContainer {...{ onClickOutside }}>
           <div className="resource" key={result._self}>
             <Tag color="red">{`${result.resource?.[0]}/${result.resource?.[1]}`}</Tag>
-            <button onClick={() => onClickLink(result)} className="link">
+            <button
+              onClick={() => onClickLink(result)}
+              className="link popover-btn"
+            >
               <span>{result.title ?? result.resource?.[2]}</span>
             </button>
           </div>
@@ -135,7 +137,10 @@ const ResolvedLinkEditorPopover = () => {
           {(results as TDELink[]).map(item => (
             <div className="resource" key={item._self}>
               <Tag color="blue">{`${item.resource?.[0]}/${item.resource?.[1]}`}</Tag>
-              <button onClick={() => onClickLink(item)} className="link">
+              <button
+                onClick={() => onClickLink(item)}
+                className="link popover-btn"
+              >
                 <span>{item.title ?? item.resource?.[2]}</span>
               </button>
             </div>
@@ -153,7 +158,7 @@ const ResolvedLinkEditorPopover = () => {
               This is external Link please configure CrossProjectResolver for
               your project
             </span>
-            <button disabled className="link">
+            <button disabled className="link popover-btn">
               <span>{result.title}</span>
             </button>
           </div>
