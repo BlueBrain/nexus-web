@@ -130,6 +130,24 @@ export const notifyTotalSizeExeeced = () => {
     key: 'data-panel-size-exceeded',
   });
 };
+const getTypesTrancated = (text: string | string[]) => {
+  let types = '';
+  let typesWithUrl = text;
+  if (isArray(text)) {
+    types = text
+      .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+      .join('\n');
+    typesWithUrl = text.join('\n');
+  } else if (isString(text) && isValidUrl(text)) {
+    types = text.split('/').pop() ?? '';
+  } else {
+    types = text;
+  }
+  return {
+    types,
+    typesWithUrl,
+  };
+};
 type TSorterProps = {
   order?: string;
   name: string;
@@ -281,19 +299,12 @@ const MyDataTable: React.FC<TProps> = ({
         dataIndex: '@type',
         sorter: false,
         render: text => {
-          let types = '';
-          if (isArray(text)) {
-            types = text
-              .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
-              .join('\n');
-          } else if (isString(text) && isValidUrl(text)) {
-            types = text.split('/').pop() ?? '';
-          } else {
-            types = text;
-          }
+          const { types, typesWithUrl } = getTypesTrancated(text);
           return (
             <Tooltip
-              title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}
+              title={() => (
+                <div style={{ whiteSpace: 'pre-wrap' }}>{typesWithUrl}</div>
+              )}
             >
               <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
             </Tooltip>
