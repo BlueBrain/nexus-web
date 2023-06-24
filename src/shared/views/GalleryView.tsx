@@ -77,6 +77,8 @@ const GalleryView: React.FC = () => {
           (event.target &&
             !currentWrapperRef.contains(event.target as Node) &&
             // @ts-ignore
+            !event.target.closest('.popover-btn') &&
+            // @ts-ignore
             event.target.closest('#app')) ||
           // @ts-ignore
           event.target.closest('.ant-drawer-close')
