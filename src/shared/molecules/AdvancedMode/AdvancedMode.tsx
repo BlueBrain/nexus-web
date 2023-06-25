@@ -1,40 +1,34 @@
 import * as React from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { match as pmatch } from 'ts-pattern';
-import { useSelector, useDispatch } from 'react-redux';
 import { Switch } from 'antd';
-import { RootState } from '../../store/reducers';
-import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import './styles.less';
 
-export const advancedModeBlackList = ['/studios', '/studio', '/data-explorer'];
+export const advancedModeBlackList = ['/studios', '/studio'];
+type TAMLocationState = {
+  source: string;
+  search: string;
+};
+
 const AdvancedModeToggle = () => {
-  const location = useLocation();
   const history = useHistory();
-  const dispatch = useDispatch();
-  const { isAdvancedModeEnabled } = useSelector(
-    (state: RootState) => state.uiSettings
-  );
+  const location = useLocation<TAMLocationState>();
   const showToggle = !advancedModeBlackList.includes(location.pathname);
 
-  const onToggle = () => {
-    dispatch({
-      type: UISettingsActionTypes.ENABLE_ADVANCED_MODE,
-    });
-    history.push('/data-explorer');
+  const onToggle = (checked: boolean) => {
+    if (checked) {
+      history.push('/data-explorer', {
+        source: location.pathname,
+        search: location.search,
+      });
+    } else {
+      history.push(
+        location.state.source
+          ? `${location.state.source}${location.state.search}`
+          : '/'
+      );
+    }
   };
-
-  React.useEffect(() => {
-    history.listen(location => {
-      if (location.pathname !== '/data-explorer' && isAdvancedModeEnabled) {
-        dispatch({
-          type: UISettingsActionTypes.ENABLE_ADVANCED_MODE,
-          payload: false,
-        });
-      }
-    });
-  }, [history, isAdvancedModeEnabled]);
-
   return pmatch(showToggle)
     .with(true, () => {
       return (
@@ -42,7 +36,7 @@ const AdvancedModeToggle = () => {
           <Switch
             data-testid="advanced-mode-toggle"
             defaultChecked={false}
-            checked={isAdvancedModeEnabled}
+            checked={location.pathname === '/data-explorer'}
             onClick={onToggle}
           />
           <span className="advanced">Advanced Mode</span>
