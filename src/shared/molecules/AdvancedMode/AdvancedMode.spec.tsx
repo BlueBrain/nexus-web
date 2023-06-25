@@ -24,7 +24,10 @@ describe('AdvancedModeToggle', () => {
     });
     store = configureStore(history, { nexus }, {});
   });
-  it('should toggle advanced mode be in the', async () => {
+  afterEach(() => {
+    history.push('/');
+  });
+  it('should toggle advanced mode be in the document', async () => {
     await act(async () => {
       await render(
         <Provider store={store}>
@@ -39,7 +42,21 @@ describe('AdvancedModeToggle', () => {
       expect(toggleSwitch).toBeInTheDocument();
     });
   });
-  it('should the history be in /data-explorer', async () => {
+  it('should be checked on /data-explorer pages', () => {
+    history.push('/data-explorer');
+    render(
+      <Provider store={store}>
+        <Router history={history}>
+          <AdvancedModeToggle />
+        </Router>
+      </Provider>
+    );
+
+    const toggleSwitch = screen.queryByTestId('advanced-mode-toggle');
+    const ariaChecked = toggleSwitch?.getAttribute('aria-checked');
+    expect(ariaChecked).toEqual('true');
+  });
+  it('should the path /data-explorer be the current path the toggle turned on', async () => {
     await act(async () => {
       await render(
         <Provider store={store}>
@@ -49,13 +66,15 @@ describe('AdvancedModeToggle', () => {
         </Provider>
       );
     });
+    let toggleSwitch;
     await waitFor(async () => {
-      const toggleSwitch = await screen.getByTestId('advanced-mode-toggle');
+      toggleSwitch = await screen.getByTestId('advanced-mode-toggle');
       fireEvent.click(toggleSwitch);
+      const ariaChecked = toggleSwitch.getAttribute('aria-checked');
+      console.log('@@ariaChecked', ariaChecked);
+      expect(ariaChecked).toEqual('true');
     });
-    const state = store.getState();
     const currentPath = history.location.pathname;
-    expect(state.uiSettings.isAdvancedModeEnabled).toBeTruthy();
     expect(currentPath).toBe('/data-explorer');
   });
   it('should not render the toggle on blacklisted pages', () => {
