@@ -398,10 +398,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
   const actionButtons = () => {
     const actionsPopovers = (
-      <div className='actions-menu'>
+      <div className="actions-menu">
         <Popover
           style={{ background: 'none' }}
-          placement='leftBottom'
+          placement="leftBottom"
           content={editWorkspaceWrapper}
           trigger="click"
         >
@@ -429,7 +429,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             </div>
           </Popover>
         ) : null}
-
       </div>
     );
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
@@ -689,10 +688,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     queryFn: async () => {
       const { results } = await PromisePool.for(workspaces)
         .withConcurrency(5)
-        .process(async (item) => {
+        .process(async item => {
           const { results } = await PromisePool.for(item.dashboards)
             .withConcurrency(5)
-            .process(async (subitem) => {
+            .process(async subitem => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
@@ -704,47 +703,57 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
                   dataQuery: string;
                   plugins: string[];
                 }>
-              >
-            })
+              >;
+            });
           return { workspace: item, dashboards: results };
-        })
+        });
       return results;
-    }
-  })
-  const items: ItemType[] = isSuccess &&
-    workspaceDashboards &&
-    Boolean(workspaceDashboards.length) ?
-    orderBy(workspaceDashboards.map(item => {
-      return ({
-        key: item.workspace['@id'],
-        label: item.workspace.label,
-        title: item.workspace.label,
-        expandIcon: <DownOutlined />,
-        icon: <DownOutlined />,
-        className: selectKeysHighlight(item.workspace),
-        onTitleClick: () => setSelectedWorkspace(item.workspace),
-        popupClassName: 'workspace-popup-classname',
-        popupOffset: [0, 0],
-        createdAt: item.workspace._createdAt,
-        children: orderBy(item.dashboards.map(dash => {
-          return ({
-            label: dash.label,
-            updatedAt: dash._updatedAt,
-            key: `${item.workspace['@id']}*${dash['@id']}`,
-            onClick: () => {
-              setSelectedDashboard(dash);
-              setSelectedKeys([`${item.workspace['@id']}*${dash['@id']}`]);
-            }
-          })
-        }), ['label'], ['asc'])
-      })
-    }), ['createdAt'], ['asc']) : [];
+    },
+  });
+  const items: ItemType[] =
+    isSuccess && workspaceDashboards && Boolean(workspaceDashboards.length)
+      ? orderBy(
+          workspaceDashboards.map(item => {
+            return {
+              key: item.workspace['@id'],
+              label: item.workspace.label,
+              title: item.workspace.label,
+              expandIcon: <DownOutlined />,
+              icon: <DownOutlined />,
+              className: selectKeysHighlight(item.workspace),
+              onTitleClick: () => setSelectedWorkspace(item.workspace),
+              popupClassName: 'workspace-popup-classname',
+              popupOffset: [0, 0],
+              createdAt: item.workspace._createdAt,
+              children: orderBy(
+                item.dashboards.map(dash => {
+                  return {
+                    label: dash.label,
+                    updatedAt: dash._updatedAt,
+                    key: `${item.workspace['@id']}*${dash['@id']}`,
+                    onClick: () => {
+                      setSelectedDashboard(dash);
+                      setSelectedKeys([
+                        `${item.workspace['@id']}*${dash['@id']}`,
+                      ]);
+                    },
+                  };
+                }),
+                ['label'],
+                ['asc']
+              ),
+            };
+          }),
+          ['createdAt'],
+          ['asc']
+        )
+      : [];
 
   return (
     <div className="workspace-list-container">
-      <div className='top-menu'>
-        {
-          isSuccess && Boolean(items.length) && <Menu
+      <div className="top-menu">
+        {isSuccess && Boolean(items.length) && (
+          <Menu
             theme="dark"
             mode="horizontal"
             selectable={false}
@@ -755,7 +764,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             }}
             items={items}
           />
-        }
+        )}
         {actionButtons()}
       </div>
       <div>
@@ -852,8 +861,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         )}
       </div>
     </div>
-  )
-
+  );
 };
 
 export default WorkspaceMenu;
