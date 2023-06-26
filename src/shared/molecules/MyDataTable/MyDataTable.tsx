@@ -139,7 +139,7 @@ const getTypesTrancated = (text: string | string[]) => {
       .join('\n');
     typesWithUrl = text.join('\n');
   } else if (isString(text) && isValidUrl(text)) {
-    types = text.split('/').pop() ?? '';
+    types = text.split('/').pop()!;
   } else {
     types = text;
   }
