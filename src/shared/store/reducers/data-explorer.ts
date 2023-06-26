@@ -158,6 +158,14 @@ export const dataExplorerSlice = createSlice({
         highlightIndex: -1,
       };
     },
+    InitDataExplorerGraphFlowLimitedVersion: (state, action) => {
+      const newState = {
+        ...state,
+        limited: action.payload ?? !state.limited,
+      };
+      calculateNewDigest(newState);
+      return newState;
+    },
   },
 });
 export const {
@@ -170,6 +178,7 @@ export const {
   ReturnBackDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
   ResetHighlightedNodeDataExplorerGraphFlow,
+  InitDataExplorerGraphFlowLimitedVersion,
 } = dataExplorerSlice.actions;
 
 export default dataExplorerSlice.reducer;
