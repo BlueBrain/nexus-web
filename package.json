@@ -12,7 +12,8 @@
     "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",
     "test": "jest",
     "test:watch": "jest --watch",
-    "cy:open": "cypress open",
+    "cy:open": "cypress run --headed --no-exit --config-file cypress.config.ts --browser /usr/bin/google-chrome",
+    "cypress:run": " DEBUG=cypress:cli,cypress:server:specs,cypress:launcher,cypress:server:browsers cypress run --config-file cypress.config.ts --browser /usr/bin/google-chrome",
     "cy:run": "DEBUG=cypress:cli,cypress:server:specs,cypress:launcher,cypress:server:browsers cypress run",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
     "codecov": "codecov",
@@ -22,7 +23,7 @@
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
     "getvideo": "sudo docker cp cypress:/e2e/cypress/videos/Studios.cy.ts.mp4 .",
-    "runtest": "echo | sudo docker exec -e DEBUG=cypress:* -t cypress cypress run --config-file cypress.config.ts --browser /usr/bin/google-chrome",
+    "runtest": "echo | sudo docker exec -e -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser /usr/bin/google-chrome",
     "cp": "for file in $(git st | grep modified: | cut -d: -f2); do sudo docker cp $file cypress:/e2e/$file; done"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "connected-react-router": "^6.3.2",
     "cookie-parser": "^1.4.4",
     "csv-string": "^4.0.1",
+    "cypress-log-to-output": "^1.1.2",
     "cytoscape": "^3.18.1",
     "cytoscape-avsdf": "^1.0.0",
     "cytoscape-cola": "^2.5.0",

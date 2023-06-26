@@ -48,23 +48,23 @@ Cypress.Commands.add('directlogin', (id, realm, username, password) => {
 
 Cypress.Commands.add("rewriteHeaders", () => {
   cy.intercept("*", (req) => {
-    console.log('$$$ Req', req.url)
-    console.log('$$$ Req Cookie', req.headers["Cookie"])
-    return req
-    // return req.on("response", (res) => {
-    //   const setCookies = res.headers["set-cookie"]
+    return req.on("response", (res) => {
+      res.headers["Access-Control-Allow-Origin"] = "*";
+      res.headers["Access-Control-Allow-Credentials"] = true;
 
-    //   res.headers["set-cookie"] = (
-    //     Array.isArray(setCookies) ? setCookies : [setCookies]
-    //   )
-    //     .filter((x) => x)
-    //     .map((headerContent) =>
-    //       headerContent.replace(
-    //         /samesite=(lax|strict)/gi,
-    //         "secure; samesite=none"
-    //       )
-    //     )
-    // })
+      const setCookies = res.headers["set-cookie"]
+
+      res.headers["set-cookie"] = (
+        Array.isArray(setCookies) ? setCookies : [setCookies]
+      )
+        .filter((x) => x)
+        .map((headerContent) =>
+          headerContent.replace(
+            /samesite=(lax|strict)/gi,
+            "secure; samesite=none"
+          )
+        )
+    })
   }
   )
 });

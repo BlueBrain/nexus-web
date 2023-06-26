@@ -21,7 +21,7 @@ import {
   DEFAULT_REPORT_TYPES,
 } from '../constants';
 
-const PORT_NUMBER = 8003;
+const PORT_NUMBER = 8000;
 
 // Create a express app
 const app: express.Express = express();

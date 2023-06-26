@@ -32,6 +32,7 @@ export const reportIssueLink =
 // https://github.com/quasarframework/quasar/issues/2233
 const resizeObserverLoopErrRe = /^[^(ResizeObserver loop limit exceeded)]/;
 Cypress.on('uncaught:exception', err => {
+  console.log('Does this log');
   console.log(
     'There is an error that should not happen, but is being caught in Cypress.'
   );
@@ -40,6 +41,7 @@ Cypress.on('uncaught:exception', err => {
   if (resizeObserverLoopErrRe.test(err.message)) {
     return false;
   }
+  return false;
 });
 
 /// <reference types="cypress" />

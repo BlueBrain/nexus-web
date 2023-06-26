@@ -12,14 +12,17 @@ const fetch = require('node-fetch');
 
 export default defineConfig({
   projectId: '1iihco',
-  viewportWidth: 1200,
   video: true,
   e2e: {
-    baseUrl: 'http://localhost:8003',
+    baseUrl: 'http://fusion.test:8000',
     fileServerFolder: '/cypress',
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
+    defaultCommandTimeout: 10000,
+    viewportWidth: 1920,
+    viewportHeight: 1080,
+    chromeWebSecurity: false,
     // testIsolation: false,
     env: {
       DEBUG: 'cypress:launcher:browsers',
@@ -28,12 +31,23 @@ export default defineConfig({
     },
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
+        console.log('$$$ browser name', browser.name);
+        // launchOptions.args = require('cypress-log-to-output').browserLaunchHandler(
+        //   browser,
+        //   launchOptions.args
+        // );
         launchOptions.args.push(
           '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
         );
+        launchOptions.args.push('--window-size=1920,1080');
+        // launchOptions.args.push('--force-device-scale-factor=1');
+
         launchOptions.args.push('--auto-open-devtools-for-tabs');
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--disable-web-security');
+          launchOptions.args.push('--disable-dev-shm-usage');
+
           launchOptions.args.push(
             '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
           );

@@ -22,7 +22,7 @@ describe('Studios', () => {
 
   before(() => {
     // @ts-ignore
-    cy.rewriteHeaders();
+    // cy.rewriteHeaders();
     // cy.visit('chrome://flags/');
     // cy.get('#search').type('insecure origins');
     // cy.get('h2.experiment-name').contains('Insecure origins');
@@ -88,6 +88,8 @@ describe('Studios', () => {
     cy.visit(
       `studios/${Cypress.env('ORG_LABEL')}/${this.projectLabel}/studios`
     );
+
+    cy.visit('/');
     studioDetailsPage.createStudio('Test Studio 1');
     studioDetailsPage.createWorkspace('Test Workspace 1');
     studioDetailsPage.createDashboard('Test Workspace 1', 'Test Dashboard 1');

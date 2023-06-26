@@ -1,7 +1,9 @@
 version: '3.3'
 services:
   cypress:
-    image: 'cypress/included:cypress-12.13.0-node-18.16.0-chrome-113.0.5672.92-1-ff-113.0-edge-113.0.1774.35-1'
+    image: 'cypress/included:10.3.1-typescript'
+    volumes:
+      - ../:/e2e
     depends_on:
       - fusion
       - delta
@@ -22,7 +24,7 @@ services:
       API_ENDPOINT: 'http://delta.test:8098/v1'
       CLIENT_ID: 'fusion'
     volumes:
-      - ../:/opt/nexus
+      - ../dist:/opt/nexus
     image: nexus-web:fresh
     expose:
       - 8000
