@@ -6,7 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
@@ -18,6 +18,7 @@ import isValidUrl from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { TToken, resolveLinkInEditor } from './editorUtils';
 import { Resource } from '@bbp/nexus-sdk';
+import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -72,12 +73,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const nexus = useNexusContext();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
-  const [fullScreen, setFullScreen] = React.useState(false);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
+  const { limited } = useSelector((state: RootState) => state.dataExplorer);
   const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
@@ -215,7 +216,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Switch
                 checkedChildren="Standard Screen"
                 unCheckedChildren="Full Screen"
-                checked={fullScreen}
+                checked={limited}
                 onChange={onFullScreen}
                 style={switchMarginRight}
               />

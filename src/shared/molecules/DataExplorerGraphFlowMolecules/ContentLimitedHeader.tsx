@@ -1,20 +1,25 @@
 import React, { useState } from 'react';
 import { Switch } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
+import { InitDataExplorerGraphFlowLimitedVersion } from '../../store/reducers/data-explorer';
 import './styles.less';
 
 const DataExplorerGraphFlowContentLimitedHeader = () => {
-  const { current } = useSelector((state: RootState) => state.dataExplorer);
-  const [write, setWrite] = useState(false);
-  const onSelectWrite = (checked: boolean) => setWrite(() => checked);
+  const dispatch = useDispatch();
+  const { current, limited } = useSelector(
+    (state: RootState) => state.dataExplorer
+  );
+  const onSelectWrite = (checked: boolean) => {
+    dispatch(InitDataExplorerGraphFlowLimitedVersion(!checked));
+  };
 
   return (
     <div className="degf-content__haeder">
       <div className="title">{current?.title}</div>
       <div className="switcher">
         <span>Read</span>
-        <Switch checked={write} onChange={onSelectWrite} />
+        <Switch checked={!limited} onChange={onSelectWrite} />
         <span>Write</span>
       </div>
     </div>
