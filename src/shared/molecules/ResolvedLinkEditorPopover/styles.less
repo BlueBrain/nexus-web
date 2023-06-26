@@ -21,11 +21,28 @@
     // padding: 0 4px;
     width: 100%;
     overflow: hidden;
-
     span.ant-tag {
       margin: 10px 12px;
     }
 
+    &.list-item {
+      &:first-child {
+        span.ant-tag {
+          margin: 10px 12px 5px;
+        }
+      }
+      &:last-child {
+        span.ant-tag {
+          margin: 5px 12px 10px;
+        }
+      }
+      span.ant-tag {
+        margin: 3px 12px;
+      }
+      .popover-btn.link {
+        padding: 3px 10px 3px 0;
+      }
+    }
     .popover-btn.link {
       border: none;
       margin: 0;
