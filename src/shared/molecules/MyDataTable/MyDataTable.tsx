@@ -87,6 +87,7 @@ type TProps = {
   sort: string[];
   updateSort(value: string[]): void;
   locate: boolean;
+  query: string;
 };
 export const makeOrgProjectTuple = (text: string) => {
   const parts = text.split('/');
@@ -171,6 +172,7 @@ const MyDataTable: React.FC<TProps> = ({
   sort,
   updateSort,
   locate,
+  query,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -244,12 +246,15 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               organization / project
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_project'])}
-                onSortDescend={() => updateSort(['-_project'])}
-              />
+              {query ||
+                (query.trim() !== '' && (
+                  <Sorter
+                    name="name"
+                    order={orderDirection}
+                    onSortAscend={() => updateSort(['_project'])}
+                    onSortDescend={() => updateSort(['-_project'])}
+                  />
+                ))}
             </div>
           );
         },
@@ -315,12 +320,15 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               updated date
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_updatedAt', '@id'])}
-                onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
-              />
+              {query ||
+                (query.trim() !== '' && (
+                  <Sorter
+                    name="name"
+                    order={orderDirection}
+                    onSortAscend={() => updateSort(['_updatedAt', '@id'])}
+                    onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
+                  />
+                ))}
             </div>
           );
         },
@@ -341,19 +349,22 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               created date
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_createdAt', '@id'])}
-                onSortDescend={() => updateSort(['-_createdAt', '@id'])}
-              />
+              {query ||
+                (query.trim() !== '' && (
+                  <Sorter
+                    name="name"
+                    order={orderDirection}
+                    onSortAscend={() => updateSort(['_createdAt', '@id'])}
+                    onSortDescend={() => updateSort(['-_createdAt', '@id'])}
+                  />
+                ))}
             </div>
           );
         },
         render: text => timeago(new Date(text)),
       },
     ],
-    [sort]
+    [sort, query]
   );
   const dataSource: TMyDataTableRow[] =
     resources?._results?.map(resource => {

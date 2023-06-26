@@ -126,12 +126,6 @@ const Filters = ({
   };
   const handleSubmitDates: React.FormEventHandler<HTMLFormElement> = e => {
     e.preventDefault();
-    console.log('@@form', {
-      dateFilterType,
-      singleDate,
-      dateStart,
-      dateEnd,
-    });
     setFilterOptions({
       dateFilterType,
       singleDate,
@@ -322,7 +316,7 @@ const Filters = ({
           type="link"
           style={{ textAlign: 'left', padding: '4px 0px', color: '#333' }}
         >
-          {dateField ? dateFieldName[dateField] : 'Date Field'}
+          {dateFieldName[dateField]}
           <RightOutlined style={{ fontSize: 8, verticalAlign: 'middle' }} />
         </Button>
       </Dropdown>

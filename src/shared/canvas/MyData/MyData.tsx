@@ -80,7 +80,7 @@ const HomeMyData: React.FC<{}> = () => {
     }),
     {
       dateFilterType: undefined,
-      dateField: undefined,
+      dateField: 'createdAt',
       singleDate: undefined,
       dateStart: undefined,
       dateEnd: undefined,
@@ -202,6 +202,7 @@ const HomeMyData: React.FC<{}> = () => {
           locate,
           issuer,
           setFilterOptions,
+          query,
         }}
       />
     </div>

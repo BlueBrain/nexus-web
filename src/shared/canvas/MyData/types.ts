@@ -6,7 +6,7 @@ export type TDateFilterType = 'before' | 'after' | 'range';
 export type TFilterOptions = {
   query: string;
   dateFilterType?: TDateFilterType;
-  dateField?: TDateField;
+  dateField: TDateField;
   dataType?: string[];
   singleDate?: string;
   dateStart?: string;
