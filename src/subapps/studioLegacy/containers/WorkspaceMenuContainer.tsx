@@ -405,14 +405,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          {/* <div
-            style={{ maxWidth: 'max-content', float: 'right', margin: '0 5px' }}
-          > */}
           <Button shape="round" type="default" role="button">
             <EditOutlined />
             Workspace
           </Button>
-          {/* </div> */}
         </Popover>
         {selectedWorkspace ? (
           <Popover
