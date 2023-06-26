@@ -94,7 +94,6 @@ const Filters = ({
   setFilterOptions,
   locate,
   issuer,
-  isAcrossProjects,
 }: THeaderFilterProps) => {
   const popoverRef = useRef(null);
   const nexus = useNexusContext();
@@ -137,8 +136,6 @@ const Filters = ({
     setFilterOptions({ issuer: e.target.value });
   const onSearchLocateChange = (e: CheckboxChangeEvent) =>
     setFilterOptions({ locate: e.target.checked });
-  const onSearchAcrossProjectsChange = (e: CheckboxChangeEvent) =>
-    setFilterOptions({ isAcrossProjects: e.target.checked });
   const onDatePopoverVisibleChange = () =>
     setOpenDateFilterContainer(state => !state);
   const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = event =>
@@ -296,8 +293,8 @@ const Filters = ({
   return (
     <div className="my-data-table-header-actions">
       <Radio.Group
-        defaultValue={isAcrossProjects ? undefined : 'createdBy'}
-        value={isAcrossProjects ? undefined : issuer}
+        defaultValue={'createdBy'}
+        value={issuer}
         onChange={onIssuerChange}
       >
         <Radio className="radio-filter" value="createdBy">
@@ -422,12 +419,6 @@ const Filters = ({
           <Checkbox checked={locate} onChange={onSearchLocateChange}>
             <span className="locate-text">By resource id or self</span>
           </Checkbox>
-          <Checkbox
-            checked={isAcrossProjects}
-            onChange={onSearchAcrossProjectsChange}
-          >
-            <span className="spread-text">Across Projects</span>
-          </Checkbox>
         </div>
       </div>
     </div>
@@ -442,7 +433,6 @@ const MyDataHeader: React.FC<THeaderProps> = ({
   setFilterOptions,
   locate,
   issuer,
-  isAcrossProjects,
 }) => {
   return (
     <div className="my-data-table-header">
@@ -461,7 +451,6 @@ const MyDataHeader: React.FC<THeaderProps> = ({
           locate,
           setFilterOptions,
           issuer,
-          isAcrossProjects,
         }}
       />
     </div>
