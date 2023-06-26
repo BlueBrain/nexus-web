@@ -17,11 +17,13 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
-    defaultCommandTimeout: 50000,
+    defaultCommandTimeout: 10000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
     // testIsolation: false,
+    chromeWebSecurity: false,
+
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
@@ -31,6 +33,10 @@ export default defineConfig({
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--disable-web-security');
+          launchOptions.args.push(
+            '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
+          );
         }
         return launchOptions;
       }),
@@ -65,7 +71,7 @@ export default defineConfig({
             const projectLabel = `${projectLabelBase}-${uuidv4()}`;
             const projectDescription =
               'An project used for Cypress automated tests';
-
+            console.log('Auth TOKEN', authToken);
             try {
               const nexus = createNexusClient({
                 uri: nexusApiUrl,
