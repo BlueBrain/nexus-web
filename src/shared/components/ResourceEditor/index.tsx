@@ -30,6 +30,7 @@ import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import CodeEditor from './CodeEditor';
 import './ResourceEditor.less';
 import { Resource } from '@bbp/nexus-sdk';
+import { RootState } from 'shared/store/reducers';
 
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
@@ -122,12 +123,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const nexus = useNexusContext();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
-  const [fullScreen, setFullScreen] = React.useState(false);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
+  const { limited } = useSelector((state: RootState) => state.dataExplorer);
   const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
@@ -385,7 +386,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Switch
                 checkedChildren="Standard Screen"
                 unCheckedChildren="Full Screen"
-                checked={fullScreen}
+                checked={limited}
                 onChange={onFullScreen}
                 style={switchMarginRight}
               />
