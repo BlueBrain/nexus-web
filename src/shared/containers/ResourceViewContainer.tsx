@@ -197,18 +197,24 @@ const ResourceViewContainer: React.FunctionComponent<{
   const isLatest = latestResource?._rev === resource?._rev;
 
   const handleTabChange = (activeTabKey: string) => {
-    goToResource(orgLabel, projectLabel, resourceId, {
-      revision: resource ? resource._rev : undefined,
-      tab: activeTabKey,
-    });
+    const newLink = `${location.pathname}${location.search}${activeTabKey}`;
+    history.push(newLink, location.state);
+    // goToResource(orgLabel, projectLabel, resourceId, {
+    //   revision: resource ? resource._rev : undefined,
+    //   tab: activeTabKey,
+    // });
   };
 
   const handleExpanded = (expanded: boolean) => {
-    goToResource(orgLabel, projectLabel, resourceId, {
-      expanded,
-      revision: resource ? resource._rev : undefined,
-      tab: activeTabKey,
-    });
+    // goToResource(orgLabel, projectLabel, resourceId, {
+    //   expanded,
+    //   revision: resource ? resource._rev : undefined,
+    //   tab: activeTabKey,
+    // });
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('expanded', expanded ? 'true' : 'false');
+    const newLink = `${location.pathname}?${searchParams.toString()}`;
+    history.push(newLink, location.state);
   };
 
   const handleEditFormSubmit = async (value: any) => {
