@@ -99,7 +99,6 @@ const ResourceViewActionsContainer: React.FC<{
     }
   };
   const basePath = useSelector((state: RootState) => state.config.basePath);
-
   const [tags, setTags] = React.useState<{
     '@context'?: Context;
     tags: {
