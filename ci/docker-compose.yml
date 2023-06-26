@@ -2,13 +2,14 @@ version: '3.3'
 services:
   cypress:
     image: 'cypress/included:10.3.1-typescript'
+    volumes:
+      - ../:/e2e
     depends_on:
       - fusion
       - delta
     environment:
-      - CYPRESS_NEXUS_API_URL=http://delta.test:8080/v1
+      - CYPRESS_NEXUS_API_URL=http://delta.test:8098/v1
       - CYPRESS_BASE_URL=http://fusion.test:8000
-
     working_dir: /e2e
     container_name: cypress
     entrypoint: ['bash']
@@ -19,11 +20,13 @@ services:
       - delta
     environment:
       ANALYSIS_PLUGIN_SHOW_ON_TYPES: 'Analysis,DetailedCircuit,AnalysisReport,Report'
-      API_ENDPOINT: 'http://delta.test:8080/v1'
+      API_ENDPOINT: 'http://delta.test:8098/v1'
       CLIENT_ID: 'fusion'
     image: nexus-web:fresh
     expose:
       - 8000
+    ports:
+      - 8000:8000
     networks:
       default:
         aliases:
@@ -56,9 +59,12 @@ services:
         './bin/delta-app',
         '-Xmx4G',
         '-Dapp.cluster.remote-interface=delta',
+        '-Dapp.http.port=8098',
       ]
     expose:
-      - 8080
+      - 8098
+    ports:
+      - 8098:8098
     volumes:
       - ./config:/config
       - /tmp:/default-volume
@@ -79,6 +85,7 @@ services:
       - --hostname-port=8080
       - --hostname-strict=false
       - --hostname-strict-backchannel=false
+      - --log-level=DEBUG
     ports:
       - 8080:8080
     networks:
