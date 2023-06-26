@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const fs = require('fs');
 
 const keycloakUrl = 'http://keycloak.test:8080';
-const deltaBaseUrl = 'http://delta.test:8080/v1';
+const deltaBaseUrl = 'http://delta.test:8098/v1';
 
 // /* these are used for administrating keycloak */
 const keycloakAdmin = {
