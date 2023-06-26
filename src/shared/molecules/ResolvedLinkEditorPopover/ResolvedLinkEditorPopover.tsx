@@ -180,7 +180,7 @@ const ResolvedLinkEditorPopover = () => {
       return (
         <PopoverContainer {...{ onClickOutside, ref }}>
           {(results as TDELink[]).map(item => (
-            <div className="resource" key={item._self}>
+            <div className="resource list-item" key={item._self}>
               {item.resource?.[0] && item.resource?.[1] && (
                 <Tag color="blue">{`${item.resource?.[0]}/${item.resource?.[1]}`}</Tag>
               )}
