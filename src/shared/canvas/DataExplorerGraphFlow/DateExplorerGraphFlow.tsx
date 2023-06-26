@@ -15,7 +15,7 @@ import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStac
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
 import './styles.less';
 
-const DataExplorerResolverPage = () => {
+const DataExplorerGraphFlow = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -68,4 +68,4 @@ const DataExplorerResolverPage = () => {
   );
 };
 
-export default DataExplorerResolverPage;
+export default DataExplorerGraphFlow;
