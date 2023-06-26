@@ -17,7 +17,6 @@ export type TFilterOptions = {
   sort: string[];
   locate: boolean;
   issuer: TIssuer;
-  isAcrossProjects: boolean;
 };
 export type TCurrentDate = Pick<
   TFilterOptions,
