@@ -12,6 +12,7 @@ import './styles.less';
 
 type TError = Error & { cause: any };
 type Props = {};
+
 type DataType = {
   key: string;
   name: string;
@@ -20,9 +21,11 @@ type DataType = {
   write?: boolean;
   create?: boolean;
   query?: boolean;
-  children?: DataType[];
+  children?: ChildType[];
   realm?: string;
 };
+type ChildType = Omit<DataType, 'children' | 'realm' | 'parent'>;
+
 type GroupedPermission = {
   name: string;
   permissions: string[];
@@ -165,7 +168,6 @@ const PermissionsAclsSubView = (props: Props) => {
         name: `${identity['@type']}${name}`,
         realm: identity.realm,
         parent: true,
-        // @ts-ignore
         children: permissions.map(({ name, permissions }) => ({
           name,
           key: `${identity.realm}/${identity['@type']}/${identity.subject}:${name}`,
