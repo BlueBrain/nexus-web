@@ -264,15 +264,14 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               organization / project
-              {query ||
-                (query.trim() !== '' && (
-                  <Sorter
-                    name="name"
-                    order={orderDirection}
-                    onSortAscend={() => updateSort(['_project'])}
-                    onSortDescend={() => updateSort(['-_project'])}
-                  />
-                ))}
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_project'])}
+                  onSortDescend={() => updateSort(['-_project'])}
+                />
+              )}
             </div>
           );
         },
@@ -331,15 +330,14 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               updated date
-              {query ||
-                (query.trim() !== '' && (
-                  <Sorter
-                    name="name"
-                    order={orderDirection}
-                    onSortAscend={() => updateSort(['_updatedAt', '@id'])}
-                    onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
-                  />
-                ))}
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_updatedAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
+                />
+              )}
             </div>
           );
         },
@@ -360,15 +358,14 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               created date
-              {query ||
-                (query.trim() !== '' && (
-                  <Sorter
-                    name="name"
-                    order={orderDirection}
-                    onSortAscend={() => updateSort(['_createdAt', '@id'])}
-                    onSortDescend={() => updateSort(['-_createdAt', '@id'])}
-                  />
-                ))}
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_createdAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_createdAt', '@id'])}
+                />
+              )}
             </div>
           );
         },
