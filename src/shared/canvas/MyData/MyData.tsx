@@ -70,7 +70,6 @@ const HomeMyData: React.FC<{}> = () => {
       sort,
       locate,
       issuer,
-      isAcrossProjects,
     },
     setFilterOptions,
   ] = React.useReducer(
@@ -80,7 +79,7 @@ const HomeMyData: React.FC<{}> = () => {
     }),
     {
       dateFilterType: undefined,
-      dateField: undefined,
+      dateField: 'createdAt',
       singleDate: undefined,
       dateStart: undefined,
       dateEnd: undefined,
@@ -91,7 +90,6 @@ const HomeMyData: React.FC<{}> = () => {
       sort: ['-_createdAt', '@id'],
       locate: false,
       issuer: 'createdBy',
-      isAcrossProjects: false,
     }
   );
 
@@ -126,7 +124,6 @@ const HomeMyData: React.FC<{}> = () => {
         query,
         locate,
         issuer,
-        isAcrossProjects,
         date,
         order,
       },
@@ -136,11 +133,7 @@ const HomeMyData: React.FC<{}> = () => {
       nexus.Resource.list(undefined, undefined, {
         size,
         from: offset,
-        ...(isAcrossProjects
-          ? {}
-          : {
-              [issuer]: issuerUri,
-            }),
+        [issuer]: issuerUri,
         ...(locate && query.trim().length
           ? {
               locate: query,
@@ -186,7 +179,6 @@ const HomeMyData: React.FC<{}> = () => {
           total,
           locate,
           issuer,
-          isAcrossProjects,
           setFilterOptions,
         }}
       />
@@ -202,6 +194,7 @@ const HomeMyData: React.FC<{}> = () => {
           locate,
           issuer,
           setFilterOptions,
+          query,
         }}
       />
     </div>

@@ -239,7 +239,7 @@ describe('datapanel utilities', () => {
     expect(actualPathProps).toEqual(expectPathProps);
   });
 
-  it('trims path for top level resource when its name is too long', () => {
+  it('does not trim path for top level resource even if it is long', () => {
     const namePrefix = Array(20)
       .fill('A')
       .join('');
@@ -257,7 +257,7 @@ describe('datapanel utilities', () => {
     const actualPathProps = pathForTopLevelResources(mockResource, new Map());
 
     const expectPathProps: FilePath = {
-      path: `/${orgName}/${projectName}/${nameSuffix}`,
+      path: `/${orgName}/${projectName}/${resourceName}`,
       filename: 'metadata',
       extension: 'json',
     };
@@ -364,8 +364,8 @@ describe('datapanel utilities', () => {
     );
 
     const expectPathProps = {
-      path: `${parentPath}/${nameSuffix}`,
-      fileName: `${nameSuffix}.asc`,
+      path: `${parentPath}/${namePrefix}${nameSuffix}`,
+      fileName: `${namePrefix}${nameSuffix}.asc`,
     };
 
     expect(actualPathProps).toEqual(expectPathProps);
