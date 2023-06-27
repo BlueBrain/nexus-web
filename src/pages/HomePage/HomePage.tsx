@@ -9,7 +9,6 @@ const Home: React.FunctionComponent = () => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const userAuthenticated = oidc && !!oidc.user?.id_token;
   if (!userAuthenticated) {
-    console.log('@@not authenticated');
     return <IdentityPage />;
   }
 
