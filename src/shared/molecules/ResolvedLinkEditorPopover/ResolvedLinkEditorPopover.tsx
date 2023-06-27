@@ -36,6 +36,7 @@ const PopoverContainer = ({
   useOnClickOutside(ref, onClickOutside);
   return (
     <div
+      data-testId="custom-link-popover"
       ref={ref}
       className={clsx(
         'custom-popover-token',
