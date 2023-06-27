@@ -36,9 +36,11 @@ const DataExplorerGraphFlow = () => {
   }, [location.search, digestFirstRender.current]);
 
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      dispatch(ResetDataExplorerGraphFlow());
-      localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+    const unlisten = history.listen(location => {
+      if (!location.pathname.startsWith('/data-explorer/graph-flow')) {
+        dispatch(ResetDataExplorerGraphFlow());
+        localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+      }
     });
     return () => unlisten();
   }, []);
