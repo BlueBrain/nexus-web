@@ -36,6 +36,7 @@ describe('ResourceEditor', () => {
         handleChange={() => {}}
         loadingResolution={false}
         ref={editor}
+        fullscreen={false}
       />
     );
     await waitFor(async () => {
