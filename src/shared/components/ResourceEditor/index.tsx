@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Switch, Spin } from 'antd';
+import { Button, Switch } from 'antd';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -27,6 +27,7 @@ import {
   getResourceLabel,
 } from '../../utils';
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
+import CodeEditor from './CodeEditor';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -57,8 +58,8 @@ type TActionData = {
   payload: TEditorPopoverResolvedData;
 };
 
-const INDENT_UNIT = 4;
 const LINE_HEIGHT = 50;
+export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 export const getNormalizedTypes = (types?: string | string[]) => {
   if (types) {
@@ -159,19 +160,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     const elements = document.getElementsByClassName('cm-string');
     Array.from(elements).forEach(item => {
       const itemSpan = item as HTMLSpanElement;
-      if (
-        isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))
-        // && item.tagName !== 'a'
-      ) {
+      if (isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))) {
         itemSpan.style.textDecoration = 'underline';
-        // itemSpan.classList.add('cm-ghost-link');
-        // itemSpan.onclick = () => false;
-        // const anchor = document.createElement('a');
-        // anchor.href = itemSpan.innerText;
-        // anchor.innerHTML = itemSpan.innerText;
-        // anchor.className = 'cm-ghost-link';
-        // anchor.onclick = () => false;
-        // item.replaceWith(anchor);
       }
     });
   };
@@ -303,43 +293,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
     setLoadingResolution(false);
   };
-  const renderCodeMirror = (value: string) => {
-    return (
-      <Spin spinning={busy}>
-        <CodeMirror
-          value={value}
-          autoCursor={false}
-          detach={false}
-          options={{
-            readOnly: !editable,
-            mode: { name: 'javascript', json: true },
-            theme: 'base16-light',
-            lineNumbers: true,
-            lineWrapping: true,
-            viewportMargin: Infinity,
-            foldGutter: true,
-            // @ts-ignore
-            foldCode: true,
-            indentUnit: INDENT_UNIT,
-            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-            extraKeys: {
-              'Ctrl-Q': keyFoldCode,
-            },
-          }}
-          className={clsx(
-            'code-mirror-editor',
-            loadingResolution && 'resolution-on-progress'
-          )}
-          onChange={handleChange}
-          editorDidMount={editor => {
-            codeMirorRef.current = editor;
-          }}
-          onMouseDown={onLinkClick}
-          onUpdate={onLinksFound}
-        />
-      </Spin>
-    );
-  };
 
   React.useEffect(() => {
     setEditing(false);
@@ -380,7 +333,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
 
   return (
-    <div className={valid ? 'resource-editor' : 'resource-editor _invalid'}>
+    <div
+      data-testId="resource-editor"
+      className={valid ? 'resource-editor' : 'resource-editor _invalid'}
+    >
       {showControlPanel && (
         <div className="control-panel">
           <div>
@@ -432,6 +388,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               />
             )}
             <Button
+              role="submit"
               icon={<SaveOutlined />}
               type="primary"
               size="small"
@@ -448,8 +405,17 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           </div>
         </div>
       )}
-
-      {renderCodeMirror(stringValue)}
+      <CodeEditor
+        busy={busy}
+        value={stringValue}
+        editable={editable}
+        handleChange={handleChange}
+        keyFoldCode={keyFoldCode}
+        loadingResolution={loadingResolution}
+        onLinkClick={onLinkClick}
+        onLinksFound={onLinksFound}
+        ref={codeMirorRef}
+      />
     </div>
   );
 };
