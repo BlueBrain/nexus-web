@@ -38,6 +38,10 @@ export class StudioDetailsPage extends StudioListPage {
   }
 
   createDashboard(workspaceName, dashboardName) {
+    cy.intercept({ method: 'PUT', path: /resources/ }).as(
+      'saveDashboardRequest'
+    );
+
     cy.findByRole('button', { name: /Dashboard/ }).click();
     cy.findByRole('button', { name: /Add/ }).click();
     cy.findByPlaceholderText(/Name/i).type(dashboardName);
@@ -47,6 +51,7 @@ export class StudioDetailsPage extends StudioListPage {
     ).click();
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
+    cy.wait('@saveDashboardRequest');
     cy.findByRole('menuitem', { name: new RegExp(workspaceName, 'i') }).click();
     cy.get('ul')
       .contains(new RegExp(dashboardName, 'i'))
