@@ -4,6 +4,8 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT } from '.';
 import { clsx } from 'clsx';
 import { Spin } from 'antd';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 type TCodeEditor = {
   busy: boolean;
@@ -35,6 +37,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
     },
     ref
   ) => {
+    const { limited } = useSelector((state: RootState) => state.dataExplorer);
     return (
       <Spin spinning={busy}>
         <CodeMirror
