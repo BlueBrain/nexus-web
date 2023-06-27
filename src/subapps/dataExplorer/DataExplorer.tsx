@@ -1,32 +1,41 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
-import { isObject, isString } from 'lodash';
+import { isString } from 'lodash';
 import React, { useReducer } from 'react';
 import { useQuery } from 'react-query';
 import { getResourceLabel } from '../../shared/utils';
 import { DataExplorerTable } from './DataExplorerTable';
 import './styles.less';
 import { ProjectSelector } from './ProjectSelector';
+import { PredicateSelector, isPathMissing } from './PredicateSelector';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
+  predicatePath: string | null;
+  predicateFilter: string | null;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
   const [
-    { pageSize, offset, orgAndProject },
+    { pageSize, offset, orgAndProject, predicatePath, predicateFilter },
     updateTableConfiguration,
   ] = useReducer(
     (
       previous: DataExplorerConfiguration,
       next: Partial<DataExplorerConfiguration>
     ) => ({ ...previous, ...next }),
-    { pageSize: 50, offset: 0, orgAndProject: undefined }
+    {
+      pageSize: 50,
+      offset: 0,
+      orgAndProject: undefined,
+      predicatePath: null,
+      predicateFilter: null,
+    }
   );
 
   const { data: resources, isLoading } = useQuery({
@@ -55,13 +64,14 @@ export const DataExplorer: React.FC<{}> = () => {
     },
   });
 
-  const dataSource: Resource[] =
-    resources?._results?.map(resource => {
-      return {
-        ...resource,
-        name: getResourceLabel(resource),
-      };
-    }) || [];
+  const currentPageDataSource: Resource[] = resources?._results || [];
+
+  const displayedDataSource =
+    predicatePath && predicateFilter
+      ? currentPageDataSource.filter(resource =>
+          isPathMissing(resource, predicatePath)
+        )
+      : currentPageDataSource;
 
   return (
     <div className="data-explorer-contents">
@@ -77,10 +87,15 @@ export const DataExplorer: React.FC<{}> = () => {
             }
           }}
         />
+        <PredicateSelector
+          dataSource={currentPageDataSource}
+          onPredicateChange={updateTableConfiguration}
+        />
       </div>
       <DataExplorerTable
         isLoading={isLoading}
-        dataSource={dataSource}
+        dataSource={displayedDataSource}
+        columns={columnsFromDataSource(currentPageDataSource)}
         total={resources?._total}
         pageSize={pageSize}
         offset={offset}
@@ -88,4 +103,18 @@ export const DataExplorer: React.FC<{}> = () => {
       />
     </div>
   );
+};
+
+export const isObject = (value: any) => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+};
+
+export const columnsFromDataSource = (resources: Resource[]): string[] => {
+  const columnNames = new Set<string>();
+
+  resources.forEach(resource => {
+    Object.keys(resource).forEach(key => columnNames.add(key));
+  });
+
+  return Array.from(columnNames);
 };
