@@ -21,7 +21,7 @@
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
-    "runtest": "echo | sudo docker exec -e -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser /usr/bin/google-chrome"
+    "runtest": "echo | sudo docker exec -e DEBUG='cypress:*' -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser chrome"
   },
   "dependencies": {
     "@ant-design/charts": "^1.3.4",
