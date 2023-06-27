@@ -274,6 +274,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         onLinkClick={() => {}}
         onLinksFound={() => {}}
         ref={codeMirorRef}
+        fullscreen={limited}
       />
     </div>
   );
