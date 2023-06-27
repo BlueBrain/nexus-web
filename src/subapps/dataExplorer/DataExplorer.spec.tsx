@@ -1,7 +1,7 @@
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
-import { RenderResult } from '@testing-library/react';
+import { RenderResult, act, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -18,6 +18,7 @@ import { render, screen, waitFor } from '../../utils/testUtil';
 import { DataExplorer } from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
+import { DEFAULT_OPTION, getAllPaths } from './PredicateSelector';
 
 describe('DataExplorer', () => {
   const server = setupServer(
@@ -53,13 +54,21 @@ describe('DataExplorer', () => {
     user = userEvent.setup();
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     server.resetHandlers();
+    await userEvent.click(container); // Close any open dropdowns
   });
+
   afterAll(() => {
     server.resetHandlers();
     server.close();
   });
+
+  const DropdownSelector = '.ant-select-dropdown';
+  const DropdownOptionSelector = 'div.ant-select-item-option-content';
+  const PathMenuLabel = 'path-selector';
+  const PredicateMenuLabel = 'predicate-selector';
+  const ProjectMenuLabel = 'project-filter';
 
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
@@ -77,17 +86,6 @@ describe('DataExplorer', () => {
     });
     expect(header).toBeInTheDocument();
     return header;
-  };
-
-  const expectedHeader = (propName: string) => {
-    switch (propName) {
-      case '_project':
-        return 'PROJECT';
-      case '@type':
-        return 'TYPE';
-      default:
-        return propName;
-    }
   };
 
   const getTextForColumn = async (resource: Resource, colName: string) => {
@@ -111,12 +109,6 @@ describe('DataExplorer', () => {
     const projectAutocomplete = await getProjectAutocomplete();
     await userEvent.click(projectAutocomplete);
     return projectAutocomplete;
-  };
-
-  const selectProject = async (projectName: string) => {
-    await openProjectAutocomplete();
-    const unhcrProject = await getProjectOption(projectName);
-    await userEvent.click(unhcrProject, { pointerEventsCheck: 0 });
   };
 
   const searchForProject = async (searchTerm: string) => {
@@ -149,6 +141,56 @@ describe('DataExplorer', () => {
     });
   };
 
+  const getDropdownOption = async (optionLabel: string) =>
+    await screen.getByText(new RegExp(`${optionLabel}$`), {
+      selector: DropdownOptionSelector,
+    });
+
+  const getRowsForNextPage = async (resources: Resource[]) => {
+    server.use(dataExplorerPageHandler(resources));
+
+    const pageInput = await screen.getByRole('listitem', { name: '2' });
+    expect(pageInput).toBeInTheDocument();
+
+    await user.click(pageInput);
+
+    await expectRowCountToBe(3);
+  };
+
+  const openMenuFor = async (ariaLabel: string) => {
+    const menuInput = await screen.getByLabelText(ariaLabel, {
+      selector: 'input',
+    });
+    await userEvent.click(menuInput, { pointerEventsCheck: 0 });
+    await act(async () => {
+      fireEvent.mouseDown(menuInput);
+    });
+    const menuDropdown = document.querySelector(DropdownSelector);
+    expect(menuDropdown).toBeInTheDocument();
+    return menuDropdown;
+  };
+
+  const selectOptionFromMenu = async (
+    menuAriaLabel: string,
+    optionLabel: string
+  ) => {
+    await openMenuFor(menuAriaLabel);
+    const option = await getDropdownOption(optionLabel);
+    await userEvent.click(option, { pointerEventsCheck: 0 });
+  };
+
+  /**
+   * @returns All options visible in the currently open dropdown menu in the DOM.
+   * NOTE: Since antd menus use virtual scroll, not all options inside the menu are visible.
+   * This function only returns those options that are visible.
+   */
+  const getVisibleOptionsFromMenu = () => {
+    const menuDropdown = document.querySelector(DropdownSelector);
+    return Array.from(
+      menuDropdown?.querySelectorAll(DropdownOptionSelector) ?? []
+    );
+  };
+
   it('shows rows for all fetched resources', async () => {
     await expectRowCountToBe(10);
   });
@@ -161,7 +203,7 @@ describe('DataExplorer', () => {
       for (const topLevelProperty of Object.keys(mockResource)) {
         if (!seenColumns.has(topLevelProperty)) {
           seenColumns.add(topLevelProperty);
-          const header = expectedHeader(topLevelProperty);
+          const header = getColumnTitle(topLevelProperty);
           await expectColumHeaderToExist(header);
         }
       }
@@ -187,20 +229,13 @@ describe('DataExplorer', () => {
   it('updates columns when new page is selected', async () => {
     await expectRowCountToBe(10);
 
-    server.use(
-      dataExplorerPageHandler([
-        getMockResource('self1', { author: 'piggy', edition: 1 }),
-        getMockResource('self2', { author: ['iggy', 'twinky'] }),
-        getMockResource('self3', { year: 2013 }),
-      ])
-    );
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
 
-    const pageInput = await screen.getByRole('listitem', { name: '2' });
-    expect(pageInput).toBeInTheDocument();
-
-    await user.click(pageInput);
-
-    await expectRowCountToBe(3);
+    await getRowsForNextPage(mockResourcesForNextPage);
 
     await expectColumHeaderToExist('author');
     await expectColumHeaderToExist('edition');
@@ -310,19 +345,14 @@ describe('DataExplorer', () => {
     expect(textForSpecialProperty).toEqual('{}');
   });
 
-  const getProjectOption = async (projectName: string) =>
-    await screen.getByText(new RegExp(projectName, 'i'), {
-      selector: 'div.ant-select-item-option-content',
-    });
-
   it('shows resources filtered by the selected project', async () => {
-    await selectProject('unhcr');
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
 
     visibleTableRows().forEach(row =>
       expect(projectFromRow(row)).toMatch(/unhcr/i)
     );
 
-    await selectProject(AllProjects);
+    await selectOptionFromMenu(ProjectMenuLabel, AllProjects);
     await expectRowCountToBe(10);
   });
 
@@ -332,5 +362,45 @@ describe('DataExplorer', () => {
 
     await searchForProject('bbc');
     await expectProjectOptionsToMatch('bbc');
+  });
+
+  it('shows paths as options in a select menu of path selector', async () => {
+    await openMenuFor('path-selector');
+
+    const pathOptions = getVisibleOptionsFromMenu();
+
+    const expectedPaths = getAllPaths(defaultMockResult);
+    expect(expectedPaths.length).toBeGreaterThanOrEqual(
+      Object.keys(defaultMockResult[0]).length
+    );
+    expect(pathOptions[0].innerHTML).toMatch(DEFAULT_OPTION);
+
+    pathOptions.slice(1).forEach((path, index) => {
+      expect(path.innerHTML).toMatch(
+        new RegExp(`${expectedPaths[index]}$`, 'i')
+      );
+    });
+
+    expect(pathOptions.length).toBeGreaterThanOrEqual(3); // Since antd options in a select menu are displayed in a virtual list (by default), not all expected options are in the DOM.
+  });
+
+  it('shows resources that have path missing', async () => {
+    await expectRowCountToBe(10);
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
+
+    await getRowsForNextPage(mockResourcesForNextPage);
+    await expectRowCountToBe(3);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectOptionFromMenu(PredicateMenuLabel, 'Empty value');
+    await expectRowCountToBe(1);
+
+    await selectOptionFromMenu(PathMenuLabel, 'edition');
+    await selectOptionFromMenu(PredicateMenuLabel, 'Empty value');
+    await expectRowCountToBe(2);
   });
 });
