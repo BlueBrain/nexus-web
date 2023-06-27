@@ -444,6 +444,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         onLinkClick={onLinkClick}
         onLinksFound={onLinksFound}
         ref={codeMirorRef}
+        fullscreen={limited}
       />
     </div>
   );

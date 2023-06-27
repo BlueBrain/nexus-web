@@ -4,15 +4,14 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT } from '.';
 import { clsx } from 'clsx';
 import { Spin } from 'antd';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 type TCodeEditor = {
   busy: boolean;
   value: string;
   editable: boolean;
-  keyFoldCode(cm: any): void;
   loadingResolution: boolean;
+  fullscreen: boolean;
+  keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
   onLinkClick(_: any, ev: MouseEvent): void;
   onLinksFound(): void;
@@ -20,12 +19,14 @@ type TCodeEditor = {
 type TEditorConfiguration = EditorConfiguration & {
   foldCode: boolean;
 };
+
 const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
   (
     {
       busy,
       value,
       editable,
+      fullscreen,
       keyFoldCode,
       loadingResolution,
       handleChange,
@@ -34,7 +35,6 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
     },
     ref
   ) => {
-    const { limited } = useSelector((state: RootState) => state.dataExplorer);
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -62,7 +62,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           className={clsx(
             'code-mirror-editor',
             loadingResolution && 'resolution-on-progress',
-            limited && 'full-screen-mode'
+            fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
           editorDidMount={editor => {
