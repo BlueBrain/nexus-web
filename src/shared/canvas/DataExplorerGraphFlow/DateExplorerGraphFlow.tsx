@@ -6,6 +6,7 @@ import { RootState } from '../../store/reducers';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
   PopulateDataExplorerGraphFlow,
+  ResetDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
 import {
   NavigationBack,
@@ -36,6 +37,7 @@ const DataExplorerResolverPage = () => {
 
   useEffect(() => {
     const unlisten = history.listen(() => {
+      dispatch(ResetDataExplorerGraphFlow());
       localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
     });
     return () => unlisten();
