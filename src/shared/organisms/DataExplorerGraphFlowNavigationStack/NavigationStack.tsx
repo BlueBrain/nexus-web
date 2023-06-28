@@ -59,7 +59,7 @@ const NavigationStack = () => {
                     resource,
                   }}
                 />
-                <NavigationStackShrinkedItem />
+                <NavigationStackShrinkedItem key="shrinkable-item" />
               </Fragment>
             );
           }
