@@ -1,7 +1,6 @@
 import { Location } from 'history';
 import * as React from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
-import PrivateRoute from '../../shared/organisms/ProtectedRoute/ProtectedRoute';
 import NotFound from './404';
 
 const SubAppsView: React.FC<{
@@ -16,15 +15,7 @@ const SubAppsView: React.FC<{
     <Switch location={background || location}>
       {routesWithSubApps.map(
         ({ path, component: SubAppComponent, requireLogin, ...rest }) => {
-          return rest.protected ? (
-            <PrivateRoute
-              key={`protected-${path as string}`}
-              path={path}
-              {...rest}
-            >
-              <SubAppComponent />
-            </PrivateRoute>
-          ) : (
+          return (
             <Route key={`path-${path as string}`} path={path} {...rest}>
               <SubAppComponent />
             </Route>

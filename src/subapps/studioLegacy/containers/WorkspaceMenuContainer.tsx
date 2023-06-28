@@ -8,6 +8,10 @@ import {
   EditOutlined,
   DownOutlined,
 } from '@ant-design/icons';
+import PromisePool from '@supercharge/promise-pool';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { useQuery } from 'react-query';
+import { find, orderBy } from 'lodash';
 import useNotification from '../../../shared/hooks/useNotification';
 import EditTableForm from '../../../shared/components/EditTableForm';
 import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
@@ -24,8 +28,8 @@ import DataTableContainer, {
 } from '../../../shared/containers/DataTableContainer';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
-import { find } from 'lodash';
 import { ErrorComponent } from '../../../shared/components/ErrorComponent';
+import '../studio.less';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -346,7 +350,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ) : null}
       </>
     );
-
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
 
@@ -390,44 +393,39 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         ) : null}
       </>
     );
-
     return resourcesWritePermissionsWrapper(editButton, permissionsPath);
   };
 
   const actionButtons = () => {
     const actionsPopovers = (
-      <>
+      <div className="actions-menu">
         <Popover
           style={{ background: 'none' }}
-          placement="rightTop"
+          placement="leftBottom"
           content={editWorkspaceWrapper}
           trigger="click"
         >
-          <Menu.Item
-            style={{ maxWidth: 'max-content', float: 'right', margin: '0 5px' }}
-          >
-            <Button shape="round" type="default" role="button">
-              <EditOutlined />
-              Workspace
-            </Button>
-          </Menu.Item>
+          <Button shape="round" type="default" role="button">
+            <EditOutlined />
+            Workspace
+          </Button>
         </Popover>
         {selectedWorkspace ? (
           <Popover
             style={{ background: 'none' }}
-            placement="rightTop"
+            placement="leftBottom"
             content={editDhashBoardspaceWrapper}
             trigger="click"
           >
-            <Menu.Item style={{ maxWidth: 'max-content', float: 'right' }}>
+            <div style={{ maxWidth: 'max-content', float: 'right' }}>
               <Button shape="round" type="default" role="button">
                 <EditOutlined />
                 Dashboard
               </Button>
-            </Menu.Item>
+            </div>
           </Popover>
         ) : null}
-      </>
+      </div>
     );
     return resourcesWritePermissionsWrapper(actionsPopovers, permissionsPath);
   };
@@ -538,7 +536,6 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       }
     }
   }, [selectedWorkspace, selectedDashboard]);
-
   React.useEffect(() => {
     if (workspaceIds.length > 0) {
       Promise.all(
@@ -679,51 +676,93 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     }
     return '';
   }
+  const { data: workspaceDashboards, isSuccess } = useQuery({
+    queryKey: ['workspace-dashboard-menu', { workspaces }],
+    enabled: !!workspaces && !!workspaces.length,
+    refetchOnWindowFocus: false,
+    retry: false,
+    queryFn: async () => {
+      const { results } = await PromisePool.for(workspaces)
+        .withConcurrency(5)
+        .process(async item => {
+          const { results } = await PromisePool.for(item.dashboards)
+            .withConcurrency(5)
+            .process(async subitem => {
+              return nexus.Resource.get(
+                orgLabel,
+                projectLabel,
+                encodeURIComponent((subitem as any).dashboard)
+              ) as Promise<
+                Resource<{
+                  label: string;
+                  description?: string;
+                  dataQuery: string;
+                  plugins: string[];
+                }>
+              >;
+            });
+          return { workspace: item, dashboards: results };
+        });
+      return results;
+    },
+  });
+  const items: ItemType[] =
+    isSuccess && workspaceDashboards && Boolean(workspaceDashboards.length)
+      ? orderBy(
+          workspaceDashboards.map(item => {
+            return {
+              key: item.workspace['@id'],
+              label: item.workspace.label,
+              title: item.workspace.label,
+              expandIcon: <DownOutlined />,
+              icon: <DownOutlined />,
+              className: selectKeysHighlight(item.workspace),
+              onTitleClick: () => setSelectedWorkspace(item.workspace),
+              popupClassName: 'workspace-popup-classname',
+              popupOffset: [0, 0],
+              createdAt: item.workspace._createdAt,
+              children: orderBy(
+                item.dashboards.map(dash => {
+                  return {
+                    label: dash.label,
+                    updatedAt: dash._updatedAt,
+                    key: `${item.workspace['@id']}*${dash['@id']}`,
+                    onClick: () => {
+                      setSelectedDashboard(dash);
+                      setSelectedKeys([
+                        `${item.workspace['@id']}*${dash['@id']}`,
+                      ]);
+                    },
+                  };
+                }),
+                ['label'],
+                ['asc']
+              ),
+            };
+          }),
+          ['createdAt'],
+          ['asc']
+        )
+      : [];
+
   return (
     <div className="workspace-list-container">
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        selectable={false}
-        triggerSubMenuAction="click"
-        selectedKeys={selectedKeys}
-        style={{
-          minHeight: '40px',
-        }}
-      >
-        {workspaces.map(w => (
-          <Menu.SubMenu
-            icon={<DownOutlined />}
-            title={w.label}
-            key={`workspace-${w['@id']}`}
-            popupOffset={[0, 0]}
-            className={selectKeysHighlight(w)}
-            onTitleClick={() => setSelectedWorkspace(w)}
-            popupClassName="workspace-popup-classname"
-          >
-            {dashboardSpinner ? (
-              <Menu.Item>
-                <Spin />
-              </Menu.Item>
-            ) : (
-              dashboards.map((d: Resource) => {
-                return (
-                  <Menu.Item
-                    key={`w${w['@id']}-d${d['@id']}`}
-                    onClick={() => {
-                      setSelectedKeys([`${w['@id']}*${d['@id']}`]);
-                      setSelectedDashboard(d);
-                    }}
-                  >
-                    {d.label}
-                  </Menu.Item>
-                );
-              })
-            )}
-          </Menu.SubMenu>
-        ))}
+      <div className="top-menu">
+        {isSuccess && Boolean(items.length) && (
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectable={false}
+            triggerSubMenuAction="click"
+            selectedKeys={selectedKeys}
+            style={{
+              minHeight: '40px',
+            }}
+            items={items}
+          />
+        )}
         {actionButtons()}
-      </Menu>
+      </div>
       <div>
         {renderResults()}
         {tableDataError && (
