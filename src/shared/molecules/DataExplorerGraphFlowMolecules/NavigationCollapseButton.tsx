@@ -15,7 +15,7 @@ const NavigationHamburguer = () => {
   const dispatch = useDispatch();
   const onShrink = () => dispatch(ShrinkNavigationStackDataExplorerGraphFlow());
   return !shrinked && links.length > MAX_NAVIGATION_ITEMS_IN_STACK ? (
-    <button className="navigation-humburguer" onClick={onShrink}>
+    <button className="navigation-collapse-btn" onClick={onShrink}>
       <ShrinkOutlined style={{ fontSize: 18 }} />
     </button>
   ) : null;

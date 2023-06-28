@@ -2,4 +2,4 @@ export { default as DataExplorerGraphFlowContentLimitedHeader } from './ContentL
 export { default as NavigationBack } from './NavigationBack';
 export { default as NavigationStackItem } from './NavigationStackItem';
 export { default as NavigationStackShrinkedItem } from './NavigationStackShrinkedItem';
-export { default as NavigationHamburguer } from './NavigationHamburguer';
+export { default as NavigationCollapseButton } from './NavigationCollapseButton';
