@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ResizeObserver from 'resize-observer-polyfill';
-
 export interface Bounds {
   left: number;
   top: number;
@@ -9,9 +8,10 @@ export interface Bounds {
   bottom: number;
   right: number;
 }
+type TElement = HTMLDivElement | HTMLInputElement;
 
-export default function useMeasure() {
-  const ref = React.useRef<HTMLDivElement>(null);
+export default function useMeasure<T extends TElement>() {
+  const ref = React.useRef<T>(null);
   const [bounds, set] = React.useState<Bounds>({
     left: 0,
     top: 0,
@@ -46,8 +46,5 @@ export default function useMeasure() {
     };
   }, [ref, ro]);
 
-  return [{ ref }, bounds] as [
-    { ref: React.MutableRefObject<HTMLDivElement> },
-    Bounds
-  ];
+  return [{ ref }, bounds] as [{ ref: React.MutableRefObject<T> }, Bounds];
 }

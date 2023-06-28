@@ -19,8 +19,10 @@ import {
   deltaUrlToFusionUrl,
   getFriendlyTimeAgoString,
   getDateString,
+  getResourceLabel,
 } from '..';
 import * as moment from 'moment';
+import { getMockResource } from '../__mocks__/data_panel_download_resource';
 
 const identities: Identity[] = [
   {
@@ -814,6 +816,66 @@ describe('utils functions', () => {
     it('returns an empty array if the input is null or undefined', () => {
       expect(forceAsArray(null)).toEqual([]);
       expect(forceAsArray(undefined)).toEqual([]);
+    });
+  });
+
+  describe('getResourceLabel', () => {
+    it('uses prefLabel when availablae', () => {
+      const expectedLabel = 'ExpectedLabel';
+
+      const actualLabel = getResourceLabel({
+        prefLabel: expectedLabel,
+        name: 'foo',
+        label: 'bar',
+        '@id': 'https://abc.com/myid',
+        _self: 'https://abc.com/myself',
+      } as any);
+
+      expect(actualLabel).toEqual(expectedLabel);
+    });
+
+    it('appends name if it is an array', () => {
+      const expectedLabel = 'foo-bar';
+
+      const actualLabel = getResourceLabel({
+        name: ['foo', 'bar'],
+        '@id': 'https://abc.com/myid',
+        _self: 'https://abc.com/myself',
+      } as any);
+
+      expect(actualLabel).toEqual(expectedLabel);
+    });
+
+    it('takes first name if it is an array of one string', () => {
+      const expectedLabel = 'foo';
+
+      const actualLabel = getResourceLabel({
+        name: ['foo'],
+        '@id': 'https://abc.com/myid',
+        _self: 'https://abc.com/myself',
+      } as any);
+
+      expect(actualLabel).toEqual(expectedLabel);
+    });
+
+    it('uses self if id is not available', () => {
+      const expectedLabel = 'myself';
+
+      const actualLabel = getResourceLabel({
+        _self: 'https://abc.com/myself',
+      } as any);
+
+      expect(actualLabel).toEqual(expectedLabel);
+    });
+
+    it('gives last part of id after pound sign', () => {
+      const expectedLabel = 'myid';
+
+      const actualLabel = getResourceLabel({
+        '@id': 'https://abc.com#myid',
+      } as any);
+
+      expect(actualLabel).toEqual(expectedLabel);
     });
   });
 });

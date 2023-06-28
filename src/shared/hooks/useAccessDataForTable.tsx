@@ -6,13 +6,10 @@ import { ColumnType } from 'antd/lib/table/interface';
 import * as bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
-  get,
-  has,
   isArray,
   isNil,
   isString,
   pick,
-  sum,
   sumBy,
   toNumber,
   uniq,
@@ -23,7 +20,8 @@ import { useQuery } from 'react-query';
 import {
   StudioTableRow,
   TableError,
-  getStudioRowKey,
+  getStudioLocalStorageKey,
+  getStudioTableKey,
 } from '../../shared/containers/DataTableContainer';
 import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
@@ -48,6 +46,7 @@ import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
+import PromisePool from '@supercharge/promise-pool';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -415,6 +414,51 @@ const getTotalContentSize = (rows: TDataSource[]) => {
   return size;
 };
 
+export const fetchResourceForDownload = async (
+  selfUrl: string,
+  nexus: ReturnType<typeof useNexusContext>
+): Promise<Resource> => {
+  let compactResource;
+  let expandedResource;
+
+  try {
+    compactResource = await nexus.httpGet({
+      path: selfUrl,
+      headers: { Accept: 'application/json' },
+    });
+
+    const receivedExpandedId =
+      isValidUrl(compactResource['@id']) &&
+      compactResource['@id']?.startsWith('http');
+
+    if (receivedExpandedId) {
+      return compactResource;
+    }
+    expandedResource = await nexus.httpGet({
+      path: `${selfUrl}?format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+
+    return {
+      ...compactResource,
+      ['@id']:
+        expandedResource?.[0]?.['@id'] ??
+        expandedResource['@id'] ??
+        compactResource['@id'],
+    };
+  } catch (err) {
+    notification.warning({
+      message: <>Could not fetch a resource with id for download {selfUrl}</>,
+      description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
+      key: selfUrl,
+    });
+    // @ts-ignore TODO: Remove when we supprot es2022 in ts.
+    throw new Error(`Could not select resource ${selfUrl} for download`, {
+      cause: err,
+    });
+  }
+};
+
 export const useAccessDataForTable = (
   orgLabel: string,
   projectLabel: string,
@@ -446,36 +490,35 @@ export const useAccessDataForTable = (
     let rowsForLS = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      rowKeysForLS = [
-        ...rowKeysForLS,
-        ...changedRows.map(row => getStudioRowKey(row)),
-      ];
-
-      const futureResources = changedRows.map(row =>
-        fetchResourceForDownload(getStudioRowKey(row))
-      );
-
-      Promise.allSettled(futureResources)
-        .then(result => {
-          result.forEach(res => {
-            if (res.status === 'fulfilled') {
-              const localStorageResource = toLocalStorageResources(
-                res.value,
-                'studios'
-              );
-              rowsForLS = [...rowsForLS, ...localStorageResource];
-            }
-          });
+      const { results, errors } = await PromisePool.withConcurrency(4)
+        .for(changedRows)
+        .handleError(async err => {
+          console.log(
+            '@@error in selecting multiple resources for download in studios',
+            err
+          );
           return;
         })
-        .then(() => {
-          saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
-        })
-        .catch(err => {
-          console.log('@@error', err);
+        .process(async row => {
+          const fetchedRow = await fetchResourceForDownload(
+            getStudioLocalStorageKey(row),
+            nexus
+          );
+          const localStorageResources = toLocalStorageResources(
+            fetchedRow,
+            'studios'
+          );
+          rowKeysForLS.push(getStudioLocalStorageKey(row));
+
+          return localStorageResources;
         });
+
+      rowsForLS = [...rowsForLS, ...results.flat()];
+      saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     } else {
-      const rowKeysToRemove = changedRows.map(row => getStudioRowKey(row));
+      const rowKeysToRemove = changedRows.map(row =>
+        getStudioLocalStorageKey(row)
+      );
 
       rowKeysForLS = rowKeysForLS.filter(
         lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
@@ -490,8 +533,7 @@ export const useAccessDataForTable = (
     record: StudioTableRow,
     selected: boolean
   ) => {
-    const recordKey = getStudioRowKey(record);
-
+    const recordKey = getStudioLocalStorageKey(record);
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -500,7 +542,7 @@ export const useAccessDataForTable = (
     let localStorageRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      const deltaResource = await fetchResourceForDownload(recordKey);
+      const deltaResource = await fetchResourceForDownload(recordKey, nexus);
       const localStorageResource = toLocalStorageResources(
         deltaResource,
         'studios'
@@ -515,59 +557,14 @@ export const useAccessDataForTable = (
     saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
   };
 
-  const fetchResourceForDownload = async (
-    selfUrl: string
-  ): Promise<Resource> => {
-    let compactResource;
-    let expandedResource;
-
-    try {
-      compactResource = await nexus.httpGet({
-        path: selfUrl,
-        headers: { Accept: 'application/json' },
-      });
-
-      const receivedExpandedId =
-        isValidUrl(compactResource['@id']) &&
-        !isUrlCurieFormat(compactResource['@id']);
-
-      if (receivedExpandedId) {
-        return compactResource;
-      }
-
-      expandedResource = await nexus.httpGet({
-        path: `${selfUrl}?format=expanded`,
-        headers: { Accept: 'application/json' },
-      });
-
-      return {
-        ...compactResource,
-        ['@id']:
-          expandedResource?.[0]?.['@id'] ??
-          expandedResource['@id'] ??
-          compactResource['@id'],
-      };
-    } catch (err) {
-      notification.warning({
-        message: (
-          <div>Could not fetch a resource with id for download {selfUrl}</div>
-        ),
-        description: <em>{(err as any)?.reason ?? (err as any)?.['@type']}</em>,
-        key: selfUrl,
-      });
-      // @ts-ignore TODO: Remove when we supprot es2022 in ts.
-      throw new Error(`Could not select resource ${selfUrl} for download`, {
-        cause: err,
-      });
-    }
-  };
-
   const saveSelectedRowsToLocalStorage = (
     rowKeys: React.Key[],
     rows: TDataSource[]
   ) => {
+    const uniqueRows = uniqBy(rows, 'key');
+    const uniqueKeys = uniq(rowKeys);
     const currentLocalStorageSize = getLocalStorageSize();
-    const newLocalStorageSize = getTotalContentSize(rows);
+    const newLocalStorageSize = getTotalContentSize(uniqueRows);
     if (
       newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -578,8 +575,8 @@ export const useAccessDataForTable = (
     localStorage.setItem(
       DATA_PANEL_STORAGE,
       JSON.stringify({
-        selectedRowKeys: rowKeys,
-        selectedRows: rows,
+        selectedRowKeys: uniqueKeys,
+        selectedRows: uniqueRows,
       })
     );
 
@@ -587,8 +584,8 @@ export const useAccessDataForTable = (
       new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
         detail: {
           datapanel: {
-            selectedRowKeys: rowKeys,
-            selectedRows: rows,
+            selectedRowKeys: uniqueKeys,
+            selectedRows: uniqueRows,
           },
         },
       })
@@ -629,6 +626,10 @@ export const useAccessDataForTable = (
           basePath
         );
 
+        result.items.forEach(
+          (i: StudioTableRow, index: number) =>
+            (i.tableKey = getStudioTableKey(i, index))
+        );
         return result;
       }
       return {};

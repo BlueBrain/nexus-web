@@ -1,12 +1,12 @@
 import { Resource } from '@bbp/nexus-sdk';
 import * as Sentry from '@sentry/browser';
-import { isArray, isNil, sum } from 'lodash';
+import { compact, flatMap, isArray, isNil, sum } from 'lodash';
 import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import isValidUrl from '../../utils/validUrl';
-
-const getResourceName = (resource: Resource) =>
-  resource.name ?? resource['@id'] ?? resource._self;
+import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
+import { getResourceLabel, uuidv4 } from '.';
+import { parseURL } from './nexusParse';
 
 const baseLocalStorageObject = (
   resource: Resource,
@@ -18,7 +18,7 @@ const baseLocalStorageObject = (
     key: keySuffix ? `${resource._self}-${keySuffix}` : resource._self,
     _self: resource._self,
     id: resource['@id'],
-    name: getResourceName(resource),
+    name: getResourceLabel(resource),
     project: resource._project,
     description: resource.description ?? '',
     createdAt: resource._createdAt,
@@ -33,7 +33,7 @@ export const toLocalStorageResources = (
   resource: Resource,
   source: string
 ): TDataSource[] => {
-  const resourceName = getResourceName(resource);
+  const resourceName = getResourceLabel(resource);
   try {
     // Case 1 - Resource has no distribution
     if (isNil(resource.distribution)) {
@@ -41,12 +41,16 @@ export const toLocalStorageResources = (
         {
           ...baseLocalStorageObject(resource, source),
           localStorageType: 'resource',
-          ...(resource['@type'] === 'File' && {
-            contentSize: resource._bytes,
-            encodingFormat: resource._mediaType,
-            label: resource._filename,
+          distribution: {
             hasDistribution: false,
-          }),
+            contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+            encodingFormat:
+              resource['@type'] === 'File' ? resource._mediaType : 'json',
+            label:
+              resource['@type'] === 'File'
+                ? resource._filename
+                : 'metadata.json',
+          },
         },
       ];
     }
@@ -64,9 +68,11 @@ export const toLocalStorageResources = (
         distributionItemsLength: resource.distribution.length,
         distribution: {
           hasDistribution: true,
-          contentSize: 0, // So the size in not doubled
-          encodingFormat: '',
-          label: '',
+          contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+          encodingFormat:
+            resource['@type'] === 'File' ? resource._mediaType : 'json',
+          label:
+            resource['@type'] === 'File' ? resource._filename : 'metadata.json',
         },
       });
 
@@ -92,9 +98,23 @@ export const toLocalStorageResources = (
 
     // Case 3 - resource.distribution is an object with key-value pairs.
     return [
+      // First store an object for the parent resource.
       {
         ...baseLocalStorageObject(resource, source),
         localStorageType: 'resource',
+        distribution: {
+          hasDistribution: true,
+          contentSize: resource['@type'] === 'File' ? resource._bytes : 0,
+          encodingFormat:
+            resource['@type'] === 'File' ? resource._mediaType : 'json',
+          label:
+            resource['@type'] === 'File' ? resource._filename : 'metadata.json',
+        },
+      },
+      // Now store an object for the distribution item.
+      {
+        ...baseLocalStorageObject(resource, source, '1'),
+        localStorageType: 'distribution',
         distribution: {
           hasDistribution: true,
           contentSize: isArray(resource.distribution?.contentSize)
@@ -124,16 +144,21 @@ export const toLocalStorageResources = (
   }
 };
 
-export const fileNameForDistributionItem = (
-  distItem: any,
-  defaultName: string
-) => {
+export const distributionName = (distItem: any, defaultName: string) => {
   const distName: string =
     distItem?.label ??
     distItem?.name ??
     distItem?._filename ??
     distItem?.filename ??
     defaultName;
+  return distName;
+};
+
+export const fileNameForDistributionItem = (
+  distItem: any,
+  defaultName: string
+) => {
+  const distName = distributionName(distItem, defaultName);
   // Distribution name has an extension if  it's not a url & it has some text after the last period.
   const distNameHasExtension = Boolean(
     !isValidUrl(distName) &&
@@ -143,7 +168,7 @@ export const fileNameForDistributionItem = (
   );
 
   if (!Boolean(distItem?.name) || !distNameHasExtension) {
-    Sentry.captureException(
+    Sentry.captureMessage(
       'Distribution item does not have name or extension.',
       {
         extra: { distItem, defaultName },
@@ -171,3 +196,103 @@ export const removeLocalStorageRows = (
     row => !keysToRemove.find(key => row.key.toString().startsWith(key))
   );
 };
+
+export const distributionMatchesTypes = (
+  distItem: any,
+  fileExtenstions: string[]
+): boolean => {
+  const distributionName = fileNameForDistributionItem(distItem, '');
+  const distributionExtension =
+    distributionName
+      .split('.')
+      .pop()
+      ?.trim()
+      .toLowerCase() ?? '';
+
+  return fileExtenstions.includes(distributionExtension);
+};
+
+export const getSizeOfResourcesToDownload = (
+  /* tslint:disable-next-line */
+  resultsObject: Array<ResourceObscured | undefined>,
+  types: string[]
+) => {
+  return sum(
+    compact(
+      flatMap(resultsObject).map(item => {
+        // If no types are selected, show the size of only the top level resources (i.e. don't include size of distribution).
+        if (types.length === 0) {
+          return item?.localStorageType === 'resource' ? item.size : 0;
+        }
+        // If user has selected types, show size of only the distribution that match the selected types.
+        return distributionMatchesTypes(item?.distribution, types)
+          ? item?.size
+          : 0;
+      })
+    )
+  );
+};
+
+export type FilePath = { path: string; filename: string; extension: string };
+
+export function pathForTopLevelResources(
+  resource: ResourceObscured,
+  existingPaths: Map<string, number>
+): FilePath {
+  const self = isArray(resource._self) ? resource._self[0] : resource._self;
+  const parsedSelf = parseURL(self);
+  const encodedName = encodeURIComponent(resource.name);
+
+  const fullPath = `/${parsedSelf.org}/${parsedSelf.project}/${encodedName}`;
+
+  let uniquePath: string;
+  if (existingPaths.has(fullPath)) {
+    const count = existingPaths.get(fullPath)!;
+    uniquePath = `${fullPath}-${count}`;
+    existingPaths.set(fullPath, count + 1);
+  } else {
+    uniquePath = fullPath;
+    existingPaths.set(fullPath, 1);
+  }
+
+  return {
+    path: uniquePath, // Max Length - 60
+    filename: resource['@type'] === 'File' ? encodedName : 'metadata', // Max Length - 20
+    extension:
+      resource['@type'] === 'File' && resource.contentType
+        ? resource.contentType
+        : 'json', // Max Length - 4
+  };
+}
+
+export function pathForChildDistributions(
+  distItem: any,
+  parentPath: string,
+  existingPaths: Map<string, number>
+) {
+  const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
+
+  const fullFileName = fileNameForDistributionItem(distItem, defaultUniqueName);
+  const fileNameWithoutExtension = fullFileName.slice(
+    0,
+    fullFileName.lastIndexOf('.')
+  );
+  const extension = fullFileName.slice(fullFileName.lastIndexOf('.') + 1);
+
+  const childDir = fileNameWithoutExtension; // Max Length 20
+  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
+  let uniquePath: string; // TODO de-deuplicate
+  if (existingPaths.has(pathToChildFile)) {
+    const count = existingPaths.get(pathToChildFile)!;
+    uniquePath = `${pathToChildFile}-${count}`;
+    existingPaths.set(pathToChildFile, count + 1);
+  } else {
+    uniquePath = pathToChildFile;
+    existingPaths.set(pathToChildFile, 1);
+  }
+
+  return {
+    path: uniquePath,
+    fileName: `${fileNameWithoutExtension}.${extension}`,
+  };
+}

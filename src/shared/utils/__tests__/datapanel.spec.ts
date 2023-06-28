@@ -1,19 +1,37 @@
 import {
+  fileResourceWithNoDistribution,
+  getMockDistribution,
+  getMockResource,
   resourceWithDistributionArray,
   resourceWithDistributionObject,
   resourceWithoutDistrition,
 } from '../__mocks__/data_panel_download_resource';
-import { toLocalStorageResources } from '../datapanel';
+import {
+  FilePath,
+  pathForChildDistributions,
+  pathForTopLevelResources,
+  toLocalStorageResources,
+} from '../datapanel';
 
-describe('ToLocalStorageResources', () => {
+describe('datapanel utilities', () => {
+  const orgName = 'orgA';
+  const projectName = 'projectA';
+
   it('serializes resources with no distribution correctly to local storage object', () => {
     const actualLSResources = toLocalStorageResources(
       resourceWithoutDistrition,
       'studios'
     );
+    const expectedParentDistributionValue = {
+      hasDistribution: false,
+      contentSize: 0,
+      encodingFormat: 'json',
+      label: 'metadata.json',
+    };
 
     expect(actualLSResources.length).toEqual(1);
-    expect(actualLSResources[0].distribution).not.toBeDefined();
+
+    expect(actualLSResources[0].localStorageType).toEqual('resource');
     expect(actualLSResources[0]._self).toEqual(resourceWithoutDistrition._self);
     expect(actualLSResources[0].key).toEqual(resourceWithoutDistrition._self);
     expect(actualLSResources[0].project).toEqual(
@@ -23,6 +41,27 @@ describe('ToLocalStorageResources', () => {
       resourceWithoutDistrition['@type'],
     ]);
     expect(actualLSResources[0].source).toEqual('studios');
+    expect(actualLSResources[0].distribution).toEqual(
+      expectedParentDistributionValue
+    );
+  });
+
+  it('serializes resource of type file with no distribution correctly', () => {
+    const actualLSResources = toLocalStorageResources(
+      fileResourceWithNoDistribution,
+      'my-data'
+    );
+    expect(actualLSResources.length).toEqual(1);
+    const expectedParentDistributionValue = {
+      hasDistribution: false,
+      contentSize: fileResourceWithNoDistribution._bytes,
+      encodingFormat: fileResourceWithNoDistribution._mediaType,
+      label: fileResourceWithNoDistribution._filename,
+    };
+    expect(actualLSResources[0].distribution).toEqual(
+      expectedParentDistributionValue
+    );
+    expect(actualLSResources[0].source).toEqual('my-data');
   });
 
   it('serializes resources with distribution array correctly to local storage object', () => {
@@ -34,13 +73,25 @@ describe('ToLocalStorageResources', () => {
     const expectedParentDistributionValue = {
       hasDistribution: true,
       contentSize: 0,
-      encodingFormat: '',
-      label: '',
+      encodingFormat: 'json',
+      label: 'metadata.json',
     };
 
     expect(actualParentDistributionValue).toEqual(
       expectedParentDistributionValue
     );
+  });
+
+  it('serializes resources with arrays for name correctly', () => {
+    const resource = {
+      ...resourceWithDistributionArray,
+      label: undefined,
+      name: ['Sterling', 'Malory', 'Archer'],
+    };
+    const serializedItems = toLocalStorageResources(resource, 'studios');
+
+    expect(serializedItems.length).toEqual(5);
+    expect(serializedItems[0].name).toEqual('Sterling-Malory-Archer');
   });
 
   it('serializes correct distribution value for each distribution item in array', () => {
@@ -59,6 +110,7 @@ describe('ToLocalStorageResources', () => {
         encodingFormat: originalDistItems[index].encodingFormat,
         label: originalDistItems[index].name,
       };
+      expect(actualDistItem.localStorageType).toEqual('distribution');
       expect(actualDistItem.distribution).toEqual(expectedDistributionValue);
       expect(actualDistItem._self).toEqual(resource._self);
       expect(actualDistItem.key).toEqual(`${resource._self}-${index}`);
@@ -69,19 +121,33 @@ describe('ToLocalStorageResources', () => {
     const resource = resourceWithDistributionObject;
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems.length).toEqual(1);
-    const expectedDistributionValue = {
+    expect(actualSerializedItems.length).toEqual(2);
+
+    const expectedDistributionValueForParent = {
+      hasDistribution: true,
+      contentSize: 0,
+      encodingFormat: 'json',
+      label: 'metadata.json',
+    };
+    expect(actualSerializedItems[0].distribution).toEqual(
+      expectedDistributionValueForParent
+    );
+    expect(actualSerializedItems[0].localStorageType).toEqual('resource');
+
+    const expectedDistributionValueForChild = {
       hasDistribution: true,
       contentSize: 15135,
       encodingFormat: 'text/turtle',
       label: 'molecular-systems.ttl',
     };
-    expect(actualSerializedItems[0].distribution).toEqual(
-      expectedDistributionValue
+    const serializedChild = actualSerializedItems[1];
+    expect(serializedChild.distribution).toEqual(
+      expectedDistributionValueForChild
     );
-    expect(actualSerializedItems[0]._self).toEqual(resource._self);
-    expect(actualSerializedItems[0].key).toEqual(resource._self);
-    expect(actualSerializedItems[0].project).toEqual(resource._project);
+    expect(serializedChild._self).toEqual(resource._self);
+    expect(serializedChild.key).toEqual(`${resource._self}-1`);
+    expect(serializedChild.project).toEqual(resource._project);
+    expect(serializedChild.localStorageType).toEqual('distribution');
   });
 
   it('serializes resources with distribution object when content size is number', () => {
@@ -94,10 +160,10 @@ describe('ToLocalStorageResources', () => {
     };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems[0].distribution?.contentSize).toEqual(123);
+    expect(actualSerializedItems[1].distribution?.contentSize).toEqual(123);
   });
 
-  it('serializes resources with distribution object when content size is array', () => {
+  it('sums up content size for distribution item when it is an array', () => {
     const resource = {
       ...resourceWithDistributionObject,
       distribution: {
@@ -107,7 +173,7 @@ describe('ToLocalStorageResources', () => {
     };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems[0].distribution?.contentSize).toEqual(30);
+    expect(actualSerializedItems[1].distribution?.contentSize).toEqual(30);
   });
 
   it('serializes resources when distribution is empty array', () => {
@@ -118,8 +184,8 @@ describe('ToLocalStorageResources', () => {
     const expectedDistributionValue = {
       hasDistribution: true,
       contentSize: 0,
-      encodingFormat: '',
-      label: '',
+      encodingFormat: 'json',
+      label: 'metadata.json',
     };
 
     expect(actualSerializedItems[0].distribution).toEqual(
@@ -131,7 +197,177 @@ describe('ToLocalStorageResources', () => {
     const resource = { ...resourceWithoutDistrition, distribution: {} };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
 
-    expect(actualSerializedItems.length).toEqual(1);
+    expect(actualSerializedItems.length).toEqual(2);
     expect(actualSerializedItems[0].distribution).toBeDefined();
+  });
+
+  it('calculates path for top level resource based on its name', () => {
+    const resourceName = 'brain-region-1';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${resourceName}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('encodes path for top level resource when its name has special uri characters', () => {
+    const resourceName = 'brain#reg/ion';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${encodeURIComponent(resourceName)}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('does not trim path for top level resource even if it is long', () => {
+    const namePrefix = Array(20)
+      .fill('A')
+      .join('');
+    const nameSuffix = Array(20)
+      .fill('B')
+      .join('');
+    const resourceName = `${namePrefix}${nameSuffix}`;
+
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${resourceName}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('gets correct name for top level resource when it is a File', () => {
+    const filename = 'awesome-file';
+    const mockResource = {
+      ...getMockResource(filename, 'resource', orgName, projectName, 'File'),
+      contentType: 'asc',
+    };
+    const actualPathProps = pathForTopLevelResources(mockResource, new Map());
+
+    const expectPathProps: FilePath = {
+      filename,
+      path: `/${orgName}/${projectName}/${filename}`,
+      extension: mockResource.contentType,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('suffixes index at the end when there are conflicting paths', () => {
+    const resourceName = 'brain-region';
+    const mockResource = getMockResource(
+      resourceName,
+      'resource',
+      orgName,
+      projectName
+    );
+
+    const conflictingPath = `/${orgName}/${projectName}/${resourceName}`;
+    const pathFrequency = 2;
+
+    const actualPathProps = pathForTopLevelResources(
+      mockResource,
+      new Map([[conflictingPath, pathFrequency]])
+    );
+
+    const expectPathProps: FilePath = {
+      path: `/${orgName}/${projectName}/${resourceName}-${pathFrequency}`,
+      filename: 'metadata',
+      extension: 'json',
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('gets correct path for distribution items', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+    const filename = 'awesome-file.asc';
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map()
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/awesome-file`,
+      fileName: filename,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('suffixes index at the end of the path when there is a conflict', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+
+    const conflictingName = 'awesome-file';
+
+    const filename = `${conflictingName}.asc`;
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map([[`${parentPath}/awesome-file`, 2]])
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/awesome-file-2`,
+      fileName: filename,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('trims distribution path if it is too long', () => {
+    const parentPath = `/${orgName}/${projectName}/parentPath`;
+    const namePrefix = Array(20)
+      .fill('A')
+      .join('');
+    const nameSuffix = Array(20)
+      .fill('B')
+      .join('');
+    const filename = `${namePrefix}${nameSuffix}.asc`;
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map()
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}/${namePrefix}${nameSuffix}`,
+      fileName: `${namePrefix}${nameSuffix}.asc`,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
   });
 });

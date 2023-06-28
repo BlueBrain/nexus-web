@@ -1,8 +1,19 @@
-import React, { Fragment, useMemo, useReducer, useEffect } from 'react';
-import { Button, Table, Tag, Tooltip, notification } from 'antd';
+import React, {
+  Fragment,
+  useMemo,
+  useReducer,
+  useEffect,
+  useState,
+} from 'react';
+import { Button, Empty, Table, Tag, Tooltip, notification } from 'antd';
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  VerticalAlignMiddleOutlined,
+} from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk';
-import { isString, isArray } from 'lodash';
+import { isString, isArray, isNil } from 'lodash';
 import { clsx } from 'clsx';
 import { useSelector } from 'react-redux';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
@@ -13,7 +24,7 @@ import {
   DATA_PANEL_STORAGE_EVENT,
 } from '../../organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
-import { TFilterOptions } from '../MyDataHeader/MyDataHeader';
+import { TFilterOptions } from '../../../shared/canvas/MyData/types';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
 import './styles.less';
@@ -21,38 +32,13 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
+import { getResourceLabel } from '../../../shared/utils';
+import { useNexusContext } from '@bbp/react-nexus';
+import { fetchResourceForDownload } from '../../../shared/hooks/useAccessDataForTable';
+import PromisePool from '@supercharge/promise-pool';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;
-
-type TResource = {
-  [key: string]: any;
-} & {
-  '@context'?:
-    | string
-    | (
-        | string
-        | {
-            [key: string]: any;
-          }
-      )[]
-    | {
-        [key: string]: any;
-      };
-  '@type'?: string | string[];
-  '@id': string;
-  _incoming: string;
-  _outgoing: string;
-  _self: string;
-  _constrainedBy: string;
-  _project: string;
-  _rev: number;
-  _deprecated: boolean;
-  _createdAt: string;
-  _createdBy: string;
-  _updatedAt: string;
-  _updatedBy: string;
-};
 
 interface TMyDataTableRow extends Resource {
   name: string;
@@ -84,11 +70,11 @@ export type TDataSource = {
   resource?: any; // TODO: Remove
   localStorageType?: 'resource' | 'distribution';
   distributionItemsLength?: number;
-  distribution?: {
+  distribution: {
     contentSize: number;
     encodingFormat: string | string[];
-    label: string | string[];
-    hasDistribution?: boolean;
+    label: string;
+    hasDistribution: boolean;
   };
 };
 type TProps = {
@@ -98,6 +84,10 @@ type TProps = {
   offset: number;
   size: number;
   total?: number;
+  sort: string[];
+  updateSort(value: string[]): void;
+  locate: boolean;
+  query: string;
 };
 export const makeOrgProjectTuple = (text: string) => {
   const parts = text.split('/');
@@ -141,6 +131,54 @@ export const notifyTotalSizeExeeced = () => {
     key: 'data-panel-size-exceeded',
   });
 };
+const getTypesTrancated = (text: string | string[]) => {
+  let types = '';
+  let typesWithUrl = text;
+  if (isArray(text)) {
+    types = text
+      .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+      .join('\n');
+    typesWithUrl = text.join('\n');
+  } else if (isString(text) && isValidUrl(text)) {
+    types = text.split('/').pop()!;
+  } else {
+    types = text;
+  }
+  return {
+    types,
+    typesWithUrl,
+  };
+};
+type TSorterProps = {
+  order?: string;
+  name: string;
+  onSortDescend(): void;
+  onSortAscend(): void;
+};
+
+const Sorter = ({ onSortDescend, onSortAscend, order, name }: TSorterProps) => {
+  if (!order) {
+    return (
+      <VerticalAlignMiddleOutlined
+        style={{ marginLeft: 5, fontSize: 13 }}
+        onClick={onSortDescend}
+      />
+    );
+  }
+  return order === 'asc' ? (
+    <CaretDownOutlined
+      style={{ marginLeft: 5, fontSize: 13 }}
+      name={`${name}-desc`}
+      onClick={onSortDescend}
+    />
+  ) : (
+    <CaretUpOutlined
+      style={{ marginLeft: 5, fontSize: 13 }}
+      name={`${name}-asc`}
+      onClick={onSortAscend}
+    />
+  );
+};
 
 const MyDataTable: React.FC<TProps> = ({
   setFilterOptions,
@@ -149,12 +187,17 @@ const MyDataTable: React.FC<TProps> = ({
   size,
   offset,
   total,
+  sort,
+  updateSort,
+  locate,
+  query,
 }) => {
   const history = useHistory();
   const location = useLocation();
   const { currentResourceView } = useSelector(
     (state: RootState) => state.uiSettings
   );
+  const nexus = useNexusContext();
   const [{ selectedRowKeys }, updateTableData] = useReducer(
     (
       previous: TResourceTableData,
@@ -168,6 +211,8 @@ const MyDataTable: React.FC<TProps> = ({
       selectedRows: [],
     }
   );
+
+  const [fetchingResourcesForDownload, setFetchingResources] = useState(false);
 
   const goToResource = (
     orgLabel: string,
@@ -188,29 +233,48 @@ const MyDataTable: React.FC<TProps> = ({
         width: 250,
         ellipsis: true,
         render: (text, record) => {
-          const showedText = isValidUrl(text) ? text.split('/').pop() : text;
+          const resourceId = record['@id'] ?? record._self;
           if (text && record._project) {
             const { org, project } = makeOrgProjectTuple(record._project);
             return (
-              <Tooltip title={text}>
+              <Tooltip title={resourceId}>
                 <Button
                   style={{ padding: 0 }}
                   type="link"
-                  onClick={() => goToResource(org, project, text)}
+                  onClick={() => goToResource(org, project, resourceId)}
                 >
-                  {showedText}
+                  {text}
                 </Button>
               </Tooltip>
             );
           }
-          return <Tooltip title={text}>{showedText}</Tooltip>;
+          return <Tooltip title={resourceId}>{text}</Tooltip>;
         },
       },
       {
         key: 'project',
-        title: 'organization / project',
         dataIndex: '_project',
-        sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_project'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              organization / project
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_project'])}
+                  onSortDescend={() => updateSort(['-_project'])}
+                />
+              )}
+            </div>
+          );
+        },
         render: (text, record) => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
@@ -239,19 +303,12 @@ const MyDataTable: React.FC<TProps> = ({
         dataIndex: '@type',
         sorter: false,
         render: text => {
-          let types = '';
-          if (isArray(text)) {
-            types = text
-              .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
-              .join('\n');
-          } else if (isString(text) && isValidUrl(text)) {
-            types = text.split('/').pop() ?? '';
-          } else {
-            types = text;
-          }
+          const { types, typesWithUrl } = getTypesTrancated(text);
           return (
             <Tooltip
-              title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}
+              title={() => (
+                <div style={{ whiteSpace: 'pre-wrap' }}>{typesWithUrl}</div>
+              )}
             >
               <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
             </Tooltip>
@@ -260,28 +317,68 @@ const MyDataTable: React.FC<TProps> = ({
       },
       {
         key: 'updatedAt',
-        title: 'updated date',
         dataIndex: '_updatedAt',
         width: 140,
         sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_updatedAt'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              updated date
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_updatedAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
+                />
+              )}
+            </div>
+          );
+        },
         render: text => timeago(new Date(text)),
       },
       {
         key: 'createdAt',
-        title: 'created date',
         dataIndex: '_createdAt',
         width: 140,
         sorter: false,
+        title: () => {
+          const order = sort.find(item => item.includes('_createdAt'));
+          const orderDirection = order
+            ? order.includes('-')
+              ? 'desc'
+              : 'asc'
+            : undefined;
+          return (
+            <div>
+              created date
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_createdAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_createdAt', '@id'])}
+                />
+              )}
+            </div>
+          );
+        },
         render: text => timeago(new Date(text)),
       },
     ],
-    []
+    [sort, query]
   );
   const dataSource: TMyDataTableRow[] =
     resources?._results?.map(resource => {
       return {
         ...resource,
-        name: resource['@id'] ?? resource._self,
+        name: getResourceLabel(resource),
         description: resource.discription ?? '',
       };
     }) || [];
@@ -297,16 +394,27 @@ const MyDataTable: React.FC<TProps> = ({
     showQuickJumper: true,
     showSizeChanger: true,
   };
-  const onSelectRowChange: SelectionSelectFn<TMyDataTableRow> = (
+  const onSelectRowChange: SelectionSelectFn<TMyDataTableRow> = async (
     record,
     selected
   ) => {
     const recordKey = record._self;
-
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
-    const localStorageRows = toLocalStorageResources(record, 'my-data');
+
+    let localStorageRows;
+    if (selected && isNil(record.distribution)) {
+      // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
+      // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
+      setFetchingResources(true);
+      const expandedResource = await fetchResourceForDownload(recordKey, nexus);
+      setFetchingResources(false);
+      localStorageRows = toLocalStorageResources(expandedResource, 'my-data');
+    } else {
+      localStorageRows = toLocalStorageResources(record, 'my-data');
+    }
+    toLocalStorageResources(record, 'my-data');
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
 
@@ -344,17 +452,11 @@ const MyDataTable: React.FC<TProps> = ({
     );
   };
 
-  const onSelectAllChange = (
+  const onSelectAllChange = async (
     selected: boolean,
     tSelectedRows: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
-    const changedRowsLS: TDataSource[] = [];
-    changeRows.forEach(row => {
-      const localStorageRows = toLocalStorageResources(row, 'my-data');
-      changedRowsLS.push(...localStorageRows);
-    });
-
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -362,8 +464,38 @@ const MyDataTable: React.FC<TProps> = ({
     let selectedRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
-      selectedRows = [...selectedRows, ...changedRowsLS];
+      setFetchingResources(true);
+
+      const { results, errors } = await PromisePool.withConcurrency(4)
+        .for(changeRows)
+        .handleError(async err => {
+          console.log(
+            '@@error in selecting multiple resources for download in my-data',
+            err
+          );
+          return;
+        })
+        .process(async row => {
+          let localStorageResources: TDataSource[];
+          // Sometimes the distributions are not available in the response of the bulk fetch of resources. Delta is working on fixing this.
+          // In the mean time, fusion can retrieve this extra information by doing a separate request per resource that does not have `distribution`.
+
+          if (isNil(row.distribution)) {
+            const fetchedRow = await fetchResourceForDownload(row._self, nexus);
+            localStorageResources = toLocalStorageResources(
+              fetchedRow,
+              'my-data'
+            );
+          } else {
+            localStorageResources = toLocalStorageResources(row, 'my-data');
+          }
+          return localStorageResources;
+        });
+
+      selectedRows = [...selectedRows, ...results.flat()];
       selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+
+      setFetchingResources(false);
     } else {
       const rowKeysToRemove = changeRows.map(r => r._self);
 
@@ -428,6 +560,7 @@ const MyDataTable: React.FC<TProps> = ({
       );
     };
   }, []);
+
   return (
     <Table<TMyDataTableRow>
       sticky={{
@@ -435,7 +568,7 @@ const MyDataTable: React.FC<TProps> = ({
         getContainer: () => window,
       }}
       rowKey={record => record._self}
-      loading={isLoading}
+      loading={isLoading || fetchingResourcesForDownload}
       columns={columns}
       dataSource={dataSource}
       pagination={tablePaginationConfig}
@@ -454,6 +587,20 @@ const MyDataTable: React.FC<TProps> = ({
         selectedRowKeys,
         onSelect: onSelectRowChange,
         onSelectAll: onSelectAllChange,
+      }}
+      locale={{
+        emptyText() {
+          return isLoading ? (
+            <></>
+          ) : locate && !dataSource.length ? (
+            <div className="no-resource-with-locate">
+              <strong>No resource with Id or self was found</strong>
+              <em> Please use the filter bar for more options</em>
+            </div>
+          ) : (
+            <Empty />
+          );
+        },
       }}
     />
   );

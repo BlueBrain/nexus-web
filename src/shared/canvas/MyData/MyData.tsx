@@ -1,89 +1,156 @@
 import * as React from 'react';
 import * as moment from 'moment';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
-import { isArray, isObject, isString, omit } from 'lodash';
-import {
-  DATE_PATTERN,
-  TDateType,
-  TFilterOptions,
-} from '../../molecules/MyDataHeader/MyDataHeader';
+import { isObject, isString } from 'lodash';
+
 import { MyDataHeader, MyDataTable } from '../../molecules';
+import { RootState } from '../../../shared/store/reducers';
+import { TDateFilterType, TFilterOptions } from './types';
 
-import './styles.less';
-
+const makeDatetimePattern = ({
+  dateFilterType,
+  singleDate,
+  dateStart,
+  dateEnd,
+}: {
+  dateFilterType?: TDateFilterType;
+  singleDate?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}) => {
+  switch (dateFilterType) {
+    case 'after': {
+      if (!!singleDate && moment(singleDate).isValid()) {
+        return `${singleDate}..*`;
+      }
+      return undefined;
+    }
+    case 'before': {
+      if (!!singleDate && moment(singleDate).isValid()) {
+        return `*..${singleDate}`;
+      }
+      return undefined;
+    }
+    case 'range': {
+      if (
+        !!dateStart &&
+        !!dateEnd &&
+        moment(dateStart).isValid() &&
+        moment(dateEnd).isValid() &&
+        moment(dateStart).isBefore(moment(dateEnd), 'days')
+      ) {
+        return `${dateStart}..${dateEnd}`;
+      }
+      return undefined;
+    }
+    default:
+      return undefined;
+  }
+};
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
+  const identities = useSelector(
+    (state: RootState) => state.auth.identities?.data?.identities
+  );
+  const issuerUri = identities?.find(item => item['@type'] === 'User')?.['@id'];
   const [
-    { dataType, dateField, query, dateType, date, offset, size },
+    {
+      dataType,
+      dateField,
+      query,
+      dateFilterType,
+      singleDate,
+      dateStart,
+      dateEnd,
+      offset,
+      size,
+      sort,
+      locate,
+      issuer,
+    },
     setFilterOptions,
   ] = React.useReducer(
-    (previous: TFilterOptions, newPartialState: Partial<TFilterOptions>) => ({
+    (previous: TFilterOptions, next: Partial<TFilterOptions>) => ({
       ...previous,
-      ...newPartialState,
+      ...next,
     }),
     {
-      dateType: 'before',
+      dateFilterType: undefined,
       dateField: 'createdAt',
-      date: undefined,
+      singleDate: undefined,
+      dateStart: undefined,
+      dateEnd: undefined,
       dataType: [],
       query: '',
       offset: 0,
       size: 50,
+      sort: ['-_createdAt', '@id'],
+      locate: false,
+      issuer: 'createdBy',
     }
   );
-  const makeDatetimePattern = ({
-    dateType,
-    date,
-  }: {
-    dateType: TDateType;
-    date?: string | string[];
-  }) => {
-    switch (dateType) {
-      case 'after': {
-        if (isString(date) && date && moment(date, DATE_PATTERN).isValid()) {
-          return `${moment(date, DATE_PATTERN).format()}..*`;
-        }
-        return undefined;
-      }
-      case 'before': {
-        if (isString(date) && date && moment(date, 'DD/MM/YYYY').isValid()) {
-          return `*..${moment(date, DATE_PATTERN).format()}`;
-        }
-        return undefined;
-      }
-      case 'range': {
-        if (
-          isArray(date) &&
-          date &&
-          moment(date?.[0], DATE_PATTERN).isValid() &&
-          moment(date?.[1], DATE_PATTERN).isValid()
-        ) {
-          return `${moment(date?.[0], DATE_PATTERN).format()}..${moment(
-            date?.[1],
-            'DD/MM/YYYY'
-          ).format()}`;
-        }
-        return undefined;
-      }
-      default:
-        return undefined;
-    }
+
+  const updateSort = (value: string[]) => {
+    setFilterOptions({
+      offset: 0,
+      sort: value,
+    });
   };
 
+  const dateFilterRange = React.useMemo(
+    () =>
+      makeDatetimePattern({
+        dateFilterType,
+        singleDate,
+        dateStart,
+        dateEnd,
+      }),
+    [dateFilterType, singleDate, dateStart, dateEnd]
+  );
+  const date =
+    dateField && dateFilterRange && dateFilterType
+      ? `${dateField}-${dateFilterType}-${dateFilterRange}`
+      : undefined;
+  const order = sort.join('-');
   const { data: resources, isLoading } = useQuery({
-    queryKey: ['my-data-resources', { size, offset, query }],
+    queryKey: [
+      'my-data-resources',
+      {
+        size,
+        offset,
+        query,
+        locate,
+        issuer,
+        date,
+        order,
+      },
+    ],
+    retry: false,
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {
         size,
         from: offset,
-        // after: offset,
-        q: query,
-        [dateField]: makeDatetimePattern({ dateType, date }),
+        [issuer]: issuerUri,
+        ...(locate && query.trim().length
+          ? {
+              locate: query,
+            }
+          : query.trim().length
+          ? {
+              q: query,
+            }
+          : {}),
+        ...(!!sort.length && !query.trim().length ? { sort } : {}),
+        ...(!!dateField && !!dateFilterRange
+          ? {
+              [dateField]: dateFilterRange,
+            }
+          : {}),
         // type: dataType,
       }),
-    retry: 2,
     onError: error => {
       notification.error({
         message: 'Error loading data from the server',
@@ -108,14 +175,27 @@ const HomeMyData: React.FC<{}> = () => {
           dataType,
           dateField,
           query,
-          dateType,
-          date,
+          dateFilterRange,
           total,
+          locate,
+          issuer,
           setFilterOptions,
         }}
       />
       <MyDataTable
-        {...{ resources, isLoading, offset, size, total, setFilterOptions }}
+        {...{
+          resources,
+          isLoading,
+          offset,
+          size,
+          total,
+          sort,
+          updateSort,
+          locate,
+          issuer,
+          setFilterOptions,
+          query,
+        }}
       />
     </div>
   );

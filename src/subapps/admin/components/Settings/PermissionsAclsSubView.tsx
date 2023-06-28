@@ -1,18 +1,18 @@
 import React, { useMemo } from 'react';
 import { groupBy, sortBy } from 'lodash';
-import { Table, Collapse, Checkbox } from 'antd';
+import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
 import { Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  useAdminSubappContext,
-  useOrganisationsSubappContext,
-} from '../../../../subapps/admin';
+import { match as pmatch } from 'ts-pattern';
+import { useOrganisationsSubappContext } from '../../../../subapps/admin';
 import './styles.less';
 
+type TError = Error & { cause: any };
 type Props = {};
+
 type DataType = {
   key: string;
   name: string;
@@ -21,8 +21,11 @@ type DataType = {
   write?: boolean;
   create?: boolean;
   query?: boolean;
-  children?: DataType[];
+  children?: ChildType[];
+  realm?: string;
 };
+type ChildType = Omit<DataType, 'children' | 'realm' | 'parent'>;
+
 type GroupedPermission = {
   name: string;
   permissions: string[];
@@ -82,11 +85,12 @@ const PermissionsAclsSubView = (props: Props) => {
   };
   const path = `${orgLabel}${projectLabel ? `/${projectLabel}` : ''}`;
   const nexus = useNexusContext();
-  const { data: acls, status } = useQuery({
+  const { data: acls, status, error } = useQuery({
     queryKey: [`permissions-${orgLabel}-${projectLabel}`],
     queryFn: () => fetchPermissions({ nexus, path }),
+    refetchOnWindowFocus: false,
+    retry: false,
   });
-
   const columns: ColumnsType<DataType> = useMemo(
     () => [
       {
@@ -96,7 +100,10 @@ const PermissionsAclsSubView = (props: Props) => {
         width: 200,
         ellipsis: true,
         render: (text, record) => (
-          <span className={record.parent ? 'row-as-head' : ''}>{text}</span>
+          <span className={record.parent ? 'row-as-head' : ''}>
+            {record.realm && <Tag>{record.realm}</Tag>}
+            {text}
+          </span>
         ),
       },
       {
@@ -157,13 +164,13 @@ const PermissionsAclsSubView = (props: Props) => {
       const iden = identity.subject ?? (identity.group || '');
       const name = iden ? `: ${iden}` : '';
       return {
-        key: identity['@id'],
+        key: `${identity.realm}/${identity['@id']}`,
         name: `${identity['@type']}${name}`,
+        realm: identity.realm,
         parent: true,
-        // @ts-ignore
         children: permissions.map(({ name, permissions }) => ({
           name,
-          key: `${identity['@type']}:${identity.subject}:${name}`,
+          key: `${identity.realm}/${identity['@type']}/${identity.subject}:${name}`,
           read: permissions.includes('read'),
           write: permissions.includes('write'),
           create: permissions.includes('create'),
@@ -177,30 +184,63 @@ const PermissionsAclsSubView = (props: Props) => {
       data,
     };
   });
+
   return (
     <div className="settings-view settings-permissions-view">
       <h2>Permissions & ACLs</h2>
       <div className="settings-view-container">
-        <Collapse accordion bordered={false}>
-          {results?.map(({ id, path, data }, index) => (
-            <Panel
-              header={`Permissions applied to: ${path}`}
-              key={`${id}:${index}`}
-            >
-              <Table
-                loading={status === 'loading'}
-                key={`table:${id}:${index}`}
-                className="views-table acls-table"
-                rowClassName="view-item-row"
-                columns={columns}
-                dataSource={data}
-                sticky={true}
-                size="middle"
-                pagination={false}
-              />
-            </Panel>
+        {pmatch(status)
+          .with('error', () => (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={
+                <div style={{ color: 'red' }}>
+                  {(error as TError)?.cause?.['@type'] === 'AuthorizationFailed'
+                    ? (error as TError).cause?.['reason']
+                    : 'Error while fetching the permisions and ACLs'}
+                </div>
+              }
+            />
+          ))
+          .with('loading', () => (
+            <div className="row-center">
+              <Spin spinning />
+            </div>
+          ))
+          .with('success', () => {
+            if (!acls?.length) {
+              return (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_DEFAULT}
+                  description="No ACLs was found"
+                />
+              );
+            }
+            return (
+              <Collapse accordion bordered={false}>
+                {results?.map(({ id, path, data }, index) => (
+                  <Panel
+                    header={`Permissions applied to: ${path}`}
+                    key={`${id}:${index}`}
+                  >
+                    <Table
+                      key={`table:${id}:${index}`}
+                      className="views-table acls-table"
+                      rowClassName="view-item-row"
+                      columns={columns}
+                      dataSource={data}
+                      sticky={true}
+                      size="middle"
+                      pagination={false}
+                    />
+                  </Panel>
+                ))}
+              </Collapse>
+            );
+          })
+          .otherwise(() => (
+            <></>
           ))}
-        </Collapse>
       </div>
     </div>
   );

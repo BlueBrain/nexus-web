@@ -5,6 +5,7 @@
   height: 100%;
   min-height: 100vh;
   background: white;
+  margin-top: 52px;
 }
 
 .route {
@@ -95,7 +96,7 @@
         width: 100%;
 
         .route-result-list_item {
-          padding: 5px 20px;
+          padding: 24px 20px;
           cursor: pointer;
 
           &:hover {
@@ -118,7 +119,19 @@
                 font-size: 24px;
                 line-height: 32px;
                 color: @fusion-daybreak-9;
+                margin-bottom: 0.25em;
 
+                .organization-tag {
+                  background-color: #f0f0f0;
+                  font-size: 12px;
+                  font-weight: 200;
+                  line-height: 16px;
+                  padding: 2px 6px;
+                  margin: 0 4px;
+                  border-radius: 4px;
+                  text-align: center;
+                  vertical-align: middle;
+                }
                 .depreacted-tag {
                   font-family: 'Titillium Web';
                   font-style: normal;
@@ -127,6 +140,19 @@
                   line-height: 14px;
                   letter-spacing: 0.01em;
                   color: #e9b328;
+                  margin: 0 3px;
+                  vertical-align: middle;
+                }
+                .deletion-tag {
+                  font-family: 'Titillium Web';
+                  font-style: normal;
+                  font-weight: 400;
+                  font-size: 12px;
+                  line-height: 14px;
+                  letter-spacing: 0.01em;
+                  color: #dc7943;
+                  vertical-align: middle;
+                  margin: 0 3px;
                 }
               }
 
@@ -138,6 +164,7 @@
                 line-height: 145%;
                 letter-spacing: 0.01em;
                 color: @fusion-daybreak-9;
+                max-width: 80%;
               }
             }
 

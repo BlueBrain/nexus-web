@@ -50,7 +50,7 @@ export const MIME_TYPE_TO_EXTENSION: { [key: string]: string } = {
  * If no extension could be derived, the function returns an empty string.
  */
 export const fileExtensionFromResourceEncoding = (encodingType?: string) => {
-  const mimeType = encodingType?.split(';')[0] ?? '';
+  const mimeType = encodingType?.split(';')[0] ?? encodingType ?? '';
   const extension = MIME_TYPE_TO_EXTENSION[mimeType]
     ? `${MIME_TYPE_TO_EXTENSION[mimeType]}`
     : '';
@@ -62,4 +62,16 @@ export const fileExtensionFromResourceEncoding = (encodingType?: string) => {
   }
 
   return extension;
+};
+
+export const getNormalizedFileExtension = (
+  filename: string,
+  encodingFormat?: string
+) => {
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex !== -1 && lastDotIndex !== 0) {
+    const extension = filename.slice(lastDotIndex + 1);
+    return extension;
+  }
+  return fileExtensionFromResourceEncoding(encodingFormat) ?? '';
 };
