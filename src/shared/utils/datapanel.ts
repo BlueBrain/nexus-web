@@ -113,7 +113,7 @@ export const toLocalStorageResources = (
       },
       // Now store an object for the distribution item.
       {
-        ...baseLocalStorageObject(resource, source),
+        ...baseLocalStorageObject(resource, source, '1'),
         localStorageType: 'distribution',
         distribution: {
           hasDistribution: true,
