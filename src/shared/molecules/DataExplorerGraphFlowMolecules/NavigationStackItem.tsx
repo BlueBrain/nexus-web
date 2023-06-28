@@ -41,6 +41,7 @@ const NavigationStackItem = ({
         highlighted && 'highlight',
         shrinked && index !== 0 && index !== links.length - 1 && 'shrinkable'
       )}
+      hidden={shrinked && index !== 0 && index !== links.length - 1}
     >
       <Tooltip
         placement="bottomRight"
