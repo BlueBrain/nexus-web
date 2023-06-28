@@ -1,0 +1,247 @@
+import '@testing-library/jest-dom';
+import React from 'react';
+import { render, RenderResult, within } from '@testing-library/react';
+
+import { Provider } from 'react-redux';
+import NavigationStack from './NavigationStack';
+import { createMemoryHistory } from 'history';
+import { createNexusClient } from '@bbp/nexus-sdk';
+import { deltaPath } from '__mocks__/handlers/handlers';
+import configureStore from '../../../shared/store';
+import { Router } from 'react-router-dom';
+import { NexusProvider } from '@bbp/react-nexus';
+import {
+  JumpToNodeDataExplorerGrpahFlow,
+  ReturnBackDataExplorerGraphFlow,
+  AddNewNodeDataExplorerGraphFlow,
+} from '../../../shared/store/reducers/data-explorer';
+import { AnyAction, Store } from 'redux';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+
+const fourthItemInStack = {
+  isDownloadable: false,
+  _self:
+    'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/datashapes:ontologyentity/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fefeatures%2FAHPAmplitude',
+  title: 'AHP Amplitude',
+  types: ['Class'],
+  resource: [
+    'neurosciencegraph',
+    'datamodels',
+    'https://bbp.epfl.ch/ontologies/core/efeatures/AHPAmplitude',
+    28,
+  ],
+};
+describe('NavigationStack', () => {
+  let app: JSX.Element;
+  let component: RenderResult;
+  let container: HTMLElement;
+  let rerender: (ui: React.ReactElement) => void;
+  let store: Store<any, AnyAction>;
+  let user: UserEvent;
+  beforeAll(() => {
+    const history = createMemoryHistory({});
+
+    const nexus = createNexusClient({
+      fetch,
+      uri: deltaPath(),
+    });
+    store = configureStore(
+      history,
+      { nexus },
+      {
+        dataExplorer: {
+          current: {
+            isDownloadable: false,
+            _self:
+              'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.417881.3',
+            title: 'Allen Institute for Brain Science',
+            types: ['Agent', 'Organization'],
+            resource: [
+              'bbp',
+              'atlas',
+              'https://www.grid.ac/institutes/grid.417881.3',
+              1,
+            ],
+          },
+          links: [
+            {
+              _self:
+                'https://bbp.epfl.ch/nexus/v1/resources/bbp/lnmce/datashapes:dataset/traces%2F460bfa2e-cb7d-4420-a448-2030a6bf4ae4',
+              title: '001_141216_A1_CA1py_R_MPG',
+              types: ['Entity', 'Trace', 'Dataset'],
+              resource: [
+                'bbp',
+                'lnmce',
+                'https://bbp.epfl.ch/neurosciencegraph/data/traces/460bfa2e-cb7d-4420-a448-2030a6bf4ae4',
+              ],
+            },
+            {
+              isDownloadable: false,
+              _self:
+                'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
+              title: 'Ecole Polytechnique Federale de Lausanne',
+              types: ['Organization', 'prov#Agent'],
+              resource: [
+                'bbp',
+                'atlas',
+                'https://www.grid.ac/institutes/grid.5333.6',
+                1,
+              ],
+            },
+          ],
+          shrinked: false,
+          highlightIndex: -1,
+          limited: false,
+        },
+      }
+    );
+    app = (
+      <Provider store={store}>
+        <Router history={history}>
+          <NexusProvider nexusClient={nexus}>
+            <NavigationStack />
+          </NexusProvider>
+        </Router>
+      </Provider>
+    );
+    component = render(app);
+    container = component.container;
+    rerender = component.rerender;
+    user = userEvent.setup();
+  });
+
+  it('should render the correct number of NavigationStackItem components in the state', () => {
+    const navigationItems = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more)'
+    );
+    expect(navigationItems.length).toBe(2);
+  });
+  it('should render the correct number of NavigationStackItem components after hit the return back btn', () => {
+    store.dispatch(ReturnBackDataExplorerGraphFlow());
+    rerender(app);
+    const navigationItemsAfterBack = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more)'
+    );
+    expect(navigationItemsAfterBack.length).toBe(1);
+  });
+  it('should render the correct number of NavigationStackItem after multiple navigation', () => {
+    store.dispatch(
+      AddNewNodeDataExplorerGraphFlow({
+        isDownloadable: false,
+        _self:
+          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
+        title: 'bbp.neuroshapes.org',
+        types: [],
+        resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
+      })
+    );
+    rerender(app);
+    store.dispatch(
+      AddNewNodeDataExplorerGraphFlow({
+        isDownloadable: false,
+        _self:
+          'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
+        title: 'neuroshapes.org',
+        types: [],
+        resource: [
+          'neurosciencegraph',
+          'datamodels',
+          'https://neuroshapes.org',
+          161,
+        ],
+      })
+    );
+    render(app);
+    store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
+    render(app);
+    const navigationItemsAfterMultipleNavigation = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more)'
+    );
+    expect(navigationItemsAfterMultipleNavigation.length).toBe(4);
+    const state = store.getState();
+    expect(state.dataExplorer.links.length).toBe(4);
+  });
+  it('should render the NavigationStackShrinkedItem when it passed MAX_NAVIGATION_ITEMS_IN_STACK', () => {
+    store.dispatch(
+      AddNewNodeDataExplorerGraphFlow({
+        isDownloadable: false,
+        _self:
+          'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/datashapes:ontologyentity/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fefeatures%2FNeuroElectroNeuronElectrophysiologicalFeature',
+        title: 'NeuroElectro Neuron Electrophysiological Feature',
+        types: ['Class'],
+        resource: [
+          'neurosciencegraph',
+          'datamodels',
+          'https://bbp.epfl.ch/ontologies/core/efeatures/NeuroElectroNeuronElectrophysiologicalFeature',
+          29,
+        ],
+      })
+    );
+    rerender(app);
+    store.dispatch(
+      AddNewNodeDataExplorerGraphFlow({
+        isDownloadable: false,
+        _self:
+          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:atlasrelease/4906ab85-694f-469d-962f-c0174e901885',
+        title: 'Blue Brain Atlas',
+        types: ['AtlasRelease', 'BrainAtlasRelease'],
+        resource: [
+          'bbp',
+          'atlas',
+          'https://bbp.epfl.ch/neurosciencegraph/data/4906ab85-694f-469d-962f-c0174e901885',
+          3,
+        ],
+      })
+    );
+    rerender(app);
+    const navigationStackShrinkedItem = container.querySelectorAll(
+      '.navigation-stack-item.more'
+    );
+    expect(navigationStackShrinkedItem.length).toBe(1);
+    expect(navigationStackShrinkedItem).not.toBeNull();
+    const navigationHiddenItems = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more):not(.more)[hidden]'
+    );
+    expect(navigationHiddenItems.length).toBe(4);
+  });
+  it('should show the collapse button when the NavigationStackShrinkedItem is clicked', () => {
+    const navigationStackShrinkedItem = container.querySelector(
+      '.navigation-stack-item.more'
+    );
+    if (navigationStackShrinkedItem) {
+      user.click(navigationStackShrinkedItem);
+      const collapseBtn = container.querySelector('.navigation-collapse-btn');
+      expect(collapseBtn).not.toBeNull();
+      expect(collapseBtn).toBeInTheDocument();
+      expect(store.getState().dataExplorer.shrinked).toBe(false);
+    }
+  });
+  it('should hide the collapse button when the collapse button is clicked', () => {
+    const navigationCollapseButton = container.querySelector(
+      '.navigation-collapse-btn'
+    );
+    if (navigationCollapseButton) {
+      user.click(navigationCollapseButton);
+      const collapseBtn = container.querySelector('.navigation-collapse-btn');
+      expect(collapseBtn).toBeNull();
+      expect(store.getState().dataExplorer.shrinked).toBe(true);
+    }
+  });
+  it('should the items in the stack be 4 when the user jump to the 5th item', () => {
+    store.dispatch(JumpToNodeDataExplorerGrpahFlow(4));
+    rerender(app);
+    const navigationStackShrinkedItem = container.querySelector(
+      '.navigation-stack-item.more'
+    );
+    expect(navigationStackShrinkedItem).toBeNull();
+    const navigationItems = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more)'
+    );
+    expect(navigationItems.length).toBe(4);
+  });
+  it('should the fourth item in the stack will be the current one when the user jump to the 4th item', () => {
+    const state = store.getState();
+    expect(state.dataExplorer.current._self).toEqual(fourthItemInStack._self);
+  });
+});
