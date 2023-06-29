@@ -1,15 +1,16 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { render, RenderResult, within } from '@testing-library/react';
-
+import { render, RenderResult } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import NavigationStack from './NavigationStack';
-import { createMemoryHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import { deltaPath } from '__mocks__/handlers/handlers';
-import configureStore from '../../../shared/store';
-import { Router } from 'react-router-dom';
+import { AnyAction, Store } from 'redux';
 import { NexusProvider } from '@bbp/react-nexus';
+import { createMemoryHistory, MemoryHistory } from 'history';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { Router } from 'react-router-dom';
+import { deltaPath } from '__mocks__/handlers/handlers';
 import {
   JumpToNodeDataExplorerGraphFlow,
   ReturnBackDataExplorerGraphFlow,
@@ -17,9 +18,7 @@ import {
   ResetDataExplorerGraphFlow,
   PopulateDataExplorerGraphFlow,
 } from '../../../shared/store/reducers/data-explorer';
-import { AnyAction, Store } from 'redux';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import configureStore from '../../store';
 
 const sampleDigest =
   'eyJjdXJyZW50Ijp7Il9zZWxmIjoiaHR0cHM6Ly9iYnAuZXBmbC5jaC9uZXh1cy92MS9yZXNvdXJjZXMvYmJwL2F0bGFzL2RhdGFzaGFwZXM6dm9sdW1ldHJpY2RhdGFsYXllci9jY2UwNmU5Ni04NWE0LTQwM2QtOGI4Ny02MzRhMTU1NGNkYjkiLCJ0aXRsZSI6IkJCUCBNb3VzZSBCcmFpbiBUZW1wbGF0ZSBWb2x1bWUsIDI1bSIsInR5cGVzIjpbIlZvbHVtZXRyaWNEYXRhTGF5ZXIiLCJCcmFpblRlbXBsYXRlRGF0YUxheWVyIiwiRGF0YXNldCJdLCJyZXNvdXJjZSI6WyJiYnAiLCJhdGxhcyIsImh0dHBzOi8vYmJwLmVwZmwuY2gvbmV1cm9zY2llbmNlZ3JhcGgvZGF0YS9jY2UwNmU5Ni04NWE0LTQwM2QtOGI4Ny02MzRhMTU1NGNkYjkiLDJdfSwibGlua3MiOlt7Il9zZWxmIjoiaHR0cHM6Ly9iYnAuZXBmbC5jaC9uZXh1cy92MS9yZXNvdXJjZXMvYmJwL2xubWNlL2RhdGFzaGFwZXM6ZGF0YXNldC90cmFjZXMlMkY0NjBiZmEyZS1jYjdkLTQ0MjAtYTQ0OC0yMDMwYTZiZjRhZTQiLCJ0aXRsZSI6IjAwMV8xNDEyMTZfQTFfQ0ExcHlfUl9NUEciLCJ0eXBlcyI6WyJFbnRpdHkiLCJUcmFjZSIsIkRhdGFzZXQiXSwicmVzb3VyY2UiOlsiYmJwIiwibG5tY2UiLCJodHRwczovL2JicC5lcGZsLmNoL25ldXJvc2NpZW5jZWdyYXBoL2RhdGEvdHJhY2VzLzQ2MGJmYTJlLWNiN2QtNDQyMC1hNDQ4LTIwMzBhNmJmNGFlNCIsMTVdfSx7Il9zZWxmIjoiaHR0cHM6Ly9iYnAuZXBmbC5jaC9uZXh1cy92MS9yZXNvdXJjZXMvYmJwL2F0bGFzL2RhdGFzaGFwZXM6YXRsYXNzcGF0aWFscmVmZXJlbmNlc3lzdGVtL2FsbGVuX2NjZnYzX3NwYXRpYWxfcmVmZXJlbmNlX3N5c3RlbSIsInRpdGxlIjoiQWxsZW4gTW91c2UgQ0NGIiwidHlwZXMiOlsiQXRsYXNTcGF0aWFsUmVmZXJlbmNlU3lzdGVtIiwiQnJhaW5BdGxhc1NwYXRpYWxSZWZlcmVuY2VTeXN0ZW0iXSwicmVzb3VyY2UiOlsiYmJwIiwiYXRsYXMiLCJodHRwczovL2JicC5lcGZsLmNoL25ldXJvc2NpZW5jZWdyYXBoL2RhdGEvYWxsZW5fY2NmdjNfc3BhdGlhbF9yZWZlcmVuY2Vfc3lzdGVtIiw5XX1dLCJzaHJpbmtlZCI6ZmFsc2UsImhpZ2hsaWdodEluZGV4IjotMX0=';
@@ -89,13 +88,14 @@ describe('NavigationStack', () => {
   let rerender: (ui: React.ReactElement) => void;
   let store: Store<any, AnyAction>;
   let user: UserEvent;
+  let history: MemoryHistory<{}>;
   beforeAll(() => {
-    const history = createMemoryHistory({});
-
     const nexus = createNexusClient({
       fetch,
       uri: deltaPath(),
     });
+
+    history = createMemoryHistory({});
     store = configureStore(
       history,
       { nexus },
@@ -248,7 +248,7 @@ describe('NavigationStack', () => {
     const state = store.getState();
     expect(state.dataExplorer.current._self).toEqual(fourthItemInStack._self);
   });
-  it('should decode the navigation digest at first render', () => {
+  it('should decode the navigation digest when refresh the page', () => {
     store.dispatch(ResetDataExplorerGraphFlow());
     store.dispatch(PopulateDataExplorerGraphFlow(sampleDigest));
     render(app);
