@@ -1,0 +1,31 @@
+.seperated-input-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(50px, 1fr));
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  .seperated-input {
+    margin: 10px 0;
+    outline: none !important;
+    border: none;
+    border-bottom: 1px solid #003a8c;
+    padding: 4px 4px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #003a8c;
+    &::-webkit-input-placeholder {
+      color: #d9d9d9;
+    }
+    &:focus {
+      border-bottom: 1.8px solid #003a8c;
+    }
+    &:not(:placeholder-shown) {
+      text-align: center;
+      border-bottom: 2px solid #003a8c;
+      font-weight: 700;
+    }
+    &.error {
+      border-bottom: 1.8px solid red;
+    }
+  }
+}
