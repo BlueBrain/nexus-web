@@ -6,7 +6,7 @@ import { isArray } from 'lodash';
 import { PlusOutlined } from '@ant-design/icons';
 import {
   TDEResource,
-  JumpToNodeDataExplorerGrpahFlow,
+  JumpToNodeDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
 import { RootState } from '../../store/reducers';
 import './styles.less';
@@ -32,7 +32,7 @@ const NavigationStackItem = ({
   const { shrinked, links } = useSelector(
     (state: RootState) => state.dataExplorer
   );
-  const onClick = () => dispatch(JumpToNodeDataExplorerGrpahFlow(index));
+  const onClick = () => dispatch(JumpToNodeDataExplorerGraphFlow(index));
 
   return (
     <div

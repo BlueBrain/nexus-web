@@ -11,7 +11,7 @@ import configureStore from '../../../shared/store';
 import { Router } from 'react-router-dom';
 import { NexusProvider } from '@bbp/react-nexus';
 import {
-  JumpToNodeDataExplorerGrpahFlow,
+  JumpToNodeDataExplorerGraphFlow,
   ReturnBackDataExplorerGraphFlow,
   AddNewNodeDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
@@ -233,7 +233,7 @@ describe('NavigationStack', () => {
     }
   });
   it('should the items in the stack be 4 when the user jump to the 5th item', () => {
-    store.dispatch(JumpToNodeDataExplorerGrpahFlow(4));
+    store.dispatch(JumpToNodeDataExplorerGraphFlow(4));
     rerender(app);
     const navigationStackShrinkedItem = container.querySelector(
       '.navigation-stack-item.more'
