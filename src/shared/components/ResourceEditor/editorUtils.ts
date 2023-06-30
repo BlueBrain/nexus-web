@@ -1,4 +1,4 @@
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { Dispatch } from 'redux';
 import { isArray, last } from 'lodash';
 import isValidUrl, { externalLink } from '../../../utils/validUrl';
@@ -35,6 +35,13 @@ const dispatchEvent = (
     payload: data.payload,
   });
 };
+
+const isDownloadableLink = (resource: Resource) => {
+  return Boolean(
+    resource['@type'] === 'File' || resource['@type']?.includes('File')
+  );
+};
+
 export const getNormalizedTypes = (types?: string | string[]) => {
   if (types) {
     if (isArray(types)) {
@@ -76,6 +83,7 @@ export async function resolveLinkInEditor({
         resourceId: encodeURIComponent(url),
       });
       const entity = getOrgAndProjectFromResourceObject(data);
+      const isDownloadable = isDownloadableLink(data);
       return dispatchEvent(dispatch, {
         type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
         payload: {
@@ -83,15 +91,24 @@ export async function resolveLinkInEditor({
           error: null,
           resolvedAs: 'resource',
           results: {
+            isDownloadable,
             _self: data._self,
             title: getResourceLabel(data),
             types: getNormalizedTypes(data['@type']),
-            resource: [
-              entity?.orgLabel,
-              entity?.projectLabel,
-              data['@id'],
-              data._rev,
-            ],
+            resource: isDownloadable
+              ? [
+                  entity?.orgLabel,
+                  entity?.projectLabel,
+                  data['@id'],
+                  data._rev,
+                  data._mediaType,
+                ]
+              : [
+                  entity?.orgLabel,
+                  entity?.projectLabel,
+                  data['@id'],
+                  data._rev,
+                ],
           },
         },
       });
@@ -115,27 +132,38 @@ export async function resolveLinkInEditor({
                     _self: url,
                     title: url,
                     types: [],
+                    isDownloadable: false,
                   },
                 }
               : !data._total
               ? {
                   error: 'No @id or _self has been resolved',
                   resolvedAs: 'error',
+                  isDownloadable: false,
                 }
               : {
                   resolvedAs: 'resources',
                   results: data._results.map(item => {
+                    const isDownloadable = isDownloadableLink(item);
                     const entity = getOrgAndProjectFromResourceObject(item);
                     return {
                       _self: item._self,
                       title: getResourceLabel(item),
                       types: getNormalizedTypes(item['@type']),
-                      resource: [
-                        entity?.orgLabel,
-                        entity?.projectLabel,
-                        item['@id'],
-                        item._rev,
-                      ],
+                      resource: isDownloadable
+                        ? [
+                            entity?.orgLabel,
+                            entity?.projectLabel,
+                            item['@id'],
+                            item._rev,
+                            item._mediaType,
+                          ]
+                        : [
+                            entity?.orgLabel,
+                            entity?.projectLabel,
+                            item['@id'],
+                            item._rev,
+                          ],
                     };
                   }),
                 }),
@@ -154,6 +182,7 @@ export async function resolveLinkInEditor({
                 _self: url,
                 title: url,
                 types: [],
+                isDownloadable: false,
               },
             },
           });
