@@ -44,12 +44,6 @@ export const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 
-const isDownloadableLink = (resource: Resource) => {
-  return Boolean(
-    resource['@type'] === 'File' || resource['@type']?.includes('File')
-  );
-};
-
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,

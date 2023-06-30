@@ -16,7 +16,7 @@ export type TDELink = {
   title: string;
   types?: string | string[];
   resource?: TDEResource;
-  isDownloadable: boolean;
+  isDownloadable?: boolean;
 };
 export type TDataExplorerState = {
   links: TDELink[];
