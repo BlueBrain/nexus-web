@@ -347,6 +347,21 @@ export function getOrgAndProjectFromProjectId(
   }
   return null;
 }
+export function getOrgAndProjectFromResourceObject(resource: Resource) {
+  if (resource._project) {
+    return getOrgAndProjectFromProjectId(resource._project);
+  }
+  if (resource['@type'] === 'Project') {
+    return {
+      orgLabel: resource._organizationLabel,
+      projectLabel: resource._label,
+    };
+  }
+  return {
+    orgLabel: '',
+    projectLabel: '',
+  };
+}
 
 /**
  * Returns a project and org labels from url

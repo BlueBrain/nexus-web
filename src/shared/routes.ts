@@ -6,6 +6,7 @@ import Home from '../pages/HomePage/HomePage';
 import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import StudioRedirectView from './views/StudioRedirectView';
 import MyDataPage from '../pages/MyDataPage/MyDataPage';
+import DataExplorerResolverPage from '../pages/DataExplorerGraphFlowPage/DataExplorerGraphFlowPage';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
 
@@ -36,6 +37,12 @@ const routes: TRoutePropsExtended[] = [
   {
     path: '/my-data',
     component: MyDataPage,
+    exact: true,
+    protected: true,
+  },
+  {
+    path: '/data-explorer/graph-flow',
+    component: DataExplorerResolverPage,
     exact: true,
     protected: true,
   },

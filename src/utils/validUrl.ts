@@ -27,5 +27,9 @@ function isUrlCurieFormat(str: string) {
   return curiePattern.test(str);
 }
 
-export { easyValidURL, isUrlCurieFormat };
+function externalLink(url: string): boolean {
+  return !url.startsWith('https://') && !url.startsWith('http://');
+}
+
+export { easyValidURL, isUrlCurieFormat, externalLink };
 export default isValidUrl;

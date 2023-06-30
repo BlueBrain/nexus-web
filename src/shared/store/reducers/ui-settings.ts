@@ -4,8 +4,9 @@ import {
   UISettingsActions,
   UISettingsActionTypes,
 } from '../actions/ui-settings';
+import { TDELink } from './data-explorer';
 
-export const DEFAULT_UI_SETTINGS = {
+export const DEFAULT_UI_SETTINGS: UISettingsState = {
   openCreationPanel: false,
   pageSizes: {
     orgsListPageSize: 5,
@@ -14,12 +15,34 @@ export const DEFAULT_UI_SETTINGS = {
     linksListPageSize: 10,
   },
   currentResourceView: null,
+  editorPopoverResolvedData: {
+    top: 0,
+    left: 0,
+    open: false,
+    results: [],
+    error: null,
+    resolvedAs: undefined,
+  },
 };
-
+export type TEditorPopoverResolvedAs =
+  | 'resource'
+  | 'resources'
+  | 'external'
+  | 'error'
+  | undefined;
+export type TEditorPopoverResolvedData = {
+  open: boolean;
+  top: number;
+  left: number;
+  results?: TDELink | TDELink[];
+  resolvedAs: TEditorPopoverResolvedAs;
+  error?: any;
+};
 export interface UISettingsState {
   openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
   currentResourceView: Resource | null;
+  editorPopoverResolvedData: TEditorPopoverResolvedData;
 }
 
 export default function uiSettingsReducer(
@@ -45,6 +68,20 @@ export default function uiSettingsReducer(
       return {
         ...state,
         currentResourceView: action.payload,
+      };
+    }
+    case UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER: {
+      return {
+        ...state,
+        editorPopoverResolvedData: {
+          ...state.editorPopoverResolvedData,
+          open: action.payload.open,
+          top: action.payload.top,
+          left: action.payload.left,
+          results: action.payload.results,
+          error: action.payload.error,
+          resolvedAs: action.payload.resolvedAs,
+        },
       };
     }
     default:

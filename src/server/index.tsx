@@ -146,6 +146,13 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     },
     search: DEFAULT_SEARCH_STATE,
     modals: DEFAULT_MODALS_STATE,
+    dataExplorer: {
+      current: null,
+      links: [],
+      shrinked: false,
+      limited: false,
+      highlightIndex: -1,
+    },
   };
 
   // render an HTML string of our app

@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { clsx } from 'clsx';
 import useDateTimeInputs from './useDateTimeInputs';
 import { DATE_PATTERN } from '../../canvas/MyData/types';
-import './styles.scss';
+import './styles.less';
 
 type TDate = {
   day: string;
