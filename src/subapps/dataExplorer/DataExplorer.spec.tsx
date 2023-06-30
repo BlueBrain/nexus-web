@@ -73,6 +73,7 @@ describe('DataExplorer', () => {
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
+      rows.forEach(row => console.log('Inner html', row.innerHTML));
       expect(rows.length).toEqual(expectedRowsCount);
       return rows;
     });
@@ -175,6 +176,7 @@ describe('DataExplorer', () => {
     optionLabel: string
   ) => {
     await openMenuFor(menuAriaLabel);
+    console.log('Lookig for option ', optionLabel, ' in menu ', menuAriaLabel);
     const option = await getDropdownOption(optionLabel);
     await userEvent.click(option, { pointerEventsCheck: 0 });
   };
@@ -402,5 +404,46 @@ describe('DataExplorer', () => {
     await selectOptionFromMenu(PathMenuLabel, 'edition');
     await selectOptionFromMenu(PredicateMenuLabel, 'Empty value');
     await expectRowCountToBe(2);
+  });
+
+  it('shows resources that contains value provided by user', async () => {
+    await expectRowCountToBe(10);
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
+
+    await getRowsForNextPage(mockResourcesForNextPage);
+    await expectRowCountToBe(3);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await userEvent.click(container);
+    await selectOptionFromMenu(PredicateMenuLabel, 'Contains');
+    const valueInput = await screen.getByPlaceholderText('type the value...');
+    await userEvent.type(valueInput, 'iggy');
+    await expectRowCountToBe(2);
+
+    await userEvent.clear(valueInput);
+
+    await userEvent.type(valueInput, 'goldilocks');
+    await expectRowCountToBe(0);
+  });
+
+  it('shows all resources when the user has not typed anything in the value filter', async () => {
+    await expectRowCountToBe(10);
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
+
+    await getRowsForNextPage(mockResourcesForNextPage);
+    await expectRowCountToBe(3);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await userEvent.click(container);
+    await selectOptionFromMenu(PredicateMenuLabel, 'Contains');
+    await expectRowCountToBe(3);
   });
 });
