@@ -22,6 +22,7 @@ const NavigationStackShrinkedItem = () => {
         shrinked ? 'more' : 'no-more',
         shrinked && highlightIndex !== -1 && 'highlight'
       )}
+      hidden={!shrinked}
     >
       <Tooltip
         placement="bottomRight"
