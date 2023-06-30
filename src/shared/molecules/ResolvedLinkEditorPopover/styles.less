@@ -21,11 +21,22 @@
     // padding: 0 4px;
     width: 100%;
     overflow: hidden;
+    padding: 3px 0;
     span.ant-tag {
       margin: 10px 12px;
     }
 
     &.list-item {
+      &:hover {
+        background-color: @fusion-neutral-2;
+        .link {
+          font-weight: 700;
+        }
+        .ant-tag {
+          transform: scale(1.05);
+          transition: transform 0.2s ease-in-out;
+        }
+      }
       &:first-child {
         span.ant-tag {
           margin: 10px 12px 5px;

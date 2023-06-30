@@ -17,7 +17,6 @@ import 'codemirror/addon/fold/brace-fold';
 import isValidUrl from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { TToken, resolveLinkInEditor } from './editorUtils';
-import { Resource } from '@bbp/nexus-sdk';
 import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
 

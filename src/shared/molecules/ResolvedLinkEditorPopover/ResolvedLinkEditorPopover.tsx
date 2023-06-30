@@ -4,7 +4,7 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Tag, Divider } from 'antd';
+import { Tag } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
