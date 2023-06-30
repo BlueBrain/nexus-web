@@ -481,7 +481,6 @@ const DataPanel: React.FC<Props> = ({}) => {
             }`,
           };
         } catch (error) {
-          console.log('@@error', resource.id, error);
           return;
         }
       });
