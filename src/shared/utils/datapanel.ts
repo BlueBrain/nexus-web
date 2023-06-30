@@ -113,7 +113,7 @@ export const toLocalStorageResources = (
       },
       // Now store an object for the distribution item.
       {
-        ...baseLocalStorageObject(resource, source),
+        ...baseLocalStorageObject(resource, source, '1'),
         localStorageType: 'distribution',
         distribution: {
           hasDistribution: true,
@@ -241,19 +241,18 @@ export function pathForTopLevelResources(
 ): FilePath {
   const self = isArray(resource._self) ? resource._self[0] : resource._self;
   const parsedSelf = parseURL(self);
-  const encodedName = encodeURIComponent(resource.name).slice(-20);
+  const encodedName = encodeURIComponent(resource.name);
 
   const fullPath = `/${parsedSelf.org}/${parsedSelf.project}/${encodedName}`;
-  const trimmedPath = fullPath.length > 60 ? `/${uuidv4()}` : fullPath;
 
   let uniquePath: string;
-  if (existingPaths.has(trimmedPath)) {
-    const count = existingPaths.get(trimmedPath)!;
-    uniquePath = `${trimmedPath}-${count}`;
-    existingPaths.set(trimmedPath, count + 1);
+  if (existingPaths.has(fullPath)) {
+    const count = existingPaths.get(fullPath)!;
+    uniquePath = `${fullPath}-${count}`;
+    existingPaths.set(fullPath, count + 1);
   } else {
-    uniquePath = trimmedPath;
-    existingPaths.set(trimmedPath, 1);
+    uniquePath = fullPath;
+    existingPaths.set(fullPath, 1);
   }
 
   return {
@@ -274,15 +273,13 @@ export function pathForChildDistributions(
   const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
 
   const fullFileName = fileNameForDistributionItem(distItem, defaultUniqueName);
-  const nameWithoutExtension = fullFileName.slice(
+  const fileNameWithoutExtension = fullFileName.slice(
     0,
     fullFileName.lastIndexOf('.')
   );
   const extension = fullFileName.slice(fullFileName.lastIndexOf('.') + 1);
 
-  const fileName = nameWithoutExtension.slice(-20);
-
-  const childDir = fileName; // Max Length 20
+  const childDir = fileNameWithoutExtension; // Max Length 20
   const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
   let uniquePath: string; // TODO de-deuplicate
   if (existingPaths.has(pathToChildFile)) {
@@ -296,6 +293,6 @@ export function pathForChildDistributions(
 
   return {
     path: uniquePath,
-    fileName: `${fileName}.${extension}`,
+    fileName: `${fileNameWithoutExtension}.${extension}`,
   };
 }

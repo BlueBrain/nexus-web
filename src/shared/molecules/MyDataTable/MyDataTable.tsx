@@ -87,6 +87,7 @@ type TProps = {
   sort: string[];
   updateSort(value: string[]): void;
   locate: boolean;
+  query: string;
 };
 export const makeOrgProjectTuple = (text: string) => {
   const parts = text.split('/');
@@ -130,6 +131,24 @@ export const notifyTotalSizeExeeced = () => {
     key: 'data-panel-size-exceeded',
   });
 };
+const getTypesTrancated = (text: string | string[]) => {
+  let types = '';
+  let typesWithUrl = text;
+  if (isArray(text)) {
+    types = text
+      .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
+      .join('\n');
+    typesWithUrl = text.join('\n');
+  } else if (isString(text) && isValidUrl(text)) {
+    types = text.split('/').pop()!;
+  } else {
+    types = text;
+  }
+  return {
+    types,
+    typesWithUrl,
+  };
+};
 type TSorterProps = {
   order?: string;
   name: string;
@@ -171,6 +190,7 @@ const MyDataTable: React.FC<TProps> = ({
   sort,
   updateSort,
   locate,
+  query,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -244,12 +264,14 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               organization / project
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_project'])}
-                onSortDescend={() => updateSort(['-_project'])}
-              />
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_project'])}
+                  onSortDescend={() => updateSort(['-_project'])}
+                />
+              )}
             </div>
           );
         },
@@ -281,19 +303,12 @@ const MyDataTable: React.FC<TProps> = ({
         dataIndex: '@type',
         sorter: false,
         render: text => {
-          let types = '';
-          if (isArray(text)) {
-            types = text
-              .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
-              .join('\n');
-          } else if (isString(text) && isValidUrl(text)) {
-            types = text.split('/').pop() ?? '';
-          } else {
-            types = text;
-          }
+          const { types, typesWithUrl } = getTypesTrancated(text);
           return (
             <Tooltip
-              title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}
+              title={() => (
+                <div style={{ whiteSpace: 'pre-wrap' }}>{typesWithUrl}</div>
+              )}
             >
               <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
             </Tooltip>
@@ -315,12 +330,14 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               updated date
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_updatedAt', '@id'])}
-                onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
-              />
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_updatedAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_updatedAt', '@id'])}
+                />
+              )}
             </div>
           );
         },
@@ -341,19 +358,21 @@ const MyDataTable: React.FC<TProps> = ({
           return (
             <div>
               created date
-              <Sorter
-                name="name"
-                order={orderDirection}
-                onSortAscend={() => updateSort(['_createdAt', '@id'])}
-                onSortDescend={() => updateSort(['-_createdAt', '@id'])}
-              />
+              {(!query || query.trim() === '') && (
+                <Sorter
+                  name="name"
+                  order={orderDirection}
+                  onSortAscend={() => updateSort(['_createdAt', '@id'])}
+                  onSortDescend={() => updateSort(['-_createdAt', '@id'])}
+                />
+              )}
             </div>
           );
         },
         render: text => timeago(new Date(text)),
       },
     ],
-    [sort]
+    [sort, query]
   );
   const dataSource: TMyDataTableRow[] =
     resources?._results?.map(resource => {

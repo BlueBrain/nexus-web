@@ -140,13 +140,14 @@ describe('datapanel utilities', () => {
       encodingFormat: 'text/turtle',
       label: 'molecular-systems.ttl',
     };
-    expect(actualSerializedItems[1].distribution).toEqual(
+    const serializedChild = actualSerializedItems[1];
+    expect(serializedChild.distribution).toEqual(
       expectedDistributionValueForChild
     );
-    expect(actualSerializedItems[1]._self).toEqual(resource._self);
-    expect(actualSerializedItems[1].key).toEqual(resource._self);
-    expect(actualSerializedItems[1].project).toEqual(resource._project);
-    expect(actualSerializedItems[1].localStorageType).toEqual('distribution');
+    expect(serializedChild._self).toEqual(resource._self);
+    expect(serializedChild.key).toEqual(`${resource._self}-1`);
+    expect(serializedChild.project).toEqual(resource._project);
+    expect(serializedChild.localStorageType).toEqual('distribution');
   });
 
   it('serializes resources with distribution object when content size is number', () => {
@@ -192,7 +193,6 @@ describe('datapanel utilities', () => {
     );
   });
 
-  // TODO-NOW: Remove skip when rebased on latest develop
   it('serializes resources when distribution is empty object', () => {
     const resource = { ...resourceWithoutDistrition, distribution: {} };
     const actualSerializedItems = toLocalStorageResources(resource, 'studios');
@@ -239,7 +239,7 @@ describe('datapanel utilities', () => {
     expect(actualPathProps).toEqual(expectPathProps);
   });
 
-  it('trims path for top level resource when its name is too long', () => {
+  it('does not trim path for top level resource even if it is long', () => {
     const namePrefix = Array(20)
       .fill('A')
       .join('');
@@ -257,7 +257,7 @@ describe('datapanel utilities', () => {
     const actualPathProps = pathForTopLevelResources(mockResource, new Map());
 
     const expectPathProps: FilePath = {
-      path: `/${orgName}/${projectName}/${nameSuffix}`,
+      path: `/${orgName}/${projectName}/${resourceName}`,
       filename: 'metadata',
       extension: 'json',
     };
@@ -364,8 +364,8 @@ describe('datapanel utilities', () => {
     );
 
     const expectPathProps = {
-      path: `${parentPath}/${nameSuffix}`,
-      fileName: `${nameSuffix}.asc`,
+      path: `${parentPath}/${namePrefix}${nameSuffix}`,
+      fileName: `${namePrefix}${nameSuffix}.asc`,
     };
 
     expect(actualPathProps).toEqual(expectPathProps);

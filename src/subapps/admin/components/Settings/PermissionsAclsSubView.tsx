@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { groupBy, sortBy } from 'lodash';
-import { Table, Collapse, Checkbox, Empty, Spin } from 'antd';
+import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
@@ -12,6 +12,7 @@ import './styles.less';
 
 type TError = Error & { cause: any };
 type Props = {};
+
 type DataType = {
   key: string;
   name: string;
@@ -20,8 +21,11 @@ type DataType = {
   write?: boolean;
   create?: boolean;
   query?: boolean;
-  children?: DataType[];
+  children?: ChildType[];
+  realm?: string;
 };
+type ChildType = Omit<DataType, 'children' | 'realm' | 'parent'>;
+
 type GroupedPermission = {
   name: string;
   permissions: string[];
@@ -87,7 +91,6 @@ const PermissionsAclsSubView = (props: Props) => {
     refetchOnWindowFocus: false,
     retry: false,
   });
-
   const columns: ColumnsType<DataType> = useMemo(
     () => [
       {
@@ -97,7 +100,10 @@ const PermissionsAclsSubView = (props: Props) => {
         width: 200,
         ellipsis: true,
         render: (text, record) => (
-          <span className={record.parent ? 'row-as-head' : ''}>{text}</span>
+          <span className={record.parent ? 'row-as-head' : ''}>
+            {record.realm && <Tag>{record.realm}</Tag>}
+            {text}
+          </span>
         ),
       },
       {
@@ -158,13 +164,13 @@ const PermissionsAclsSubView = (props: Props) => {
       const iden = identity.subject ?? (identity.group || '');
       const name = iden ? `: ${iden}` : '';
       return {
-        key: identity['@id'],
+        key: `${identity.realm}/${identity['@id']}`,
         name: `${identity['@type']}${name}`,
+        realm: identity.realm,
         parent: true,
-        // @ts-ignore
         children: permissions.map(({ name, permissions }) => ({
           name,
-          key: `${identity['@type']}:${identity.subject}:${name}`,
+          key: `${identity.realm}/${identity['@type']}/${identity.subject}:${name}`,
           read: permissions.includes('read'),
           write: permissions.includes('write'),
           create: permissions.includes('create'),
