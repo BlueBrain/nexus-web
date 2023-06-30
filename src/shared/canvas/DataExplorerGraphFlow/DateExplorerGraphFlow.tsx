@@ -21,7 +21,7 @@ const DataExplorerGraphFlow = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const digestFirstRender = useRef<boolean>(false);
-  const { links, shrinked } = useSelector(
+  const { links, shrinked, current } = useSelector(
     (state: RootState) => state.dataExplorer
   );
 
@@ -45,6 +45,24 @@ const DataExplorerGraphFlow = () => {
     return () => unlisten();
   }, []);
 
+  if (current === null) {
+    return (
+      <div className="data-explorer-resolver no-current">
+        <div className="empty">
+          <img
+            src={require('../../images/graphNodes.svg')}
+            alt="nodes"
+            style={{ width: 500 }}
+          />
+          <div className="empty__title">No data explorer graph flow</div>
+          <div className="empty__subtitle">
+            Please select a node from any resource view editor to start
+            exploring
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className={clsx(
