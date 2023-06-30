@@ -5,29 +5,18 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { Dispatch } from 'redux';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { useDispatch } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
 import codemiror from 'codemirror';
-import { isArray } from 'lodash';
-import { clsx } from 'clsx';
+
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import {
-  UISettingsActionTypes,
-  TUpdateJSONEditorPopoverAction,
-} from '../../store/actions/ui-settings';
-import isValidUrl, { externalLink } from '../../../utils/validUrl';
-import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
-import {
-  getOrgAndProjectFromResourceObject,
-  getResourceLabel,
-} from '../../utils';
-import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
+import isValidUrl from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
+import { TToken, resolveLinkInEditor } from './editorUtils';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -48,49 +37,10 @@ export interface ResourceEditorProps {
   showControlPanel?: boolean;
   onFullScreen(): void;
 }
-type TToken = {
-  string: string;
-  start: number;
-  end: number;
-};
-type TActionData = {
-  type: typeof UISettingsActionTypes['UPDATE_JSON_EDITOR_POPOVER'];
-  payload: TEditorPopoverResolvedData;
-};
 
-const LINE_HEIGHT = 50;
+export const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
-export const getNormalizedTypes = (types?: string | string[]) => {
-  if (types) {
-    if (isArray(types)) {
-      return types.map(item => {
-        if (isValidUrl(item)) {
-          return item.split('/').pop()!;
-        }
-        return item;
-      });
-    }
-    if (isValidUrl(types)) {
-      return types.split('/').pop();
-    }
-    return [types];
-  }
-  return [];
-};
-
-const dispatchEvent = (
-  dispatch: Dispatch<TUpdateJSONEditorPopoverAction>,
-  data: TActionData
-) => {
-  return dispatch<{
-    type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER;
-    payload: TEditorPopoverResolvedData;
-  }>({
-    type: data.type,
-    payload: data.payload,
-  });
-};
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
@@ -166,9 +116,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     });
   };
   const onLinkClick = async (_: any, ev: MouseEvent) => {
-    // ev.preventDefault();
-    ev.stopPropagation();
     setLoadingResolution(true);
+    ev.stopPropagation();
     const x = ev.pageX;
     const y = ev.pageY;
     const editorPosition = codeMirorRef.current?.coordsChar({
@@ -183,114 +132,17 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     const left = x - LINE_HEIGHT;
     const top = y - LINE_HEIGHT;
     const defaultPaylaod = { top, left, open: true };
+    // replace the double quotes in the borns of the string because code mirror will added another double quotes
+    // and it will break the url
     const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
-    if (isValidUrl(url)) {
-      let data;
-      try {
-        // case-1: link resolved by the project resolver
-        data = await fetchResourceByResolver({
-          nexus,
-          orgLabel,
-          projectLabel,
-          resourceId: encodeURIComponent(url),
-        });
-        const entity = getOrgAndProjectFromResourceObject(data);
-        dispatchEvent(dispatch, {
-          type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-          payload: {
-            ...defaultPaylaod,
-            error: null,
-            resolvedAs: 'resource',
-            results: {
-              _self: data._self,
-              title: getResourceLabel(data),
-              types: getNormalizedTypes(data['@type']),
-              resource: [
-                entity?.orgLabel,
-                entity?.projectLabel,
-                data['@id'],
-                data._rev,
-              ],
-            },
-          },
-        });
-      } catch (error) {
-        try {
-          // case-2: link can not be resolved by the project resolver
-          // then try to find it across all projects
-          // it may be single resource, multiple resources or external resource
-          // if no resource found then we consider it as an error
-          data = await nexus.Resource.list(undefined, undefined, {
-            locate: url,
-          });
-          dispatchEvent(dispatch, {
-            type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-            payload: {
-              ...defaultPaylaod,
-              ...(externalLink(url) && !data._total
-                ? {
-                    resolvedAs: 'external',
-                    results: {
-                      _self: url,
-                      title: url,
-                      types: [],
-                    },
-                  }
-                : !data._total
-                ? {
-                    error: 'No @id or _self has been resolved',
-                    resolvedAs: 'error',
-                  }
-                : {
-                    resolvedAs: 'resources',
-                    results: data._results.map(item => {
-                      const entity = getOrgAndProjectFromResourceObject(item);
-                      return {
-                        _self: item._self,
-                        title: getResourceLabel(item),
-                        types: getNormalizedTypes(item['@type']),
-                        resource: [
-                          entity?.orgLabel,
-                          entity?.projectLabel,
-                          item['@id'],
-                          item._rev,
-                        ],
-                      };
-                    }),
-                  }),
-            },
-          });
-        } catch (error) {
-          // case-3: if an error occured when tring both resolution method above
-          // we check if the resource is external
-          if (externalLink(url)) {
-            dispatchEvent(dispatch, {
-              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-              payload: {
-                ...defaultPaylaod,
-                resolvedAs: 'external',
-                results: {
-                  _self: url,
-                  title: url,
-                  types: [],
-                },
-              },
-            });
-          }
-          // case-4: if not an external url then it will be an error
-          else {
-            dispatchEvent(dispatch, {
-              type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-              payload: {
-                ...defaultPaylaod,
-                error,
-                resolvedAs: 'error',
-              },
-            });
-          }
-        }
-      }
-    }
+    await resolveLinkInEditor({
+      nexus,
+      dispatch,
+      orgLabel,
+      projectLabel,
+      url,
+      defaultPaylaod,
+    });
     setLoadingResolution(false);
   };
 

@@ -7,10 +7,9 @@ import {
 } from '@bbp/nexus-sdk';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
+import ResourceEditor from '../components/ResourceEditor';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceEditor, {
-  getNormalizedTypes,
-} from '../components/ResourceEditor';
+import { getNormalizedTypes } from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 import { InitNewVisitDataExplorerGraphView } from '../store/reducers/data-explorer';
 import { getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';

@@ -62,8 +62,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           )}
           onChange={handleChange}
           editorDidMount={editor => {
-            // @ts-ignore
-            ref!.current = editor;
+            (ref as React.MutableRefObject<codemiror.Editor>).current = editor;
           }}
           onMouseDown={onLinkClick}
           onUpdate={onLinksFound}

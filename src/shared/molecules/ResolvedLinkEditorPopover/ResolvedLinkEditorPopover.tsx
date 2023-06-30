@@ -15,7 +15,7 @@ import {
 } from '../../store/reducers/data-explorer';
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import { getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
-import { getNormalizedTypes } from '../../components/ResourceEditor';
+import { getNormalizedTypes } from '../../components/ResourceEditor/editorUtils';
 import useOnClickOutside from '../../hooks/useClickOutside';
 import './styles.less';
 
@@ -42,10 +42,7 @@ const PopoverContainer = ({
         'custom-popover-token',
         resolvedAs === 'error' && 'error'
       )}
-      style={{
-        top: `${top}px`,
-        left: `${left}px`,
-      }}
+      style={{ top, left }}
     >
       {children}
     </div>

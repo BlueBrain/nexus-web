@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import * as React from 'react';
 import { render, waitFor } from '../../../utils/testUtil';
-import { resource } from '__mocks__/handlers/ResourceEditor/handlers';
+import { resourceResolverApi } from '__mocks__/handlers/ResourceEditor/handlers';
 import CodeEditor from './CodeEditor';
 
 import codemiror from 'codemirror';
@@ -27,7 +27,7 @@ describe('ResourceEditor', () => {
     const { queryByText, container, getByTestId } = render(
       <CodeEditor
         data-testId="code-mirror-editor"
-        value={JSON.stringify(resource)}
+        value={JSON.stringify(resourceResolverApi)}
         editable={false}
         onLinkClick={() => {}}
         onLinksFound={onLinksFound}
