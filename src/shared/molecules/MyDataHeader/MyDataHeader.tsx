@@ -405,7 +405,7 @@ const Filters = ({
           value={dataType.map(item => startCase(item.split('/').pop()))}
         />
       </Dropdown> */}
-      <div className="search-container">
+      <div className="my-data-search-container">
         <Input.Search
           allowClear
           className="my-data-search"
