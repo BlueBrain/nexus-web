@@ -102,7 +102,7 @@ export const dataExplorerSlice = createSlice({
       calculateNewDigest(newState);
       return newState;
     },
-    JumpToNodeDataExplorerGrpahFlow: (state, action) => {
+    JumpToNodeDataExplorerGraphFlow: (state, action) => {
       const newLinks = slice(state.links, 0, action.payload);
       const newState: TDataExplorerState = {
         ...state,
@@ -158,7 +158,7 @@ export const {
   PopulateDataExplorerGraphFlow,
   InitNewVisitDataExplorerGraphView,
   AddNewNodeDataExplorerGraphFlow,
-  JumpToNodeDataExplorerGrpahFlow,
+  JumpToNodeDataExplorerGraphFlow,
   ExpandNavigationStackDataExplorerGraphFlow,
   ShrinkNavigationStackDataExplorerGraphFlow,
   ReturnBackDataExplorerGraphFlow,
