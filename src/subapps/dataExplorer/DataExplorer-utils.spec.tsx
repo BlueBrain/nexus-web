@@ -1,4 +1,8 @@
-import { getAllPaths, isPathMissing } from './PredicateSelector';
+import {
+  doesResourceContain,
+  getAllPaths,
+  isPathMissing,
+} from './PredicateSelector';
 
 describe('DataExplorerSpec-Utils', () => {
   it('shows all paths for resources', () => {
@@ -156,5 +160,145 @@ describe('DataExplorerSpec-Utils', () => {
     expect(isPathMissing(resource, 'distribution.label.emptyString')).toEqual(
       true
     );
+  });
+
+  it('checks if array strings can be checked for contains', () => {
+    const resource = {
+      '@id':
+        'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+      '@type': ['ElasticSearchView', 'View'],
+    };
+    expect(doesResourceContain(resource, '@type', '')).toEqual(true);
+    expect(doesResourceContain(resource, '@type', 'ElasticSearchView')).toEqual(
+      true
+    );
+    expect(doesResourceContain(resource, '@type', 'File')).toEqual(false);
+  });
+
+  it('checks if path has a specific value', () => {
+    const resource = {
+      foo: 'some value',
+      bar: 42,
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: {
+            official: 'official',
+            unofficial: 'rebel',
+            extended: [{ prefix: '1', suffix: 2 }, { prefix: '1' }],
+          },
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+          label: [
+            {
+              official: 'official',
+              extended: [{ prefix: '1', suffix: 2 }, { prefix: '1' }],
+            },
+            {
+              official: 'official',
+              unofficial: 'rebel',
+              extended: [{ prefix: 1, suffix: '2' }, { prefix: '1' }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(doesResourceContain(resource, 'foo', '')).toEqual(true);
+    expect(doesResourceContain(resource, 'foo', 'some value')).toEqual(true);
+    expect(doesResourceContain(resource, 'foo', '2')).toEqual(false);
+    expect(doesResourceContain(resource, 'bar', '42')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.name', 'sally')).toEqual(
+      true
+    );
+    expect(
+      doesResourceContain(resource, 'distribution.sillyname', 'sally')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.filename', 'billy')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(resource, 'distribution.label', 'madeUpLabel')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.official', 'official')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.label.official', 'official')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(resource, 'distribution.label.unofficial', 'official')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.label.unofficial', 'rebel')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(resource, 'distribution.label.extended.prefix', '1')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(resource, 'distribution.label.extended.prefix', '10')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.label.extended.suffix', '1')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.label.extended.suffix', '2')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.label.extended.nonexisting',
+        '2'
+      )
+    ).toEqual(false);
+  });
+
+  it('ignores case when checking for contains value', () => {
+    const resource = {
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: ['ChiPmunK'],
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+        },
+      ],
+    };
+    expect(
+      doesResourceContain(resource, 'distribution.filename', 'BiLLy')
+    ).toEqual(true);
+    expect(
+      doesResourceContain(resource, 'distribution.filename', 'Lilly')
+    ).toEqual(false);
+    expect(
+      doesResourceContain(resource, 'distribution.label', 'chipmunk')
+    ).toEqual(true);
+  });
+
+  it('checks if value is a substring in existing path when checking for contains', () => {
+    const resource = {
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: ['ChiPmunK'],
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+        },
+      ],
+    };
+    expect(
+      doesResourceContain(resource, 'distribution.filename', 'lly')
+    ).toEqual(true);
   });
 });

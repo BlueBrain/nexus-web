@@ -1,8 +1,10 @@
-import { Select } from 'antd';
-import React from 'react';
+import { Input, Select } from 'antd';
+import React, { useState } from 'react';
 import { DataExplorerConfiguration, isObject } from './DataExplorer';
 import './styles.less';
 import { Resource } from '@bbp/nexus-sdk';
+import { normalizeString } from '../../utils/stringUtils';
+import { clsx } from 'clsx';
 
 interface Props {
   dataSource: Resource[];
@@ -13,13 +15,18 @@ export const PredicateSelector: React.FC<Props> = ({
   dataSource,
   onPredicateChange,
 }: Props) => {
+  const [selectedPredicateFilter, setSeletectPredicateFilter] = useState<
+    string
+  >(DEFAULT_OPTION);
+
   const pathOptions = [
     { value: DEFAULT_OPTION },
     ...getAllPaths(dataSource).map(path => ({ value: path })),
   ];
-  const predicateOptions = [
+  const predicateFilterOptions: PredicateFilterOptions[] = [
     { value: DEFAULT_OPTION },
-    { value: 'Empty value' },
+    { value: EMPTY_VALUE },
+    { value: CONTAINS },
   ];
 
   return (
@@ -38,27 +45,59 @@ export const PredicateSelector: React.FC<Props> = ({
         className="select-menu"
         popupClassName="search-menu"
       />
+
       <span className="label">= </span>
+
       <Select
-        options={predicateOptions}
-        onSelect={(predicateLabel: string) => {
+        options={predicateFilterOptions}
+        onSelect={(predicateFilterLabel: PredicateFilterOptions['value']) => {
+          setSeletectPredicateFilter(predicateFilterLabel);
+          if (predicateFilterLabel === CONTAINS) {
+            return;
+          }
           onPredicateChange({
             predicateFilter:
-              predicateLabel === DEFAULT_OPTION ? null : predicateLabel,
+              predicateFilterLabel === DEFAULT_OPTION
+                ? null
+                : predicateFilterLabel,
           });
         }}
         aria-label="predicate-selector"
-        style={{ width: 200 }}
-        className="select-menu"
+        className={clsx(
+          'select-menu',
+          selectedPredicateFilter === CONTAINS && 'greyed-out'
+        )}
         popupClassName="search-menu"
         allowClear={true}
         onClear={() => onPredicateChange({ predicateFilter: null })}
       />
+
+      {selectedPredicateFilter === CONTAINS && (
+        <Input
+          placeholder="type the value..."
+          aria-label="predicate-value-input"
+          bordered={false}
+          className="predicate-value-input"
+          onChange={event => {
+            onPredicateChange({
+              predicateFilter: CONTAINS,
+              predicateValue: event.target.value,
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
 
 export const DEFAULT_OPTION = '-';
+export const EMPTY_VALUE = 'Empty value';
+export const CONTAINS = 'Contains';
+export type PredicateFilterT = typeof EMPTY_VALUE | typeof CONTAINS | null;
+
+type PredicateFilterOptions = {
+  value: Exclude<PredicateFilterT, null> | typeof DEFAULT_OPTION;
+};
 
 export const pathOptions = (paths: string[]) => [
   { value: DEFAULT_OPTION },
@@ -107,7 +146,7 @@ export const isPathMissing = (
   resource: { [key: string]: any },
   path: string
 ): boolean => {
-  if (path in resource && path !== '') {
+  if (path in resource) {
     return false;
   }
 
@@ -129,4 +168,39 @@ export const isPathMissing = (
     }
   }
   return true;
+};
+
+export const doesResourceContain = (
+  resource: { [key: string]: any },
+  path: string,
+  value: string
+): boolean => {
+  if (!Array.isArray(resource) && !isObject(resource)) {
+    return isSubstringOf(String(resource), value);
+  }
+
+  const subpaths = path.split('.');
+
+  for (const subpath of subpaths) {
+    const valueAtSubpath = resource[subpath];
+    const remainingPath = subpaths.slice(1);
+    if (Array.isArray(valueAtSubpath)) {
+      return valueAtSubpath.some(arrayElement =>
+        doesResourceContain(arrayElement, remainingPath.join('.'), value)
+      );
+    }
+    if (isObject(valueAtSubpath)) {
+      return doesResourceContain(
+        valueAtSubpath,
+        remainingPath.join('.'),
+        value
+      );
+    }
+    return isSubstringOf(String(valueAtSubpath), value);
+  }
+  return isSubstringOf(String(resource), value);
+};
+
+const isSubstringOf = (text: string, maybeSubstring: string) => {
+  return normalizeString(text).includes(normalizeString(maybeSubstring));
 };
