@@ -118,7 +118,9 @@ const ResolvedLinkEditorPopover = () => {
       return (
         <PopoverContainer {...{ onClickOutside }}>
           <div className="resource" key={result._self}>
-            <Tag color="red">{`${result.resource?.[0]}/${result.resource?.[1]}`}</Tag>
+            {result.resource?.[0] && result.resource?.[1] && (
+              <Tag color="blue">{`${result.resource?.[0]}/${result.resource?.[1]}`}</Tag>
+            )}
             <button
               onClick={() => onClickLink(result)}
               className="link popover-btn"
@@ -134,7 +136,9 @@ const ResolvedLinkEditorPopover = () => {
         <PopoverContainer {...{ onClickOutside }}>
           {(results as TDELink[]).map(item => (
             <div className="resource" key={item._self}>
-              <Tag color="blue">{`${item.resource?.[0]}/${item.resource?.[1]}`}</Tag>
+              {item.resource?.[0] && item.resource?.[1] && (
+                <Tag color="blue">{`${item.resource?.[0]}/${item.resource?.[1]}`}</Tag>
+              )}
               <button
                 onClick={() => onClickLink(item)}
                 className="link popover-btn"
