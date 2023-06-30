@@ -8,21 +8,37 @@ import { getResourceLabel } from '../../shared/utils';
 import { DataExplorerTable } from './DataExplorerTable';
 import './styles.less';
 import { ProjectSelector } from './ProjectSelector';
-import { PredicateSelector, isPathMissing } from './PredicateSelector';
+import {
+  CONTAINS,
+  EMPTY_VALUE,
+  PredicateFilterT,
+  PredicateSelector,
+  doesResourceContain,
+  isPathMissing,
+} from './PredicateSelector';
+import { normalizeString } from 'utils/stringUtils';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
   predicatePath: string | null;
-  predicateFilter: string | null;
+  predicateFilter: PredicateFilterT | null;
+  predicateValue: string | null;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
   const [
-    { pageSize, offset, orgAndProject, predicatePath, predicateFilter },
+    {
+      pageSize,
+      offset,
+      orgAndProject,
+      predicatePath,
+      predicateFilter,
+      predicateValue,
+    },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -35,6 +51,7 @@ export const DataExplorer: React.FC<{}> = () => {
       orgAndProject: undefined,
       predicatePath: null,
       predicateFilter: null,
+      predicateValue: '',
     }
   );
 
@@ -68,9 +85,20 @@ export const DataExplorer: React.FC<{}> = () => {
 
   const displayedDataSource =
     predicatePath && predicateFilter
-      ? currentPageDataSource.filter(resource =>
-          isPathMissing(resource, predicatePath)
-        )
+      ? currentPageDataSource.filter(resource => {
+          switch (predicateFilter) {
+            case EMPTY_VALUE:
+              return isPathMissing(resource, predicatePath);
+            case CONTAINS:
+              return doesResourceContain(
+                resource,
+                predicatePath,
+                predicateValue ?? ''
+              );
+            default:
+              return true;
+          }
+        })
       : currentPageDataSource;
 
   return (
