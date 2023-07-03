@@ -95,7 +95,7 @@ describe('NavigationStack', () => {
   let history: MemoryHistory<{}>;
   let nexus: NexusClient;
 
-  beforeAll(() => {
+  beforeEach(() => {
     history = createMemoryHistory({});
 
     nexus = createNexusClient({
@@ -105,7 +105,7 @@ describe('NavigationStack', () => {
     store = configureStore(
       history,
       { nexus },
-      { dataExplorer: initialDataExplorerState }
+      { }
     );
     app = (
       <Provider store={store}>
@@ -125,10 +125,7 @@ describe('NavigationStack', () => {
     rerender = component.rerender;
     user = userEvent.setup();
   });
-  beforeEach(() => {
-    // reset the data explorer state
-    store.dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
-  });
+
   it('should render the correct number of NavigationStackItem components in the state', () => {
     store.dispatch(
       ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
@@ -265,7 +262,6 @@ describe('NavigationStack', () => {
       ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
     );
     rerender(app);
-    // console.log('@@dada', JSON.stringify(store.getState().dataExplorer, null, 2));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
@@ -326,25 +322,12 @@ describe('NavigationStack', () => {
     const openShrinkedNavList = container.querySelector(
       '[role="open-shrinked-nav"]'
     );
-    console.log(
-      '@@navigationStackShrinkedItem',
-      openShrinkedNavList?.innerHTML
-    );
-    await waitFor(async () => {
-      if (openShrinkedNavList) {
-        await user.click(openShrinkedNavList);
-        rerender(app);
-        const collapseBtn = container.querySelector('.navigation-collapse-btn');
-        console.log('@@collapseBtn', collapseBtn?.innerHTML);
-        console.log(
-          '@@state',
-          JSON.stringify(store.getState().dataExplorer, null, 2)
-        );
-        expect(collapseBtn).not.toBeNull();
-        expect(collapseBtn).toBeInTheDocument();
-        expect(store.getState().dataExplorer.shrinked).toBe(false);
-      }
-    });
+    openShrinkedNavList && await user.click(openShrinkedNavList);
+    rerender(app);
+    const collapseBtn = container.querySelector('.navigation-collapse-btn');
+    expect(collapseBtn).not.toBeNull();
+    expect(collapseBtn).toBeInTheDocument();
+    expect(store.getState().dataExplorer.shrinked).toBe(false);
   });
   it('should the items in the stack be 4 when the user jump to the 5th item', async () => {
     store.dispatch(
