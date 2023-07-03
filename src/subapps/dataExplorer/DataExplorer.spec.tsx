@@ -18,7 +18,13 @@ import { render, screen, waitFor } from '../../utils/testUtil';
 import { DataExplorer } from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
-import { DEFAULT_OPTION, getAllPaths } from './PredicateSelector';
+import {
+  CONTAINS,
+  DEFAULT_OPTION,
+  DOES_NOT_EXIST,
+  EXISTS,
+  getAllPaths,
+} from './PredicateSelector';
 
 describe('DataExplorer', () => {
   const server = setupServer(
@@ -73,7 +79,6 @@ describe('DataExplorer', () => {
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
-      rows.forEach(row => console.log('Inner html', row.innerHTML));
       expect(rows.length).toEqual(expectedRowsCount);
       return rows;
     });
@@ -176,7 +181,6 @@ describe('DataExplorer', () => {
     optionLabel: string
   ) => {
     await openMenuFor(menuAriaLabel);
-    console.log('Lookig for option ', optionLabel, ' in menu ', menuAriaLabel);
     const option = await getDropdownOption(optionLabel);
     await userEvent.click(option, { pointerEventsCheck: 0 });
   };
@@ -398,11 +402,11 @@ describe('DataExplorer', () => {
     await expectRowCountToBe(3);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
-    await selectOptionFromMenu(PredicateMenuLabel, 'Empty value');
+    await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(1);
 
     await selectOptionFromMenu(PathMenuLabel, 'edition');
-    await selectOptionFromMenu(PredicateMenuLabel, 'Empty value');
+    await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(2);
   });
 
@@ -419,7 +423,7 @@ describe('DataExplorer', () => {
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
-    await selectOptionFromMenu(PredicateMenuLabel, 'Contains');
+    await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
     const valueInput = await screen.getByPlaceholderText('type the value...');
     await userEvent.type(valueInput, 'iggy');
     await expectRowCountToBe(2);
@@ -443,7 +447,24 @@ describe('DataExplorer', () => {
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
-    await selectOptionFromMenu(PredicateMenuLabel, 'Contains');
+    await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
     await expectRowCountToBe(3);
+  });
+
+  it('shows resources that have a path when user selects exists predicate', async () => {
+    await expectRowCountToBe(10);
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
+
+    await getRowsForNextPage(mockResourcesForNextPage);
+    await expectRowCountToBe(3);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await userEvent.click(container);
+    await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+    await expectRowCountToBe(2);
   });
 });
