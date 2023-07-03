@@ -4,41 +4,23 @@ import { notification } from 'antd';
 import { isString } from 'lodash';
 import React, { useReducer } from 'react';
 import { useQuery } from 'react-query';
-import { getResourceLabel } from '../../shared/utils';
 import { DataExplorerTable } from './DataExplorerTable';
 import './styles.less';
 import { ProjectSelector } from './ProjectSelector';
-import {
-  CONTAINS,
-  EMPTY_VALUE,
-  PredicateFilterT,
-  PredicateSelector,
-  doesResourceContain,
-  isPathMissing,
-} from './PredicateSelector';
-import { normalizeString } from 'utils/stringUtils';
+import { PredicateSelector } from './PredicateSelector';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
-  predicatePath: string | null;
-  predicateFilter: PredicateFilterT | null;
-  predicateValue: string | null;
+  predicateFilter: ((resource: Resource) => boolean) | null;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
   const [
-    {
-      pageSize,
-      offset,
-      orgAndProject,
-      predicatePath,
-      predicateFilter,
-      predicateValue,
-    },
+    { pageSize, offset, orgAndProject, predicateFilter },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -49,9 +31,7 @@ export const DataExplorer: React.FC<{}> = () => {
       pageSize: 50,
       offset: 0,
       orgAndProject: undefined,
-      predicatePath: null,
       predicateFilter: null,
-      predicateValue: '',
     }
   );
 
@@ -83,23 +63,11 @@ export const DataExplorer: React.FC<{}> = () => {
 
   const currentPageDataSource: Resource[] = resources?._results || [];
 
-  const displayedDataSource =
-    predicatePath && predicateFilter
-      ? currentPageDataSource.filter(resource => {
-          switch (predicateFilter) {
-            case EMPTY_VALUE:
-              return isPathMissing(resource, predicatePath);
-            case CONTAINS:
-              return doesResourceContain(
-                resource,
-                predicatePath,
-                predicateValue ?? ''
-              );
-            default:
-              return true;
-          }
-        })
-      : currentPageDataSource;
+  const displayedDataSource = predicateFilter
+    ? currentPageDataSource.filter(resource => {
+        return predicateFilter(resource);
+      })
+    : currentPageDataSource;
 
   return (
     <div className="data-explorer-contents">
