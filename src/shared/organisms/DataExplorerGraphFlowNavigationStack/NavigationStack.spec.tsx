@@ -102,11 +102,7 @@ describe('NavigationStack', () => {
       fetch,
       uri: deltaPath(),
     });
-    store = configureStore(
-      history,
-      { nexus },
-      { }
-    );
+    store = configureStore(history, { nexus }, {});
     app = (
       <Provider store={store}>
         <Router history={history}>
@@ -322,7 +318,7 @@ describe('NavigationStack', () => {
     const openShrinkedNavList = container.querySelector(
       '[role="open-shrinked-nav"]'
     );
-    openShrinkedNavList && await user.click(openShrinkedNavList);
+    openShrinkedNavList && (await user.click(openShrinkedNavList));
     rerender(app);
     const collapseBtn = container.querySelector('.navigation-collapse-btn');
     expect(collapseBtn).not.toBeNull();
