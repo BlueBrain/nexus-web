@@ -1,7 +1,7 @@
 import {
   doesResourceContain,
   getAllPaths,
-  isPathMissing,
+  checkPathExistence,
 } from './PredicateSelector';
 
 describe('DataExplorerSpec-Utils', () => {
@@ -82,7 +82,7 @@ describe('DataExplorerSpec-Utils', () => {
     expect(receivedPaths).toEqual(expectedPaths);
   });
 
-  it('returns true when top level property does not exist in resource', () => {
+  it('checks if path exists in resource', () => {
     const resource = {
       foo: 'some value',
       nullValue: null,
@@ -121,45 +121,229 @@ describe('DataExplorerSpec-Utils', () => {
         },
       ],
     };
-    expect(isPathMissing(resource, 'bar')).toEqual(true);
-    expect(isPathMissing(resource, 'nullValue')).toEqual(false);
-    expect(isPathMissing(resource, 'undefinedValue')).toEqual(false);
-    expect(isPathMissing(resource, 'emptyString')).toEqual(false);
-    expect(isPathMissing(resource, 'emptyArray')).toEqual(false);
-    expect(isPathMissing(resource, 'emptyObject')).toEqual(false);
+    expect(checkPathExistence(resource, 'bar')).toEqual(false);
+    expect(checkPathExistence(resource, 'nullValue')).toEqual(true);
+    expect(checkPathExistence(resource, 'undefinedValue')).toEqual(true);
+    expect(checkPathExistence(resource, 'emptyString')).toEqual(true);
+    expect(checkPathExistence(resource, 'emptyArray')).toEqual(true);
+    expect(checkPathExistence(resource, 'emptyObject')).toEqual(true);
 
-    expect(isPathMissing(resource, 'foo')).toEqual(false);
-    expect(isPathMissing(resource, 'foo.xyz')).toEqual(true);
-    expect(isPathMissing(resource, 'foo.distribution')).toEqual(true);
+    expect(checkPathExistence(resource, 'foo')).toEqual(true);
+    expect(checkPathExistence(resource, 'foo.xyz')).toEqual(false);
+    expect(checkPathExistence(resource, 'foo.distribution')).toEqual(false);
 
-    expect(isPathMissing(resource, 'distribution')).toEqual(false);
-    expect(isPathMissing(resource, 'distribution.name')).toEqual(false);
-    expect(isPathMissing(resource, 'distribution.name.sillyname')).toEqual(
-      true
-    );
-    expect(
-      isPathMissing(resource, 'distribution.name.sillyname.pancake')
-    ).toEqual(true);
-    expect(isPathMissing(resource, 'distribution.name.label.pancake')).toEqual(
-      true
-    );
-    expect(isPathMissing(resource, 'distribution.label.unofficial')).toEqual(
-      true
-    );
-    expect(
-      isPathMissing(resource, 'distribution.label.extended.prefix')
-    ).toEqual(false);
-    expect(
-      isPathMissing(resource, 'distribution.label.extended.suffix')
-    ).toEqual(true);
-    expect(isPathMissing(resource, 'distribution.foo')).toEqual(true);
-    expect(isPathMissing(resource, 'distribution.emptyArray')).toEqual(true);
-    expect(isPathMissing(resource, 'distribution.label.emptyArray')).toEqual(
+    expect(checkPathExistence(resource, 'distribution')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.name')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.name.sillyname')).toEqual(
       false
     );
-    expect(isPathMissing(resource, 'distribution.label.emptyString')).toEqual(
+    expect(
+      checkPathExistence(resource, 'distribution.name.sillyname.pancake')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'distribution.name.label.pancake')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'distribution.label.unofficial')
+    ).toEqual(true); // TODO: Add opposite
+    expect(
+      checkPathExistence(resource, 'distribution.label.extended.prefix')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'distribution.label.extended.suffix')
+    ).toEqual(true); // Add opposite
+    expect(
+      checkPathExistence(resource, 'distribution.label.extended.notexisting')
+    ).toEqual(false); // Add opposite
+    expect(checkPathExistence(resource, 'distribution.foo')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.emptyArray')).toEqual(
+      false
+    );
+    expect(
+      checkPathExistence(resource, 'distribution.label.emptyArray')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'distribution.label.emptyString')
+    ).toEqual(true); // Add opposite
+  });
+
+  it('check if path exists in resource with nested array', () => {
+    const resource = {
+      distribution: [
+        {
+          foo: 'foovalue',
+          filename: ['filename1'],
+        },
+        {
+          foo: 'foovalue',
+        },
+      ],
+      objPath: {
+        filename: ['filename1'],
+      },
+    };
+    expect(
+      checkPathExistence(resource, 'distribution.filename', 'exists')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'distribution.filename', 'does-not-exist')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'objPath.filename', 'does-not-exist')
+    ).toEqual(false);
+    expect(checkPathExistence(resource, 'objPath.filename', 'exists')).toEqual(
       true
     );
+  });
+
+  it('checks if path is missing in resource', () => {
+    const resource = {
+      foo: 'some value',
+      nullValue: null,
+      undefinedValue: undefined,
+      emptyString: '',
+      emptyArray: [],
+      emptyObject: {},
+      distribution: [
+        {
+          name: 'sally',
+          label: {
+            official: 'official',
+            unofficial: 'unofficial',
+            emptyArray: [],
+            emptyString: '',
+            extended: [{ prefix: '1', suffix: 2 }, { prefix: '1' }],
+          },
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          label: [
+            {
+              official: 'official',
+              emptyArray: [],
+              emptyString: '',
+              extended: [{ prefix: '1', suffix: 2 }, { prefix: '1' }],
+            },
+            {
+              official: 'official',
+              unofficial: 'unofficial',
+              emptyArray: [1],
+              extended: [{ prefix: '1', suffix: 2 }, { prefix: '1' }],
+            },
+          ],
+        },
+      ],
+    };
+    expect(checkPathExistence(resource, 'bar', 'does-not-exist')).toEqual(true);
+    expect(checkPathExistence(resource, 'nullValue', 'does-not-exist')).toEqual(
+      false
+    );
+    expect(
+      checkPathExistence(resource, 'undefinedValue', 'does-not-exist')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'emptyString', 'does-not-exist')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'emptyArray', 'does-not-exist')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'emptyObject', 'does-not-exist')
+    ).toEqual(false);
+
+    expect(checkPathExistence(resource, 'foo', 'does-not-exist')).toEqual(
+      false
+    );
+    expect(checkPathExistence(resource, 'foo.xyz', 'does-not-exist')).toEqual(
+      true
+    );
+    expect(
+      checkPathExistence(resource, 'foo.distribution', 'does-not-exist')
+    ).toEqual(true);
+
+    expect(
+      checkPathExistence(resource, 'distribution', 'does-not-exist')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(resource, 'distribution.name', 'does-not-exist')
+    ).toEqual(false);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.name.sillyname',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.name.sillyname.pancake',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.name.label.pancake',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.unofficial',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.official',
+        'does-not-exist'
+      )
+    ).toEqual(false);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.extended.prefix',
+        'does-not-exist'
+      )
+    ).toEqual(false);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.extended.suffix',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.extended.notexisting',
+        'does-not-exist'
+      )
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'distribution.foo', 'does-not-exist')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(resource, 'distribution.emptyArray', 'does-not-exist')
+    ).toEqual(true);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.emptyArray',
+        'does-not-exist'
+      )
+    ).toEqual(false);
+    expect(
+      checkPathExistence(
+        resource,
+        'distribution.label.emptyString',
+        'does-not-exist'
+      )
+    ).toEqual(true);
   });
 
   it('checks if array strings can be checked for contains', () => {
@@ -300,5 +484,24 @@ describe('DataExplorerSpec-Utils', () => {
     expect(
       doesResourceContain(resource, 'distribution.filename', 'lly')
     ).toEqual(true);
+  });
+
+  it('checks if path exists in resource', () => {
+    const resource = {
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: ['ChiPmunK'],
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+          label: { foo: 'foovalut', bar: 'barvalue' },
+        },
+      ],
+    };
+    expect(checkPathExistence(resource, 'topLevelNotExisting')).toEqual(false);
   });
 });
