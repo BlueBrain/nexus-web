@@ -37,7 +37,7 @@ const DataExplorerResolverPage = () => {
 
   useEffect(() => {
     const unlisten = history.listen(() => {
-      dispatch(ResetDataExplorerGraphFlow());
+      dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
       localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
     });
     return () => unlisten();

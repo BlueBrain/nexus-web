@@ -38,6 +38,7 @@ const NavigationStackItem = ({
     <div
       className={clsx(
         'navigation-stack-item',
+        `item-${index}`,
         highlighted && 'highlight',
         shrinked && index !== 0 && index !== links.length - 1 && 'shrinkable'
       )}

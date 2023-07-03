@@ -27,9 +27,13 @@ const NavigationStackShrinkedItem = () => {
       <Tooltip
         placement="bottomRight"
         overlayClassName="navigation-item-tooltip"
-        title={<div>Open more {count} other resources</div>}
+        title={<div>Open {count} other resources</div>}
       >
-        <PlusOutlined className="icon" onClick={onClick} />
+        <PlusOutlined
+          role="open-shrinked-nav"
+          className="icon"
+          onClick={onClick}
+        />
       </Tooltip>
       <div className="count">{count}</div>
       <MoreOutlined style={{ fontSize: 18, color: '#BFBFBF' }} />
