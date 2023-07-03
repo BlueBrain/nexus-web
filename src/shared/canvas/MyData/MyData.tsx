@@ -7,8 +7,9 @@ import { notification } from 'antd';
 import { isObject, isString } from 'lodash';
 
 import { MyDataHeader, MyDataTable } from '../../molecules';
-import { RootState } from '../../../shared/store/reducers';
+import { RootState } from '../../store/reducers';
 import { TDateFilterType, TFilterOptions } from './types';
+import './styles.less';
 
 const makeDatetimePattern = ({
   dateFilterType,

@@ -67,7 +67,10 @@ const ResourceViewContainer: React.FunctionComponent<{
       [key: string]: any;
     }> | null
   ) => React.ReactElement | null;
-}> = ({ render }) => {
+  deOrgLabel?: string;
+  deProjectLabel?: string;
+  deResourceId?: string;
+}> = ({ render, deOrgLabel, deProjectLabel, deResourceId }) => {
   const history = useHistory();
   const nexus = useNexusContext();
   const notification = useNotification();
@@ -102,9 +105,12 @@ const ResourceViewContainer: React.FunctionComponent<{
     projectLabel: string;
     resourceId: string;
   }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
-  const orgLabel = match?.params.orgLabel!;
-  const projectLabel = match?.params.projectLabel!;
-  const resourceId = match?.params.resourceId!;
+
+  const orgLabel = match?.params.orgLabel! ?? deOrgLabel;
+  const projectLabel = match?.params.projectLabel! ?? deProjectLabel;
+  const resourceId =
+    match?.params.resourceId! ??
+    (deResourceId ? encodeURIComponent(deResourceId) : '');
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
@@ -510,6 +516,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         handleCollapseChanged={() => {
           pluginCollapsedToggle('advanced');
         }}
+        showFullScreen={true}
       />
     );
 
@@ -615,12 +622,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       });
     };
   }, []);
-  // React.useEffect(() => {
-  //   window.scrollTo({
-  //     top: 0,
-  //     behavior: 'smooth',
-  //   });
-  // }, []);
   return (
     <>
       <div className="resource-details">

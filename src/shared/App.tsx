@@ -20,6 +20,7 @@ import CreateProject from './modals/CreateProject/CreateProject';
 import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
+import ResolvedLinkEditorPopover from './molecules/ResolvedLinkEditorPopover/ResolvedLinkEditorPopover';
 import './App.less';
 
 const App: React.FC = () => {
@@ -52,13 +53,14 @@ const App: React.FC = () => {
         <FusionMainLayout environment={nexusEcosystem?.environment}>
           <SubAppsView routesWithSubApps={routesWithSubApps} />
           <AppInfo {...{ ...nexusEcosystem }} />
+          <ResolvedLinkEditorPopover />
+          <DataPanel />
           {userAuthenticated && (
             <React.Fragment>
               <GalleryView />
               <CreateProject />
               <CreateOrganization />
               <CreateStudio />
-              <DataPanel />
             </React.Fragment>
           )}
         </FusionMainLayout>

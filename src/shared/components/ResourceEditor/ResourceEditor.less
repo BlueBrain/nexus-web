@@ -7,9 +7,11 @@
 .cm-s-base16-light span.cm-string {
   // string values
 }
+
 .cm-s-base16-light span.cm-string.cm-property {
   color: @link-color;
 }
+
 .CodeMirror {
   pre {
     color: @text-color;
@@ -19,12 +21,14 @@
 .sm-string .cm-property {
   color: @text-color;
 }
+
 .cm-s-base16-light.CodeMirror {
   background-color: white;
 }
 
 .resource-editor {
   .interactiveArea();
+
   &._invalid {
     border: 1px solid pink;
   }
@@ -46,6 +50,20 @@
 ._positive {
   color: @success-color;
 }
+
 ._negative {
   color: @error-color;
+}
+
+.code-mirror-editor {
+  .CodeMirror-lines {
+    cursor: text;
+  }
+
+  &.resolution-on-progress {
+    .CodeMirror-lines {
+      cursor: progress;
+      user-select: none;
+    }
+  }
 }
