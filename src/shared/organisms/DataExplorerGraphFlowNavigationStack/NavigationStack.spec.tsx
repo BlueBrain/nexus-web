@@ -132,12 +132,12 @@ describe('NavigationStack', () => {
     );
     expect(navigationItems.length).toBe(2);
   });
-  it('should render the correct number of NavigationStackItem components after hit the return back btn', () => {
-    // create a new store with preloaded state
+  it('should render the correct number of NavigationStackItem components after hit the return back btn', async () => {
     store.dispatch(
       ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
     );
-    store.dispatch(ReturnBackDataExplorerGraphFlow());
+    const navigationBackItem = container.querySelector('.navigation-back-btn');
+    navigationBackItem && (await user.click(navigationBackItem));
     rerender(app);
     const navigationItemsAfterBack = container.querySelectorAll(
       '.navigation-stack-item:not(.no-more)'
