@@ -20,7 +20,7 @@ import {
   initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
-} from '../../../__mocks__/handlers/DataExplorer/handlers';
+} from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 
 const initialDataExplorerState = {
   current: {
