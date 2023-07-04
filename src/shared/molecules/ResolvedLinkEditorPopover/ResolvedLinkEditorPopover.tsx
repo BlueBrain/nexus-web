@@ -5,7 +5,7 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Tag } from 'antd';
+import { Button, Tag } from 'antd';
 import { DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
@@ -156,7 +156,10 @@ const ResolvedLinkEditorPopover = () => {
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
       <PopoverContainer {...{ onClickOutside, ref }}>
-        <div className="popover-btn error">{error}</div>
+        <div className="resource error">
+          <Tag color="red">Error</Tag>
+          <div className="popover-btn error">{error}</div>
+        </div>
       </PopoverContainer>
     ))
     .with({ open: true, resolvedAs: 'resource' }, () => {
@@ -224,13 +227,15 @@ const ResolvedLinkEditorPopover = () => {
         <PopoverContainer {...{ onClickOutside, ref }}>
           <div className="resource external">
             <Tag color="yellow">External Link</Tag>
-            <span>
-              This is external Link please configure CrossProjectResolver for
-              your project
-            </span>
-            <button disabled className="link popover-btn">
-              <span>{result.title}</span>
-            </button>
+            <a
+              type="link"
+              rel="noopener noreferrer"
+              target="_blank"
+              href={result.title}
+              className="link popover-btn"
+            >
+              {result.title}
+            </a>
           </div>
         </PopoverContainer>
       );

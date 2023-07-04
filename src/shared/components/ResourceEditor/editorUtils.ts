@@ -1,7 +1,12 @@
+import { extractFieldName } from './../../../subapps/search/containers/FilterOptions';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { Dispatch } from 'redux';
-import { isArray, last } from 'lodash';
-import isValidUrl, { externalLink } from '../../../utils/validUrl';
+import { has, isArray, last } from 'lodash';
+import isValidUrl, {
+  isExternalLink,
+  isStorageLink,
+  isUrlCurieFormat,
+} from '../../../utils/validUrl';
 import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import {
@@ -23,6 +28,13 @@ type TActionData = {
   payload: TEditorPopoverResolvedData;
 };
 
+type TDeltaError = Error & {
+  '@type': string;
+  details: string;
+};
+type TErrorMessage = Error & {
+  message: string;
+};
 const dispatchEvent = (
   dispatch: Dispatch<TUpdateJSONEditorPopoverAction>,
   data: TActionData
@@ -57,6 +69,10 @@ export const getNormalizedTypes = (types?: string | string[]) => {
   return [];
 };
 
+const mayBeResolvableLink = (url: string): boolean => {
+  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+};
+
 export async function resolveLinkInEditor({
   nexus,
   dispatch,
@@ -72,7 +88,7 @@ export async function resolveLinkInEditor({
   projectLabel: string;
   defaultPaylaod: { top: number; left: number; open: boolean };
 }) {
-  if (isValidUrl(url)) {
+  if (mayBeResolvableLink(url)) {
     let data;
     try {
       // case-1: link resolved by the project resolver
@@ -121,59 +137,47 @@ export async function resolveLinkInEditor({
         data = await nexus.Resource.list(undefined, undefined, {
           locate: url,
         });
+        if (
+          !data._total ||
+          (!data._total && url.startsWith('https://bbp.epfl.ch'))
+        ) {
+          throw new Error('Resource can not be resolved');
+        }
         return dispatchEvent(dispatch, {
           type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
           payload: {
             ...defaultPaylaod,
-            ...(externalLink(url) && !data._total
-              ? {
-                  resolvedAs: 'external',
-                  results: {
-                    _self: url,
-                    title: url,
-                    types: [],
-                    isDownloadable: false,
-                  },
-                }
-              : !data._total
-              ? {
-                  error: 'No @id or _self has been resolved',
-                  resolvedAs: 'error',
-                  isDownloadable: false,
-                }
-              : {
-                  resolvedAs: 'resources',
-                  results: data._results.map(item => {
-                    const isDownloadable = isDownloadableLink(item);
-                    const entity = getOrgAndProjectFromResourceObject(item);
-                    return {
-                      isDownloadable,
-                      _self: item._self,
-                      title: getResourceLabel(item),
-                      types: getNormalizedTypes(item['@type']),
-                      resource: isDownloadable
-                        ? [
-                            entity?.orgLabel,
-                            entity?.projectLabel,
-                            item['@id'],
-                            item._rev,
-                            item._mediaType,
-                          ]
-                        : [
-                            entity?.orgLabel,
-                            entity?.projectLabel,
-                            item['@id'],
-                            item._rev,
-                          ],
-                    };
-                  }),
-                }),
+            resolvedAs: 'resources',
+            results: data._results.map(item => {
+              const isDownloadable = isDownloadableLink(item);
+              const entity = getOrgAndProjectFromResourceObject(item);
+              return {
+                isDownloadable,
+                _self: item._self,
+                title: getResourceLabel(item),
+                types: getNormalizedTypes(item['@type']),
+                resource: isDownloadable
+                  ? [
+                      entity?.orgLabel,
+                      entity?.projectLabel,
+                      item['@id'],
+                      item._rev,
+                      item._mediaType,
+                    ]
+                  : [
+                      entity?.orgLabel,
+                      entity?.projectLabel,
+                      item['@id'],
+                      item._rev,
+                    ],
+              };
+            }),
           },
         });
       } catch (error) {
         // case-3: if an error occured when tring both resolution method above
         // we check if the resource is external
-        if (externalLink(url)) {
+        if (isExternalLink(url)) {
           return dispatchEvent(dispatch, {
             type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
             payload: {
@@ -183,18 +187,18 @@ export async function resolveLinkInEditor({
                 _self: url,
                 title: url,
                 types: [],
-                isDownloadable: false,
               },
             },
           });
         }
-
         // case-4: if not an external url then it will be an error
         return dispatchEvent(dispatch, {
           type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
           payload: {
             ...defaultPaylaod,
-            error: JSON.stringify(error),
+            error: has(error, 'details')
+              ? (error as TDeltaError).details
+              : (error as TErrorMessage).message ?? JSON.stringify(error),
             resolvedAs: 'error',
           },
         });

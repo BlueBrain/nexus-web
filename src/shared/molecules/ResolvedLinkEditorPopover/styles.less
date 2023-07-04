@@ -23,6 +23,8 @@
     overflow: hidden;
     span.ant-tag {
       margin: 10px 12px;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px rgba(#333, 0.12);
     }
 
     &.list-item {
@@ -33,7 +35,7 @@
       }
       &:last-child {
         span.ant-tag {
-          margin: 5px 12px 10px;
+          margin: 10px 12px 10px;
         }
       }
       span.ant-tag {
@@ -68,16 +70,29 @@
   }
 
   .external {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     max-width: inherit;
+    gap: 10px;
     padding: 10px;
+    span.ant-tag {
+      margin: 0;
+    }
+    .popover-btn.link {
+      padding: 0;
+    }
   }
 
   &.error {
     background-color: rgba(255, 0, 0, 0.478);
     color: white;
+    span.ant-tag {
+      margin-right: 0px;
+    }
+    .popover-btn.error {
+      word-break: break-all;
+    }
   }
 
   .popover-download-btn {

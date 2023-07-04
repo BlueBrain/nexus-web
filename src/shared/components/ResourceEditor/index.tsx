@@ -14,10 +14,12 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import isValidUrl from '../../../utils/validUrl';
+import isValidUrl, {
+  isStorageLink,
+  isUrlCurieFormat,
+} from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { TToken, resolveLinkInEditor } from './editorUtils';
-import { Resource } from '@bbp/nexus-sdk';
 import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
 
@@ -112,7 +114,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     const elements = document.getElementsByClassName('cm-string');
     Array.from(elements).forEach(item => {
       const itemSpan = item as HTMLSpanElement;
-      if (isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))) {
+      const url = itemSpan.innerText.replace(/^"|"$/g, '');
+      if (isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url)) {
         itemSpan.style.textDecoration = 'underline';
       }
     });
