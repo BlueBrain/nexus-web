@@ -504,4 +504,127 @@ describe('DataExplorerSpec-Utils', () => {
     };
     expect(checkPathExistence(resource, 'topLevelNotExisting')).toEqual(false);
   });
+
+  it('checks if resource does not contain value in path', () => {
+    const resource = {
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: ['ChiPmunK'],
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+          label: { foo: 'foovalut', bar: 'barvalue' },
+        },
+      ],
+    };
+
+    expect(
+      doesResourceContain(resource, 'distribution', 'sally', 'does-not-contain')
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.name',
+        'sally',
+        'does-not-contain'
+      )
+    ).toEqual(false);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.filename',
+        'billy',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.filename',
+        'popeye',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+  });
+
+  it('checks if resource does not contain value for nested paths', () => {
+    const resource = {
+      distribution: [
+        {
+          name: 'sally',
+          filename: 'billy',
+          label: ['ChiPmunK'],
+          nested: [{ prop1: 'value1', prop2: ['value2', 'value3'] }],
+        },
+        {
+          name: 'sally',
+          sillyname: 'soliloquy',
+          filename: 'bolly',
+          label: { foo: 'foovalut', bar: 'barvalue' },
+          nested: [{ prop1: 'value1', prop2: ['value2', 'value5'] }],
+        },
+      ],
+    };
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.label',
+        'chipmunk',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.label',
+        'crazy',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.nested',
+        'crazy',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.nested.prop2',
+        'value2',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.nested.prop2',
+        'value',
+        'does-not-contain'
+      )
+    ).toEqual(false);
+
+    expect(
+      doesResourceContain(
+        resource,
+        'distribution.nested.prop2',
+        'value5',
+        'does-not-contain'
+      )
+    ).toEqual(true);
+  });
 });
