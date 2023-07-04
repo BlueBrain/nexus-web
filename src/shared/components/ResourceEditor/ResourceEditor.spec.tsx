@@ -26,7 +26,7 @@ describe('ResourceEditor', () => {
     const onLinksFound = jest.fn();
     const { queryByText, container } = render(
       <CodeEditor
-        data-testId="code-mirror-editor"
+        data-testid="code-mirror-editor"
         value={JSON.stringify(resourceResolverApi)}
         editable={false}
         onLinkClick={() => {}}

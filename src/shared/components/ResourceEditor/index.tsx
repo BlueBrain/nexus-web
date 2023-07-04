@@ -194,7 +194,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   return (
     <div
-      data-testId="resource-editor"
+      data-testid="resource-editor"
       className={valid ? 'resource-editor' : 'resource-editor _invalid'}
     >
       {showControlPanel && (

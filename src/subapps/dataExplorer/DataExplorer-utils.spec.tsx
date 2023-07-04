@@ -607,7 +607,7 @@ describe('DataExplorerSpec-Utils', () => {
         'value2',
         'does-not-contain'
       )
-    ).toEqual(true);
+    ).toEqual(true); // This is expected since the in the arrays ([`value2`, `value3`] & [`value2`, `value5`]) there is atleast 1 element (`value3` in the 1st array and value5 in the 2nd) that does not contain "value2"
 
     expect(
       doesResourceContain(
