@@ -263,8 +263,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         loadingResolution={loadingResolution}
-        onLinkClick={() => {}}
-        onLinksFound={() => {}}
+        onLinkClick={onLinkClick}
+        onLinksFound={onLinksFound}
         ref={codeMirorRef}
       />
     </div>
