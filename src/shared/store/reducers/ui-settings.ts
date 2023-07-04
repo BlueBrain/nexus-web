@@ -24,6 +24,7 @@ export const DEFAULT_UI_SETTINGS: UISettingsState = {
   },
   currentResourceView: null,
   editorPopoverResolvedData: editorPopoverResolvedDataInitialValue,
+  isAdvancedModeEnabled: false,
 };
 export type TEditorPopoverResolvedAs =
   | 'resource'
@@ -44,6 +45,7 @@ export interface UISettingsState {
   pageSizes: { [key: string]: number };
   currentResourceView: Resource | null;
   editorPopoverResolvedData: TEditorPopoverResolvedData;
+  isAdvancedModeEnabled: boolean;
 }
 
 export default function uiSettingsReducer(
@@ -83,6 +85,12 @@ export default function uiSettingsReducer(
           error: action.payload.error,
           resolvedAs: action.payload.resolvedAs,
         },
+      };
+    }
+    case UISettingsActionTypes.ENABLE_ADVANCED_MODE: {
+      return {
+        ...state,
+        isAdvancedModeEnabled: action.payload ?? !state.isAdvancedModeEnabled,
       };
     }
     default:

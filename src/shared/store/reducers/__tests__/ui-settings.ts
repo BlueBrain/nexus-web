@@ -32,6 +32,7 @@ describe('UISettings Reducer', () => {
         results: [],
         top: 0,
       },
+      isAdvancedModeEnabled: false,
     });
   });
 });
