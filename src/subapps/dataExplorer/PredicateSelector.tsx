@@ -232,6 +232,11 @@ export const checkPathExistence = (
   return criteria === 'exists' ? false : true;
 };
 
+/**
+ * Returns true if `path` in resource matches the crtieria (ie contains or does not contain) for the given value.
+ *
+ * If resource is an array, then the return value is true if any one element in that array matches the criteria.
+ */
 export const doesResourceContain = (
   resource: { [key: string]: any },
   path: string,

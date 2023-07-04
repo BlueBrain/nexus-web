@@ -8,6 +8,8 @@ import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
 import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
+import { useHistory, useLocation } from 'react-router-dom';
+import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -30,6 +32,9 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   offset,
   updateTableConfiguration,
 }: TDataExplorerTable) => {
+  const history = useHistory();
+  const location = useLocation();
+
   const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
 
   const tablePaginationConfig: TablePaginationConfig = {
@@ -48,11 +53,23 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
     showSizeChanger: true,
   };
 
+  const goToResource = (resource: Resource) => {
+    const resourceId = resource['@id'] ?? resource._self;
+    const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+
+    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
+      background: location,
+    });
+  };
+
   return (
     <Table<Resource>
       columns={columnsConfig(columns)}
       dataSource={dataSource}
       rowKey={record => record._self}
+      onRow={resource => ({
+        onClick: _ => goToResource(resource),
+      })}
       loading={isLoading}
       bordered={false}
       className="data-explorer-table"
@@ -98,7 +115,8 @@ const defaultColumnConfig = (colName: string): ColumnType<Resource> => {
     className: `data-explorer-column data-explorer-column-${colName}`,
     sorter: false,
     render: text => {
-      if (text === undefined || text === null) {
+      if (text === undefined) {
+        // Text will also be undefined if a certain resource does not have `colName` as its property
         return <NoDataCell />;
       }
       return <>{JSON.stringify(text)}</>;

@@ -130,5 +130,5 @@ export const defaultMockResult: Resource[] = [
   getMockResource('self7', { specialProperty: { foo: 1, bar: 2 } }, 'unhcr'),
   getMockResource('self8', { specialProperty: null }),
   getMockResource('self9', { specialProperty: {} }),
-  getMockResource('self10', {}),
+  getMockResource('self10', { specialProperty: undefined }),
 ];

@@ -26,6 +26,10 @@ import {
   EXISTS,
   getAllPaths,
 } from './PredicateSelector';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import configureStore from '../../shared/store';
 
 describe('DataExplorer', () => {
   const server = setupServer(
@@ -33,6 +37,7 @@ describe('DataExplorer', () => {
     filterByProjectHandler(defaultMockResult),
     getProjectHandler()
   );
+  const history = createMemoryHistory({});
 
   let container: HTMLElement;
   let user: UserEvent;
@@ -46,13 +51,18 @@ describe('DataExplorer', () => {
       fetch,
       uri: deltaPath(),
     });
+    const store = configureStore(history, { nexus }, {});
 
     dataExplorerPage = (
-      <QueryClientProvider client={queryClient}>
-        <NexusProvider nexusClient={nexus}>
-          <DataExplorer />
-        </NexusProvider>
-      </QueryClientProvider>
+      <Provider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <Router history={history}>
+            <NexusProvider nexusClient={nexus}>
+              <DataExplorer />
+            </NexusProvider>
+          </Router>
+        </QueryClientProvider>
+      </Provider>
     );
 
     component = render(dataExplorerPage);
@@ -110,6 +120,18 @@ describe('DataExplorer', () => {
       header.innerHTML.match(new RegExp(getColumnTitle(colName), 'i'))
     );
     return allCellsForRow[colIndex].textContent;
+  };
+
+  const getRowForResource = async (resource: Resource) => {
+    const selfCell = await screen.getAllByText(
+      new RegExp(resource._self, 'i'),
+      {
+        selector: 'td',
+      }
+    );
+    const row = selfCell[0].parentElement;
+    expect(row).toBeInTheDocument();
+    return row!;
   };
 
   const openProjectAutocomplete = async () => {
@@ -293,7 +315,7 @@ describe('DataExplorer', () => {
     expect(textForSpecialProperty).toMatch(/No data/i);
   });
 
-  it('shows No data text when values is null', async () => {
+  it('does not show No data text when values is null', async () => {
     await expectRowCountToBe(10);
     const resourceWithUndefinedProperty = defaultMockResult.find(
       res => res.specialProperty === null
@@ -302,7 +324,8 @@ describe('DataExplorer', () => {
       resourceWithUndefinedProperty,
       'specialProperty'
     );
-    expect(textForSpecialProperty).toMatch(/No data/i);
+    expect(textForSpecialProperty).not.toMatch(/No data/i);
+    expect(textForSpecialProperty).toMatch(/null/);
   });
 
   it('does not show No data when value is empty string', async () => {
@@ -498,5 +521,16 @@ describe('DataExplorer', () => {
     await userEvent.clear(valueInput);
     await userEvent.type(valueInput, 'arch');
     await expectRowCountToBe(3);
+  });
+
+  it('navigates to resource view when user clicks on row', async () => {
+    await expectRowCountToBe(10);
+
+    expect(history.location.pathname).not.toContain('self1');
+
+    const firstDataRow = await getRowForResource(defaultMockResult[0]);
+    await userEvent.click(firstDataRow);
+
+    expect(history.location.pathname).toContain('self1');
   });
 });
