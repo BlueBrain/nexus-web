@@ -147,6 +147,7 @@ export async function resolveLinkInEditor({
                     const isDownloadable = isDownloadableLink(item);
                     const entity = getOrgAndProjectFromResourceObject(item);
                     return {
+                      isDownloadable,
                       _self: item._self,
                       title: getResourceLabel(item),
                       types: getNormalizedTypes(item['@type']),

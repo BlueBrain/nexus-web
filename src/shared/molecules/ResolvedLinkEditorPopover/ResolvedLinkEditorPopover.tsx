@@ -1,11 +1,12 @@
 import React, { ReactNode, useRef, forwardRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useMutation } from 'react-query';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Tag, Divider } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Tag } from 'antd';
+import { DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import { RootState } from '../../store/reducers';
@@ -136,7 +137,7 @@ const ResolvedLinkEditorPopover = () => {
     }
   };
 
-  const onDownload = async (data: TDELink) => {
+  const handleDownloadBinary = async (data: TDELink) => {
     await downloadFile({
       nexus,
       orgLabel: data.resource?.[0]!,
@@ -146,6 +147,11 @@ const ResolvedLinkEditorPopover = () => {
       title: data.title,
     });
   };
+
+  const {
+    mutateAsync: downloadBinaryAsync,
+    isLoading: downloadInProgress,
+  } = useMutation([], handleDownloadBinary);
 
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
@@ -169,7 +175,13 @@ const ResolvedLinkEditorPopover = () => {
             </button>
             {result.isDownloadable && (
               <div className="popover-download-btn">
-                <DownloadOutlined onClick={() => onDownload(result)} />
+                {downloadInProgress ? (
+                  <LoadingOutlined spin />
+                ) : (
+                  <DownloadOutlined
+                    onClick={() => downloadBinaryAsync(result)}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -192,7 +204,13 @@ const ResolvedLinkEditorPopover = () => {
               </button>
               {item.isDownloadable && (
                 <div className="popover-download-btn">
-                  <DownloadOutlined onClick={() => onDownload(item)} />
+                  {downloadInProgress ? (
+                    <LoadingOutlined spin />
+                  ) : (
+                    <DownloadOutlined
+                      onClick={() => downloadBinaryAsync(item)}
+                    />
+                  )}
                 </div>
               )}
             </div>
