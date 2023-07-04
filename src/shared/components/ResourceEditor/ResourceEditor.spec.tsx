@@ -24,7 +24,7 @@ describe('ResourceEditor', () => {
   it('check if code editor will be rendered in the screen', async () => {
     const editor = React.createRef<codemiror.Editor>();
     const onLinksFound = jest.fn();
-    const { queryByText, container, getByTestId } = render(
+    const { queryByText, container } = render(
       <CodeEditor
         data-testId="code-mirror-editor"
         value={JSON.stringify(resourceResolverApi)}
@@ -36,6 +36,7 @@ describe('ResourceEditor', () => {
         handleChange={() => {}}
         loadingResolution={false}
         ref={editor}
+        fullscreen={false}
       />
     );
     await waitFor(async () => {

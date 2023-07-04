@@ -16,12 +16,12 @@ import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStac
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
 import './styles.less';
 
-const DataExplorerResolverPage = () => {
+const DataExplorerGraphFlow = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
   const digestFirstRender = useRef<boolean>(false);
-  const { links, shrinked } = useSelector(
+  const { links, shrinked, current } = useSelector(
     (state: RootState) => state.dataExplorer
   );
 
@@ -36,13 +36,33 @@ const DataExplorerResolverPage = () => {
   }, [location.search, digestFirstRender.current]);
 
   useEffect(() => {
-    const unlisten = history.listen(() => {
-      dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
-      localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+    const unlisten = history.listen(location => {
+      if (!location.pathname.startsWith('/data-explorer/graph-flow')) {
+        dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
+        localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+      }
     });
     return () => unlisten();
   }, []);
 
+  if (current === null) {
+    return (
+      <div className="data-explorer-resolver no-current">
+        <div className="empty">
+          <img
+            src={require('../../images/graphNodes.svg')}
+            alt="nodes"
+            style={{ width: 500 }}
+          />
+          <div className="empty__title">No data explorer graph flow</div>
+          <div className="empty__subtitle">
+            Please select a node from any resource view editor to start
+            exploring
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className={clsx(
@@ -70,4 +90,4 @@ const DataExplorerResolverPage = () => {
   );
 };
 
-export default DataExplorerResolverPage;
+export default DataExplorerGraphFlow;

@@ -197,18 +197,14 @@ const ResourceViewContainer: React.FunctionComponent<{
   const isLatest = latestResource?._rev === resource?._rev;
 
   const handleTabChange = (activeTabKey: string) => {
-    goToResource(orgLabel, projectLabel, resourceId, {
-      revision: resource ? resource._rev : undefined,
-      tab: activeTabKey,
-    });
+    const newLink = `${location.pathname}${location.search}${activeTabKey}`;
+    history.push(newLink, location.state);
   };
-
   const handleExpanded = (expanded: boolean) => {
-    goToResource(orgLabel, projectLabel, resourceId, {
-      expanded,
-      revision: resource ? resource._rev : undefined,
-      tab: activeTabKey,
-    });
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('expanded', expanded ? 'true' : 'false');
+    const newLink = `${location.pathname}?${searchParams.toString()}`;
+    history.push(newLink, location.state);
   };
 
   const handleEditFormSubmit = async (value: any) => {
@@ -315,7 +311,6 @@ const ResourceViewContainer: React.FunctionComponent<{
         projectLabel,
         resourceId
       )) as Resource;
-
       const selectedResource: Resource =
         rev || tag
           ? ((await nexus.Resource.get(
@@ -339,7 +334,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       )) as ExpandedResource[];
 
       const expandedResource = expandedResources[0];
-
       setLatestResource(resource);
       setResource({
         // Note: we must fetch the proper, expanded @id. The @id that comes from a normal request or from the URL

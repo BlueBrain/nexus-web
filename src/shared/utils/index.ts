@@ -301,6 +301,7 @@ export function getResourceLabel(
     resource.prefLabel ??
     resource.label ??
     resourceName ??
+    resource._filename ??
     labelOf(resource['@id']) ??
     labelOf(resource._self)
   );

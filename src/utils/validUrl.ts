@@ -27,9 +27,12 @@ function isUrlCurieFormat(str: string) {
   return curiePattern.test(str);
 }
 
-function externalLink(url: string): boolean {
-  return !url.startsWith('https://') && !url.startsWith('http://');
+function isExternalLink(url: string): boolean {
+  return !url.startsWith('https://bbp.epfl.ch');
 }
 
-export { easyValidURL, isUrlCurieFormat, externalLink };
+function isStorageLink(url: string): boolean {
+  return url.startsWith('file:///gpfs');
+}
+export { easyValidURL, isUrlCurieFormat, isExternalLink, isStorageLink };
 export default isValidUrl;

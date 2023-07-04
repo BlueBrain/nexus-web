@@ -6,7 +6,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
@@ -14,9 +14,13 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import isValidUrl from '../../../utils/validUrl';
+import isValidUrl, {
+  isStorageLink,
+  isUrlCurieFormat,
+} from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { TToken, resolveLinkInEditor } from './editorUtils';
+import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -42,6 +46,10 @@ export const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 
+const isClickableLine = (url: string) => {
+  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+};
+
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -65,12 +73,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const nexus = useNexusContext();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
-  const [fullScreen, setFullScreen] = React.useState(false);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
+  const { limited } = useSelector((state: RootState) => state.dataExplorer);
   const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
@@ -110,7 +118,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     const elements = document.getElementsByClassName('cm-string');
     Array.from(elements).forEach(item => {
       const itemSpan = item as HTMLSpanElement;
-      if (isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))) {
+      const url = itemSpan.innerText.replace(/^"|"$/g, '');
+      if (isClickableLine(url)) {
         itemSpan.style.textDecoration = 'underline';
       }
     });
@@ -208,7 +217,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Switch
                 checkedChildren="Standard Screen"
                 unCheckedChildren="Full Screen"
-                checked={fullScreen}
+                checked={limited}
                 onChange={onFullScreen}
                 style={switchMarginRight}
               />
@@ -266,6 +275,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         onLinkClick={onLinkClick}
         onLinksFound={onLinksFound}
         ref={codeMirorRef}
+        fullscreen={limited}
       />
     </div>
   );

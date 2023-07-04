@@ -5,13 +5,19 @@ import {
   Resource,
   NexusClient,
 } from '@bbp/nexus-sdk';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import ResourceEditor from '../components/ResourceEditor';
 import { useNexusContext } from '@bbp/react-nexus';
-import { getNormalizedTypes } from '../components/ResourceEditor/editorUtils';
+import {
+  getDataExplorerResourceItemArray,
+  getNormalizedTypes,
+} from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
-import { InitNewVisitDataExplorerGraphView } from '../store/reducers/data-explorer';
+import {
+  InitDataExplorerGraphFlowLimitedVersion,
+  InitNewVisitDataExplorerGraphView,
+} from '../store/reducers/data-explorer';
 import { getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';
 
 const ResourceEditorContainer: React.FunctionComponent<{
@@ -46,6 +52,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   const nexus = useNexusContext();
   const dispatch = useDispatch();
   const navigate = useHistory();
+  const location = useLocation();
   const notification = useNotification();
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [editable, setEditable] = React.useState(defaultEditable);
@@ -119,23 +126,25 @@ const ResourceEditorContainer: React.FunctionComponent<{
       }
     )) as Resource;
     const orgProject = getOrgAndProjectFromResourceObject(data);
-    dispatch(
-      InitNewVisitDataExplorerGraphView({
-        current: {
-          _self: data._self,
-          types: getNormalizedTypes(data['@type']),
-          title: getResourceLabel(data),
-          resource: [
-            orgProject?.orgLabel ?? '',
-            orgProject?.projectLabel ?? '',
-            data['@id'],
-            data._rev,
-          ],
-        },
-        limited: true,
-      })
-    );
-    navigate.push('/data-explorer/graph-flow');
+    if (location.pathname === '/data-explorer/graph-flow') {
+      dispatch(InitDataExplorerGraphFlowLimitedVersion(true));
+    } else {
+      dispatch(
+        InitNewVisitDataExplorerGraphView({
+          current: {
+            _self: data._self,
+            types: getNormalizedTypes(data['@type']),
+            title: getResourceLabel(data),
+            resource: getDataExplorerResourceItemArray(
+              orgProject ?? { orgLabel: '', projectLabel: '' },
+              data
+            ),
+          },
+          limited: true,
+        })
+      );
+      navigate.push('/data-explorer/graph-flow');
+    }
   };
   async function getResourceSource(
     nexus: NexusClient,

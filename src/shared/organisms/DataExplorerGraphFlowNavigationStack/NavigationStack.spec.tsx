@@ -9,7 +9,6 @@ import { Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { NexusProvider } from '@bbp/react-nexus';
-import { waitFor } from '../../../utils/testUtil';
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import NavigationStack from './NavigationStack';
 import {

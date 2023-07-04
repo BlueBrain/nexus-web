@@ -9,8 +9,9 @@ type TCodeEditor = {
   busy: boolean;
   value: string;
   editable: boolean;
-  keyFoldCode(cm: any): void;
   loadingResolution: boolean;
+  fullscreen: boolean;
+  keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
   onLinkClick(_: any, ev: MouseEvent): void;
   onLinksFound(): void;
@@ -18,12 +19,14 @@ type TCodeEditor = {
 type TEditorConfiguration = EditorConfiguration & {
   foldCode: boolean;
 };
+
 const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
   (
     {
       busy,
       value,
       editable,
+      fullscreen,
       keyFoldCode,
       loadingResolution,
       handleChange,
@@ -58,7 +61,8 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           }
           className={clsx(
             'code-mirror-editor',
-            loadingResolution && 'resolution-on-progress'
+            loadingResolution && 'resolution-on-progress',
+            fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
           editorDidMount={editor => {
