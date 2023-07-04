@@ -142,7 +142,6 @@ export async function resolveLinkInEditor({
           },
         });
       } catch (error) {
-        console.error('case 3: ', url, externalLink(url), '\n', error);
         // case-3: if an error occured when tring both resolution method above
         // we check if the resource is external
         if (externalLink(url)) {

@@ -6,6 +6,14 @@ import {
 } from '../actions/ui-settings';
 import { TDELink } from './data-explorer';
 
+export const editorPopoverResolvedDataInitialValue = {
+  top: 0,
+  left: 0,
+  open: false,
+  results: [],
+  error: null,
+  resolvedAs: undefined,
+};
 export const DEFAULT_UI_SETTINGS: UISettingsState = {
   openCreationPanel: false,
   pageSizes: {
@@ -15,14 +23,7 @@ export const DEFAULT_UI_SETTINGS: UISettingsState = {
     linksListPageSize: 10,
   },
   currentResourceView: null,
-  editorPopoverResolvedData: {
-    top: 0,
-    left: 0,
-    open: false,
-    results: [],
-    error: null,
-    resolvedAs: undefined,
-  },
+  editorPopoverResolvedData: editorPopoverResolvedDataInitialValue,
 };
 export type TEditorPopoverResolvedAs =
   | 'resource'

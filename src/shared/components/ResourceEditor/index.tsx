@@ -117,7 +117,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
   const onLinkClick = async (_: any, ev: MouseEvent) => {
     setLoadingResolution(true);
-    ev.stopPropagation();
     const x = ev.pageX;
     const y = ev.pageY;
     const editorPosition = codeMirorRef.current?.coordsChar({

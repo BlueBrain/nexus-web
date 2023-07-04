@@ -143,8 +143,8 @@ export const dataExplorerSlice = createSlice({
       calculateNewDigest(newState);
       return newState;
     },
-    ResetDataExplorerGraphFlow: () => {
-      return initialState;
+    ResetDataExplorerGraphFlow: (state, action) => {
+      return action.payload.initialState ?? initialState;
     },
     ResetHighlightedNodeDataExplorerGraphFlow: state => {
       return {

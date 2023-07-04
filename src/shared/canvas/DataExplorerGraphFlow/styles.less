@@ -9,4 +9,33 @@
   display: grid;
   grid-auto-columns: 1fr;
   gap: 10px;
+
+  &.no-links {
+    grid-template-columns: 1fr;
+  }
+
+  &.with-links {
+    grid-template-columns: calc(calc(var(--links-count) * 31px) + 40px) max-content 1fr;
+  }
+
+  .degf__navigation-stack {
+    width: 100%;
+  }
+
+  .degf__navigation-back {
+    position: sticky;
+    top: 53px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .degf__content {
+    padding: 30px 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
 }

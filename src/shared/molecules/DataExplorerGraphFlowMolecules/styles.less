@@ -24,8 +24,13 @@
   }
 
   &.highlight {
-    border: 2px solid #377af5;
+    background: rgba(#377af5, 0.12);
+    border: 1.5px solid #377af5;
+    border-top: none;
+    border-bottom: none;
     transition: border-color 0s ease-out infinite;
+    -webkit-animation: vibrate 0.3s linear infinite both;
+    animation: vibrate 0.3s linear infinite both;
   }
 
   &.shrinkable {
@@ -167,7 +172,7 @@
   }
 }
 
-.navigation-humburguer {
+.navigation-collapse-btn {
   background: white;
   box-shadow: 0 2px 12px rgba(#333, 0.12);
   padding: 5px;
@@ -177,4 +182,31 @@
   border-radius: 4px;
   border: 1px solid #afacacd8;
   cursor: pointer;
+}
+
+@keyframes vibrate {
+  0% {
+    -webkit-transform: translate(0);
+    transform: translate(0);
+  }
+  20% {
+    -webkit-transform: translate(-1.5px, 1.5px);
+    transform: translate(-1.5px, 1.5px);
+  }
+  40% {
+    -webkit-transform: translate(-1.5px, -1.5px);
+    transform: translate(-1.5px, -1.5px);
+  }
+  60% {
+    -webkit-transform: translate(1.5px, 1.5px);
+    transform: translate(1.5px, 1.5px);
+  }
+  80% {
+    -webkit-transform: translate(1.5px, -1.5px);
+    transform: translate(1.5px, -1.5px);
+  }
+  100% {
+    -webkit-transform: translate(0);
+    transform: translate(0);
+  }
 }
