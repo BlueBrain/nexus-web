@@ -31,6 +31,7 @@ export const PredicateSelector: React.FC<Props> = ({
     { value: EXISTS },
     { value: DOES_NOT_EXIST },
     { value: CONTAINS },
+    { value: DOES_NOT_CONTAIN },
   ];
 
   const predicateSelected = (
@@ -59,7 +60,20 @@ export const PredicateSelector: React.FC<Props> = ({
         if (searchTerm) {
           onPredicateChange({
             predicateFilter: (resource: Resource) =>
-              doesResourceContain(resource, path, searchTerm),
+              doesResourceContain(resource, path, searchTerm, 'contains'),
+          });
+        }
+        break;
+      case DOES_NOT_CONTAIN:
+        if (searchTerm) {
+          onPredicateChange({
+            predicateFilter: (resource: Resource) =>
+              doesResourceContain(
+                resource,
+                path,
+                searchTerm,
+                'does-not-contain'
+              ),
           });
         }
         break;
@@ -67,6 +81,9 @@ export const PredicateSelector: React.FC<Props> = ({
         onPredicateChange({ predicateFilter: null });
     }
   };
+
+  const shouldShowValueInput =
+    predicate === CONTAINS || predicate === DOES_NOT_CONTAIN;
 
   return (
     <div className="form-container">
@@ -93,7 +110,7 @@ export const PredicateSelector: React.FC<Props> = ({
           predicateSelected(path, predicateLabel, searchTerm);
         }}
         aria-label="predicate-selector"
-        className={clsx('select-menu', path === CONTAINS && 'greyed-out')}
+        className={clsx('select-menu', shouldShowValueInput && 'greyed-out')}
         popupClassName="search-menu"
         allowClear={true}
         onClear={() => {
@@ -102,12 +119,13 @@ export const PredicateSelector: React.FC<Props> = ({
         }}
       />
 
-      {predicate === CONTAINS && (
+      {shouldShowValueInput && (
         <Input
           placeholder="type the value..."
           aria-label="predicate-value-input"
           bordered={false}
           className="predicate-value-input"
+          allowClear={false}
           onChange={event => {
             setSearchTerm(event.target.value);
             predicateSelected(path, predicate, event.target.value);
@@ -122,11 +140,13 @@ export const DEFAULT_OPTION = '-';
 export const DOES_NOT_EXIST = 'Does not exist';
 export const EXISTS = 'Exists';
 export const CONTAINS = 'Contains';
+export const DOES_NOT_CONTAIN = 'Does not contain';
 
 export type PredicateFilterT =
   | typeof DOES_NOT_EXIST
   | typeof EXISTS
   | typeof CONTAINS
+  | typeof DOES_NOT_CONTAIN
   | null;
 
 type PredicateFilterOptions = {
@@ -212,41 +232,14 @@ export const checkPathExistence = (
   return criteria === 'exists' ? false : true;
 };
 
-export const isPathMissing = (
-  resource: { [key: string]: any },
-  path: string
-): boolean => {
-  if (path in resource && path !== '') {
-    return false;
-  }
-
-  const subpaths = path.split('.');
-
-  for (const subpath of subpaths) {
-    if (!(subpath in resource)) {
-      return true;
-    }
-    const valueAtSubpath = resource[subpath];
-    const remainingPath = subpaths.slice(1);
-    if (Array.isArray(valueAtSubpath)) {
-      return valueAtSubpath.some(value =>
-        isPathMissing(value, remainingPath.join('.'))
-      );
-    }
-    if (isObject(valueAtSubpath)) {
-      return isPathMissing(valueAtSubpath, remainingPath.join('.'));
-    }
-  }
-  return true;
-};
-
 export const doesResourceContain = (
   resource: { [key: string]: any },
   path: string,
-  value: string
+  value: string,
+  criteria: 'contains' | 'does-not-contain' = 'contains'
 ): boolean => {
-  if (!Array.isArray(resource) && !isObject(resource)) {
-    return isSubstringOf(String(resource), value);
+  if (isPrimitiveValue(resource)) {
+    return isSubstringOf(String(resource), value, criteria === 'contains');
   }
 
   const subpaths = path.split('.');
@@ -255,22 +248,44 @@ export const doesResourceContain = (
     const valueAtSubpath = resource[subpath];
     const remainingPath = subpaths.slice(1);
     if (Array.isArray(valueAtSubpath)) {
-      return valueAtSubpath.some(arrayElement =>
-        doesResourceContain(arrayElement, remainingPath.join('.'), value)
-      );
+      return valueAtSubpath.some(arrayElement => {
+        return doesResourceContain(
+          arrayElement,
+          remainingPath.join('.'),
+          value,
+          criteria
+        );
+      });
     }
     if (isObject(valueAtSubpath)) {
       return doesResourceContain(
         valueAtSubpath,
         remainingPath.join('.'),
-        value
+        value,
+        criteria
       );
     }
-    return isSubstringOf(String(valueAtSubpath), value);
+    return isSubstringOf(
+      String(valueAtSubpath),
+      value,
+      criteria === 'contains'
+    );
   }
-  return isSubstringOf(String(resource), value);
+  return isSubstringOf(String(resource), value, criteria === 'contains');
 };
 
-const isSubstringOf = (text: string, maybeSubstring: string) => {
-  return normalizeString(text).includes(normalizeString(maybeSubstring));
+const isSubstringOf = (
+  text: string,
+  maybeSubstring: string,
+  shouldContain: boolean
+) => {
+  if (shouldContain) {
+    return normalizeString(text).includes(normalizeString(maybeSubstring));
+  }
+  return !normalizeString(text).includes(normalizeString(maybeSubstring));
+};
+
+// Returns true if value is not an array, object, or function.
+const isPrimitiveValue = (value: any) => {
+  return !Array.isArray(value) && !isObject(value);
 };
