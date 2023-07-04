@@ -46,6 +46,10 @@ export const LINE_HEIGHT = 50;
 export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 
+const isClickableLine = (url: string) => {
+  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+};
+
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     rawData,
@@ -115,7 +119,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     Array.from(elements).forEach(item => {
       const itemSpan = item as HTMLSpanElement;
       const url = itemSpan.innerText.replace(/^"|"$/g, '');
-      if (isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url)) {
+      if (isClickableLine(url)) {
         itemSpan.style.textDecoration = 'underline';
       }
     });
