@@ -54,13 +54,13 @@ const App: React.FC = () => {
           <SubAppsView routesWithSubApps={routesWithSubApps} />
           <AppInfo {...{ ...nexusEcosystem }} />
           <ResolvedLinkEditorPopover />
+          <DataPanel />
           {userAuthenticated && (
             <React.Fragment>
               <GalleryView />
               <CreateProject />
               <CreateOrganization />
               <CreateStudio />
-              <DataPanel />
             </React.Fragment>
           )}
         </FusionMainLayout>
