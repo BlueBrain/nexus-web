@@ -100,6 +100,7 @@ export const getMockResource = (
   extra: { [key: string]: any },
   project: string = 'hippocampus'
 ): Resource => ({
+  ...extra,
   '@id': `https://bbp.epfl.ch/neurosciencegraph/data/${selfSuffix}`,
   '@type':
     'https://bbp.epfl.ch/ontologies/core/bmo/SimulationCampaignConfiguration',
@@ -115,7 +116,6 @@ export const getMockResource = (
   _self: `https://bbp.epfl.ch/nexus/v1/resources/bbp/${project}/_/${selfSuffix}`,
   _updatedAt: '2023-06-21T09:39:47.844Z',
   _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/antonel',
-  ...extra,
 });
 
 export const defaultMockResult: Resource[] = [

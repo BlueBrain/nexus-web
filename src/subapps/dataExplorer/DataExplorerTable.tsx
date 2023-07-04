@@ -16,6 +16,7 @@ interface TDataExplorerTable {
   pageSize: number;
   offset: number;
   updateTableConfiguration: React.Dispatch<Partial<DataExplorerConfiguration>>;
+  columns: string[];
 }
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
@@ -23,6 +24,7 @@ type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
 export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   isLoading,
   dataSource,
+  columns,
   total,
   pageSize,
   offset,
@@ -47,44 +49,40 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   };
 
   return (
-    <>
-      <Table<Resource>
-        columns={dynamicColumnsForDataSource(dataSource)}
-        dataSource={dataSource}
-        rowKey={record => record._self}
-        loading={isLoading}
-        bordered={false}
-        className="data-explorer-table"
-        rowClassName="data-explorer-row"
-        scroll={{ x: 'max-content', y: '100vh' }}
-        locale={{
-          emptyText() {
-            return isLoading ? <></> : <Empty />;
-          },
-        }}
-        pagination={tablePaginationConfig}
-      />
-    </>
+    <Table<Resource>
+      columns={columnsConfig(columns)}
+      dataSource={dataSource}
+      rowKey={record => record._self}
+      loading={isLoading}
+      bordered={false}
+      className="data-explorer-table"
+      rowClassName="data-explorer-row"
+      scroll={{ x: 'max-content' }}
+      locale={{
+        emptyText() {
+          return isLoading ? <></> : <Empty />;
+        },
+      }}
+      pagination={tablePaginationConfig}
+    />
   );
 };
 
 /**
  * For each resource in the resources array, it creates column configuration for all its keys (if the column config for that key does not already exist).
  */
-const dynamicColumnsForDataSource = (
-  resources: Resource[]
+export const columnsConfig = (
+  columnNames: string[]
 ): ColumnType<Resource>[] => {
-  const colNameToConfig = new Map(initialTableConfig());
+  const colNameToConfig = new Map(
+    columnNames.length === 0 ? [] : initialTableConfig()
+  );
 
-  resources.forEach(resource => {
-    const newResourceKeys = Object.keys(resource).filter(
-      key => !colNameToConfig.has(key)
-    );
-
-    newResourceKeys.forEach(key => {
-      colNameToConfig.set(key, { ...defaultColumnConfig(key) });
-    });
-  });
+  for (const columnName of columnNames) {
+    if (!colNameToConfig.has(columnName)) {
+      colNameToConfig.set(columnName, { ...defaultColumnConfig(columnName) });
+    }
+  }
 
   return Array.from(colNameToConfig.values());
 };

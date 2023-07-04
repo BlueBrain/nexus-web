@@ -19,7 +19,7 @@ export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
   ].filter(project => project.value.includes(searchTerm));
 
   return (
-    <div className="search-container">
+    <div className="form-container">
       <span className="label">Show me </span>
       <AutoComplete
         options={allOptions}
