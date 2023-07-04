@@ -18,7 +18,6 @@ import {
 } from '../../molecules/DataExplorerGraphFlowMolecules';
 import configureStore from '../../store';
 import {
-  ReturnBackDataExplorerGraphFlow,
   AddNewNodeDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
   PopulateDataExplorerGraphFlow,
@@ -318,6 +317,8 @@ describe('NavigationStack', () => {
     const openShrinkedNavList = container.querySelector(
       '[role="open-shrinked-nav"]'
     );
+    expect(openShrinkedNavList).not.toBeNull();
+    expect(openShrinkedNavList).toBeInTheDocument();
     openShrinkedNavList && (await user.click(openShrinkedNavList));
     rerender(app);
     const collapseBtn = container.querySelector('.navigation-collapse-btn');
@@ -339,6 +340,7 @@ describe('NavigationStack', () => {
         resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
       })
     );
+    store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
@@ -369,7 +371,6 @@ describe('NavigationStack', () => {
         ],
       })
     );
-    store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
@@ -386,23 +387,19 @@ describe('NavigationStack', () => {
       })
     );
     rerender(app);
-    await waitFor(async () => {
-      const forthNode = container.querySelector(
-        '.navigation-stack-item.item-4 > .anticon.anticon-plus'
-      );
-      if (forthNode) {
-        await user.click(forthNode);
-        rerender(app);
-        const navigationItems = container.querySelectorAll(
-          '.navigation-stack-item:not(.no-more)'
-        );
-        expect(navigationItems.length).toBe(4);
-        const state = store.getState();
-        expect(state.dataExplorer.current._self).toEqual(
-          fourthItemInStack._self
-        );
-      }
-    });
+    const forthNode = container.querySelector(
+      '.navigation-stack-item.item-4 > .anticon.anticon-plus'
+    );
+    expect(forthNode).not.toBeNull();
+    expect(forthNode).toBeInTheDocument();
+    forthNode && (await user.click(forthNode));
+    rerender(app);
+    const navigationItems = container.querySelectorAll(
+      '.navigation-stack-item:not(.no-more)'
+    );
+    expect(navigationItems.length).toBe(4);
+    const state = store.getState();
+    expect(state.dataExplorer.current._self).toEqual(fourthItemInStack._self);
   });
   it('should decode the navigation digest at first render', () => {
     store.dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
