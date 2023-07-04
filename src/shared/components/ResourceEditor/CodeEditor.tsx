@@ -35,7 +35,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
     return (
       <Spin spinning={busy}>
         <CodeMirror
-          data-testId="code-mirror-editor"
+          data-testid="code-mirror-editor"
           value={value}
           autoCursor={false}
           detach={false}
