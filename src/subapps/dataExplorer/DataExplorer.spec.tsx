@@ -21,6 +21,7 @@ import { getColumnTitle } from './DataExplorerTable';
 import {
   CONTAINS,
   DEFAULT_OPTION,
+  DOES_NOT_CONTAIN,
   DOES_NOT_EXIST,
   EXISTS,
   getAllPaths,
@@ -466,5 +467,36 @@ describe('DataExplorer', () => {
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
+  });
+
+  it('filters by resources that do not contain value provided by user', async () => {
+    await expectRowCountToBe(10);
+    const mockResourcesForNextPage = [
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ];
+
+    await getRowsForNextPage(mockResourcesForNextPage);
+    await expectRowCountToBe(3);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await userEvent.click(container);
+    await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_CONTAIN);
+    const valueInput = await screen.getByPlaceholderText('type the value...');
+    await userEvent.type(valueInput, 'iggy');
+    await expectRowCountToBe(2);
+
+    await userEvent.clear(valueInput);
+    await userEvent.type(valueInput, 'goldilocks');
+    await expectRowCountToBe(3);
+
+    await userEvent.clear(valueInput);
+    await userEvent.type(valueInput, 'piggy');
+    await expectRowCountToBe(2);
+
+    await userEvent.clear(valueInput);
+    await userEvent.type(valueInput, 'arch');
+    await expectRowCountToBe(3);
   });
 });
