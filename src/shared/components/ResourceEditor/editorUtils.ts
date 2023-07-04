@@ -13,6 +13,7 @@ import {
   getOrgAndProjectFromResourceObject,
   getResourceLabel,
 } from '../../utils';
+import { TDEResource } from '../../store/reducers/data-explorer';
 import {
   UISettingsActionTypes,
   TUpdateJSONEditorPopoverAction,
@@ -72,7 +73,25 @@ export const getNormalizedTypes = (types?: string | string[]) => {
 const mayBeResolvableLink = (url: string): boolean => {
   return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
 };
-
+export const getDataExplorerResourceItemArray = (
+  entity: { orgLabel: string; projectLabel: string },
+  data: Resource
+) => {
+  return (isDownloadableLink(data) && data._mediaType
+    ? [
+        entity?.orgLabel,
+        entity?.projectLabel,
+        data['@id'],
+        data._rev,
+        data._mediaType,
+      ]
+    : [
+        entity?.orgLabel,
+        entity?.projectLabel,
+        data['@id'],
+        data._rev,
+      ]) as TDEResource;
+};
 export async function resolveLinkInEditor({
   nexus,
   dispatch,
@@ -111,20 +130,10 @@ export async function resolveLinkInEditor({
             _self: data._self,
             title: getResourceLabel(data),
             types: getNormalizedTypes(data['@type']),
-            resource: isDownloadable
-              ? [
-                  entity?.orgLabel,
-                  entity?.projectLabel,
-                  data['@id'],
-                  data._rev,
-                  data._mediaType,
-                ]
-              : [
-                  entity?.orgLabel,
-                  entity?.projectLabel,
-                  data['@id'],
-                  data._rev,
-                ],
+            resource: getDataExplorerResourceItemArray(
+              entity ?? { orgLabel: '', projectLabel: '' },
+              data
+            ),
           },
         },
       });
@@ -156,20 +165,10 @@ export async function resolveLinkInEditor({
                 _self: item._self,
                 title: getResourceLabel(item),
                 types: getNormalizedTypes(item['@type']),
-                resource: isDownloadable
-                  ? [
-                      entity?.orgLabel,
-                      entity?.projectLabel,
-                      item['@id'],
-                      item._rev,
-                      item._mediaType,
-                    ]
-                  : [
-                      entity?.orgLabel,
-                      entity?.projectLabel,
-                      item['@id'],
-                      item._rev,
-                    ],
+                resource: getDataExplorerResourceItemArray(
+                  entity ?? { orgLabel: '', projectLabel: '' },
+                  item
+                ),
               };
             }),
           },

@@ -9,7 +9,10 @@ import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import ResourceEditor from '../components/ResourceEditor';
 import { useNexusContext } from '@bbp/react-nexus';
-import { getNormalizedTypes } from '../components/ResourceEditor/editorUtils';
+import {
+  getDataExplorerResourceItemArray,
+  getNormalizedTypes,
+} from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 import {
   InitDataExplorerGraphFlowLimitedVersion,
@@ -132,12 +135,10 @@ const ResourceEditorContainer: React.FunctionComponent<{
             _self: data._self,
             types: getNormalizedTypes(data['@type']),
             title: getResourceLabel(data),
-            resource: [
-              orgProject?.orgLabel ?? '',
-              orgProject?.projectLabel ?? '',
-              data['@id'],
-              data._rev,
-            ],
+            resource: getDataExplorerResourceItemArray(
+              orgProject ?? { orgLabel: '', projectLabel: '' },
+              data
+            ),
           },
           limited: true,
         })
