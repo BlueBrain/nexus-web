@@ -32,8 +32,10 @@ import { Provider } from 'react-redux';
 import configureStore from '../../shared/store';
 
 describe('DataExplorer', () => {
+  const defaultTotalResults = 500;
+
   const server = setupServer(
-    dataExplorerPageHandler(defaultMockResult),
+    dataExplorerPageHandler(defaultMockResult, defaultTotalResults),
     filterByProjectHandler(defaultMockResult),
     getProjectHandler()
   );
@@ -175,8 +177,11 @@ describe('DataExplorer', () => {
       selector: DropdownOptionSelector,
     });
 
-  const getRowsForNextPage = async (resources: Resource[]) => {
-    server.use(dataExplorerPageHandler(resources));
+  const getRowsForNextPage = async (
+    resources: Resource[],
+    total: number = 300
+  ) => {
+    server.use(dataExplorerPageHandler(resources, total));
 
     const pageInput = await screen.getByRole('listitem', { name: '2' });
     expect(pageInput).toBeInTheDocument();
@@ -220,6 +225,33 @@ describe('DataExplorer', () => {
     );
   };
 
+  const getTotalCountFromBackend = async (
+    expectedCount = defaultTotalResults
+  ) => {
+    const totalFromBackend = await screen.getByText('Total from backend:');
+    const totalCount = within(totalFromBackend).getByText(
+      new RegExp(`${expectedCount} dataset`, 'i')
+    );
+    return totalCount;
+  };
+
+  const getTotalFromFrontend = async (expectedCount: number = 0) => {
+    const totalFromFrontend = await screen.queryByText('Total from frontend:');
+    if (!totalFromFrontend) {
+      return totalFromFrontend;
+    }
+    const totalCount = within(totalFromFrontend).getByText(
+      new RegExp(`${expectedCount} dataset`, 'i')
+    );
+    return totalCount;
+  };
+
+  const updateResourcesShownInTable = async (resources: Resource[]) => {
+    await expectRowCountToBe(10);
+    await getRowsForNextPage(resources);
+    await expectRowCountToBe(resources.length);
+  };
+
   it('shows rows for all fetched resources', async () => {
     await expectRowCountToBe(10);
   });
@@ -256,15 +288,11 @@ describe('DataExplorer', () => {
   });
 
   it('updates columns when new page is selected', async () => {
-    await expectRowCountToBe(10);
-
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
+    ]);
 
     await expectColumHeaderToExist('author');
     await expectColumHeaderToExist('edition');
@@ -415,15 +443,11 @@ describe('DataExplorer', () => {
   });
 
   it('shows resources that have path missing', async () => {
-    await expectRowCountToBe(10);
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
-    await expectRowCountToBe(3);
+    ]);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
@@ -435,15 +459,11 @@ describe('DataExplorer', () => {
   });
 
   it('shows resources that contains value provided by user', async () => {
-    await expectRowCountToBe(10);
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
-    await expectRowCountToBe(3);
+    ]);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
@@ -459,15 +479,11 @@ describe('DataExplorer', () => {
   });
 
   it('shows all resources when the user has not typed anything in the value filter', async () => {
-    await expectRowCountToBe(10);
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
-    await expectRowCountToBe(3);
+    ]);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
@@ -476,15 +492,11 @@ describe('DataExplorer', () => {
   });
 
   it('shows resources that have a path when user selects exists predicate', async () => {
-    await expectRowCountToBe(10);
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
-    await expectRowCountToBe(3);
+    ]);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
@@ -493,15 +505,11 @@ describe('DataExplorer', () => {
   });
 
   it('filters by resources that do not contain value provided by user', async () => {
-    await expectRowCountToBe(10);
-    const mockResourcesForNextPage = [
+    await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
       getMockResource('self3', { year: 2013 }),
-    ];
-
-    await getRowsForNextPage(mockResourcesForNextPage);
-    await expectRowCountToBe(3);
+    ]);
 
     await selectOptionFromMenu(PathMenuLabel, 'author');
     await userEvent.click(container);
@@ -532,5 +540,53 @@ describe('DataExplorer', () => {
     await userEvent.click(firstDataRow);
 
     expect(history.location.pathname).toContain('self1');
+  });
+
+  it('shows total results received from backend', async () => {
+    await expectRowCountToBe(10);
+    const totalBackendCount = await getTotalCountFromBackend(
+      defaultTotalResults
+    );
+    expect(totalBackendCount).toBeVisible();
+  });
+
+  it('shows updated total from backend when user searches by project', async () => {
+    await expectRowCountToBe(10);
+    const totalBackendBefore = await getTotalCountFromBackend(
+      defaultTotalResults
+    );
+    expect(totalBackendBefore).toBeVisible();
+
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+    await expectRowCountToBe(2);
+
+    const totalBackendAfter = await getTotalCountFromBackend(2);
+    expect(totalBackendAfter).toBeVisible();
+  });
+
+  it('does not show total frontend count if predicate is not selected', async () => {
+    await expectRowCountToBe(10);
+    const totalFromFrontend = await getTotalFromFrontend();
+    expect(totalFromFrontend).toEqual(null);
+  });
+
+  it('does shows total frontend count if predicate is selected', async () => {
+    await expectRowCountToBe(10);
+    const totalFromFrontendBefore = await getTotalFromFrontend();
+    expect(totalFromFrontendBefore).toEqual(null);
+
+    await updateResourcesShownInTable([
+      getMockResource('self1', { author: 'piggy', edition: 1 }),
+      getMockResource('self2', { author: ['iggy', 'twinky'] }),
+      getMockResource('self3', { year: 2013 }),
+    ]);
+
+    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await userEvent.click(container);
+    await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+    await expectRowCountToBe(2);
+
+    const totalFromFrontendAfter = await getTotalFromFrontend(2);
+    expect(totalFromFrontendAfter).toBeVisible();
   });
 });
