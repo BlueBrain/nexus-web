@@ -9,7 +9,7 @@ import {
   ResetDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
 import {
-  NavigationBack,
+  NavigationBackButton,
   NavigationCollapseButton,
 } from '../../molecules/DataExplorerGraphFlowMolecules';
 import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStack/NavigationStack';
@@ -81,7 +81,7 @@ const DataExplorerGraphFlow = () => {
       </div>
       <div className="degf__navigation-back">
         <NavigationCollapseButton />
-        <NavigationBack />
+        <NavigationBackButton />
       </div>
       <div className="degf__content">
         <DataExplorerContentPage />

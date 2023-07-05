@@ -12,7 +12,7 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import NavigationStack from './NavigationStack';
 import {
-  NavigationBack,
+  NavigationBackButton,
   NavigationCollapseButton,
 } from '../../molecules/DataExplorerGraphFlowMolecules';
 import configureStore from '../../store';
@@ -108,7 +108,7 @@ describe('NavigationStack', () => {
             <>
               <NavigationStack />
               <NavigationCollapseButton />
-              <NavigationBack />
+              <NavigationBackButton />
             </>
           </NexusProvider>
         </Router>
@@ -403,7 +403,7 @@ describe('NavigationStack', () => {
   it('should decode the navigation digest at first render', () => {
     store.dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
     store.dispatch(PopulateDataExplorerGraphFlow(sampleDigest));
-    render(app);
+    rerender(app);
     const dataExplorerState = store.getState().dataExplorer;
     expect(dataExplorerState.links.length).toBe(2);
     expect(dataExplorerState.current._self).toBe(digestCurrentSelf);
