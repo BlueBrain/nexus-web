@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { ReturnBackDataExplorerGraphFlow } from '../../store/reducers/data-explorer';
 import { RootState } from '../../store/reducers';
@@ -9,6 +9,7 @@ import './styles.less';
 const NavigationBack = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const { links } = useSelector((state: RootState) => state.dataExplorer);
   const onBack = () => {
     history.replace(location.pathname);
