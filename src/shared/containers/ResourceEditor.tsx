@@ -19,6 +19,7 @@ import {
   InitNewVisitDataExplorerGraphView,
 } from '../store/reducers/data-explorer';
 import { getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';
+import { pick } from 'lodash';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -131,6 +132,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     } else {
       dispatch(
         InitNewVisitDataExplorerGraphView({
+          referer: pick(location, ['pathname', 'search', 'state']),
           current: {
             _self: data._self,
             types: getNormalizedTypes(data['@type']),

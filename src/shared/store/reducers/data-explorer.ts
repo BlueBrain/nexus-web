@@ -21,6 +21,11 @@ export type TDELink = {
 export type TDataExplorerState = {
   links: TDELink[];
   current: TDELink | null;
+  referer?: {
+    pathname: string;
+    search: string;
+    state: Record<string, any>;
+  } | null;
   shrinked: boolean;
   limited: boolean;
   highlightIndex: number;
@@ -29,6 +34,7 @@ export type TDataExplorerState = {
 const initialState: TDataExplorerState = {
   links: [],
   current: null,
+  referer: null,
   shrinked: false,
   limited: false,
   highlightIndex: -1,
@@ -70,10 +76,11 @@ export const dataExplorerSlice = createSlice({
     },
     InitNewVisitDataExplorerGraphView: (
       state,
-      { payload: { source, current, limited } }
+      { payload: { source, current, limited, referer } }
     ) => {
       const newState = {
         ...state,
+        referer,
         current,
         limited,
         links:

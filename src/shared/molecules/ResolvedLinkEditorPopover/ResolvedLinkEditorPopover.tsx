@@ -5,7 +5,8 @@ import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Button, Tag } from 'antd';
+import { Tag } from 'antd';
+import { pick } from 'lodash';
 import { DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
@@ -90,7 +91,7 @@ const ResolvedLinkEditorPopover = () => {
   const navigate = useHistory();
   const dispatch = useDispatch();
   const nexus = useNexusContext();
-  const { pathname } = useLocation();
+  const { pathname, search, state } = useLocation();
   const routeMatch = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -120,6 +121,7 @@ const ResolvedLinkEditorPopover = () => {
       const orgProject = getOrgAndProjectFromProjectId(data._project);
       dispatch(
         InitNewVisitDataExplorerGraphView({
+          referer: { pathname, search, state },
           source: {
             _self: data._self,
             title: getResourceLabel(data),
