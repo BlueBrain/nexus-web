@@ -55,9 +55,9 @@ const App: React.FC = () => {
           <AppInfo {...{ ...nexusEcosystem }} />
           <ResolvedLinkEditorPopover />
           <DataPanel />
+          <GalleryView />
           {userAuthenticated && (
             <React.Fragment>
-              <GalleryView />
               <CreateProject />
               <CreateOrganization />
               <CreateStudio />

@@ -78,7 +78,14 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
-  const { limited } = useSelector((state: RootState) => state.dataExplorer);
+  const {
+    dataExplorer: { limited },
+    oidc,
+  } = useSelector((state: RootState) => ({
+    dataExplorer: state.dataExplorer,
+    oidc: state.oidc,
+  }));
+  const userAuthenticated = oidc.user && oidc.user.access_token;
   const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
@@ -247,16 +254,18 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 style={switchMarginRight}
               />
             )}
-            <Button
-              role="submit"
-              icon={<SaveOutlined />}
-              type="primary"
-              size="small"
-              onClick={handleSubmit}
-              disabled={!valid || !editable || !isEditing}
-            >
-              Save
-            </Button>{' '}
+            {userAuthenticated && (
+              <Button
+                role="submit"
+                icon={<SaveOutlined />}
+                type="primary"
+                size="small"
+                onClick={handleSubmit}
+                disabled={!valid || !editable || !isEditing}
+              >
+                Save
+              </Button>
+            )}{' '}
             {editable && isEditing && (
               <Button danger size="small" onClick={handleCancel}>
                 Cancel
