@@ -2,7 +2,10 @@ import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { Project, Resource } from '@bbp/nexus-sdk';
 
-export const dataExplorerPageHandler = (mockReources: Resource[]) =>
+export const dataExplorerPageHandler = (
+  mockResources: Resource[],
+  total: number = 300
+) =>
   rest.get(deltaPath(`/resources`), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
@@ -10,8 +13,8 @@ export const dataExplorerPageHandler = (mockReources: Resource[]) =>
         'https://bluebrain.github.io/nexus/contexts/search.json',
         'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
       ],
-      _total: 300,
-      _results: mockReources,
+      _total: total,
+      _results: mockResources,
       _next:
         'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
     };
@@ -34,7 +37,7 @@ export const filterByProjectHandler = (mockReources: Resource[]) =>
         'https://bluebrain.github.io/nexus/contexts/search.json',
         'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
       ],
-      _total: 300,
+      _total: responseBody.length,
       _results: responseBody,
       _next:
         'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
