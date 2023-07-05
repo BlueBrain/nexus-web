@@ -8,7 +8,7 @@ import { DataExplorerTable } from './DataExplorerTable';
 import './styles.less';
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
-import * as pluralize from 'pluralize';
+import { DatasetCount } from './DatasetCount';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
@@ -91,25 +91,13 @@ export const DataExplorer: React.FC<{}> = () => {
       </div>
 
       {!isLoading && (
-        <div className="data-explorer-count">
-          <span>
-            Total from backend:{' '}
-            <b>
-              {resources?._total ?? 0}{' '}
-              {pluralize('dataset', resources?._total ?? 0)}
-            </b>{' '}
-          </span>
-
-          {predicateFilter !== null && (
-            <span>
-              Total from frontend:{' '}
-              <b>
-                {displayedDataSource.length}{' '}
-                {pluralize('dataset', displayedDataSource.length ?? 0)}
-              </b>{' '}
-            </span>
-          )}
-        </div>
+        <DatasetCount
+          nexusTotal={resources?._total ?? 0}
+          totalOnPage={resources?._results?.length ?? 0}
+          totalFiltered={
+            predicateFilter ? displayedDataSource.length : undefined
+          }
+        />
       )}
 
       <DataExplorerTable

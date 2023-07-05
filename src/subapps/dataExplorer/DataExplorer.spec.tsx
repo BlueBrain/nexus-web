@@ -32,7 +32,7 @@ import { Provider } from 'react-redux';
 import configureStore from '../../shared/store';
 
 describe('DataExplorer', () => {
-  const defaultTotalResults = 500;
+  const defaultTotalResults = 500_123;
 
   const server = setupServer(
     dataExplorerPageHandler(defaultMockResult, defaultTotalResults),
@@ -225,25 +225,33 @@ describe('DataExplorer', () => {
     );
   };
 
-  const getTotalCountFromBackend = async (
-    expectedCount = defaultTotalResults
-  ) => {
-    const totalFromBackend = await screen.getByText('Total from backend:');
+  const getTotalSizeOfDataset = async (expectedCount: string) => {
+    const totalFromBackend = await screen.getByText('Total:');
     const totalCount = within(totalFromBackend).getByText(
       new RegExp(`${expectedCount} dataset`, 'i')
     );
     return totalCount;
   };
 
-  const getTotalFromFrontend = async (expectedCount: number = 0) => {
-    const totalFromFrontend = await screen.queryByText('Total from frontend:');
-    if (!totalFromFrontend) {
-      return totalFromFrontend;
-    }
-    const totalCount = within(totalFromFrontend).getByText(
-      new RegExp(`${expectedCount} dataset`, 'i')
+  const getSizeOfCurrentlyLoadedData = async (expectedCount: number) => {
+    const totalFromBackend = await screen.getByText(
+      'Sample loaded for review:'
+    );
+    const totalCount = within(totalFromBackend).getByText(
+      new RegExp(`${expectedCount}`, 'i')
     );
     return totalCount;
+  };
+
+  const getFilteredResultsCount = async (expectedCount: number = 0) => {
+    const filteredCountLabel = await screen.queryByText('Filtered:');
+    if (!filteredCountLabel) {
+      return filteredCountLabel;
+    }
+    const filteredCount = within(filteredCountLabel).getByText(
+      new RegExp(`${expectedCount}`, 'i')
+    );
+    return filteredCount;
   };
 
   const updateResourcesShownInTable = async (resources: Resource[]) => {
@@ -542,37 +550,39 @@ describe('DataExplorer', () => {
     expect(history.location.pathname).toContain('self1');
   });
 
-  it('shows total results received from backend', async () => {
+  it('shows total size of dataset', async () => {
     await expectRowCountToBe(10);
-    const totalBackendCount = await getTotalCountFromBackend(
-      defaultTotalResults
-    );
+    const totalBackendCount = await getTotalSizeOfDataset('500,123');
     expect(totalBackendCount).toBeVisible();
+  });
+
+  it('shows results currently loaded in frontend', async () => {
+    await expectRowCountToBe(10);
+    const loadedDataCount = await getSizeOfCurrentlyLoadedData(10);
+    expect(loadedDataCount).toBeVisible();
   });
 
   it('shows updated total from backend when user searches by project', async () => {
     await expectRowCountToBe(10);
-    const totalBackendBefore = await getTotalCountFromBackend(
-      defaultTotalResults
-    );
+    const totalBackendBefore = await getTotalSizeOfDataset('500,123');
     expect(totalBackendBefore).toBeVisible();
 
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
     await expectRowCountToBe(2);
 
-    const totalBackendAfter = await getTotalCountFromBackend(2);
+    const totalBackendAfter = await getTotalSizeOfDataset('2');
     expect(totalBackendAfter).toBeVisible();
   });
 
-  it('does not show total frontend count if predicate is not selected', async () => {
+  it('does not show filtered count if predicate is not selected', async () => {
     await expectRowCountToBe(10);
-    const totalFromFrontend = await getTotalFromFrontend();
+    const totalFromFrontend = await getFilteredResultsCount();
     expect(totalFromFrontend).toEqual(null);
   });
 
-  it('does shows total frontend count if predicate is selected', async () => {
+  it('shows total filtered count if predicate is selected', async () => {
     await expectRowCountToBe(10);
-    const totalFromFrontendBefore = await getTotalFromFrontend();
+    const totalFromFrontendBefore = await getFilteredResultsCount();
     expect(totalFromFrontendBefore).toEqual(null);
 
     await updateResourcesShownInTable([
@@ -586,7 +596,7 @@ describe('DataExplorer', () => {
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
 
-    const totalFromFrontendAfter = await getTotalFromFrontend(2);
+    const totalFromFrontendAfter = await getFilteredResultsCount(2);
     expect(totalFromFrontendAfter).toBeVisible();
   });
 });
