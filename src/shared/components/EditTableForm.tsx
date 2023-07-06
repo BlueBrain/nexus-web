@@ -560,6 +560,7 @@ const EditTableForm: React.FC<{
               <Select
                 value={viewName}
                 aria-label="View"
+                data-testid="view-selector"
                 style={{ width: 650 }}
                 onChange={value => {
                   onChangeViewDropDown(value);
