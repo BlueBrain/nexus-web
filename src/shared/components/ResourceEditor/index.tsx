@@ -5,8 +5,7 @@ import {
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
@@ -14,12 +13,17 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
+
 import isValidUrl, {
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
-import { TToken, resolveLinkInEditor } from './editorUtils';
+import {
+  mayBeResolvableLink,
+  useResourceResoultion,
+  editorLinkResolutionHandler,
+} from './editorUtils';
 import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
 
@@ -69,8 +73,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onFullScreen,
     showControlPanel = true,
   } = props;
-
   const nexus = useNexusContext();
+  const onResolutionComplete = useResourceResoultion();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
@@ -86,7 +90,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     oidc: state.oidc,
   }));
   const userAuthenticated = oidc.user && oidc.user.access_token;
-  const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -127,7 +130,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       const itemSpan = item as HTMLSpanElement;
       const url = itemSpan.innerText.replace(/^"|"$/g, '');
       if (isClickableLine(url)) {
-        itemSpan.style.textDecoration = 'underline';
+        itemSpan.classList.add('fusion-resource-link');
       }
     });
   };
@@ -141,7 +144,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     });
     const token = (editorPosition
       ? codeMirorRef.current?.getTokenAt(editorPosition)
-      : { start: 0, end: 0, string: '' }) as TToken;
+      : { start: 0, end: 0, string: '' }) as codemiror.Token;
     const tokenStart = editorPosition?.ch || 0;
     // const left = x - ((tokenStart - token.start) * 8);
     const left = x - LINE_HEIGHT;
@@ -149,15 +152,23 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     const defaultPaylaod = { top, left, open: true };
     // replace the double quotes in the borns of the string because code mirror will added another double quotes
     // and it will break the url
-    const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
-    await resolveLinkInEditor({
-      nexus,
-      dispatch,
-      orgLabel,
-      projectLabel,
-      url,
-      defaultPaylaod,
-    });
+    const url = (token as codemiror.Token).string
+      .replace(/\\/g, '')
+      .replace(/\"/g, '');
+    if (mayBeResolvableLink(url)) {
+      const { resolvedAs, results, error } = await editorLinkResolutionHandler({
+        nexus,
+        url,
+        orgLabel,
+        projectLabel,
+      });
+      onResolutionComplete({
+        ...defaultPaylaod,
+        resolvedAs,
+        results,
+        error,
+      });
+    }
     setLoadingResolution(false);
   };
 
