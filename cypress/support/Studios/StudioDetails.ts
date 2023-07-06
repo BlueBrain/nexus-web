@@ -20,7 +20,7 @@ export class StudioDetailsPage extends StudioListPage {
     cy.findByRole('button', { name: /Dashboard/ }).click({ force: true });
     cy.get('button[data-testid="edit-dashboard"]')
       .contains(/Edit/)
-      .click();
+      .click({ force: true });
     cy.findByRole('dialog').findByText('Edit');
   }
 
@@ -56,6 +56,7 @@ export class StudioDetailsPage extends StudioListPage {
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
     cy.wait('@saveDashboardRequest');
+
     cy.findByText(new RegExp(dashboardName, 'i')).should('exist');
   }
 }
