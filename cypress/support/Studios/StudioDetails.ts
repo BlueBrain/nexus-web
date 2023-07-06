@@ -46,17 +46,16 @@ export class StudioDetailsPage extends StudioListPage {
     cy.findByRole('button', { name: /Add/ }).click();
     cy.findByPlaceholderText(/Name/i).type(dashboardName);
     cy.findByRole('combobox', { name: /View/ }).click();
-    cy.findByTitle(
-      'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
+    cy.get(
+      '[data-testid="https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex"]'
+    );
+    cy.get(
+      '[data-testid="https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex"]'
     ).click();
+
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
     cy.wait('@saveDashboardRequest');
-    cy.findByRole('menuitem', {
-      name: new RegExp(workspaceName, 'i'),
-    }).click();
-    cy.findByRole('menuitem', {
-      name: new RegExp(dashboardName, 'i'),
-    }).click();
+    cy.findByText(new RegExp(dashboardName, 'i')).should('exist');
   }
 }
