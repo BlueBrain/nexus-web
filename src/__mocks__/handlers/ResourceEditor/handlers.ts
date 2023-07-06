@@ -483,6 +483,7 @@ const getSearchApiResponseObject = rest.get(
 
 export {
   resourceResolverApi,
+  resourceResolverApiId,
   resourceFromSearchApiId,
   resourceFromSearchApi,
   getResolverResponseObject,
