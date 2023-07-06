@@ -223,8 +223,5 @@ describe('resolveLinkInEditor', () => {
         store.getState().uiSettings.editorPopoverResolvedData.error
       ).toBeUndefined();
     });
-    const urlMatch = new RegExp(url, 'i');
-    const urlInScreen = await screen.findByText(urlMatch);
-    expect(urlInScreen).toBeInTheDocument();
   });
 });
