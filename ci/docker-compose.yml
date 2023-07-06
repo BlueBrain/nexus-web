@@ -15,7 +15,7 @@ services:
     entrypoint: ['bash']
     stdin_open: true
     tty: true
-    user: $USER
+    user: $UID
   fusion:
     depends_on:
       - delta

@@ -21,7 +21,7 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
-    // testIsolation: false,
+    testIsolation: 'off',
     chromeWebSecurity: false,
 
     env: {
@@ -31,6 +31,7 @@ export default defineConfig({
     },
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
+        launchOptions.args.push('--window-size=1920,1080');
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push('--disable-web-security');
