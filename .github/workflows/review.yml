@@ -7,7 +7,7 @@ jobs:
     runs-on: it
 
     steps:
-      - run: docker run --rm --volume $PWD/cypress/videos:/videos:rw bash chown -R $UID /videos
+      - run: docker run --rm --volume $PWD:/videos:rw bash chown -R $UID /videos
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
