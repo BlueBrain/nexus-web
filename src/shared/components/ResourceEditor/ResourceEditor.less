@@ -61,14 +61,30 @@
 }
 
 .code-mirror-editor {
+  .fusion-resource-link {
+    text-decoration: underline;
+    cursor: pointer;
+    &::after {
+      content: '';
+      display: inline-block;
+      background-image: url(../../images/AnchorLink.svg);
+      background-repeat: no-repeat;
+      background-size: 14px 14px;
+      width: 14px;
+      height: 14px;
+      margin-left: 10px;
+    }
+  }
   .CodeMirror-lines {
     cursor: text;
   }
 
   &.resolution-on-progress {
     .CodeMirror-lines {
-      cursor: progress !important;
       user-select: none;
+      .fusion-resource-link {
+        cursor: progress !important;
+      }
     }
   }
 }
