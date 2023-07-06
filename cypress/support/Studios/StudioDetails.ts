@@ -51,7 +51,7 @@ export class StudioDetailsPage extends StudioListPage {
     );
     cy.get(
       '[data-testid="https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex"]'
-    ).click();
+    ).trigger('click');
 
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
