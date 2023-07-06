@@ -63,6 +63,9 @@ describe('Studios', () => {
   });
 
   it('saves changes made by user to table columns and shows them correctly', function() {
+    cy.intercept({ method: 'PUT', path: /resources/ }).as(
+      'saveDashboardRequest'
+    );
     studioDetailsPage
       .getAnyDashboard(Cypress.env('ORG_LABEL'), this.projectLabel)
       .then(() => {
@@ -74,6 +77,7 @@ describe('Studios', () => {
       })
       .then(() => {
         studioDetailsPage.openEditDashboard();
+        cy.wait('@saveDashboardRequest');
 
         cy.findByLabelText(/Enable Filter/i).should('be.checked');
       });
