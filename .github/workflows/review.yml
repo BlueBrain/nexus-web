@@ -7,7 +7,10 @@ jobs:
     runs-on: it
 
     steps:
-      - uses: actions/checkout@v1
+      - run: docker run --rm --volume $PWD/cypress/screenshots:/videos:rw bash chown -R $UID /videos
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
