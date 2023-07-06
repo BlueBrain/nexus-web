@@ -1,6 +1,7 @@
 import { extractFieldName } from './../../../subapps/search/containers/FilterOptions';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { has, isArray, last } from 'lodash';
+import { useDispatch } from 'react-redux';
 import useResolvedLinkEditorPopover from '../../molecules/ResolvedLinkEditorPopover/useResolvedLinkEditorPopover';
 import isValidUrl, {
   isExternalLink,
@@ -15,8 +16,6 @@ import {
 } from '../../utils';
 import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
-import { Dispatch } from 'redux';
-import { useDispatch } from 'react-redux';
 
 type TDeltaError = Error & {
   '@type': string;
@@ -71,7 +70,33 @@ export const getDataExplorerResourceItemArray = (
         data._rev,
       ]) as TDEResource;
 };
+const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
+export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
+  const node = e.target || e.srcElement;
+  const text =
+    (node as HTMLElement).innerText || (node as HTMLElement).textContent;
 
+  for (let i = 0; i < NEAR_BY.length; i += 2) {
+    const coords = {
+      left: e.pageX + NEAR_BY[i],
+      top: e.pageY + NEAR_BY[i + 1],
+    };
+    const pos = current.coordsChar({
+      ...coords,
+    });
+    const token = current.getTokenAt(pos);
+    if (token && token.string === text) {
+      return {
+        token,
+        coords,
+      };
+    }
+  }
+  return {
+    token: null,
+    coords: { left: e.pageX, top: e.pageY },
+  };
+}
 export async function editorLinkResolutionHandler({
   nexus,
   orgLabel,
