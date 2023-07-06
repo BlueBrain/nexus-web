@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { resolveLinkInEditor, getNormalizedTypes } from './editorUtils';
+import { getNormalizedTypes, editorLinkResolutionHandler } from './editorUtils';
 import { Provider } from 'react-redux';
 import { createMemoryHistory } from 'history';
 import { NexusClient, createNexusClient } from '@bbp/nexus-sdk';
@@ -12,19 +12,37 @@ import { AnyAction, Store } from 'redux';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { setupServer } from 'msw/node';
 import {
-  resourceResolverApi,
   resourceFromSearchApiId,
   resourceFromSearchApi,
   getResolverResponseObject,
   getSearchApiResponseObject,
 } from '../../../__mocks__/handlers/ResourceEditor/handlers';
+import { getResourceLabel } from '../../utils';
 import {
-  getOrgAndProjectFromResourceObject,
-  getResourceLabel,
-} from '../../utils';
-import { render, screen, waitFor, act, cleanup } from '../../../utils/testUtil';
+  render,
+  screen,
+  waitFor,
+  cleanup,
+  RenderResult,
+} from '../../../utils/testUtil';
 import ResolvedLinkEditorPopover from '../../molecules/ResolvedLinkEditorPopover/ResolvedLinkEditorPopover';
+import { UISettingsActionTypes } from 'shared/store/actions/ui-settings';
 
+document.createRange = () => {
+  const range = new Range();
+
+  range.getBoundingClientRect = jest.fn();
+
+  range.getClientRects = () => {
+    return {
+      item: () => null,
+      length: 0,
+      [Symbol.iterator]: jest.fn(),
+    };
+  };
+
+  return range;
+};
 describe('getNormalizedTypes', () => {
   const typesAsString = 'Resource';
   it('should return the normalized types', () => {
@@ -64,12 +82,15 @@ describe('resolveLinkInEditor', () => {
   const defaultPaylaod = { top: 0, left: 0, open: true };
   let nexus: NexusClient;
   let TestApp: JSX.Element;
+  let component: RenderResult;
+  let rerender: (ui: React.ReactElement) => void;
+
   beforeAll(() => {
     server = setupServer(getResolverResponseObject, getSearchApiResponseObject);
     server.listen();
   });
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const history = createMemoryHistory({});
     nexus = createNexusClient({
       fetch,
@@ -87,12 +108,10 @@ describe('resolveLinkInEditor', () => {
         </QueryClientProvider>
       </Provider>
     );
+    component = render(TestApp);
+    rerender = component.rerender;
   });
-  beforeEach(async () => {
-    await act(async () => {
-      await render(TestApp);
-    });
-  });
+
   afterEach(async () => {
     cleanup();
   });
@@ -100,76 +119,56 @@ describe('resolveLinkInEditor', () => {
     server.resetHandlers();
     server.close();
   });
-  // case-0: the url is not valid
+  // case-resource: can not be tested since codemirror issue and redirection
+  // case-error: link can not be resolved by the project resolver nor the search api and it's not external
   it('should return null if the url is not valid', async () => {
-    const url = 'not a valid url';
-    const result = await resolveLinkInEditor({
+    const url = 'https://bbp.epfl.ch/nexus/v1/resources/bbp/lnmce/invalid';
+    const { resolvedAs, error, results } = await editorLinkResolutionHandler({
       nexus,
       url,
-      defaultPaylaod,
-      dispatch: store.dispatch,
       orgLabel: 'orgLabel',
       projectLabel: 'projectLabel',
     });
+    store.dispatch({
+      type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+      payload: {
+        ...defaultPaylaod,
+        resolvedAs,
+        error,
+        results,
+      },
+    });
+    rerender(TestApp);
     expect(
-      store.getState().uiSettings.editorPopoverResolvedData.results.length
-    ).toEqual(0);
+      store.getState().uiSettings.editorPopoverResolvedData.results
+    ).toBeUndefined();
     expect(
       store.getState().uiSettings.editorPopoverResolvedData.resolvedAs
-    ).toBeUndefined();
-    expect(result).toBeNull();
+    ).toEqual('error');
   });
-  // case-1: url is valid and link resolved by the project resolver
-  it('should show popover when the link is resolved by the project resolver if the url is valid', async () => {
-    const orgProject = getOrgAndProjectFromResourceObject(resourceResolverApi);
-    const name = getResourceLabel(resourceResolverApi);
-    await waitFor(async () => {
-      await resolveLinkInEditor({
-        nexus,
-        defaultPaylaod: { ...defaultPaylaod, top: 400, left: 400 },
-        url: resourceResolverApi['@id'],
-        dispatch: store.dispatch,
-        orgLabel: orgProject?.orgLabel,
-        projectLabel: orgProject?.projectLabel,
-      });
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.results
-      ).toBeDefined();
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.results._self
-      ).toEqual(resourceResolverApi._self);
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.resolvedAs
-      ).toBe('resource');
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.error
-      ).toBeNull();
-    });
-    await waitFor(
-      async () => {
-        const nameMatch = new RegExp(name, 'i');
-        const nameInScreen = await screen.findByText(nameMatch);
-        expect(nameInScreen).toBeInTheDocument();
-      },
-      { timeout: 3000 }
-    );
-  });
-  // case-2: link can not be resolved by the project resolver
-  // then try to find it across all projects
-  it('should show popover when the link is resolved by search api and resolver can not resolve it if the url is valid', async () => {
+  // case-resources: link can be resolved by search api and has multiple results
+  it('should show popover when the link is resolved by search api with multiple results', async () => {
     const orgProject = {
       orgLabel: 'bbp',
       projectLabel: 'lnmce',
     };
     await waitFor(async () => {
-      await resolveLinkInEditor({
+      const { resolvedAs, error, results } = await editorLinkResolutionHandler({
         nexus,
-        defaultPaylaod: { ...defaultPaylaod, top: 400, left: 400 },
         url: resourceFromSearchApiId,
-        dispatch: store.dispatch,
-        orgLabel: orgProject.orgLabel,
-        projectLabel: orgProject.projectLabel,
+        orgLabel: orgProject?.orgLabel,
+        projectLabel: orgProject?.projectLabel,
       });
+      store.dispatch({
+        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+        payload: {
+          ...defaultPaylaod,
+          resolvedAs,
+          error,
+          results,
+        },
+      });
+      rerender(TestApp);
       expect(
         store.getState().uiSettings.editorPopoverResolvedData.results
       ).toBeDefined();
@@ -194,18 +193,26 @@ describe('resolveLinkInEditor', () => {
       }
     });
   });
-  // case-3: link can not be resolved by the project resolver and search api and it's an external link
-  it('shoudl show popover when external link is provided', async () => {
+  // case-external: link can not be resolved by the project resolver nor the search api and it's external
+  it('should show popover when external link is provided', async () => {
     const url = 'ftp://www.google.com';
     await waitFor(async () => {
-      await resolveLinkInEditor({
+      const { resolvedAs, error, results } = await editorLinkResolutionHandler({
         nexus,
         url,
-        defaultPaylaod: { ...defaultPaylaod, top: 400, left: 400 },
-        dispatch: store.dispatch,
         orgLabel: 'orgLabel',
         projectLabel: 'projectLabel',
       });
+      store.dispatch({
+        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
+        payload: {
+          ...defaultPaylaod,
+          resolvedAs,
+          error,
+          results,
+        },
+      });
+      rerender(TestApp);
       expect(
         store.getState().uiSettings.editorPopoverResolvedData.results._self
       ).toEqual(url);
