@@ -52,9 +52,11 @@ export class StudioDetailsPage extends StudioListPage {
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
     cy.wait('@saveDashboardRequest');
-    cy.findByRole('menuitem', { name: new RegExp(workspaceName, 'i') }).click();
-    cy.get('ul')
-      .contains(new RegExp(dashboardName, 'i'))
-      .click();
+    cy.findByRole('menuitem', {
+      name: new RegExp(workspaceName, 'i'),
+    }).click();
+    cy.findByRole('menuitem', {
+      name: new RegExp(dashboardName, 'i'),
+    }).click();
   }
 }
