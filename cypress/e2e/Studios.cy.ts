@@ -73,11 +73,9 @@ describe('Studios', () => {
 
         cy.findByText('Enable Filter').click();
 
-        return cy.findByRole('button', { name: /Save/ }).click();
-      })
-      .then(() => {
-        studioDetailsPage.openEditDashboard();
+        cy.findByRole('button', { name: /Save/ }).click();
         cy.wait('@saveDashboardRequest');
+        studioDetailsPage.openEditDashboard();
 
         cy.findByLabelText(/Enable Filter/i).should('be.checked');
       });
