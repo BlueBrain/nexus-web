@@ -23,6 +23,7 @@ import {
   mayBeResolvableLink,
   useResourceResoultion,
   editorLinkResolutionHandler,
+  getTokenAndPosAt,
 } from './editorUtils';
 import { RootState } from '../../store/reducers';
 import './ResourceEditor.less';
@@ -134,42 +135,33 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       }
     });
   };
+
   const onLinkClick = async (_: any, ev: MouseEvent) => {
-    setLoadingResolution(true);
-    const x = ev.pageX;
-    const y = ev.pageY;
-    const editorPosition = codeMirorRef.current?.coordsChar({
-      left: x,
-      top: y,
-    });
-    const token = (editorPosition
-      ? codeMirorRef.current?.getTokenAt(editorPosition)
-      : { start: 0, end: 0, string: '' }) as codemiror.Token;
-    const tokenStart = editorPosition?.ch || 0;
-    // const left = x - ((tokenStart - token.start) * 8);
-    const left = x - LINE_HEIGHT;
-    const top = y - LINE_HEIGHT;
-    const defaultPaylaod = { top, left, open: true };
-    // replace the double quotes in the borns of the string because code mirror will added another double quotes
-    // and it will break the url
-    const url = (token as codemiror.Token).string
-      .replace(/\\/g, '')
-      .replace(/\"/g, '');
-    if (mayBeResolvableLink(url)) {
-      const { resolvedAs, results, error } = await editorLinkResolutionHandler({
-        nexus,
-        url,
-        orgLabel,
-        projectLabel,
-      });
-      onResolutionComplete({
-        ...defaultPaylaod,
-        resolvedAs,
-        results,
-        error,
-      });
+    if (codeMirorRef.current) {
+      setLoadingResolution(true);
+      const { coords, token } = getTokenAndPosAt(ev, codeMirorRef.current);
+      const url = token?.string.replace(/\\/g, '').replace(/\"/g, '');
+      if (url && mayBeResolvableLink(url)) {
+        const position = { ...coords, open: true };
+        const {
+          resolvedAs,
+          results,
+          error,
+        } = await editorLinkResolutionHandler({
+          nexus,
+          url,
+          orgLabel,
+          projectLabel,
+        });
+        onResolutionComplete({
+          ...position,
+          resolvedAs,
+          results,
+          error,
+        });
+      }
+      setLoadingResolution(false);
     }
-    setLoadingResolution(false);
   };
 
   React.useEffect(() => {
