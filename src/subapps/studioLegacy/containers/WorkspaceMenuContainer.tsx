@@ -717,7 +717,9 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               expandIcon: <DownOutlined />,
               icon: <DownOutlined />,
               className: selectKeysHighlight(item.workspace),
-              onTitleClick: () => setSelectedWorkspace(item.workspace),
+              dataTestId: `workspace-item-${item.workspace.label}`,
+              onClick: () => setSelectedWorkspace(item.workspace),
+              // onTitleClick: () => setSelectedWorkspace(item.workspace),
               popupClassName: 'workspace-popup-classname',
               popupOffset: [0, 0],
               createdAt: item.workspace._createdAt,
@@ -727,6 +729,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
                     label: dash.label,
                     updatedAt: dash._updatedAt,
                     key: `${item.workspace['@id']}*${dash['@id']}`,
+                    dataTestId: `dashboard-item-${dash.label}`,
                     onClick: () => {
                       setSelectedDashboard(dash);
                       setSelectedKeys([
