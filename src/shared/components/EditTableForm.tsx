@@ -560,7 +560,6 @@ const EditTableForm: React.FC<{
               <Select
                 value={viewName}
                 aria-label="View"
-                data-testid="view-selector"
                 style={{ width: 650 }}
                 onChange={value => {
                   onChangeViewDropDown(value);
@@ -568,7 +567,11 @@ const EditTableForm: React.FC<{
               >
                 {availableViews &&
                   availableViews.map(view => (
-                    <Option key={view['@id']} value={view['@id']}>
+                    <Option
+                      key={view['@id']}
+                      value={view['@id']}
+                      data-testid={view['@id']}
+                    >
                       {view['@id']}
                     </Option>
                   ))}
