@@ -1,30 +1,16 @@
 import React, { ReactNode, useRef, forwardRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
-import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { clsx } from 'clsx';
-import { Tag } from 'antd';
-import { pick } from 'lodash';
+import { Tag, notification } from 'antd';
+import * as Sentry from '@sentry/browser';
 import { DownloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import { match as pmatch } from 'ts-pattern';
-import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import { RootState } from '../../store/reducers';
-import {
-  TDELink,
-  InitNewVisitDataExplorerGraphView,
-  AddNewNodeDataExplorerGraphFlow,
-} from '../../store/reducers/data-explorer';
-import {
-  TEditorPopoverResolvedData,
-  editorPopoverResolvedDataInitialValue,
-} from '../../store/reducers/ui-settings';
-import { getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
-import { getNormalizedTypes } from '../../components/ResourceEditor/editorUtils';
-import { download } from '../../utils/download';
-import { parseResourceId } from '../../components/Preview/Preview';
+import { TDELink } from '../../store/reducers/data-explorer';
+import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import useOnClickOutside from '../../hooks/useClickOutside';
+import useResolvedLinkEditorPopover from './useResolvedLinkEditorPopover';
 import './styles.less';
 
 type TResultPattern = Pick<TEditorPopoverResolvedData, 'open' | 'resolvedAs'>;
@@ -33,34 +19,23 @@ type PopoverContainer = {
   onClickOutside(): void;
 };
 
-const downloadFile = async ({
-  nexus,
-  orgLabel,
-  projectLabel,
-  resourceId,
-  ext,
-  title,
+const DownloadResourceButton = ({
+  downloadInProgress,
+  downloadBinaryAsync,
 }: {
-  nexus: NexusClient;
-  orgLabel: string;
-  projectLabel: string;
-  resourceId: string;
-  title: string;
-  ext?: string;
+  downloadInProgress: boolean;
+  downloadBinaryAsync: () => Promise<void>;
 }) => {
-  try {
-    const data = await nexus.File.get(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(parseResourceId(resourceId)),
-      { as: 'blob' }
-    );
-    return download(title, ext ?? 'json', data);
-  } catch (error) {
-    console.log('@@error', error);
-  }
+  return (
+    <div className="popover-download-btn">
+      {downloadInProgress ? (
+        <LoadingOutlined spin />
+      ) : (
+        <DownloadOutlined onClick={downloadBinaryAsync} />
+      )}
+    </div>
+  );
 };
-
 const PopoverContainer = forwardRef<HTMLDivElement, PopoverContainer>(
   ({ children, onClickOutside }, ref) => {
     const {
@@ -88,76 +63,39 @@ const PopoverContainer = forwardRef<HTMLDivElement, PopoverContainer>(
 
 const ResolvedLinkEditorPopover = () => {
   const ref = useRef<HTMLDivElement>(null);
-  const navigate = useHistory();
-  const dispatch = useDispatch();
-  const nexus = useNexusContext();
-  const { pathname, search, state } = useLocation();
-  const routeMatch = useRouteMatch<{
-    orgLabel: string;
-    projectLabel: string;
-    resourceId: string;
-  }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
+  const {
+    clickOutsideHandler,
+    navigateResourceHandler,
+    downloadBinaryAsyncHandler,
+  } = useResolvedLinkEditorPopover();
+
   const {
     editorPopoverResolvedData: { open, error, resolvedAs, results },
   } = useSelector((state: RootState) => state.uiSettings);
+
   const resultPattern: TResultPattern = { resolvedAs, open };
-
-  const onClickOutside = () => {
-    dispatch({
-      type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-      payload: editorPopoverResolvedDataInitialValue,
-    });
-  };
-  const onClickLink = async (resource: TDELink) => {
-    onClickOutside();
-    if (pathname === '/data-explorer/graph-flow') {
-      dispatch(AddNewNodeDataExplorerGraphFlow(resource));
-    } else if (routeMatch?.url && routeMatch.params) {
-      const data = (await nexus.Resource.get(
-        routeMatch.params.orgLabel,
-        routeMatch.params.projectLabel,
-        routeMatch.params.resourceId
-      )) as Resource;
-      const orgProject = getOrgAndProjectFromProjectId(data._project);
-      dispatch(
-        InitNewVisitDataExplorerGraphView({
-          referer: { pathname, search, state },
-          source: {
-            _self: data._self,
-            title: getResourceLabel(data),
-            types: getNormalizedTypes(data['@type']),
-            resource: [
-              orgProject?.orgLabel ?? '',
-              orgProject?.projectLabel ?? '',
-              data['@id'],
-            ],
-          },
-          current: resource,
-        })
-      );
-      navigate.push('/data-explorer/graph-flow');
-    }
-  };
-
-  const handleDownloadBinary = async (data: TDELink) => {
-    await downloadFile({
-      nexus,
-      orgLabel: data.resource?.[0]!,
-      projectLabel: data.resource?.[1]!,
-      resourceId: data.resource?.[2]!,
-      ext: data.resource?.[4] ?? 'json',
-      title: data.title,
-    });
-  };
 
   const {
     mutateAsync: downloadBinaryAsync,
     isLoading: downloadInProgress,
-  } = useMutation([], handleDownloadBinary);
+  } = useMutation({
+    mutationKey: 'downloadBinary',
+    mutationFn: downloadBinaryAsyncHandler,
+    onError: error => {
+      notification.error({
+        message: 'Download error',
+        description: 'Something went wrong while downloading the resource.',
+      });
+      Sentry.captureException({
+        error,
+        message: 'Download Binary error',
+      });
+    },
+  });
 
   return pmatch(resultPattern)
     .with({ open: true, resolvedAs: 'error' }, () => (
-      <PopoverContainer {...{ onClickOutside, ref }}>
+      <PopoverContainer ref={ref} onClickOutside={clickOutsideHandler}>
         <div className="resource error">
           <Tag color="red">Error</Tag>
           <div className="popover-btn error">{error}</div>
@@ -167,27 +105,30 @@ const ResolvedLinkEditorPopover = () => {
     .with({ open: true, resolvedAs: 'resource' }, () => {
       const result = results as TDELink;
       return (
-        <PopoverContainer {...{ onClickOutside, ref }}>
+        <PopoverContainer ref={ref} onClickOutside={clickOutsideHandler}>
           <div className="resource" key={result._self}>
             {result.resource?.[0] && result.resource?.[1] && (
               <Tag color="blue">{`${result.resource?.[0]}/${result.resource?.[1]}`}</Tag>
             )}
             <button
-              onClick={() => onClickLink(result)}
+              onClick={() => navigateResourceHandler(result)}
               className="link popover-btn"
             >
               <span>{result.title ?? result.resource?.[2]}</span>
             </button>
             {result.isDownloadable && (
-              <div className="popover-download-btn">
-                {downloadInProgress ? (
-                  <LoadingOutlined spin />
-                ) : (
-                  <DownloadOutlined
-                    onClick={() => downloadBinaryAsync(result)}
-                  />
-                )}
-              </div>
+              <DownloadResourceButton
+                downloadInProgress={downloadInProgress}
+                downloadBinaryAsync={() =>
+                  downloadBinaryAsync({
+                    orgLabel: result.resource?.[0]!,
+                    projectLabel: result.resource?.[1]!,
+                    resourceId: result.resource?.[2]!,
+                    ext: result.resource?.[4] ?? 'json',
+                    title: result.title,
+                  })
+                }
+              />
             )}
           </div>
         </PopoverContainer>
@@ -195,50 +136,34 @@ const ResolvedLinkEditorPopover = () => {
     })
     .with({ open: true, resolvedAs: 'resources' }, () => {
       return (
-        <PopoverContainer {...{ onClickOutside, ref }}>
+        <PopoverContainer ref={ref} onClickOutside={clickOutsideHandler}>
           {(results as TDELink[]).map(item => (
             <div className="resource list-item" key={item._self}>
               {item.resource?.[0] && item.resource?.[1] && (
                 <Tag color="blue">{`${item.resource?.[0]}/${item.resource?.[1]}`}</Tag>
               )}
               <button
-                onClick={() => onClickLink(item)}
+                onClick={() => navigateResourceHandler(item)}
                 className="link popover-btn"
               >
                 <span>{item.title ?? item.resource?.[2]}</span>
               </button>
               {item.isDownloadable && (
-                <div className="popover-download-btn">
-                  {downloadInProgress ? (
-                    <LoadingOutlined spin />
-                  ) : (
-                    <DownloadOutlined
-                      onClick={() => downloadBinaryAsync(item)}
-                    />
-                  )}
-                </div>
+                <DownloadResourceButton
+                  downloadInProgress={downloadInProgress}
+                  downloadBinaryAsync={() =>
+                    downloadBinaryAsync({
+                      orgLabel: item.resource?.[0]!,
+                      projectLabel: item.resource?.[1]!,
+                      resourceId: item.resource?.[2]!,
+                      ext: item.resource?.[4] ?? 'json',
+                      title: item.title,
+                    })
+                  }
+                />
               )}
             </div>
           ))}
-        </PopoverContainer>
-      );
-    })
-    .with({ open: true, resolvedAs: 'external' }, () => {
-      const result = results as TDELink;
-      return (
-        <PopoverContainer {...{ onClickOutside, ref }}>
-          <div className="resource external">
-            <Tag color="yellow">External Link</Tag>
-            <a
-              type="link"
-              rel="noopener noreferrer"
-              target="_blank"
-              href={result.title}
-              className="link popover-btn"
-            >
-              {result.title}
-            </a>
-          </div>
         </PopoverContainer>
       );
     })
