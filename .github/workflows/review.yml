@@ -38,12 +38,12 @@ jobs:
           docker build . --tag=nexus-web:fresh
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
-      - name: Copy nexus-web into Cypress container
-        # avoids permission issue where cypress writes screenshots to host with root as user
-        # which we can't then delete easily
-        run: docker cp ./. cypress:/e2e
+      # - name: Copy nexus-web into Cypress container
+      # avoids permission issue where cypress writes screenshots to host with root as user
+      # which we can't then delete easily
+      # run: docker cp ./. cypress:/e2e
       - name: e2e tests
-        run: echo | docker exec -e DEBUG='cypress:*' -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser chrome --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+        run: echo | docker exec --user $UID -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser chrome --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
