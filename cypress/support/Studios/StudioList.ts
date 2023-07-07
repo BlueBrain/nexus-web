@@ -4,8 +4,17 @@ export class StudioListPage {
     cy.findByRole('textbox', { name: /Label/ }).type(name);
     cy.findByRole('button', { name: /Save/ }).click();
 
-    cy.wait(5000);
+    // cy.get('h1[data-testid="studio-title"]').contains(/name/i);
+    // cy.findByText(/Studio has been created Successfully/i);
+    // cy.location('pathname').should(
+    //   'include',
+    //   encodeURIComponent('resources/Cypress-Testing')
+    // );
+    // const studioElement = cy.findByRole('heading', { name, timeout: 10_001 });
+    // studioElement.contains(name);
+    // return studioElement;
 
+    cy.wait(5000);
     return cy;
   }
 }
