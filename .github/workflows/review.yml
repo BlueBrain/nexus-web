@@ -8,6 +8,11 @@ jobs:
 
     steps:
       - run: docker run --rm --volume $PWD:/videos:rw bash chown -R $UID /videos
+      - run: ls -la .
+      - run: ls -la cypress
+      - run: rm -rf cypress/videos
+      - run: rm -rf cypress/screenshots
+      - run: rm -rf cypress/downloads
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
