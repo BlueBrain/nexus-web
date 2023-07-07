@@ -4,7 +4,7 @@ import {
   createNexusOrgAndProject,
   createResource,
   deprecateNexusOrgAndProject,
-} from './cypress/plugins/nexus';
+} from './cypress/support/Utils/nexus';
 import { uuidv4 } from './src/shared/utils';
 import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
 
@@ -21,7 +21,7 @@ export default defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
-    testIsolation: 'off',
+    testIsolation: false,
     chromeWebSecurity: false,
 
     env: {
