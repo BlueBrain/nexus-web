@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk';
 
-describe.skip('Report (formerly Analysis) Plugin', () => {
+describe('Report (formerly Analysis) Plugin', () => {
   before(() => {
     if (
       !Cypress.env('use_existing_delta_instance') ||
