@@ -48,7 +48,11 @@ jobs:
       # which we can't then delete easily
       # run: docker cp ./. cypress:/e2e
       - name: e2e tests
-        run: echo | docker exec --env "CYPRESS_RECORD_KEY=${{secrets.CYPRESS_RECORD_KEY}}" -t cypress /e2e/run-e2e-ci.sh
+        run: echo | docker exec --user=$UID --env "CYPRESS_RECORD_KEY=${{secrets.CYPRESS_RECORD_KEY}}" -t cypress /e2e/run-e2e-ci.sh
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
+      - run: ls -lan .
+        if: ${{ always() }}
+      - run: ls -lan cypress
+        if: ${{ always() }}
