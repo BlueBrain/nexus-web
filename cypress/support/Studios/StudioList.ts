@@ -4,6 +4,8 @@ export class StudioListPage {
     cy.findByRole('textbox', { name: /Label/ }).type(name);
     cy.findByRole('button', { name: /Save/ }).click();
 
+    cy.findByText(/Studio has been created Successfully/i);
+    cy.wait(5000);
     cy.location('pathname').should(
       'include',
       encodeURIComponent('resources/Cypress-Testing')
