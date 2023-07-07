@@ -15,6 +15,7 @@ services:
     entrypoint: ['bash']
     stdin_open: true
     tty: true
+    user: ${CYPRESS_USER}
   fusion:
     depends_on:
       - delta
