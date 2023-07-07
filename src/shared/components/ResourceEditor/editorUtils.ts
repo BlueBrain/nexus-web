@@ -1,4 +1,3 @@
-import { extractFieldName } from './../../../subapps/search/containers/FilterOptions';
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { has, isArray, last } from 'lodash';
 import { useDispatch } from 'react-redux';
