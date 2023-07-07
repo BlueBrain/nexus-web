@@ -12,8 +12,6 @@ jobs:
       - run: rm -rf cypress/videos
       - run: rm -rf cypress/screenshots
       - run: rm -rf cypress/downloads
-      - name: docker-login
-        run: docker login -u ${{secrets.DOCKER_USER}} -p ${{secrets.DOCKER_PASS}}
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -49,7 +47,7 @@ jobs:
       # which we can't then delete easily
       # run: docker cp ./. cypress:/e2e
       - name: e2e tests
-        run: echo | docker exec --user=$UID --env "CYPRESS_RECORD_KEY=${{secrets.CYPRESS_RECORD_KEY}}" -t cypress /e2e/run-e2e-ci.sh
+        run: echo | docker exec --user=$UID -t cypress /e2e/run-e2e.sh
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
