@@ -17,10 +17,10 @@ export class StudioDetailsPage extends StudioListPage {
   }
 
   openEditDashboard() {
-    cy.findByRole('button', { name: /Dashboard/ }).click({ force: true });
+    cy.findByRole('button', { name: /Dashboard/ }).click();
     cy.get('button[data-testid="edit-dashboard"]')
       .contains(/Edit/)
-      .click({ force: true });
+      .click();
     cy.findByRole('dialog').findByText('Edit');
   }
 

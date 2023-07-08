@@ -70,7 +70,7 @@ describe('Studios', () => {
 
         cy.findByText('Enable Filter').click();
 
-        cy.findByRole('button', { name: /Save/ }).click({ force: true });
+        cy.findByRole('button', { name: /Save/ }).click();
         // cy.wait('@saveDashboardRequest');
 
         studioDetailsPage.openEditDashboard();
