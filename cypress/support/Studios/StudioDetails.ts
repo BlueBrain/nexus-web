@@ -51,6 +51,7 @@ export class StudioDetailsPage extends StudioListPage {
 
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
+    console.log('Saved');
     cy.findByText(new RegExp(dashboardName, 'i')).should('exist');
   }
 }
