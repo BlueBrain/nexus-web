@@ -14,6 +14,7 @@ export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
   video: true,
+  screenshotOnRunFailure: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
