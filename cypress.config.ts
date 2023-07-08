@@ -13,7 +13,7 @@ const fetch = require('node-fetch');
 export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
-  video: false,
+  video: true,
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
@@ -38,6 +38,7 @@ export default defineConfig({
           launchOptions.args.push(
             '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
           );
+          launchOptions.args.push('--headless=new');
         }
         return launchOptions;
       }),
