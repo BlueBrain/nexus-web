@@ -13,8 +13,8 @@ export class StudioListPage {
     // const studioElement = cy.findByRole('heading', { name, timeout: 10_001 });
     // studioElement.contains(name);
     // return studioElement;
-
-    cy.wait(5000);
-    return cy;
+    const studioElement = cy.findByRole('heading', { name });
+    studioElement.contains(name);
+    return studioElement;
   }
 }
