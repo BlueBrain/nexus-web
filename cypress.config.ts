@@ -36,6 +36,7 @@ export default defineConfig({
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
           launchOptions.args.push('--no-sandbox'); // Prevents [this](https://stackoverflow.com/questions/47269579/nacl-helper-process-running-without-a-sandbox-error-when-running-npm-tests) error
+          launchOptions.args.push('--disable-setuid-sandbox');
 
           launchOptions.args.push('--disable-web-security');
           launchOptions.args.push(
