@@ -5,7 +5,6 @@ on: [pull_request]
 jobs:
   test-and-build:
     runs-on: it
-    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v3
         with:
@@ -43,7 +42,7 @@ jobs:
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
         run: >-
-          echo | docker exec
+          echo | timeout 5s docker exec
           -e 'DEBUG=cypress:launcher:browsers'
           -t
           cypress
