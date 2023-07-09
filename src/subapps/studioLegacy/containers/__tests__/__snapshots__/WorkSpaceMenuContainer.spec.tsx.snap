@@ -17,7 +17,6 @@ exports[`workSpaceMenu renders with a single workspace and dashboard  1`] = `
       >
         <li
           class="ant-menu-overflow-item ant-menu-submenu ant-menu-submenu-horizontal menu-highlight-override ant-menu-submenu-selected"
-          datatestid="workspace-item-w1"
           role="none"
           style="opacity: 1; order: 0;"
         >

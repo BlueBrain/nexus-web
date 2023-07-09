@@ -14,7 +14,7 @@ const StudioHeader: React.FC<{
   return (
     <div className="studio-header">
       <div>
-        <h1 className="title" data-testid="studio-title">
+        <h1 className="title">
           {label}
           <span>{children}</span>
         </h1>
