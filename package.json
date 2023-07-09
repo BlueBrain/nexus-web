@@ -21,8 +21,7 @@
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "start:storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook",
-    "runtest": "echo | sudo docker exec --user=$UID -t cypress xvfb-run -s '-screen 0 1920x1080x24' cypress run --headed --config-file cypress.config.ts --browser chrome",
-    "runtest2": "echo | sudo docker exec --user=$UID -t cypress /e2e/run-e2e.sh"
+    "runtest": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome"
   },
   "dependencies": {
     "@ant-design/charts": "^1.3.4",
