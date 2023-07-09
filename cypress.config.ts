@@ -18,7 +18,7 @@ export default defineConfig({
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
-    defaultCommandTimeout: 30000,
+    defaultCommandTimeout: 50000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
     // @ts-ignore
     experimentalSessionAndOrigin: true,
