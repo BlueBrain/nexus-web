@@ -322,7 +322,10 @@ const EditTableForm: React.FC<{
     {
       onSuccess: data => {
         updateTableDataError(null);
-        if (isNil(configuration) || !(configuration as TableColumn[]).length) {
+        if (
+          isNil(configuration) ||
+          (configuration as TableColumn[]).length === 0
+        ) {
           setConfiguration(data);
         }
       },
