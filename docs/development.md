@@ -250,3 +250,55 @@ yarn cy:run --e2e --browser chrome
 ```
 
 All of the tests will run in headless mode.
+
+## Debugging End-to-End test failures in CI
+
+There are a few differences between how our e2e tests run in the ci compared to how we run it locally. We use different instances of delta, postgress, keycloak etc in these 2 environments. Also, the version of chrome you may have locally might differ from the version of chrome being used in the ci. Finally, the machine cpu, memory are also most likely different. This can make debugging test failures in ci difficult.
+
+The videos and screenshots of tests are uploaded to [cypress cloud](https://cloud.cypress.io/). If these are not sufficient to debug the issue, follow along.
+
+1. Remove your node_modules folder locally and reinstall the dependencies to be sure that they are exactly the same as in ci:
+
+```
+rm -rf node_modules
+yarn install --frozen-lockfile
+```
+
+2. Create the image for fusion:
+
+```
+sudo docker build . --tag=nexus-web:fresh
+```
+
+You may need to run the above command with sudo privileges
+
+3. [Optional] You may want to mount your local code inside the container. This will allow you to make changes and see their results quickly, as opposed to make changes, copy the changes into the container, and then see their results. You'll need to update the `cypress` service section inside your `docker-compose.yml` for this:
+
+```
+  cypress:
+    image: 'cypress/included:12.17.0'
+    volumes:   # This is the change
+      - ../:/e2e
+    user: ${CYPRESS_USER} # You can also set a user here to avoid issues with file permissions. This is optional.
+```
+
+4. Start services defined in docker-compose file:
+
+If you followed step 3:
+
+```
+CYPRESS_USER=$UID sudo --preserve-env=CYPRESS_USER docker-compose -f ci/docker-compose.yml up -d
+```
+
+Otherwise:
+
+```
+sudo docker-compose -f ci/docker-compose.yml up -d
+sudo docker cp ./. cypress:/e2e
+```
+
+5. Run the tests as they would in ci:
+
+```
+yarn run cy:ci
+```
