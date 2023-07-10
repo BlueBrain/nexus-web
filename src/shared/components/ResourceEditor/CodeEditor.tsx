@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import codemiror, { EditorConfiguration } from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT } from '.';
+import { INDENT_UNIT } from './editorUtils';
 import { clsx } from 'clsx';
 import { Spin } from 'antd';
 

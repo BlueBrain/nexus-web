@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Switch } from 'antd';
+import { useLocation } from 'react-router';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -26,6 +27,10 @@ import {
   getTokenAndPosAt,
 } from './editorUtils';
 import { RootState } from '../../store/reducers';
+import useEditorTooltip, { CODEMIRROR_LINK_CLASS } from './useEditorTooltip';
+import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
+import ResourceResolutionCache from './ResourcesLRUCache';
+
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -47,8 +52,6 @@ export interface ResourceEditorProps {
   onFullScreen(): void;
 }
 
-export const LINE_HEIGHT = 50;
-export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 
 const isClickableLine = (url: string) => {
@@ -74,7 +77,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onFullScreen,
     showControlPanel = true,
   } = props;
+
   const nexus = useNexusContext();
+  const location = useLocation();
   const onResolutionComplete = useResourceResoultion();
   const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
@@ -86,9 +91,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     dataExplorer: { limited },
     oidc,
+    config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
     dataExplorer: state.dataExplorer,
     oidc: state.oidc,
+    config: state.config,
   }));
   const userAuthenticated = oidc.user && oidc.user.access_token;
   const keyFoldCode = (cm: any) => {
@@ -127,40 +134,46 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
   const onLinksFound = () => {
     const elements = document.getElementsByClassName('cm-string');
-    Array.from(elements).forEach(item => {
+    Array.from(elements).forEach((item, index) => {
       const itemSpan = item as HTMLSpanElement;
       const url = itemSpan.innerText.replace(/^"|"$/g, '');
       if (isClickableLine(url)) {
-        itemSpan.classList.add('fusion-resource-link');
+        itemSpan.classList.add(CODEMIRROR_LINK_CLASS);
       }
     });
   };
 
   const onLinkClick = async (_: any, ev: MouseEvent) => {
     if (codeMirorRef.current) {
-      setLoadingResolution(true);
-      const { coords, token } = getTokenAndPosAt(ev, codeMirorRef.current);
-      const url = token?.string.replace(/\\/g, '').replace(/\"/g, '');
-      if (url && mayBeResolvableLink(url)) {
-        const position = { ...coords, open: true };
-        const {
-          resolvedAs,
-          results,
-          error,
-        } = await editorLinkResolutionHandler({
-          nexus,
-          url,
-          orgLabel,
-          projectLabel,
-        });
-        onResolutionComplete({
-          ...position,
-          resolvedAs,
-          results,
-          error,
-        });
+      try {
+        setLoadingResolution(true);
+        const { coords, token } = getTokenAndPosAt(ev, codeMirorRef.current);
+        const url = token?.string.replace(/\\/g, '').replace(/\"/g, '');
+        if (url && mayBeResolvableLink(url)) {
+          ev.stopPropagation();
+          const {
+            resolvedAs,
+            results,
+            error,
+          } = await editorLinkResolutionHandler({
+            nexus,
+            apiEndpoint,
+            url,
+            orgLabel,
+            projectLabel,
+          });
+          onResolutionComplete({
+            ...coords,
+            resolvedAs,
+            results,
+            error,
+            open: true,
+          });
+        }
+      } catch (error) {
+      } finally {
+        setLoadingResolution(false);
       }
-      setLoadingResolution(false);
     }
   };
 
@@ -201,6 +214,21 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setValid(true);
     setEditing(false);
   };
+
+  useEditorTooltip({
+    orgLabel,
+    projectLabel,
+    isEditing,
+    ref: codeMirorRef,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
+        ResourceResolutionCache.clear();
+      }
+    };
+  }, [ResourceResolutionCache, location]);
 
   return (
     <div
@@ -279,6 +307,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       )}
       <CodeEditor
         busy={busy}
+        ref={codeMirorRef}
         value={stringValue}
         editable={editable}
         handleChange={handleChange}
@@ -286,7 +315,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         loadingResolution={loadingResolution}
         onLinkClick={onLinkClick}
         onLinksFound={onLinksFound}
-        ref={codeMirorRef}
         fullscreen={limited}
       />
     </div>

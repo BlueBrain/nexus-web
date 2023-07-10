@@ -17,6 +17,7 @@
     color: @text-color;
   }
 }
+
 .resource-editor .full-screen-mode {
   .CodeMirror {
     height: calc(100vh - 200px) !important;
@@ -62,8 +63,20 @@
 
 .code-mirror-editor {
   .fusion-resource-link {
-    text-decoration: underline;
-    cursor: pointer;
+    color: #0974ca !important;
+    cursor: pointer !important;
+
+    &.wait-for-tooltip {
+      cursor: progress !important;
+    }
+    &.has-tooltip {
+      cursor: pointer !important;
+    }
+    &.error {
+      cursor: not-allowed !important;
+    }
+    &.downloadable {
+    }
     &::after {
       content: '';
       display: inline-block;
@@ -75,6 +88,7 @@
       margin-left: 10px;
     }
   }
+
   .CodeMirror-lines {
     cursor: text;
   }
@@ -85,6 +99,82 @@
       .fusion-resource-link {
         cursor: progress !important;
       }
+    }
+  }
+}
+
+.CodeMirror-hover-tooltip {
+  background-color: white;
+  border: 1px solid 333;
+  box-shadow: 0 2px 12px rgba(#333, 0.12);
+  border-radius: 4px;
+  font-size: 10pt;
+  overflow: hidden;
+  position: fixed;
+  z-index: 9999;
+  max-width: 600px;
+  white-space: pre-wrap;
+  transition: all 0.4s ease-in-out;
+  padding: 4px 0;
+
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    row-gap: 2px;
+
+    &.error {
+      .tag {
+        background-color: @fusion-danger-color;
+      }
+    }
+
+    &.external {
+      .tag {
+        background-color: @fusion-warning-color;
+        color: #333;
+      }
+    }
+
+    &.resource {
+      .tag {
+        background-color: @fusion-primary-color;
+      }
+    }
+
+    &.resources {
+      .tag {
+        background-color: @fusion-primary-color;
+      }
+    }
+  }
+
+  &-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px 2px 5px;
+    overflow: hidden;
+
+    .tag {
+      color: white;
+      padding: 2px 5px;
+      border-radius: 4px;
+      margin-right: 5px;
+      box-shadow: 0 2px 12px rgba(#333, 0.12);
+    }
+
+    .title {
+      font-weight: 200;
+      font-size: 13px;
+    }
+
+    .download-icon {
+      width: 24px;
+      height: 24px;
+      margin-left: 10px;
+      color: @fusion-primary-color;
     }
   }
 }
