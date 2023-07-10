@@ -9,11 +9,13 @@ import './styles.less';
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
+import { TypeSelector } from './TypeSelector';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
+  type: string | undefined;
   predicateFilter: ((resource: Resource) => boolean) | null;
 }
 
@@ -21,7 +23,7 @@ export const DataExplorer: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
   const [
-    { pageSize, offset, orgAndProject, predicateFilter },
+    { pageSize, offset, orgAndProject, predicateFilter, type },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -32,15 +34,17 @@ export const DataExplorer: React.FC<{}> = () => {
       pageSize: 50,
       offset: 0,
       orgAndProject: undefined,
+      type: undefined,
       predicateFilter: null,
     }
   );
 
   const { data: resources, isLoading } = useQuery({
-    queryKey: ['data-explorer', { pageSize, offset, orgAndProject }],
+    queryKey: ['data-explorer', { pageSize, offset, orgAndProject, type }],
     retry: false,
     queryFn: () => {
       return nexus.Resource.list(orgAndProject?.[0], orgAndProject?.[1], {
+        type,
         from: offset,
         size: pageSize,
       });
@@ -82,6 +86,12 @@ export const DataExplorer: React.FC<{}> = () => {
             } else {
               updateTableConfiguration({ orgAndProject: undefined });
             }
+          }}
+        />
+        <TypeSelector
+          orgAndProject={orgAndProject}
+          onSelect={selectedType => {
+            updateTableConfiguration({ type: selectedType });
           }}
         />
         <PredicateSelector

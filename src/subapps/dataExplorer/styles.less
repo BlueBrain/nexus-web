@@ -42,17 +42,33 @@
     .search-input {
       border-bottom: 1px solid @fusion-neutral-7;
       margin-left: 8px !important;
+      color: @fusion-blue-8 !important;
+      width: 200px;
 
       input {
         color: @fusion-blue-8 !important;
         border: none;
         background: @fusion-main-bg;
         font-weight: 700;
+
+        &::placeholder {
+          color: @fusion-neutral-7;
+          font-weight: 400;
+        }
       }
 
-      button {
-        background: #f5f5f5;
-        border: unset;
+      input:focus {
+        border: none !important;
+      }
+
+      .ant-input-group-addon {
+        background: transparent;
+        border: none;
+      }
+
+      .anticon-search,
+      .anticon-close {
+        color: @fusion-blue-8;
       }
     }
 
