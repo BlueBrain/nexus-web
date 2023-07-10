@@ -14,14 +14,14 @@
     "test:watch": "jest --watch",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
+    "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "start:storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook",
-    "runtest": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome"
+    "build:storybook": "build-storybook"
   },
   "dependencies": {
     "@ant-design/charts": "^1.3.4",

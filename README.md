@@ -55,6 +55,23 @@ Run unit tests:
 yarn test
 ```
 
+Run end to end tests:
+
+1. Ensure you have the `cypress.env.json` file locally.
+2.
+
+a. To run the tests in headed mode:
+
+```
+yarn cy:open
+```
+
+b. To run the tests in headless mode:
+
+```
+yarn cy:run
+```
+
 ## Build for production
 
 Compile app in `dist/` folder.
