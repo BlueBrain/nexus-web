@@ -20,6 +20,7 @@ document.createRange = () => {
 
   return range;
 };
+
 describe('ResourceEditor', () => {
   it('check if code editor will be rendered in the screen', async () => {
     const editor = React.createRef<codemiror.Editor>();

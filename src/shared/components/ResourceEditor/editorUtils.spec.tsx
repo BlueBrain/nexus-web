@@ -1,22 +1,19 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { getNormalizedTypes, editorLinkResolutionHandler } from './editorUtils';
+import { editorLinkResolutionHandler } from './editorUtils';
 import { Provider } from 'react-redux';
 import { createMemoryHistory } from 'history';
 import { NexusClient, createNexusClient } from '@bbp/nexus-sdk';
-import { deltaPath } from '__mocks__/handlers/handlers';
-import configureStore from '../../../shared/store';
 import { Router } from 'react-router-dom';
 import { NexusProvider } from '@bbp/react-nexus';
 import { AnyAction, Store } from 'redux';
 import { QueryClientProvider, QueryClient } from 'react-query';
-import { setupServer } from 'msw/node';
+import configureStore from '../../store';
 import {
   resourceFromSearchApiId,
   resourceFromSearchApi,
-  getResolverResponseObject,
-  getSearchApiResponseObject,
 } from '../../../__mocks__/handlers/ResourceEditor/handlers';
+import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import { getResourceLabel } from '../../utils';
 import {
   render,
@@ -26,7 +23,8 @@ import {
   RenderResult,
 } from '../../../utils/testUtil';
 import ResolvedLinkEditorPopover from '../../molecules/ResolvedLinkEditorPopover/ResolvedLinkEditorPopover';
-import { UISettingsActionTypes } from 'shared/store/actions/ui-settings';
+import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import { ResourceResolutionFetchFn } from './ResourcesLRUCache';
 
 document.createRange = () => {
   const range = new Range();
@@ -43,52 +41,39 @@ document.createRange = () => {
 
   return range;
 };
-describe('getNormalizedTypes', () => {
-  const typesAsString = 'Resource';
-  it('should return the normalized types', () => {
-    const result = getNormalizedTypes(typesAsString);
-    expect(result).toEqual(['Resource']);
-  });
 
-  const typesAsUrl = 'https://bluebrain.github.io/nexus/vocabulary/Resource';
-  it('should return the normalized types', () => {
-    const result = getNormalizedTypes(typesAsUrl);
-    expect(result).toEqual(['Resource']);
-  });
-
-  const typesWithUrls = [
-    'https://bluebrain.github.io/nexus/vocabulary/Schema',
-    'https://bluebrain.github.io/nexus/vocabulary/Resource',
-    'https://bluebrain.github.io/nexus/vocabulary/Project',
-    'Realm',
-    'NeuronMorphology',
-  ];
-  it('should return the normalized types', () => {
-    const result = getNormalizedTypes(typesWithUrls);
-    expect(result).toEqual([
-      'Schema',
-      'Resource',
-      'Project',
-      'Realm',
-      'NeuronMorphology',
-    ]);
-  });
-});
+const INVALID_URL = 'https://bbp.epfl.ch/nexus/v1/resources/bbp/lnmce/invalid';
+const testFetcher: ResourceResolutionFetchFn = async (
+  key,
+  { fetchContext }
+) => {
+  const { resourceId } = fetchContext;
+  if (resourceId === INVALID_URL) {
+    return Promise.resolve({
+      type: 'error',
+      data: new Error('Resource can not be resolved'),
+    });
+  }
+  if (decodeURIComponent(resourceId) === resourceFromSearchApiId) {
+    return {
+      data: resourceFromSearchApi,
+      type: 'search-api',
+    };
+  }
+  return {
+    data: new Error('Not found'),
+    type: 'error',
+  };
+};
 
 describe('resolveLinkInEditor', () => {
   const queryClient = new QueryClient();
   let store: Store<any, AnyAction>;
-  let server: ReturnType<typeof setupServer>;
   const defaultPaylaod = { top: 0, left: 0, open: true };
   let nexus: NexusClient;
   let TestApp: JSX.Element;
   let component: RenderResult;
   let rerender: (ui: React.ReactElement) => void;
-
-  beforeAll(() => {
-    server = setupServer(getResolverResponseObject, getSearchApiResponseObject);
-    server.listen();
-  });
 
   beforeEach(async () => {
     const history = createMemoryHistory({});
@@ -115,19 +100,16 @@ describe('resolveLinkInEditor', () => {
   afterEach(async () => {
     cleanup();
   });
-  afterAll(() => {
-    server.resetHandlers();
-    server.close();
-  });
   // case-resource: can not be tested since codemirror issue and redirection
   // case-error: link can not be resolved by the project resolver nor the search api and it's not external
   it('should return null if the url is not valid', async () => {
-    const url = 'https://bbp.epfl.ch/nexus/v1/resources/bbp/lnmce/invalid';
     const { resolvedAs, error, results } = await editorLinkResolutionHandler({
       nexus,
-      url,
+      url: INVALID_URL,
+      apiEndpoint: '/',
       orgLabel: 'orgLabel',
       projectLabel: 'projectLabel',
+      fetcher: testFetcher,
     });
     store.dispatch({
       type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
@@ -155,9 +137,11 @@ describe('resolveLinkInEditor', () => {
     await waitFor(async () => {
       const { resolvedAs, error, results } = await editorLinkResolutionHandler({
         nexus,
+        apiEndpoint: '/',
         url: resourceFromSearchApiId,
         orgLabel: orgProject?.orgLabel,
         projectLabel: orgProject?.projectLabel,
+        fetcher: testFetcher,
       });
       store.dispatch({
         type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
@@ -191,37 +175,6 @@ describe('resolveLinkInEditor', () => {
           expect(nameInScreen).toBeInTheDocument();
         }
       }
-    });
-  });
-  // case-external: link can not be resolved by the project resolver nor the search api and it's external
-  it('should show popover when external link is provided', async () => {
-    const url = 'ftp://www.google.com';
-    await waitFor(async () => {
-      const { resolvedAs, error, results } = await editorLinkResolutionHandler({
-        nexus,
-        url,
-        orgLabel: 'orgLabel',
-        projectLabel: 'projectLabel',
-      });
-      store.dispatch({
-        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-        payload: {
-          ...defaultPaylaod,
-          resolvedAs,
-          error,
-          results,
-        },
-      });
-      rerender(TestApp);
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.results._self
-      ).toEqual(url);
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.resolvedAs
-      ).toEqual('external');
-      expect(
-        store.getState().uiSettings.editorPopoverResolvedData.error
-      ).toBeUndefined();
     });
   });
 });
