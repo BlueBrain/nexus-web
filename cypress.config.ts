@@ -41,7 +41,8 @@ export default defineConfig({
           launchOptions.args.push(
             '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
           );
-          if (browser.isHeadless) {
+          if (!browser.isHeaded) {
+            console.log('Pushing Headless New');
             launchOptions.args.push('--headless=new');
           }
         }
