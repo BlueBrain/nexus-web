@@ -9,7 +9,6 @@ import {
   defaultMockResult,
   filterByProjectHandler,
   getMockResource,
-  getProjectHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
@@ -36,8 +35,7 @@ describe('DataExplorer', () => {
 
   const server = setupServer(
     dataExplorerPageHandler(defaultMockResult, defaultTotalResults),
-    filterByProjectHandler(defaultMockResult),
-    getProjectHandler()
+    filterByProjectHandler(defaultMockResult)
   );
   const history = createMemoryHistory({});
 
@@ -85,9 +83,12 @@ describe('DataExplorer', () => {
 
   const DropdownSelector = '.ant-select-dropdown';
   const DropdownOptionSelector = 'div.ant-select-item-option-content';
+  const TypeOptionSelector = 'div.ant-select-item-option-content > span';
+
   const PathMenuLabel = 'path-selector';
   const PredicateMenuLabel = 'predicate-selector';
   const ProjectMenuLabel = 'project-filter';
+  const TypeMenuLabel = 'type-filter';
 
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
@@ -162,6 +163,11 @@ describe('DataExplorer', () => {
     return projectColumn?.textContent;
   };
 
+  const typeFromRow = (row: Element) => {
+    const typeColumn = row.querySelectorAll('td')[1]; // second column is the type column
+    return typeColumn?.textContent;
+  };
+
   const visibleTableRows = () => {
     return container.querySelectorAll('table tbody tr.data-explorer-row');
   };
@@ -172,9 +178,12 @@ describe('DataExplorer', () => {
     });
   };
 
-  const getDropdownOption = async (optionLabel: string) =>
-    await screen.getByText(new RegExp(`${optionLabel}$`), {
-      selector: DropdownOptionSelector,
+  const getDropdownOption = async (
+    optionLabel: string,
+    selector: string = DropdownOptionSelector
+  ) =>
+    await screen.getByText(new RegExp(`${optionLabel}$`, 'i'), {
+      selector,
     });
 
   const getRowsForNextPage = async (
@@ -206,10 +215,11 @@ describe('DataExplorer', () => {
 
   const selectOptionFromMenu = async (
     menuAriaLabel: string,
-    optionLabel: string
+    optionLabel: string,
+    optionSelector?: string
   ) => {
     await openMenuFor(menuAriaLabel);
-    const option = await getDropdownOption(optionLabel);
+    const option = await getDropdownOption(optionLabel, optionSelector);
     await userEvent.click(option, { pointerEventsCheck: 0 });
   };
 
@@ -258,6 +268,10 @@ describe('DataExplorer', () => {
     await expectRowCountToBe(10);
     await getRowsForNextPage(resources);
     await expectRowCountToBe(resources.length);
+  };
+
+  const getResetProjectButton = async () => {
+    return await screen.getByTestId('reset-project-button');
   };
 
   it('shows rows for all fetched resources', async () => {
@@ -417,8 +431,31 @@ describe('DataExplorer', () => {
     visibleTableRows().forEach(row =>
       expect(projectFromRow(row)).toMatch(/unhcr/i)
     );
+  });
 
+  it('resets selected project when user clicks reset button', async () => {
+    await expectRowCountToBe(10);
+
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+
+    expect(visibleTableRows().length).toBeLessThan(10);
+
+    const resetProjectButton = await getResetProjectButton();
+    await userEvent.click(resetProjectButton);
+    await expectRowCountToBe(10);
+  });
+
+  it('shows all projects when allProjects option is selected', async () => {
+    await expectRowCountToBe(10);
+
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+
+    expect(visibleTableRows().length).toBeLessThan(10);
+
+    const resetProjectButton = await getResetProjectButton();
+    await userEvent.click(resetProjectButton);
     await selectOptionFromMenu(ProjectMenuLabel, AllProjects);
+
     await expectRowCountToBe(10);
   });
 
@@ -428,6 +465,28 @@ describe('DataExplorer', () => {
 
     await searchForProject('bbc');
     await expectProjectOptionsToMatch('bbc');
+  });
+
+  it('shows resources filtered by the selected type', async () => {
+    await expectRowCountToBe(10);
+    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
+
+    visibleTableRows().forEach(row =>
+      expect(typeFromRow(row)).toMatch(/file/i)
+    );
+  });
+
+  it('only shows types that exist in selected project in type autocomplete', async () => {
+    await openMenuFor(TypeMenuLabel);
+    const optionBefore = await getDropdownOption('Dataset', TypeOptionSelector);
+    expect(optionBefore).toBeInTheDocument();
+
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+
+    await openMenuFor(TypeMenuLabel);
+    expect(
+      getDropdownOption('Dataset', TypeOptionSelector)
+    ).rejects.toThrowError();
   });
 
   it('shows paths as options in a select menu of path selector', async () => {
