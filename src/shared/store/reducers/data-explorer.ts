@@ -40,6 +40,7 @@ const initialState: TDataExplorerState = {
   highlightIndex: -1,
 };
 
+export const DATA_EXPLORER_GRAPH_FLOW_PATH = '/data-explorer/graph-flow';
 export const DATA_EXPLORER_GRAPH_FLOW_DIGEST = 'data-explorer-last-navigation';
 export const MAX_NAVIGATION_ITEMS_IN_STACK = 5;
 const calculateNewDigest = (state: TDataExplorerState) => {
@@ -51,7 +52,7 @@ const calculateNewDigest = (state: TDataExplorerState) => {
       current: omit(clonedState.current, ['highlight']),
     })
   );
-  localStorage.setItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST, digest);
+  sessionStorage.setItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST, digest);
 };
 
 const isShrinkable = (links: TDELink[]) => {
