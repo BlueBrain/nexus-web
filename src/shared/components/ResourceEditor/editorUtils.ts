@@ -1,5 +1,5 @@
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
-import { has, isArray, last } from 'lodash';
+import { has } from 'lodash';
 import { useDispatch } from 'react-redux';
 import useResolvedLinkEditorPopover from '../../molecules/ResolvedLinkEditorPopover/useResolvedLinkEditorPopover';
 import isValidUrl, {
@@ -7,14 +7,21 @@ import isValidUrl, {
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
-import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
 import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import {
+  getNormalizedTypes,
   getOrgAndProjectFromResourceObject,
   getResourceLabel,
 } from '../../utils';
 import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import ResourceResolutionCache, {
+  ResourceResolutionFetchFn,
+  TPagedResources,
+  TResolutionData,
+  TResolutionReturnedData,
+  TResolutionType,
+} from './ResourcesLRUCache';
 
 type TDeltaError = Error & {
   '@type': string;
@@ -28,24 +35,13 @@ type TReturnedResolvedData = Omit<
   'top' | 'left' | 'open'
 >;
 
+export const LINE_HEIGHT = 15;
+export const INDENT_UNIT = 4;
+const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 const isDownloadableLink = (resource: Resource) => {
   return Boolean(
     resource['@type'] === 'File' || resource['@type']?.includes('File')
   );
-};
-export const getNormalizedTypes = (types?: string | string[]) => {
-  if (types) {
-    if (isArray(types)) {
-      return types.map(item => {
-        if (isValidUrl(item)) {
-          return item.split('/').pop()!;
-        }
-        return item;
-      });
-    }
-    return [last(types.split('/'))!];
-  }
-  return [];
 };
 export const mayBeResolvableLink = (url: string): boolean => {
   return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
@@ -69,84 +65,107 @@ export const getDataExplorerResourceItemArray = (
         data._rev,
       ]) as TDEResource;
 };
-const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
   const node = e.target || e.srcElement;
   const text =
     (node as HTMLElement).innerText || (node as HTMLElement).textContent;
-
+  const editorRect = (e.target as HTMLElement).getBoundingClientRect();
   for (let i = 0; i < NEAR_BY.length; i += 2) {
     const coords = {
       left: e.pageX + NEAR_BY[i],
       top: e.pageY + NEAR_BY[i + 1],
     };
-    const pos = current.coordsChar({
-      ...coords,
-    });
+    const pos = current.coordsChar(coords);
     const token = current.getTokenAt(pos);
     if (token && token.string === text) {
       return {
         token,
-        coords,
+        coords: {
+          left: editorRect.left,
+          top: coords.top + LINE_HEIGHT,
+        },
       };
     }
   }
   return {
     token: null,
-    coords: { left: e.pageX, top: e.pageY },
+    coords: { left: editorRect.left, top: e.pageY },
   };
 }
 export async function editorLinkResolutionHandler({
   nexus,
+  apiEndpoint,
   orgLabel,
   projectLabel,
   url,
+  fetcher,
 }: {
   nexus: NexusClient;
+  apiEndpoint: string;
   url: string;
   orgLabel: string;
   projectLabel: string;
+  fetcher?: ResourceResolutionFetchFn;
 }): Promise<TReturnedResolvedData> {
-  let data;
-  try {
-    // case: link resolved by the project resolver
-    data = await fetchResourceByResolver({
-      nexus,
-      orgLabel,
-      projectLabel,
-      resourceId: encodeURIComponent(url),
-    });
-    const entity = getOrgAndProjectFromResourceObject(data);
-    const isDownloadable = isDownloadableLink(data);
-    // case-resource: link is resolved as a resource by project resolver
-    // next-action: open resource editor
-    return {
-      resolvedAs: 'resource',
-      results: {
-        isDownloadable,
-        _self: data._self,
-        title: getResourceLabel(data),
-        types: getNormalizedTypes(data['@type']),
-        resource: getDataExplorerResourceItemArray(
-          entity ?? { orgLabel: '', projectLabel: '' },
-          data
-        ),
+  const key = `${orgLabel}/${projectLabel}/${url}`;
+  let data: TResolutionData;
+  let type: TResolutionType;
+  if (fetcher) {
+    ({ data, type } = await fetcher(key, {
+      fetchContext: {
+        nexus,
+        apiEndpoint,
+        orgLabel,
+        projectLabel,
+        resourceId: encodeURIComponent(url),
       },
-    };
-  } catch (error) {
-    try {
-      // cases: using nexus search api to resolve the link
-      data = await nexus.Resource.list(undefined, undefined, {
-        locate: url,
-      });
-      if (!data._total || (!data._total && isExternalLink(url))) {
+    }));
+  } else {
+    ({ data, type } = await ResourceResolutionCache.fetch(key, {
+      fetchContext: {
+        nexus,
+        apiEndpoint,
+        orgLabel,
+        projectLabel,
+        resourceId: encodeURIComponent(url),
+      },
+    }));
+  }
+  switch (type) {
+    case 'resolver-api': {
+      const details: Resource = data as Resource;
+      const entity = getOrgAndProjectFromResourceObject(details);
+      const isDownloadable = isDownloadableLink(details);
+      // case-resource: link is resolved as a resource by project resolver
+      // next-action: open resource editor
+      return {
+        resolvedAs: 'resource',
+        results: {
+          isDownloadable,
+          _self: details._self,
+          title: getResourceLabel(details),
+          types: getNormalizedTypes(details['@type']),
+          resource: getDataExplorerResourceItemArray(
+            entity ?? { orgLabel: '', projectLabel: '' },
+            details
+          ),
+        },
+      };
+    }
+    case 'search-api': {
+      const details = data as TPagedResources;
+      if (!details._total || (!details._total && isExternalLink(url))) {
         // case-error: link is not resolved by nither project resolver nor nexus search api
         // next-action: throw error and capture it in the catch block
-        throw new Error('Resource can not be resolved');
-      } else if (data._total === 1) {
+        return {
+          error: 'Resource can not be resolved',
+          resolvedAs: 'error',
+        };
+      }
+      if (details._total === 1) {
         // case-resource: link is resolved as a resource by nexus search api
         // next-action: open resource editor
-        const result = data._results[0];
+        const result = details._results[0];
         const isDownloadable = isDownloadableLink(result);
         const entity = getOrgAndProjectFromResourceObject(result);
         return {
@@ -162,29 +181,30 @@ export async function editorLinkResolutionHandler({
             ),
           },
         };
-      } else {
-        // case-resources: link is resolved as a list of resources by nexus search api
-        // next-action: open resources list in the popover
-        return {
-          resolvedAs: 'resources',
-          results: data._results.map(item => {
-            const isDownloadable = isDownloadableLink(item);
-            const entity = getOrgAndProjectFromResourceObject(item);
-            return {
-              isDownloadable,
-              _self: item._self,
-              title: getResourceLabel(item),
-              types: getNormalizedTypes(item['@type']),
-              resource: getDataExplorerResourceItemArray(
-                entity ?? { orgLabel: '', projectLabel: '' },
-                item
-              ),
-            };
-          }),
-        };
       }
-    } catch (error) {
-      // case-external: link is external
+      // case-resources: link is resolved as a list of resources by nexus search api
+      // next-action: open resources list in the popover
+      return {
+        resolvedAs: 'resources',
+        results: details._results.map((item: Resource) => {
+          const isDownloadable = isDownloadableLink(item);
+          const entity = getOrgAndProjectFromResourceObject(item);
+          return {
+            isDownloadable,
+            _self: item._self,
+            title: getResourceLabel(item),
+            types: getNormalizedTypes(item['@type']),
+            resource: getDataExplorerResourceItemArray(
+              entity ?? { orgLabel: '', projectLabel: '' },
+              item
+            ),
+          };
+        }),
+      };
+    }
+    case 'error':
+    default: {
+      const details = data as any;
       if (isExternalLink(url)) {
         return {
           resolvedAs: 'external',
@@ -198,9 +218,9 @@ export async function editorLinkResolutionHandler({
       // case-error: link is not resolved by nither project resolver nor nexus search api
       // and it's not an external link
       return {
-        error: has(error, 'details')
-          ? (error as TDeltaError).details
-          : (error as TErrorMessage).message ?? JSON.stringify(error),
+        error: has(details, 'details')
+          ? (details as TDeltaError).details
+          : (details as TErrorMessage).message ?? JSON.stringify(details),
         resolvedAs: 'error',
       };
     }
@@ -209,7 +229,11 @@ export async function editorLinkResolutionHandler({
 
 export const useResourceResoultion = () => {
   const dispatch = useDispatch();
-  const { navigateResourceHandler } = useResolvedLinkEditorPopover();
+  const {
+    navigateResourceHandler,
+    downloadBinaryAsyncHandler,
+  } = useResolvedLinkEditorPopover();
+
   return ({
     resolvedAs,
     error,
@@ -217,8 +241,18 @@ export const useResourceResoultion = () => {
     top,
     left,
   }: TEditorPopoverResolvedData) => {
-    if (resolvedAs === 'resource' && !(results as TDELink).isDownloadable) {
-      return navigateResourceHandler({ ...(results as TDELink) });
+    if (resolvedAs === 'resource') {
+      const result = results as TDELink;
+      if (result.isDownloadable) {
+        return downloadBinaryAsyncHandler({
+          orgLabel: result.resource?.[0]!,
+          projectLabel: result.resource?.[1]!,
+          resourceId: result.resource?.[2]!,
+          ext: result.resource?.[4] ?? 'json',
+          title: result.title,
+        });
+      }
+      return navigateResourceHandler(result);
     }
     if (resolvedAs === 'external') {
       return window.open(
@@ -230,11 +264,11 @@ export const useResourceResoultion = () => {
     return dispatch({
       type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
       payload: {
+        top,
+        left,
         resolvedAs,
         error,
         results,
-        top,
-        left,
         open: true,
       },
     });
