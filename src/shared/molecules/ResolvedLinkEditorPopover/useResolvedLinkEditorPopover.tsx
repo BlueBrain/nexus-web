@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { Resource } from '@bbp/nexus-sdk';
 import { RootState } from '../../store/reducers';
-import { getNormalizedTypes } from '../../components/ResourceEditor/editorUtils';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import {
   TDELink,
@@ -11,7 +10,11 @@ import {
   InitNewVisitDataExplorerGraphView,
 } from '../../store/reducers/data-explorer';
 import { editorPopoverResolvedDataInitialValue } from '../../store/reducers/ui-settings';
-import { getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
+import {
+  getNormalizedTypes,
+  getOrgAndProjectFromProjectId,
+  getResourceLabel,
+} from '../../utils';
 import { parseResourceId } from '../../components/Preview/Preview';
 import { download } from '../../utils/download';
 
@@ -24,10 +27,6 @@ const useResolvedLinkEditorPopover = () => {
     projectLabel: string;
     resourceId: string;
   }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
-
-  const {
-    editorPopoverResolvedData: { open, error, resolvedAs, results },
-  } = useSelector((state: RootState) => state.uiSettings);
 
   const { pathname, search, state } = useLocation();
 
