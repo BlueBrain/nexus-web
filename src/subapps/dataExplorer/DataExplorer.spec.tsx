@@ -6,9 +6,10 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   dataExplorerPageHandler,
-  defaultMockResult,
   filterByProjectHandler,
+  getCompleteResources,
   getMockResource,
+  sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
@@ -19,7 +20,6 @@ import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
 import {
   CONTAINS,
-  DEFAULT_OPTION,
   DOES_NOT_CONTAIN,
   DOES_NOT_EXIST,
   EXISTS,
@@ -29,13 +29,16 @@ import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import configureStore from '../../shared/store';
+import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
+  const mockResourcesOnPage1: Resource[] = getCompleteResources();
 
   const server = setupServer(
-    dataExplorerPageHandler(defaultMockResult, defaultTotalResults),
-    filterByProjectHandler(defaultMockResult)
+    dataExplorerPageHandler(undefined, defaultTotalResults),
+    sourceResourceHandler(),
+    filterByProjectHandler()
   );
   const history = createMemoryHistory({});
 
@@ -83,7 +86,7 @@ describe('DataExplorer', () => {
 
   const DropdownSelector = '.ant-select-dropdown';
   const DropdownOptionSelector = 'div.ant-select-item-option-content';
-  const TypeOptionSelector = 'div.ant-select-item-option-content > span';
+  const CustomOptionSelector = 'div.ant-select-item-option-content > span';
 
   const PathMenuLabel = 'path-selector';
   const PredicateMenuLabel = 'predicate-selector';
@@ -108,15 +111,18 @@ describe('DataExplorer', () => {
     return header;
   };
 
-  const getTextForColumn = async (resource: Resource, colName: string) => {
-    const selfCell = await screen.getAllByText(
-      new RegExp(resource._self, 'i'),
-      {
-        selector: 'td',
-      }
-    );
+  const getTotalColumns = () => {
+    return Array.from(container.querySelectorAll('th'));
+  };
 
-    const allCellsForRow = Array.from(selfCell[0].parentElement!.childNodes);
+  const expectColumHeaderToNotExist = async (name: string) => {
+    expect(expectColumHeaderToExist(name)).rejects.toThrow();
+  };
+
+  const getTextForColumn = async (resource: Resource, colName: string) => {
+    const row = await screen.getByTestId(resource._self);
+
+    const allCellsForRow = Array.from(row.childNodes);
     const colIndex = Array.from(
       container.querySelectorAll('th')
     ).findIndex(header =>
@@ -126,13 +132,7 @@ describe('DataExplorer', () => {
   };
 
   const getRowForResource = async (resource: Resource) => {
-    const selfCell = await screen.getAllByText(
-      new RegExp(resource._self, 'i'),
-      {
-        selector: 'td',
-      }
-    );
-    const row = selfCell[0].parentElement;
+    const row = await screen.getByTestId(resource._self);
     expect(row).toBeInTheDocument();
     return row!;
   };
@@ -190,7 +190,10 @@ describe('DataExplorer', () => {
     resources: Resource[],
     total: number = 300
   ) => {
-    server.use(dataExplorerPageHandler(resources, total));
+    server.use(
+      sourceResourceHandler(resources),
+      dataExplorerPageHandler(resources, total)
+    );
 
     const pageInput = await screen.getByRole('listitem', { name: '2' });
     expect(pageInput).toBeInTheDocument();
@@ -213,12 +216,17 @@ describe('DataExplorer', () => {
     return menuDropdown;
   };
 
+  const selectPath = async (path: string) => {
+    selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
+  };
+
   const selectOptionFromMenu = async (
     menuAriaLabel: string,
     optionLabel: string,
     optionSelector?: string
   ) => {
     await openMenuFor(menuAriaLabel);
+    const allOptions = getVisibleOptionsFromMenu();
     const option = await getDropdownOption(optionLabel, optionSelector);
     await userEvent.click(option, { pointerEventsCheck: 0 });
   };
@@ -228,11 +236,11 @@ describe('DataExplorer', () => {
    * NOTE: Since antd menus use virtual scroll, not all options inside the menu are visible.
    * This function only returns those options that are visible.
    */
-  const getVisibleOptionsFromMenu = () => {
+  const getVisibleOptionsFromMenu = (
+    selector: string = DropdownOptionSelector
+  ) => {
     const menuDropdown = document.querySelector(DropdownSelector);
-    return Array.from(
-      menuDropdown?.querySelectorAll(DropdownOptionSelector) ?? []
-    );
+    return Array.from(menuDropdown?.querySelectorAll(selector) ?? []);
   };
 
   const getTotalSizeOfDataset = async (expectedCount: string) => {
@@ -274,20 +282,56 @@ describe('DataExplorer', () => {
     return await screen.getByTestId('reset-project-button');
   };
 
+  const showMetadataSwitch = async () =>
+    await screen.getByLabelText('Show metadata');
+
+  it('shows columns for fields that are only in source data', async () => {
+    await expectRowCountToBe(10);
+    const column = await expectColumHeaderToExist('userProperty1');
+    expect(column).toBeInTheDocument();
+  });
+
   it('shows rows for all fetched resources', async () => {
     await expectRowCountToBe(10);
   });
 
-  it('shows columns for each top level property in resources', async () => {
+  it('shows only user columns for each top level property by default', async () => {
     await expectRowCountToBe(10);
     const seenColumns = new Set();
 
-    for (const mockResource of defaultMockResult) {
+    for (const mockResource of mockResourcesOnPage1) {
       for (const topLevelProperty of Object.keys(mockResource)) {
         if (!seenColumns.has(topLevelProperty)) {
           seenColumns.add(topLevelProperty);
-          const header = getColumnTitle(topLevelProperty);
-          await expectColumHeaderToExist(header);
+
+          if (ALWAYS_DISPLAYED_COLUMNS.has(topLevelProperty)) {
+            await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
+          } else if (isNexusMetadata(topLevelProperty)) {
+            expect(
+              expectColumHeaderToExist(getColumnTitle(topLevelProperty))
+            ).rejects.toThrow();
+          } else {
+            await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
+          }
+        }
+      }
+    }
+
+    expect(seenColumns.size).toBeGreaterThan(1);
+  });
+
+  it('shows user columns for all top level properties when show user metadata clicked', async () => {
+    await expectRowCountToBe(10);
+    const showMetadataButton = await showMetadataSwitch();
+    await userEvent.click(showMetadataButton);
+
+    const seenColumns = new Set();
+
+    for (const mockResource of mockResourcesOnPage1) {
+      for (const topLevelProperty of Object.keys(mockResource)) {
+        if (!seenColumns.has(topLevelProperty)) {
+          seenColumns.add(topLevelProperty);
+          await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
         }
       }
     }
@@ -343,7 +387,7 @@ describe('DataExplorer', () => {
 
   it('shows No data text when values are missing for a column', async () => {
     await expectRowCountToBe(10);
-    const resourceWithMissingProperty = defaultMockResult.find(
+    const resourceWithMissingProperty = mockResourcesOnPage1.find(
       res => !('specialProperty' in res)
     )!;
     const textForSpecialProperty = await getTextForColumn(
@@ -355,7 +399,7 @@ describe('DataExplorer', () => {
 
   it('shows No data text when values is undefined', async () => {
     await expectRowCountToBe(10);
-    const resourceWithUndefinedProperty = defaultMockResult.find(
+    const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
       res => res.specialProperty === undefined
     )!;
     const textForSpecialProperty = await getTextForColumn(
@@ -367,7 +411,7 @@ describe('DataExplorer', () => {
 
   it('does not show No data text when values is null', async () => {
     await expectRowCountToBe(10);
-    const resourceWithUndefinedProperty = defaultMockResult.find(
+    const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
       res => res.specialProperty === null
     )!;
     const textForSpecialProperty = await getTextForColumn(
@@ -380,7 +424,7 @@ describe('DataExplorer', () => {
 
   it('does not show No data when value is empty string', async () => {
     await expectRowCountToBe(10);
-    const resourceWithEmptyString = defaultMockResult.find(
+    const resourceWithEmptyString = mockResourcesOnPage1.find(
       res => res.specialProperty === ''
     )!;
 
@@ -394,7 +438,7 @@ describe('DataExplorer', () => {
 
   it('does not show No data when value is empty array', async () => {
     await expectRowCountToBe(10);
-    const resourceWithEmptyArray = defaultMockResult.find(
+    const resourceWithEmptyArray = mockResourcesOnPage1.find(
       res =>
         Array.isArray(res.specialProperty) && res.specialProperty.length === 0
     )!;
@@ -409,7 +453,7 @@ describe('DataExplorer', () => {
 
   it('does not show No data when value is empty object', async () => {
     await expectRowCountToBe(10);
-    const resourceWithEmptyObject = defaultMockResult.find(
+    const resourceWithEmptyObject = mockResourcesOnPage1.find(
       res =>
         typeof res.specialProperty === 'object' &&
         res.specialProperty !== null &&
@@ -469,7 +513,7 @@ describe('DataExplorer', () => {
 
   it('shows resources filtered by the selected type', async () => {
     await expectRowCountToBe(10);
-    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
+    await selectOptionFromMenu(TypeMenuLabel, 'file', CustomOptionSelector);
 
     visibleTableRows().forEach(row =>
       expect(typeFromRow(row)).toMatch(/file/i)
@@ -478,29 +522,32 @@ describe('DataExplorer', () => {
 
   it('only shows types that exist in selected project in type autocomplete', async () => {
     await openMenuFor(TypeMenuLabel);
-    const optionBefore = await getDropdownOption('Dataset', TypeOptionSelector);
+    const optionBefore = await getDropdownOption(
+      'Dataset',
+      CustomOptionSelector
+    );
     expect(optionBefore).toBeInTheDocument();
 
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
 
     await openMenuFor(TypeMenuLabel);
     expect(
-      getDropdownOption('Dataset', TypeOptionSelector)
+      getDropdownOption('Dataset', CustomOptionSelector)
     ).rejects.toThrowError();
   });
 
   it('shows paths as options in a select menu of path selector', async () => {
+    await expectRowCountToBe(10);
     await openMenuFor('path-selector');
 
-    const pathOptions = getVisibleOptionsFromMenu();
+    const pathOptions = getVisibleOptionsFromMenu(CustomOptionSelector);
 
-    const expectedPaths = getAllPaths(defaultMockResult);
+    const expectedPaths = getAllPaths(mockResourcesOnPage1);
     expect(expectedPaths.length).toBeGreaterThanOrEqual(
-      Object.keys(defaultMockResult[0]).length
+      Object.keys(mockResourcesOnPage1[0]).length
     );
-    expect(pathOptions[0].innerHTML).toMatch(DEFAULT_OPTION);
 
-    pathOptions.slice(1).forEach((path, index) => {
+    pathOptions.forEach((path, index) => {
       expect(path.innerHTML).toMatch(
         new RegExp(`${expectedPaths[index]}$`, 'i')
       );
@@ -516,11 +563,11 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(1);
 
-    await selectOptionFromMenu(PathMenuLabel, 'edition');
+    await selectPath('edition');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(2);
   });
@@ -532,7 +579,7 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
     const valueInput = await screen.getByPlaceholderText('type the value...');
@@ -552,7 +599,7 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
     await expectRowCountToBe(3);
@@ -565,7 +612,7 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
@@ -578,7 +625,7 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_CONTAIN);
     const valueInput = await screen.getByPlaceholderText('type the value...');
@@ -603,7 +650,7 @@ describe('DataExplorer', () => {
 
     expect(history.location.pathname).not.toContain('self1');
 
-    const firstDataRow = await getRowForResource(defaultMockResult[0]);
+    const firstDataRow = await getRowForResource(mockResourcesOnPage1[0]);
     await userEvent.click(firstDataRow);
 
     expect(history.location.pathname).toContain('self1');
@@ -650,12 +697,31 @@ describe('DataExplorer', () => {
       getMockResource('self3', { year: 2013 }),
     ]);
 
-    await selectOptionFromMenu(PathMenuLabel, 'author');
+    await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
 
     const totalFromFrontendAfter = await getFilteredResultsCount(2);
     expect(totalFromFrontendAfter).toBeVisible();
+  });
+
+  it('shows column for metadata path even if toggle for show metadata is off', async () => {
+    const metadataProperty = '_createdBy';
+    await expectRowCountToBe(10);
+
+    await expectColumHeaderToNotExist(metadataProperty);
+
+    const originalColumns = getTotalColumns().length;
+
+    await selectOptionFromMenu(
+      PathMenuLabel,
+      metadataProperty,
+      CustomOptionSelector
+    );
+    await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+
+    await expectColumHeaderToExist(metadataProperty);
+    expect(getTotalColumns().length).toEqual(originalColumns + 1);
   });
 });
