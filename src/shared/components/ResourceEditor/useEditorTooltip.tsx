@@ -4,10 +4,10 @@ import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import {
-    TEditorPopoverResolvedData,
-    editorLinkResolutionHandler,
-    getTokenAndPosAt,
-    mayBeResolvableLink,
+  TEditorPopoverResolvedData,
+  editorLinkResolutionHandler,
+  getTokenAndPosAt,
+  mayBeResolvableLink,
 } from './editorUtils';
 import { TDELink } from '../../store/reducers/data-explorer';
 import { RootState } from '../../store/reducers';
@@ -18,387 +18,388 @@ const downloadImg = require('../../images/DownloadingLoop.svg');
 export const CODEMIRROR_HOVER_CLASS = 'CodeMirror-hover-tooltip';
 export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 type TTooltipCreator = Pick<
-    TEditorPopoverResolvedData,
-    'error' | 'resolvedAs' | 'results'
+  TEditorPopoverResolvedData,
+  'error' | 'resolvedAs' | 'results'
 >;
 
 function removePopoversFromDOM() {
-    const popovers = document.querySelectorAll(
-        `.${CODEMIRROR_HOVER_CLASS}-popover`
-    );
-    popovers.forEach(popover => popover.remove());
+  const popovers = document.querySelectorAll(
+    `.${CODEMIRROR_HOVER_CLASS}-popover`
+  );
+  popovers.forEach(popover => popover.remove());
 }
 function removeTooltipsFromDOM() {
-    const tooltips = document.getElementsByClassName(CODEMIRROR_HOVER_CLASS);
-    tooltips &&
-        Array.from(tooltips).forEach(tooltip => {
-            tooltip.remove();
-        });
+  const tooltips = document.getElementsByClassName(CODEMIRROR_HOVER_CLASS);
+  tooltips &&
+    Array.from(tooltips).forEach(tooltip => {
+      tooltip.remove();
+    });
 }
 
 function createTooltipNode({
-    tag,
-    title,
-    isDownloadable,
+  tag,
+  title,
+  isDownloadable,
 }: {
-    tag: string | null;
-    title: string;
-    isDownloadable?: boolean;
+  tag: string | null;
+  title: string;
+  isDownloadable?: boolean;
 }) {
-    const tooltipItemContent = document.createElement('div');
-    tooltipItemContent.className = 'CodeMirror-hover-tooltip-item';
-    const nodeTag = document.createElement('div');
-    nodeTag.className = 'tag';
-    tag && nodeTag.appendChild(document.createTextNode(tag));
-    tooltipItemContent.appendChild(nodeTag);
+  const tooltipItemContent = document.createElement('div');
+  tooltipItemContent.className = 'CodeMirror-hover-tooltip-item';
+  const nodeTag = document.createElement('div');
+  nodeTag.className = 'tag';
+  tag && nodeTag.appendChild(document.createTextNode(tag));
+  tooltipItemContent.appendChild(nodeTag);
 
-    const nodeTitle = document.createElement('span');
-    nodeTitle.className = 'title';
-    nodeTitle.appendChild(document.createTextNode(title));
-    tooltipItemContent.appendChild(nodeTitle);
+  const nodeTitle = document.createElement('span');
+  nodeTitle.className = 'title';
+  nodeTitle.appendChild(document.createTextNode(title));
+  tooltipItemContent.appendChild(nodeTitle);
 
-    const nodeDownload = isDownloadable && document.createElement('img');
-    nodeDownload && nodeDownload.setAttribute('src', downloadImg);
-    nodeDownload && nodeDownload.classList.add('download-icon');
-    nodeDownload && tooltipItemContent.appendChild(nodeDownload);
+  const nodeDownload = isDownloadable && document.createElement('img');
+  nodeDownload && nodeDownload.setAttribute('src', downloadImg);
+  nodeDownload && nodeDownload.classList.add('download-icon');
+  nodeDownload && tooltipItemContent.appendChild(nodeDownload);
 
-    return tooltipItemContent;
+  return tooltipItemContent;
 }
 function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
-    const tooltipContent = document.createElement('div');
-    tooltipContent.className = clsx(
-        `${CODEMIRROR_HOVER_CLASS}-content`,
-        resolvedAs && resolvedAs
+  const tooltipContent = document.createElement('div');
+  tooltipContent.className = clsx(
+    `${CODEMIRROR_HOVER_CLASS}-content`,
+    resolvedAs && resolvedAs
+  );
+  if (resolvedAs === 'error' && error) {
+    tooltipContent.appendChild(
+      createTooltipNode({
+        tag: 'Error',
+        title: error,
+      })
     );
-    if (resolvedAs === 'error' && error) {
-        tooltipContent.appendChild(
-            createTooltipNode({
-                tag: 'Error',
-                title: error,
-            })
-        );
-        return tooltipContent;
-    }
-    if (resolvedAs === 'resource') {
-        const result = results as TDELink;
-        tooltipContent.appendChild(
-            createTooltipNode({
-                tag: result.resource
-                    ? `${result.resource?.[0]}/${result.resource?.[1]}`
-                    : null,
-                title: result.title ?? result._self,
-                isDownloadable: result.isDownloadable,
-            })
-        );
-        return tooltipContent;
-    }
-    if (resolvedAs === 'resources') {
-        tooltipContent.appendChild(
-            createTooltipNode({
-                tag: 'Multiple',
-                title: `${(results as TDELink[]).length
-                    } resources was found, click to list them`,
-            })
-        );
-        return tooltipContent;
-    }
-    if (resolvedAs === 'external') {
-        tooltipContent.appendChild(
-            createTooltipNode({
-                tag: 'External',
-                title: (results as TDELink).title ?? (results as TDELink)._self,
-            })
-        );
-        return tooltipContent;
-    }
-    return null;
+    return tooltipContent;
+  }
+  if (resolvedAs === 'resource') {
+    const result = results as TDELink;
+    tooltipContent.appendChild(
+      createTooltipNode({
+        tag: result.resource
+          ? `${result.resource?.[0]}/${result.resource?.[1]}`
+          : null,
+        title: result.title ?? result._self,
+        isDownloadable: result.isDownloadable,
+      })
+    );
+    return tooltipContent;
+  }
+  if (resolvedAs === 'resources') {
+    tooltipContent.appendChild(
+      createTooltipNode({
+        tag: 'Multiple',
+        title: `${
+          (results as TDELink[]).length
+        } resources was found, click to list them`,
+      })
+    );
+    return tooltipContent;
+  }
+  if (resolvedAs === 'external') {
+    tooltipContent.appendChild(
+      createTooltipNode({
+        tag: 'External',
+        title: (results as TDELink).title ?? (results as TDELink)._self,
+      })
+    );
+    return tooltipContent;
+  }
+  return null;
 }
 
 function createPopoverContent({
-    results,
-    onClick,
+  results,
+  onClick,
 }: {
-    results: TDELink[];
-    onClick: (result: TDELink) => void;
+  results: TDELink[];
+  onClick: (result: TDELink) => void;
 }) {
-    const tooltipContent = document.createElement('div');
-    tooltipContent.className = clsx(
-        `${CODEMIRROR_HOVER_CLASS}-resources-content`
-    );
-    // create node for each link in results and then append it to the tooltipContent
-    (results as TDELink[]).forEach((link: TDELink) => {
-        const linkNode = createTooltipNode({
-            tag: link.resource ? `${link.resource?.[0]}/${link.resource?.[1]}` : null,
-            title: link.title ?? link._self,
-            isDownloadable: link.isDownloadable,
-        });
-        linkNode.onclick = () => {
-            removePopoversFromDOM();
-            onClick(link);
-        };
-        return tooltipContent.appendChild(linkNode);
+  const tooltipContent = document.createElement('div');
+  tooltipContent.className = clsx(
+    `${CODEMIRROR_HOVER_CLASS}-resources-content`
+  );
+  // create node for each link in results and then append it to the tooltipContent
+  (results as TDELink[]).forEach((link: TDELink) => {
+    const linkNode = createTooltipNode({
+      tag: link.resource ? `${link.resource?.[0]}/${link.resource?.[1]}` : null,
+      title: link.title ?? link._self,
+      isDownloadable: link.isDownloadable,
     });
-    return tooltipContent;
+    linkNode.onclick = () => {
+      removePopoversFromDOM();
+      onClick(link);
+    };
+    return tooltipContent.appendChild(linkNode);
+  });
+  return tooltipContent;
 }
 function useEditorTooltip({
-    ref,
-    isEditing,
-    orgLabel,
-    projectLabel,
+  ref,
+  isEditing,
+  orgLabel,
+  projectLabel,
 }: {
-    ref: React.MutableRefObject<CodeMirror.Editor | undefined>;
-    isEditing: boolean;
-    orgLabel: string;
-    projectLabel: string;
+  ref: React.MutableRefObject<CodeMirror.Editor | undefined>;
+  isEditing: boolean;
+  orgLabel: string;
+  projectLabel: string;
 }) {
-    const nexus = useNexusContext();
-    const {
-        config: { apiEndpoint },
-    } = useSelector((state: RootState) => ({
-        config: state.config,
-    }));
+  const nexus = useNexusContext();
+  const {
+    config: { apiEndpoint },
+  } = useSelector((state: RootState) => ({
+    config: state.config,
+  }));
 
-    const allowTooltip = !isEditing;
+  const allowTooltip = !isEditing;
 
-    React.useEffect(() => {
-        const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
-            ?.current;
-        const editorWrapper = currentEditor.getWrapperElement();
-        function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
-            const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
-            const tooltipRect = tooltip.getBoundingClientRect();
-            if (tooltipRect.height <= editorRect.top) {
-                tooltip.style.top = `${editorRect.top - tooltipRect.height}px`;
-            } else {
-                tooltip.style.top = `${editorRect.bottom}px`;
-            }
-            tooltip.style.left = `${editorRect.left}px`;
+  React.useEffect(() => {
+    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
+      ?.current;
+    const editorWrapper = currentEditor.getWrapperElement();
+    function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
+      const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      if (tooltipRect.height <= editorRect.top) {
+        tooltip.style.top = `${editorRect.top - tooltipRect.height}px`;
+      } else {
+        tooltip.style.top = `${editorRect.bottom}px`;
+      }
+      tooltip.style.left = `${editorRect.left}px`;
+    }
+    function removeTooltipFromDom(tooltip: HTMLDivElement) {
+      if (tooltip.parentNode) {
+        tooltip.parentNode.removeChild(tooltip);
+      }
+    }
+    function hideTooltip(tooltip: HTMLDivElement) {
+      if (!tooltip.parentNode) {
+        return;
+      }
+      setTimeout(() => {
+        removeTooltipFromDom(tooltip);
+      }, 300);
+    }
+    function showTooltip(content: HTMLDivElement, node: HTMLElement) {
+      const tooltip = document.createElement('div');
+      tooltip.className = CODEMIRROR_HOVER_CLASS;
+      tooltip.appendChild(content);
+      document.body.appendChild(tooltip);
+
+      function hide() {
+        if (tooltip) {
+          node.classList.remove('has-tooltip');
+          hideTooltip(tooltip);
+          tooltip.remove();
         }
-        function removeTooltipFromDom(tooltip: HTMLDivElement) {
-            if (tooltip.parentNode) {
-                tooltip.parentNode.removeChild(tooltip);
-            }
+        node.removeEventListener('mouseout', hide);
+        node.removeEventListener('click', hide);
+        node.removeEventListener('scroll', hide);
+      }
+
+      node.addEventListener('mouseout', hide);
+      node.addEventListener('click', hide);
+      node.addEventListener('scroll', hide);
+
+      const pool: ReturnType<typeof setTimeout> = setTimeout(() => {
+        if (tooltip) {
+          hideTooltip(tooltip);
+          tooltip.remove();
         }
-        function hideTooltip(tooltip: HTMLDivElement) {
-            if (!tooltip.parentNode) {
-                return;
+        return clearTimeout(pool);
+      }, 3000);
+
+      return tooltip;
+    }
+
+    async function onMouseOver(ev: MouseEvent) {
+      const node = ev.target as HTMLElement;
+      if (node) {
+        const { token } = getTokenAndPosAt(ev, currentEditor);
+        const content = token?.string || '';
+        const url = content.replace(/\\/g, '').replace(/\"/g, '');
+        if (url && mayBeResolvableLink(url)) {
+          node.classList.add('wait-for-tooltip');
+          removeTooltipsFromDOM();
+          editorLinkResolutionHandler({
+            nexus,
+            apiEndpoint,
+            url,
+            orgLabel,
+            projectLabel,
+          }).then(({ resolvedAs, results, error }) => {
+            const tooltipContent = createTooltipContent({
+              resolvedAs,
+              error,
+              results,
+            });
+            if (tooltipContent) {
+              node.classList.remove('wait-for-tooltip');
+              node.classList.add(
+                resolvedAs === 'error'
+                  ? 'error'
+                  : resolvedAs === 'resource' &&
+                    (results as TDELink).isDownloadable
+                  ? 'downloadable'
+                  : 'has-tooltip'
+              );
+              const tooltip = showTooltip(tooltipContent, node);
+              const calculatePosition = (ev: MouseEvent) =>
+                positionner(ev, tooltip);
+              editorWrapper.addEventListener('mousemove', calculatePosition);
             }
-            setTimeout(() => {
-                removeTooltipFromDom(tooltip);
-            }, 300);
+          });
         }
-        function showTooltip(content: HTMLDivElement, node: HTMLElement) {
-            const tooltip = document.createElement('div');
-            tooltip.className = CODEMIRROR_HOVER_CLASS;
-            tooltip.appendChild(content);
-            document.body.appendChild(tooltip);
+      }
+    }
+    // allow the tooltip only when the editor is not in edition mode
+    // and the popover is not open
+    allowTooltip && editorWrapper.addEventListener('mouseover', onMouseOver);
+    // remove the event listener when not allwoed
+    !allowTooltip &&
+      editorWrapper.removeEventListener('mouseover', onMouseOver);
 
-            function hide() {
-                if (tooltip) {
-                    node.classList.remove('has-tooltip');
-                    hideTooltip(tooltip);
-                    tooltip.remove();
-                }
-                node.removeEventListener('mouseout', hide);
-                node.removeEventListener('click', hide);
-                node.removeEventListener('scroll', hide);
-            }
-
-            node.addEventListener('mouseout', hide);
-            node.addEventListener('click', hide);
-            node.addEventListener('scroll', hide);
-
-            const pool: ReturnType<typeof setTimeout> = setTimeout(() => {
-                if (tooltip) {
-                    hideTooltip(tooltip);
-                    tooltip.remove();
-                }
-                return clearTimeout(pool);
-            }, 3000);
-
-            return tooltip;
-        }
-
-        async function onMouseOver(ev: MouseEvent) {
-            const node = ev.target as HTMLElement;
-            if (node) {
-                const { token } = getTokenAndPosAt(ev, currentEditor);
-                const content = token?.string || '';
-                const url = content.replace(/\\/g, '').replace(/\"/g, '');
-                if (url && mayBeResolvableLink(url)) {
-                    node.classList.add('wait-for-tooltip');
-                    removeTooltipsFromDOM();
-                    editorLinkResolutionHandler({
-                        nexus,
-                        apiEndpoint,
-                        url,
-                        orgLabel,
-                        projectLabel,
-                    }).then(({ resolvedAs, results, error }) => {
-                        const tooltipContent = createTooltipContent({
-                            resolvedAs,
-                            error,
-                            results,
-                        });
-                        if (tooltipContent) {
-                            node.classList.remove('wait-for-tooltip');
-                            node.classList.add(
-                                resolvedAs === 'error'
-                                    ? 'error'
-                                    : resolvedAs === 'resource' &&
-                                        (results as TDELink).isDownloadable
-                                        ? 'downloadable'
-                                        : 'has-tooltip'
-                            );
-                            const tooltip = showTooltip(tooltipContent, node);
-                            const calculatePosition = (ev: MouseEvent) =>
-                                positionner(ev, tooltip);
-                            editorWrapper.addEventListener('mousemove', calculatePosition);
-                        }
-                    });
-                }
-            }
-        }
-        // allow the tooltip only when the editor is not in edition mode
-        // and the popover is not open
-        allowTooltip && editorWrapper.addEventListener('mouseover', onMouseOver);
-        // remove the event listener when not allwoed
-        !allowTooltip &&
-            editorWrapper.removeEventListener('mouseover', onMouseOver);
-
-        // cleanup
-        // remove the event listener when the component is unmounted
-        return () => {
-            allowTooltip &&
-                editorWrapper.removeEventListener('mouseover', onMouseOver);
-        };
-    }, [
-        (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
-        allowTooltip,
-    ]);
+    // cleanup
+    // remove the event listener when the component is unmounted
+    return () => {
+      allowTooltip &&
+        editorWrapper.removeEventListener('mouseover', onMouseOver);
+    };
+  }, [
+    (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
+    allowTooltip,
+  ]);
 }
 function useEditorPopover({
-    ref,
-    orgLabel,
-    projectLabel,
+  ref,
+  orgLabel,
+  projectLabel,
 }: {
-    ref: React.MutableRefObject<CodeMirror.Editor | undefined>;
-    orgLabel: string;
-    projectLabel: string;
+  ref: React.MutableRefObject<CodeMirror.Editor | undefined>;
+  orgLabel: string;
+  projectLabel: string;
 }) {
-    const nexus = useNexusContext();
-    const {
-        navigateResourceHandler,
-        downloadBinaryAsyncHandler,
-    } = useResolutionActions();
-    const {
-        config: { apiEndpoint },
-    } = useSelector((state: RootState) => ({
-        config: state.config,
-    }));
+  const nexus = useNexusContext();
+  const {
+    navigateResourceHandler,
+    downloadBinaryAsyncHandler,
+  } = useResolutionActions();
+  const {
+    config: { apiEndpoint },
+  } = useSelector((state: RootState) => ({
+    config: state.config,
+  }));
 
-    React.useEffect(() => {
-        const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
-            ?.current;
-        const editorWrapper = currentEditor.getWrapperElement();
-        function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
-            const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
-            const tooltipRect = tooltip.getBoundingClientRect();
-            if (tooltipRect.height <= editorRect.top) {
-                tooltip.style.top = `${editorRect.top - tooltipRect.height}px`;
-            } else {
-                tooltip.style.top = `${editorRect.bottom}px`;
-            }
-            tooltip.style.left = `${editorRect.left}px`;
-        }
-        function showTooltip(content: HTMLDivElement, node: HTMLElement) {
-            const tooltip = document.createElement('div');
-            tooltip.className = `${CODEMIRROR_HOVER_CLASS}-popover popover`;
-            tooltip.appendChild(content);
-            document.body.appendChild(tooltip);
-            return tooltip;
-        }
-        function onEditorMouseDown(ev: MouseEvent, node: HTMLElement) {
-            if (
-                ev.target &&
-                !node.contains(ev.target as HTMLElement) &&
-                !(ev.target as HTMLElement).isEqualNode(node) &&
-                (ev.target as HTMLElement).closest('.CodeMirror-wrap')
-            ) {
-                removePopoversFromDOM();
-            }
-            editorWrapper.removeEventListener('mousedown', (ev: MouseEvent) =>
-                onEditorMouseDown(ev, node)
-            );
-        }
-        async function onMouseDown(_: CodeMirror.Editor, ev: MouseEvent) {
-            const node = ev.target as HTMLElement;
-            if (node) {
-                const { token } = getTokenAndPosAt(ev, currentEditor);
-                const content = token?.string || '';
-                const url = content.replace(/\\/g, '').replace(/\"/g, '');
-                if (url && mayBeResolvableLink(url)) {
-                    editorLinkResolutionHandler({
-                        nexus,
-                        apiEndpoint,
-                        url,
-                        orgLabel,
-                        projectLabel,
-                    }).then(({ resolvedAs, results }) => {
-                        switch (resolvedAs) {
-                            case 'resources': {
-                                const tooltipContent = createPopoverContent({
-                                    results: results as TDELink[],
-                                    onClick: navigateResourceHandler,
-                                });
-                                if (tooltipContent) {
-                                    const tooltip = showTooltip(tooltipContent, node);
-                                    positionner(ev, tooltip);
-                                    editorWrapper.addEventListener(
-                                        'mousedown',
-                                        (ev: MouseEvent) => onEditorMouseDown(ev, node)
-                                    );
-                                }
-                                break;
-                            }
-                            case 'resource': {
-                                const result = results as TDELink;
-                                if (result.isDownloadable) {
-                                    return downloadBinaryAsyncHandler({
-                                        orgLabel: result.resource?.[0]!,
-                                        projectLabel: result.resource?.[1]!,
-                                        resourceId: result.resource?.[2]!,
-                                        ext: result.resource?.[4] ?? 'json',
-                                        title: result.title,
-                                    });
-                                }
-                                return navigateResourceHandler(result);
-                            }
-                            case 'external': {
-                                window.open(
-                                    (results as TDELink)._self,
-                                    '_blank',
-                                    'noopener noreferrer'
-                                );
-                                break;
-                            }
-                            case 'error':
-                            default:
-                                break;
-                        }
-                        return;
-                    });
+  React.useEffect(() => {
+    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
+      ?.current;
+    const editorWrapper = currentEditor.getWrapperElement();
+    function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
+      const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
+      const tooltipRect = tooltip.getBoundingClientRect();
+      if (tooltipRect.height <= editorRect.top) {
+        tooltip.style.top = `${editorRect.top - tooltipRect.height}px`;
+      } else {
+        tooltip.style.top = `${editorRect.bottom}px`;
+      }
+      tooltip.style.left = `${editorRect.left}px`;
+    }
+    function showTooltip(content: HTMLDivElement, node: HTMLElement) {
+      const tooltip = document.createElement('div');
+      tooltip.className = `${CODEMIRROR_HOVER_CLASS}-popover popover`;
+      tooltip.appendChild(content);
+      document.body.appendChild(tooltip);
+      return tooltip;
+    }
+    function onEditorMouseDown(ev: MouseEvent, node: HTMLElement) {
+      if (
+        ev.target &&
+        !node.contains(ev.target as HTMLElement) &&
+        !(ev.target as HTMLElement).isEqualNode(node) &&
+        (ev.target as HTMLElement).closest('.CodeMirror-wrap')
+      ) {
+        removePopoversFromDOM();
+      }
+      editorWrapper.removeEventListener('mousedown', (ev: MouseEvent) =>
+        onEditorMouseDown(ev, node)
+      );
+    }
+    async function onMouseDown(_: CodeMirror.Editor, ev: MouseEvent) {
+      const node = ev.target as HTMLElement;
+      if (node) {
+        const { token } = getTokenAndPosAt(ev, currentEditor);
+        const content = token?.string || '';
+        const url = content.replace(/\\/g, '').replace(/\"/g, '');
+        if (url && mayBeResolvableLink(url)) {
+          editorLinkResolutionHandler({
+            nexus,
+            apiEndpoint,
+            url,
+            orgLabel,
+            projectLabel,
+          }).then(({ resolvedAs, results }) => {
+            switch (resolvedAs) {
+              case 'resources': {
+                const tooltipContent = createPopoverContent({
+                  results: results as TDELink[],
+                  onClick: navigateResourceHandler,
+                });
+                if (tooltipContent) {
+                  const tooltip = showTooltip(tooltipContent, node);
+                  positionner(ev, tooltip);
+                  editorWrapper.addEventListener(
+                    'mousedown',
+                    (ev: MouseEvent) => onEditorMouseDown(ev, node)
+                  );
                 }
+                break;
+              }
+              case 'resource': {
+                const result = results as TDELink;
+                if (result.isDownloadable) {
+                  return downloadBinaryAsyncHandler({
+                    orgLabel: result.resource?.[0]!,
+                    projectLabel: result.resource?.[1]!,
+                    resourceId: result.resource?.[2]!,
+                    ext: result.resource?.[4] ?? 'json',
+                    title: result.title,
+                  });
+                }
+                return navigateResourceHandler(result);
+              }
+              case 'external': {
+                window.open(
+                  (results as TDELink)._self,
+                  '_blank',
+                  'noopener noreferrer'
+                );
+                break;
+              }
+              case 'error':
+              default:
+                break;
             }
+            return;
+          });
         }
-        currentEditor.on('mousedown', onMouseDown);
-        return () => {
-            currentEditor.off('mousedown', onMouseDown);
-        };
-    }, [
-        (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
-        navigateResourceHandler,
-    ]);
+      }
+    }
+    currentEditor.on('mousedown', onMouseDown);
+    return () => {
+      currentEditor.off('mousedown', onMouseDown);
+    };
+  }, [
+    (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
+    navigateResourceHandler,
+  ]);
 }
 
 export { useEditorPopover, useEditorTooltip };
