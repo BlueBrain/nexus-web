@@ -1,28 +1,37 @@
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { has } from 'lodash';
-import { useDispatch } from 'react-redux';
-import useResolvedLinkEditorPopover from '../../molecules/ResolvedLinkEditorPopover/useResolvedLinkEditorPopover';
 import isValidUrl, {
   isExternalLink,
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
-import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
 import {
   getNormalizedTypes,
   getOrgAndProjectFromResourceObject,
   getResourceLabel,
 } from '../../utils';
 import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
-import { UISettingsActionTypes } from '../../store/actions/ui-settings';
 import ResourceResolutionCache, {
   ResourceResolutionFetchFn,
   TPagedResources,
   TResolutionData,
-  TResolutionReturnedData,
   TResolutionType,
 } from './ResourcesLRUCache';
 
+export type TEditorPopoverResolvedAs =
+  | 'resource'
+  | 'resources'
+  | 'external'
+  | 'error'
+  | undefined;
+export type TEditorPopoverResolvedData = {
+  open: boolean;
+  top: number;
+  left: number;
+  results?: TDELink | TDELink[];
+  resolvedAs: TEditorPopoverResolvedAs;
+  error?: any;
+};
 type TDeltaError = Error & {
   '@type': string;
   details: string;
@@ -226,51 +235,3 @@ export async function editorLinkResolutionHandler({
     }
   }
 }
-
-export const useResourceResoultion = () => {
-  const dispatch = useDispatch();
-  const {
-    navigateResourceHandler,
-    downloadBinaryAsyncHandler,
-  } = useResolvedLinkEditorPopover();
-
-  return ({
-    resolvedAs,
-    error,
-    results,
-    top,
-    left,
-  }: TEditorPopoverResolvedData) => {
-    if (resolvedAs === 'resource') {
-      const result = results as TDELink;
-      if (result.isDownloadable) {
-        return downloadBinaryAsyncHandler({
-          orgLabel: result.resource?.[0]!,
-          projectLabel: result.resource?.[1]!,
-          resourceId: result.resource?.[2]!,
-          ext: result.resource?.[4] ?? 'json',
-          title: result.title,
-        });
-      }
-      return navigateResourceHandler(result);
-    }
-    if (resolvedAs === 'external') {
-      return window.open(
-        (results as TDELink)._self,
-        '_blank',
-        'noopener noreferrer'
-      );
-    }
-    return dispatch({
-      type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-      payload: {
-        top,
-        left,
-        resolvedAs,
-        error,
-        results,
-        open: true,
-      },
-    });
-  };
-};

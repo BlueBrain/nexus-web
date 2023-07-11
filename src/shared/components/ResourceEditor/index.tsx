@@ -20,14 +20,12 @@ import isValidUrl, {
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
-import {
-  mayBeResolvableLink,
-  useResourceResoultion,
-  editorLinkResolutionHandler,
-  getTokenAndPosAt,
-} from './editorUtils';
 import { RootState } from '../../store/reducers';
-import useEditorTooltip, { CODEMIRROR_LINK_CLASS } from './useEditorTooltip';
+import {
+  useEditorPopover,
+  useEditorTooltip,
+  CODEMIRROR_LINK_CLASS,
+} from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import ResourceResolutionCache from './ResourcesLRUCache';
 
@@ -77,11 +75,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onFullScreen,
     showControlPanel = true,
   } = props;
-
-  const nexus = useNexusContext();
   const location = useLocation();
-  const onResolutionComplete = useResourceResoultion();
-  const [loadingResolution, setLoadingResolution] = React.useState(false);
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
@@ -143,40 +137,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     });
   };
 
-  const onLinkClick = async (_: any, ev: MouseEvent) => {
-    if (codeMirorRef.current) {
-      try {
-        setLoadingResolution(true);
-        const { coords, token } = getTokenAndPosAt(ev, codeMirorRef.current);
-        const url = token?.string.replace(/\\/g, '').replace(/\"/g, '');
-        if (url && mayBeResolvableLink(url)) {
-          ev.stopPropagation();
-          const {
-            resolvedAs,
-            results,
-            error,
-          } = await editorLinkResolutionHandler({
-            nexus,
-            apiEndpoint,
-            url,
-            orgLabel,
-            projectLabel,
-          });
-          onResolutionComplete({
-            ...coords,
-            resolvedAs,
-            results,
-            error,
-            open: true,
-          });
-        }
-      } catch (error) {
-      } finally {
-        setLoadingResolution(false);
-      }
-    }
-  };
-
   React.useEffect(() => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
@@ -219,6 +179,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     orgLabel,
     projectLabel,
     isEditing,
+    ref: codeMirorRef,
+  });
+  useEditorPopover({
+    orgLabel,
+    projectLabel,
     ref: codeMirorRef,
   });
 
@@ -312,8 +277,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         editable={editable}
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
-        loadingResolution={loadingResolution}
-        onLinkClick={onLinkClick}
         onLinksFound={onLinksFound}
         fullscreen={limited}
       />
