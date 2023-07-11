@@ -302,3 +302,11 @@ sudo docker cp ./. cypress:/e2e
 ```
 yarn run cy:ci
 ```
+
+6. You can also navigate to http://fusion.test:8000 in your browser to see the same instance of fusion that cypress is testing.
+
+7. Remember to stop the services once done:
+
+```
+sudo docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
+```
