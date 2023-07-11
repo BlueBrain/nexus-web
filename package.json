@@ -13,7 +13,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "cy:open": "cypress open",
-    "cy:run": "cypress run",
+    "cy:run": "cypress run --browser chrome",
     "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
     "codecov": "codecov",
