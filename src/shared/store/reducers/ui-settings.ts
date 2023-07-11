@@ -4,16 +4,7 @@ import {
   UISettingsActions,
   UISettingsActionTypes,
 } from '../actions/ui-settings';
-import { TDELink } from './data-explorer';
 
-export const editorPopoverResolvedDataInitialValue = {
-  top: 0,
-  left: 0,
-  open: false,
-  results: [],
-  error: null,
-  resolvedAs: undefined,
-};
 export const DEFAULT_UI_SETTINGS: UISettingsState = {
   openCreationPanel: false,
   pageSizes: {
@@ -23,28 +14,13 @@ export const DEFAULT_UI_SETTINGS: UISettingsState = {
     linksListPageSize: 10,
   },
   currentResourceView: null,
-  editorPopoverResolvedData: editorPopoverResolvedDataInitialValue,
   isAdvancedModeEnabled: false,
 };
-export type TEditorPopoverResolvedAs =
-  | 'resource'
-  | 'resources'
-  | 'external'
-  | 'error'
-  | undefined;
-export type TEditorPopoverResolvedData = {
-  open: boolean;
-  top: number;
-  left: number;
-  results?: TDELink | TDELink[];
-  resolvedAs: TEditorPopoverResolvedAs;
-  error?: any;
-};
+
 export interface UISettingsState {
   openCreationPanel: boolean;
   pageSizes: { [key: string]: number };
   currentResourceView: Resource | null;
-  editorPopoverResolvedData: TEditorPopoverResolvedData;
   isAdvancedModeEnabled: boolean;
 }
 
@@ -71,20 +47,6 @@ export default function uiSettingsReducer(
       return {
         ...state,
         currentResourceView: action.payload,
-      };
-    }
-    case UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER: {
-      return {
-        ...state,
-        editorPopoverResolvedData: {
-          ...state.editorPopoverResolvedData,
-          open: action.payload.open,
-          top: action.payload.top,
-          left: action.payload.left,
-          results: action.payload.results,
-          error: action.payload.error,
-          resolvedAs: action.payload.resolvedAs,
-        },
       };
     }
     case UISettingsActionTypes.ENABLE_ADVANCED_MODE: {
