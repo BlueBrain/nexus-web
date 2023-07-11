@@ -1,10 +1,20 @@
 import { Input, Select } from 'antd';
 import React, { useState } from 'react';
-import { DataExplorerConfiguration, isObject } from './DataExplorer';
+import { DataExplorerConfiguration } from './DataExplorer';
 import './styles.less';
 import { Resource } from '@bbp/nexus-sdk';
 import { normalizeString } from '../../utils/stringUtils';
 import { clsx } from 'clsx';
+import { BaseOptionType } from 'antd/lib/select';
+import { DefaultOptionType } from 'antd/lib/cascader';
+import {
+  ALWAYS_DISPLAYED_COLUMNS,
+  columnFromPath,
+  isObject,
+  isUserColumn,
+  sortColumns,
+} from './DataExplorerUtils';
+import { ClearOutlined } from '@ant-design/icons';
 
 interface Props {
   dataSource: Resource[];
@@ -22,10 +32,6 @@ export const PredicateSelector: React.FC<Props> = ({
   );
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
 
-  const pathOptions = [
-    { value: DEFAULT_OPTION },
-    ...getAllPaths(dataSource).map(path => ({ value: path })),
-  ];
   const predicateFilterOptions: PredicateFilterOptions[] = [
     { value: DEFAULT_OPTION },
     { value: EXISTS },
@@ -40,7 +46,7 @@ export const PredicateSelector: React.FC<Props> = ({
     searchTerm: string | null
   ) => {
     if (path === DEFAULT_OPTION || predicate === DEFAULT_OPTION) {
-      onPredicateChange({ predicateFilter: null });
+      onPredicateChange({ predicateFilter: null, selectedPath: null });
     }
 
     switch (predicate) {
@@ -48,12 +54,14 @@ export const PredicateSelector: React.FC<Props> = ({
         onPredicateChange({
           predicateFilter: (resource: Resource) =>
             checkPathExistence(resource, path, 'exists'),
+          selectedPath: path,
         });
         break;
       case DOES_NOT_EXIST:
         onPredicateChange({
           predicateFilter: (resource: Resource) =>
             checkPathExistence(resource, path, 'does-not-exist'),
+          selectedPath: path,
         });
         break;
       case CONTAINS:
@@ -61,9 +69,10 @@ export const PredicateSelector: React.FC<Props> = ({
           onPredicateChange({
             predicateFilter: (resource: Resource) =>
               doesResourceContain(resource, path, searchTerm, 'contains'),
+            selectedPath: path,
           });
         } else {
-          onPredicateChange({ predicateFilter: null });
+          onPredicateChange({ predicateFilter: null, selectedPath: null });
         }
         break;
       case DOES_NOT_CONTAIN:
@@ -76,14 +85,15 @@ export const PredicateSelector: React.FC<Props> = ({
                 searchTerm,
                 'does-not-contain'
               ),
+            selectedPath: path,
           });
         } else {
-          onPredicateChange({ predicateFilter: null });
+          onPredicateChange({ predicateFilter: null, selectedPath: null });
         }
 
         break;
       default:
-        onPredicateChange({ predicateFilter: null });
+        onPredicateChange({ predicateFilter: null, selectedPath: null });
     }
   };
 
@@ -95,13 +105,15 @@ export const PredicateSelector: React.FC<Props> = ({
       <span className="label">with </span>
 
       <Select
-        options={pathOptions}
+        options={pathOptions([...getAllPaths(dataSource)])}
         onSelect={pathLabel => {
           setPath(pathLabel);
           predicateSelected(pathLabel, predicate, searchTerm);
         }}
+        optionLabelProp="label"
         aria-label="path-selector"
         style={{ width: 200 }}
+        dropdownMatchSelectWidth={false}
         className="select-menu"
         popupClassName="search-menu"
       />
@@ -158,29 +170,36 @@ type PredicateFilterOptions = {
   value: Exclude<PredicateFilterT, null> | typeof DEFAULT_OPTION;
 };
 
-export const pathOptions = (paths: string[]) => [
-  { value: DEFAULT_OPTION },
-  paths.map(path => ({ value: path })),
-];
+// Creates <Option /> element for each path. Also adds a class of "first-metadata-path" for the first path generated for a metadata column.
+export const pathOptions = (paths: string[]) => {
+  let firstMetadataFound = false;
+  const pathOptions: DefaultOptionType[] = [];
 
-const UNDERSCORE = '_';
+  paths.forEach(path => {
+    const column = columnFromPath(path);
+    const isFirstMetadataPath = !isUserColumn(column) && !firstMetadataFound;
+
+    pathOptions.push({
+      value: path,
+      label: (
+        <span
+          className={isFirstMetadataPath ? 'first-metadata-path' : ''}
+          title={path}
+        >
+          {path}
+        </span>
+      ),
+    });
+
+    if (isFirstMetadataPath) {
+      firstMetadataFound = true;
+    }
+  });
+  return pathOptions;
+};
 
 export const getAllPaths = (objects: { [key: string]: any }[]): string[] => {
-  return Array.from(getPathsForResource(objects, '')).sort(
-    (a: string, b: string) => {
-      // Sorts paths alphabetically. Additionally all paths starting with an underscore are sorted at the end of the list (because they represent metadata).
-      if (a.startsWith(UNDERSCORE) && b.startsWith(UNDERSCORE)) {
-        return a.localeCompare(b);
-      }
-      if (a.startsWith(UNDERSCORE)) {
-        return 1;
-      }
-      if (b.startsWith(UNDERSCORE)) {
-        return -1;
-      }
-      return a.localeCompare(b);
-    }
-  );
+  return Array.from(getPathsForResource(objects, '')).sort(sortColumns);
 };
 
 const getPathsForResource = (
@@ -206,7 +225,7 @@ export const checkPathExistence = (
   path: string,
   criteria: 'exists' | 'does-not-exist' = 'exists'
 ): boolean => {
-  if (path in resource) {
+  if (isObject(resource) && path in resource) {
     return criteria === 'exists' ? true : false;
   }
 
@@ -215,7 +234,7 @@ export const checkPathExistence = (
   for (const subpath of subpaths) {
     const valueAtSubpath = resource[subpath];
     const remainingPath = subpaths.slice(1);
-    if (!(subpath in resource)) {
+    if (isObject(resource) && !(subpath in resource)) {
       return criteria === 'exists' ? false : true;
     }
 

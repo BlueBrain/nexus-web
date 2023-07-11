@@ -1,15 +1,18 @@
 import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { notification } from 'antd';
-import { isString } from 'lodash';
-import React, { useReducer } from 'react';
-import { useQuery } from 'react-query';
+import { Switch } from 'antd';
+import React, { useReducer, useState } from 'react';
 import { DataExplorerTable } from './DataExplorerTable';
-import './styles.less';
+import {
+  columnFromPath,
+  isUserColumn,
+  sortColumns,
+  usePaginatedExpandedResources,
+} from './DataExplorerUtils';
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
 import { TypeSelector } from './TypeSelector';
+import './styles.less';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
@@ -17,13 +20,14 @@ export interface DataExplorerConfiguration {
   orgAndProject?: [string, string];
   type: string | undefined;
   predicateFilter: ((resource: Resource) => boolean) | null;
+  selectedPath: string | null;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
-  const nexus = useNexusContext();
+  const [showMetadataColumns, setShowMetadataColumns] = useState(false);
 
   const [
-    { pageSize, offset, orgAndProject, predicateFilter, type },
+    { pageSize, offset, orgAndProject, predicateFilter, type, selectedPath },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -36,34 +40,15 @@ export const DataExplorer: React.FC<{}> = () => {
       orgAndProject: undefined,
       type: undefined,
       predicateFilter: null,
+      selectedPath: null,
     }
   );
 
-  const { data: resources, isLoading } = useQuery({
-    queryKey: ['data-explorer', { pageSize, offset, orgAndProject, type }],
-    retry: false,
-    queryFn: () => {
-      return nexus.Resource.list(orgAndProject?.[0], orgAndProject?.[1], {
-        type,
-        from: offset,
-        size: pageSize,
-      });
-    },
-    onError: error => {
-      notification.error({
-        message: 'Error loading data from the server',
-        description: isString(error) ? (
-          error
-        ) : isObject(error) ? (
-          <div>
-            <strong>{(error as any)['@type']}</strong>
-            <div>{(error as any)['details']}</div>
-          </div>
-        ) : (
-          ''
-        ),
-      });
-    },
+  const { data: resources, isLoading } = usePaginatedExpandedResources({
+    pageSize,
+    offset,
+    orgAndProject,
+    type,
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -101,19 +86,35 @@ export const DataExplorer: React.FC<{}> = () => {
       </div>
 
       {!isLoading && (
-        <DatasetCount
-          nexusTotal={resources?._total ?? 0}
-          totalOnPage={resources?._results?.length ?? 0}
-          totalFiltered={
-            predicateFilter ? displayedDataSource.length : undefined
-          }
-        />
+        <div className="flex-container">
+          <DatasetCount
+            nexusTotal={resources?._total ?? 0}
+            totalOnPage={resources?._results?.length ?? 0}
+            totalFiltered={
+              predicateFilter ? displayedDataSource.length : undefined
+            }
+          />
+          <div className="data-explorer-toggles">
+            <Switch
+              defaultChecked={false}
+              checked={showMetadataColumns}
+              onClick={isChecked => setShowMetadataColumns(isChecked)}
+              id="show-metadata-columns"
+              className="data-explorer-toggle"
+            />
+            <label htmlFor="show-metadata-columns">Show metadata</label>
+          </div>
+        </div>
       )}
 
       <DataExplorerTable
         isLoading={isLoading}
         dataSource={displayedDataSource}
-        columns={columnsFromDataSource(currentPageDataSource)}
+        columns={columnsFromDataSource(
+          currentPageDataSource,
+          showMetadataColumns,
+          selectedPath
+        )}
         total={resources?._total}
         pageSize={pageSize}
         offset={offset}
@@ -123,16 +124,25 @@ export const DataExplorer: React.FC<{}> = () => {
   );
 };
 
-export const isObject = (value: any) => {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-};
-
-export const columnsFromDataSource = (resources: Resource[]): string[] => {
+export const columnsFromDataSource = (
+  resources: Resource[],
+  showMetadataColumns: boolean,
+  selectedPath: string | null
+): string[] => {
   const columnNames = new Set<string>();
 
   resources.forEach(resource => {
     Object.keys(resource).forEach(key => columnNames.add(key));
   });
 
-  return Array.from(columnNames);
+  if (showMetadataColumns) {
+    return Array.from(columnNames).sort(sortColumns);
+  }
+
+  const selectedMetadataColumn = columnFromPath(selectedPath);
+  return Array.from(columnNames)
+    .filter(
+      colName => isUserColumn(colName) || colName === selectedMetadataColumn
+    )
+    .sort(sortColumns);
 };
