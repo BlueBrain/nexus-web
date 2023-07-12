@@ -165,6 +165,7 @@ function useEditorTooltip({
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
       ?.current;
     const editorWrapper = currentEditor.getWrapperElement();
+
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
@@ -175,17 +176,15 @@ function useEditorTooltip({
       }
       tooltip.style.left = `${editorRect.left}px`;
     }
-    function removeTooltipFromDom(tooltip: HTMLDivElement) {
-      if (tooltip.parentNode) {
-        tooltip.parentNode.removeChild(tooltip);
-      }
-    }
+
     function hideTooltip(tooltip: HTMLDivElement) {
       if (!tooltip.parentNode) {
         return;
       }
       setTimeout(() => {
-        removeTooltipFromDom(tooltip);
+        if (tooltip.parentNode) {
+          tooltip.parentNode.removeChild(tooltip);
+        }
       }, 300);
     }
     function showTooltip(content: HTMLDivElement, node: HTMLElement) {
@@ -194,27 +193,27 @@ function useEditorTooltip({
       tooltip.appendChild(content);
       document.body.appendChild(tooltip);
 
-      function hide() {
+      function cleanup() {
         if (tooltip) {
           node.classList.remove('has-tooltip');
           hideTooltip(tooltip);
           tooltip.remove();
         }
-        node.removeEventListener('mouseout', hide);
-        node.removeEventListener('click', hide);
-        node.removeEventListener('scroll', hide);
+        node.removeEventListener('mouseout', cleanup);
+        node.removeEventListener('click', cleanup);
+        node.removeEventListener('scroll', cleanup);
       }
 
-      node.addEventListener('mouseout', hide);
-      node.addEventListener('click', hide);
-      node.addEventListener('scroll', hide);
+      node.addEventListener('mouseout', cleanup);
+      node.addEventListener('click', cleanup);
+      node.addEventListener('scroll', cleanup);
 
-      const pool: ReturnType<typeof setTimeout> = setTimeout(() => {
+      const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
         if (tooltip) {
           hideTooltip(tooltip);
           tooltip.remove();
         }
-        return clearTimeout(pool);
+        return clearTimeout(timeoutId);
       }, 3000);
 
       return tooltip;
