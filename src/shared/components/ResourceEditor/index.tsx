@@ -16,6 +16,7 @@ import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 
 import isValidUrl, {
+  isAllowedProtocal,
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
@@ -53,7 +54,12 @@ export interface ResourceEditorProps {
 const switchMarginRight = { marginRight: 5 };
 
 const isClickableLine = (url: string) => {
-  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+  return (
+    isValidUrl(url) &&
+    isAllowedProtocal(url) &&
+    !isUrlCurieFormat(url) &&
+    !isStorageLink(url)
+  );
 };
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
