@@ -20,6 +20,7 @@ document.createRange = () => {
 
   return range;
 };
+
 describe('ResourceEditor', () => {
   it('check if code editor will be rendered in the screen', async () => {
     const editor = React.createRef<codemiror.Editor>();
@@ -29,12 +30,10 @@ describe('ResourceEditor', () => {
         data-testid="code-mirror-editor"
         value={JSON.stringify(resourceResolverApi)}
         editable={false}
-        onLinkClick={() => {}}
         onLinksFound={onLinksFound}
         busy={false}
         keyFoldCode={() => {}}
         handleChange={() => {}}
-        loadingResolution={false}
         ref={editor}
         fullscreen={false}
       />

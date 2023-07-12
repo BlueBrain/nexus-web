@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import codemiror, { EditorConfiguration } from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT } from '.';
+import { INDENT_UNIT } from './editorUtils';
 import { clsx } from 'clsx';
 import { Spin } from 'antd';
 
@@ -9,11 +9,9 @@ type TCodeEditor = {
   busy: boolean;
   value: string;
   editable: boolean;
-  loadingResolution: boolean;
   fullscreen: boolean;
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
-  onLinkClick(_: any, ev: MouseEvent): void;
   onLinksFound(): void;
 };
 type TEditorConfiguration = EditorConfiguration & {
@@ -28,9 +26,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
       editable,
       fullscreen,
       keyFoldCode,
-      loadingResolution,
       handleChange,
-      onLinkClick,
       onLinksFound,
     },
     ref
@@ -61,14 +57,12 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           }
           className={clsx(
             'code-mirror-editor',
-            loadingResolution && 'resolution-on-progress',
             fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
           editorDidMount={editor => {
             (ref as React.MutableRefObject<codemiror.Editor>).current = editor;
           }}
-          onMouseDown={onLinkClick}
           onUpdate={onLinksFound}
         />
       </Spin>

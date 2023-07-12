@@ -5,6 +5,7 @@ import { clsx } from 'clsx';
 import { RootState } from '../../store/reducers';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
+  DATA_EXPLORER_GRAPH_FLOW_PATH,
   PopulateDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
@@ -14,6 +15,8 @@ import {
 } from '../../molecules/DataExplorerGraphFlowMolecules';
 import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStack/NavigationStack';
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
+import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+
 import './styles.less';
 
 const DataExplorerGraphFlow = () => {
@@ -27,7 +30,7 @@ const DataExplorerGraphFlow = () => {
 
   useEffect(() => {
     if (!digestFirstRender.current) {
-      const state = localStorage.getItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+      const state = sessionStorage.getItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
       if (state) {
         dispatch(PopulateDataExplorerGraphFlow(state));
       }
@@ -37,14 +40,19 @@ const DataExplorerGraphFlow = () => {
 
   useEffect(() => {
     const unlisten = history.listen(location => {
-      if (!location.pathname.startsWith('/data-explorer/graph-flow')) {
+      if (!location.pathname.startsWith(DATA_EXPLORER_GRAPH_FLOW_PATH)) {
         dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
-        localStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+        sessionStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
       }
     });
     return () => unlisten();
   }, []);
 
+  useEffect(() => {
+    return () => {
+      ResourceResolutionCache.clear();
+    };
+  }, [ResourceResolutionCache]);
   if (current === null) {
     return (
       <div className="data-explorer-resolver no-current">

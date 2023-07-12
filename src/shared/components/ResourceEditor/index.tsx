@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Button, Switch } from 'antd';
+import { useLocation } from 'react-router';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
@@ -14,13 +14,22 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
+
 import isValidUrl, {
+  isAllowedProtocal,
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
-import { TToken, resolveLinkInEditor } from './editorUtils';
 import { RootState } from '../../store/reducers';
+import {
+  useEditorPopover,
+  useEditorTooltip,
+  CODEMIRROR_LINK_CLASS,
+} from './useEditorTooltip';
+import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
+import ResourceResolutionCache from './ResourcesLRUCache';
+
 import './ResourceEditor.less';
 
 export interface ResourceEditorProps {
@@ -42,12 +51,15 @@ export interface ResourceEditorProps {
   onFullScreen(): void;
 }
 
-export const LINE_HEIGHT = 50;
-export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
 
 const isClickableLine = (url: string) => {
-  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+  return (
+    isValidUrl(url) &&
+    isAllowedProtocal(url) &&
+    !isUrlCurieFormat(url) &&
+    !isStorageLink(url)
+  );
 };
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
@@ -69,9 +81,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onFullScreen,
     showControlPanel = true,
   } = props;
-
-  const nexus = useNexusContext();
-  const [loadingResolution, setLoadingResolution] = React.useState(false);
+  const location = useLocation();
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
@@ -81,12 +91,13 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     dataExplorer: { limited },
     oidc,
+    config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
     dataExplorer: state.dataExplorer,
     oidc: state.oidc,
+    config: state.config,
   }));
   const userAuthenticated = oidc.user && oidc.user.access_token;
-  const dispatch = useDispatch();
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -123,42 +134,13 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
   const onLinksFound = () => {
     const elements = document.getElementsByClassName('cm-string');
-    Array.from(elements).forEach(item => {
+    Array.from(elements).forEach((item, index) => {
       const itemSpan = item as HTMLSpanElement;
       const url = itemSpan.innerText.replace(/^"|"$/g, '');
       if (isClickableLine(url)) {
-        itemSpan.style.textDecoration = 'underline';
+        itemSpan.classList.add(CODEMIRROR_LINK_CLASS);
       }
     });
-  };
-  const onLinkClick = async (_: any, ev: MouseEvent) => {
-    setLoadingResolution(true);
-    const x = ev.pageX;
-    const y = ev.pageY;
-    const editorPosition = codeMirorRef.current?.coordsChar({
-      left: x,
-      top: y,
-    });
-    const token = (editorPosition
-      ? codeMirorRef.current?.getTokenAt(editorPosition)
-      : { start: 0, end: 0, string: '' }) as TToken;
-    const tokenStart = editorPosition?.ch || 0;
-    // const left = x - ((tokenStart - token.start) * 8);
-    const left = x - LINE_HEIGHT;
-    const top = y - LINE_HEIGHT;
-    const defaultPaylaod = { top, left, open: true };
-    // replace the double quotes in the borns of the string because code mirror will added another double quotes
-    // and it will break the url
-    const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
-    await resolveLinkInEditor({
-      nexus,
-      dispatch,
-      orgLabel,
-      projectLabel,
-      url,
-      defaultPaylaod,
-    });
-    setLoadingResolution(false);
   };
 
   React.useEffect(() => {
@@ -198,6 +180,26 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setValid(true);
     setEditing(false);
   };
+
+  useEditorTooltip({
+    orgLabel,
+    projectLabel,
+    isEditing,
+    ref: codeMirorRef,
+  });
+  useEditorPopover({
+    orgLabel,
+    projectLabel,
+    ref: codeMirorRef,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
+        ResourceResolutionCache.clear();
+      }
+    };
+  }, [ResourceResolutionCache, location]);
 
   return (
     <div
@@ -276,14 +278,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       )}
       <CodeEditor
         busy={busy}
+        ref={codeMirorRef}
         value={stringValue}
         editable={editable}
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
-        loadingResolution={loadingResolution}
-        onLinkClick={onLinkClick}
         onLinksFound={onLinksFound}
-        ref={codeMirorRef}
         fullscreen={limited}
       />
     </div>

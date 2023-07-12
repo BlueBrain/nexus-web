@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { renderHook } from '@testing-library/react-hooks';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
-import { NexusProvider, useNexusContext } from '@bbp/react-nexus';
+import { NexusProvider } from '@bbp/react-nexus';
 import {
   ProjectList,
   ProjectResponseCommon,
@@ -13,13 +13,7 @@ import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
-import {
-  render,
-  fireEvent,
-  waitFor,
-  screen,
-  server,
-} from '../../utils/testUtil';
+import { render, waitFor, screen, server } from '../../utils/testUtil';
 import configureStore from '../../shared/store';
 import OrganizationProjectsPage, {
   useInfiniteOrganizationProjectsQuery,

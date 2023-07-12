@@ -7,19 +7,20 @@ import {
 } from '@bbp/nexus-sdk';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
-import ResourceEditor from '../components/ResourceEditor';
+import { pick } from 'lodash';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  getDataExplorerResourceItemArray,
-  getNormalizedTypes,
-} from '../components/ResourceEditor/editorUtils';
+import ResourceEditor from '../components/ResourceEditor';
+import { getDataExplorerResourceItemArray } from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 import {
   InitDataExplorerGraphFlowLimitedVersion,
   InitNewVisitDataExplorerGraphView,
 } from '../store/reducers/data-explorer';
-import { getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';
-import { pick } from 'lodash';
+import {
+  getNormalizedTypes,
+  getOrgAndProjectFromResourceObject,
+  getResourceLabel,
+} from '../utils';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;

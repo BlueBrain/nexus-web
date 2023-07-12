@@ -34,5 +34,15 @@ function isExternalLink(url: string): boolean {
 function isStorageLink(url: string): boolean {
   return url.startsWith('file:///gpfs');
 }
-export { easyValidURL, isUrlCurieFormat, isExternalLink, isStorageLink };
+function isAllowedProtocal(url: string): boolean {
+  return url.startsWith('https://') || url.startsWith('http://');
+}
+
+export {
+  easyValidURL,
+  isUrlCurieFormat,
+  isExternalLink,
+  isStorageLink,
+  isAllowedProtocal,
+};
 export default isValidUrl;
