@@ -9,13 +9,10 @@ import {
   PopulateDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
-import {
-  NavigationBackButton,
-  NavigationCollapseButton,
-} from '../../molecules/DataExplorerGraphFlowMolecules';
 import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStack/NavigationStack';
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
 import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
 
 import './styles.less';
 
@@ -24,9 +21,20 @@ const DataExplorerGraphFlow = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const digestFirstRender = useRef<boolean>(false);
-  const { links, shrinked, current } = useSelector(
+  const { current, rightNodes, leftNodes } = useSelector(
     (state: RootState) => state.dataExplorer
   );
+
+  const {
+    leftShrinked,
+    rightShrinked,
+    leftLinks,
+    rightLinks,
+    onLeftShrink,
+    onLeftExpand,
+    onRightShrink,
+    onRightExpand,
+  } = useNavigationStackManager();
 
   useEffect(() => {
     if (!digestFirstRender.current) {
@@ -75,25 +83,34 @@ const DataExplorerGraphFlow = () => {
     <div
       className={clsx(
         'data-explorer-resolver',
-        shrinked && 'shrinked',
-        !links.length ? 'no-links' : 'with-links'
+        leftLinks.length && 'left-existed',
+        rightLinks.length && 'right-existed',
+        leftShrinked && 'left-shrinked',
+        rightShrinked && 'right-shrinked',
+        !leftNodes.links.length && !rightNodes.links.length
+          ? 'no-links'
+          : 'with-links'
       )}
       style={
         {
-          '--links-count': shrinked ? 3 : links.length,
+          '--left--links-count': leftShrinked ? 3 : leftNodes.links.length,
+          '--right--links-count': rightShrinked ? 3 : rightNodes.links.length,
         } as CSSProperties
       }
     >
-      <div className="degf__navigation-stack">
-        <NavigationStack />
-      </div>
-      <div className="degf__navigation-back">
-        <NavigationCollapseButton />
-        <NavigationBackButton />
-      </div>
+      {!!leftLinks.length && (
+        <div className="degf__navigation-stack">
+          <NavigationStack key="navigation-stack-left" side="left" />
+        </div>
+      )}
       <div className="degf__content">
         <DataExplorerContentPage />
       </div>
+      {!!rightLinks.length && (
+        <div className="degf__navigation-stack">
+          <NavigationStack key="navigation-stack-right" side="right" />
+        </div>
+      )}
     </div>
   );
 };
