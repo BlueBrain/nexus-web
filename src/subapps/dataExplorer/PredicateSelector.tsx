@@ -62,6 +62,8 @@ export const PredicateSelector: React.FC<Props> = ({
             predicateFilter: (resource: Resource) =>
               doesResourceContain(resource, path, searchTerm, 'contains'),
           });
+        } else {
+          onPredicateChange({ predicateFilter: null });
         }
         break;
       case DOES_NOT_CONTAIN:
@@ -75,7 +77,10 @@ export const PredicateSelector: React.FC<Props> = ({
                 'does-not-contain'
               ),
           });
+        } else {
+          onPredicateChange({ predicateFilter: null });
         }
+
         break;
       default:
         onPredicateChange({ predicateFilter: null });
