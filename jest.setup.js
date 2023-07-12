@@ -1,4 +1,3 @@
-const { rest } = require('msw');
 fetch = require('node-fetch');
 window.fetch = fetch;
 
