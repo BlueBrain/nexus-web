@@ -1,24 +1,23 @@
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { ShrinkOutlined } from '@ant-design/icons';
-import { RootState } from '../../store/reducers';
-import {
-  MAX_NAVIGATION_ITEMS_IN_STACK,
-  ShrinkNavigationStackDataExplorerGraphFlow,
-} from '../../store/reducers/data-explorer';
-import './styles.less';
+import * as React from 'react';
+import { clsx } from 'clsx';
+import { Tooltip } from 'antd';
+import CollapseIcon from '../../components/Icons/Collapse';
+import { TNavigationStackSide } from '../../store/reducers/data-explorer';
 
-const NavigationHamburguer = () => {
-  const { shrinked, links } = useSelector(
-    (state: RootState) => state.dataExplorer
+const NavigationCollapseButton = ({
+  side,
+  onExpand,
+}: {
+  side: TNavigationStackSide;
+  onExpand: () => void;
+}) => {
+  return (
+    <Tooltip placement="top" title={`Collapse ${side} side`}>
+      <button className={clsx('collapse-btn', side)} onClick={onExpand}>
+        <CollapseIcon color="white" />
+      </button>
+    </Tooltip>
   );
-  const dispatch = useDispatch();
-  const onShrink = () => dispatch(ShrinkNavigationStackDataExplorerGraphFlow());
-  return !shrinked && links.length > MAX_NAVIGATION_ITEMS_IN_STACK ? (
-    <button className="navigation-collapse-btn" onClick={onShrink}>
-      <ShrinkOutlined style={{ fontSize: 18 }} />
-    </button>
-  ) : null;
 };
 
-export default NavigationHamburguer;
+export default NavigationCollapseButton;
