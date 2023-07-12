@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { slice, omit, clone, dropRight, nth } from 'lodash';
+import { slice, clone, dropRight, nth, last, concat } from 'lodash';
 
 type TProject = string;
 type TOrganization = string;
@@ -7,9 +7,20 @@ type TResourceID = string;
 type TVersionTag = number;
 type TMediaType = string;
 
-export type TDEResource =
-  | [TOrganization, TProject, TResourceID, TVersionTag]
-  | [TOrganization, TProject, TResourceID, TVersionTag, TMediaType];
+export type TDEResourceWithoutMedia = [
+  TOrganization,
+  TProject,
+  TResourceID,
+  TVersionTag
+];
+export type TDEResourceWithMedia = [
+  TOrganization,
+  TProject,
+  TResourceID,
+  TVersionTag,
+  TMediaType
+];
+export type TDEResource = TDEResourceWithoutMedia | TDEResourceWithMedia;
 
 export type TDELink = {
   _self: string;
@@ -18,46 +29,50 @@ export type TDELink = {
   resource?: TDEResource;
   isDownloadable?: boolean;
 };
+
 export type TDataExplorerState = {
-  links: TDELink[];
+  leftNodes: {
+    links: TDELink[];
+    shrinked: boolean;
+  };
+  rightNodes: {
+    links: TDELink[];
+    shrinked: boolean;
+  };
   current: TDELink | null;
   referer?: {
     pathname: string;
     search: string;
     state: Record<string, any>;
   } | null;
-  shrinked: boolean;
   limited: boolean;
-  highlightIndex: number;
 };
 
-const initialState: TDataExplorerState = {
-  links: [],
-  current: null,
-  referer: null,
-  shrinked: false,
-  limited: false,
-  highlightIndex: -1,
-};
-
+export type TNavigationStackSide = 'left' | 'right';
 export const DATA_EXPLORER_GRAPH_FLOW_PATH = '/data-explorer/graph-flow';
 export const DATA_EXPLORER_GRAPH_FLOW_DIGEST = 'data-explorer-last-navigation';
-export const MAX_NAVIGATION_ITEMS_IN_STACK = 5;
+export const MAX_NAVIGATION_ITEMS_IN_STACK = 3;
+
+const initialState: TDataExplorerState = {
+  leftNodes: { links: [], shrinked: false },
+  rightNodes: { links: [], shrinked: false },
+  current: null,
+  referer: null,
+  limited: false,
+};
+
 const calculateNewDigest = (state: TDataExplorerState) => {
   const clonedState = clone(state);
-  const digest = btoa(
-    JSON.stringify({
-      ...clonedState,
-      links: clonedState.links.map(i => omit(i, ['highlight'])),
-      current: omit(clonedState.current, ['highlight']),
-    })
-  );
+  const digest = btoa(JSON.stringify(clonedState));
   sessionStorage.setItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST, digest);
 };
 
 const isShrinkable = (links: TDELink[]) => {
   return links.length > MAX_NAVIGATION_ITEMS_IN_STACK;
 };
+function insert(arr: any[], index: number, item: any) {
+  arr.splice(index, 0, item);
+}
 
 export const dataExplorerSlice = createSlice({
   initialState,
@@ -69,7 +84,14 @@ export const dataExplorerSlice = createSlice({
       try {
         return {
           ...newState,
-          shrinked: isShrinkable(newState.links),
+          leftNodes: {
+            links: newState.leftNodes.links,
+            shrinked: isShrinkable(newState.leftNodes.links),
+          },
+          rightNodes: {
+            links: newState.rightNodes.links,
+            shrinked: isShrinkable(newState.rightNodes.links),
+          },
         };
       } catch (error) {
         return state;
@@ -84,87 +106,191 @@ export const dataExplorerSlice = createSlice({
         referer,
         current,
         limited,
-        links:
-          source && current
-            ? source._self === current._self
-              ? []
-              : [source]
-            : [],
+        leftNodes: {
+          links:
+            source && current
+              ? source._self === current._self
+                ? []
+                : [source]
+              : [],
+          shrinked: false,
+        },
       };
       calculateNewDigest(newState);
       return newState;
     },
     AddNewNodeDataExplorerGraphFlow: (state, action) => {
-      const linkIndex = state.links.findIndex(
-        item => item._self === action.payload._self
-      );
-      const isCurrentLink = state.current?._self === action.payload._self;
-      const newLinks = isCurrentLink
-        ? state.links
-        : linkIndex !== -1
-        ? state.links
-        : [...state.links, state.current!];
-      const newCurrent =
-        isCurrentLink || linkIndex !== -1 ? state.current : action.payload;
-      const newState: TDataExplorerState = {
+      if (action.payload._self === state.current?._self) {
+        console.log('@@same node');
+        return state;
+      }
+      const newLink = action.payload as TDELink;
+      const whichSide = state.leftNodes.links.find(
+        link => link._self === newLink._self
+      )
+        ? 'left'
+        : state.rightNodes.links.find(link => link._self === newLink._self)
+        ? 'right'
+        : null;
+      let leftNodesLinks: TDELink[] = [];
+      let rightNodesLinks: TDELink[] = [];
+      let current: TDELink;
+      switch (whichSide) {
+        case 'left': {
+          const index = state.leftNodes.links.findIndex(
+            link => link._self === newLink._self
+          );
+          rightNodesLinks = concat(
+            slice(state.leftNodes.links, index + 1),
+            state.current ? [state.current] : [],
+            state.rightNodes.links
+          );
+          leftNodesLinks = slice(state.leftNodes.links, 0, index);
+          current = state.leftNodes.links[index];
+          break;
+        }
+        case 'right': {
+          const index = state.rightNodes.links.findIndex(
+            link => link._self === newLink._self
+          );
+          // make the new link the current one
+          // add the links before that and the current one the left part
+          leftNodesLinks = concat(
+            state.leftNodes.links,
+            state.current ? [state.current] : [],
+            slice(state.rightNodes.links, 0, index)
+          );
+          rightNodesLinks = slice(state.rightNodes.links, index + 1);
+          current = state.rightNodes.links[index];
+          break;
+        }
+        case null:
+        default: {
+          leftNodesLinks = concat(
+            state.leftNodes.links,
+            state.current ? [state.current] : []
+          );
+          rightNodesLinks = [];
+          current = action.payload;
+          break;
+        }
+      }
+      const newState = {
         ...state,
-        links: newLinks,
-        current: newCurrent,
-        highlightIndex: linkIndex,
-        shrinked: linkIndex !== -1 ? false : isShrinkable(newLinks),
+        current,
+        leftNodes: {
+          links: leftNodesLinks,
+          shrinked: isShrinkable(leftNodesLinks),
+        },
+        rightNodes: {
+          links: rightNodesLinks,
+          shrinked: isShrinkable(rightNodesLinks),
+        },
       };
       calculateNewDigest(newState);
       return newState;
     },
     JumpToNodeDataExplorerGraphFlow: (state, action) => {
-      const newLinks = slice(state.links, 0, action.payload);
-      const newState: TDataExplorerState = {
+      const index = action.payload.index as number;
+      const side = action.payload.side as TNavigationStackSide;
+      const realIndex =
+        side === 'left' ? index : state.leftNodes.links.length + index + 1;
+      const allLinks = concat(
+        state.leftNodes.links,
+        state.current ? [state.current] : [],
+        state.rightNodes.links
+      );
+      const current = nth(allLinks, realIndex) as TDELink;
+      // construct left part
+      const leftNodesLinks = slice(allLinks, 0, realIndex);
+      const leftNodes = {
+        links: leftNodesLinks,
+        shrinked: isShrinkable(leftNodesLinks),
+      };
+      // construct right part
+      const rightNodesLinks = slice(allLinks, realIndex + 1);
+      const rightNodes = {
+        links: rightNodesLinks,
+        shrinked: isShrinkable(rightNodesLinks),
+      };
+      const newState = {
         ...state,
-        links: newLinks,
-        current: state.links[action.payload],
-        shrinked: isShrinkable(newLinks),
+        leftNodes,
+        rightNodes,
+        current,
       };
       calculateNewDigest(newState);
       return newState;
     },
     ReturnBackDataExplorerGraphFlow: state => {
-      const lastItem = state.links.length ? nth(state.links, -1) : null;
-      const newLinks = dropRight(state.links);
-      const newState = lastItem
-        ? {
-            ...state,
-            links: newLinks,
-            current: lastItem,
-            shrinked: isShrinkable(newLinks),
-          }
-        : state;
-      calculateNewDigest(newState);
-      return newState;
-    },
-    ExpandNavigationStackDataExplorerGraphFlow: state => {
+      const current = last(state.leftNodes.links) as TDELink;
+      const newrightNodesLinks = state.rightNodes.links;
+      const newleftNodesLinks = dropRight(state.leftNodes.links) as TDELink[];
+      insert(newrightNodesLinks, 0, state.current);
+      const rightNodes = {
+        links: newrightNodesLinks,
+        shrinked: isShrinkable(newrightNodesLinks),
+      };
       const newState = {
         ...state,
-        shrinked: false,
+        current,
+        rightNodes,
+        leftNodes: {
+          links: newleftNodesLinks,
+          shrinked: isShrinkable(newleftNodesLinks),
+        },
       };
       calculateNewDigest(newState);
       return newState;
     },
-    ShrinkNavigationStackDataExplorerGraphFlow: state => {
+    ExpandNavigationStackDataExplorerGraphFlow: (state, action) => {
+      const side = action.payload.side as TNavigationStackSide;
+      const sideUpdater =
+        side === 'left'
+          ? {
+              leftNodes: {
+                ...state.leftNodes,
+                shrinked: false,
+              },
+            }
+          : {
+              rightNodes: {
+                ...state.rightNodes,
+                shrinked: false,
+              },
+            };
       const newState = {
         ...state,
-        shrinked: isShrinkable(state.links) ? true : false,
+        ...sideUpdater,
       };
       calculateNewDigest(newState);
       return newState;
     },
-    ResetDataExplorerGraphFlow: (state, action) => {
+    ShrinkNavigationStackDataExplorerGraphFlow: (state, action) => {
+      const side = action.payload.side as TNavigationStackSide;
+      const sideUpdater =
+        side === 'left'
+          ? {
+              leftNodes: {
+                ...state.leftNodes,
+                shrinked: isShrinkable(state.leftNodes.links) ? true : false,
+              },
+            }
+          : {
+              rightNodes: {
+                ...state.rightNodes,
+                shrinked: isShrinkable(state.rightNodes.links) ? true : false,
+              },
+            };
+      const newState = {
+        ...state,
+        ...sideUpdater,
+      };
+      calculateNewDigest(newState);
+      return newState;
+    },
+    ResetDataExplorerGraphFlow: (_, action) => {
       return action.payload.initialState ?? initialState;
-    },
-    ResetHighlightedNodeDataExplorerGraphFlow: state => {
-      return {
-        ...state,
-        highlightIndex: -1,
-      };
     },
     InitDataExplorerGraphFlowLimitedVersion: (state, action) => {
       const newState = {
@@ -180,12 +306,11 @@ export const {
   PopulateDataExplorerGraphFlow,
   InitNewVisitDataExplorerGraphView,
   AddNewNodeDataExplorerGraphFlow,
-  JumpToNodeDataExplorerGraphFlow,
   ExpandNavigationStackDataExplorerGraphFlow,
   ShrinkNavigationStackDataExplorerGraphFlow,
+  JumpToNodeDataExplorerGraphFlow,
   ReturnBackDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
-  ResetHighlightedNodeDataExplorerGraphFlow,
   InitDataExplorerGraphFlowLimitedVersion,
 } = dataExplorerSlice.actions;
 
