@@ -124,12 +124,13 @@ describe('DataExplorerGraphFlow', () => {
     );
     history.push('/another-page');
     const dataExplorerState = store.getState().dataExplorer;
-    const localstorage = localStorage.getItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
+    const localstorage = sessionStorage.getItem(
+      DATA_EXPLORER_GRAPH_FLOW_DIGEST
+    );
     expect(localstorage).toBeNull();
-    expect(dataExplorerState.links.length).toBe(0);
+    expect(dataExplorerState.leftNodes.links.length).toBe(0);
+    expect(dataExplorerState.rightNodes.links.length).toBe(0);
     expect(dataExplorerState.current).toBeNull();
-    expect(dataExplorerState.shrinked).toBe(false);
     expect(dataExplorerState.limited).toBe(false);
-    expect(dataExplorerState.highlightIndex).toBe(-1);
   });
 });
