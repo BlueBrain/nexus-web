@@ -115,7 +115,11 @@ const defaultColumnConfig = (colName: string): ColumnType<Resource> => {
     title: getColumnTitle(colName),
     dataIndex: colName,
     className: `data-explorer-column data-explorer-column-${colName}`,
-    sorter: false,
+    sorter: (a, b) => {
+      return JSON.stringify(a[colName] ?? '').localeCompare(
+        JSON.stringify(b[colName] ?? '')
+      );
+    },
     render: text => {
       if (text === undefined) {
         // Text will also be undefined if a certain resource does not have `colName` as its property

@@ -109,11 +109,16 @@ describe('DataExplorer', () => {
   const expectColumHeaderToExist = async (name: string) => {
     const nameReg = new RegExp(getColumnTitle(name), 'i');
     const header = await screen.getByText(nameReg, {
-      selector: 'th',
+      selector: 'th .ant-table-column-title',
       exact: false,
     });
     expect(header).toBeInTheDocument();
     return header;
+  };
+
+  const getColumnSorter = async (colName: string) => {
+    const column = await expectColumHeaderToExist(colName);
+    return column.closest('.ant-table-column-sorters');
   };
 
   const getTotalColumns = () => {
@@ -171,6 +176,11 @@ describe('DataExplorer', () => {
   const typeFromRow = (row: Element) => {
     const typeColumn = row.querySelectorAll('td')[1]; // second column is the type column
     return typeColumn?.textContent;
+  };
+
+  const columnTextFromRow = (row: Element, colName: string) => {
+    const column = row.querySelector(`td.data-explorer-column-${colName}`);
+    return column?.textContent;
   };
 
   const visibleTableRows = () => {
@@ -311,6 +321,17 @@ describe('DataExplorer', () => {
       name: /reset predicate/i,
     });
     await userEvent.click(resetPredicateButton);
+  };
+
+  const expectRowsInOrder = async (expectedOrder: Resource[]) => {
+    for await (const [index, row] of visibleTableRows().entries()) {
+      const text = await columnTextFromRow(row, 'author');
+      if (expectedOrder[index].author) {
+        expect(text).toMatch(JSON.stringify(expectedOrder[index].author));
+      } else {
+        expect(text).toMatch(/No data/i);
+      }
+    }
   };
 
   it('shows columns for fields that are only in source data', async () => {
@@ -776,5 +797,21 @@ describe('DataExplorer', () => {
     expect(openMenuFor(PredicateMenuLabel)).rejects.toThrow();
     await selectPath('@type');
     expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
+  });
+
+  it('sorts table columns', async () => {
+    const dataSource = [
+      getMockResource('self1', { author: 'tweaty', edition: 1 }),
+      getMockResource('self2', { edition: 2001 }),
+      getMockResource('self3', { year: 2013, author: 'piggy' }),
+    ];
+    await updateResourcesShownInTable(dataSource);
+
+    await expectRowsInOrder(dataSource);
+
+    const authorColumnSorter = await getColumnSorter('author');
+    await userEvent.click(authorColumnSorter!);
+
+    await expectRowsInOrder([dataSource[1], dataSource[2], dataSource[0]]);
   });
 });
