@@ -34,7 +34,7 @@ const getUserManager = (state: RootState): UserManager | undefined => {
       cacheKey,
       new UserManager({
         authority: realm._issuer,
-        response_type: 'id_token token',
+        response_type: 'token',
         client_id: clientId,
         redirect_uri: redirectHostName,
         post_logout_redirect_uri: redirectHostName,
