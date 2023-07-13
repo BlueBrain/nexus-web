@@ -7,7 +7,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import { useNexusContext } from '@bbp/react-nexus';
+import { AccessControl } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
 import 'codemirror/mode/javascript/javascript';
@@ -261,7 +261,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   style={switchMarginRight}
                 />
               )}
-              {userAuthenticated && (
+              <AccessControl
+                path={[`${orgLabel}/${projectLabel}`]}
+                permissions={['resources/write']}
+                noAccessComponent={() => <></>}
+              >
                 <Button
                   role="submit"
                   icon={<SaveOutlined />}
@@ -272,7 +276,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 >
                   Save
                 </Button>
-              )}{' '}
+              </AccessControl>
               {editable && isEditing && (
                 <Button danger size="small" onClick={handleCancel}>
                   Cancel
