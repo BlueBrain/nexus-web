@@ -1,5 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { slice, clone, dropRight, nth, last, concat } from 'lodash';
+import {
+  slice,
+  clone,
+  dropRight,
+  nth,
+  last,
+  concat,
+  first,
+  drop,
+} from 'lodash';
 
 type TProject = string;
 type TOrganization = string;
@@ -223,22 +232,51 @@ export const dataExplorerSlice = createSlice({
       return newState;
     },
     ReturnBackDataExplorerGraphFlow: state => {
-      const current = last(state.leftNodes.links) as TDELink;
-      const newrightNodesLinks = state.rightNodes.links;
-      const newleftNodesLinks = dropRight(state.leftNodes.links) as TDELink[];
-      insert(newrightNodesLinks, 0, state.current);
+      const newCurrent = last(state.leftNodes.links) as TDELink;
+      const current = state.current;
+      const newRightNodesLinks = concat(
+        current ? [current] : [],
+        state.rightNodes.links
+      );
+      const newLeftNodesLinks = dropRight(state.leftNodes.links) as TDELink[];
       const rightNodes = {
-        links: newrightNodesLinks,
-        shrinked: isShrinkable(newrightNodesLinks),
+        links: newRightNodesLinks,
+        shrinked: isShrinkable(newRightNodesLinks),
+      };
+      const leftNodes = {
+        links: newLeftNodesLinks,
+        shrinked: isShrinkable(newLeftNodesLinks),
       };
       const newState = {
         ...state,
-        current,
         rightNodes,
-        leftNodes: {
-          links: newleftNodesLinks,
-          shrinked: isShrinkable(newleftNodesLinks),
-        },
+        leftNodes,
+        current: newCurrent,
+      };
+      calculateNewDigest(newState);
+      return newState;
+    },
+    MoveForwardDataExplorerGraphFlow: state => {
+      const newCurrent = first(state.rightNodes.links) as TDELink;
+      const current = state.current;
+      const newLeftNodesLinks = concat(
+        state.leftNodes.links,
+        current ? [current] : []
+      );
+      const newRightNodesLinks = drop(state.rightNodes.links) as TDELink[];
+      const rightNodes = {
+        links: newRightNodesLinks,
+        shrinked: isShrinkable(newRightNodesLinks),
+      };
+      const leftNodes = {
+        links: newLeftNodesLinks,
+        shrinked: isShrinkable(newLeftNodesLinks),
+      };
+      const newState = {
+        ...state,
+        rightNodes,
+        leftNodes,
+        current: newCurrent,
       };
       calculateNewDigest(newState);
       return newState;
@@ -310,6 +348,7 @@ export const {
   ShrinkNavigationStackDataExplorerGraphFlow,
   JumpToNodeDataExplorerGraphFlow,
   ReturnBackDataExplorerGraphFlow,
+  MoveForwardDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
   InitDataExplorerGraphFlowLimitedVersion,
 } = dataExplorerSlice.actions;
