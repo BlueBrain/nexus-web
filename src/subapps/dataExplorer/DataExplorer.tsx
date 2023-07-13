@@ -19,7 +19,7 @@ export interface DataExplorerConfiguration {
   offset: number;
   orgAndProject?: [string, string];
   type: string | undefined;
-  predicateFilter: ((resource: Resource) => boolean) | null;
+  predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
 }
 
@@ -27,7 +27,7 @@ export const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
 
   const [
-    { pageSize, offset, orgAndProject, predicateFilter, type, selectedPath },
+    { pageSize, offset, orgAndProject, predicate, type, selectedPath },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -39,7 +39,7 @@ export const DataExplorer: React.FC<{}> = () => {
       offset: 0,
       orgAndProject: undefined,
       type: undefined,
-      predicateFilter: null,
+      predicate: null,
       selectedPath: null,
     }
   );
@@ -53,10 +53,8 @@ export const DataExplorer: React.FC<{}> = () => {
 
   const currentPageDataSource: Resource[] = resources?._results || [];
 
-  const displayedDataSource = predicateFilter
-    ? currentPageDataSource.filter(resource => {
-        return predicateFilter(resource);
-      })
+  const displayedDataSource = predicate
+    ? currentPageDataSource.filter(predicate)
     : currentPageDataSource;
 
   return (
@@ -90,9 +88,7 @@ export const DataExplorer: React.FC<{}> = () => {
           <DatasetCount
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
-            totalFiltered={
-              predicateFilter ? displayedDataSource.length : undefined
-            }
+            totalFiltered={predicate ? displayedDataSource.length : undefined}
           />
           <div className="data-explorer-toggles">
             <Switch
