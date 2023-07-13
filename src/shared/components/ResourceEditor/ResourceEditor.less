@@ -69,14 +69,18 @@
     &.wait-for-tooltip {
       cursor: progress !important;
     }
+
     &.has-tooltip {
       cursor: pointer !important;
     }
+
     &.error {
       cursor: not-allowed !important;
     }
+
     &.downloadable {
     }
+
     &::after {
       content: '';
       display: inline-block;
@@ -96,12 +100,14 @@
   &.resolution-on-progress {
     .CodeMirror-lines {
       user-select: none;
+
       .fusion-resource-link {
         cursor: progress !important;
       }
     }
   }
 }
+
 .CodeMirror-hover-tooltip-popover,
 .CodeMirror-hover-tooltip {
   background-color: white;
@@ -116,25 +122,31 @@
   white-space: pre-wrap;
   transition: all 0.4s ease-in-out;
   padding: 4px 0;
+
   &.popover {
     background-color: white !important;
+
     .CodeMirror-hover-tooltip-resources-content {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
+
       .CodeMirror-hover-tooltip-item {
         width: 100%;
         padding: 4px;
         align-items: center;
         justify-content: flex-start;
         cursor: pointer;
+
         .tag {
           background-color: @fusion-primary-color;
         }
+
         &:hover {
           background-color: @fusion-blue-0;
           color: @fusion-primary-color;
+
           .tag {
             background-color: white;
             color: @fusion-primary-color;
@@ -143,6 +155,7 @@
       }
     }
   }
+
   &-content {
     display: flex;
     flex-direction: column;
@@ -183,6 +196,7 @@
     padding: 2px 10px 2px 5px;
     overflow: hidden;
     user-select: none;
+
     .tag {
       color: white;
       padding: 2px 5px;
@@ -203,4 +217,12 @@
       color: @fusion-primary-color;
     }
   }
+}
+
+.editor-controls-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
 }
