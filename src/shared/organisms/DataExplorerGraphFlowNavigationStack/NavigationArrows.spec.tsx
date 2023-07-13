@@ -12,9 +12,7 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import configureStore from '../../store';
 import {
-  AddNewNodeDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
-  PopulateDataExplorerGraphFlow,
   TDataExplorerState,
 } from '../../store/reducers/data-explorer';
 import NavigationArrows from './NavigationArrows';
@@ -108,7 +106,7 @@ const initialDataExplorerState: TDataExplorerState = {
     ],
     shrinked: false,
   },
-  limited: false,
+  fullscreen: false,
   referer: {
     pathname: '/my-data',
     search: '',
