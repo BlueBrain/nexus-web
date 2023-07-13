@@ -148,10 +148,9 @@ app.get('*', async (req: express.Request, res: express.Response) => {
     modals: DEFAULT_MODALS_STATE,
     dataExplorer: {
       current: null,
-      links: [],
-      shrinked: false,
+      leftNodes: { links: [], shrinked: false },
+      rightNodes: { links: [], shrinked: false },
       limited: false,
-      highlightIndex: -1,
     },
   };
 

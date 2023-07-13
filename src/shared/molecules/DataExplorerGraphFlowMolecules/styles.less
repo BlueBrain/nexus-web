@@ -1,26 +1,104 @@
 @import '../../lib.less';
 
 .navigation-stack-item {
-  display: grid;
-  grid-template-rows: repeat(4, max-content);
-  gap: 10px;
-  align-items: start;
-  justify-items: center;
-  justify-content: center;
-  align-content: start;
-  border-right: 1px solid @fusion-neutral-6;
-  padding: 3px 5px;
-  height: 100%;
-  min-height: 0;
-  background-color: @fusion-main-bg;
+  display: flex;
+  align-items: flex-start;
 
-  &.more {
-    background-color: white;
+  &.shrinkable {
+    display: none;
   }
 
-  &.no-more {
-    display: none;
-    transition: display 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+  &__wrapper {
+    display: grid;
+    grid-template-rows: repeat(4, max-content);
+    gap: 10px;
+    align-items: start;
+    justify-items: center;
+    justify-content: center;
+    align-content: start;
+    padding: 3px 5px;
+    height: 100%;
+    min-height: 0;
+    background-color: @fusion-main-bg;
+    position: relative;
+
+    &.more {
+      background-color: white;
+    }
+
+    &.no-more {
+      display: none;
+      transition: display 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+
+    .icon {
+      margin-top: 5px !important;
+      padding: 4px !important;
+    }
+
+    .title {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 130%;
+      letter-spacing: 0.01em;
+      color: #003a8c;
+      writing-mode: vertical-lr;
+      text-orientation: sideways-right;
+      transform: rotate(180deg);
+      align-self: start;
+    }
+
+    .org-project {
+      writing-mode: vertical-rl;
+      transform: rotate(-180deg);
+      background-color: #bfbfbfbe;
+      padding: 5px 1px;
+      font-size: 10px;
+      border-radius: 4px;
+      user-select: none;
+    }
+
+    .types {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 12px;
+      line-height: 130%;
+      letter-spacing: 0.01em;
+      color: #8c8c8c;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+      align-self: start;
+      transform: rotate(180deg);
+    }
+
+    .count {
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 130%;
+      letter-spacing: 0.01em;
+      color: #bfbfbf;
+    }
+
+    .ellipsis {
+      user-select: none;
+      writing-mode: vertical-lr;
+      text-orientation: mixed;
+    }
+  }
+
+  &.right {
+    .navigation-stack-item__wrapper {
+      border-left: 1px solid @fusion-neutral-6;
+    }
+  }
+
+  &.left {
+    .navigation-stack-item__wrapper {
+      border-right: 1px solid @fusion-neutral-6;
+    }
   }
 
   &.highlight {
@@ -33,65 +111,39 @@
     animation: vibrate 0.3s linear infinite both;
   }
 
-  &.shrinkable {
-    display: none;
-  }
+  .collapse-btn {
+    inset: 0;
+    overflow: visible;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 8px 8px;
+    background-color: @fusion-blue-8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    box-shadow: 0 2px 12px rgba(#333, 0.12);
+    cursor: pointer;
+    border: none;
 
-  .icon {
-    margin-top: 5px !important;
-    padding: 4px !important;
-  }
+    &.right {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      svg {
+        transform: rotate(180deg);
+      }
+    }
 
-  .title {
-    font-family: 'Titillium Web';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 12px;
-    line-height: 130%;
-    letter-spacing: 0.01em;
-    color: #003a8c;
-    writing-mode: vertical-lr;
-    text-orientation: sideways-right;
-    transform: rotate(180deg);
-    align-self: start;
-  }
+    &.left {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
 
-  .org-project {
-    writing-mode: vertical-rl;
-    transform: rotate(-180deg);
-    background-color: #bfbfbfbe;
-    padding: 5px 1px;
-    font-size: 10px;
-    border-radius: 4px;
-    user-select: none;
-  }
-
-  .types {
-    font-family: 'Titillium Web';
-    font-style: normal;
-    font-weight: 300;
-    font-size: 12px;
-    line-height: 130%;
-    letter-spacing: 0.01em;
-    color: #8c8c8c;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
-    align-self: start;
-    transform: rotate(180deg);
-  }
-
-  .count {
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 130%;
-    letter-spacing: 0.01em;
-    color: #bfbfbf;
-  }
-
-  .ellipsis {
-    user-select: none;
-    writing-mode: vertical-lr;
-    text-orientation: mixed;
+    svg {
+      color: white;
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
@@ -130,6 +182,7 @@
       color: @fusion-daybreak-7;
     }
   }
+
   &.go-back-to-referer {
     margin-left: 40px;
   }
@@ -192,22 +245,27 @@
     -webkit-transform: translate(0);
     transform: translate(0);
   }
+
   20% {
     -webkit-transform: translate(-1.5px, 1.5px);
     transform: translate(-1.5px, 1.5px);
   }
+
   40% {
     -webkit-transform: translate(-1.5px, -1.5px);
     transform: translate(-1.5px, -1.5px);
   }
+
   60% {
     -webkit-transform: translate(1.5px, 1.5px);
     transform: translate(1.5px, 1.5px);
   }
+
   80% {
     -webkit-transform: translate(1.5px, -1.5px);
     transform: translate(1.5px, -1.5px);
   }
+
   100% {
     -webkit-transform: translate(0);
     transform: translate(0);
