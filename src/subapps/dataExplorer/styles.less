@@ -53,12 +53,20 @@
     }
   }
 
+  .text-button {
+    color: @fusion-gray-7;
+  }
+
   .form-container {
     display: flex;
     align-items: center;
     flex-direction: row;
     max-width: fit-content;
     margin: 0 10px;
+
+    .ant-form-item {
+      margin-bottom: 0;
+    }
 
     .label {
       font-size: 12px;
@@ -129,6 +137,12 @@
         font-weight: 700;
       }
     }
+    .select-menu.reduced-width {
+      .ant-select-selector {
+        min-width: 140px;
+        width: max-content;
+      }
+    }
   }
 
   .select-menu.greyed-out {
@@ -161,11 +175,9 @@
   }
 
   .predicate-value-input {
-    border-bottom: 1px solid @medium-gray;
     color: @fusion-blue-8;
-    &::placeholder {
-      color: @fusion-blue-8;
-    }
+    background: @fusion-main-bg;
+    width: 200px;
   }
 }
 
@@ -175,7 +187,7 @@
     min-width: 90vw;
   }
   .ant-table {
-    background: #f5f5f5;
+    background: @fusion-main-bg;
   }
   .ant-table-thead > tr > th.data-explorer-column {
     background-color: #f5f5f5 !important;

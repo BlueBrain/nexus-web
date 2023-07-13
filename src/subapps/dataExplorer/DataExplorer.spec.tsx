@@ -34,6 +34,11 @@ import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
   const mockResourcesOnPage1: Resource[] = getCompleteResources();
+  const mockResourcesForPage2: Resource[] = [
+    getMockResource('self1', { author: 'piggy', edition: 1 }),
+    getMockResource('self2', { author: ['iggy', 'twinky'] }),
+    getMockResource('self3', { year: 2013 }),
+  ];
 
   const server = setupServer(
     dataExplorerPageHandler(undefined, defaultTotalResults),
@@ -203,10 +208,21 @@ describe('DataExplorer', () => {
     await expectRowCountToBe(3);
   };
 
-  const openMenuFor = async (ariaLabel: string) => {
-    const menuInput = await screen.getByLabelText(ariaLabel, {
+  const getInputForLabel = async (label: string) => {
+    return (await screen.getByLabelText(label, {
       selector: 'input',
-    });
+    })) as HTMLInputElement;
+  };
+
+  const getSelectedValueInMenu = async (menuLabel: string) => {
+    const input = await getInputForLabel(menuLabel);
+    return input
+      .closest('.ant-select-selector')
+      ?.querySelector('.ant-select-selection-item')?.innerHTML;
+  };
+
+  const openMenuFor = async (ariaLabel: string) => {
+    const menuInput = await getInputForLabel(ariaLabel);
     await userEvent.click(menuInput, { pointerEventsCheck: 0 });
     await act(async () => {
       fireEvent.mouseDown(menuInput);
@@ -217,7 +233,11 @@ describe('DataExplorer', () => {
   };
 
   const selectPath = async (path: string) => {
-    selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
+    await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
+  };
+
+  const selectPredicate = async (predicate: string) => {
+    await selectOptionFromMenu(PredicateMenuLabel, predicate);
   };
 
   const selectOptionFromMenu = async (
@@ -226,7 +246,6 @@ describe('DataExplorer', () => {
     optionSelector?: string
   ) => {
     await openMenuFor(menuAriaLabel);
-    const allOptions = getVisibleOptionsFromMenu();
     const option = await getDropdownOption(optionLabel, optionSelector);
     await userEvent.click(option, { pointerEventsCheck: 0 });
   };
@@ -272,7 +291,9 @@ describe('DataExplorer', () => {
     return filteredCount;
   };
 
-  const updateResourcesShownInTable = async (resources: Resource[]) => {
+  const updateResourcesShownInTable = async (
+    resources: Resource[] = mockResourcesForPage2
+  ) => {
     await expectRowCountToBe(10);
     await getRowsForNextPage(resources);
     await expectRowCountToBe(resources.length);
@@ -284,6 +305,13 @@ describe('DataExplorer', () => {
 
   const showMetadataSwitch = async () =>
     await screen.getByLabelText('Show metadata');
+
+  const resetPredicate = async () => {
+    const resetPredicateButton = await screen.getByRole('button', {
+      name: /reset predicate/i,
+    });
+    await userEvent.click(resetPredicateButton);
+  };
 
   it('shows columns for fields that are only in source data', async () => {
     await expectRowCountToBe(10);
@@ -582,7 +610,7 @@ describe('DataExplorer', () => {
     await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
-    const valueInput = await screen.getByPlaceholderText('type the value...');
+    const valueInput = await screen.getByPlaceholderText('Search for...');
     await userEvent.type(valueInput, 'iggy');
     await expectRowCountToBe(2);
 
@@ -628,7 +656,7 @@ describe('DataExplorer', () => {
     await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_CONTAIN);
-    const valueInput = await screen.getByPlaceholderText('type the value...');
+    const valueInput = await screen.getByPlaceholderText('Search for...');
     await userEvent.type(valueInput, 'iggy');
     await expectRowCountToBe(2);
 
@@ -714,14 +742,39 @@ describe('DataExplorer', () => {
 
     const originalColumns = getTotalColumns().length;
 
-    await selectOptionFromMenu(
-      PathMenuLabel,
-      metadataProperty,
-      CustomOptionSelector
-    );
+    await selectPath(metadataProperty);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
 
     await expectColumHeaderToExist(metadataProperty);
     expect(getTotalColumns().length).toEqual(originalColumns + 1);
+
+    await resetPredicate();
+    expect(getTotalColumns().length).toEqual(originalColumns);
+  });
+
+  it('resets predicate fields when reset predicate clicked', async () => {
+    await updateResourcesShownInTable(mockResourcesForPage2);
+
+    await selectPath('author');
+    await selectPredicate(EXISTS);
+
+    const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
+    expect(selectedPathBefore).toMatch(/author/);
+
+    await expectRowCountToBe(2);
+
+    await resetPredicate();
+
+    await expectRowCountToBe(3);
+
+    const selectedPathAfter = await getSelectedValueInMenu(PathMenuLabel);
+    expect(selectedPathAfter).toBeFalsy();
+  });
+
+  it('only shows predicate menu if path is selected', async () => {
+    await expectRowCountToBe(10);
+    expect(openMenuFor(PredicateMenuLabel)).rejects.toThrow();
+    await selectPath('@type');
+    expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
   });
 });
