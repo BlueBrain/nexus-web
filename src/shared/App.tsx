@@ -22,26 +22,22 @@ import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
 
 import './App.less';
+import useUserAuthenticated from './hooks/useUserAuthenticated';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();
   const { subAppRoutes } = useSubApps();
   const cartData: CartType = useDataCart();
-  const { oidc, config } = useSelector((state: RootState) => ({
-    oidc: state.oidc,
-    config: state.config,
-  }));
-  const authenticated = !!oidc.user;
-  const token = oidc.user && oidc.user.access_token;
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+  const userAuthenticated = useUserAuthenticated();
   const notificationData: NotificationContextType = getNotificationContextValue();
-  const userAuthenticated = Boolean(authenticated) && Boolean(token);
   const routesWithSubApps = [...routes, ...subAppRoutes];
 
   const { data: nexusEcosystem } = useQuery({
     queryKey: ['nexus-ecosystem'],
     queryFn: () =>
       nexus.httpGet({
-        path: `${config.apiEndpoint}/version`,
+        path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       }),
   });
