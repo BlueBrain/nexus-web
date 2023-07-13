@@ -9,27 +9,39 @@
   margin: 52px auto 0;
   display: flex;
   background: #f5f5f5 !important;
+
   &.-unconstrained-width {
     padding: 2em;
     max-width: none;
   }
+
   &.resource-view {
-    max-width: 60%;
+    max-width: 1320px;
     background-color: @primary-card;
-    background-image: linear-gradient(
-      315deg,
-      @primary-card 0%,
-      @subtle-white 74%
-    );
     min-height: calc(100vh - 40px);
     transition: background-image ease-out 1s;
+
+    &.background {
+      max-width: 60%;
+      background-image: linear-gradient(
+        315deg,
+        @primary-card 0%,
+        @subtle-white 74%
+      );
+
+      .resource-details {
+        .highShadow();
+        padding: 1em;
+        width: 100%;
+        background-color: @background-color-subtle;
+      }
+    }
+
     .resource-details {
-      .highShadow();
-      padding: 1em;
-      width: 100%;
-      background-color: @background-color-subtle;
+      background-color: @fusion-main-bg;
     }
   }
+
   &.data-explorer-container {
     width: fit-content;
     min-width: calc(100vw - 1rem);
@@ -55,6 +67,7 @@
   .ant-alert-warning {
     margin: 1em 0;
   }
+
   section.links {
     width: 48%;
   }
@@ -64,6 +77,7 @@
   .identities-list {
     margin: 0;
     padding: 0;
+
     .list-item {
       cursor: auto;
     }
@@ -76,6 +90,7 @@
 .ant-pagination-item {
   margin-right: 2px;
 }
+
 .ant-list-pagination {
   text-align: center;
 }
@@ -83,6 +98,7 @@
 .ant-input-affix-wrapper .ant-input-suffix {
   color: rgba(0, 0, 0, 0.2);
 }
+
 .ant-upload.ant-upload-drag .ant-upload {
   padding: @default-pad;
 }
@@ -97,6 +113,7 @@
 
 .studio-view {
   padding: 0 2em;
+
   .workspace {
     display: flex;
     width: 100%;
@@ -104,6 +121,7 @@
     min-width: 800px;
     min-height: 600px;
   }
+
   .studio-back-button {
     margin-bottom: 5px;
   }
@@ -210,4 +228,30 @@
   text-align: inherit;
   outline: none;
   border-radius: 0;
+}
+
+.full-screen-switch__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  span {
+    color: #003a8c;
+  }
+  .full-screen-switch {
+    border-color: #2e76bf !important;
+    background: linear-gradient(
+        0deg,
+        rgba(0, 58, 140, 0.3),
+        rgba(0, 58, 140, 0.3)
+      ),
+      linear-gradient(0deg, rgba(46, 118, 191, 0.2), rgba(46, 118, 191, 0.2));
+    border: 1px solid #003a8c4d;
+    .ant-switch-handle {
+      top: 1px;
+      &::before {
+        background: #002766;
+      }
+    }
+  }
 }
