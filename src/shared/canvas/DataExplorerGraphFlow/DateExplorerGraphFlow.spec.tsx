@@ -124,10 +124,10 @@ describe('DataExplorerGraphFlow', () => {
     );
     history.push('/another-page');
     const dataExplorerState = store.getState().dataExplorer;
-    const localstorage = sessionStorage.getItem(
+    const sessionStorageItem = sessionStorage.getItem(
       DATA_EXPLORER_GRAPH_FLOW_DIGEST
     );
-    expect(localstorage).toBeNull();
+    expect(sessionStorageItem).toBeNull();
     expect(dataExplorerState.leftNodes.links.length).toBe(0);
     expect(dataExplorerState.rightNodes.links.length).toBe(0);
     expect(dataExplorerState.current).toBeNull();
