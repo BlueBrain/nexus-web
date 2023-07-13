@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { HomeSeachByPresets, HomeSearchByApps } from '../../shared/organisms';
 import { MyData } from '../../shared/canvas';
-import { RootState } from '../../shared/store/reducers';
 import IdentityPage from '../../pages/IdentityPage/IdentityPage';
+import useUserAuthenticated from '../../shared/hooks/useUserAuthenticated';
 
 const Home: React.FunctionComponent = () => {
-  const oidc = useSelector((state: RootState) => state.oidc);
-  const userAuthenticated = oidc && !!oidc.user?.id_token;
+  const userAuthenticated = useUserAuthenticated();
   if (!userAuthenticated) {
     return <IdentityPage />;
   }
