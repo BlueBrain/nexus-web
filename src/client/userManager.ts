@@ -1,7 +1,8 @@
-import { UserManager, WebStorageStateStore } from 'oidc-client';
+import { UserManager, WebStorageStateStore, Log } from 'oidc-client';
 import { Realm } from '@bbp/nexus-sdk';
 
 import { RootState } from '../shared/store/reducers';
+import MyResponseValidator from './validator';
 
 const userManagerCache: Map<string, UserManager> = new Map();
 
@@ -28,23 +29,26 @@ const getUserManager = (state: RootState): UserManager | undefined => {
   }
 
   const cacheKey = `${realm._label}||${realm._issuer}||${clientId}||${redirectHostName}`;
-
-  userManagerCache.has(cacheKey) ||
-    userManagerCache.set(
-      cacheKey,
-      new UserManager({
-        authority: realm._issuer,
-        response_type: 'token',
-        client_id: clientId,
-        redirect_uri: redirectHostName,
-        post_logout_redirect_uri: redirectHostName,
-        automaticSilentRenew: true,
-        silent_redirect_uri: `${redirectHostName}/silent_refresh`,
-        loadUserInfo: false,
-        userStore: new WebStorageStateStore({ store: window.localStorage }),
-        ...realm,
-      })
-    );
+  const userManager = new UserManager({
+    authority: realm._issuer,
+    response_type: 'token',
+    client_id: clientId,
+    redirect_uri: 'http://localhost:8000/',
+    post_logout_redirect_uri: redirectHostName,
+    automaticSilentRenew: false,
+    silent_redirect_uri: `${redirectHostName}/silent_refresh`,
+    loadUserInfo: false,
+    scope: 'openid profile email',
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    // @ts-ignore
+    ResponseValidatorCtor: MyResponseValidator,
+    revokeTokenTypes: ['refresh_token'],
+    ...realm,
+  });
+  userManager.events.addUserLoaded((ev: any) => {
+    console.log('@@user loaded', ev);
+  });
+  userManagerCache.has(cacheKey) || userManagerCache.set(cacheKey, userManager);
 
   return userManagerCache.get(cacheKey);
 };
