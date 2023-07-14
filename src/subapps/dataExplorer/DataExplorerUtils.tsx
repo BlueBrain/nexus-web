@@ -104,6 +104,7 @@ export const useAggregations = (
     onError: error => {
       notification.error({ message: 'Aggregations could not be fetched' });
     },
+    staleTime: Infinity,
   });
 };
 
