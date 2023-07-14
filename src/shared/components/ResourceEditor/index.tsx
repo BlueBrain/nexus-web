@@ -91,7 +91,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
     dataExplorer: { limited },
     oidc,
-    config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
     dataExplorer: state.dataExplorer,
     oidc: state.oidc,
