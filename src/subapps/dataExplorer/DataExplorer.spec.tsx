@@ -316,6 +316,9 @@ describe('DataExplorer', () => {
   const showMetadataSwitch = async () =>
     await screen.getByLabelText('Show metadata');
 
+  const showEmptyDataCellsSwitch = async () =>
+    await screen.getByLabelText('Show empty data cells');
+
   const resetPredicate = async () => {
     const resetPredicateButton = await screen.getByRole('button', {
       name: /reset predicate/i,
@@ -813,5 +816,26 @@ describe('DataExplorer', () => {
     await userEvent.click(authorColumnSorter!);
 
     await expectRowsInOrder([dataSource[1], dataSource[2], dataSource[0]]);
+  });
+
+  it('does not show "No data" cell if "Show empty data cells" toggle is turned off', async () => {
+    await expectRowCountToBe(10);
+    const resourceWithMissingProperty = mockResourcesOnPage1.find(
+      res => !('specialProperty' in res)
+    )!;
+    const textForSpecialProperty = await getTextForColumn(
+      resourceWithMissingProperty,
+      'specialProperty'
+    );
+    expect(textForSpecialProperty).toMatch(/No data/i);
+
+    const button = await showEmptyDataCellsSwitch();
+    await userEvent.click(button);
+
+    const textForSpecialPropertyAfter = await getTextForColumn(
+      resourceWithMissingProperty,
+      'specialProperty'
+    );
+    expect(textForSpecialPropertyAfter).toMatch('');
   });
 });

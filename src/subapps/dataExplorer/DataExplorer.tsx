@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { Switch } from 'antd';
-import React, { useReducer, useState } from 'react';
+import React, { useMemo, useReducer, useState } from 'react';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -25,6 +25,7 @@ export interface DataExplorerConfiguration {
 
 export const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
+  const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
 
   const [
     { pageSize, offset, orgAndProject, predicate, type, selectedPath },
@@ -56,6 +57,16 @@ export const DataExplorer: React.FC<{}> = () => {
   const displayedDataSource = predicate
     ? currentPageDataSource.filter(predicate)
     : currentPageDataSource;
+
+  const memoizedColumns = useMemo(
+    () =>
+      columnsFromDataSource(
+        currentPageDataSource,
+        showMetadataColumns,
+        selectedPath
+      ),
+    [currentPageDataSource, showMetadataColumns, selectedPath]
+  );
 
   return (
     <div className="data-explorer-contents">
@@ -99,6 +110,15 @@ export const DataExplorer: React.FC<{}> = () => {
               className="data-explorer-toggle"
             />
             <label htmlFor="show-metadata-columns">Show metadata</label>
+
+            <Switch
+              defaultChecked={true}
+              checked={showEmptyDataCells}
+              onClick={isChecked => setShowEmptyDataCells(isChecked)}
+              id="show-empty-data-cells"
+              className="data-explorer-toggle"
+            />
+            <label htmlFor="show-empty-data-cells">Show empty data cells</label>
           </div>
         </div>
       )}
@@ -106,15 +126,12 @@ export const DataExplorer: React.FC<{}> = () => {
       <DataExplorerTable
         isLoading={isLoading}
         dataSource={displayedDataSource}
-        columns={columnsFromDataSource(
-          currentPageDataSource,
-          showMetadataColumns,
-          selectedPath
-        )}
+        columns={memoizedColumns}
         total={resources?._total}
         pageSize={pageSize}
         offset={offset}
         updateTableConfiguration={updateTableConfiguration}
+        showEmptyDataCells={showEmptyDataCells}
       />
     </div>
   );
