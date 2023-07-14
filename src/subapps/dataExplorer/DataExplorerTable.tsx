@@ -40,6 +40,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   const tablePaginationConfig: TablePaginationConfig = {
     pageSize,
     total: allowedTotal,
+    pageSizeOptions: [10, 20, 50],
     position: ['bottomLeft'],
     defaultPageSize: 50,
     defaultCurrent: 0,
@@ -69,6 +70,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
       rowKey={record => record._self}
       onRow={resource => ({
         onClick: _ => goToResource(resource),
+        'data-testid': resource._self,
       })}
       loading={isLoading}
       bordered={false}
