@@ -85,6 +85,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
         },
       }}
       pagination={tablePaginationConfig}
+      sticky={{ offsetHeader: 52 }}
     />
   );
 };
@@ -152,6 +153,12 @@ const initialTableConfig = (showEmptyDataCells: boolean) => {
         return `${org}/${project}`;
       }
       return showEmptyDataCells && <NoDataCell />;
+    },
+    sorter: (a, b) => {
+      const tupleA = makeOrgProjectTuple(a[projectKey] ?? '');
+      const tupleB = makeOrgProjectTuple(b[projectKey] ?? '');
+
+      return (tupleA.project ?? '').localeCompare(tupleB.project);
     },
   };
   const typeConfig: ColumnType<Resource> = {
