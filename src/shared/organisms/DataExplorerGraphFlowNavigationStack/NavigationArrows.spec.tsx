@@ -106,7 +106,7 @@ const initialDataExplorerState: TDataExplorerState = {
     ],
     shrinked: false,
   },
-  limited: false,
+  fullscreen: false,
   referer: {
     pathname: '/my-data',
     search: '',

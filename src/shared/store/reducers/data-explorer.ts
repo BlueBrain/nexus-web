@@ -54,7 +54,7 @@ export type TDataExplorerState = {
     search: string;
     state: Record<string, any>;
   } | null;
-  limited: boolean;
+  fullscreen: boolean;
 };
 
 export type TNavigationStackSide = 'left' | 'right';
@@ -67,7 +67,7 @@ const initialState: TDataExplorerState = {
   rightNodes: { links: [], shrinked: false },
   current: null,
   referer: null,
-  limited: false,
+  fullscreen: false,
 };
 
 const calculateNewDigest = (state: TDataExplorerState) => {
@@ -108,13 +108,13 @@ export const dataExplorerSlice = createSlice({
     },
     InitNewVisitDataExplorerGraphView: (
       state,
-      { payload: { source, current, limited, referer } }
+      { payload: { source, current, fullscreen, referer } }
     ) => {
       const newState = {
         ...state,
         referer,
         current,
-        limited,
+        fullscreen,
         leftNodes: {
           links:
             source && current
@@ -330,10 +330,13 @@ export const dataExplorerSlice = createSlice({
     ResetDataExplorerGraphFlow: (_, action) => {
       return action.payload.initialState ?? initialState;
     },
-    InitDataExplorerGraphFlowLimitedVersion: (state, action) => {
+    InitDataExplorerGraphFlowFullscreenVersion: (
+      state,
+      { payload: { fullscreen } }: { payload: { fullscreen?: boolean } }
+    ) => {
       const newState = {
         ...state,
-        limited: action.payload ?? !state.limited,
+        fullscreen: fullscreen ?? !state.fullscreen,
       };
       calculateNewDigest(newState);
       return newState;
@@ -350,7 +353,7 @@ export const {
   ReturnBackDataExplorerGraphFlow,
   MoveForwardDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
-  InitDataExplorerGraphFlowLimitedVersion,
+  InitDataExplorerGraphFlowFullscreenVersion,
 } = dataExplorerSlice.actions;
 
 export default dataExplorerSlice.reducer;
