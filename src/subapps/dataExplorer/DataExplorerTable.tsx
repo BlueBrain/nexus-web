@@ -85,6 +85,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
         },
       }}
       pagination={tablePaginationConfig}
+      sticky={{ offsetHeader: 52 }}
     />
   );
 };
