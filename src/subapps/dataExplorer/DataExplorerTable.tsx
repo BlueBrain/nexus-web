@@ -20,6 +20,7 @@ interface TDataExplorerTable {
   updateTableConfiguration: React.Dispatch<Partial<DataExplorerConfiguration>>;
   columns: string[];
   showEmptyDataCells: boolean;
+  fromTop: number;
 }
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
@@ -33,6 +34,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   offset,
   updateTableConfiguration,
   showEmptyDataCells,
+  fromTop,
 }: TDataExplorerTable) => {
   const history = useHistory();
   const location = useLocation();
@@ -66,27 +68,29 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   };
 
   return (
-    <Table<Resource>
-      columns={columnsConfig(columns, showEmptyDataCells)}
-      dataSource={dataSource}
-      rowKey={record => record._self}
-      onRow={resource => ({
-        onClick: _ => goToResource(resource),
-        'data-testid': resource._self,
-      })}
-      loading={isLoading}
-      bordered={false}
-      className="data-explorer-table"
-      rowClassName="data-explorer-row"
-      scroll={{ x: 'max-content' }}
-      locale={{
-        emptyText() {
-          return isLoading ? <></> : <Empty />;
-        },
-      }}
-      pagination={tablePaginationConfig}
-      sticky={{ offsetHeader: 52 }}
-    />
+    <div style={{ display: 'block' }}>
+      <Table<Resource>
+        columns={columnsConfig(columns, showEmptyDataCells)}
+        dataSource={dataSource}
+        rowKey={record => record._self}
+        onRow={resource => ({
+          onClick: _ => goToResource(resource),
+          'data-testid': resource._self,
+        })}
+        loading={isLoading}
+        bordered={false}
+        className="data-explorer-table"
+        rowClassName="data-explorer-row"
+        scroll={{ x: 'max-content' }}
+        locale={{
+          emptyText() {
+            return isLoading ? <></> : <Empty />;
+          },
+        }}
+        pagination={tablePaginationConfig}
+        sticky={{ offsetHeader: fromTop ? fromTop + 52 : 52 }}
+      />
+    </div>
   );
 };
 
