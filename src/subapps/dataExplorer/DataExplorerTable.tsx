@@ -68,7 +68,13 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   };
 
   return (
-    <div style={{ display: 'block' }}>
+    <div
+      style={{
+        display: 'block',
+        top: fromTop ? fromTop : 0,
+        position: fromTop ? 'absolute' : 'relative',
+      }}
+    >
       <Table<Resource>
         columns={columnsConfig(columns, showEmptyDataCells)}
         dataSource={dataSource}
