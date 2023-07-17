@@ -1,4 +1,4 @@
-import Icon, { SettingOutlined } from '@ant-design/icons';
+import Icon, { CloseOutlined, SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { debounce } from 'lodash';
 import React, {
@@ -22,12 +22,11 @@ export const CollapsibleOnScroll: React.FC<Props> = ({
   children,
   onHidden,
 }: Props) => {
-  const [hardVisible, setHardVisible] = useState<boolean>(false);
-  const [childrenHeight, setHeight] = useState<number>(0);
+  const [outOfViewport, setOutOfViewport] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [childrenHeight, setHeight] = useState(0);
 
   const ref = useRef<HTMLDivElement>(null);
-
-  const [outOfViewport, setOutOfViewport] = useState(false);
 
   useScrollPosition(
     (currentYPosition: number) => {
@@ -52,35 +51,52 @@ export const CollapsibleOnScroll: React.FC<Props> = ({
 
   return (
     <>
-      {outOfViewport && (
-        <Button
+      {outOfViewport &&
+        (expanded ? (
+          <Button
+            style={{
+              position: 'sticky',
+              top: 150,
+              zIndex: 20,
+            }}
+            shape="circle"
+            icon={<CloseOutlined />}
+            onClick={() => {
+              setExpanded(false);
+              onHidden(FUSION_HEADER_HEIGHT);
+            }}
+          ></Button>
+        ) : (
+          <Button
+            style={{
+              position: 'sticky',
+              top: 150,
+              zIndex: 20,
+            }}
+            shape="circle"
+            icon={<FilterIcon />}
+            onClick={() => {
+              const childOffsetHeight = FUSION_HEADER_HEIGHT + childrenHeight;
+              setExpanded(true);
+              onHidden(childOffsetHeight);
+            }}
+          ></Button>
+        ))}
+
+      {(!outOfViewport || expanded) && (
+        <div
           style={{
-            position: 'sticky',
-            top: 150,
-            zIndex: 100,
+            position: expanded ? 'fixed' : 'relative',
+            top: FUSION_HEADER_HEIGHT,
+            left: 0,
+            height: childrenHeight,
+            zIndex: expanded ? 10 : 0,
           }}
-          shape="circle"
-          icon={<FilterIcon />}
-          onClick={() => {
-            const childOffsetHeight = FUSION_HEADER_HEIGHT + childrenHeight;
-            console.log('Children heigh', childOffsetHeight, childrenHeight);
-            setHardVisible(!hardVisible);
-            onHidden(childOffsetHeight);
-          }}
-        ></Button>
+          ref={ref}
+        >
+          {children}
+        </div>
       )}
-      <div
-        style={{
-          position: hardVisible ? 'fixed' : 'relative',
-          top: hardVisible ? 60 : 0,
-          left: 0,
-          width: '100vw',
-          height: hardVisible || !outOfViewport ? childrenHeight : 0,
-          zIndex: hardVisible ? 100 : 0,
-        }}
-      >
-        <div ref={ref}>{children}</div>
-      </div>
     </>
   );
 };
