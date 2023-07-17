@@ -14,6 +14,7 @@ import {
 } from '../../utils';
 import { parseResourceId } from '../Preview/Preview';
 import { download } from '../../utils/download';
+import { getDataExplorerResourceItemArray } from './editorUtils';
 
 const useResolvedLinkEditorPopover = () => {
   const nexus = useNexusContext();
@@ -44,11 +45,13 @@ const useResolvedLinkEditorPopover = () => {
             _self: data._self,
             title: getResourceLabel(data),
             types: getNormalizedTypes(data['@type']),
-            resource: [
-              orgProject?.orgLabel ?? '',
-              orgProject?.projectLabel ?? '',
-              data['@id'],
-            ],
+            resource: getDataExplorerResourceItemArray(
+              {
+                orgLabel: orgProject?.orgLabel ?? '',
+                projectLabel: orgProject?.projectLabel ?? '',
+              },
+              data
+            ),
           },
           current: resource,
         })

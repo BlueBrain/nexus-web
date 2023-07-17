@@ -7,7 +7,7 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import { useNexusContext } from '@bbp/react-nexus';
+import { AccessControl } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
 import 'codemirror/mode/javascript/javascript';
@@ -89,9 +89,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     JSON.stringify(rawData, null, 2)
   );
   const {
-    dataExplorer: { limited },
+    dataExplorer: { fullscreen },
     oidc,
-    config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
     dataExplorer: state.dataExplorer,
     oidc: state.oidc,
@@ -221,58 +220,69 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             )}
           </div>
 
-          <div className="controls">
-            {showFullScreen && (
+          <div className="editor-controls-panel">
+            <div className="left-side">
+              {showFullScreen && (
+                <div className="full-screen-switch__wrapper">
+                  <span>Fullscreen</span>
+                  <Switch
+                    aria-label="fullscreen switch"
+                    className="full-screen-switch"
+                    checked={fullscreen}
+                    onChange={onFullScreen}
+                    style={switchMarginRight}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="right-side">
               <Switch
-                checkedChildren="Standard Screen"
-                unCheckedChildren="Full Screen"
-                checked={limited}
-                onChange={onFullScreen}
+                checkedChildren="Unfold"
+                unCheckedChildren="Fold"
+                checked={foldCodeMiror}
+                onChange={onFoldChange}
                 style={switchMarginRight}
               />
-            )}
-            <Switch
-              checkedChildren="Unfold"
-              unCheckedChildren="Fold"
-              checked={foldCodeMiror}
-              onChange={onFoldChange}
-              style={switchMarginRight}
-            />
-            {!expanded && !isEditing && valid && showMetadataToggle && (
-              <Switch
-                checkedChildren="Metadata"
-                unCheckedChildren="Show Metadata"
-                checked={showMetadata}
-                onChange={checked => onMetadataChangeFold(checked)}
-                style={switchMarginRight}
-              />
-            )}
-            {showExpanded && !isEditing && valid && (
-              <Switch
-                checkedChildren="Expanded"
-                unCheckedChildren="Expand"
-                checked={expanded}
-                onChange={expaned => onFormatChangeFold(expanded)}
-                style={switchMarginRight}
-              />
-            )}
-            {userAuthenticated && (
-              <Button
-                role="submit"
-                icon={<SaveOutlined />}
-                type="primary"
-                size="small"
-                onClick={handleSubmit}
-                disabled={!valid || !editable || !isEditing}
+              {!expanded && !isEditing && valid && showMetadataToggle && (
+                <Switch
+                  checkedChildren="Metadata"
+                  unCheckedChildren="Show Metadata"
+                  checked={showMetadata}
+                  onChange={checked => onMetadataChangeFold(checked)}
+                  style={switchMarginRight}
+                />
+              )}
+              {showExpanded && !isEditing && valid && (
+                <Switch
+                  checkedChildren="Expanded"
+                  unCheckedChildren="Expand"
+                  checked={expanded}
+                  onChange={expaned => onFormatChangeFold(expanded)}
+                  style={switchMarginRight}
+                />
+              )}
+              <AccessControl
+                path={[`${orgLabel}/${projectLabel}`]}
+                permissions={['resources/write']}
+                noAccessComponent={() => <></>}
               >
-                Save
-              </Button>
-            )}{' '}
-            {editable && isEditing && (
-              <Button danger size="small" onClick={handleCancel}>
-                Cancel
-              </Button>
-            )}
+                <Button
+                  role="submit"
+                  icon={<SaveOutlined />}
+                  type="primary"
+                  size="small"
+                  onClick={handleSubmit}
+                  disabled={!valid || !editable || !isEditing}
+                >
+                  Save
+                </Button>
+              </AccessControl>
+              {editable && isEditing && (
+                <Button danger size="small" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -284,7 +294,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         onLinksFound={onLinksFound}
-        fullscreen={limited}
+        fullscreen={fullscreen}
       />
     </div>
   );
