@@ -29,9 +29,9 @@ import {
 } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import ResourceResolutionCache from './ResourcesLRUCache';
-
 import './ResourceEditor.less';
 
+const AnchorLinkIcon = require('../../images/AnchorLink.svg');
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
   onSubmit: (rawData: { [key: string]: any }) => void;
@@ -204,6 +204,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div
       data-testid="resource-editor"
       className={valid ? 'resource-editor' : 'resource-editor _invalid'}
+      style={
+        {
+          '--resource-link-anchor-icon': `url(${AnchorLinkIcon})`,
+        } as React.CSSProperties
+      }
     >
       {showControlPanel && (
         <div className="control-panel">
