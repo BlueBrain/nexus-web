@@ -107,7 +107,7 @@ const TypeSelector = ({
     selectCallback,
   });
 
-  const onSearchTypeChange = ({
+  const onChangeTypeChange = ({
     target: { value },
     type,
   }: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,11 +138,7 @@ const TypeSelector = ({
     e.preventDefault();
     e.stopPropagation();
     setFilterOptions({
-      types: types?.find(item => item.key === type.key)
-        ? types.filter(item => item.key !== type.key)
-        : types
-        ? concat(types, type)
-        : [type],
+      types: [type],
     });
   };
 
@@ -161,7 +157,7 @@ const TypeSelector = ({
               className="my-data-type-filter-search"
               placeholder="Search for type"
               value={typeSearchValue}
-              onChange={onSearchTypeChange}
+              onChange={onChangeTypeChange}
             />
             {
               <div className="count">{`${prettifyNumber(

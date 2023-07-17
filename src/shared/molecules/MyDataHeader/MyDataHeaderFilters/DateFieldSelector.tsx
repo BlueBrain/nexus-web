@@ -36,6 +36,7 @@ const DateFieldSelector = ({
   );
   return (
     <Dropdown
+      className="date-field-selector"
       placement="bottomLeft"
       trigger={['click']}
       overlay={DateFieldMenu}

@@ -35,12 +35,28 @@
   &-actions {
     width: 100%;
     margin: 0;
-    display: grid;
+    display: flex;
+    flex-flow: row wrap;
+    // grid-template-columns: max-content max-content 300px 300px 1fr;
     gap: 15px;
-    grid-template-columns: max-content max-content 300px 300px 1fr;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     align-content: center;
+  }
+  .issuer-selector,
+  .date-field-selector {
+    width: 100%;
+    max-width: max-content;
+  }
+  .my-data-date-picker,
+  .my-data-type-picker {
+    width: 100%;
+    max-width: 300px;
+  }
+  .my-data-search-container {
+    flex: 0 1 25%;
+    width: 100%;
+    min-width: 250px;
   }
 }
 .radio-filter {

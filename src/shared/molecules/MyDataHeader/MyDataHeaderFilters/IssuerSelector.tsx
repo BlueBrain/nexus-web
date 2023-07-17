@@ -12,6 +12,7 @@ const IssuerSelector = ({ issuer, setFilterOptions }: TIssuerSelectorProps) => {
 
   return (
     <Radio.Group
+      className="issuer-selector"
       defaultValue={'createdBy'}
       value={issuer}
       onChange={onIssuerChange}
