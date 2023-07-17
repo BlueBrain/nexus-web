@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { RootState } from '../../store/reducers';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
@@ -13,6 +13,7 @@ import {
 const useNavigationStackManager = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
   const { rightNodes, leftNodes, referer } = useSelector(
     (state: RootState) => state.dataExplorer
   );
