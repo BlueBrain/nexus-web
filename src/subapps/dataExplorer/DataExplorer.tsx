@@ -73,58 +73,62 @@ export const DataExplorer: React.FC<{}> = () => {
   return (
     <div className="data-explorer-contents">
       <CollapsibleOnScroll onHidden={() => setFromTop(200)}>
-        <div className="data-explorer-filters">
-          <ProjectSelector
-            onSelect={(orgLabel?: string, projectLabel?: string) => {
-              if (orgLabel && projectLabel) {
-                updateTableConfiguration({
-                  orgAndProject: [orgLabel, projectLabel],
-                });
-              } else {
-                updateTableConfiguration({ orgAndProject: undefined });
-              }
-            }}
-          />
-          <TypeSelector
-            orgAndProject={orgAndProject}
-            onSelect={selectedType => {
-              updateTableConfiguration({ type: selectedType });
-            }}
-          />
-          <PredicateSelector
-            dataSource={currentPageDataSource}
-            onPredicateChange={updateTableConfiguration}
-          />
-        </div>
-        {!isLoading && (
-          <div className="flex-container">
-            <DatasetCount
-              nexusTotal={resources?._total ?? 0}
-              totalOnPage={resources?._results?.length ?? 0}
-              totalFiltered={predicate ? displayedDataSource.length : undefined}
+        <div className="data-explorer-header">
+          <div className="data-explorer-filters">
+            <ProjectSelector
+              onSelect={(orgLabel?: string, projectLabel?: string) => {
+                if (orgLabel && projectLabel) {
+                  updateTableConfiguration({
+                    orgAndProject: [orgLabel, projectLabel],
+                  });
+                } else {
+                  updateTableConfiguration({ orgAndProject: undefined });
+                }
+              }}
             />
-            <div className="data-explorer-toggles">
-              <Switch
-                defaultChecked={false}
-                checked={showMetadataColumns}
-                onClick={isChecked => setShowMetadataColumns(isChecked)}
-                id="show-metadata-columns"
-                className="data-explorer-toggle"
-              />
-              <label htmlFor="show-metadata-columns">Show metadata</label>
-              <Switch
-                defaultChecked={true}
-                checked={showEmptyDataCells}
-                onClick={isChecked => setShowEmptyDataCells(isChecked)}
-                id="show-empty-data-cells"
-                className="data-explorer-toggle"
-              />
-              <label htmlFor="show-empty-data-cells">
-                Show empty data cells
-              </label>
-            </div>
+            <TypeSelector
+              orgAndProject={orgAndProject}
+              onSelect={selectedType => {
+                updateTableConfiguration({ type: selectedType });
+              }}
+            />
+            <PredicateSelector
+              dataSource={currentPageDataSource}
+              onPredicateChange={updateTableConfiguration}
+            />
           </div>
-        )}
+          {!isLoading && (
+            <div className="flex-container">
+              <DatasetCount
+                nexusTotal={resources?._total ?? 0}
+                totalOnPage={resources?._results?.length ?? 0}
+                totalFiltered={
+                  predicate ? displayedDataSource.length : undefined
+                }
+              />
+              <div className="data-explorer-toggles">
+                <Switch
+                  defaultChecked={false}
+                  checked={showMetadataColumns}
+                  onClick={isChecked => setShowMetadataColumns(isChecked)}
+                  id="show-metadata-columns"
+                  className="data-explorer-toggle"
+                />
+                <label htmlFor="show-metadata-columns">Show metadata</label>
+                <Switch
+                  defaultChecked={true}
+                  checked={showEmptyDataCells}
+                  onClick={isChecked => setShowEmptyDataCells(isChecked)}
+                  id="show-empty-data-cells"
+                  className="data-explorer-toggle"
+                />
+                <label htmlFor="show-empty-data-cells">
+                  Show empty data cells
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
       </CollapsibleOnScroll>
 
       <DataExplorerTable

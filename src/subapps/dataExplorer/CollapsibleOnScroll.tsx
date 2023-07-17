@@ -45,7 +45,6 @@ export const CollapsibleOnScroll: React.FC<Props> = ({
           left: 0,
           width: '100vw',
           height: hardVisible || !isHidden ? 200 : 0,
-          background: 'white',
           zIndex: hardVisible ? 60 : 0,
         }}
       >
