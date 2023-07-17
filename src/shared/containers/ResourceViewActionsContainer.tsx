@@ -5,7 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row, notification } from 'antd';
 import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { uniq } from 'lodash';
+import { isArray, isString, uniq } from 'lodash';
 import { makeResourceUri } from '../utils';
 import { RootState } from '../store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
@@ -123,10 +123,15 @@ const ResourceViewActionsContainer: React.FC<{
     );
     nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then(
       resource => {
-        // @ts-ignore
-        if (resource && resource['@type'].includes('View')) {
-          // @ts-ignore
-          setView(resource);
+        const resourceType = resource ? (resource as Resource)['@type'] : null;
+        const isView =
+          resourceType && isArray(resourceType)
+            ? resourceType.includes('View')
+            : isString(resourceType)
+            ? resourceType === 'View'
+            : false;
+        if (isView) {
+          setView(resource as Resource);
         }
       }
     );
