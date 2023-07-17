@@ -114,6 +114,11 @@ const initialDataExplorerState: TDataExplorerState = {
   },
 };
 
+const getButtonElement = (container: HTMLElement, side: 'back' | 'forward') => {
+  return container.querySelector(
+    `.navigation-arrow-btn[aria-label="${side}-arrow"]`
+  );
+};
 describe('NavigationStack', () => {
   let app: JSX.Element;
   let component: RenderResult;
@@ -149,87 +154,60 @@ describe('NavigationStack', () => {
     container = component.container;
     rerender = component.rerender;
     user = userEvent.setup();
-  });
 
-  it('should render the back/forward arrows as not disabled', () => {
     store.dispatch(
       ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
     );
     rerender(app);
+  });
 
+  it('should render the back/forward arrows as not disabled', () => {
     const backArrow = container.querySelector('[aria-label="back-arrow"]');
-    const forwardArrow = container.querySelector(
-      '[aria-label="forward-arrow"]'
-    );
+    const forwardArrow = getButtonElement(container, 'forward');
     expect(backArrow).toBeInTheDocument();
     expect(forwardArrow).toBeInTheDocument();
   });
   it('should left side of navigation become 3 and right side become 2 when Forward btn clicked', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
-    rerender(app);
-    const forwardArrow = container.querySelector(
-      '.navigation-arrow-btn[aria-label="forward-arrow"]'
-    );
-    expect(forwardArrow).not.toBeNull();
+    const forwardArrow = getButtonElement(container, 'forward');
+    expect(forwardArrow).toBeInTheDocument();
     forwardArrow && (await user.click(forwardArrow));
     rerender(app);
     expect(store.getState().dataExplorer.leftNodes.links.length).toEqual(3);
     expect(store.getState().dataExplorer.rightNodes.links.length).toEqual(2);
   });
   it('should left side of navigation become 1 and right side become 4 when Back btn clicked', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
-    rerender(app);
-    const backArrow = container.querySelector(
-      '.navigation-arrow-btn[aria-label="back-arrow"]'
-    );
-    expect(backArrow).not.toBeNull();
+    const backArrow = getButtonElement(container, 'back');
+    expect(backArrow).toBeInTheDocument();
     backArrow && (await user.click(backArrow));
     rerender(app);
     expect(store.getState().dataExplorer.leftNodes.links.length).toEqual(1);
     expect(store.getState().dataExplorer.rightNodes.links.length).toEqual(4);
   });
   it('should forward btn disappear when there is no more forward navigation', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
-    rerender(app);
     for (const _ of store.getState().dataExplorer.rightNodes.links) {
-      const forwardArrow = container.querySelector(
-        '.navigation-arrow-btn[aria-label="forward-arrow"]'
-      );
-      expect(forwardArrow).not.toBeNull();
+      const forwardArrow = getButtonElement(container, 'forward');
+      expect(forwardArrow).toBeInTheDocument();
       forwardArrow && (await user.click(forwardArrow));
       rerender(app);
     }
     expect(store.getState().dataExplorer.leftNodes.links.length).toEqual(5);
     expect(store.getState().dataExplorer.rightNodes.links.length).toEqual(0);
-    const forwardArrowAfterFullNavigation = container.querySelector(
-      '.navigation-arrow-btn[aria-label="forward-arrow"]'
+    const forwardArrowAfterFullNavigation = getButtonElement(
+      container,
+      'forward'
     );
     expect(forwardArrowAfterFullNavigation).toBeNull();
   });
   it('should return to /my-data when there is no more back navigation', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
-    rerender(app);
     for (const _ of store.getState().dataExplorer.leftNodes.links) {
-      const backArrow = container.querySelector(
-        '.navigation-arrow-btn[aria-label="back-arrow"]'
-      );
-      expect(backArrow).not.toBeNull();
+      const backArrow = getButtonElement(container, 'back');
+      expect(backArrow).toBeInTheDocument();
       backArrow && (await user.click(backArrow));
       rerender(app);
     }
     expect(store.getState().dataExplorer.leftNodes.links.length).toEqual(0);
-    const lastBackArrow = container.querySelector(
-      '.navigation-arrow-btn[aria-label="back-arrow"]'
-    );
-    expect(lastBackArrow).not.toBeNull();
+    const lastBackArrow = getButtonElement(container, 'back');
+    expect(lastBackArrow).toBeInTheDocument();
     lastBackArrow && (await user.click(lastBackArrow));
     expect(history.location.pathname).toEqual('/my-data');
   });
