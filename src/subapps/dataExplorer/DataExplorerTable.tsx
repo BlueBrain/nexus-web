@@ -10,6 +10,7 @@ import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
+import { FUSION_HEADER_HEIGHT } from './CollapsibleOnScroll';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -20,7 +21,7 @@ interface TDataExplorerTable {
   updateTableConfiguration: React.Dispatch<Partial<DataExplorerConfiguration>>;
   columns: string[];
   showEmptyDataCells: boolean;
-  fromTop: number;
+  offsetFromTop: number;
 }
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
@@ -34,7 +35,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   offset,
   updateTableConfiguration,
   showEmptyDataCells,
-  fromTop,
+  offsetFromTop,
 }: TDataExplorerTable) => {
   const history = useHistory();
   const location = useLocation();
@@ -67,14 +68,9 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
     });
   };
 
+  console.log('Offset from top', offsetFromTop);
   return (
-    <div
-      style={{
-        display: 'block',
-        top: fromTop ? fromTop : 0,
-        position: fromTop ? 'absolute' : 'relative',
-      }}
-    >
+    <div>
       <Table<Resource>
         columns={columnsConfig(columns, showEmptyDataCells)}
         dataSource={dataSource}
@@ -94,7 +90,9 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
           },
         }}
         pagination={tablePaginationConfig}
-        sticky={{ offsetHeader: fromTop ? fromTop + 52 : 52 }}
+        sticky={{
+          offsetHeader: offsetFromTop ? offsetFromTop : FUSION_HEADER_HEIGHT,
+        }}
       />
     </div>
   );

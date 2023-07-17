@@ -1,40 +1,71 @@
-import { SettingOutlined } from '@ant-design/icons';
+import Icon, { SettingOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import React, { ReactNode, useEffect, useState } from 'react';
+import { debounce } from 'lodash';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
 
 interface Props {
   children: ReactNode;
-  onHidden: () => void;
+  onHidden: (offsetFromTop: number) => void;
 }
+
+export const FUSION_HEADER_HEIGHT = 52;
 
 export const CollapsibleOnScroll: React.FC<Props> = ({
   children,
   onHidden,
 }: Props) => {
-  const [isHidden, setIsHidden] = useState<boolean>(false);
   const [hardVisible, setHardVisible] = useState<boolean>(false);
+  const [childrenHeight, setHeight] = useState<number>(0);
 
-  const handleScrollChange = () => {
-    setIsHidden(window.scrollY !== 0);
-  };
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [outOfViewport, setOutOfViewport] = useState(false);
+
+  useScrollPosition(
+    (currentYPosition: number) => {
+      const childOffsetHeight = FUSION_HEADER_HEIGHT + childrenHeight;
+
+      const shouldShow = currentYPosition > childOffsetHeight;
+      if (shouldShow !== outOfViewport) setOutOfViewport(shouldShow);
+    },
+    100,
+    [outOfViewport, childrenHeight]
+  );
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScrollChange);
-    return () => {
-      window.removeEventListener('scroll', handleScrollChange);
-    };
-  }, []); // only add event listener on mount & clean on unmount
+    if (ref.current) {
+      const innerChildrenHeight = Array.from(ref.current.children).reduce(
+        (acc, currentChild) => (acc = acc + currentChild.clientHeight),
+        0
+      );
+      setHeight(innerChildrenHeight);
+    }
+  }, []);
 
   return (
     <>
-      {isHidden && (
+      {outOfViewport && (
         <Button
-          style={{ position: 'sticky', top: 100, zIndex: 10, color: '#003A8C' }}
+          style={{
+            position: 'sticky',
+            top: 150,
+            zIndex: 100,
+          }}
           shape="circle"
-          icon={<SettingOutlined />}
+          icon={<FilterIcon />}
           onClick={() => {
+            const childOffsetHeight = FUSION_HEADER_HEIGHT + childrenHeight;
+            console.log('Children heigh', childOffsetHeight, childrenHeight);
             setHardVisible(!hardVisible);
-            onHidden();
+            onHidden(childOffsetHeight);
           }}
         ></Button>
       )}
@@ -44,12 +75,49 @@ export const CollapsibleOnScroll: React.FC<Props> = ({
           top: hardVisible ? 60 : 0,
           left: 0,
           width: '100vw',
-          height: hardVisible || !isHidden ? 200 : 0,
-          zIndex: hardVisible ? 60 : 0,
+          height: hardVisible || !outOfViewport ? childrenHeight : 0,
+          zIndex: hardVisible ? 100 : 0,
         }}
       >
-        {children}
+        <div ref={ref}>{children}</div>
       </div>
     </>
   );
 };
+
+const isBrowser = typeof window !== `undefined`;
+
+const getScrollYPosition = (): number => {
+  if (!isBrowser) return 0;
+
+  return window.scrollY;
+};
+
+export function useScrollPosition(
+  effect: (currentYPosition: number) => void,
+  waitMs: number,
+  deps: React.DependencyList
+) {
+  const yPosition = useRef(getScrollYPosition());
+
+  let throttleTimeout: number | null = null;
+
+  const callBack = () => {
+    const currentPosition = getScrollYPosition();
+    effect(currentPosition);
+    yPosition.current = currentPosition;
+    throttleTimeout = null;
+  };
+
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      if (throttleTimeout === null) {
+        throttleTimeout = window.setTimeout(callBack, waitMs);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, deps);
+}

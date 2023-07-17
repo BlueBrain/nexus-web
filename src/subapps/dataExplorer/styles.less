@@ -9,11 +9,16 @@
   position: relative;
 
   .data-explorer-header {
+    position: fixed;
+    top: @fusion-header-height;
+    left: 0;
+    width: 100vw;
+    padding: 20px 52px;
     background: white;
 
     .data-explorer-filters {
       display: flex;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
     .data-explorer-count {
@@ -93,7 +98,7 @@
       input {
         color: @fusion-blue-8 !important;
         border: none;
-        background: @fusion-main-bg;
+        background: transparent;
         font-weight: 700;
 
         &::placeholder {
@@ -148,35 +153,6 @@
         min-width: 140px;
         width: max-content;
       }
-    }
-  }
-
-  .select-menu.greyed-out {
-    .ant-select-selector {
-      color: @fusion-neutral-6 !important;
-      background-color: transparent !important;
-      text-transform: lowercase;
-      border: none;
-      max-width: max-content;
-      min-width: unset;
-      display: flex;
-      align-items: center;
-    }
-
-    .ant-select-selector::before {
-      content: url('./predicate-filter.svg');
-      width: 10px;
-      margin-right: 4px;
-    }
-
-    .ant-select-arrow {
-      display: none;
-    }
-
-    .ant-select-selection-item {
-      font-weight: 700;
-      padding-right: 0;
-      width: max-content;
     }
   }
 

@@ -27,6 +27,7 @@ export interface DataExplorerConfiguration {
 export const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
+  const [headerHeight, setHeaderHeight] = useState(0);
 
   const [
     { pageSize, offset, orgAndProject, predicate, type, selectedPath },
@@ -69,35 +70,36 @@ export const DataExplorer: React.FC<{}> = () => {
     [currentPageDataSource, showMetadataColumns, selectedPath]
   );
 
-  const [fromTop, setFromTop] = useState(0);
   return (
     <div className="data-explorer-contents">
-      <CollapsibleOnScroll onHidden={() => setFromTop(200)}>
-        <div className="data-explorer-header">
-          <div className="data-explorer-filters">
-            <ProjectSelector
-              onSelect={(orgLabel?: string, projectLabel?: string) => {
-                if (orgLabel && projectLabel) {
-                  updateTableConfiguration({
-                    orgAndProject: [orgLabel, projectLabel],
-                  });
-                } else {
-                  updateTableConfiguration({ orgAndProject: undefined });
-                }
-              }}
-            />
-            <TypeSelector
-              orgAndProject={orgAndProject}
-              onSelect={selectedType => {
-                updateTableConfiguration({ type: selectedType });
-              }}
-            />
-            <PredicateSelector
-              dataSource={currentPageDataSource}
-              onPredicateChange={updateTableConfiguration}
-            />
-          </div>
-          {!isLoading && (
+      {!isLoading && (
+        <CollapsibleOnScroll
+          onHidden={offsetFromTop => setHeaderHeight(offsetFromTop)}
+        >
+          <div className="data-explorer-header">
+            <div className="data-explorer-filters">
+              <ProjectSelector
+                onSelect={(orgLabel?: string, projectLabel?: string) => {
+                  if (orgLabel && projectLabel) {
+                    updateTableConfiguration({
+                      orgAndProject: [orgLabel, projectLabel],
+                    });
+                  } else {
+                    updateTableConfiguration({ orgAndProject: undefined });
+                  }
+                }}
+              />
+              <TypeSelector
+                orgAndProject={orgAndProject}
+                onSelect={selectedType => {
+                  updateTableConfiguration({ type: selectedType });
+                }}
+              />
+              <PredicateSelector
+                dataSource={currentPageDataSource}
+                onPredicateChange={updateTableConfiguration}
+              />
+            </div>
             <div className="flex-container">
               <DatasetCount
                 nexusTotal={resources?._total ?? 0}
@@ -127,9 +129,9 @@ export const DataExplorer: React.FC<{}> = () => {
                 </label>
               </div>
             </div>
-          )}
-        </div>
-      </CollapsibleOnScroll>
+          </div>
+        </CollapsibleOnScroll>
+      )}
 
       <DataExplorerTable
         isLoading={isLoading}
@@ -140,7 +142,7 @@ export const DataExplorer: React.FC<{}> = () => {
         offset={offset}
         updateTableConfiguration={updateTableConfiguration}
         showEmptyDataCells={showEmptyDataCells}
-        fromTop={fromTop}
+        offsetFromTop={headerHeight}
       />
     </div>
   );
