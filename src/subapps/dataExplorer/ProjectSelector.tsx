@@ -51,6 +51,7 @@ export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
         bordered={false}
         className="search-input"
         popupClassName="search-menu"
+        data-testid="project-filter"
       >
         <Input
           size="middle"

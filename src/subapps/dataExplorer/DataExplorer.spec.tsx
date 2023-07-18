@@ -1,7 +1,14 @@
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
-import { RenderResult, act, fireEvent, within } from '@testing-library/react';
+import {
+  RenderResult,
+  act,
+  fireEvent,
+  queryByRole,
+  waitForElementToBeRemoved,
+  within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -77,6 +84,7 @@ describe('DataExplorer', () => {
 
     container = component.container;
     user = userEvent.setup();
+    await expectRowCountToBe(mockResourcesOnPage1.length);
   });
 
   afterEach(async () => {
@@ -103,6 +111,24 @@ describe('DataExplorer', () => {
       const rows = visibleTableRows();
       expect(rows.length).toEqual(expectedRowsCount);
       return rows;
+    });
+  };
+
+  const waitForHeaderToBeHidden = async () => {
+    return await waitFor(() => {
+      const dataExplorerHeader = document.querySelector(
+        '.data-explorer-header'
+      ) as HTMLDivElement;
+      expect(dataExplorerHeader).not.toBeVisible();
+    });
+  };
+
+  const waitForHeaderToBeVisible = async () => {
+    return await waitFor(() => {
+      const dataExplorerHeader = document.querySelector(
+        '.data-explorer-header'
+      ) as HTMLDivElement;
+      expect(dataExplorerHeader).toBeVisible();
     });
   };
 
@@ -337,6 +363,49 @@ describe('DataExplorer', () => {
     }
   };
 
+  const expectDataExplorerHeaderToExist = async () => {
+    const pro = await getProjectAutocomplete();
+    expect(pro).toBeVisible();
+    const type = await getInputForLabel(TypeMenuLabel);
+    expect(type).toBeVisible();
+    const predicate = await getInputForLabel(PathMenuLabel);
+    expect(predicate).toBeVisible();
+    const totalResultsCount = await getTotalSizeOfDataset('500,123');
+    expect(totalResultsCount).toBeVisible();
+    const metadataSwitch = await showMetadataSwitch();
+    expect(metadataSwitch).toBeVisible();
+    const showEmptyCellsToggle = await showEmptyDataCellsSwitch();
+    expect(showEmptyCellsToggle).toBeVisible();
+  };
+
+  const scrollWindow = async (yPosition: number) => {
+    await fireEvent.scroll(window, { target: { scrollY: yPosition } });
+  };
+
+  const getButtonByLabel = async (label: string) => {
+    const buttonElement = await screen.getByRole('button', {
+      name: label,
+    });
+    return buttonElement;
+  };
+
+  const expandHeaderButton = async () =>
+    await getButtonByLabel('expand-header');
+
+  const collapseHeaderButton = async () =>
+    await getButtonByLabel('collapse-header');
+
+  const clickExpandHeaderButton = async () => {
+    const expandHeaderButtonElement = await expandHeaderButton();
+
+    await userEvent.click(expandHeaderButtonElement);
+  };
+
+  const clickCollapseHeaderButton = async () => {
+    const collapseHeaderButtonElement = await collapseHeaderButton();
+    await userEvent.click(collapseHeaderButtonElement);
+  };
+
   it('shows columns for fields that are only in source data', async () => {
     await expectRowCountToBe(10);
     const column = await expectColumHeaderToExist('userProperty1');
@@ -530,8 +599,6 @@ describe('DataExplorer', () => {
   });
 
   it('resets selected project when user clicks reset button', async () => {
-    await expectRowCountToBe(10);
-
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
 
     expect(visibleTableRows().length).toBeLessThan(10);
@@ -542,8 +609,6 @@ describe('DataExplorer', () => {
   });
 
   it('shows all projects when allProjects option is selected', async () => {
-    await expectRowCountToBe(10);
-
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
 
     expect(visibleTableRows().length).toBeLessThan(10);
@@ -573,6 +638,8 @@ describe('DataExplorer', () => {
   });
 
   it('only shows types that exist in selected project in type autocomplete', async () => {
+    await expectRowCountToBe(10);
+
     await openMenuFor(TypeMenuLabel);
     const optionBefore = await getDropdownOption(
       'Dataset',
@@ -581,6 +648,7 @@ describe('DataExplorer', () => {
     expect(optionBefore).toBeInTheDocument();
 
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+    await expectRowCountToBe(2);
 
     await openMenuFor(TypeMenuLabel);
     expect(
@@ -840,17 +908,83 @@ describe('DataExplorer', () => {
   });
 
   it('show data explorer header by default', async () => {
-    // const pro = await getProjectAutocomplete();
-    // expect(pro).toBeVisible();
-    const type = await getInputForLabel(TypeMenuLabel);
-    expect(type).toBeVisible();
-    const predicate = await getInputForLabel(PredicateMenuLabel);
-    expect(predicate).toBeVisible();
-    const totalResultsCount = await getTotalSizeOfDataset('500,123');
-    expect(totalResultsCount).toBeVisible();
-    const metadataSwitch = await showMetadataSwitch();
-    expect(metadataSwitch).toBeVisible();
-    const showEmptyCellsToggle = await showEmptyDataCellsSwitch();
-    expect(showEmptyCellsToggle).toBeVisible();
+    await expectDataExplorerHeaderToExist();
+  });
+
+  it('hides data explorer header when user scrolls past its height', async () => {
+    await expectDataExplorerHeaderToExist();
+
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
+  });
+
+  it('shows expand header button when data explorer is not visible', async () => {
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    await clickExpandHeaderButton();
+
+    await expectDataExplorerHeaderToExist();
+  });
+
+  it('collapses header again when collapse button is clicked', async () => {
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    await clickExpandHeaderButton();
+    await expectDataExplorerHeaderToExist();
+
+    await clickCollapseHeaderButton();
+    expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
+  });
+
+  it('hides expand header button when user scrolls up', async () => {
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    expect(await expandHeaderButton()).toBeVisible();
+
+    await scrollWindow(0);
+    await waitForHeaderToBeVisible();
+
+    expect(expandHeaderButton()).rejects.toThrow();
+  });
+
+  it('hides collapse header button when user scrolls up', async () => {
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    await clickExpandHeaderButton();
+    expect(await collapseHeaderButton()).toBeVisible();
+
+    await scrollWindow(0);
+    await waitForHeaderToBeVisible();
+
+    await waitForElementToBeRemoved(() =>
+      screen.queryByRole('button', { name: 'collapse-header' })
+    );
+  });
+
+  it('does not reset values in filters when header was hidden due to scroll', async () => {
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+    await selectOptionFromMenu(TypeMenuLabel, 'file', CustomOptionSelector);
+    await selectPath('@type');
+
+    await scrollWindow(500);
+    await waitForHeaderToBeHidden();
+
+    await scrollWindow(0);
+    await waitForHeaderToBeVisible();
+
+    const projectInput = await getInputForLabel(ProjectMenuLabel);
+    expect(projectInput.value).toMatch(new RegExp('unhcr', 'i'));
+
+    const typeInput = await getSelectedValueInMenu(TypeMenuLabel);
+    expect(typeInput).toMatch(new RegExp('file', 'i'));
+
+    const pathInput = await getSelectedValueInMenu(PathMenuLabel);
+    expect(pathInput).toMatch(new RegExp('@type', 'i'));
   });
 });

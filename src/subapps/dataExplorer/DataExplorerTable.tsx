@@ -75,8 +75,9 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
         top: tableOffsetFromTop,
         left: 0,
         padding: '0 52px',
-        height: 'fit-content',
         background: '#f5f5f5',
+        height: 'fit-content',
+        minHeight: '100%',
       }}
     >
       <Table<Resource>
@@ -87,7 +88,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
           onClick: _ => goToResource(resource),
           'data-testid': resource._self,
         })}
-        loading={isLoading}
+        loading={{ spinning: isLoading, indicator: <></> }}
         bordered={false}
         className="data-explorer-table"
         rowClassName="data-explorer-row"
