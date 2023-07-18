@@ -4,6 +4,7 @@ import React, {
   useReducer,
   useEffect,
   useState,
+  CSSProperties,
 } from 'react';
 import { Button, Empty, Table, Tag, Tooltip, notification } from 'antd';
 import {
@@ -155,7 +156,7 @@ type TSorterProps = {
   onSortDescend(): void;
   onSortAscend(): void;
 };
-
+const columnWhiteSpaceWrap = { whiteSpace: 'nowrap' } as CSSProperties;
 const Sorter = ({ onSortDescend, onSortAscend, order, name }: TSorterProps) => {
   if (!order) {
     return (
@@ -239,7 +240,7 @@ const MyDataTable: React.FC<TProps> = ({
             return (
               <Tooltip title={resourceId}>
                 <Button
-                  style={{ padding: 0 }}
+                  style={{ padding: 0, ...columnWhiteSpaceWrap }}
                   type="link"
                   onClick={() => goToResource(org, project, resourceId)}
                 >
@@ -262,7 +263,7 @@ const MyDataTable: React.FC<TProps> = ({
               : 'asc'
             : undefined;
           return (
-            <div>
+            <div style={columnWhiteSpaceWrap}>
               organization / project
               {(!query || query.trim() === '') && (
                 <Sorter
@@ -328,7 +329,7 @@ const MyDataTable: React.FC<TProps> = ({
               : 'asc'
             : undefined;
           return (
-            <div>
+            <div style={columnWhiteSpaceWrap}>
               updated date
               {(!query || query.trim() === '') && (
                 <Sorter
@@ -356,7 +357,7 @@ const MyDataTable: React.FC<TProps> = ({
               : 'asc'
             : undefined;
           return (
-            <div>
+            <div style={columnWhiteSpaceWrap}>
               created date
               {(!query || query.trim() === '') && (
                 <Sorter

@@ -138,7 +138,7 @@ const TypeSelector = ({
     e.preventDefault();
     e.stopPropagation();
     setFilterOptions({
-      types: [type],
+      types: types?.find(item => item.value === type.value) ? [] : [type],
     });
   };
 
