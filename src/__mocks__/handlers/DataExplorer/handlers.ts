@@ -1,13 +1,19 @@
 import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk';
 import {
   AggregatedBucket,
   AggregationsResult,
 } from 'subapps/dataExplorer/DataExplorerUtils';
 
+export const getCompleteResources = (
+  resources: Resource[] = defaultPartialResources
+) => {
+  return resources.map(res => ({ ...res, ...propertiesOnlyInSource }));
+};
+
 export const dataExplorerPageHandler = (
-  mockResources: Resource[],
+  partialResources: Resource[] = defaultPartialResources,
   total: number = 300
 ) => {
   return rest.get(deltaPath(`/resources`), (req, res, ctx) => {
@@ -23,8 +29,8 @@ export const dataExplorerPageHandler = (
       ],
       _total: total,
       _results: passedType
-        ? mockResources.filter(res => res['@type'] === passedType)
-        : mockResources,
+        ? partialResources.filter(res => res['@type'] === passedType)
+        : partialResources,
       _next:
         'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
     };
@@ -32,7 +38,38 @@ export const dataExplorerPageHandler = (
   });
 };
 
-export const filterByProjectHandler = (mockResources: Resource[]) => {
+const propertiesOnlyInSource = { userProperty1: { subUserProperty1: 'bar' } };
+
+export const sourceResourceHandler = (
+  partialResources: Resource[] = defaultPartialResources
+) => {
+  return rest.get(
+    deltaPath(`/resources/:org/:project/_/:id`),
+    (req, res, ctx) => {
+      const { id } = req.params;
+      const decodedId = decodeURIComponent(id as string);
+
+      const partialResource = partialResources.find(
+        resource => resource['@id'] === decodedId
+      );
+      if (partialResource) {
+        return res(
+          ctx.status(200),
+          ctx.json({ ...partialResource, ...propertiesOnlyInSource })
+        );
+      }
+
+      return res(
+        ctx.status(200),
+        ctx.json(getMockResource(decodedId, { ...propertiesOnlyInSource }))
+      );
+    }
+  );
+};
+
+export const filterByProjectHandler = (
+  mockResources: Resource[] = defaultPartialResources
+) => {
   return rest.get(deltaPath(`/resources/:org/:project`), (req, res, ctx) => {
     if (req.url.searchParams.has('aggregations')) {
       return res(
@@ -180,7 +217,7 @@ export const getMockResource = (
   _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/antonel',
 });
 
-export const defaultMockResult: Resource[] = [
+const defaultPartialResources: Resource[] = [
   getMockResource('self1', {}),
   getMockResource(
     'self2',

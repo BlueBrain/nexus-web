@@ -19,6 +19,7 @@ interface TDataExplorerTable {
   offset: number;
   updateTableConfiguration: React.Dispatch<Partial<DataExplorerConfiguration>>;
   columns: string[];
+  showEmptyDataCells: boolean;
 }
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
@@ -31,6 +32,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   pageSize,
   offset,
   updateTableConfiguration,
+  showEmptyDataCells,
 }: TDataExplorerTable) => {
   const history = useHistory();
   const location = useLocation();
@@ -40,6 +42,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   const tablePaginationConfig: TablePaginationConfig = {
     pageSize,
     total: allowedTotal,
+    pageSizeOptions: [10, 20, 50],
     position: ['bottomLeft'],
     defaultPageSize: 50,
     defaultCurrent: 0,
@@ -64,11 +67,12 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
 
   return (
     <Table<Resource>
-      columns={columnsConfig(columns)}
+      columns={columnsConfig(columns, showEmptyDataCells)}
       dataSource={dataSource}
       rowKey={record => record._self}
       onRow={resource => ({
         onClick: _ => goToResource(resource),
+        'data-testid': resource._self,
       })}
       loading={isLoading}
       bordered={false}
@@ -81,6 +85,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
         },
       }}
       pagination={tablePaginationConfig}
+      sticky={{ offsetHeader: 52 }}
     />
   );
 };
@@ -89,15 +94,18 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
  * For each resource in the resources array, it creates column configuration for all its keys (if the column config for that key does not already exist).
  */
 export const columnsConfig = (
-  columnNames: string[]
+  columnNames: string[],
+  showEmptyDataCells: boolean
 ): ColumnType<Resource>[] => {
   const colNameToConfig = new Map(
-    columnNames.length === 0 ? [] : initialTableConfig()
+    columnNames.length === 0 ? [] : initialTableConfig(showEmptyDataCells)
   );
 
   for (const columnName of columnNames) {
     if (!colNameToConfig.has(columnName)) {
-      colNameToConfig.set(columnName, { ...defaultColumnConfig(columnName) });
+      colNameToConfig.set(columnName, {
+        ...defaultColumnConfig(columnName, showEmptyDataCells),
+      });
     }
   }
 
@@ -107,15 +115,22 @@ export const columnsConfig = (
 export const getColumnTitle = (colName: string) =>
   startCase(colName).toUpperCase();
 
-const defaultColumnConfig = (colName: string): ColumnType<Resource> => {
+const defaultColumnConfig = (
+  colName: string,
+  showEmptyDataCells: boolean
+): ColumnType<Resource> => {
   return {
     key: colName,
     title: getColumnTitle(colName),
     dataIndex: colName,
     className: `data-explorer-column data-explorer-column-${colName}`,
-    sorter: false,
+    sorter: (a, b) => {
+      return JSON.stringify(a[colName] ?? '').localeCompare(
+        JSON.stringify(b[colName] ?? '')
+      );
+    },
     render: text => {
-      if (text === undefined) {
+      if (text === undefined && showEmptyDataCells) {
         // Text will also be undefined if a certain resource does not have `colName` as its property
         return <NoDataCell />;
       }
@@ -124,24 +139,30 @@ const defaultColumnConfig = (colName: string): ColumnType<Resource> => {
   };
 };
 
-const initialTableConfig = () => {
+const initialTableConfig = (showEmptyDataCells: boolean) => {
   const colNameToConfig: TColumnNameToConfig = new Map();
   const projectKey = '_project';
   const typeKey = '@type';
 
   const projectConfig: ColumnType<Resource> = {
-    ...defaultColumnConfig(projectKey),
+    ...defaultColumnConfig(projectKey, showEmptyDataCells),
     title: 'PROJECT',
     render: text => {
       if (text) {
         const { org, project } = makeOrgProjectTuple(text);
         return `${org}/${project}`;
       }
-      return <NoDataCell />;
+      return showEmptyDataCells && <NoDataCell />;
+    },
+    sorter: (a, b) => {
+      const tupleA = makeOrgProjectTuple(a[projectKey] ?? '');
+      const tupleB = makeOrgProjectTuple(b[projectKey] ?? '');
+
+      return (tupleA.project ?? '').localeCompare(tupleB.project);
     },
   };
   const typeConfig: ColumnType<Resource> = {
-    ...defaultColumnConfig(typeKey),
+    ...defaultColumnConfig(typeKey, showEmptyDataCells),
     title: 'TYPE',
     render: text => {
       let types = '';
@@ -161,7 +182,7 @@ const initialTableConfig = () => {
           <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
         </Tooltip>
       ) : (
-        <NoDataCell />
+        showEmptyDataCells && <NoDataCell />
       );
     },
   };

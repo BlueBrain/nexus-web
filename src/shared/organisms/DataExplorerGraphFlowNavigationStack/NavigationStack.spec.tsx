@@ -73,7 +73,7 @@ const initialDataExplorerState: TDataExplorerState = {
     links: [],
     shrinked: false,
   },
-  limited: false,
+  fullscreen: false,
 };
 const fourthItemInStack = {
   isDownloadable: false,

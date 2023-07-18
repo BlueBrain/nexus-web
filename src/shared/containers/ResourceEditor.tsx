@@ -13,7 +13,7 @@ import ResourceEditor from '../components/ResourceEditor';
 import { getDataExplorerResourceItemArray } from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';
 import {
-  InitDataExplorerGraphFlowLimitedVersion,
+  InitDataExplorerGraphFlowFullscreenVersion,
   InitNewVisitDataExplorerGraphView,
 } from '../store/reducers/data-explorer';
 import {
@@ -129,7 +129,9 @@ const ResourceEditorContainer: React.FunctionComponent<{
     )) as Resource;
     const orgProject = getOrgAndProjectFromResourceObject(data);
     if (location.pathname === '/data-explorer/graph-flow') {
-      dispatch(InitDataExplorerGraphFlowLimitedVersion(true));
+      dispatch(
+        InitDataExplorerGraphFlowFullscreenVersion({ fullscreen: true })
+      );
     } else {
       dispatch(
         InitNewVisitDataExplorerGraphView({
@@ -143,7 +145,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
               data
             ),
           },
-          limited: true,
+          fullscreen: true,
         })
       );
       navigate.push('/data-explorer/graph-flow');

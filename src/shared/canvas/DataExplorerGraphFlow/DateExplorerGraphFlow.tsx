@@ -9,10 +9,14 @@ import {
   PopulateDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
 } from '../../store/reducers/data-explorer';
-import NavigationStack from '../../organisms/DataExplorerGraphFlowNavigationStack/NavigationStack';
+import {
+  NavigationArrows,
+  NavigationStack,
+} from '../../organisms/DataExplorerGraphFlowNavigationStack';
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
-import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
 import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
+import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+import DataExplorerGraphFlowEmpty from './DataExplorerGraphFlowEmpty';
 
 import './styles.less';
 
@@ -30,10 +34,6 @@ const DataExplorerGraphFlow = () => {
     rightShrinked,
     leftLinks,
     rightLinks,
-    onLeftShrink,
-    onLeftExpand,
-    onRightShrink,
-    onRightExpand,
   } = useNavigationStackManager();
 
   useEffect(() => {
@@ -61,32 +61,15 @@ const DataExplorerGraphFlow = () => {
       ResourceResolutionCache.clear();
     };
   }, [ResourceResolutionCache]);
-  if (current === null) {
-    return (
-      <div className="data-explorer-resolver no-current">
-        <div className="empty">
-          <img
-            src={require('../../images/graphNodes.svg')}
-            alt="nodes"
-            style={{ width: 500 }}
-          />
-          <div className="empty__title">No data explorer graph flow</div>
-          <div className="empty__subtitle">
-            Please select a node from any resource view editor to start
-            exploring
-          </div>
-        </div>
-      </div>
-    );
-  }
-  return (
+
+  return !current ? (
+    <DataExplorerGraphFlowEmpty />
+  ) : (
     <div
       className={clsx(
         'data-explorer-resolver',
         leftLinks.length && 'left-existed',
         rightLinks.length && 'right-existed',
-        leftShrinked && 'left-shrinked',
-        rightShrinked && 'right-shrinked',
         !leftNodes.links.length && !rightNodes.links.length
           ? 'no-links'
           : 'with-links'
@@ -104,6 +87,7 @@ const DataExplorerGraphFlow = () => {
         </div>
       )}
       <div className="degf__content">
+        <NavigationArrows />
         <DataExplorerContentPage />
       </div>
       {!!rightLinks.length && (

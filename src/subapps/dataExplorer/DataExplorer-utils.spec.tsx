@@ -36,8 +36,8 @@ describe('DataExplorerSpec-Utils', () => {
         },
       },
     ];
+    const actual = getAllPaths(resources);
     const expectedPaths = [
-      '@id',
       'contributors',
       'contributors.name',
       'contributors.name.firstname',
@@ -50,8 +50,9 @@ describe('DataExplorerSpec-Utils', () => {
       'distribution.filename',
       'distribution.label',
       'distribution.name',
+      '@id',
     ];
-    expect(getAllPaths(resources)).toEqual(expectedPaths);
+    expect(actual).toEqual(expectedPaths);
   });
 
   it('sorts path starting with underscore at the end of the list', () => {
@@ -65,17 +66,18 @@ describe('DataExplorerSpec-Utils', () => {
         _updatedAt: 'some time ago',
         name: 'anotherNameValue',
         _createdAt: '12 September 2020',
-        project: 'secret project',
+        _project: 'secret project',
       },
     ];
     const expectedPaths = [
       'name',
-      'project',
+      '_createdAt',
+      '_project',
+      '_updatedAt',
+
       '_author',
       '_author.designation',
       '_author.name',
-      '_createdAt',
-      '_updatedAt',
     ];
     const receivedPaths = getAllPaths(resources);
 
@@ -625,6 +627,57 @@ describe('DataExplorerSpec-Utils', () => {
         'value5',
         'does-not-contain'
       )
+    ).toEqual(true);
+  });
+
+  it('does not throw when checking for non existence on a path when resource has primitve value', () => {
+    const resource = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        {
+          '1Point': {
+            '@id': 'nsg:1Point',
+          },
+          '2DContour': {
+            '@id': 'nsg:2DContour',
+          },
+          '3DContour': {
+            '@id': 'nsg:3DContour',
+          },
+          '3Point': {
+            '@id': 'nsg:3Point',
+          },
+          '@vocab':
+            'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/',
+          Derivation: {
+            '@id': 'prov:Derivation',
+          },
+          xsd: 'http://www.w3.org/2001/XMLSchema#',
+        },
+      ],
+      '@id': 'https://bbp.epfl.ch/nexus/search/neuroshapes',
+      _constrainedBy:
+        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _createdAt: '2019-02-11T14:15:14.020Z',
+      _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/pirman',
+      _deprecated: false,
+      _incoming:
+        'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes/incoming',
+      _outgoing:
+        'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes/outgoing',
+      _project:
+        'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
+      _rev: 1,
+      _schemaProject:
+        'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
+      _self:
+        'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes',
+      _updatedAt: '2019-02-11T14:15:14.020Z',
+      _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/pirman',
+    };
+
+    expect(
+      checkPathExistence(resource, '@context.@vocab', 'does-not-exist')
     ).toEqual(true);
   });
 });
