@@ -65,6 +65,10 @@
   .fusion-resource-link {
     color: #0974ca !important;
     cursor: pointer !important;
+    background-color: rgba(#0974ca, 0.12);
+    border-radius: 4px;
+    padding: 1px;
+    border: 0.5px solid rgba(#0974ca, 0.14);
 
     &.wait-for-tooltip {
       cursor: progress !important;
@@ -76,17 +80,6 @@
 
     &.error {
       cursor: not-allowed !important;
-    }
-
-    &::after {
-      content: '';
-      display: inline-block;
-      background-image: var(--resource-link-anchor-icon);
-      background-repeat: no-repeat;
-      background-size: 14px 14px;
-      width: 14px;
-      height: 14px;
-      margin-left: 10px;
     }
   }
 
