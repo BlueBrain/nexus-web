@@ -93,10 +93,9 @@ const TypeSelector = ({
   const [typeSearchValue, updateSearchType] = useState('');
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
 
-  const selectCallback = useCallback((data: any) => {
+  const selectCallback = useCallback((data: TTypeAggregationsResult) => {
     const options = (
-      ((data as unknown) as TTypeAggregationsResult).aggregations.types
-        ?.buckets ?? ([] as TTypesAggregatedBucket[])
+      data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])
     ).map<TType>(item => typesOptionsBuilder(item));
     originTypes.current = options;
     return options;
