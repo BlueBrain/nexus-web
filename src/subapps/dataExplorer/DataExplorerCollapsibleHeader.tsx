@@ -1,10 +1,4 @@
-import React, {
-  CSSProperties,
-  ReactNode,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import './styles.less';
 import { Button } from 'antd';
 import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
@@ -55,11 +49,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
   return (
     <>
       {(!headerOutOfViewport || headerExpanded) && (
-        <div
-          className="data-explorer-header"
-          style={{ ...fixedHeaderStyles }}
-          ref={headerRef}
-        >
+        <div className="data-explorer-header" ref={headerRef}>
           {children}
         </div>
       )}
@@ -95,16 +85,6 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
 };
 
 export const FUSION_TITLEBAR_HEIGHT = 52; // height in pixels of the blue fixed header on every page of fusion.
-
-// TODO: Move to styles.less
-const fixedHeaderStyles: CSSProperties = {
-  position: 'fixed',
-  top: FUSION_TITLEBAR_HEIGHT,
-  left: 0,
-  width: '100vw',
-  padding: '20px 52px',
-  zIndex: 2,
-};
 
 const isBrowser = typeof window !== `undefined`;
 
