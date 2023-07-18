@@ -3,18 +3,18 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import ResourceViewContainer from '../../containers/ResourceViewContainer';
 import ResourceEditorContainer from '../../containers/ResourceEditor';
-import { DataExplorerGraphFlowContentLimitedHeader } from '../../molecules/DataExplorerGraphFlowMolecules';
+import { DEFGContentFullscreenHeader } from '../../molecules/DataExplorerGraphFlowMolecules';
 import './styles.less';
 
 const DataExplorerContentPage = ({}) => {
-  const { current, limited } = useSelector(
+  const { current, fullscreen } = useSelector(
     (state: RootState) => state.dataExplorer
   );
   return (
     <div className="degf-content__wrapper">
-      {limited ? (
+      {fullscreen ? (
         <Fragment>
-          <DataExplorerGraphFlowContentLimitedHeader />
+          <DEFGContentFullscreenHeader />
           <ResourceEditorContainer
             key={current?._self}
             onSubmit={() => {}}
