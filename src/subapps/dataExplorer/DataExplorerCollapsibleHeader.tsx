@@ -6,6 +6,8 @@ import React, {
   useState,
 } from 'react';
 import './styles.less';
+import { Button } from 'antd';
+import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
 
 interface Props {
   children: ReactNode;
@@ -16,8 +18,9 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
   children,
   onVisibilityChange,
 }: Props) => {
-  const [headerBottom, setHeaderBottom] = useState<number>(0);
+  const [headerBottom, setHeaderBottom] = useState(0);
   const [headerOutOfViewport, setHeaderOutOfViewport] = useState(false);
+  const [headerExpanded, setHeaderExpanded] = useState(false);
 
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +38,9 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
       if (shouldHide !== headerOutOfViewport) {
         toggleHeaderVisibility(shouldHide);
       }
+      if (!headerOutOfViewport) {
+        setHeaderExpanded(false);
+      }
     },
     100, // throttle time in ms for scroll event
     [headerBottom, headerOutOfViewport]
@@ -47,7 +53,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
 
   return (
     <>
-      {!headerOutOfViewport && (
+      {(!headerOutOfViewport || headerExpanded) && (
         <div
           className="data-explorer-header"
           style={{ ...fixedHeaderStyles }}
@@ -55,6 +61,20 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
         >
           {children}
         </div>
+      )}
+
+      {headerOutOfViewport && (
+        <>
+          <Button
+            icon={<FilterIcon />}
+            onClick={() => {
+              setHeaderExpanded(true);
+              onVisibilityChange(headerBottom);
+            }}
+            shape="circle"
+            className="toggle-header-buttons"
+          />
+        </>
       )}
     </>
   );
