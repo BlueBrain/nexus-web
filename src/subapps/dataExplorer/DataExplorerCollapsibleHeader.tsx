@@ -8,6 +8,7 @@ import React, {
 import './styles.less';
 import { Button } from 'antd';
 import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
+import { CloseOutlined } from '@ant-design/icons';
 
 interface Props {
   children: ReactNode;
@@ -65,15 +66,28 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
 
       {headerOutOfViewport && (
         <>
-          <Button
-            icon={<FilterIcon />}
-            onClick={() => {
-              setHeaderExpanded(true);
-              onVisibilityChange(headerBottom);
-            }}
-            shape="circle"
-            className="toggle-header-buttons"
-          />
+          {headerExpanded ? (
+            <Button
+              icon={<CloseOutlined />}
+              onClick={() => {
+                setHeaderExpanded(false);
+                onVisibilityChange(FUSION_TITLEBAR_HEIGHT);
+              }}
+              shape="circle"
+              className="toggle-header-buttons"
+              style={{ top: 60, left: 10 }}
+            />
+          ) : (
+            <Button
+              icon={<FilterIcon />}
+              onClick={() => {
+                setHeaderExpanded(true);
+                onVisibilityChange(headerBottom);
+              }}
+              shape="circle"
+              className="toggle-header-buttons"
+            />
+          )}
         </>
       )}
     </>

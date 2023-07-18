@@ -16,6 +16,11 @@
     position: fixed;
     top: 100px;
     left: 20px;
+    color: @fusion-blue-8;
+    &:active, &:focus {
+      border-color: @fusion-gray-4;
+      color: @fusion-blue-8;
+    }
   }
 
   .data-explorer-header {
@@ -102,7 +107,7 @@
       input {
         color: @fusion-blue-8 !important;
         border: none;
-        background: @fusion-main-bg;
+        background: transparent;
         font-weight: 700;
 
         &::placeholder {
