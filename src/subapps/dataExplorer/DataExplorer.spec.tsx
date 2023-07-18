@@ -838,4 +838,19 @@ describe('DataExplorer', () => {
     );
     expect(textForSpecialPropertyAfter).toMatch('');
   });
+
+  it('show data explorer header by default', async () => {
+    // const pro = await getProjectAutocomplete();
+    // expect(pro).toBeVisible();
+    const type = await getInputForLabel(TypeMenuLabel);
+    expect(type).toBeVisible();
+    const predicate = await getInputForLabel(PredicateMenuLabel);
+    expect(predicate).toBeVisible();
+    const totalResultsCount = await getTotalSizeOfDataset('500,123');
+    expect(totalResultsCount).toBeVisible();
+    const metadataSwitch = await showMetadataSwitch();
+    expect(metadataSwitch).toBeVisible();
+    const showEmptyCellsToggle = await showEmptyDataCellsSwitch();
+    expect(showEmptyCellsToggle).toBeVisible();
+  });
 });
