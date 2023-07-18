@@ -16,32 +16,56 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
   children,
   onVisibilityChange,
 }: Props) => {
-  const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const [headerBottom, setHeaderBottom] = useState<number>(0);
+  const [headerOutOfViewport, setHeaderOutOfViewport] = useState(false);
+
   const headerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const headerY =
       headerRef.current?.getBoundingClientRect().bottom ??
       FUSION_TITLEBAR_HEIGHT;
-    console.log('Calculated Height', headerY);
+    console.log('Setting header bootom', headerY);
+    setHeaderBottom(headerY);
     onVisibilityChange(headerY);
   }, []);
 
+  useScrollPosition(
+    (currentYPosition: number) => {
+      console.log('Header Bottom in UseScrollPosition', headerBottom);
+      const shouldHide = currentYPosition > headerBottom;
+      if (shouldHide !== headerOutOfViewport) {
+        toggleHeaderVisibility(shouldHide);
+      }
+    },
+    100, // throttle time in ms for scroll event
+    [headerBottom]
+  );
+
+  const toggleHeaderVisibility = (shouldHide: boolean) => {
+    setHeaderOutOfViewport(shouldHide);
+    console.log('Should Show', shouldHide, headerBottom);
+    onVisibilityChange(shouldHide ? FUSION_TITLEBAR_HEIGHT : headerBottom);
+  };
+
   return (
     <>
-      <div
-        className="data-explorer-header"
-        style={{ ...fixedHeaderStyles }}
-        ref={headerRef}
-      >
-        {children}
-      </div>
+      {!headerOutOfViewport && (
+        <div
+          className="data-explorer-header"
+          style={{ ...fixedHeaderStyles }}
+          ref={headerRef}
+        >
+          {children}
+        </div>
+      )}
     </>
   );
 };
 
 export const FUSION_TITLEBAR_HEIGHT = 52; // height in pixels of the blue fixed header on every page of fusion.
 
+// TODO: Move to styles.less
 const fixedHeaderStyles: CSSProperties = {
   position: 'fixed',
   top: FUSION_TITLEBAR_HEIGHT,
@@ -50,3 +74,40 @@ const fixedHeaderStyles: CSSProperties = {
   padding: '20px 52px',
   zIndex: 2,
 };
+
+const isBrowser = typeof window !== `undefined`;
+
+const getScrollYPosition = (): number => {
+  if (!isBrowser) return 0;
+
+  return window.scrollY;
+};
+
+export function useScrollPosition(
+  effect: (currentYPosition: number) => void,
+  waitMs: number,
+  deps: React.DependencyList
+) {
+  const yPosition = useRef(getScrollYPosition());
+
+  let throttleTimeout: number | null = null;
+
+  const callBack = () => {
+    const currentPosition = getScrollYPosition();
+    effect(currentPosition);
+    yPosition.current = currentPosition;
+    throttleTimeout = null;
+  };
+
+  useLayoutEffect(() => {
+    const handleScroll = () => {
+      if (throttleTimeout === null) {
+        throttleTimeout = window.setTimeout(callBack, waitMs);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, deps);
+}
