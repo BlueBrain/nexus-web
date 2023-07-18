@@ -1,56 +1,16 @@
 import * as React from 'react';
-import * as moment from 'moment';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
-import { isObject, isString } from 'lodash';
+import { get, isObject, isString } from 'lodash';
 
 import { MyDataHeader, MyDataTable } from '../../molecules';
 import { RootState } from '../../store/reducers';
-import { TDateFilterType, TFilterOptions } from './types';
+import { TFilterOptions } from './types';
+import { makeDatetimePattern } from './utils';
 import './styles.less';
 
-const makeDatetimePattern = ({
-  dateFilterType,
-  singleDate,
-  dateStart,
-  dateEnd,
-}: {
-  dateFilterType?: TDateFilterType;
-  singleDate?: string;
-  dateStart?: string;
-  dateEnd?: string;
-}) => {
-  switch (dateFilterType) {
-    case 'after': {
-      if (!!singleDate && moment(singleDate).isValid()) {
-        return `${singleDate}..*`;
-      }
-      return undefined;
-    }
-    case 'before': {
-      if (!!singleDate && moment(singleDate).isValid()) {
-        return `*..${singleDate}`;
-      }
-      return undefined;
-    }
-    case 'range': {
-      if (
-        !!dateStart &&
-        !!dateEnd &&
-        moment(dateStart).isValid() &&
-        moment(dateEnd).isValid() &&
-        moment(dateStart).isBefore(moment(dateEnd), 'days')
-      ) {
-        return `${dateStart}..${dateEnd}`;
-      }
-      return undefined;
-    }
-    default:
-      return undefined;
-  }
-};
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const identities = useSelector(
@@ -59,7 +19,6 @@ const HomeMyData: React.FC<{}> = () => {
   const issuerUri = identities?.find(item => item['@type'] === 'User')?.['@id'];
   const [
     {
-      dataType,
       dateField,
       query,
       dateFilterType,
@@ -71,6 +30,7 @@ const HomeMyData: React.FC<{}> = () => {
       sort,
       locate,
       issuer,
+      types,
     },
     setFilterOptions,
   ] = React.useReducer(
@@ -84,13 +44,13 @@ const HomeMyData: React.FC<{}> = () => {
       singleDate: undefined,
       dateStart: undefined,
       dateEnd: undefined,
-      dataType: [],
       query: '',
       offset: 0,
       size: 50,
       sort: ['-_createdAt', '@id'],
       locate: false,
       issuer: 'createdBy',
+      types: [],
     }
   );
 
@@ -116,6 +76,7 @@ const HomeMyData: React.FC<{}> = () => {
       ? `${dateField}-${dateFilterType}-${dateFilterRange}`
       : undefined;
   const order = sort.join('-');
+  const resourceTypes = types?.map(item => get(item, 'value'));
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
@@ -127,6 +88,7 @@ const HomeMyData: React.FC<{}> = () => {
         issuer,
         date,
         order,
+        types: resourceTypes,
       },
     ],
     retry: false,
@@ -150,7 +112,8 @@ const HomeMyData: React.FC<{}> = () => {
               [dateField]: dateFilterRange,
             }
           : {}),
-        // type: dataType,
+        // @ts-ignore
+        type: resourceTypes,
       }),
     onError: error => {
       notification.error({
@@ -170,10 +133,10 @@ const HomeMyData: React.FC<{}> = () => {
   });
   const total = resources?._total;
   return (
-    <div className="home-mydata">
+    <div className="my-data-view view-container">
       <MyDataHeader
         {...{
-          dataType,
+          types,
           dateField,
           query,
           dateFilterRange,

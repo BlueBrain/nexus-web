@@ -7,7 +7,7 @@ export type TFilterOptions = {
   query: string;
   dateFilterType?: TDateFilterType;
   dateField: TDateField;
-  dataType?: string[];
+  types?: TType[];
   singleDate?: string;
   dateStart?: string;
   dateEnd?: string;
@@ -29,9 +29,16 @@ export type THeaderProps = Omit<TFilterOptions, 'size' | 'offset' | 'sort'> & {
 export type TTitleProps = {
   text: string;
   label: string;
-  total?: string;
+  total?: number;
 };
-export type THeaderFilterProps = Omit<THeaderProps, 'total' | 'sort'>;
+export type THeaderFilterProps = Pick<
+  THeaderProps,
+  'types' | 'dateField' | 'setFilterOptions'
+>;
+export type THeaderTitleProps = Pick<
+  THeaderProps,
+  'total' | 'query' | 'locate' | 'issuer' | 'setFilterOptions'
+>;
 export type THandleMenuSelect = MenuProps['onClick'];
 export type TTypeDateItem = {
   key: string;
@@ -45,3 +52,26 @@ export type TDate = {
 };
 export type TDateOptions = 'singleDate' | 'dateStart' | 'dateEnd';
 export const DATE_PATTERN = 'DD/MM/YYYY';
+export type TType = {
+  key: string;
+  value: string;
+  label: string;
+  docCount: number;
+};
+
+export type TTypeAggregationsResult = {
+  '@context': string;
+  total: number;
+  aggregations: {
+    projects: TTypesAggregatedProperty;
+    types: TTypesAggregatedProperty;
+  };
+};
+
+export type TTypesAggregatedProperty = {
+  buckets: TTypesAggregatedBucket[];
+  doc_count_error_upper_bound: number;
+  sum_other_doc_count: number;
+};
+
+export type TTypesAggregatedBucket = { key: string; doc_count: number };
