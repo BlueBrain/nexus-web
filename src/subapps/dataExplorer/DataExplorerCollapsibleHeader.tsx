@@ -25,26 +25,23 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
     const headerY =
       headerRef.current?.getBoundingClientRect().bottom ??
       FUSION_TITLEBAR_HEIGHT;
-    console.log('Setting header bootom', headerY);
     setHeaderBottom(headerY);
     onVisibilityChange(headerY);
   }, []);
 
   useScrollPosition(
-    (currentYPosition: number) => {
-      console.log('Header Bottom in UseScrollPosition', headerBottom);
+    function(currentYPosition: number) {
       const shouldHide = currentYPosition > headerBottom;
       if (shouldHide !== headerOutOfViewport) {
         toggleHeaderVisibility(shouldHide);
       }
     },
     100, // throttle time in ms for scroll event
-    [headerBottom]
+    [headerBottom, headerOutOfViewport]
   );
 
   const toggleHeaderVisibility = (shouldHide: boolean) => {
     setHeaderOutOfViewport(shouldHide);
-    console.log('Should Show', shouldHide, headerBottom);
     onVisibilityChange(shouldHide ? FUSION_TITLEBAR_HEIGHT : headerBottom);
   };
 
