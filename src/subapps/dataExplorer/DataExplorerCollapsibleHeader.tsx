@@ -28,7 +28,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
   }, []);
 
   useScrollPosition(
-    function(currentYPosition: number) {
+    (currentYPosition: number) => {
       const shouldHide = currentYPosition > headerBottom;
       if (shouldHide !== headerOutOfViewport) {
         toggleHeaderVisibility(shouldHide);
@@ -48,12 +48,15 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
 
   return (
     <>
-      {(!headerOutOfViewport || headerExpanded) && (
-        <div className="data-explorer-header" ref={headerRef}>
-          {children}
-        </div>
-      )}
-
+      <div
+        className="data-explorer-header"
+        ref={headerRef}
+        style={{
+          display: !headerOutOfViewport || headerExpanded ? 'block' : 'none',
+        }}
+      >
+        {children}
+      </div>
       {headerOutOfViewport && (
         <>
           {headerExpanded ? (
@@ -65,6 +68,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
               }}
               shape="circle"
               className="toggle-header-buttons"
+              aria-label="collapse-header"
               style={{ top: 60, left: 10 }}
             />
           ) : (
@@ -75,6 +79,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
                 onVisibilityChange(headerBottom);
               }}
               shape="circle"
+              aria-label="expand-header"
               className="toggle-header-buttons"
             />
           )}
@@ -88,7 +93,7 @@ export const FUSION_TITLEBAR_HEIGHT = 52; // height in pixels of the blue fixed 
 
 const isBrowser = typeof window !== `undefined`;
 
-const getScrollYPosition = (): number => {
+export const getScrollYPosition = (): number => {
   if (!isBrowser) return 0;
 
   return window.scrollY;
