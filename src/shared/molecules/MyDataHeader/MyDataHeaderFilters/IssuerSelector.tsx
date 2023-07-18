@@ -1,10 +1,7 @@
 import { Radio, RadioChangeEvent } from 'antd';
-import { THeaderFilterProps } from 'shared/canvas/MyData/types';
+import { THeaderProps } from 'shared/canvas/MyData/types';
 
-type TIssuerSelectorProps = Pick<
-  THeaderFilterProps,
-  'issuer' | 'setFilterOptions'
->;
+type TIssuerSelectorProps = Pick<THeaderProps, 'issuer' | 'setFilterOptions'>;
 
 const IssuerSelector = ({ issuer, setFilterOptions }: TIssuerSelectorProps) => {
   const onIssuerChange = (e: RadioChangeEvent) =>
@@ -12,7 +9,7 @@ const IssuerSelector = ({ issuer, setFilterOptions }: TIssuerSelectorProps) => {
 
   return (
     <Radio.Group
-      className="issuer-selector"
+      className="my-data-header-title_issuer_selector"
       defaultValue={'createdBy'}
       value={issuer}
       onChange={onIssuerChange}

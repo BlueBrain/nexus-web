@@ -31,7 +31,14 @@ export type TTitleProps = {
   label: string;
   total?: number;
 };
-export type THeaderFilterProps = Omit<THeaderProps, 'total' | 'sort'>;
+export type THeaderFilterProps = Pick<
+  THeaderProps,
+  'types' | 'dateField' | 'setFilterOptions'
+>;
+export type THeaderTitleProps = Pick<
+  THeaderProps,
+  'total' | 'query' | 'locate' | 'issuer' | 'setFilterOptions'
+>;
 export type THandleMenuSelect = MenuProps['onClick'];
 export type TTypeDateItem = {
   key: string;

@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Checkbox, Col, Dropdown, Input, Row, Select } from 'antd';
-import { concat, isString, startCase } from 'lodash';
+import { isString, startCase } from 'lodash';
 import { useQuery } from 'react-query';
 import {
   THeaderProps,
