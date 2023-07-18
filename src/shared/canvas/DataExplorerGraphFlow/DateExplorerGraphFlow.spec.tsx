@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import React from 'react';
-import { waitFor } from '@testing-library/react';
+import { RenderResult, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { NexusClient, createNexusClient } from '@bbp/nexus-sdk';
 import { AnyAction, Store } from 'redux';
@@ -9,10 +9,11 @@ import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { setupServer } from 'msw/node';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { cleanup, render, act, screen } from '../../../utils/testUtil';
+import { cleanup, render, screen } from '../../../utils/testUtil';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
   InitNewVisitDataExplorerGraphView,
+  TDataExplorerState,
 } from '../../../shared/store/reducers/data-explorer';
 import configureStore from '../../store';
 import DateExplorerGraphFlow from './DateExplorerGraphFlow';
@@ -21,8 +22,10 @@ import {
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent from '@testing-library/user-event';
 
-const initialDataExplorerState = {
+const initialDataExplorerState: TDataExplorerState = {
   current: {
     isDownloadable: false,
     _self: initialResource._self,
@@ -30,16 +33,22 @@ const initialDataExplorerState = {
     types: initialResource['@type'],
     resource: ['public', 'sscx', initialResource['@id'], initialResource._rev],
   },
-  links: [],
-  shrinked: false,
-  highlightIndex: -1,
-  limited: false,
+  leftNodes: { links: [], shrinked: false },
+  rightNodes: { links: [], shrinked: false },
+  fullscreen: false,
 };
+
 describe('DataExplorerGraphFlow', () => {
-  let store: Store<any, AnyAction>;
-  let history: MemoryHistory<{}>;
   let server: ReturnType<typeof setupServer>;
+  let app: JSX.Element;
+  let container: HTMLElement;
+  let rerender: (ui: React.ReactElement) => void;
+  let store: Store<any, AnyAction>;
+  let user: UserEvent;
+  let history: MemoryHistory<{}>;
   let nexus: NexusClient;
+  let component: RenderResult;
+
   beforeAll(async () => {
     nexus = createNexusClient({
       fetch,
@@ -78,8 +87,15 @@ describe('DataExplorerGraphFlow', () => {
     cleanup();
   });
 
-  it('should render the name of the resource', async () => {
-    const App: JSX.Element = (
+  beforeEach(() => {
+    history = createMemoryHistory({});
+
+    nexus = createNexusClient({
+      fetch,
+      uri: deltaPath(),
+    });
+    store = configureStore(history, { nexus }, {});
+    app = (
       <Provider store={store}>
         <Router history={history}>
           <NexusProvider nexusClient={nexus}>
@@ -88,40 +104,33 @@ describe('DataExplorerGraphFlow', () => {
         </Router>
       </Provider>
     );
-    await act(async () => {
-      await render(App);
-    });
+    component = render(app);
+    container = component.container;
+    rerender = component.rerender;
+    user = userEvent.setup();
+  });
+
+  it('should render the name of the resource', async () => {
     store.dispatch(
       InitNewVisitDataExplorerGraphView({
         current: initialDataExplorerState.current,
-        limited: false,
+        fullscreen: false,
       })
     );
-
+    rerender(app);
     const resourceTitle = await waitFor(() =>
       screen.getByText(initialResource.name)
     );
     expect(resourceTitle).toBeInTheDocument();
   });
   it('should clean the data explorer state when quit the page', async () => {
-    const App: JSX.Element = (
-      <Provider store={store}>
-        <Router history={history}>
-          <NexusProvider nexusClient={nexus}>
-            <DateExplorerGraphFlow />
-          </NexusProvider>
-        </Router>
-      </Provider>
-    );
-    await act(async () => {
-      await render(App);
-    });
     store.dispatch(
       InitNewVisitDataExplorerGraphView({
         current: initialDataExplorerState.current,
-        limited: false,
+        fullscreen: false,
       })
     );
+    rerender(app);
     history.push('/another-page');
     const dataExplorerState = store.getState().dataExplorer;
     const sessionStorageItem = sessionStorage.getItem(
@@ -131,6 +140,26 @@ describe('DataExplorerGraphFlow', () => {
     expect(dataExplorerState.leftNodes.links.length).toBe(0);
     expect(dataExplorerState.rightNodes.links.length).toBe(0);
     expect(dataExplorerState.current).toBeNull();
-    expect(dataExplorerState.limited).toBe(false);
+    expect(dataExplorerState.fullscreen).toBe(false);
+  });
+
+  it('should the fullscren toggle present in the screen if the user in fullscreen mode', async () => {
+    store.dispatch(
+      InitNewVisitDataExplorerGraphView({
+        current: initialDataExplorerState.current,
+        fullscreen: true,
+      })
+    );
+    rerender(app);
+    const fullscreenSwitch = container.querySelector(
+      'button[aria-label="fullscreen switch"]'
+    );
+    const fullscreenTitle = container.querySelector(
+      'h1[aria-label="fullscreen title"]'
+    );
+    expect(fullscreenSwitch).toBeInTheDocument();
+    expect(fullscreenTitle).toBeInTheDocument();
+    await user.click(fullscreenSwitch as HTMLButtonElement);
+    expect(store.getState().dataExplorer.fullscreen).toBe(false);
   });
 });
