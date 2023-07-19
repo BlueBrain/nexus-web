@@ -219,7 +219,7 @@ function useEditorTooltip({
           tooltip.remove();
         }
         return clearTimeout(timeoutId);
-      }, 3000);
+      }, 2000);
 
       return tooltip;
     }
