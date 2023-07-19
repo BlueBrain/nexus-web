@@ -105,8 +105,9 @@ function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
     tooltipContent.appendChild(
       createTooltipNode({
         tag: 'Multiple',
-        title: `${(results as TDELink[]).length
-          } resources was found, click to list them`,
+        title: `${
+          (results as TDELink[]).length
+        } resources was found, click to list them`,
       })
     );
     return tooltipContent;
@@ -251,8 +252,8 @@ function useEditorTooltip({
                   ? 'error'
                   : resolvedAs === 'resource' &&
                     (results as TDELink).isDownloadable
-                    ? 'downloadable'
-                    : 'has-tooltip'
+                  ? 'downloadable'
+                  : 'has-tooltip'
               );
               const tooltip = showTooltip(tooltipContent, node);
               const calculatePosition = (ev: MouseEvent) =>
