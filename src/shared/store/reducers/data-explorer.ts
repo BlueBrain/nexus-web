@@ -301,7 +301,6 @@ export const dataExplorerSlice = createSlice({
         ...state,
         ...sideUpdater,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ShrinkNavigationStackDataExplorerGraphFlow: (state, action) => {
@@ -324,7 +323,6 @@ export const dataExplorerSlice = createSlice({
         ...state,
         ...sideUpdater,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ResetDataExplorerGraphFlow: (_, action) => {
@@ -343,6 +341,7 @@ export const dataExplorerSlice = createSlice({
     },
   },
 });
+
 export const {
   PopulateDataExplorerGraphFlow,
   InitNewVisitDataExplorerGraphView,

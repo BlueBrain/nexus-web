@@ -105,9 +105,8 @@ function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
     tooltipContent.appendChild(
       createTooltipNode({
         tag: 'Multiple',
-        title: `${
-          (results as TDELink[]).length
-        } resources was found, click to list them`,
+        title: `${(results as TDELink[]).length
+          } resources was found, click to list them`,
       })
     );
     return tooltipContent;
@@ -190,11 +189,7 @@ function useEditorTooltip({
       if (!tooltip.parentNode) {
         return;
       }
-      setTimeout(() => {
-        if (tooltip.parentNode) {
-          tooltip.parentNode.removeChild(tooltip);
-        }
-      }, 300);
+      tooltip.parentNode.removeChild(tooltip);
     }
     function showTooltip(content: HTMLDivElement, node: HTMLElement) {
       const tooltip = document.createElement('div');
@@ -223,7 +218,7 @@ function useEditorTooltip({
           tooltip.remove();
         }
         return clearTimeout(timeoutId);
-      }, 3000);
+      }, 2000);
 
       return tooltip;
     }
@@ -256,8 +251,8 @@ function useEditorTooltip({
                   ? 'error'
                   : resolvedAs === 'resource' &&
                     (results as TDELink).isDownloadable
-                  ? 'downloadable'
-                  : 'has-tooltip'
+                    ? 'downloadable'
+                    : 'has-tooltip'
               );
               const tooltip = showTooltip(tooltipContent, node);
               const calculatePosition = (ev: MouseEvent) =>
@@ -286,6 +281,7 @@ function useEditorTooltip({
     allowTooltip,
   ]);
 }
+
 function useEditorPopover({
   ref,
   orgLabel,
@@ -341,6 +337,7 @@ function useEditorPopover({
       );
     }
     async function onMouseDown(_: CodeMirror.Editor, ev: MouseEvent) {
+      removeTooltipsFromDOM();
       const node = ev.target as HTMLElement;
       if (node) {
         const { token } = getTokenAndPosAt(ev, currentEditor);
