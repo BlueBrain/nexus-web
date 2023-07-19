@@ -987,4 +987,19 @@ describe('DataExplorer', () => {
     const pathInput = await getSelectedValueInMenu(PathMenuLabel);
     expect(pathInput).toMatch(new RegExp('@type', 'i'));
   });
+
+  it('resets predicate search term when different predicate verb is selected', async () => {
+    await updateResourcesShownInTable(mockResourcesForPage2);
+    await selectPath('author');
+    await selectPredicate(CONTAINS);
+    const valueInput = await screen.getByPlaceholderText('Search for...');
+    await userEvent.type(valueInput, 'iggy');
+
+    await selectPredicate(EXISTS);
+
+    await selectPredicate(DOES_NOT_CONTAIN);
+
+    const valueInputAfter = await screen.getByPlaceholderText('Search for...');
+    expect((valueInputAfter as HTMLInputElement).value).not.toEqual('iggy');
+  });
 });
