@@ -1,4 +1,8 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {
+  createListenerMiddleware,
+  createSlice,
+  isAnyOf,
+} from '@reduxjs/toolkit';
 import {
   slice,
   clone,
@@ -70,7 +74,7 @@ const initialState: TDataExplorerState = {
   fullscreen: false,
 };
 
-const calculateNewDigest = (state: TDataExplorerState) => {
+const calculateDateExplorerGraphFlowDigest = (state: TDataExplorerState) => {
   const clonedState = clone(state);
   const digest = btoa(JSON.stringify(clonedState));
   sessionStorage.setItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST, digest);
@@ -79,13 +83,13 @@ const calculateNewDigest = (state: TDataExplorerState) => {
 const isShrinkable = (links: TDELink[]) => {
   return links.length > MAX_NAVIGATION_ITEMS_IN_STACK;
 };
-function insert(arr: any[], index: number, item: any) {
-  arr.splice(index, 0, item);
-}
+
+const DataExplorerFlowSliceName = 'data-explorer-graph-flow';
+const DataExplorerFlowSliceListener = createListenerMiddleware();
 
 export const dataExplorerSlice = createSlice({
   initialState,
-  name: 'data-explorer-graph-flow',
+  name: DataExplorerFlowSliceName,
   reducers: {
     PopulateDataExplorerGraphFlow: (state, action) => {
       const digest = action.payload;
@@ -125,7 +129,7 @@ export const dataExplorerSlice = createSlice({
           shrinked: false,
         },
       };
-      calculateNewDigest(newState);
+      calculateDateExplorerGraphFlowDigest(newState);
       return newState;
     },
     AddNewNodeDataExplorerGraphFlow: (state, action) => {
@@ -196,7 +200,6 @@ export const dataExplorerSlice = createSlice({
           shrinked: isShrinkable(rightNodesLinks),
         },
       };
-      calculateNewDigest(newState);
       return newState;
     },
     JumpToNodeDataExplorerGraphFlow: (state, action) => {
@@ -228,7 +231,6 @@ export const dataExplorerSlice = createSlice({
         rightNodes,
         current,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ReturnBackDataExplorerGraphFlow: state => {
@@ -253,7 +255,6 @@ export const dataExplorerSlice = createSlice({
         leftNodes,
         current: newCurrent,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     MoveForwardDataExplorerGraphFlow: state => {
@@ -278,7 +279,6 @@ export const dataExplorerSlice = createSlice({
         leftNodes,
         current: newCurrent,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ExpandNavigationStackDataExplorerGraphFlow: (state, action) => {
@@ -301,7 +301,6 @@ export const dataExplorerSlice = createSlice({
         ...state,
         ...sideUpdater,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ShrinkNavigationStackDataExplorerGraphFlow: (state, action) => {
@@ -324,7 +323,6 @@ export const dataExplorerSlice = createSlice({
         ...state,
         ...sideUpdater,
       };
-      calculateNewDigest(newState);
       return newState;
     },
     ResetDataExplorerGraphFlow: (_, action) => {
@@ -338,11 +336,11 @@ export const dataExplorerSlice = createSlice({
         ...state,
         fullscreen: fullscreen ?? !state.fullscreen,
       };
-      calculateNewDigest(newState);
       return newState;
     },
   },
 });
+
 export const {
   PopulateDataExplorerGraphFlow,
   InitNewVisitDataExplorerGraphView,
@@ -356,4 +354,20 @@ export const {
   InitDataExplorerGraphFlowFullscreenVersion,
 } = dataExplorerSlice.actions;
 
+const DataExplorerMiddlewareMatcher = isAnyOf(
+  InitNewVisitDataExplorerGraphView,
+  AddNewNodeDataExplorerGraphFlow,
+  ExpandNavigationStackDataExplorerGraphFlow,
+  ShrinkNavigationStackDataExplorerGraphFlow,
+  JumpToNodeDataExplorerGraphFlow,
+  ReturnBackDataExplorerGraphFlow,
+  MoveForwardDataExplorerGraphFlow,
+  InitDataExplorerGraphFlowFullscreenVersion
+);
+export {
+  DataExplorerFlowSliceName,
+  DataExplorerMiddlewareMatcher,
+  DataExplorerFlowSliceListener,
+  calculateDateExplorerGraphFlowDigest,
+};
 export default dataExplorerSlice.reducer;

@@ -11,6 +11,7 @@ import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk';
 import reducers from './reducers';
+import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
 
 export type Services = {
   nexus: NexusClient;
@@ -47,7 +48,8 @@ export default function configureStore(
     composeEnhancers(
       applyMiddleware(
         thunk.withExtraArgument({ nexus }),
-        routerMiddleware(history)
+        routerMiddleware(history),
+        DataExplorerFlowSliceListener.middleware
       )
     )
   );
