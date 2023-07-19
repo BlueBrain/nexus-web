@@ -1,5 +1,5 @@
 import { Resource } from '@bbp/nexus-sdk';
-import { Switch } from 'antd';
+import { Spin, Switch } from 'antd';
 import React, { useMemo, useReducer, useState } from 'react';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
@@ -13,6 +13,8 @@ import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
 import { TypeSelector } from './TypeSelector';
 import './styles.less';
+import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
+import Loading from '../../shared/components/Loading';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
@@ -26,6 +28,7 @@ export interface DataExplorerConfiguration {
 export const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   const [
     { pageSize, offset, orgAndProject, predicate, type, selectedPath },
@@ -70,31 +73,37 @@ export const DataExplorer: React.FC<{}> = () => {
 
   return (
     <div className="data-explorer-contents">
-      <div className="data-explorer-filters">
-        <ProjectSelector
-          onSelect={(orgLabel?: string, projectLabel?: string) => {
-            if (orgLabel && projectLabel) {
-              updateTableConfiguration({
-                orgAndProject: [orgLabel, projectLabel],
-              });
-            } else {
-              updateTableConfiguration({ orgAndProject: undefined });
-            }
-          }}
-        />
-        <TypeSelector
-          orgAndProject={orgAndProject}
-          onSelect={selectedType => {
-            updateTableConfiguration({ type: selectedType });
-          }}
-        />
-        <PredicateSelector
-          dataSource={currentPageDataSource}
-          onPredicateChange={updateTableConfiguration}
-        />
-      </div>
+      {isLoading && <Spin className="loading" />}
 
-      {!isLoading && (
+      <DataExplorerCollapsibleHeader
+        onVisibilityChange={offsetHeight => {
+          setHeaderHeight(offsetHeight);
+        }}
+      >
+        <div className="data-explorer-filters">
+          <ProjectSelector
+            onSelect={(orgLabel?: string, projectLabel?: string) => {
+              if (orgLabel && projectLabel) {
+                updateTableConfiguration({
+                  orgAndProject: [orgLabel, projectLabel],
+                });
+              } else {
+                updateTableConfiguration({ orgAndProject: undefined });
+              }
+            }}
+          />
+          <TypeSelector
+            orgAndProject={orgAndProject}
+            onSelect={selectedType => {
+              updateTableConfiguration({ type: selectedType });
+            }}
+          />
+          <PredicateSelector
+            dataSource={currentPageDataSource}
+            onPredicateChange={updateTableConfiguration}
+          />
+        </div>
+
         <div className="flex-container">
           <DatasetCount
             nexusTotal={resources?._total ?? 0}
@@ -121,8 +130,7 @@ export const DataExplorer: React.FC<{}> = () => {
             <label htmlFor="show-empty-data-cells">Show empty data cells</label>
           </div>
         </div>
-      )}
-
+      </DataExplorerCollapsibleHeader>
       <DataExplorerTable
         isLoading={isLoading}
         dataSource={displayedDataSource}
@@ -132,6 +140,7 @@ export const DataExplorer: React.FC<{}> = () => {
         offset={offset}
         updateTableConfiguration={updateTableConfiguration}
         showEmptyDataCells={showEmptyDataCells}
+        tableOffsetFromTop={headerHeight}
       />
     </div>
   );

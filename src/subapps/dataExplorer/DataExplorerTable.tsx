@@ -10,6 +10,8 @@ import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
+import { clsx } from 'clsx';
+import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -20,6 +22,7 @@ interface TDataExplorerTable {
   updateTableConfiguration: React.Dispatch<Partial<DataExplorerConfiguration>>;
   columns: string[];
   showEmptyDataCells: boolean;
+  tableOffsetFromTop: number;
 }
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
@@ -33,6 +36,7 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   offset,
   updateTableConfiguration,
   showEmptyDataCells,
+  tableOffsetFromTop,
 }: TDataExplorerTable) => {
   const history = useHistory();
   const location = useLocation();
@@ -66,27 +70,44 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
   };
 
   return (
-    <Table<Resource>
-      columns={columnsConfig(columns, showEmptyDataCells)}
-      dataSource={dataSource}
-      rowKey={record => record._self}
-      onRow={resource => ({
-        onClick: _ => goToResource(resource),
-        'data-testid': resource._self,
-      })}
-      loading={isLoading}
-      bordered={false}
-      className="data-explorer-table"
-      rowClassName="data-explorer-row"
-      scroll={{ x: 'max-content' }}
-      locale={{
-        emptyText() {
-          return isLoading ? <></> : <Empty />;
-        },
+    <div
+      style={{
+        display: 'block',
+        position: 'absolute',
+        top: tableOffsetFromTop,
+        left: 0,
+        padding: '0 52px',
+        background: '#f5f5f5',
+        height: 'fit-content',
+        minHeight: '100%',
       }}
-      pagination={tablePaginationConfig}
-      sticky={{ offsetHeader: 52 }}
-    />
+    >
+      <Table<Resource>
+        columns={columnsConfig(columns, showEmptyDataCells)}
+        dataSource={dataSource}
+        rowKey={record => record._self}
+        onRow={resource => ({
+          onClick: _ => goToResource(resource),
+          'data-testid': resource._self,
+        })}
+        loading={{ spinning: isLoading, indicator: <></> }}
+        bordered={false}
+        className={clsx(
+          'data-explorer-table',
+          tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
+            'data-explorer-header-collapsed'
+        )}
+        rowClassName="data-explorer-row"
+        scroll={{ x: 'max-content' }}
+        locale={{
+          emptyText() {
+            return isLoading ? <></> : <Empty />;
+          },
+        }}
+        pagination={tablePaginationConfig}
+        sticky={{ offsetHeader: tableOffsetFromTop }}
+      />
+    </div>
   );
 };
 

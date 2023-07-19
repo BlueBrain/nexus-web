@@ -7,6 +7,37 @@
   width: 100%;
   margin-top: 100px;
 
+  .loading {
+    margin: 40vh auto;
+    z-index: 100;
+    position: relative;
+  }
+
+  .toggle-header-buttons {
+    z-index: 5;
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    color: @fusion-blue-8;
+    background: white;
+    &:active,
+    &:focus {
+      background: white;
+      border-color: @fusion-gray-4;
+      color: @fusion-blue-8;
+    }
+  }
+
+  .data-explorer-header {
+    background: white;
+    position: fixed;
+    top: 52px; // Fusion titlebar height
+    left: 0;
+    width: 100vw;
+    padding: 20px 52px;
+    z-index: 2;
+  }
+
   .data-explorer-filters {
     display: flex;
     margin-bottom: 28px;
@@ -14,7 +45,6 @@
 
   .flex-container {
     display: flex;
-    max-width: 90vw;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
@@ -88,7 +118,7 @@
       input {
         color: @fusion-blue-8 !important;
         border: none;
-        background: @fusion-main-bg;
+        background: transparent;
         font-weight: 700;
 
         &::placeholder {
@@ -177,19 +207,26 @@
 
   .predicate-value-input {
     color: @fusion-blue-8;
-    background: @fusion-main-bg;
+    background: transparent;
     width: 200px;
+  }
+}
+
+.data-explorer-header-collapsed {
+  .ant-table-header {
+    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.08);
   }
 }
 
 .data-explorer-table {
   table {
     width: auto;
-    min-width: 90vw;
+    min-width: 90vw !important; // This is needed to make sure that the table headers and table body columns are aligned when the table is rerendered (eg when user selects a predicate, project, or, type).
   }
   .ant-table {
     background: @fusion-main-bg;
   }
+
   .ant-table-thead > tr > th.data-explorer-column {
     background-color: #f5f5f5 !important;
     font-family: 'Titillium Web';
