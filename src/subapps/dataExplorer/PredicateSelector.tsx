@@ -156,10 +156,12 @@ export const PredicateSelector: React.FC<Props> = ({
               options={predicateFilterOptions}
               onSelect={(predicateLabel: PredicateFilterOptions['value']) => {
                 setFormField(PREDICATE_FIELD, predicateLabel);
+                setFormField(SEARCH_TERM_FIELD, '');
+
                 predicateSelected(
                   getFormFieldValue(PATH_FIELD),
                   predicateLabel,
-                  getFormFieldValue(SEARCH_TERM_FIELD)
+                  ''
                 );
               }}
               aria-label="predicate-selector"
@@ -168,11 +170,7 @@ export const PredicateSelector: React.FC<Props> = ({
               autoFocus={true}
               allowClear={true}
               onClear={() => {
-                predicateSelected(
-                  getFormFieldValue(PATH_FIELD),
-                  null,
-                  getFormFieldValue(SEARCH_TERM_FIELD)
-                );
+                predicateSelected(getFormFieldValue(PATH_FIELD), null, '');
               }}
             />
           </Form.Item>
