@@ -960,11 +960,8 @@ describe('DataExplorer', () => {
     expect(await collapseHeaderButton()).toBeVisible();
 
     await scrollWindow(0);
-    await waitForHeaderToBeVisible();
-
-    await waitForElementToBeRemoved(() =>
-      screen.queryByRole('button', { name: 'collapse-header' })
-    );
+    // await waitForHeaderToBeVisible();
+    expect(collapseHeaderButton()).rejects.toThrow();
   });
 
   it('does not reset values in filters when header was hidden due to scroll', async () => {

@@ -3,6 +3,7 @@ import './styles.less';
 import { Button } from 'antd';
 import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
 import { CloseOutlined } from '@ant-design/icons';
+import { throttle } from 'lodash';
 
 interface Props {
   children: ReactNode;
@@ -106,29 +107,20 @@ export function useScrollPosition(
 ) {
   const yPosition = useRef(getScrollYPosition());
 
-  let throttleTimeout: number | null = null;
-
   const callBack = () => {
     const currentPosition = getScrollYPosition();
     effect(currentPosition);
     yPosition.current = currentPosition;
-    throttleTimeout = null;
   };
 
   useLayoutEffect(() => {
-    const handleScroll = () => {
-      if (throttleTimeout === null) {
-        throttleTimeout = window.setTimeout(callBack, waitMs);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
+    const throttledCallback = throttle(callBack, waitMs, {
+      leading: true,
+    });
+    window.addEventListener('scroll', throttledCallback);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (throttleTimeout) {
-        window.clearTimeout(throttleTimeout);
-      }
+      window.removeEventListener('scroll', throttledCallback);
     };
   }, deps);
 }
