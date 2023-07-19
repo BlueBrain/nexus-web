@@ -17,8 +17,10 @@
     top: 100px;
     left: 20px;
     color: @fusion-blue-8;
+    background: white;
     &:active,
     &:focus {
+      background: white;
       border-color: @fusion-gray-4;
       color: @fusion-blue-8;
     }
@@ -208,6 +210,12 @@
   }
 }
 
+.data-explorer-header-collapsed {
+  .ant-table-header {
+    box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.08);
+  }
+}
+
 .data-explorer-table {
   table {
     width: auto;
@@ -216,6 +224,7 @@
   .ant-table {
     background: @fusion-main-bg;
   }
+
   .ant-table-thead > tr > th.data-explorer-column {
     background-color: #f5f5f5 !important;
     font-family: 'Titillium Web';
