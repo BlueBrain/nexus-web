@@ -56,12 +56,21 @@ function createTooltipNode({
   nodeTitle.className = 'title';
   nodeTitle.appendChild(document.createTextNode(title));
   tooltipItemContent.appendChild(nodeTitle);
-
-  const nodeDownload = isDownloadable && document.createElement('img');
-  nodeDownload && nodeDownload.setAttribute('src', downloadImg);
-  nodeDownload && nodeDownload.classList.add('download-icon');
-  nodeDownload && tooltipItemContent.appendChild(nodeDownload);
-
+  if (isDownloadable) {
+    const nodeDownload = document.createElement('img');
+    nodeDownload.setAttribute('src', downloadImg);
+    nodeDownload.classList.add('download-icon');
+    tooltipItemContent.appendChild(nodeDownload);
+    const keyBinding = document.createElement('span');
+    keyBinding.className = 'key-binding';
+    // the user has to click and press option key on mac or alt key on windows
+    const userAgent = navigator.userAgent;
+    const isMac = userAgent.indexOf('Mac') !== -1;
+    keyBinding.appendChild(
+      document.createTextNode(isMac ? '⌥ + Click' : 'Alt + Click')
+    );
+    tooltipItemContent.appendChild(keyBinding);
+  }
   return tooltipItemContent;
 }
 function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
@@ -363,7 +372,9 @@ function useEditorPopover({
               }
               case 'resource': {
                 const result = results as TDELink;
-                if (result.isDownloadable) {
+                // this alt for windows, and option for mac
+                const optionClick = ev.altKey;
+                if (result.isDownloadable && optionClick) {
                   return downloadBinaryAsyncHandler({
                     orgLabel: result.resource?.[0]!,
                     projectLabel: result.resource?.[1]!,
