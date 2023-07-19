@@ -46,7 +46,6 @@ export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
         allowClear={true}
         clearIcon={<CloseOutlined data-testid="reset-project-button" />}
         onClear={() => onSelect(undefined, undefined)}
-        placeholder={AllProjects}
         aria-label="project-filter"
         bordered={false}
         className="search-input"
@@ -56,6 +55,7 @@ export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
         <Input
           size="middle"
           addonAfter={showClearIcon ? <CloseOutlined /> : <SearchOutlined />}
+          placeholder={AllProjects} // Antd doesn't like adding placeholder along with 'allowClear' in AutoComplete element, so it needs to be added to this Input element. (https://github.com/ant-design/ant-design/issues/26760).
         />
       </AutoComplete>
     </div>
