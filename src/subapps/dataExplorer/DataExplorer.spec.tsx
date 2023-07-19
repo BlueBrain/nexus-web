@@ -960,7 +960,6 @@ describe('DataExplorer', () => {
     expect(await collapseHeaderButton()).toBeVisible();
 
     await scrollWindow(0);
-    // await waitForHeaderToBeVisible();
     expect(collapseHeaderButton()).rejects.toThrow();
   });
 
