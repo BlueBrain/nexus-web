@@ -10,6 +10,8 @@ import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
+import { clsx } from 'clsx';
+import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -90,7 +92,11 @@ export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
         })}
         loading={{ spinning: isLoading, indicator: <></> }}
         bordered={false}
-        className="data-explorer-table"
+        className={clsx(
+          'data-explorer-table',
+          tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
+            'data-explorer-header-collapsed'
+        )}
         rowClassName="data-explorer-row"
         scroll={{ x: 'max-content' }}
         locale={{
