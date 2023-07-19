@@ -8,6 +8,10 @@ import {
   DATA_EXPLORER_GRAPH_FLOW_PATH,
   PopulateDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
+  DataExplorerFlowSliceListener,
+  DataExplorerMiddlewareMatcher,
+  calculateDateExplorerGraphFlowDigest,
+  TDataExplorerState,
 } from '../../store/reducers/data-explorer';
 import {
   NavigationArrows,
@@ -62,6 +66,18 @@ const DataExplorerGraphFlow = () => {
     };
   }, [ResourceResolutionCache]);
 
+  useEffect(() => {
+    DataExplorerFlowSliceListener.startListening({
+      matcher: DataExplorerMiddlewareMatcher,
+      effect: (_, api) => {
+        const state = (api.getState() as RootState).dataExplorer;
+        calculateDateExplorerGraphFlowDigest(state);
+      },
+    });
+    return () => {
+      DataExplorerFlowSliceListener.clearListeners();
+    };
+  }, []);
   return !current ? (
     <DataExplorerGraphFlowEmpty />
   ) : (

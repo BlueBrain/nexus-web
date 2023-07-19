@@ -190,11 +190,7 @@ function useEditorTooltip({
       if (!tooltip.parentNode) {
         return;
       }
-      setTimeout(() => {
-        if (tooltip.parentNode) {
-          tooltip.parentNode.removeChild(tooltip);
-        }
-      }, 300);
+      tooltip.parentNode.removeChild(tooltip);
     }
     function showTooltip(content: HTMLDivElement, node: HTMLElement) {
       const tooltip = document.createElement('div');
@@ -223,7 +219,7 @@ function useEditorTooltip({
           tooltip.remove();
         }
         return clearTimeout(timeoutId);
-      }, 3000);
+      }, 2000);
 
       return tooltip;
     }
@@ -286,6 +282,7 @@ function useEditorTooltip({
     allowTooltip,
   ]);
 }
+
 function useEditorPopover({
   ref,
   orgLabel,
@@ -341,6 +338,7 @@ function useEditorPopover({
       );
     }
     async function onMouseDown(_: CodeMirror.Editor, ev: MouseEvent) {
+      removeTooltipsFromDOM();
       const node = ev.target as HTMLElement;
       if (node) {
         const { token } = getTokenAndPosAt(ev, currentEditor);
