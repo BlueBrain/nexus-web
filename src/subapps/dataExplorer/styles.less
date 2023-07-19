@@ -221,7 +221,7 @@
 .data-explorer-table {
   table {
     width: auto;
-    min-width: unset !important;
+    min-width: 90vw !important; // This is needed to make sure that the table headers and table body columns are aligned when the table is rerendered (eg when user selects a predicate, project, or, type). 
   }
   .ant-table {
     background: @fusion-main-bg;
