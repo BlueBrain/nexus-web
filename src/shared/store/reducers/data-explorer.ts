@@ -200,7 +200,6 @@ export const dataExplorerSlice = createSlice({
           shrinked: isShrinkable(rightNodesLinks),
         },
       };
-      // calculateNewDigest(newState);
       return newState;
     },
     JumpToNodeDataExplorerGraphFlow: (state, action) => {
@@ -232,7 +231,6 @@ export const dataExplorerSlice = createSlice({
         rightNodes,
         current,
       };
-      // calculateNewDigest(newState);
       return newState;
     },
     ReturnBackDataExplorerGraphFlow: state => {
@@ -257,7 +255,6 @@ export const dataExplorerSlice = createSlice({
         leftNodes,
         current: newCurrent,
       };
-      // calculateNewDigest(newState);
       return newState;
     },
     MoveForwardDataExplorerGraphFlow: state => {
@@ -282,7 +279,6 @@ export const dataExplorerSlice = createSlice({
         leftNodes,
         current: newCurrent,
       };
-      // calculateNewDigest(newState);
       return newState;
     },
     ExpandNavigationStackDataExplorerGraphFlow: (state, action) => {
@@ -340,7 +336,6 @@ export const dataExplorerSlice = createSlice({
         ...state,
         fullscreen: fullscreen ?? !state.fullscreen,
       };
-      // calculateNewDigest(newState);
       return newState;
     },
   },
