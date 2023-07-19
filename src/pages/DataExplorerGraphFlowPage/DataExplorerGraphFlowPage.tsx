@@ -1,8 +1,8 @@
 import React from 'react';
-import DataExplorerResolverPage from '../../shared/canvas/DataExplorerGraphFlow/DateExplorerGraphFlow';
+import DataExplorerGraphFlow from '../../shared/canvas/DataExplorerGraphFlow/DateExplorerGraphFlow';
 
 const DataExplorerGraphFlowPage = () => {
-  return <DataExplorerResolverPage />;
+  return <DataExplorerGraphFlow />;
 };
 
 export default DataExplorerGraphFlowPage;

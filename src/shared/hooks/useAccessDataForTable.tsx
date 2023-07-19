@@ -22,7 +22,7 @@ import {
   TableError,
   getStudioLocalStorageKey,
   getStudioTableKey,
-} from '../../shared/containers/DataTableContainer';
+} from '../containers/DataTableContainer';
 import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
@@ -47,6 +47,7 @@ import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
 import PromisePool from '@supercharge/promise-pool';
+import { normalizeString } from '../../utils/stringUtils';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -125,8 +126,6 @@ type ColumnSorter = (
   a: Record<string, any>,
   b: Record<string, any>
 ) => -1 | 1 | 0;
-
-const normalizeString = (str: string) => str.trim().toLowerCase();
 
 const sorter = (dataIndex: string): ColumnSorter => {
   return (

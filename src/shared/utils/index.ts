@@ -2,12 +2,13 @@ import { Resource, Identity } from '@bbp/nexus-sdk';
 import {
   isMatch,
   isMatchWith,
-  isRegExp,
   isMatchWithCustomizer,
   pick,
   isArray,
+  last,
 } from 'lodash';
 import * as moment from 'moment';
+import isValidUrl from '../../utils/validUrl';
 
 /**
  * getProp utility - an alternative to lodash.get
@@ -301,6 +302,7 @@ export function getResourceLabel(
     resource.prefLabel ??
     resource.label ??
     resourceName ??
+    resource._filename ??
     labelOf(resource['@id']) ??
     labelOf(resource._self)
   );
@@ -729,3 +731,18 @@ export function isNumeric(str: string | number) {
     !isNaN(str as any) && !isNaN(parseFloat(str)) // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
   ); // ...and ensure strings of whitespace fail
 }
+
+export const getNormalizedTypes = (types?: string | string[]) => {
+  if (types) {
+    if (isArray(types)) {
+      return types.map(item => {
+        if (isValidUrl(item)) {
+          return item.split('/').pop()!;
+        }
+        return item;
+      });
+    }
+    return [last(types.split('/'))!];
+  }
+  return [];
+};

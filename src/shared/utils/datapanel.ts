@@ -133,7 +133,6 @@ export const toLocalStorageResources = (
       },
     ];
   } catch (err) {
-    console.log('@error Failed to serialize resource for localStorage.', err);
     Sentry.captureException(err, {
       extra: {
         resource,

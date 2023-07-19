@@ -1,176 +1,237 @@
-import { NexusClient } from '@bbp/nexus-sdk';
-import { Dispatch } from 'redux';
-import { isArray, last } from 'lodash';
-import isValidUrl, { externalLink } from '../../../utils/validUrl';
-import { fetchResourceByResolver } from '../../../subapps/admin/components/Settings/ResolversSubView';
-import { TEditorPopoverResolvedData } from '../../store/reducers/ui-settings';
+import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import { has } from 'lodash';
+import isValidUrl, {
+  isExternalLink,
+  isStorageLink,
+  isUrlCurieFormat,
+} from '../../../utils/validUrl';
 import {
+  getNormalizedTypes,
   getOrgAndProjectFromResourceObject,
   getResourceLabel,
 } from '../../utils';
-import {
-  UISettingsActionTypes,
-  TUpdateJSONEditorPopoverAction,
-} from '../../store/actions/ui-settings';
+import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
+import ResourceResolutionCache, {
+  ResourceResolutionFetchFn,
+  TPagedResources,
+  TResolutionData,
+  TResolutionType,
+} from './ResourcesLRUCache';
 
-export type TToken = {
-  string: string;
-  start: number;
-  end: number;
+export type TEditorPopoverResolvedAs =
+  | 'resource'
+  | 'resources'
+  | 'external'
+  | 'error'
+  | undefined;
+export type TEditorPopoverResolvedData = {
+  open: boolean;
+  top: number;
+  left: number;
+  results?: TDELink | TDELink[];
+  resolvedAs: TEditorPopoverResolvedAs;
+  error?: any;
 };
-type TActionData = {
-  type: typeof UISettingsActionTypes['UPDATE_JSON_EDITOR_POPOVER'];
-  payload: TEditorPopoverResolvedData;
+type TDeltaError = Error & {
+  '@type': string;
+  details: string;
 };
+type TErrorMessage = Error & {
+  message: string;
+};
+type TReturnedResolvedData = Omit<
+  TEditorPopoverResolvedData,
+  'top' | 'left' | 'open'
+>;
 
-const dispatchEvent = (
-  dispatch: Dispatch<TUpdateJSONEditorPopoverAction>,
-  data: TActionData
+export const LINE_HEIGHT = 15;
+export const INDENT_UNIT = 4;
+const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
+const isDownloadableLink = (resource: Resource) => {
+  return Boolean(
+    resource['@type'] === 'File' || resource['@type']?.includes('File')
+  );
+};
+export const mayBeResolvableLink = (url: string): boolean => {
+  return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
+};
+export const getDataExplorerResourceItemArray = (
+  entity: { orgLabel: string; projectLabel: string },
+  data: Resource
 ) => {
-  return dispatch<{
-    type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER;
-    payload: TEditorPopoverResolvedData;
-  }>({
-    type: data.type,
-    payload: data.payload,
-  });
+  return (isDownloadableLink(data) && data._mediaType
+    ? [
+        entity?.orgLabel,
+        entity?.projectLabel,
+        data['@id'],
+        data._rev,
+        data._mediaType,
+      ]
+    : [
+        entity?.orgLabel,
+        entity?.projectLabel,
+        data['@id'],
+        data._rev,
+      ]) as TDEResource;
 };
-export const getNormalizedTypes = (types?: string | string[]) => {
-  if (types) {
-    if (isArray(types)) {
-      return types.map(item => {
-        if (isValidUrl(item)) {
-          return item.split('/').pop()!;
-        }
-        return item;
-      });
+export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
+  const node = e.target || e.srcElement;
+  const text =
+    (node as HTMLElement).innerText || (node as HTMLElement).textContent;
+  const editorRect = (e.target as HTMLElement).getBoundingClientRect();
+  for (let i = 0; i < NEAR_BY.length; i += 2) {
+    const coords = {
+      left: e.pageX + NEAR_BY[i],
+      top: e.pageY + NEAR_BY[i + 1],
+    };
+    const pos = current.coordsChar(coords);
+    const token = current.getTokenAt(pos);
+    if (token && token.string === text) {
+      return {
+        token,
+        coords: {
+          left: editorRect.left,
+          top: coords.top + LINE_HEIGHT,
+        },
+      };
     }
-    return [last(types.split('/'))!];
   }
-  return [];
-};
-
-export async function resolveLinkInEditor({
+  return {
+    token: null,
+    coords: { left: editorRect.left, top: e.pageY },
+  };
+}
+export async function editorLinkResolutionHandler({
   nexus,
-  dispatch,
+  apiEndpoint,
   orgLabel,
   projectLabel,
   url,
-  defaultPaylaod,
+  fetcher,
 }: {
   nexus: NexusClient;
-  dispatch: Dispatch<TUpdateJSONEditorPopoverAction>;
+  apiEndpoint: string;
   url: string;
   orgLabel: string;
   projectLabel: string;
-  defaultPaylaod: { top: number; left: number; open: boolean };
-}) {
-  if (isValidUrl(url)) {
-    let data;
-    try {
-      // case-1: link resolved by the project resolver
-      data = await fetchResourceByResolver({
+  fetcher?: ResourceResolutionFetchFn;
+}): Promise<TReturnedResolvedData> {
+  const key = `${orgLabel}/${projectLabel}/${url}`;
+  let data: TResolutionData;
+  let type: TResolutionType;
+  if (fetcher) {
+    ({ data, type } = await fetcher(key, {
+      fetchContext: {
         nexus,
+        apiEndpoint,
         orgLabel,
         projectLabel,
         resourceId: encodeURIComponent(url),
-      });
-      const entity = getOrgAndProjectFromResourceObject(data);
-      return dispatchEvent(dispatch, {
-        type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-        payload: {
-          ...defaultPaylaod,
-          error: null,
+      },
+    }));
+  } else {
+    ({ data, type } = await ResourceResolutionCache.fetch(key, {
+      fetchContext: {
+        nexus,
+        apiEndpoint,
+        orgLabel,
+        projectLabel,
+        resourceId: encodeURIComponent(url),
+      },
+    }));
+  }
+  switch (type) {
+    case 'resolver-api': {
+      const details: Resource = data as Resource;
+      const entity = getOrgAndProjectFromResourceObject(details);
+      const isDownloadable = isDownloadableLink(details);
+      // case-resource: link is resolved as a resource by project resolver
+      // next-action: open resource editor
+      return {
+        resolvedAs: 'resource',
+        results: {
+          isDownloadable,
+          _self: details._self,
+          title: getResourceLabel(details),
+          types: getNormalizedTypes(details['@type']),
+          resource: getDataExplorerResourceItemArray(
+            entity ?? { orgLabel: '', projectLabel: '' },
+            details
+          ),
+        },
+      };
+    }
+    case 'search-api': {
+      const details = data as TPagedResources;
+      if (!details._total || (!details._total && isExternalLink(url))) {
+        // case-error: link is not resolved by nither project resolver nor nexus search api
+        // next-action: throw error and capture it in the catch block
+        return {
+          error: 'Resource can not be resolved',
+          resolvedAs: 'error',
+        };
+      }
+      if (details._total === 1) {
+        // case-resource: link is resolved as a resource by nexus search api
+        // next-action: open resource editor
+        const result = details._results[0];
+        const isDownloadable = isDownloadableLink(result);
+        const entity = getOrgAndProjectFromResourceObject(result);
+        return {
           resolvedAs: 'resource',
           results: {
-            _self: data._self,
-            title: getResourceLabel(data),
-            types: getNormalizedTypes(data['@type']),
-            resource: [
-              entity?.orgLabel,
-              entity?.projectLabel,
-              data['@id'],
-              data._rev,
-            ],
+            isDownloadable,
+            _self: result._self,
+            title: getResourceLabel(result),
+            types: getNormalizedTypes(result['@type']),
+            resource: getDataExplorerResourceItemArray(
+              entity ?? { orgLabel: '', projectLabel: '' },
+              result
+            ),
           },
-        },
-      });
-    } catch (error) {
-      try {
-        // case-2: link can not be resolved by the project resolver
-        // then try to find it across all projects
-        // it may be single resource, multiple resources or external resource
-        // if no resource found then we consider it as an error
-        data = await nexus.Resource.list(undefined, undefined, {
-          locate: url,
-        });
-        return dispatchEvent(dispatch, {
-          type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-          payload: {
-            ...defaultPaylaod,
-            ...(externalLink(url) && !data._total
-              ? {
-                  resolvedAs: 'external',
-                  results: {
-                    _self: url,
-                    title: url,
-                    types: [],
-                  },
-                }
-              : !data._total
-              ? {
-                  error: 'No @id or _self has been resolved',
-                  resolvedAs: 'error',
-                }
-              : {
-                  resolvedAs: 'resources',
-                  results: data._results.map(item => {
-                    const entity = getOrgAndProjectFromResourceObject(item);
-                    return {
-                      _self: item._self,
-                      title: getResourceLabel(item),
-                      types: getNormalizedTypes(item['@type']),
-                      resource: [
-                        entity?.orgLabel,
-                        entity?.projectLabel,
-                        item['@id'],
-                        item._rev,
-                      ],
-                    };
-                  }),
-                }),
-          },
-        });
-      } catch (error) {
-        console.error('case 3: ', url, externalLink(url), '\n', error);
-        // case-3: if an error occured when tring both resolution method above
-        // we check if the resource is external
-        if (externalLink(url)) {
-          return dispatchEvent(dispatch, {
-            type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-            payload: {
-              ...defaultPaylaod,
-              resolvedAs: 'external',
-              results: {
-                _self: url,
-                title: url,
-                types: [],
-              },
-            },
-          });
-        }
-
-        // case-4: if not an external url then it will be an error
-        return dispatchEvent(dispatch, {
-          type: UISettingsActionTypes.UPDATE_JSON_EDITOR_POPOVER,
-          payload: {
-            ...defaultPaylaod,
-            error: JSON.stringify(error),
-            resolvedAs: 'error',
-          },
-        });
+        };
       }
+      // case-resources: link is resolved as a list of resources by nexus search api
+      // next-action: open resources list in the popover
+      return {
+        resolvedAs: 'resources',
+        results: details._results.map((item: Resource) => {
+          const isDownloadable = isDownloadableLink(item);
+          const entity = getOrgAndProjectFromResourceObject(item);
+          return {
+            isDownloadable,
+            _self: item._self,
+            title: getResourceLabel(item),
+            types: getNormalizedTypes(item['@type']),
+            resource: getDataExplorerResourceItemArray(
+              entity ?? { orgLabel: '', projectLabel: '' },
+              item
+            ),
+          };
+        }),
+      };
+    }
+    case 'error':
+    default: {
+      const details = data as any;
+      if (isExternalLink(url)) {
+        return {
+          resolvedAs: 'external',
+          results: {
+            _self: url,
+            title: url,
+            types: [],
+          },
+        };
+      }
+      // case-error: link is not resolved by nither project resolver nor nexus search api
+      // and it's not an external link
+      return {
+        error: has(details, 'details')
+          ? (details as TDeltaError).details
+          : (details as TErrorMessage).message ?? JSON.stringify(details),
+        resolvedAs: 'error',
+      };
     }
   }
-  return null;
 }

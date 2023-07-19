@@ -1,0 +1,32 @@
+.navigation-stack__wrapper {
+  display: flex;
+  align-items: flex-start;
+  position: fixed;
+  gap: 10px;
+  top: 52px;
+  z-index: 6;
+  &.left {
+    left: 0;
+  }
+  &.right {
+    right: 0;
+  }
+}
+
+.navigation-stack {
+  grid-area: menu;
+  display: grid;
+  grid-auto-columns: max-content;
+  grid-auto-flow: column;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.navigation-arrows {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 20px;
+}

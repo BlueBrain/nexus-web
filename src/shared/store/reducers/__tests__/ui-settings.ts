@@ -24,14 +24,7 @@ describe('UISettings Reducer', () => {
         orgsListPageSize: 50,
       },
       currentResourceView: null,
-      editorPopoverResolvedData: {
-        error: null,
-        left: 0,
-        open: false,
-        resolvedAs: undefined,
-        results: [],
-        top: 0,
-      },
+      isAdvancedModeEnabled: false,
     });
   });
 });

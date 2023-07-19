@@ -136,7 +136,6 @@ const createStudioResource = async ({
       generateStudioResource(label, description, plugins)
     );
   } catch (error) {
-    console.log('@@error create studio', error);
     // @ts-ignore
     throw new Error('Can not process create studio request', { cause: error });
   }

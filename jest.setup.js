@@ -23,3 +23,15 @@ jest.mock('resize-observer-polyfill', () => ({
     disconnect: jest.fn(),
   })),
 }));
+
+jest.mock('lru-cache', () => {
+  return {
+    __esModule: true,
+    default: jest.fn().mockImplementation(() => {
+      return ({
+        fetch: jest.fn(),
+        clear: jest.fn(),
+      })
+    })
+  }
+});

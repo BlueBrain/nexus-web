@@ -1,24 +1,37 @@
 import * as React from 'react';
 import { Button, Switch } from 'antd';
+import { useLocation } from 'react-router';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-
-import { useDispatch } from 'react-redux';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useSelector } from 'react-redux';
+import { AccessControl } from '@bbp/react-nexus';
 import codemiror from 'codemirror';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
-import isValidUrl from '../../../utils/validUrl';
+
+import isValidUrl, {
+  isAllowedProtocal,
+  isStorageLink,
+  isUrlCurieFormat,
+} from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
-import { TToken, resolveLinkInEditor } from './editorUtils';
+import { RootState } from '../../store/reducers';
+import {
+  useEditorPopover,
+  useEditorTooltip,
+  CODEMIRROR_LINK_CLASS,
+} from './useEditorTooltip';
+import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
+import ResourceResolutionCache from './ResourcesLRUCache';
 import './ResourceEditor.less';
 
+const AnchorLinkIcon = require('../../images/AnchorLink.svg');
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
   onSubmit: (rawData: { [key: string]: any }) => void;
@@ -38,9 +51,16 @@ export interface ResourceEditorProps {
   onFullScreen(): void;
 }
 
-export const LINE_HEIGHT = 50;
-export const INDENT_UNIT = 4;
 const switchMarginRight = { marginRight: 5 };
+
+const isClickableLine = (url: string) => {
+  return (
+    isValidUrl(url) &&
+    isAllowedProtocal(url) &&
+    !isUrlCurieFormat(url) &&
+    !isStorageLink(url)
+  );
+};
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
@@ -61,17 +81,22 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onFullScreen,
     showControlPanel = true,
   } = props;
-
-  const nexus = useNexusContext();
-  const [loadingResolution, setLoadingResolution] = React.useState(false);
+  const location = useLocation();
   const [isEditing, setEditing] = React.useState(editing);
-  const [fullScreen, setFullScreen] = React.useState(false);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
-  const dispatch = useDispatch();
+  const {
+    dataExplorer: { fullscreen },
+    oidc,
+  } = useSelector((state: RootState) => ({
+    dataExplorer: state.dataExplorer,
+    oidc: state.oidc,
+    config: state.config,
+  }));
+  const userAuthenticated = oidc.user && oidc.user.access_token;
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -108,42 +133,13 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   };
   const onLinksFound = () => {
     const elements = document.getElementsByClassName('cm-string');
-    Array.from(elements).forEach(item => {
+    Array.from(elements).forEach((item, index) => {
       const itemSpan = item as HTMLSpanElement;
-      if (isValidUrl(itemSpan.innerText.replace(/^"|"$/g, ''))) {
-        itemSpan.style.textDecoration = 'underline';
+      const url = itemSpan.innerText.replace(/^"|"$/g, '');
+      if (isClickableLine(url)) {
+        itemSpan.classList.add(CODEMIRROR_LINK_CLASS);
       }
     });
-  };
-  const onLinkClick = async (_: any, ev: MouseEvent) => {
-    setLoadingResolution(true);
-    ev.stopPropagation();
-    const x = ev.pageX;
-    const y = ev.pageY;
-    const editorPosition = codeMirorRef.current?.coordsChar({
-      left: x,
-      top: y,
-    });
-    const token = (editorPosition
-      ? codeMirorRef.current?.getTokenAt(editorPosition)
-      : { start: 0, end: 0, string: '' }) as TToken;
-    const tokenStart = editorPosition?.ch || 0;
-    // const left = x - ((tokenStart - token.start) * 8);
-    const left = x - LINE_HEIGHT;
-    const top = y - LINE_HEIGHT;
-    const defaultPaylaod = { top, left, open: true };
-    // replace the double quotes in the borns of the string because code mirror will added another double quotes
-    // and it will break the url
-    const url = (token as TToken).string.replace(/\\/g, '').replace(/\"/g, '');
-    await resolveLinkInEditor({
-      nexus,
-      dispatch,
-      orgLabel,
-      projectLabel,
-      url,
-      defaultPaylaod,
-    });
-    setLoadingResolution(false);
   };
 
   React.useEffect(() => {
@@ -184,10 +180,35 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setEditing(false);
   };
 
+  useEditorTooltip({
+    orgLabel,
+    projectLabel,
+    isEditing,
+    ref: codeMirorRef,
+  });
+  useEditorPopover({
+    orgLabel,
+    projectLabel,
+    ref: codeMirorRef,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
+        ResourceResolutionCache.clear();
+      }
+    };
+  }, [ResourceResolutionCache, location]);
+
   return (
     <div
-      data-testId="resource-editor"
+      data-testid="resource-editor"
       className={valid ? 'resource-editor' : 'resource-editor _invalid'}
+      style={
+        {
+          '--resource-link-anchor-icon': `url(${AnchorLinkIcon})`,
+        } as React.CSSProperties
+      }
     >
       {showControlPanel && (
         <div className="control-panel">
@@ -204,69 +225,81 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             )}
           </div>
 
-          <div className="controls">
-            {showFullScreen && (
+          <div className="editor-controls-panel">
+            <div className="left-side">
+              {showFullScreen && (
+                <div className="full-screen-switch__wrapper">
+                  <span>Fullscreen</span>
+                  <Switch
+                    aria-label="fullscreen switch"
+                    className="full-screen-switch"
+                    checked={fullscreen}
+                    onChange={onFullScreen}
+                    style={switchMarginRight}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="right-side">
               <Switch
-                checkedChildren="Standard Screen"
-                unCheckedChildren="Full Screen"
-                checked={fullScreen}
-                onChange={onFullScreen}
+                checkedChildren="Unfold"
+                unCheckedChildren="Fold"
+                checked={foldCodeMiror}
+                onChange={onFoldChange}
                 style={switchMarginRight}
               />
-            )}
-            <Switch
-              checkedChildren="Unfold"
-              unCheckedChildren="Fold"
-              checked={foldCodeMiror}
-              onChange={onFoldChange}
-              style={switchMarginRight}
-            />
-            {!expanded && !isEditing && valid && showMetadataToggle && (
-              <Switch
-                checkedChildren="Metadata"
-                unCheckedChildren="Show Metadata"
-                checked={showMetadata}
-                onChange={checked => onMetadataChangeFold(checked)}
-                style={switchMarginRight}
-              />
-            )}
-            {showExpanded && !isEditing && valid && (
-              <Switch
-                checkedChildren="Expanded"
-                unCheckedChildren="Expand"
-                checked={expanded}
-                onChange={expaned => onFormatChangeFold(expanded)}
-                style={switchMarginRight}
-              />
-            )}
-            <Button
-              role="submit"
-              icon={<SaveOutlined />}
-              type="primary"
-              size="small"
-              onClick={handleSubmit}
-              disabled={!valid || !editable || !isEditing}
-            >
-              Save
-            </Button>{' '}
-            {editable && isEditing && (
-              <Button danger size="small" onClick={handleCancel}>
-                Cancel
-              </Button>
-            )}
+              {!expanded && !isEditing && valid && showMetadataToggle && (
+                <Switch
+                  checkedChildren="Metadata"
+                  unCheckedChildren="Show Metadata"
+                  checked={showMetadata}
+                  onChange={checked => onMetadataChangeFold(checked)}
+                  style={switchMarginRight}
+                />
+              )}
+              {showExpanded && !isEditing && valid && (
+                <Switch
+                  checkedChildren="Expanded"
+                  unCheckedChildren="Expand"
+                  checked={expanded}
+                  onChange={expaned => onFormatChangeFold(expanded)}
+                  style={switchMarginRight}
+                />
+              )}
+              <AccessControl
+                path={[`${orgLabel}/${projectLabel}`]}
+                permissions={['resources/write']}
+                noAccessComponent={() => <></>}
+              >
+                <Button
+                  role="submit"
+                  icon={<SaveOutlined />}
+                  type="primary"
+                  size="small"
+                  onClick={handleSubmit}
+                  disabled={!valid || !editable || !isEditing}
+                >
+                  Save
+                </Button>
+              </AccessControl>
+              {editable && isEditing && (
+                <Button danger size="small" onClick={handleCancel}>
+                  Cancel
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
       <CodeEditor
         busy={busy}
+        ref={codeMirorRef}
         value={stringValue}
         editable={editable}
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
-        loadingResolution={loadingResolution}
-        onLinkClick={() => {}}
-        onLinksFound={() => {}}
-        ref={codeMirorRef}
+        onLinksFound={onLinksFound}
+        fullscreen={fullscreen}
       />
     </div>
   );
