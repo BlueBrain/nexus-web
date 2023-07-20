@@ -134,7 +134,7 @@ export const highlightUrlOverlay = (editor: CodeMirror.Editor) => {
         stream.next();
       }
 
-      if (isClickableLine(word)) return CODEMIRROR_LINK_CLASS; // CSS class: cm-url
+      if (isClickableLine(word)) return CODEMIRROR_LINK_CLASS;
       return;
     },
   });
