@@ -1,6 +1,7 @@
 import { NexusClient, Resource } from '@bbp/nexus-sdk';
 import { has } from 'lodash';
 import isValidUrl, {
+  isAllowedProtocol,
   isExternalLink,
   isStorageLink,
   isUrlCurieFormat,
@@ -46,6 +47,8 @@ type TReturnedResolvedData = Omit<
 
 export const LINE_HEIGHT = 15;
 export const INDENT_UNIT = 4;
+export const CODEMIRROR_HOVER_CLASS = 'CodeMirror-hover-tooltip';
+export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 const isDownloadableLink = (resource: Resource) => {
   return Boolean(
@@ -74,6 +77,15 @@ export const getDataExplorerResourceItemArray = (
         data._rev,
       ]) as TDEResource;
 };
+export const isClickableLine = (url: string) => {
+  return (
+    isValidUrl(url) &&
+    isAllowedProtocol(url) &&
+    !isUrlCurieFormat(url) &&
+    !isStorageLink(url)
+  );
+};
+
 export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
   const node = e.target || e.srcElement;
   const text =
@@ -86,9 +98,12 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
     };
     const pos = current.coordsChar(coords);
     const token = current.getTokenAt(pos);
-    if (token && token.string === text) {
+    const url = token
+      ? token.string.replace(/\\/g, '').replace(/\"/g, '')
+      : null;
+    if (token && url === text) {
       return {
-        token,
+        url,
         coords: {
           left: editorRect.left,
           top: coords.top + LINE_HEIGHT,
@@ -101,6 +116,28 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
     coords: { left: editorRect.left, top: e.pageY },
   };
 }
+export const highlightUrlOverlay = (editor: CodeMirror.Editor) => {
+  editor.addOverlay({
+    token: function(stream: any) {
+      const rx_word = '" '; // Define what separates a word
+      let ch = stream.peek();
+      let word = '';
+
+      if (rx_word.includes(ch) || ch === '\uE000' || ch === '\uE001') {
+        stream.next();
+        return null;
+      }
+
+      while ((ch = stream.peek()) && !rx_word.includes(ch)) {
+        word += ch;
+        stream.next();
+      }
+
+      if (isClickableLine(word)) return CODEMIRROR_LINK_CLASS; // CSS class: cm-url
+      return;
+    },
+  });
+};
 export async function editorLinkResolutionHandler({
   nexus,
   apiEndpoint,

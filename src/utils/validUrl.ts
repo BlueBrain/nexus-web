@@ -34,7 +34,7 @@ function isExternalLink(url: string): boolean {
 function isStorageLink(url: string): boolean {
   return url.startsWith('file:///gpfs');
 }
-function isAllowedProtocal(url: string): boolean {
+function isAllowedProtocol(url: string): boolean {
   return url.startsWith('https://') || url.startsWith('http://');
 }
 
@@ -43,6 +43,6 @@ export {
   isUrlCurieFormat,
   isExternalLink,
   isStorageLink,
-  isAllowedProtocal,
+  isAllowedProtocol,
 };
 export default isValidUrl;

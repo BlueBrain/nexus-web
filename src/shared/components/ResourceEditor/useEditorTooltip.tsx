@@ -227,9 +227,7 @@ function useEditorTooltip({
     async function onMouseOver(ev: MouseEvent) {
       const node = ev.target as HTMLElement;
       if (node) {
-        const { token } = getTokenAndPosAt(ev, currentEditor);
-        const content = token?.string || '';
-        const url = content.replace(/\\/g, '').replace(/\"/g, '');
+        const { url } = getTokenAndPosAt(ev, currentEditor);
         if (url && mayBeResolvableLink(url)) {
           node.classList.add('wait-for-tooltip');
           removeTooltipsFromDOM();
@@ -341,9 +339,7 @@ function useEditorPopover({
       removeTooltipsFromDOM();
       const node = ev.target as HTMLElement;
       if (node) {
-        const { token } = getTokenAndPosAt(ev, currentEditor);
-        const content = token?.string || '';
-        const url = content.replace(/\\/g, '').replace(/\"/g, '');
+        const { url } = getTokenAndPosAt(ev, currentEditor);
         if (url && mayBeResolvableLink(url)) {
           editorLinkResolutionHandler({
             nexus,
