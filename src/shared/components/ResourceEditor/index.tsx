@@ -15,23 +15,12 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 
-import isValidUrl, {
-  isAllowedProtocal,
-  isStorageLink,
-  isUrlCurieFormat,
-} from '../../../utils/validUrl';
 import CodeEditor from './CodeEditor';
 import { RootState } from '../../store/reducers';
-import {
-  useEditorPopover,
-  useEditorTooltip,
-  CODEMIRROR_LINK_CLASS,
-} from './useEditorTooltip';
+import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import './ResourceEditor.less';
-
-const AnchorLinkIcon = require('../../images/AnchorLink.svg');
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
   onSubmit: (rawData: { [key: string]: any }) => void;
@@ -52,15 +41,6 @@ export interface ResourceEditorProps {
 }
 
 const switchMarginRight = { marginRight: 5 };
-
-const isClickableLine = (url: string) => {
-  return (
-    isValidUrl(url) &&
-    isAllowedProtocal(url) &&
-    !isUrlCurieFormat(url) &&
-    !isStorageLink(url)
-  );
-};
 
 const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const {
@@ -96,7 +76,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     oidc: state.oidc,
     config: state.config,
   }));
-  const userAuthenticated = oidc.user && oidc.user.access_token;
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -130,16 +109,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       setFoldCodeMiror(() => false);
     }
     onMetadataChange?.(checked);
-  };
-  const onLinksFound = () => {
-    const elements = document.getElementsByClassName('cm-string');
-    Array.from(elements).forEach((item, index) => {
-      const itemSpan = item as HTMLSpanElement;
-      const url = itemSpan.innerText.replace(/^"|"$/g, '');
-      if (isClickableLine(url)) {
-        itemSpan.classList.add(CODEMIRROR_LINK_CLASS);
-      }
-    });
   };
 
   React.useEffect(() => {
@@ -204,11 +173,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     <div
       data-testid="resource-editor"
       className={valid ? 'resource-editor' : 'resource-editor _invalid'}
-      style={
-        {
-          '--resource-link-anchor-icon': `url(${AnchorLinkIcon})`,
-        } as React.CSSProperties
-      }
     >
       {showControlPanel && (
         <div className="control-panel">
@@ -298,7 +262,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         editable={editable}
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
-        onLinksFound={onLinksFound}
         fullscreen={fullscreen}
       />
     </div>
