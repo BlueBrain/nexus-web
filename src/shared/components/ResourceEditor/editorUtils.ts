@@ -118,11 +118,12 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
 }
 export const highlightUrlOverlay = (editor: CodeMirror.Editor) => {
   editor.addOverlay({
-    token: (stream: any) => {
+    token: (stream: any, tall: any, call: any) => {
       const rxWord = '" '; // Define what separates a word
       let ch = stream.peek();
       let word = '';
-
+      // \uE001: end of line
+      // \uE000: start of line
       if (rxWord.includes(ch) || ch === '\uE000' || ch === '\uE001') {
         stream.next();
         return null;

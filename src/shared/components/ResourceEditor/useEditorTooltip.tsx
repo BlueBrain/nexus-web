@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import {
+  CODEMIRROR_HOVER_CLASS,
   TEditorPopoverResolvedData,
   editorLinkResolutionHandler,
   getTokenAndPosAt,
@@ -15,8 +16,6 @@ import useResolutionActions from './useResolutionActions';
 
 const downloadImg = require('../../images/DownloadingLoop.svg');
 
-export const CODEMIRROR_HOVER_CLASS = 'CodeMirror-hover-tooltip';
-export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
   'error' | 'resolvedAs' | 'results'
@@ -226,7 +225,7 @@ function useEditorTooltip({
 
     async function onMouseOver(ev: MouseEvent) {
       const node = ev.target as HTMLElement;
-      if (node) {
+      if (node && !node.classList.contains('cm-property')) {
         const { url } = getTokenAndPosAt(ev, currentEditor);
         if (url && mayBeResolvableLink(url)) {
           node.classList.add('wait-for-tooltip');
@@ -338,7 +337,7 @@ function useEditorPopover({
     async function onMouseDown(_: CodeMirror.Editor, ev: MouseEvent) {
       removeTooltipsFromDOM();
       const node = ev.target as HTMLElement;
-      if (node) {
+      if (node && !node.classList.contains('cm-property')) {
         const { url } = getTokenAndPosAt(ev, currentEditor);
         if (url && mayBeResolvableLink(url)) {
           editorLinkResolutionHandler({
