@@ -118,17 +118,17 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
 }
 export const highlightUrlOverlay = (editor: CodeMirror.Editor) => {
   editor.addOverlay({
-    token: function(stream: any) {
-      const rx_word = '" '; // Define what separates a word
+    token: (stream: any) => {
+      const rxWord = '" '; // Define what separates a word
       let ch = stream.peek();
       let word = '';
 
-      if (rx_word.includes(ch) || ch === '\uE000' || ch === '\uE001') {
+      if (rxWord.includes(ch) || ch === '\uE000' || ch === '\uE001') {
         stream.next();
         return null;
       }
 
-      while ((ch = stream.peek()) && !rx_word.includes(ch)) {
+      while ((ch = stream.peek()) && !rxWord.includes(ch)) {
         word += ch;
         stream.next();
       }
