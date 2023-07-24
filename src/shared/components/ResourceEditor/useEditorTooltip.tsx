@@ -3,6 +3,7 @@ import CodeMirror from 'codemirror';
 import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
+import * as pluralize from 'pluralize';
 import {
   CODEMIRROR_HOVER_CLASS,
   TEditorPopoverResolvedData,
@@ -15,6 +16,7 @@ import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
 
 const downloadImg = require('../../images/DownloadingLoop.svg');
+const infoImg = require('../../images/InfoCircleLine.svg');
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
@@ -83,6 +85,35 @@ function createTooltipNode({
   }
   return tooltipItemContent;
 }
+
+function createWarningHeader(count: number) {
+  const warningHeader = document.createElement('div');
+  warningHeader.className = 'CodeMirror-hover-tooltip-warning';
+  const warningText = document.createElement('div');
+  warningText.className = 'warning-text';
+  warningText.appendChild(
+    document.createTextNode(
+      `We could not resolve this ID to an existing resource as configured in your project, you might need to create this resource or update the resolver configuration of this project.`
+    )
+  );
+  const warningInfo = document.createElement('div');
+  warningInfo.className = 'warning-info';
+  const warningInfoIcon = document.createElement('img');
+  warningInfoIcon.className = 'warning-info-icon';
+  warningInfoIcon.setAttribute('src', infoImg);
+  warningInfo.appendChild(warningInfoIcon);
+  warningInfo.appendChild(
+    document.createTextNode(
+      `For your information, searching across all projects where you have read access, we found the following matching ${pluralize(
+        'resource',
+        count
+      )}:`
+    )
+  );
+  warningHeader.appendChild(warningText);
+  warningHeader.appendChild(warningInfo);
+  return warningHeader;
+}
 function createTooltipContent({
   resolvedAs,
   error,
@@ -105,6 +136,8 @@ function createTooltipContent({
   }
   if (resolvedAs === 'resource') {
     const result = results as TDELink;
+    const warningHeader = createWarningHeader(1);
+    tooltipContent.appendChild(warningHeader);
     tooltipContent.appendChild(
       createTooltipNode({
         onDownload,
@@ -118,6 +151,8 @@ function createTooltipContent({
     return tooltipContent;
   }
   if (resolvedAs === 'resources') {
+    const warningHeader = createWarningHeader((results as TDELink[]).length);
+    tooltipContent.appendChild(warningHeader);
     tooltipContent.appendChild(
       createTooltipNode({
         tag: 'Multiple',
