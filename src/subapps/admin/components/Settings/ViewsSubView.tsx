@@ -22,8 +22,19 @@ type TViewType = {
   status: string;
   orgLabel: string;
   projectLabel: string;
+  isAggregateView: boolean;
 };
 const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
+const aggregateFilterPredicate = (type?: string | string[]) => {
+  if (type) {
+    if (isArray(type)) {
+      return type.some(i => AggregateViews.includes(i));
+    }
+    return AggregateViews.includes(type);
+  }
+  return false;
+};
+
 const fetchViewsList = async ({
   nexus,
   orgLabel,
@@ -35,7 +46,7 @@ const fetchViewsList = async ({
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    let result: TViewType[] = views._results.map(item => {
+    const result: TViewType[] = views._results.map(item => {
       const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
         item._project
       )!;
@@ -46,44 +57,38 @@ const fetchViewsList = async ({
         key: item['@id'] as string,
         name: (item['@id'] as string).split('/').pop() as string,
         type: item['@type'],
+        isAggregateView: aggregateFilterPredicate(item['@type']),
         status: '100%',
       };
     });
-    result = orderBy(
-      result.filter(item => {
-        if (item.type) {
-          if (isArray(item.type)) {
-            return !item.type.some(i => AggregateViews.includes(i));
-          }
-          return !AggregateViews.includes(item.type);
-        }
-        return false;
-      }),
-      ['id'],
-      ['asc']
-    );
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
       .process(async view => {
-        const iViewStats = await nexus.View.statistics(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(view.key)
-        );
-        //  TODO: we should update the type in nexus-sdk! as the response is not the same from delta!
-        // @ts-ignore
-        const percentage = iViewStats.totalEvents
-          ? // @ts-ignore
-            iViewStats.processedEvents / iViewStats.totalEvents
-          : 0;
+        if (!view.isAggregateView) {
+          const iViewStats = await nexus.View.statistics(
+            orgLabel,
+            projectLabel,
+            encodeURIComponent(view.key)
+          );
+          //  TODO: we should update the type in nexus-sdk! as the response is not the same from delta!
+          // @ts-ignore
+          const percentage = iViewStats.totalEvents
+            ? // @ts-ignore
+              iViewStats.processedEvents / iViewStats.totalEvents
+            : 0;
+          return {
+            ...view,
+            status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
+          };
+        }
         return {
           ...view,
-          status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
+          status: 'N/A',
         };
       });
     return {
-      results,
       errors,
+      results: orderBy(results, ['isAggregateView', 'name'], ['asc', 'asc']),
     };
   } catch (error) {
     console.error('@@error', error);
@@ -235,7 +240,7 @@ const ViewsSubView = () => {
       dataIndex: 'actions',
       title: 'Actions',
       align: 'center',
-      render: (_, { id, key, orgLabel, projectLabel }) => {
+      render: (_, { id, key, orgLabel, projectLabel, isAggregateView }) => {
         const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
           `${key}`
         )}`;
@@ -258,34 +263,36 @@ const ViewsSubView = () => {
             >
               Query
             </Button>
-            <AccessControl
-              permissions={['views/query', 'views/write']}
-              path={[`${orgLabel}/${projectLabel}`]}
-              noAccessComponent={() => (
-                <Tooltip title="You have no permissions to re-index this view">
-                  <Button disabled type="link">
-                    <span style={{ marginRight: 5 }}>Re-index</span>
-                    <HasNoPermission />
-                  </Button>
-                </Tooltip>
-              )}
-            >
-              <Button
-                type="link"
-                htmlType="button"
-                onClick={() =>
-                  handleReindexingOneView({
-                    nexus,
-                    apiEndpoint,
-                    orgLabel,
-                    projectLabel,
-                    viewId: id,
-                  })
-                }
+            {!isAggregateView && (
+              <AccessControl
+                permissions={['views/query', 'views/write']}
+                path={[`${orgLabel}/${projectLabel}`]}
+                noAccessComponent={() => (
+                  <Tooltip title="You have no permissions to re-index this view">
+                    <Button disabled type="link">
+                      <span style={{ marginRight: 5 }}>Re-index</span>
+                      <HasNoPermission />
+                    </Button>
+                  </Tooltip>
+                )}
               >
-                Re-index
-              </Button>
-            </AccessControl>
+                <Button
+                  type="link"
+                  htmlType="button"
+                  onClick={() =>
+                    handleReindexingOneView({
+                      nexus,
+                      apiEndpoint,
+                      orgLabel,
+                      projectLabel,
+                      viewId: id,
+                    })
+                  }
+                >
+                  Re-index
+                </Button>
+              </AccessControl>
+            )}
           </div>
         );
       },
@@ -341,7 +348,9 @@ const ViewsSubView = () => {
                   handleReindexingAllViews({
                     nexus,
                     apiEndpoint,
-                    views: views?.results || [],
+                    views:
+                      views?.results.filter(item => !item.isAggregateView) ||
+                      [],
                   });
                 }}
               >
