@@ -23,6 +23,7 @@ export interface DataExplorerConfiguration {
   type: string | undefined;
   predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
+  deprecated: boolean;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
@@ -31,7 +32,15 @@ export const DataExplorer: React.FC<{}> = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   const [
-    { pageSize, offset, orgAndProject, predicate, type, selectedPath },
+    {
+      pageSize,
+      offset,
+      orgAndProject,
+      predicate,
+      type,
+      selectedPath,
+      deprecated,
+    },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -45,6 +54,7 @@ export const DataExplorer: React.FC<{}> = () => {
       type: undefined,
       predicate: null,
       selectedPath: null,
+      deprecated: false,
     }
   );
 
@@ -53,6 +63,7 @@ export const DataExplorer: React.FC<{}> = () => {
     offset,
     orgAndProject,
     type,
+    deprecated,
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -70,6 +81,11 @@ export const DataExplorer: React.FC<{}> = () => {
       ),
     [currentPageDataSource, showMetadataColumns, selectedPath]
   );
+
+  const onDeprecatedChange = (checked: boolean) =>
+    updateTableConfiguration({
+      deprecated: checked,
+    });
 
   return (
     <div className="data-explorer-contents">
@@ -111,6 +127,14 @@ export const DataExplorer: React.FC<{}> = () => {
             totalFiltered={predicate ? displayedDataSource.length : undefined}
           />
           <div className="data-explorer-toggles">
+            <Switch
+              defaultChecked={false}
+              checked={deprecated}
+              onClick={onDeprecatedChange}
+              id="show-deprecated-resources"
+              className="data-explorer-toggle"
+            />
+            <label htmlFor="show-metadata-columns">Show deprecated</label>
             <Switch
               defaultChecked={false}
               checked={showMetadataColumns}
