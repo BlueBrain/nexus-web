@@ -132,7 +132,7 @@ export const notifyTotalSizeExeeced = () => {
     key: 'data-panel-size-exceeded',
   });
 };
-const getTypesTrancated = (text: string | string[]) => {
+export const getTypesTrancated = (text: string | string[]) => {
   let types = '';
   let typesWithUrl = text;
   if (isArray(text)) {
