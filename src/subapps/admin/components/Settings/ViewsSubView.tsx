@@ -3,11 +3,12 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useMutation, useQuery } from 'react-query';
 import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
-import { isArray, isString } from 'lodash';
+import { isArray, isString, orderBy } from 'lodash';
 import { ColumnsType } from 'antd/es/table';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
+import * as Sentry from '@sentry/browser';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
@@ -22,21 +23,19 @@ type TViewType = {
   orgLabel: string;
   projectLabel: string;
 };
-
+const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
 const fetchViewsList = async ({
   nexus,
   orgLabel,
   projectLabel,
-  apiRoot,
 }: {
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
-  apiRoot: string;
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: TViewType[] = views._results.map(item => {
+    let result: TViewType[] = views._results.map(item => {
       const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
         item._project
       )!;
@@ -50,6 +49,19 @@ const fetchViewsList = async ({
         status: '100%',
       };
     });
+    result = orderBy(
+      result.filter(item => {
+        if (item.type) {
+          if (isArray(item.type)) {
+            return !item.type.some(i => AggregateViews.includes(i));
+          }
+          return !AggregateViews.includes(item.type);
+        }
+        return false;
+      }),
+      ['id'],
+      ['asc']
+    );
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
       .process(async view => {
@@ -74,6 +86,14 @@ const fetchViewsList = async ({
       errors,
     };
   } catch (error) {
+    console.error('@@error', error);
+    Sentry.captureException('Error loading and filtering the views', {
+      extra: {
+        orgLabel,
+        projectLabel,
+        error,
+      },
+    });
     // @ts-ignore
     throw new Error('Can not fetch views', { cause: error });
   }
@@ -91,11 +111,23 @@ const restartIndexOneView = async ({
   projectLabel: string;
   viewId: string;
 }) => {
-  return await nexus.httpDelete({
-    path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(
-      viewId
-    )}/offset`,
-  });
+  try {
+    return await nexus.httpDelete({
+      path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(
+        viewId
+      )}/offset`,
+    });
+  } catch (error) {
+    console.log('@@error', error);
+    Sentry.captureException('Error restarting one view', {
+      extra: {
+        orgLabel,
+        projectLabel,
+        viewId,
+        error,
+      },
+    });
+  }
 };
 const restartIndexingAllViews = async ({
   nexus,
@@ -118,6 +150,11 @@ const restartIndexingAllViews = async ({
       });
     });
   if (errors.length) {
+    Sentry.captureException('Error restarting views', {
+      extra: {
+        views,
+      },
+    });
     // @ts-ignore
     throw new Error('Error captured when reindexing the views', {
       cause: errors,
@@ -144,8 +181,7 @@ const ViewsSubView = () => {
   };
   const { data: views, status } = useQuery({
     queryKey: [`views-${orgLabel}-${projectLabel}`],
-    queryFn: () =>
-      fetchViewsList({ nexus, orgLabel, projectLabel, apiRoot: apiEndpoint }),
+    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel }),
     refetchInterval: 30 * 1000, // 30s
   });
   const { mutateAsync: handleReindexingOneView } = useMutation(
