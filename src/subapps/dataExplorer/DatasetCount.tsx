@@ -42,11 +42,9 @@ export const DatasetCount: React.FC<Props> = ({
         )}
       </span>
       <span className="predicate">
-        <span>
-          Sample loaded for review: <b>{totalOnPage}</b>
-        </span>{' '}
+        Sample loaded for review: <b>{totalOnPage}</b>{' '}
         {!isNil(totalFiltered) && (
-          <span>
+          <span data-testid="filtered-count">
             of which <b>{totalFiltered}</b> matching filter
           </span>
         )}
