@@ -1,24 +1,19 @@
-import React, {
-  useCallback,
-  useRef,
-  useState,
-  ReactElement,
-  FunctionComponent,
-} from 'react';
+import React, { useCallback, useRef, useState, ReactElement } from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Checkbox, Col, Dropdown, Input, Row, Select } from 'antd';
+import { Checkbox, Col, Input, Row, Select } from 'antd';
 import { isString, startCase } from 'lodash';
 import { useQuery } from 'react-query';
+import { prettifyNumber } from '../../../utils/formatNumber';
 import {
-  THeaderProps,
+  TRowRendererProps,
   TType,
   TTypeAggregationsResult,
+  TTypeSelectorProps,
   TTypesAggregatedBucket,
-} from '../../../canvas/MyData/types';
-import useMeasure from '../../../hooks/useMeasure';
-import isValidUrl from '../../../../utils/validUrl';
-import { prettifyNumber } from '../../../../utils/formatNumber';
+} from './types';
+import isValidUrl from '../../../utils/validUrl';
+import './style.less';
 
 const getTypesByAggregation = async ({
   nexus,
@@ -36,18 +31,24 @@ const getTypesByAggregation = async ({
 
 const useTypesAggregation = ({
   nexus,
+  org,
+  project,
   selectCallback,
 }: {
   nexus: NexusClient;
+  org?: string;
+  project?: string;
   selectCallback: (data: any) => TType[];
 }) => {
   return useQuery({
     refetchOnWindowFocus: false,
-    queryKey: ['types-aggregation-results'],
-    queryFn: () => getTypesByAggregation({ nexus }),
+    queryKey: ['types-aggregation-results', { org, project }],
+    queryFn: () =>
+      getTypesByAggregation({ nexus, orgLabel: org, projectLabel: project }),
     select: selectCallback,
   });
 };
+
 const typesOptionsBuilder = (typeBucket: TTypesAggregatedBucket): TType => {
   const typeKey = typeBucket.key;
   const typeLabel =
@@ -70,12 +71,7 @@ const TypeItem = ({ value, docCount, label }: TType) => {
     </Col>
   );
 };
-type TRowRendererProps<T> = {
-  checked: boolean;
-  value: T;
-  onCheck(e: React.MouseEvent<HTMLElement, MouseEvent>, type: T): void;
-  titleComponent: (props: T) => ReactElement;
-};
+
 export const RowRenderer = <T,>({
   value,
   checked,
@@ -103,10 +99,14 @@ export const RowRenderer = <T,>({
     </Row>
   );
 };
+
 const TypeSelector = ({
+  org,
+  project,
   types,
-  setFilterOptions,
-}: Pick<THeaderProps, 'types' | 'setFilterOptions'>) => {
+  styles,
+  updateOptions,
+}: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
   const [typeSearchValue, updateSearchType] = useState('');
@@ -120,8 +120,10 @@ const TypeSelector = ({
     return options;
   }, []);
 
-  const { data: typeOptions } = useTypesAggregation({
+  const { data: typeOptions, isLoading } = useTypesAggregation({
     nexus,
+    org,
+    project,
     selectCallback,
   });
 
@@ -141,11 +143,11 @@ const TypeSelector = ({
     }
   };
   const onDeselectTypesChange = (value: any) =>
-    setFilterOptions({
-      types: types?.filter(item => item.value !== value),
+    updateOptions({
+      types: types?.filter((item: TType) => item.value !== value),
     });
   const onClearTypesChange = () =>
-    setFilterOptions({
+    updateOptions({
       types: [],
     });
 
@@ -155,75 +157,75 @@ const TypeSelector = ({
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    setFilterOptions({
-      types: types?.find(item => item.value === type.value) ? [] : [type],
+    updateOptions({
+      types: types?.find((item: TType) => item.value === type.value)
+        ? []
+        : [type],
     });
   };
-
-  const [typeInputRef, { width }] = useMeasure<HTMLInputElement>();
   const renderedTypes = typeSearchValue ? typesOptionsArray : typeOptions ?? [];
+
   return (
-    <Dropdown
-      placement="bottom"
-      trigger={['click']}
-      overlayStyle={{ width }}
-      overlay={
-        <div className="my-data-type-filter-overlay">
-          <div className="my-data-type-filter-search-container">
-            <Input.Search
-              allowClear
-              className="my-data-type-filter-search"
-              placeholder="Search for type"
-              value={typeSearchValue}
-              onChange={onChangeTypeChange}
-            />
-            {
-              <div className="count">{`${prettifyNumber(
-                renderedTypes.length
-              )} types`}</div>
-            }
-          </div>
-          <div className="my-data-type-filter-content">
-            {renderedTypes.length ? (
-              renderedTypes.map((type: TType) => {
-                return (
-                  <RowRenderer<TType>
-                    key={type.key}
-                    value={type}
-                    checked={Boolean(
-                      types?.find(item => item.key === type.key)
-                    )}
-                    onCheck={handleOnCheckType}
-                    titleComponent={TypeItem}
-                  />
-                );
-              })
-            ) : (
-              <div className="no-types-content">
-                <span>No types found</span>
+    <div className="types-selector" style={styles?.container}>
+      <div className="types-selector-wrapper">
+        <Select
+          id="columns-selector"
+          mode="tags"
+          virtual={false}
+          value={types}
+          loading={isLoading}
+          disabled={isLoading}
+          placeholder="Type"
+          optionLabelProp="label"
+          onDeselect={onDeselectTypesChange}
+          onClear={onClearTypesChange}
+          style={styles?.selector}
+          dropdownStyle={{ position: 'fixed' }}
+          className="types-selector-select"
+          popupClassName="types-selector-popup"
+          aria-label="type-filter"
+          dropdownRender={() => (
+            <>
+              <div className="types-selector-search-container">
+                <Input.Search
+                  allowClear
+                  placeholder="Search column"
+                  className="types-selector-search-input"
+                  value={typeSearchValue}
+                  onChange={onChangeTypeChange}
+                />
+                {
+                  <div className="count">{`${prettifyNumber(
+                    renderedTypes.length
+                  )} types`}</div>
+                }
               </div>
-            )}
-          </div>
-        </div>
-      }
-    >
-      <Select
-        allowClear
-        // @ts-ignore
-        ref={typeInputRef}
-        mode="tags"
-        style={{ width: '100%' }}
-        placeholder="Type"
-        className="my-data-type-picker"
-        popupClassName="my-data-type-picker-popup"
-        optionLabelProp="label"
-        value={types}
-        options={undefined}
-        onDeselect={onDeselectTypesChange}
-        onClear={onClearTypesChange}
-        maxLength={1}
-      />
-    </Dropdown>
+              <div className="my-data-type-filter-content">
+                {renderedTypes.length ? (
+                  renderedTypes.map((type: TType) => {
+                    return (
+                      <RowRenderer<TType>
+                        key={type.key}
+                        value={type}
+                        checked={Boolean(
+                          types?.find((item: TType) => item.key === type.key)
+                        )}
+                        onCheck={handleOnCheckType}
+                        titleComponent={TypeItem}
+                      />
+                    );
+                  })
+                ) : (
+                  <div className="no-types-content">
+                    <span>No types found</span>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        />
+      </div>
+    </div>
   );
 };
 

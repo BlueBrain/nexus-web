@@ -1,4 +1,5 @@
 import { MenuProps } from 'antd';
+import { TType } from '../../molecules/TypeSelector/types';
 
 export type TIssuer = 'createdBy' | 'updatedBy';
 export type TDateField = 'createdAt' | 'updatedAt';
@@ -52,26 +53,3 @@ export type TDate = {
 };
 export type TDateOptions = 'singleDate' | 'dateStart' | 'dateEnd';
 export const DATE_PATTERN = 'DD/MM/YYYY';
-export type TType = {
-  key: string;
-  value: string;
-  label: string;
-  docCount: number;
-};
-
-export type TTypeAggregationsResult = {
-  '@context': string;
-  total: number;
-  aggregations: {
-    projects: TTypesAggregatedProperty;
-    types: TTypesAggregatedProperty;
-  };
-};
-
-export type TTypesAggregatedProperty = {
-  buckets: TTypesAggregatedBucket[];
-  doc_count_error_upper_bound: number;
-  sum_other_doc_count: number;
-};
-
-export type TTypesAggregatedBucket = { key: string; doc_count: number };
