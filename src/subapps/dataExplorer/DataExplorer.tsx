@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';
 import { find, merge, unionWith } from 'lodash';
-import { useSelector, useDispatch } from 'react-redux';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -19,11 +19,6 @@ import { TypeSelector } from './TypeSelector';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-
-import './styles.less';
-
-import { RootState } from '../../shared/store/reducers';
-import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
 import './styles.less';
 
 const $update = <T,>(
@@ -104,11 +99,9 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
 
 export const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
-  const { origin } = useSelector((state: RootState) => state.dataExplorer);
   const [
     {
       pageSize,
@@ -239,7 +232,7 @@ export const DataExplorer: React.FC<{}> = () => {
     });
     updateSelectedColumnsCached(newColumns);
   };
-
+  
   const displayedColumns = columns
     .filter(column => column.selected)
     .map(column => column.value);
