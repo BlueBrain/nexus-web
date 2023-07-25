@@ -121,7 +121,7 @@ export const dataExplorerSlice = createSlice({
         referer,
         current,
         fullscreen,
-        origin: referer.state?.background?.pathname || '',
+        origin: referer?.state?.background?.pathname || '',
         leftNodes: {
           links:
             source && current
@@ -328,16 +328,8 @@ export const dataExplorerSlice = createSlice({
       return newState;
     },
     ResetDataExplorerGraphFlow: (state, action) => {
-      return (
-        action.payload.initialState ?? {
-          leftNodes: { links: [], shrinked: false },
-          rightNodes: { links: [], shrinked: false },
-          current: null,
-          referer: null,
-          fullscreen: false,
-          origin: state.origin,
-        }
-      );
+      console.log('resetting', state);
+      return action.payload.initialState ?? initialState;
     },
     InitDataExplorerGraphFlowFullscreenVersion: (
       state,

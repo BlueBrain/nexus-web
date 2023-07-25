@@ -1,9 +1,15 @@
-import React, { useEffect, useMemo, useReducer, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
-import { find, merge, unionBy, orderBy } from 'lodash';
+import { find, merge, unionBy, orderBy, differenceBy } from 'lodash';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -133,31 +139,51 @@ export const DataExplorer: React.FC<{}> = () => {
     });
     updateSelectedColumnsCached(newColumns);
   };
+  const buildColumns = useMemo(() => {
+    return columnsFromDataSource(
+      currentPageDataSource,
+      showMetadataColumns,
+      selectedPath
+    )
+      .filter((t: string) => !['@type', '_project'].includes(t))
+      .map(value => ({
+        value,
+        selected: true,
+        key: `de-column-${value}`,
+      }));
+  }, [currentPageDataSource, showMetadataColumns, selectedPath]);
 
   const displayedColumns = columns
     .filter(column => column.selected)
     .map(column => column.value);
 
   useEffect(() => {
-    const newColumns = columnsFromDataSource(
-      currentPageDataSource,
-      showMetadataColumns,
-      selectedPath
-    )
-      .filter(t => !['@type', '_project'].includes(t))
-      .map(value => ({
-        value,
-        selected: true,
-        key: `de-column-${value}`,
-      }));
-    const updatedColumns = unionBy(columns, newColumns, 'value');
+    const newColumns = buildColumns;
+    const updatedColumns = unionBy(newColumns, columns, 'value');
     if (newColumns.length) {
       updateTableConfiguration({
         columns: updatedColumns,
       });
     }
-  }, [currentPageDataSource, showMetadataColumns, selectedPath]);
+  }, [JSON.stringify(buildColumns)]);
 
+  const onShowMetadataColumnsChange = (checked: boolean) => {
+    setShowMetadataColumns(checked);
+    const newColumns = buildColumns;
+    const updatedColumns = differenceBy(columns, newColumns, 'value');
+    updateTableConfiguration({
+      columns: updatedColumns,
+    });
+  };
+  const onResetPredicateCallback = (column: string, checked: boolean) => {
+    const newColumns = $update<TColumn>(columns, c => c.value === column, {
+      value: column,
+      selected: checked,
+    });
+    updateTableConfiguration({
+      columns: newColumns,
+    });
+  };
   useEffect(() => {
     let timeoutId: number;
     if (showNewItemsMessage) {
@@ -216,8 +242,10 @@ export const DataExplorer: React.FC<{}> = () => {
               }}
             />
             <PredicateSelector
+              columns={columns}
               dataSource={currentPageDataSource}
               onPredicateChange={updateTableConfiguration}
+              onResetCallback={onResetPredicateCallback}
             />
           </div>
           <div className="right">
@@ -243,7 +271,7 @@ export const DataExplorer: React.FC<{}> = () => {
             <Switch
               defaultChecked={false}
               checked={showMetadataColumns}
-              onClick={isChecked => setShowMetadataColumns(isChecked)}
+              onClick={onShowMetadataColumnsChange}
               id="show-metadata-columns"
               className="data-explorer-toggle"
             />
