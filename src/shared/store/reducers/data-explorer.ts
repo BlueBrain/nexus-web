@@ -328,7 +328,6 @@ export const dataExplorerSlice = createSlice({
       return newState;
     },
     ResetDataExplorerGraphFlow: (state, action) => {
-      console.log('resetting', state);
       return action.payload.initialState ?? initialState;
     },
     InitDataExplorerGraphFlowFullscreenVersion: (
