@@ -1,6 +1,5 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Input, Select, Col } from 'antd';
-import { normalizeString } from '../../utils/stringUtils';
 import { RowRenderer } from '../../shared/molecules/TypeSelector/TypeSelector';
 import Light from '../../shared/components/Icons/Light';
 import { orderBy } from 'lodash';
@@ -47,12 +46,12 @@ const ColumnsSelector = ({
   );
   const onSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.type === 'click' || e.target.value === '') {
-      return updateSearchResults({ inputColumns: columns, queryTerm: '' });
+      updateSearchResults({ inputColumns: columns, queryTerm: '' });
     }
     updateSearchResults({
       queryTerm: e.target.value,
       inputColumns: columns.filter(column =>
-        normalizeString(column.value).includes(normalizeString(e.target.value))
+        column.value.toLowerCase().includes(e.target.value.toLowerCase())
       ),
     });
   };
@@ -67,6 +66,7 @@ const ColumnsSelector = ({
         <Select
           id="columns-selector"
           style={{ width: 300 }}
+          placeholder="custom dropdown render"
           className="columns-selector-dropdown"
           popupClassName="columns-selector-popup"
           virtual={false}
@@ -107,6 +107,11 @@ const ColumnsSelector = ({
           )}
         />
       </div>
+      {Boolean(newItemsCount) && showNewItemsMessage && (
+        <div className="new-columns-message">
+          <Light /> {newItemsCount} new columns added on this page
+        </div>
+      )}
     </div>
   );
 };

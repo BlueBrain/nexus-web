@@ -1,5 +1,5 @@
 import * as pluralize from 'pluralize';
-import TypeSelector from './TypeSelector';
+import TypeSelector from '../../TypeSelector/TypeSelector';
 import DateSelector from './DateSelector';
 import DateFieldSelector from './DateFieldSelector';
 import PageTitle from './PageTitle';
@@ -44,7 +44,7 @@ const MyDataHeaderFilters = ({
       <span className="filter-heading">Filter: </span>
       <DateFieldSelector {...{ dateField, setFilterOptions }} />
       <DateSelector {...{ dateField, setFilterOptions }} />
-      <TypeSelector {...{ types, setFilterOptions }} />
+      <TypeSelector {...{ types, updateOptions: setFilterOptions }} />
     </div>
   );
 };
