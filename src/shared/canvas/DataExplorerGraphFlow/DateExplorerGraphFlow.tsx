@@ -11,7 +11,6 @@ import {
   DataExplorerFlowSliceListener,
   DataExplorerMiddlewareMatcher,
   calculateDateExplorerGraphFlowDigest,
-  TDataExplorerState,
 } from '../../store/reducers/data-explorer';
 import {
   NavigationArrows,
