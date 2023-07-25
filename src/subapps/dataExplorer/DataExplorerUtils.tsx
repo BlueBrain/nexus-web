@@ -11,24 +11,37 @@ export const usePaginatedExpandedResources = ({
   pageSize,
   offset,
   orgAndProject,
+<<<<<<< HEAD
   type,
   deprecated,
+=======
+  types,
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
 }: PaginatedResourcesParams) => {
   const nexus = useNexusContext();
-
   return useQuery({
+<<<<<<< HEAD
     queryKey: [
       'data-explorer',
       { pageSize, offset, orgAndProject, type, deprecated },
     ],
+=======
+    queryKey: ['data-explorer', { pageSize, offset, orgAndProject, types }],
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
     retry: false,
     queryFn: async () => {
       const resultWithPartialResources = await nexus.Resource.list(
         orgAndProject?.[0],
         orgAndProject?.[1],
         {
+<<<<<<< HEAD
           type,
           deprecated,
+=======
+          // @ts-ignore
+          type: types,
+          typeOperator: 'or',
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
           from: offset,
           size: pageSize,
         }
@@ -186,8 +199,12 @@ interface PaginatedResourcesParams {
   pageSize: number;
   offset: number;
   orgAndProject?: string[];
+<<<<<<< HEAD
   type?: string;
   deprecated: boolean;
+=======
+  types?: string[];
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
 }
 
 export const useTimeoutMessage = ({
