@@ -1,6 +1,8 @@
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
-import React, { useMemo, useReducer, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { find, merge, unionBy } from 'lodash';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -12,10 +14,22 @@ import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
 import { TypeSelector } from './TypeSelector';
-import './styles.less';
+import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
-import Loading from '../../shared/components/Loading';
+import { RootState } from '../../shared/store/reducers';
+import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
+import './styles.less';
+import { useHistory } from 'react-router';
 
+const $update = <T,>(
+  array: T[],
+  keyfn: (item: T) => void,
+  newVal: Partial<T>
+) => {
+  const match = find(array, keyfn);
+  if (match) merge(match, newVal);
+  return array;
+};
 export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
@@ -23,21 +37,61 @@ export interface DataExplorerConfiguration {
   type: string | undefined;
   predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
+  columns: TColumn[];
+  newItemsCount: number;
+  showNewItemsMessage: boolean;
 }
+const SELECTED_COLUMNS_CACHED_KEY = 'data-explorer-selected-columns';
+const getSelectedColumnsCached = (): TColumn[] => {
+  const cached = sessionStorage.getItem(SELECTED_COLUMNS_CACHED_KEY);
+  if (!cached) return [];
+  try {
+    return JSON.parse(cached);
+  } catch (e) {
+    return [];
+  }
+};
+export const updateSelectedColumnsCached = (columns: TColumn[]) => {
+  sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
+};
 
 export const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
-
+  const { origin } = useSelector((state: RootState) => state.dataExplorer);
+  const history = useHistory();
   const [
-    { pageSize, offset, orgAndProject, predicate, type, selectedPath },
+    {
+      pageSize,
+      offset,
+      orgAndProject,
+      predicate,
+      type,
+      selectedPath,
+      columns,
+      showNewItemsMessage,
+      newItemsCount,
+    },
     updateTableConfiguration,
   ] = useReducer(
     (
       previous: DataExplorerConfiguration,
       next: Partial<DataExplorerConfiguration>
-    ) => ({ ...previous, ...next }),
+    ) => ({
+      ...previous,
+      ...next,
+      ...(next.columns
+        ? {
+            newItemsCount:
+              (next.columns.length || 0) > (previous.columns.length || 0)
+                ? (next.columns.length || 0) - (previous.columns.length || 0)
+                : 0,
+            showNewItemsMessage:
+              previous.columns.length !== next.columns.length,
+          }
+        : {}),
+    }),
     {
       pageSize: 50,
       offset: 0,
@@ -45,6 +99,9 @@ export const DataExplorer: React.FC<{}> = () => {
       type: undefined,
       predicate: null,
       selectedPath: null,
+      columns: [],
+      showNewItemsMessage: false,
+      newItemsCount: 0,
     }
   );
 
@@ -61,16 +118,69 @@ export const DataExplorer: React.FC<{}> = () => {
     ? currentPageDataSource.filter(predicate)
     : currentPageDataSource;
 
-  const memoizedColumns = useMemo(
-    () =>
-      columnsFromDataSource(
-        currentPageDataSource,
-        showMetadataColumns,
-        selectedPath
-      ),
-    [currentPageDataSource, showMetadataColumns, selectedPath]
-  );
+  const onColumnSelect = (
+    _: React.MouseEvent<HTMLElement, MouseEvent>,
+    { value, selected }: TColumn
+  ) => {
+    const newColumns = $update<TColumn>(
+      columns,
+      column => column.value === value,
+      { value, selected: !selected }
+    );
+    updateTableConfiguration({
+      columns: newColumns,
+    });
+    updateSelectedColumnsCached(newColumns);
+  };
 
+  const displayedColumns = columns
+    .filter(column => column.selected)
+    .map(column => column.value);
+
+  useEffect(() => {
+    const newColumns = columnsFromDataSource(
+      currentPageDataSource,
+      showMetadataColumns,
+      selectedPath
+    ).map(value => ({
+      value,
+      selected: true,
+      key: `de-column-${value}`,
+    }));
+    const updatedColumns = unionBy(columns, newColumns, 'value');
+
+    if (newColumns.length) {
+      updateTableConfiguration({
+        columns: updatedColumns,
+      });
+    }
+  }, [currentPageDataSource, showMetadataColumns, selectedPath]);
+
+  useEffect(() => {
+    let timeoutId: number;
+    if (showNewItemsMessage) {
+      timeoutId = window.setTimeout(() => {
+        updateTableConfiguration({
+          showNewItemsMessage: false,
+        });
+        clearTimeout(timeoutId);
+      }, 6000);
+    }
+    () => {
+      clearTimeout(timeoutId);
+    };
+  }, [showNewItemsMessage]);
+
+  useEffect(() => {
+    history.listen(location => {
+      if (origin === '/data-explorer' && location.pathname === origin) {
+        updateTableConfiguration({
+          columns: getSelectedColumnsCached(),
+        });
+        UpdateDataExplorerOrigin('');
+      }
+    });
+  }, [origin]);
   return (
     <div className="data-explorer-contents">
       {isLoading && <Spin className="loading" />}
@@ -81,27 +191,40 @@ export const DataExplorer: React.FC<{}> = () => {
         }}
       >
         <div className="data-explorer-filters">
-          <ProjectSelector
-            onSelect={(orgLabel?: string, projectLabel?: string) => {
-              if (orgLabel && projectLabel) {
-                updateTableConfiguration({
-                  orgAndProject: [orgLabel, projectLabel],
-                });
-              } else {
-                updateTableConfiguration({ orgAndProject: undefined });
-              }
-            }}
-          />
-          <TypeSelector
-            orgAndProject={orgAndProject}
-            onSelect={selectedType => {
-              updateTableConfiguration({ type: selectedType });
-            }}
-          />
-          <PredicateSelector
-            dataSource={currentPageDataSource}
-            onPredicateChange={updateTableConfiguration}
-          />
+          <div className="left">
+            <ProjectSelector
+              onSelect={(orgLabel?: string, projectLabel?: string) => {
+                if (orgLabel && projectLabel) {
+                  updateTableConfiguration({
+                    orgAndProject: [orgLabel, projectLabel],
+                  });
+                } else {
+                  updateTableConfiguration({ orgAndProject: undefined });
+                }
+              }}
+            />
+            <TypeSelector
+              orgAndProject={orgAndProject}
+              onSelect={selectedType => {
+                updateTableConfiguration({ type: selectedType });
+              }}
+            />
+            <PredicateSelector
+              dataSource={currentPageDataSource}
+              onPredicateChange={updateTableConfiguration}
+            />
+          </div>
+          <div className="right">
+            <ColumnsSelector
+              {...{
+                columns,
+                newItemsCount,
+                showNewItemsMessage,
+                onColumnSelect,
+                loading: isLoading,
+              }}
+            />
+          </div>
         </div>
 
         <div className="flex-container">
@@ -134,7 +257,7 @@ export const DataExplorer: React.FC<{}> = () => {
       <DataExplorerTable
         isLoading={isLoading}
         dataSource={displayedDataSource}
-        columns={memoizedColumns}
+        columns={displayedColumns}
         total={resources?._total}
         pageSize={pageSize}
         offset={offset}

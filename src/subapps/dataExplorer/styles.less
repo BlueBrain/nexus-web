@@ -20,6 +20,7 @@
     left: 20px;
     color: @fusion-blue-8;
     background: white;
+
     &:active,
     &:focus {
       background: white;
@@ -41,6 +42,15 @@
   .data-explorer-filters {
     display: flex;
     margin-bottom: 28px;
+    align-items: center;
+    justify-content: space-between;
+
+    .left,
+    .right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
   }
 
   .flex-container {
@@ -64,6 +74,7 @@
       margin-left: 6px;
       color: @fusion-blue-8;
     }
+
     .data-explorer-toggle {
       border: 1px solid @fusion-blue-8;
       box-sizing: content-box;
@@ -71,12 +82,15 @@
 
       &[aria-checked='true'] {
         background-color: @fusion-blue-8;
+
         .ant-switch-handle::before {
           background-color: white;
         }
       }
+
       &[aria-checked='false'] {
         background-color: transparent;
+
         .ant-switch-handle::before {
           background-color: @fusion-blue-8;
         }
@@ -168,6 +182,7 @@
         font-weight: 700;
       }
     }
+
     .select-menu.reduced-width {
       .ant-select-selector {
         min-width: 140px;
@@ -223,6 +238,7 @@
     width: auto;
     min-width: 90vw !important; // This is needed to make sure that the table headers and table body columns are aligned when the table is rerendered (eg when user selects a predicate, project, or, type).
   }
+
   .ant-table {
     background: @fusion-main-bg;
   }
@@ -264,11 +280,91 @@
   .ant-select-item-option-content {
     color: @fusion-blue-8;
     width: 100%;
+
     .first-metadata-path {
       width: 100%;
       display: block;
       border-top: 1px solid @medium-gray;
       padding-top: 4px;
+    }
+  }
+}
+
+.columns-selector {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.columns-selector-dropdown {
+  .ant-select-selector {
+    background-color: #ffffff !important;
+  }
+}
+
+.columns-selector-popup {
+  background-color: white !important;
+}
+
+.columns-selector-container {
+  overflow-y: scroll;
+  height: 220px;
+
+  &::-webkit-scrollbar-thumb {
+    background: @fusion-primary-color;
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 px @fusion-primary-color;
+    max-height: 4px;
+  }
+}
+
+.columns-selector-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.columns-search-container {
+  padding: 15px 10px;
+}
+
+.new-columns-message {
+  color: @fusion-green-light;
+  padding: 5px 0;
+  user-select: none;
+}
+
+.columns-selector-search {
+  background-color: white !important;
+  border-bottom: 1px solid @fusion-neutral-5 !important;
+  width: 100%;
+
+  .ant-input,
+  .ant-btn {
+    border: none !important;
+    background-color: white !important;
+  }
+
+  .anticon-search {
+    svg {
+      color: @fusion-menu-color;
+    }
+  }
+
+  .ant-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .ant-input-affix-wrapper {
+    border: none;
+    background-color: transparent;
+
+    &-focused {
+      box-shadow: none;
+      outline: none;
     }
   }
 }
