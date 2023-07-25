@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';
 import { find, merge, unionWith } from 'lodash';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -104,6 +104,7 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
 
 export const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
