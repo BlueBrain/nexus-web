@@ -15,10 +15,16 @@ import {
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
-import { TypeSelector } from './TypeSelector';
-import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
+<<<<<<< HEAD
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
+=======
+import { RootState } from '../../shared/store/reducers';
+import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
+import { TType } from '../../shared/molecules/TypeSelector/types';
+import ColumnsSelector, { TColumn } from './ColumnsSelector';
+import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
 import './styles.less';
 
 const $update = <T,>(
@@ -34,7 +40,7 @@ export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
-  type: string | undefined;
+  types?: TType[];
   predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
   deprecated: boolean;
@@ -108,7 +114,7 @@ export const DataExplorer: React.FC<{}> = () => {
       offset,
       orgAndProject,
       predicate,
-      type,
+      types,
       selectedPath,
       deprecated,
       columns,
@@ -126,7 +132,7 @@ export const DataExplorer: React.FC<{}> = () => {
       pageSize: 50,
       offset: 0,
       orgAndProject: undefined,
-      type: undefined,
+      types: [],
       predicate: null,
       selectedPath: null,
       deprecated: false,
@@ -138,8 +144,12 @@ export const DataExplorer: React.FC<{}> = () => {
     pageSize,
     offset,
     orgAndProject,
+<<<<<<< HEAD
     type,
     deprecated,
+=======
+    types: types?.map(t => t.value),
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -292,6 +302,7 @@ export const DataExplorer: React.FC<{}> = () => {
               }}
             />
             <TypeSelector
+<<<<<<< HEAD
               defaultValue={type}
               orgAndProject={orgAndProject}
               onSelect={selectedType => {
@@ -300,6 +311,17 @@ export const DataExplorer: React.FC<{}> = () => {
                 updateSelectedFiltersCached({
                   type: selectedType,
                 });
+=======
+              org={orgAndProject?.[0]}
+              project={orgAndProject?.[1]}
+              types={types}
+              updateOptions={updateTableConfiguration}
+              styles={{
+                container: { width: '250px' },
+                selector: {
+                  '--types-background-color': 'white',
+                } as React.CSSProperties,
+>>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
               }}
             />
             <PredicateSelector
