@@ -24,13 +24,11 @@ document.createRange = () => {
 describe('ResourceEditor', () => {
   it('check if code editor will be rendered in the screen', async () => {
     const editor = React.createRef<codemiror.Editor>();
-    const onLinksFound = jest.fn();
     const { queryByText, container } = render(
       <CodeEditor
         data-testid="code-mirror-editor"
         value={JSON.stringify(resourceResolverApi)}
         editable={false}
-        onLinksFound={onLinksFound}
         busy={false}
         keyFoldCode={() => {}}
         handleChange={() => {}}
