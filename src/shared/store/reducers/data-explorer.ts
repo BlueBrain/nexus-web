@@ -121,6 +121,7 @@ export const dataExplorerSlice = createSlice({
         referer,
         current,
         fullscreen,
+        origin: referer.state?.background?.pathname || '',
         leftNodes: {
           links:
             source && current
