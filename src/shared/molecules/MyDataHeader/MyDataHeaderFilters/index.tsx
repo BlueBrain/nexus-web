@@ -44,7 +44,15 @@ const MyDataHeaderFilters = ({
       <span className="filter-heading">Filter: </span>
       <DateFieldSelector {...{ dateField, setFilterOptions }} />
       <DateSelector {...{ dateField, setFilterOptions }} />
-      <TypeSelector {...{ types, updateOptions: setFilterOptions }} />
+      <TypeSelector
+        {...{
+          types,
+          updateOptions: setFilterOptions,
+          styles: {
+            container: { width: '300px' },
+          },
+        }}
+      />
     </div>
   );
 };
