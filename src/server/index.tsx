@@ -151,6 +151,7 @@ app.get('*', async (req: express.Request, res: express.Response) => {
       leftNodes: { links: [], shrinked: false },
       rightNodes: { links: [], shrinked: false },
       fullscreen: false,
+      origin: '',
     },
   };
 
