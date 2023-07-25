@@ -76,7 +76,7 @@ const useResolvedLinkEditorPopover = () => {
       const data = await nexus.File.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(parseResourceId(resourceId)),
+        encodeURIComponent(decodeURIComponent(parseResourceId(resourceId))),
         { as: 'blob' }
       );
       return download(title, ext ?? 'json', data);

@@ -41,7 +41,7 @@ async function fetchImageObjectUrl(
   const rawData = await nexus.File.get(
     orgLabel,
     projectLabel,
-    encodeURIComponent(imageResourceId),
+    encodeURIComponent(decodeURIComponent(imageResourceId)),
     {
       as: 'blob',
     }

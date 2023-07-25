@@ -244,14 +244,14 @@ const Preview: React.FC<{
       contentUrl = url;
       options.rev = parseInt(rev, 10);
     }
+
     try {
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(contentUrl),
+        encodeURIComponent(decodeURIComponent(contentUrl)),
         options
       );
-
       downloadBlobHelper(rawData, asset.name);
     } catch (error) {
       notification.error({

@@ -27,7 +27,7 @@ const TableViewerContainer: React.FC<{
     await nexus.File.get(
       orgLabel,
       projectLabel,
-      encodeURIComponent(resourceId),
+      encodeURIComponent(decodeURIComponent(resourceId)),
       {
         as: 'text',
       }

@@ -114,7 +114,7 @@ const fetchImageResources = async ({
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
-        parseResourceId(contentUrl),
+        encodeURIComponent(decodeURIComponent(contentUrl)),
         { as: 'blob' }
       );
       const blob = new Blob([rawData as string], {
