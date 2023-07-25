@@ -15,6 +15,7 @@ import {
 import { parseResourceId } from '../Preview/Preview';
 import { download } from '../../utils/download';
 import { getDataExplorerResourceItemArray } from './editorUtils';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
 
 const useResolvedLinkEditorPopover = () => {
   const nexus = useNexusContext();
@@ -76,7 +77,7 @@ const useResolvedLinkEditorPopover = () => {
       const data = await nexus.File.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(decodeURIComponent(parseResourceId(resourceId))),
+        nexusUrlHardEncode(parseResourceId(resourceId)),
         { as: 'blob' }
       );
       return download(title, ext ?? 'json', data);

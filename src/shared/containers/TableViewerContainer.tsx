@@ -5,7 +5,8 @@ import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
 import useNotification from '../hooks/useNotification';
-import { parseResourceId } from '../../shared/components/Preview/Preview';
+import { parseResourceId } from '../components/Preview/Preview';
+import nexusUrlHardEncode from '../utils/nexusEncode';
 
 const TableViewerContainer: React.FC<{
   resourceUrl: string;
@@ -27,7 +28,7 @@ const TableViewerContainer: React.FC<{
     await nexus.File.get(
       orgLabel,
       projectLabel,
-      encodeURIComponent(decodeURIComponent(resourceId)),
+      nexusUrlHardEncode(resourceId),
       {
         as: 'text',
       }
