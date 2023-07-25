@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { find, merge, unionBy } from 'lodash';
 import { useHistory } from 'react-router';
 import { DataExplorerTable } from './DataExplorerTable';
@@ -59,6 +59,7 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
 };
 
 export const DataExplorer: React.FC<{}> = () => {
+  const dispatch = useDispatch();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
@@ -155,13 +156,14 @@ export const DataExplorer: React.FC<{}> = () => {
       currentPageDataSource,
       showMetadataColumns,
       selectedPath
-    ).map(value => ({
-      value,
-      selected: true,
-      key: `de-column-${value}`,
-    }));
+    )
+      .filter(t => !['@type', '_project'].includes(t))
+      .map(value => ({
+        value,
+        selected: true,
+        key: `de-column-${value}`,
+      }));
     const updatedColumns = unionBy(columns, newColumns, 'value');
-
     if (newColumns.length) {
       updateTableConfiguration({
         columns: updatedColumns,
@@ -179,21 +181,25 @@ export const DataExplorer: React.FC<{}> = () => {
         clearTimeout(timeoutId);
       }, 6000);
     }
-    () => {
+    return () => {
       clearTimeout(timeoutId);
     };
   }, [showNewItemsMessage]);
 
   useEffect(() => {
-    history.listen(location => {
+    const unlisten = history.listen(location => {
       if (origin === '/data-explorer' && location.pathname === origin) {
         updateTableConfiguration({
           columns: getSelectedColumnsCached(),
         });
-        UpdateDataExplorerOrigin('');
       }
     });
+    return () => {
+      dispatch(UpdateDataExplorerOrigin(''));
+      unlisten();
+    };
   }, [origin]);
+
   return (
     <div className="data-explorer-contents" ref={containerRef}>
       {isLoading && <Spin className="loading" />}
