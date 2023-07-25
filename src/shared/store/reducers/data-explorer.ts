@@ -59,6 +59,7 @@ export type TDataExplorerState = {
     state: Record<string, any>;
   } | null;
   fullscreen: boolean;
+  origin?: string;
 };
 
 export type TNavigationStackSide = 'left' | 'right';
@@ -72,6 +73,7 @@ const initialState: TDataExplorerState = {
   current: null,
   referer: null,
   fullscreen: false,
+  origin: '',
 };
 
 const calculateDateExplorerGraphFlowDigest = (state: TDataExplorerState) => {
@@ -119,6 +121,7 @@ export const dataExplorerSlice = createSlice({
         referer,
         current,
         fullscreen,
+        origin: referer.state?.background?.pathname || '',
         leftNodes: {
           links:
             source && current
@@ -134,7 +137,6 @@ export const dataExplorerSlice = createSlice({
     },
     AddNewNodeDataExplorerGraphFlow: (state, action) => {
       if (action.payload._self === state.current?._self) {
-        console.log('@@same node');
         return state;
       }
       const newLink = action.payload as TDELink;
@@ -338,6 +340,12 @@ export const dataExplorerSlice = createSlice({
       };
       return newState;
     },
+    UpdateDataExplorerOrigin: (state, action) => {
+      return {
+        ...state,
+        origin: action.payload,
+      };
+    },
   },
 });
 
@@ -352,6 +360,7 @@ export const {
   MoveForwardDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,
   InitDataExplorerGraphFlowFullscreenVersion,
+  UpdateDataExplorerOrigin,
 } = dataExplorerSlice.actions;
 
 const DataExplorerMiddlewareMatcher = isAnyOf(

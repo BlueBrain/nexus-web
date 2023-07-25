@@ -1,4 +1,10 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useRef,
+  useState,
+  ReactElement,
+  FunctionComponent,
+} from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Checkbox, Col, Dropdown, Input, Row, Select } from 'antd';
@@ -57,20 +63,28 @@ const typesOptionsBuilder = (typeBucket: TTypesAggregatedBucket): TType => {
   };
 };
 
-const TypeRowRenderer = ({
-  type,
+const TypeItem = ({ value, docCount, label }: TType) => {
+  return (
+    <Col span={20}>
+      <span title={`${value}, (${docCount})`}>{label}</span>
+    </Col>
+  );
+};
+type TRowRendererProps<T> = {
+  checked: boolean;
+  value: T;
+  onCheck(e: React.MouseEvent<HTMLElement, MouseEvent>, type: T): void;
+  titleComponent: (props: T) => ReactElement;
+};
+export const RowRenderer = <T,>({
+  value,
   checked,
   onCheck,
-}: {
-  checked: boolean;
-  type: TType;
-  onCheck(e: React.MouseEvent<HTMLElement, MouseEvent>, type: TType): void;
-}) => {
+  titleComponent,
+}: TRowRendererProps<T>) => {
   return (
-    <Row justify="space-between" align="top" key={type.key}>
-      <Col span={20}>
-        <span title={`${type.value}, (${type.docCount})`}>{type.label}</span>
-      </Col>
+    <Row justify="space-between" align="top" className="select-row">
+      {titleComponent(value)}
       <Col
         span={4}
         style={{
@@ -79,7 +93,7 @@ const TypeRowRenderer = ({
           alignItems: 'center',
         }}
       >
-        <Checkbox onClick={e => onCheck(e, type)} checked={checked} />
+        <Checkbox onClick={e => onCheck(e, value)} checked={checked} />
       </Col>
     </Row>
   );
@@ -168,13 +182,14 @@ const TypeSelector = ({
             {renderedTypes.length ? (
               renderedTypes.map((type: TType) => {
                 return (
-                  <TypeRowRenderer
+                  <RowRenderer<TType>
                     key={type.key}
-                    type={type}
+                    value={type}
                     checked={Boolean(
                       types?.find(item => item.key === type.key)
                     )}
                     onCheck={handleOnCheckType}
+                    titleComponent={TypeItem}
                   />
                 );
               })
