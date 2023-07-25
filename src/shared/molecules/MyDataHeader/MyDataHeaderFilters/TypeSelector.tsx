@@ -83,7 +83,12 @@ export const RowRenderer = <T,>({
   titleComponent,
 }: TRowRendererProps<T>) => {
   return (
-    <Row justify="space-between" align="top" className="select-row">
+    <Row
+      justify="space-between"
+      align="top"
+      className="select-row"
+      onClick={e => onCheck(e, value)}
+    >
       {titleComponent(value)}
       <Col
         span={4}
@@ -93,7 +98,7 @@ export const RowRenderer = <T,>({
           alignItems: 'center',
         }}
       >
-        <Checkbox onClick={e => onCheck(e, value)} checked={checked} />
+        <Checkbox checked={checked} />
       </Col>
     </Row>
   );
