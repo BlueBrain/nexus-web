@@ -174,7 +174,7 @@ export async function editorLinkResolutionHandler({
         apiEndpoint,
         orgLabel,
         projectLabel,
-        resourceId: encodeURIComponent(url),
+        resourceId: url,
       },
     }));
   }

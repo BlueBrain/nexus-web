@@ -15,6 +15,7 @@ import useNotification from '../../hooks/useNotification';
 import TableViewerContainer from '../../containers/TableViewerContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
 
 export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -244,14 +245,14 @@ const Preview: React.FC<{
       contentUrl = url;
       options.rev = parseInt(rev, 10);
     }
+
     try {
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
-        encodeURIComponent(contentUrl),
+        nexusUrlHardEncode(contentUrl),
         options
       );
-
       downloadBlobHelper(rawData, asset.name);
     } catch (error) {
       notification.error({

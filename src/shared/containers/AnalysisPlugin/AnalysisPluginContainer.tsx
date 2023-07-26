@@ -29,7 +29,8 @@ import {
   AnalysisAssetSparqlQueryRowResult,
   ReportGeneration,
 } from '../../types/plugins/report';
-import useNotification from '../../../shared/hooks/useNotification';
+import useNotification from '../../hooks/useNotification';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,
@@ -41,7 +42,7 @@ async function fetchImageObjectUrl(
   const rawData = await nexus.File.get(
     orgLabel,
     projectLabel,
-    encodeURIComponent(imageResourceId),
+    nexusUrlHardEncode(imageResourceId),
     {
       as: 'blob',
     }
