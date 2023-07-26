@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
-import React, { useMemo, useReducer, useState } from 'react';
+import React, { useMemo, useReducer, useRef, useState } from 'react';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -15,6 +15,7 @@ import { TypeSelector } from './TypeSelector';
 import './styles.less';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import Loading from '../../shared/components/Loading';
+import DateExplorerScrollArrows from './DateExplorerScrollArrows';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
@@ -70,9 +71,11 @@ export const DataExplorer: React.FC<{}> = () => {
       ),
     [currentPageDataSource, showMetadataColumns, selectedPath]
   );
-
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  console.log('DataExplorer', tableRef.current);
   return (
-    <div className="data-explorer-contents">
+    <div className="data-explorer-contents" ref={containerRef}>
       {isLoading && <Spin className="loading" />}
 
       <DataExplorerCollapsibleHeader
@@ -132,6 +135,7 @@ export const DataExplorer: React.FC<{}> = () => {
         </div>
       </DataExplorerCollapsibleHeader>
       <DataExplorerTable
+        ref={tableRef}
         isLoading={isLoading}
         dataSource={displayedDataSource}
         columns={memoizedColumns}
@@ -141,6 +145,15 @@ export const DataExplorer: React.FC<{}> = () => {
         updateTableConfiguration={updateTableConfiguration}
         showEmptyDataCells={showEmptyDataCells}
         tableOffsetFromTop={headerHeight}
+      />
+      <DateExplorerScrollArrows
+        type={type}
+        orgAndProject={orgAndProject}
+        showEmptyDataCells={showEmptyDataCells}
+        showMetadataColumns={showMetadataColumns}
+        isLoading={isLoading}
+        container={containerRef.current}
+        table={tableRef.current}
       />
     </div>
   );

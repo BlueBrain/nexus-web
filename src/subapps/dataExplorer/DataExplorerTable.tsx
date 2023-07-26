@@ -2,7 +2,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, isString, startCase } from 'lodash';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
@@ -27,89 +27,95 @@ interface TDataExplorerTable {
 
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
 
-export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
-  isLoading,
-  dataSource,
-  columns,
-  total,
-  pageSize,
-  offset,
-  updateTableConfiguration,
-  showEmptyDataCells,
-  tableOffsetFromTop,
-}: TDataExplorerTable) => {
-  const history = useHistory();
-  const location = useLocation();
-
-  const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
-
-  const tablePaginationConfig: TablePaginationConfig = {
-    pageSize,
-    total: allowedTotal,
-    pageSizeOptions: [10, 20, 50],
-    position: ['bottomLeft'],
-    defaultPageSize: 50,
-    defaultCurrent: 0,
-    current: offset / pageSize + 1,
-    onChange: (page, _) =>
-      updateTableConfiguration({ offset: (page - 1) * pageSize }),
-    onShowSizeChange: (_, size) => {
-      updateTableConfiguration({ pageSize: size, offset: 0 });
+export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
+  (
+    {
+      isLoading,
+      dataSource,
+      columns,
+      total,
+      pageSize,
+      offset,
+      updateTableConfiguration,
+      showEmptyDataCells,
+      tableOffsetFromTop,
     },
-    showQuickJumper: true,
-    showSizeChanger: true,
-  };
+    ref
+  ) => {
+    const history = useHistory();
+    const location = useLocation();
 
-  const goToResource = (resource: Resource) => {
-    const resourceId = resource['@id'] ?? resource._self;
-    const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+    const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
 
-    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
-      background: location,
-    });
-  };
+    const tablePaginationConfig: TablePaginationConfig = {
+      pageSize,
+      total: allowedTotal,
+      pageSizeOptions: [10, 20, 50],
+      position: ['bottomLeft'],
+      defaultPageSize: 50,
+      defaultCurrent: 0,
+      current: offset / pageSize + 1,
+      onChange: (page, _) =>
+        updateTableConfiguration({ offset: (page - 1) * pageSize }),
+      onShowSizeChange: (_, size) => {
+        updateTableConfiguration({ pageSize: size, offset: 0 });
+      },
+      showQuickJumper: true,
+      showSizeChanger: true,
+    };
 
-  return (
-    <div
-      style={{
-        display: 'block',
-        position: 'absolute',
-        top: tableOffsetFromTop,
-        left: 0,
-        padding: '0 52px',
-        background: '#f5f5f5',
-        height: 'fit-content',
-        minHeight: '100%',
-      }}
-    >
-      <Table<Resource>
-        columns={columnsConfig(columns, showEmptyDataCells)}
-        dataSource={dataSource}
-        rowKey={record => record._self}
-        onRow={resource => ({
-          onClick: _ => goToResource(resource),
-          'data-testid': resource._self,
-        })}
-        loading={{ spinning: isLoading, indicator: <></> }}
-        bordered={false}
-        className={clsx(
-          'data-explorer-table',
-          tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
-            'data-explorer-header-collapsed'
-        )}
-        rowClassName="data-explorer-row"
-        scroll={{ x: 'max-content' }}
-        locale={{
-          emptyText() {
-            return isLoading ? <></> : <Empty />;
-          },
+    const goToResource = (resource: Resource) => {
+      const resourceId = resource['@id'] ?? resource._self;
+      const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+
+      history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
+        background: location,
+      });
+    };
+
+    return (
+      <div
+        style={{
+          display: 'block',
+          position: 'absolute',
+          top: tableOffsetFromTop,
+          left: 0,
+          padding: '0 52px',
+          background: '#f5f5f5',
+          height: 'fit-content',
+          minHeight: '100%',
         }}
-        pagination={tablePaginationConfig}
-        sticky={{ offsetHeader: tableOffsetFromTop }}
-      />
-    </div>
-  );
-};
+      >
+        <Table<Resource>
+          columns={columnsConfig(columns, showEmptyDataCells)}
+          dataSource={dataSource}
+          rowKey={record => record._self}
+          onRow={resource => ({
+            onClick: _ => goToResource(resource),
+            'data-testid': resource._self,
+          })}
+          loading={{ spinning: isLoading, indicator: <></> }}
+          bordered={false}
+          ref={ref}
+          className={clsx(
+            'data-explorer-table',
+            tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
+              'data-explorer-header-collapsed'
+          )}
+          rowClassName="data-explorer-row"
+          scroll={{ x: 'max-content' }}
+          locale={{
+            emptyText() {
+              return isLoading ? <></> : <Empty />;
+            },
+          }}
+          pagination={tablePaginationConfig}
+          sticky={{ offsetHeader: tableOffsetFromTop }}
+        />
+      </div>
+    );
+  }
+);
 
 /**
  * For each resource in the resources array, it creates column configuration for all its keys (if the column config for that key does not already exist).
