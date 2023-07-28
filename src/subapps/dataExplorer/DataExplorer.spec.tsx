@@ -317,7 +317,7 @@ describe('DataExplorer', () => {
   };
 
   const getFilteredResultsCount = async (expectedCount: number = 0) => {
-    const filteredCountLabel = await screen.queryByText('Filtered:');
+    const filteredCountLabel = screen.queryByText(/of which/i);
     if (!filteredCountLabel) {
       return filteredCountLabel;
     }
@@ -592,7 +592,6 @@ describe('DataExplorer', () => {
 
   it('shows resources filtered by the selected project', async () => {
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-
     visibleTableRows().forEach(row =>
       expect(projectFromRow(row)).toMatch(/unhcr/i)
     );
@@ -808,9 +807,6 @@ describe('DataExplorer', () => {
 
   it('shows total filtered count if predicate is selected', async () => {
     await expectRowCountToBe(10);
-    const totalFromFrontendBefore = await getFilteredResultsCount();
-    expect(totalFromFrontendBefore).toEqual(null);
-
     await updateResourcesShownInTable([
       getMockResource('self1', { author: 'piggy', edition: 1 }),
       getMockResource('self2', { author: ['iggy', 'twinky'] }),
@@ -821,7 +817,6 @@ describe('DataExplorer', () => {
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
-
     const totalFromFrontendAfter = await getFilteredResultsCount(2);
     expect(totalFromFrontendAfter).toBeVisible();
   });

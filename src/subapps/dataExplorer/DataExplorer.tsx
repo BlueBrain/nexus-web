@@ -122,6 +122,8 @@ export const DataExplorer: React.FC<{}> = () => {
 
         <div className="flex-container">
           <DatasetCount
+            orgAndProject={orgAndProject}
+            type={type}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
             totalFiltered={predicate ? displayedDataSource.length : undefined}

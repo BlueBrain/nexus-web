@@ -25,11 +25,11 @@ const DataExplorerContentPage = ({}) => {
             rev={current?.resource?.[3]!}
             defaultEditable={false}
             defaultExpanded={false}
-            showMetadataToggle={false}
-            showFullScreen={false}
             tabChange={false}
-            showExpanded={false}
-            showControlPanel={false}
+            showFullScreen={false}
+            showMetadataToggle={true}
+            showExpanded={true}
+            showControlPanel={true}
           />
         </Fragment>
       ) : (
