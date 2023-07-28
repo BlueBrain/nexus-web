@@ -20,7 +20,7 @@ const infoImg = require('../../images/InfoCircleLine.svg');
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
-  'error' | 'resolvedAs' | 'results'
+  'error' | 'resolvedAs' | 'results' | 'resolver'
 > & {
   onDownload?: () => void;
 };
@@ -119,6 +119,7 @@ function createTooltipContent({
   error,
   results,
   onDownload,
+  resolver,
 }: TTooltipCreator) {
   const tooltipContent = document.createElement('div');
   tooltipContent.className = clsx(
@@ -136,8 +137,10 @@ function createTooltipContent({
   }
   if (resolvedAs === 'resource') {
     const result = results as TDELink;
-    const warningHeader = createWarningHeader(1);
-    tooltipContent.appendChild(warningHeader);
+    if (resolver === 'search-api') {
+      const warningHeader = createWarningHeader(1);
+      tooltipContent.appendChild(warningHeader);
+    }
     tooltipContent.appendChild(
       createTooltipNode({
         onDownload,
@@ -287,11 +290,12 @@ function useEditorTooltip({
             url,
             orgLabel,
             projectLabel,
-          }).then(({ resolvedAs, results, error }) => {
+          }).then(({ resolvedAs, results, error, resolver }) => {
             const tooltipContent = createTooltipContent({
               resolvedAs,
               error,
               results,
+              resolver,
               onDownload:
                 resolvedAs === 'resource' && (results as TDELink).isDownloadable
                   ? () => {
