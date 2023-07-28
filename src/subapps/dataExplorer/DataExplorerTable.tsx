@@ -3,7 +3,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-
 import { isArray, isNil, isString, startCase } from 'lodash';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import { clsx } from 'clsx';
