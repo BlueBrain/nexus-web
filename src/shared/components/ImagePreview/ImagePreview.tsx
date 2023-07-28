@@ -21,8 +21,9 @@ import {
   SortDescendingOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
-import { orderBy, isNil, create, isArray, isObject } from 'lodash';
+import { orderBy, isNil, isArray, isObject } from 'lodash';
 import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
 
 import './ImagePreview.less';
 
@@ -114,7 +115,7 @@ const fetchImageResources = async ({
       const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
-        parseResourceId(contentUrl),
+        nexusUrlHardEncode(contentUrl),
         { as: 'blob' }
       );
       const blob = new Blob([rawData as string], {

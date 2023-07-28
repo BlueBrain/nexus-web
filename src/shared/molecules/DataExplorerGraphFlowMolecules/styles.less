@@ -16,11 +16,18 @@
     justify-items: center;
     justify-content: center;
     align-content: start;
-    padding: 3px 5px;
+    padding: 10px 5px;
     height: 100%;
     min-height: 0;
     background-color: @fusion-main-bg;
     position: relative;
+    user-select: none;
+    cursor: pointer;
+    &:hover {
+      background-color: white;
+      color: @fusion-primary-color;
+      box-shadow: 0 2px 12px rgba(#333, 0.12);
+    }
 
     &.more {
       background-color: white;
@@ -53,7 +60,7 @@
     .org-project {
       writing-mode: vertical-rl;
       transform: rotate(-180deg);
-      background-color: #bfbfbfbe;
+      background-color: #bfbfbf7c;
       padding: 5px 1px;
       font-size: 10px;
       border-radius: 4px;
@@ -129,6 +136,7 @@
     &.right {
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
+
       svg {
         transform: rotate(180deg);
       }
@@ -166,21 +174,26 @@
   gap: 5px;
   z-index: 90;
   border: none;
+
   &:hover {
     text-shadow: 0 2px 12px rgba(#333, 0.12);
+
     span {
       color: #377af5;
     }
+
     svg {
       transform: scale(1.1);
       transition: transform 0.2s ease-in-out;
     }
   }
+
   span {
     font-weight: 700;
     font-size: 16px;
     color: @fusion-daybreak-8;
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
