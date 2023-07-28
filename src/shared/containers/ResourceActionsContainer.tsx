@@ -154,12 +154,15 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
     downloadFile: async () => {
       try {
-        const data = await nexus.File.get(
-          orgLabel,
-          projectLabel,
-          parseResourceId(resource._self),
-          { as: 'blob' }
-        );
+        const data = await nexus.httpGet({
+          path: resource._self,
+          headers: {
+            Accept: 'application/json',
+          },
+          context: {
+            as: 'blob',
+          },
+        });
         return download(
           resource._filename || getResourceLabel(resource),
           resource._mediaType,
