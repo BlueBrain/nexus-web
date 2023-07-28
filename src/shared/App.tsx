@@ -45,7 +45,6 @@ const App: React.FC = () => {
         context: { as: 'json' },
       }),
   });
-
   return (
     <CartContext.Provider value={cartData}>
       <NotificationContext.Provider value={notificationData}>

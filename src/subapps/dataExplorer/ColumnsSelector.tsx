@@ -2,13 +2,10 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { Input, Select, Col } from 'antd';
 import { RowRenderer } from '../../shared/molecules/MyDataHeader/MyDataHeaderFilters/TypeSelector';
 import Light from '../../shared/components/Icons/Light';
-import { orderBy } from 'lodash';
 
 export type TColumn = { value: string; selected: boolean; key: string };
 type TColumnsSelectorProps = {
   columns: TColumn[];
-  newItemsCount: number;
-  showNewItemsMessage: boolean;
   loading: boolean;
   onColumnSelect: (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -30,8 +27,6 @@ const ColumnItem = ({ value }: TColumn) => {
 
 const ColumnsSelector = ({
   columns,
-  newItemsCount,
-  showNewItemsMessage,
   loading,
   onColumnSelect,
 }: TColumnsSelectorProps) => {
@@ -111,11 +106,6 @@ const ColumnsSelector = ({
           )}
         />
       </div>
-      {Boolean(newItemsCount) && showNewItemsMessage && (
-        <div className="new-columns-message">
-          <Light /> {newItemsCount} new columns added on this page
-        </div>
-      )}
     </div>
   );
 };

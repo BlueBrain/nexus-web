@@ -9,11 +9,13 @@ import './styles.less';
 import Select, { DefaultOptionType } from 'antd/lib/select';
 
 interface Props {
+  defaultValue?: string;
   orgAndProject?: string[];
   onSelect: (type: string | undefined) => void;
 }
 
 export const TypeSelector: React.FC<Props> = ({
+  defaultValue,
   onSelect,
   orgAndProject,
 }: Props) => {
@@ -33,7 +35,6 @@ export const TypeSelector: React.FC<Props> = ({
       setDisplayedOptions(optionsRef.current);
     }
   }, [isSuccess, aggregatedTypes]);
-
   return (
     <div className="form-container">
       <span className="label">Type: </span>
@@ -66,7 +67,8 @@ export const TypeSelector: React.FC<Props> = ({
         bordered={false}
         className="search-input"
         popupClassName="search-menu"
-      ></Select>
+        value={defaultValue}
+      />
     </div>
   );
 };
