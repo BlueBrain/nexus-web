@@ -7,10 +7,14 @@ import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { normalizeString } from '../../utils/stringUtils';
 
 interface Props {
+  defaultValue?: string;
   onSelect: (orgLabel?: string, projectLabel?: string) => void;
 }
 
-export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
+export const ProjectSelector: React.FC<Props> = ({
+  defaultValue,
+  onSelect,
+}: Props) => {
   const { data: projects } = useAggregations('projects');
   const [showClearIcon, setShowClearIcon] = useState(false);
 
@@ -51,6 +55,7 @@ export const ProjectSelector: React.FC<Props> = ({ onSelect }: Props) => {
         className="search-input"
         popupClassName="search-menu"
         data-testid="project-filter"
+        value={defaultValue}
       >
         <Input
           size="middle"

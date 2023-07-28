@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo, useCallback, useReducer, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
-import { find, merge, unionBy, orderBy, differenceBy } from 'lodash';
+import { find, merge, unionWith } from 'lodash';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -18,8 +16,6 @@ import { TypeSelector } from './TypeSelector';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-import { RootState } from '../../shared/store/reducers';
-import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
 
 import './styles.less';
 
@@ -41,10 +37,26 @@ export interface DataExplorerConfiguration {
   selectedPath: string | null;
   deprecated: boolean;
   columns: TColumn[];
-  newItemsCount: number;
-  showNewItemsMessage: boolean;
 }
 const SELECTED_COLUMNS_CACHED_KEY = 'data-explorer-selected-columns';
+const SELECTED_FILTERS_CACHED_KEY = 'data-explorer-selected-filters';
+
+export const updateSelectedColumnsCached = (columns: TColumn[]) => {
+  sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
+};
+
+export const updateSelectedFiltersCached = (
+  options: Record<string, string | number | boolean | undefined>
+) => {
+  const data = JSON.parse(
+    sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY) ?? '{}'
+  );
+  Object.keys(options).forEach(key => {
+    (data as any)[key] = options[key];
+  });
+  sessionStorage.setItem(SELECTED_FILTERS_CACHED_KEY, JSON.stringify(data));
+};
+
 const getSelectedColumnsCached = (): TColumn[] => {
   const cached = sessionStorage.getItem(SELECTED_COLUMNS_CACHED_KEY);
   if (!cached) return [];
@@ -54,17 +66,34 @@ const getSelectedColumnsCached = (): TColumn[] => {
     return [];
   }
 };
-export const updateSelectedColumnsCached = (columns: TColumn[]) => {
-  sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
+
+const getSelectedFiltersCached = () => {
+  const cached = sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY);
+  try {
+    const parsed = JSON.parse(cached ?? '{}');
+    return {
+      org: parsed.org ?? undefined,
+      project: parsed.project ?? undefined,
+      type: parsed.type ?? undefined,
+      deprecated: parsed.deprecated ?? false,
+      showMetadata: parsed.showMetadata ?? false,
+      showEmptyCells: parsed.showEmptyCells ?? true,
+      pageSize: parsed.pageSize ?? 50,
+      offset: parsed.offset ?? 0,
+    };
+  } catch (e) {
+    return null;
+  }
+};
+
+const clearSelectedColumnsCached = () => {
+  sessionStorage.removeItem(SELECTED_COLUMNS_CACHED_KEY);
 };
 
 export const DataExplorer: React.FC<{}> = () => {
-  const dispatch = useDispatch();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
-  const { origin } = useSelector((state: RootState) => state.dataExplorer);
-  const history = useHistory();
   const [
     {
       pageSize,
@@ -75,8 +104,6 @@ export const DataExplorer: React.FC<{}> = () => {
       selectedPath,
       deprecated,
       columns,
-      showNewItemsMessage,
-      newItemsCount,
     },
     updateTableConfiguration,
   ] = useReducer(
@@ -86,16 +113,6 @@ export const DataExplorer: React.FC<{}> = () => {
     ) => ({
       ...previous,
       ...next,
-      ...(next.columns
-        ? {
-            newItemsCount:
-              (next.columns.length || 0) > (previous.columns.length || 0)
-                ? (next.columns.length || 0) - (previous.columns.length || 0)
-                : 0,
-            showNewItemsMessage:
-              previous.columns.length !== next.columns.length,
-          }
-        : {}),
     }),
     {
       pageSize: 50,
@@ -106,8 +123,6 @@ export const DataExplorer: React.FC<{}> = () => {
       selectedPath: null,
       deprecated: false,
       columns: [],
-      showNewItemsMessage: false,
-      newItemsCount: 0,
     }
   );
 
@@ -125,22 +140,8 @@ export const DataExplorer: React.FC<{}> = () => {
     ? currentPageDataSource.filter(predicate)
     : currentPageDataSource;
 
-  const onColumnSelect = (
-    _: React.MouseEvent<HTMLElement, MouseEvent>,
-    { value, selected }: TColumn
-  ) => {
-    const newColumns = $update<TColumn>(
-      columns,
-      column => column.value === value,
-      { value, selected: !selected }
-    );
-    updateTableConfiguration({
-      columns: newColumns,
-    });
-    updateSelectedColumnsCached(newColumns);
-  };
   const buildColumns = useMemo(() => {
-    return columnsFromDataSource(
+    const newColumns = columnsFromDataSource(
       currentPageDataSource,
       showMetadataColumns,
       selectedPath
@@ -151,74 +152,82 @@ export const DataExplorer: React.FC<{}> = () => {
         selected: true,
         key: `de-column-${value}`,
       }));
-  }, [currentPageDataSource, showMetadataColumns, selectedPath]);
+    const selectedColumns = getSelectedColumnsCached();
+    if (selectedColumns.length > 0) {
+      return unionWith(
+        selectedColumns,
+        newColumns,
+        (a, b) => a.value === b.value
+      );
+    }
+    return newColumns;
+  }, [
+    JSON.stringify(currentPageDataSource),
+    selectedPath,
+    showMetadataColumns,
+  ]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLDivElement>(null);
-  const onDeprecatedChange = (checked: boolean) =>
+
+  useEffect(() => {
+    updateTableConfiguration({ columns: buildColumns });
+  }, [JSON.stringify(buildColumns)]);
+
+  const onColumnSelect = (
+    _: React.MouseEvent<HTMLElement, MouseEvent>,
+    { value, selected }: TColumn
+  ) => {
+    const newColumns = $update<TColumn>(
+      columns,
+      column => column.value === value,
+      { value, selected: !selected }
+    );
+    updateTableConfiguration({ columns: newColumns });
+    updateSelectedColumnsCached(newColumns);
+  };
+
+  useEffect(() => {
+    const selectedFilters = getSelectedFiltersCached();
+    if (selectedFilters) {
+      updateTableConfiguration({
+        orgAndProject:
+          selectedFilters.org && selectedFilters.project
+            ? [selectedFilters.org, selectedFilters.project]
+            : undefined,
+        type: selectedFilters.type,
+        deprecated: selectedFilters.deprecated ?? deprecated,
+      });
+      setShowMetadataColumns(
+        selectedFilters.showMetadata ?? showMetadataColumns
+      );
+      setShowEmptyDataCells(
+        selectedFilters.showEmptyCells ?? showEmptyDataCells
+      );
+    }
+  }, []);
+
+  const onDeprecatedChange = (checked: boolean) => {
     updateTableConfiguration({
       deprecated: checked,
     });
-
-  const displayedColumns = columns
-    .filter(column => column.selected)
-    .map(column => column.value);
-
-  useEffect(() => {
-    const newColumns = buildColumns;
-    const updatedColumns = unionBy(newColumns, columns, 'value');
-    if (newColumns.length) {
-      updateTableConfiguration({
-        columns: updatedColumns,
-      });
-    }
-  }, [JSON.stringify(buildColumns)]);
-
-  const onShowMetadataColumnsChange = (checked: boolean) => {
-    setShowMetadataColumns(checked);
-    const newColumns = buildColumns;
-    const updatedColumns = differenceBy(columns, newColumns, 'value');
-    updateTableConfiguration({
-      columns: updatedColumns,
-    });
+    updateSelectedFiltersCached({ deprecated: checked });
   };
+
+  const onShowMetadataColumnsChange = (checked: boolean) =>
+    setShowMetadataColumns(checked);
+
   const onResetPredicateCallback = (column: string, checked: boolean) => {
     const newColumns = $update<TColumn>(columns, c => c.value === column, {
       value: column,
       selected: checked,
     });
-    updateTableConfiguration({
-      columns: newColumns,
-    });
+    updateSelectedColumnsCached(newColumns);
   };
-  useEffect(() => {
-    let timeoutId: number;
-    if (showNewItemsMessage) {
-      timeoutId = window.setTimeout(() => {
-        updateTableConfiguration({
-          showNewItemsMessage: false,
-        });
-        clearTimeout(timeoutId);
-      }, 6000);
-    }
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [showNewItemsMessage]);
 
-  useEffect(() => {
-    const unlisten = history.listen(location => {
-      if (origin === '/data-explorer' && location.pathname === origin) {
-        updateTableConfiguration({
-          columns: getSelectedColumnsCached(),
-        });
-      }
-    });
-    return () => {
-      dispatch(UpdateDataExplorerOrigin(''));
-      unlisten();
-    };
-  }, [origin]);
+  const displayedColumns = columns
+    .filter(column => column.selected)
+    .map(column => column.value);
 
   return (
     <div className="data-explorer-contents" ref={containerRef}>
@@ -232,20 +241,39 @@ export const DataExplorer: React.FC<{}> = () => {
         <div className="data-explorer-filters">
           <div className="left">
             <ProjectSelector
+              defaultValue={
+                orgAndProject?.length === 2
+                  ? `${orgAndProject?.[0]}/${orgAndProject?.[1]}`
+                  : undefined
+              }
               onSelect={(orgLabel?: string, projectLabel?: string) => {
                 if (orgLabel && projectLabel) {
                   updateTableConfiguration({
                     orgAndProject: [orgLabel, projectLabel],
                   });
+                  clearSelectedColumnsCached();
+                  updateSelectedFiltersCached({
+                    org: orgLabel,
+                    project: projectLabel,
+                  });
                 } else {
                   updateTableConfiguration({ orgAndProject: undefined });
+                  updateSelectedFiltersCached({
+                    org: undefined,
+                    project: undefined,
+                  });
                 }
               }}
             />
             <TypeSelector
+              defaultValue={type}
               orgAndProject={orgAndProject}
               onSelect={selectedType => {
                 updateTableConfiguration({ type: selectedType });
+                clearSelectedColumnsCached();
+                updateSelectedFiltersCached({
+                  type: selectedType,
+                });
               }}
             />
             <PredicateSelector
@@ -259,8 +287,6 @@ export const DataExplorer: React.FC<{}> = () => {
             <ColumnsSelector
               {...{
                 columns,
-                newItemsCount,
-                showNewItemsMessage,
                 onColumnSelect,
                 loading: isLoading,
               }}
