@@ -31,6 +31,7 @@ export type TEditorPopoverResolvedData = {
   left: number;
   results?: TDELink | TDELink[];
   resolvedAs: TEditorPopoverResolvedAs;
+  resolver?: 'resolver-api' | 'search-api';
   error?: any;
 };
 type TDeltaError = Error & {
@@ -187,6 +188,7 @@ export async function editorLinkResolutionHandler({
       // next-action: open resource editor
       return {
         resolvedAs: 'resource',
+        resolver: 'resolver-api',
         results: {
           isDownloadable,
           _self: details._self,
@@ -217,6 +219,7 @@ export async function editorLinkResolutionHandler({
         const entity = getOrgAndProjectFromResourceObject(result);
         return {
           resolvedAs: 'resource',
+          resolver: 'search-api',
           results: {
             isDownloadable,
             _self: result._self,
@@ -233,6 +236,7 @@ export async function editorLinkResolutionHandler({
       // next-action: open resources list in the popover
       return {
         resolvedAs: 'resources',
+        resolver: 'search-api',
         results: details._results.map((item: Resource) => {
           const isDownloadable = isDownloadableLink(item);
           const entity = getOrgAndProjectFromResourceObject(item);
