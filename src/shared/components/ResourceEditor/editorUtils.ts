@@ -48,6 +48,7 @@ type TReturnedResolvedData = Omit<
 export const LINE_HEIGHT = 15;
 export const INDENT_UNIT = 4;
 export const CODEMIRROR_HOVER_CLASS = 'CodeMirror-hover-tooltip';
+export const CODEMIRROR_COPY_URL_CLASS = 'CodeMirror-url-copy';
 export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 const isDownloadableLink = (resource: Resource) => {
@@ -104,6 +105,7 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
     if (token && url === text) {
       return {
         url,
+        pos,
         coords: {
           left: editorRect.left,
           top: coords.top + LINE_HEIGHT,
