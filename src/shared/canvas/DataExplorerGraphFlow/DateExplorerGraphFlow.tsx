@@ -11,15 +11,14 @@ import {
   DataExplorerFlowSliceListener,
   DataExplorerMiddlewareMatcher,
   calculateDateExplorerGraphFlowDigest,
-  TDataExplorerState,
-} from '../../store/reducers/data-explorer';
+} from 'shared/store/reducers/data-explorer';
 import {
   NavigationArrows,
   NavigationStack,
-} from '../../organisms/DataExplorerGraphFlowNavigationStack';
-import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
-import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
-import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+} from 'shared/organisms/DataExplorerGraphFlowNavigationStack';
+import DataExplorerContentPage from 'shared/organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
+import useNavigationStackManager from 'shared/organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
+import ResourceResolutionCache from 'shared/components/ResourceEditor/ResourcesLRUCache';
 import DataExplorerGraphFlowEmpty from './DataExplorerGraphFlowEmpty';
 
 import './styles.less';

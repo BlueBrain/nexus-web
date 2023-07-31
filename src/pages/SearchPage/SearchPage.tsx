@@ -1,8 +1,8 @@
 import * as React from 'react';
-import SearchContainer from '../../subapps/search/containers/SearchContainer';
-import ErrorBoundary from '../../subapps/search/components/SearchErrorBoundary';
-import CreationPanel from '../../shared/molecules/CreationPanel/CreationPanel';
-import '../../shared/styles/search-tables.less';
+import SearchContainer from 'subapps/search/containers/SearchContainer';
+import ErrorBoundary from 'subapps/search/components/SearchErrorBoundary';
+import CreationPanel from 'shared/molecules/CreationPanel/CreationPanel';
+import 'shared/styles/search-tables.less';
 
 const SearchPage: React.FC = () => {
   return (

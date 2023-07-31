@@ -2,15 +2,15 @@ import * as React from 'react';
 import { Redirect, useLocation, useRouteMatch } from 'react-router';
 import { get } from 'lodash';
 
-import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
-import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
-import ProjectView from '../../pages/ProjectPage/ProjectPage';
+import OrganizationListPage from 'pages/OrganizationsListPage/OrganizationListPage';
+import OrganizationProjectsPage from 'pages/OrganizationProjectsPage/OrganizationProjectsPage';
+import ProjectView from 'pages/ProjectPage/ProjectPage';
 import { SubApp } from '..';
 
 const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
-const icon = require('../../shared/images/dbIcon.svg');
+const icon = require('shared/images/dbIcon.svg');
 const requireLogin = true;
 const description = 'Manage, edit, and query your Nexus Delta knowledge graph';
 

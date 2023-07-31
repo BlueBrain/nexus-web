@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { HomeSeachByPresets, HomeSearchByApps } from '../../shared/organisms';
-import { MyData } from '../../shared/canvas';
-import { RootState } from '../../shared/store/reducers';
-import IdentityPage from '../../pages/IdentityPage/IdentityPage';
+import { HomeSeachByPresets, HomeSearchByApps } from 'shared/organisms';
+import { MyData } from 'shared/canvas';
+import { RootState } from 'shared/store/reducers';
+import IdentityPage from 'pages/IdentityPage/IdentityPage';
 
 const Home: React.FunctionComponent = () => {
   const oidc = useSelector((state: RootState) => state.oidc);

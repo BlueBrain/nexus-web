@@ -8,22 +8,22 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createMemoryHistory, MemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { setupServer } from 'msw/node';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent from '@testing-library/user-event';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { cleanup, render, screen } from '../../../utils/testUtil';
+import { cleanup, render, screen } from 'utils/testUtil';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
   InitNewVisitDataExplorerGraphView,
   TDataExplorerState,
-} from '../../../shared/store/reducers/data-explorer';
+} from 'shared/store/reducers/data-explorer';
 import configureStore from '../../store';
 import DateExplorerGraphFlow from './DateExplorerGraphFlow';
 import {
   initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
-} from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import userEvent from '@testing-library/user-event';
+} from '__mocks__/handlers/DataExplorerGraphFlow/handlers';
 
 const initialDataExplorerState: TDataExplorerState = {
   current: {

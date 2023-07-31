@@ -4,11 +4,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
-import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
-import useClickOutside from '../../shared/hooks/useClickOutside';
-import * as authActions from '../../shared/store/actions/auth';
-import * as configActions from '../../shared/store/actions/config';
+import { updateAboutModalVisibility } from 'shared/store/actions/modals';
+import { RootState } from 'shared/store/reducers';
+import useClickOutside from 'shared/hooks/useClickOutside';
+import * as authActions from 'shared/store/actions/auth';
+import * as configActions from 'shared/store/actions/config';
 
 import './styles.less';
 

@@ -13,8 +13,8 @@ import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
-import { render, waitFor, screen, server } from '../../utils/testUtil';
-import configureStore from '../../shared/store';
+import { render, waitFor, screen, server } from 'utils/testUtil';
+import configureStore from 'shared/store';
 import OrganizationProjectsPage, {
   useInfiniteOrganizationProjectsQuery,
 } from './OrganizationProjectsPage';

@@ -1,4 +1,4 @@
-import { MyData } from '../../shared/canvas';
+import { MyData } from 'shared/canvas';
 
 const MyDataPage = () => {
   return <MyData />;
