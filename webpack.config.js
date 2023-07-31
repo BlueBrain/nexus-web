@@ -26,6 +26,11 @@ const config = [
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
       alias: {
         react: path.resolve('./node_modules/react'),
+        pages: path.resolve('./src/pages'),
+        shared:  path.resolve('./src/shared'),
+        subapps:  path.resolve('./src/subapps'),
+        utils:  path.resolve('./src/utils'),
+        mocks: path.resolve('./src/__mocks__'),
       },
     },
     devtool: 'source-map',

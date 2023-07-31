@@ -18,7 +18,12 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "testUtil": ["./utils/testUtil"]
+      "testUtil": ["./utils/testUtil"],
+      "pages": ["./src/pages/*"],
+      "shared": ["./src/shared/*"],
+      "subapps": ["./src/subapps/*"],
+      "utils": ["./src/utils/*"],
+      "mocks": ["./src/__mocks__/*"]
     }
   },
   "files": ["custom.d.ts"],
