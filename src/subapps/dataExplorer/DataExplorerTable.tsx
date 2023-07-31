@@ -1,17 +1,36 @@
+import React, { useEffect, useReducer, forwardRef } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-import { isArray, isString, startCase } from 'lodash';
-import React, { forwardRef } from 'react';
-import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
+import { isArray, isNil, isString, startCase } from 'lodash';
+import { SelectionSelectFn } from 'antd/lib/table/interface';
+import { clsx } from 'clsx';
+
+import {
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  TDataSource,
+  TResourceTableData,
+  getLocalStorageSize,
+  makeOrgProjectTuple,
+  notifyTotalSizeExeeced,
+} from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
-import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
-import { useHistory, useLocation } from 'react-router-dom';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
-import { clsx } from 'clsx';
 import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../shared/utils/datapanel';
+import './styles.less';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -25,8 +44,13 @@ interface TDataExplorerTable {
   tableOffsetFromTop: number;
 }
 
-type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
+type TDateExplorerTableData = {
+  selectedRowKeys: React.Key[];
+  selectedRows: TDataSource[];
+};
 
+type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
+const DATA_EXPLORER_NAMESPACE = 'data-explorer';
 export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
   (
     {
@@ -44,9 +68,20 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
   ) => {
     const history = useHistory();
     const location = useLocation();
-
+    const [{ selectedRowKeys }, updateTableData] = useReducer(
+      (
+        previous: TResourceTableData,
+        partialData: Partial<TResourceTableData>
+      ) => ({
+        ...previous,
+        ...partialData,
+      }),
+      {
+        selectedRowKeys: [],
+        selectedRows: [],
+      }
+    );
     const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
-
     const tablePaginationConfig: TablePaginationConfig = {
       pageSize,
       total: allowedTotal,
@@ -72,6 +107,136 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         background: location,
       });
     };
+    const onSelectRowChange: SelectionSelectFn<Resource> = async (
+      record,
+      selected
+    ) => {
+      const recordKey = record._self;
+      const dataPanelLS: TDateExplorerTableData = JSON.parse(
+        localStorage.getItem(DATA_PANEL_STORAGE)!
+      );
+
+      const localStorageRows = toLocalStorageResources(
+        record,
+        DATA_EXPLORER_NAMESPACE
+      );
+      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+      let selectedRows = dataPanelLS?.selectedRows || [];
+
+      if (selected) {
+        selectedRowKeys = [...selectedRowKeys, recordKey];
+        selectedRows = [...selectedRows, ...localStorageRows];
+      } else {
+        selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+        selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
+      }
+
+      const size = selectedRows.reduce(
+        (acc, item) => acc + (item.distribution?.contentSize || 0),
+        0
+      );
+      if (
+        size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+        getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+      ) {
+        return notifyTotalSizeExeeced();
+      }
+      localStorage.setItem(
+        DATA_PANEL_STORAGE,
+        JSON.stringify({
+          selectedRowKeys,
+          selectedRows,
+        })
+      );
+      window.dispatchEvent(
+        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+          detail: {
+            datapanel: { selectedRowKeys, selectedRows },
+          },
+        })
+      );
+    };
+    const onSelectAllChange = async (
+      selected: boolean,
+      tSelectedRows: Resource[],
+      changeRows: Resource[]
+    ) => {
+      const dataPanelLS: TDateExplorerTableData = JSON.parse(
+        localStorage.getItem(DATA_PANEL_STORAGE)!
+      );
+      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+      let selectedRows = dataPanelLS?.selectedRows || [];
+
+      if (selected) {
+        const results = changeRows.map(row =>
+          toLocalStorageResources(row, DATA_EXPLORER_NAMESPACE)
+        );
+        selectedRows = [...selectedRows, ...results.flat()];
+        selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+      } else {
+        const rowKeysToRemove = changeRows.map(r => r._self);
+
+        selectedRowKeys = selectedRowKeys.filter(
+          key => !rowKeysToRemove.includes(key.toString())
+        );
+        selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
+      }
+      const size = selectedRows.reduce(
+        (acc, item) => acc + (item.distribution?.contentSize || 0),
+        0
+      );
+      if (
+        size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+        getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+      ) {
+        return notifyTotalSizeExeeced();
+      }
+      localStorage.setItem(
+        DATA_PANEL_STORAGE,
+        JSON.stringify({
+          selectedRowKeys,
+          selectedRows,
+        })
+      );
+      window.dispatchEvent(
+        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+          detail: {
+            datapanel: { selectedRowKeys, selectedRows },
+          },
+        })
+      );
+    };
+
+    useEffect(() => {
+      const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
+      const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
+      if (dataLs && dataLs.length) {
+        updateTableData({
+          selectedRows: dataLsObject.selectedRows,
+          selectedRowKeys: dataLsObject.selectedRowKeys,
+        });
+      }
+    }, []);
+    useEffect(() => {
+      const dataPanelEventListner = (
+        event: DataPanelEvent<{ datapanel: TResourceTableData }>
+      ) => {
+        updateTableData({
+          selectedRows: event.detail?.datapanel.selectedRows,
+          selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
+        });
+      };
+      window.addEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+      return () => {
+        window.removeEventListener(
+          DATA_PANEL_STORAGE_EVENT,
+          dataPanelEventListner as EventListener
+        );
+      };
+    }, []);
 
     return (
       <div
@@ -87,6 +252,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         }}
       >
         <Table<Resource>
+          ref={ref}
           columns={columnsConfig(columns, showEmptyDataCells)}
           dataSource={dataSource}
           rowKey={record => record._self}
@@ -96,7 +262,6 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
           })}
           loading={{ spinning: isLoading, indicator: <></> }}
           bordered={false}
-          ref={ref}
           className={clsx(
             'data-explorer-table',
             tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
@@ -108,6 +273,11 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
             emptyText() {
               return isLoading ? <></> : <Empty />;
             },
+          }}
+          rowSelection={{
+            selectedRowKeys,
+            onSelect: onSelectRowChange,
+            onSelectAll: onSelectAllChange,
           }}
           pagination={tablePaginationConfig}
           sticky={{ offsetHeader: tableOffsetFromTop }}
