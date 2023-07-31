@@ -36,13 +36,11 @@ import {
 import { isDeprecated } from '../utils/nexusMaybe';
 import { getUpdateResourceFunction } from '../utils/updateResource';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import ResourcePlugins from './ResourcePlugins';
-import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
-import { useMutation } from 'react-query';
-
-export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import {
+  TErrorWithType,
+  TUpdateResourceFunctionError,
+} from '../../utils/types';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -282,12 +280,14 @@ const ResourceViewContainer: FC<{
           projectLabel,
           resourceId
         )) as Resource;
-        (error as TUpdateResourceFunctionError).wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+        (error as TUpdateResourceFunctionError).wasUpdated =
+          potentiallyUpdatedResource._rev !== resource._rev;
 
         (error as TUpdateResourceFunctionError).action = 'update';
         if ('@context' in (error as TUpdateResourceFunctionError)) {
           if ('rejections' in (error as TUpdateResourceFunctionError)) {
-            (error as TUpdateResourceFunctionError).message = 'An error occurred whilst updating the resource';
+            (error as TUpdateResourceFunctionError).message =
+              'An error occurred whilst updating the resource';
           } else {
             (error as TUpdateResourceFunctionError).message = (error as TUpdateResourceFunctionError).reason;
           }
