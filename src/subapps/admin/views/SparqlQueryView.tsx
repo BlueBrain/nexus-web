@@ -6,9 +6,9 @@ import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as queryString from 'query-string';
 import { useOrganisationsSubappContext } from '..';
-import { getResourceLabel } from '../../../shared/utils';
+import { getResourceLabel } from 'shared/utils';
+import useNotification from 'shared/hooks/useNotification';
 import SparqlQueryContainer from '../containers/SparqlQuery';
-import useNotification from '../../../shared/hooks/useNotification';
 
 const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {

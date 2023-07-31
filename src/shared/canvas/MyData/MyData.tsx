@@ -5,8 +5,8 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { get, isObject, isString } from 'lodash';
 
-import { MyDataHeader, MyDataTable } from '../../molecules';
-import { RootState } from '../../store/reducers';
+import { MyDataHeader, MyDataTable } from 'shared/molecules';
+import { RootState } from 'shared/store/reducers';
 import { TFilterOptions } from './types';
 import { makeDatetimePattern } from './utils';
 import './styles.less';

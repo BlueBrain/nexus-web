@@ -1,10 +1,10 @@
 import * as React from 'react';
+import SearchPage from 'pages/SearchPage/SearchPage';
 import { SubApp } from '..';
-import SearchPage from '../../pages/SearchPage/SearchPage';
 
 const title = 'Search';
 const namespace = 'search';
-const icon = require('../../shared/images/search.svg');
+const icon = require('shared/images/search.svg');
 const requireLogin = true;
 const description =
   'Search through data added to Nexus Delta by you and others';

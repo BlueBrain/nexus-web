@@ -22,15 +22,15 @@ import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
-import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
-import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import timeago from '../../utils/timeago';
-import formatNumber from '../../utils/formatNumber';
-import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
-import '../../shared/styles/route-layout.less';
+import DeprecatedIcon from 'shared/components/Icons/DeprecatedIcon';
+import useIntersectionObserver from 'shared/hooks/useIntersectionObserver';
+import PinnedMenu from 'shared/PinnedMenu/PinnedMenu';
+import RouteHeader from 'shared/RouteHeader/RouteHeader';
+import timeago from 'utils/timeago';
+import formatNumber from 'utils/formatNumber';
+import { ModalsActionsEnum } from 'shared/store/actions/modals';
+import { RootState } from 'shared/store/reducers';
+import 'shared/styles/route-layout.less';
 
 type TProjectOptions = {
   from: number;

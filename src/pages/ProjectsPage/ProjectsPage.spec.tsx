@@ -8,14 +8,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import {
-  render,
-  fireEvent,
-  waitFor,
-  screen,
-  server,
-} from '../../utils/testUtil';
-import configureStore from '../../shared/store';
+import { render, fireEvent, waitFor, screen, server } from 'utils/testUtil';
+import configureStore from 'shared/store';
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
 
 describe('ProjectsPage', () => {

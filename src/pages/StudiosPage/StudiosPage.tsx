@@ -18,18 +18,18 @@ import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../shared/utils';
-import { RootState } from '../../shared/store/reducers';
-import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
-import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
-import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
+import { RootState } from 'shared/store/reducers';
+import PinnedMenu from 'shared/PinnedMenu/PinnedMenu';
+import RouteHeader from 'shared/RouteHeader/RouteHeader';
+import DeprecatedIcon from 'shared/components/Icons/DeprecatedIcon';
+import useIntersectionObserver from 'shared/hooks/useIntersectionObserver';
+import { updateStudioModalVisibility } from 'shared/store/actions/modals';
 import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import timeago from '../../utils/timeago';
-import '../../shared/styles/route-layout.less';
+import timeago from 'utils/timeago';
+import 'shared/styles/route-layout.less';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
