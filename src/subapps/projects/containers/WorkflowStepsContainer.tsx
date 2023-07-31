@@ -17,9 +17,11 @@ import {
   createWorkflowStepContext,
 } from '../utils/workFlowMetadataUtils';
 import useNotification, {
+  NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 import './WorkflowStepsContainer.less';
+import { TErrorWithType } from '../../../utils/types';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;
@@ -59,7 +61,7 @@ const WorkflowStepContainer: React.FC<{
     } catch (e) {
       notification.error({
         message: 'Failed to fetch workflow steps',
-        description: parseNexusError(e),
+        description: parseNexusError(e as NexusError),
       });
     }
   };
@@ -72,7 +74,7 @@ const WorkflowStepContainer: React.FC<{
         encodeURIComponent(WORKFLOW_STEP_CONTEXT['@id'])
       );
     } catch (ex) {
-      if (ex['@type'] === 'ResourceNotFound') {
+      if ((ex as TErrorWithType)['@type'] === 'ResourceNotFound') {
         createWorkflowStepContext(orgLabel, projectLabel, nexus);
         createTableContext(orgLabel, projectLabel, nexus);
       }

@@ -6,7 +6,9 @@ import { useInputs } from '../hooks/useInputs';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import { forceAsArray } from '../../../shared/utils';
 import FileUploader from '../../../shared/components/FileUpload';
+import { TError } from '../../../utils/types';
 import './InputsContainer.less';
+
 export const DATASET_KEY = 'nexus-dataset';
 const InputsContainer: React.FC<{
   orgLabel: string;
@@ -148,7 +150,7 @@ const InputsContainer: React.FC<{
       } catch (error) {
         notification.error({
           message: 'Could not import saved collection',
-          description: error.message,
+          description: (error as TError).message,
           duration: null,
         });
       }

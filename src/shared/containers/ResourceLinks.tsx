@@ -104,9 +104,9 @@ const ResourceLinksContainer: React.FunctionComponent<{
     } catch (error) {
       setLinks({
         next,
-        error,
         links,
         total,
+        error: error as Error,
         busy: false,
       });
     }
@@ -149,9 +149,9 @@ const ResourceLinksContainer: React.FunctionComponent<{
       } catch (error) {
         setLinks({
           next,
-          error,
           links,
           total,
+          error: error as Error,
           busy: false,
         });
       }

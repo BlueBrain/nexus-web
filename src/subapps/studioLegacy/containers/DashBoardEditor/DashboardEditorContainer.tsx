@@ -13,6 +13,7 @@ import { DASHBOARD_TYPE } from './CreateDashboardContainer';
 import usePlugins from '../../../../shared/hooks/usePlugins';
 import useAsyncCall from '../../../../shared/hooks/useAsynCall';
 import useNotification from '../../../../shared/hooks/useNotification';
+import { TError } from '../../../../utils/types';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;
@@ -82,7 +83,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
     } catch (error) {
       notification.error({
         message: `Could not update dashboard`,
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     } finally {
       setBusy(false);

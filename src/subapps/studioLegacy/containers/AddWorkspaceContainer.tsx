@@ -5,6 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 
 import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 import useNotification, {
+  NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 
@@ -100,7 +101,7 @@ const AddWorkspaceContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'An error occurred',
-        description: parseNexusError(error),
+        description: parseNexusError(error as NexusError),
       });
     }
   };
