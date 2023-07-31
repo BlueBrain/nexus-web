@@ -38,6 +38,7 @@ import { Provider } from 'react-redux';
 import configureStore from '../../shared/store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
+window.scrollTo = jest.fn();
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
   const mockResourcesOnPage1: Resource[] = getCompleteResources();
@@ -195,7 +196,7 @@ describe('DataExplorer', () => {
   };
 
   const projectFromRow = (row: Element) => {
-    const projectColumn = row.querySelector('td'); // first column is the project column
+    const projectColumn = row.querySelector('td.data-explorer-column-_project'); // first column is the project column
     return projectColumn?.textContent;
   };
 
