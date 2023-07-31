@@ -47,7 +47,7 @@ const CreateStudioContainer: React.FC<{
         encodeURIComponent(STUDIO_CONTEXT['@id'])
       );
     } catch (error) {
-      if (error as TErrorWithType['@type'] === 'ResourceNotFound') {
+      if ((error as TErrorWithType['@type']) === 'ResourceNotFound') {
         // @ts-ignore TODO: update resource type in SDK to allow nested objects
         // https://github.com/BlueBrain/nexus/issues/937
         await nexus.Resource.create(orgLabel, projectLabel, {
