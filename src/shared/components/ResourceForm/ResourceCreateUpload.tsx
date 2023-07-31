@@ -5,6 +5,7 @@ import './ResourceCreateUpload.scss';
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk/es';
 import { notification } from 'antd';
 import { camelCaseToTitleCase } from '../../utils';
+import { TErrorWithType } from '../../../utils/types';
 
 const ResourceCreateUpload: React.FunctionComponent<{
   orgLabel: string;
@@ -34,10 +35,10 @@ const ResourceCreateUpload: React.FunctionComponent<{
       return true;
     } catch (error) {
       notification.error({
-        message: !!error['@type']
-          ? camelCaseToTitleCase(error['@type'])
+        message: !!(error as TErrorWithType)['@type']
+          ? camelCaseToTitleCase((error as TErrorWithType)['@type'])
           : 'Error creating resource',
-        description: error.reason,
+        description: (error as TErrorWithType).reason,
       });
       setFormBusy(false);
       return false;

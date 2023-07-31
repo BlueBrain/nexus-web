@@ -6,7 +6,12 @@ import {
   PROJECT_METADATA_CONTEXT,
 } from '../fusionContext';
 import { Exception } from 'handlebars';
+<<<<<<< HEAD
 import { NexusClient } from '@bbp/nexus-sdk/es';
+=======
+import { NexusClient } from '@bbp/nexus-sdk';
+import { TErrorWithType } from '../../../utils/types';
+>>>>>>> 6266cc77 (f-4117/update: update ts version to the latest 5.1.6)
 /**
  *
  * @param userOrgLabel
@@ -34,7 +39,7 @@ const makeProjectPublic = async (
       ],
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -56,7 +61,7 @@ const createOrganization = async (
     });
     createProject(userOrg, data, realm, nexus);
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -75,7 +80,7 @@ export const createWorkflowStepContext = async (
       ...WORKFLOW_STEP_CONTEXT,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -94,7 +99,7 @@ export const createTableContext = async (
       ...FUSION_TABLE_CONTEXT,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -124,10 +129,10 @@ export const createProject = async (
       makeProjectPublic(userOrg, name, realm, nexus);
     }
   } catch (error) {
-    if (error['@type'] === 'OrganizationNotFound') {
+    if ((error as TErrorWithType)['@type'] === 'OrganizationNotFound') {
       createOrganization(userOrg, data, realm, nexus);
     } else {
-      throw new Exception(error);
+      throw new Exception(error as string);
     }
   }
 };
@@ -154,6 +159,6 @@ export const createResource = async (
       ...data,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
