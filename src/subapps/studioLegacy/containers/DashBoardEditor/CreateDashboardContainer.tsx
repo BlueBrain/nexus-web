@@ -9,6 +9,7 @@ import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor
 import STUDIO_CONTEXT from '../../components/StudioContext';
 import usePlugins from '../../../../shared/hooks/usePlugins';
 import useNotification from '../../../../shared/hooks/useNotification';
+import { TError } from '../../../../utils/types';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -93,7 +94,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
     } catch (error) {
       notification.error({
         message: `Could not create dashboard`,
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     } finally {
       onSubmit();

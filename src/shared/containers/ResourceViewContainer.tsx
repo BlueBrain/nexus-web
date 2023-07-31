@@ -282,21 +282,21 @@ const ResourceViewContainer: FC<{
           projectLabel,
           resourceId
         )) as Resource;
-        error.wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+        (error as TUpdateResourceFunctionError).wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
 
-        error.action = 'update';
-        if ('@context' in error) {
-          if ('rejections' in error) {
-            error.message = 'An error occurred whilst updating the resource';
+        (error as TUpdateResourceFunctionError).action = 'update';
+        if ('@context' in (error as TUpdateResourceFunctionError)) {
+          if ('rejections' in (error as TUpdateResourceFunctionError)) {
+            (error as TUpdateResourceFunctionError).message = 'An error occurred whilst updating the resource';
           } else {
-            error.message = error.reason;
+            (error as TUpdateResourceFunctionError).message = (error as TUpdateResourceFunctionError).reason;
           }
         }
 
         notification.error({
           message: 'An error occurred whilst updating the resource',
         });
-        if (error.wasUpdated) {
+        if ((error as TUpdateResourceFunctionError).wasUpdated) {
           const expandedResources = (await nexus.Resource.get(
             orgLabel,
             projectLabel,
@@ -308,7 +308,7 @@ const ResourceViewContainer: FC<{
 
           const expandedResource = expandedResources[0];
           setResource({
-            error,
+            error: error as TUpdateResourceFunctionError,
             resource: {
               ...potentiallyUpdatedResource,
               '@id': expandedResource['@id'],
@@ -320,7 +320,7 @@ const ResourceViewContainer: FC<{
         } else {
           setResource({
             resource,
-            error,
+            error: error as Error,
             busy: false,
           });
         }
@@ -394,7 +394,7 @@ const ResourceViewContainer: FC<{
     } catch (error) {
       let errorMessage;
 
-      if (error['@type'] === 'AuthorizationFailed') {
+      if ((error as TErrorWithType)['@type'] === 'AuthorizationFailed') {
         nexus.Identity.list().then(({ identities }) => {
           const user = identities.find(i => i['@type'] === 'User');
 
@@ -413,10 +413,10 @@ const ResourceViewContainer: FC<{
         });
 
         errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
-      } else if (error['@type'] === 'ResourceNotFound') {
+      } else if ((error as TErrorWithType)['@type'] === 'ResourceNotFound') {
         errorMessage = `Resource '${resourceId}' not found`;
       } else {
-        errorMessage = error.reason;
+        errorMessage = (error as TErrorWithType).reason;
       }
       const jsError = new Error(errorMessage);
 
