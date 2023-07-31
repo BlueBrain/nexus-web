@@ -1,12 +1,15 @@
-import fusionConfig from '../config';
 import { ProjectMetadata } from '../components/ProjectForm';
+import { Exception } from 'handlebars';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import {
   WORKFLOW_STEP_CONTEXT,
   FUSION_TABLE_CONTEXT,
   PROJECT_METADATA_CONTEXT,
 } from '../fusionContext';
-import { Exception } from 'handlebars';
-import { NexusClient } from '@bbp/nexus-sdk/es';
+import { TErrorWithType } from '../../../utils/types';
+import fusionConfig from '../config';
+
+
 /**
  *
  * @param userOrgLabel
@@ -34,7 +37,7 @@ const makeProjectPublic = async (
       ],
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -56,7 +59,7 @@ const createOrganization = async (
     });
     createProject(userOrg, data, realm, nexus);
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -75,7 +78,7 @@ export const createWorkflowStepContext = async (
       ...WORKFLOW_STEP_CONTEXT,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -94,7 +97,7 @@ export const createTableContext = async (
       ...FUSION_TABLE_CONTEXT,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };
 /**
@@ -124,10 +127,10 @@ export const createProject = async (
       makeProjectPublic(userOrg, name, realm, nexus);
     }
   } catch (error) {
-    if (error['@type'] === 'OrganizationNotFound') {
+    if ((error as TErrorWithType)['@type'] === 'OrganizationNotFound') {
       createOrganization(userOrg, data, realm, nexus);
     } else {
-      throw new Exception(error);
+      throw new Exception(error as string);
     }
   }
 };
@@ -154,6 +157,6 @@ export const createResource = async (
       ...data,
     });
   } catch (error) {
-    throw new Exception(error);
+    throw new Exception(error as string);
   }
 };

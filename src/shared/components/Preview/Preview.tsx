@@ -16,6 +16,7 @@ import TableViewerContainer from '../../containers/TableViewerContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
+import { TError } from '../../../utils/types';
 
 export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -172,7 +173,7 @@ const Preview: React.FC<{
     } catch (error) {
       notification.error({
         message: 'Failed to download the file',
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     }
     const archive = (await nexus.Archive.get(
@@ -257,7 +258,7 @@ const Preview: React.FC<{
     } catch (error) {
       notification.error({
         message: 'Failed to download the file',
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     }
   };
