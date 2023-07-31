@@ -41,7 +41,10 @@ import { StudioResource } from '../../subapps/studioLegacy/containers/StudioCont
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
 import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
-import { TErrorWithType, TUpdateResourceFunctionError } from '../../utils/types';
+import {
+  TErrorWithType,
+  TUpdateResourceFunctionError,
+} from '../../utils/types';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -238,12 +241,14 @@ const ResourceViewContainer: React.FunctionComponent<{
           projectLabel,
           resourceId
         )) as Resource;
-        (error as TUpdateResourceFunctionError).wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+        (error as TUpdateResourceFunctionError).wasUpdated =
+          potentiallyUpdatedResource._rev !== resource._rev;
 
         (error as TUpdateResourceFunctionError).action = 'update';
         if ('@context' in (error as TUpdateResourceFunctionError)) {
           if ('rejections' in (error as TUpdateResourceFunctionError)) {
-            (error as TUpdateResourceFunctionError).message = 'An error occurred whilst updating the resource';
+            (error as TUpdateResourceFunctionError).message =
+              'An error occurred whilst updating the resource';
           } else {
             (error as TUpdateResourceFunctionError).message = (error as TUpdateResourceFunctionError).reason;
           }

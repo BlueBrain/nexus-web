@@ -63,7 +63,7 @@ const ProjectGraph: React.FC<{
       layout: {
         // @ts-ignore
         name: 'avsdf',
-         // @ts-ignore
+        // @ts-ignore
         fit: true,
         nodeSeparation: 100,
       },
