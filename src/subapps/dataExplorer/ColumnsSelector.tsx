@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import { Input, Select, Col } from 'antd';
 import { RowRenderer } from '../../shared/molecules/MyDataHeader/MyDataHeaderFilters/TypeSelector';
-import Light from '../../shared/components/Icons/Light';
+import { normalizeString } from '../../utils/stringUtils';
 
 export type TColumn = { value: string; selected: boolean; key: string };
 type TColumnsSelectorProps = {
@@ -45,12 +45,12 @@ const ColumnsSelector = ({
   );
   const onSearchValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.type === 'click' || e.target.value === '') {
-      updateSearchResults({ inputColumns: columns, queryTerm: '' });
+      return updateSearchResults({ inputColumns: columns, queryTerm: '' });
     }
     updateSearchResults({
       queryTerm: e.target.value,
       inputColumns: columns.filter(column =>
-        column.value.toLowerCase().includes(e.target.value.toLowerCase())
+        normalizeString(column.value).includes(normalizeString(e.target.value))
       ),
     });
   };
@@ -65,7 +65,6 @@ const ColumnsSelector = ({
         <Select
           id="columns-selector"
           style={{ width: 300 }}
-          placeholder="custom dropdown render"
           className="columns-selector-dropdown"
           popupClassName="columns-selector-popup"
           virtual={false}
