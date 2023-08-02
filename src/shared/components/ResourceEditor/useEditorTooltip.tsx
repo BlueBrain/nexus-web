@@ -3,6 +3,7 @@ import CodeMirror from 'codemirror';
 import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
+import * as pluralize from 'pluralize';
 import {
   CODEMIRROR_HOVER_CLASS,
   TEditorPopoverResolvedData,
@@ -15,11 +16,14 @@ import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
 
 const downloadImg = require('../../images/DownloadingLoop.svg');
+const infoImg = require('../../images/InfoCircleLine.svg');
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
-  'error' | 'resolvedAs' | 'results'
->;
+  'error' | 'resolvedAs' | 'results' | 'resolver'
+> & {
+  onDownload?: () => void;
+};
 
 function removePopoversFromDOM() {
   const popovers = document.querySelectorAll(
@@ -39,10 +43,12 @@ function createTooltipNode({
   tag,
   title,
   isDownloadable,
+  onDownload,
 }: {
   tag: string | null;
   title: string;
   isDownloadable?: boolean;
+  onDownload?: (ev: MouseEvent) => void;
 }) {
   const tooltipItemContent = document.createElement('div');
   tooltipItemContent.className = 'CodeMirror-hover-tooltip-item';
@@ -59,20 +65,62 @@ function createTooltipNode({
     const nodeDownload = document.createElement('img');
     nodeDownload.setAttribute('src', downloadImg);
     nodeDownload.classList.add('download-icon');
-    tooltipItemContent.appendChild(nodeDownload);
+    nodeDownload.onclick = onDownload ?? null;
     const keyBinding = document.createElement('span');
     keyBinding.className = 'key-binding';
     // the user has to click and press option key on mac or alt key on windows
     const userAgent = navigator.userAgent;
     const isMac = userAgent.indexOf('Mac') !== -1;
-    keyBinding.appendChild(
-      document.createTextNode(isMac ? '⌥ + Click' : 'Alt + Click')
-    );
+    const kbdOption = document.createElement('kbd');
+    kbdOption.innerText = isMac ? '⌥' : 'Alt';
+    const plus = document.createElement('span');
+    plus.innerText = ' + ';
+    const kbdClick = document.createElement('kbd');
+    kbdClick.innerText = 'Click';
+    keyBinding.appendChild(kbdOption);
+    keyBinding.appendChild(plus);
+    keyBinding.appendChild(kbdClick);
+    tooltipItemContent.appendChild(nodeDownload);
     tooltipItemContent.appendChild(keyBinding);
   }
   return tooltipItemContent;
 }
-function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
+
+function createWarningHeader(count: number) {
+  const warningHeader = document.createElement('div');
+  warningHeader.className = 'CodeMirror-hover-tooltip-warning';
+  const warningText = document.createElement('div');
+  warningText.className = 'warning-text';
+  warningText.appendChild(
+    document.createTextNode(
+      `We could not resolve this ID to an existing resource as configured in your project, you might need to create this resource or update the resolver configuration of this project.`
+    )
+  );
+  const warningInfo = document.createElement('div');
+  warningInfo.className = 'warning-info';
+  const warningInfoIcon = document.createElement('img');
+  warningInfoIcon.className = 'warning-info-icon';
+  warningInfoIcon.setAttribute('src', infoImg);
+  warningInfo.appendChild(warningInfoIcon);
+  warningInfo.appendChild(
+    document.createTextNode(
+      `For your information, searching across all projects where you have read access, we found the following matching ${pluralize(
+        'resource',
+        count
+      )}:`
+    )
+  );
+  warningHeader.appendChild(warningText);
+  warningHeader.appendChild(warningInfo);
+  return warningHeader;
+}
+function createTooltipContent({
+  resolvedAs,
+  error,
+  results,
+  onDownload,
+  resolver,
+}: TTooltipCreator) {
   const tooltipContent = document.createElement('div');
   tooltipContent.className = clsx(
     `${CODEMIRROR_HOVER_CLASS}-content`,
@@ -89,8 +137,13 @@ function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
   }
   if (resolvedAs === 'resource') {
     const result = results as TDELink;
+    if (resolver === 'search-api') {
+      const warningHeader = createWarningHeader(1);
+      tooltipContent.appendChild(warningHeader);
+    }
     tooltipContent.appendChild(
       createTooltipNode({
+        onDownload,
         tag: result.resource
           ? `${result.resource?.[0]}/${result.resource?.[1]}`
           : null,
@@ -101,6 +154,8 @@ function createTooltipContent({ resolvedAs, error, results }: TTooltipCreator) {
     return tooltipContent;
   }
   if (resolvedAs === 'resources') {
+    const warningHeader = createWarningHeader((results as TDELink[]).length);
+    tooltipContent.appendChild(warningHeader);
     tooltipContent.appendChild(
       createTooltipNode({
         tag: 'Multiple',
@@ -161,6 +216,7 @@ function useEditorTooltip({
   projectLabel: string;
 }) {
   const nexus = useNexusContext();
+  const { downloadBinaryAsyncHandler } = useResolutionActions();
   const {
     config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
@@ -203,14 +259,12 @@ function useEditorTooltip({
           hideTooltip(tooltip);
           tooltip.remove();
         }
-        node.removeEventListener('mouseout', cleanup);
         node.removeEventListener('click', cleanup);
-        node.removeEventListener('scroll', cleanup);
+        editorWrapper.removeEventListener('scroll', cleanup);
       }
 
-      node.addEventListener('mouseout', cleanup);
       node.addEventListener('click', cleanup);
-      node.addEventListener('scroll', cleanup);
+      editorWrapper.addEventListener('scroll', cleanup);
 
       const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
         if (tooltip) {
@@ -218,7 +272,7 @@ function useEditorTooltip({
           tooltip.remove();
         }
         return clearTimeout(timeoutId);
-      }, 2000);
+      }, 3000);
 
       return tooltip;
     }
@@ -236,11 +290,28 @@ function useEditorTooltip({
             url,
             orgLabel,
             projectLabel,
-          }).then(({ resolvedAs, results, error }) => {
+          }).then(({ resolvedAs, results, error, resolver }) => {
             const tooltipContent = createTooltipContent({
               resolvedAs,
               error,
               results,
+              resolver,
+              onDownload:
+                resolvedAs === 'resource' && (results as TDELink).isDownloadable
+                  ? () => {
+                      const result = results as TDELink;
+                      if (result.isDownloadable) {
+                        return downloadBinaryAsyncHandler({
+                          orgLabel: result.resource?.[0]!,
+                          projectLabel: result.resource?.[1]!,
+                          resourceId: result.resource?.[2]!,
+                          ext: result.resource?.[4] ?? 'json',
+                          title: result.title,
+                        });
+                      }
+                      return;
+                    }
+                  : undefined,
             });
             if (tooltipContent) {
               node.classList.remove('wait-for-tooltip');

@@ -4,6 +4,16 @@ import LRUCache from 'lru-cache';
 
 // TODO: Use nexus.httpGet to prepare for using http cache headers
 // since the nexus SDK can not accept the headers as an argument
+
+const parseResourceId = (url: string) => {
+  const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
+  if (fileUrlPattern.test(url)) {
+    const [, , , resourceId] = url.match(fileUrlPattern) as string[];
+    return decodeURIComponent(resourceId.split('?rev=')[0]);
+  }
+  return decodeURIComponent(url);
+};
+
 const lookByProjectResolver = async ({
   nexus,
   apiEndpoint,
@@ -18,7 +28,9 @@ const lookByProjectResolver = async ({
   resourceId: string;
 }): Promise<Resource> => {
   return await nexus.httpGet({
-    path: `${apiEndpoint}/resolvers/${orgLabel}/${projectLabel}/_/${resourceId}`,
+    path: `${apiEndpoint}/resolvers/${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+      parseResourceId(resourceId)
+    )}`,
   });
 };
 const lookBySearchApi = async ({
@@ -31,7 +43,9 @@ const lookBySearchApi = async ({
   resourceId: string;
 }): Promise<TPagedResources> => {
   return await nexus.httpGet({
-    path: `${apiEndpoint}/resources?locate=${resourceId}`,
+    path: `${apiEndpoint}/resources?locate=${encodeURIComponent(
+      parseResourceId(resourceId)
+    )}`,
   });
 };
 

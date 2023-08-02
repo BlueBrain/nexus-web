@@ -1,17 +1,36 @@
+import React, { useEffect, useReducer, forwardRef } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-import { isArray, isString, startCase } from 'lodash';
-import React from 'react';
-import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
+import { isArray, isNil, isString, startCase } from 'lodash';
+import { SelectionSelectFn } from 'antd/lib/table/interface';
+import { clsx } from 'clsx';
+
+import {
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  TDataSource,
+  TResourceTableData,
+  getLocalStorageSize,
+  makeOrgProjectTuple,
+  notifyTotalSizeExeeced,
+} from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
-import './styles.less';
 import { DataExplorerConfiguration } from './DataExplorer';
-import { useHistory, useLocation } from 'react-router-dom';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
-import { clsx } from 'clsx';
 import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
+} from '../../shared/organisms/DataPanel/DataPanel';
+import {
+  removeLocalStorageRows,
+  toLocalStorageResources,
+} from '../../shared/utils/datapanel';
+import './styles.less';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -25,91 +44,248 @@ interface TDataExplorerTable {
   tableOffsetFromTop: number;
 }
 
-type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
-
-export const DataExplorerTable: React.FC<TDataExplorerTable> = ({
-  isLoading,
-  dataSource,
-  columns,
-  total,
-  pageSize,
-  offset,
-  updateTableConfiguration,
-  showEmptyDataCells,
-  tableOffsetFromTop,
-}: TDataExplorerTable) => {
-  const history = useHistory();
-  const location = useLocation();
-
-  const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
-
-  const tablePaginationConfig: TablePaginationConfig = {
-    pageSize,
-    total: allowedTotal,
-    pageSizeOptions: [10, 20, 50],
-    position: ['bottomLeft'],
-    defaultPageSize: 50,
-    defaultCurrent: 0,
-    current: offset / pageSize + 1,
-    onChange: (page, _) =>
-      updateTableConfiguration({ offset: (page - 1) * pageSize }),
-    onShowSizeChange: (_, size) => {
-      updateTableConfiguration({ pageSize: size, offset: 0 });
-    },
-    showQuickJumper: true,
-    showSizeChanger: true,
-  };
-
-  const goToResource = (resource: Resource) => {
-    const resourceId = resource['@id'] ?? resource._self;
-    const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-
-    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
-      background: location,
-    });
-  };
-
-  return (
-    <div
-      style={{
-        display: 'block',
-        position: 'absolute',
-        top: tableOffsetFromTop,
-        left: 0,
-        padding: '0 52px',
-        background: '#f5f5f5',
-        height: 'fit-content',
-        minHeight: '100%',
-      }}
-    >
-      <Table<Resource>
-        columns={columnsConfig(columns, showEmptyDataCells)}
-        dataSource={dataSource}
-        rowKey={record => record._self}
-        onRow={resource => ({
-          onClick: _ => goToResource(resource),
-          'data-testid': resource._self,
-        })}
-        loading={{ spinning: isLoading, indicator: <></> }}
-        bordered={false}
-        className={clsx(
-          'data-explorer-table',
-          tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
-            'data-explorer-header-collapsed'
-        )}
-        rowClassName="data-explorer-row"
-        scroll={{ x: 'max-content' }}
-        locale={{
-          emptyText() {
-            return isLoading ? <></> : <Empty />;
-          },
-        }}
-        pagination={tablePaginationConfig}
-        sticky={{ offsetHeader: tableOffsetFromTop }}
-      />
-    </div>
-  );
+type TDateExplorerTableData = {
+  selectedRowKeys: React.Key[];
+  selectedRows: TDataSource[];
 };
+
+type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
+const DATA_EXPLORER_NAMESPACE = 'data-explorer';
+export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
+  (
+    {
+      isLoading,
+      dataSource,
+      columns,
+      total,
+      pageSize,
+      offset,
+      updateTableConfiguration,
+      showEmptyDataCells,
+      tableOffsetFromTop,
+    },
+    ref
+  ) => {
+    const history = useHistory();
+    const location = useLocation();
+    const [{ selectedRowKeys }, updateTableData] = useReducer(
+      (
+        previous: TResourceTableData,
+        partialData: Partial<TResourceTableData>
+      ) => ({
+        ...previous,
+        ...partialData,
+      }),
+      {
+        selectedRowKeys: [],
+        selectedRows: [],
+      }
+    );
+    const allowedTotal = total ? (total > 10000 ? 10000 : total) : undefined;
+    const tablePaginationConfig: TablePaginationConfig = {
+      pageSize,
+      total: allowedTotal,
+      pageSizeOptions: [10, 20, 50],
+      position: ['bottomLeft'],
+      defaultPageSize: 50,
+      defaultCurrent: 0,
+      current: offset / pageSize + 1,
+      onChange: (page, _) =>
+        updateTableConfiguration({ offset: (page - 1) * pageSize }),
+      onShowSizeChange: (_, size) => {
+        updateTableConfiguration({ pageSize: size, offset: 0 });
+      },
+      showQuickJumper: true,
+      showSizeChanger: true,
+    };
+
+    const goToResource = (resource: Resource) => {
+      const resourceId = resource['@id'] ?? resource._self;
+      const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+
+      history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
+        background: location,
+      });
+    };
+    const onSelectRowChange: SelectionSelectFn<Resource> = async (
+      record,
+      selected
+    ) => {
+      const recordKey = record._self;
+      const dataPanelLS: TDateExplorerTableData = JSON.parse(
+        localStorage.getItem(DATA_PANEL_STORAGE)!
+      );
+
+      const localStorageRows = toLocalStorageResources(
+        record,
+        DATA_EXPLORER_NAMESPACE
+      );
+      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+      let selectedRows = dataPanelLS?.selectedRows || [];
+
+      if (selected) {
+        selectedRowKeys = [...selectedRowKeys, recordKey];
+        selectedRows = [...selectedRows, ...localStorageRows];
+      } else {
+        selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+        selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
+      }
+
+      const size = selectedRows.reduce(
+        (acc, item) => acc + (item.distribution?.contentSize || 0),
+        0
+      );
+      if (
+        size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+        getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+      ) {
+        return notifyTotalSizeExeeced();
+      }
+      localStorage.setItem(
+        DATA_PANEL_STORAGE,
+        JSON.stringify({
+          selectedRowKeys,
+          selectedRows,
+        })
+      );
+      window.dispatchEvent(
+        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+          detail: {
+            datapanel: { selectedRowKeys, selectedRows },
+          },
+        })
+      );
+    };
+    const onSelectAllChange = async (
+      selected: boolean,
+      tSelectedRows: Resource[],
+      changeRows: Resource[]
+    ) => {
+      const dataPanelLS: TDateExplorerTableData = JSON.parse(
+        localStorage.getItem(DATA_PANEL_STORAGE)!
+      );
+      let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
+      let selectedRows = dataPanelLS?.selectedRows || [];
+
+      if (selected) {
+        const results = changeRows.map(row =>
+          toLocalStorageResources(row, DATA_EXPLORER_NAMESPACE)
+        );
+        selectedRows = [...selectedRows, ...results.flat()];
+        selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+      } else {
+        const rowKeysToRemove = changeRows.map(r => r._self);
+
+        selectedRowKeys = selectedRowKeys.filter(
+          key => !rowKeysToRemove.includes(key.toString())
+        );
+        selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
+      }
+      const size = selectedRows.reduce(
+        (acc, item) => acc + (item.distribution?.contentSize || 0),
+        0
+      );
+      if (
+        size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
+        getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
+      ) {
+        return notifyTotalSizeExeeced();
+      }
+      localStorage.setItem(
+        DATA_PANEL_STORAGE,
+        JSON.stringify({
+          selectedRowKeys,
+          selectedRows,
+        })
+      );
+      window.dispatchEvent(
+        new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
+          detail: {
+            datapanel: { selectedRowKeys, selectedRows },
+          },
+        })
+      );
+    };
+
+    useEffect(() => {
+      const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
+      const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
+      if (dataLs && dataLs.length) {
+        updateTableData({
+          selectedRows: dataLsObject.selectedRows,
+          selectedRowKeys: dataLsObject.selectedRowKeys,
+        });
+      }
+    }, []);
+    useEffect(() => {
+      const dataPanelEventListner = (
+        event: DataPanelEvent<{ datapanel: TResourceTableData }>
+      ) => {
+        updateTableData({
+          selectedRows: event.detail?.datapanel.selectedRows,
+          selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
+        });
+      };
+      window.addEventListener(
+        DATA_PANEL_STORAGE_EVENT,
+        dataPanelEventListner as EventListener
+      );
+      return () => {
+        window.removeEventListener(
+          DATA_PANEL_STORAGE_EVENT,
+          dataPanelEventListner as EventListener
+        );
+      };
+    }, []);
+
+    return (
+      <div
+        style={{
+          display: 'block',
+          position: 'absolute',
+          top: tableOffsetFromTop,
+          left: 0,
+          padding: '0 52px',
+          background: '#f5f5f5',
+          height: 'fit-content',
+          minHeight: '100%',
+        }}
+      >
+        <Table<Resource>
+          ref={ref}
+          columns={columnsConfig(columns, showEmptyDataCells)}
+          dataSource={dataSource}
+          rowKey={record => record._self}
+          onRow={resource => ({
+            onClick: _ => goToResource(resource),
+            'data-testid': resource._self,
+          })}
+          loading={{ spinning: isLoading, indicator: <></> }}
+          bordered={false}
+          className={clsx(
+            'data-explorer-table',
+            tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
+              'data-explorer-header-collapsed'
+          )}
+          rowClassName="data-explorer-row"
+          scroll={{ x: 'max-content' }}
+          locale={{
+            emptyText() {
+              return isLoading ? <></> : <Empty />;
+            },
+          }}
+          rowSelection={{
+            selectedRowKeys,
+            onSelect: onSelectRowChange,
+            onSelectAll: onSelectAllChange,
+          }}
+          pagination={tablePaginationConfig}
+          sticky={{ offsetHeader: tableOffsetFromTop }}
+        />
+      </div>
+    );
+  }
+);
 
 /**
  * For each resource in the resources array, it creates column configuration for all its keys (if the column config for that key does not already exist).

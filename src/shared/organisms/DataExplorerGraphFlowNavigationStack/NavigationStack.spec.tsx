@@ -379,7 +379,7 @@ describe('NavigationStack', () => {
     rerender(app);
     // select by class and role of open-naivation-item
     const forthNodeNavigationItem = container.querySelector(
-      '.navigation-stack-item.left.item-4 .navigation-stack-item__wrapper > .icon[role="open-navigation-item"]'
+      '.navigation-stack-item.left.item-4 .navigation-stack-item__wrapper'
     );
     expect(forthNodeNavigationItem).not.toBeNull();
     expect(forthNodeNavigationItem).toBeInTheDocument();

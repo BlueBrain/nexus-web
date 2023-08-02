@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk';
 import { Spin, Switch } from 'antd';
-import React, { useMemo, useReducer, useState } from 'react';
+import React, { useMemo, useReducer, useRef, useState } from 'react';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -15,6 +15,7 @@ import { TypeSelector } from './TypeSelector';
 import './styles.less';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import Loading from '../../shared/components/Loading';
+import DateExplorerScrollArrows from './DateExplorerScrollArrows';
 
 export interface DataExplorerConfiguration {
   pageSize: number;
@@ -23,6 +24,7 @@ export interface DataExplorerConfiguration {
   type: string | undefined;
   predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
+  deprecated: boolean;
 }
 
 export const DataExplorer: React.FC<{}> = () => {
@@ -31,7 +33,15 @@ export const DataExplorer: React.FC<{}> = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   const [
-    { pageSize, offset, orgAndProject, predicate, type, selectedPath },
+    {
+      pageSize,
+      offset,
+      orgAndProject,
+      predicate,
+      type,
+      selectedPath,
+      deprecated,
+    },
     updateTableConfiguration,
   ] = useReducer(
     (
@@ -45,6 +55,7 @@ export const DataExplorer: React.FC<{}> = () => {
       type: undefined,
       predicate: null,
       selectedPath: null,
+      deprecated: false,
     }
   );
 
@@ -53,6 +64,7 @@ export const DataExplorer: React.FC<{}> = () => {
     offset,
     orgAndProject,
     type,
+    deprecated,
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -71,8 +83,15 @@ export const DataExplorer: React.FC<{}> = () => {
     [currentPageDataSource, showMetadataColumns, selectedPath]
   );
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const onDeprecatedChange = (checked: boolean) =>
+    updateTableConfiguration({
+      deprecated: checked,
+    });
+
   return (
-    <div className="data-explorer-contents">
+    <div className="data-explorer-contents" ref={containerRef}>
       {isLoading && <Spin className="loading" />}
 
       <DataExplorerCollapsibleHeader
@@ -106,11 +125,21 @@ export const DataExplorer: React.FC<{}> = () => {
 
         <div className="flex-container">
           <DatasetCount
+            orgAndProject={orgAndProject}
+            type={type}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
             totalFiltered={predicate ? displayedDataSource.length : undefined}
           />
           <div className="data-explorer-toggles">
+            <Switch
+              defaultChecked={false}
+              checked={deprecated}
+              onClick={onDeprecatedChange}
+              id="show-deprecated-resources"
+              className="data-explorer-toggle"
+            />
+            <label htmlFor="show-metadata-columns">Show deprecated</label>
             <Switch
               defaultChecked={false}
               checked={showMetadataColumns}
@@ -132,6 +161,7 @@ export const DataExplorer: React.FC<{}> = () => {
         </div>
       </DataExplorerCollapsibleHeader>
       <DataExplorerTable
+        ref={tableRef}
         isLoading={isLoading}
         dataSource={displayedDataSource}
         columns={memoizedColumns}
@@ -141,6 +171,15 @@ export const DataExplorer: React.FC<{}> = () => {
         updateTableConfiguration={updateTableConfiguration}
         showEmptyDataCells={showEmptyDataCells}
         tableOffsetFromTop={headerHeight}
+      />
+      <DateExplorerScrollArrows
+        type={type}
+        orgAndProject={orgAndProject}
+        showEmptyDataCells={showEmptyDataCells}
+        showMetadataColumns={showMetadataColumns}
+        isLoading={isLoading}
+        container={containerRef.current}
+        table={tableRef.current}
       />
     </div>
   );

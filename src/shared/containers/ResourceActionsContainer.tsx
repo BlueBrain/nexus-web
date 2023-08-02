@@ -19,7 +19,7 @@ import {
 } from '../utils/nexusMaybe';
 import useNotification from '../hooks/useNotification';
 import RemoveTagButton from './RemoveTagButtonContainer';
-import { parseResourceId } from '../components/Preview/Preview';
+import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -157,8 +157,10 @@ const ResourceActionsContainer: React.FunctionComponent<{
         const data = await nexus.File.get(
           orgLabel,
           projectLabel,
-          parseResourceId(resource._self),
-          { as: 'blob' }
+          nexusUrlHardEncode(resourceId),
+          {
+            as: 'blob',
+          }
         );
         return download(
           resource._filename || getResourceLabel(resource),
