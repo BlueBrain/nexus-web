@@ -5,6 +5,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
 import * as pluralize from 'pluralize';
 import {
+  CODEMIRROR_COPY_URL_CLASS,
   CODEMIRROR_HOVER_CLASS,
   TEditorPopoverResolvedData,
   editorLinkResolutionHandler,
@@ -14,9 +15,12 @@ import {
 import { TDELink } from '../../store/reducers/data-explorer';
 import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
+import { triggerCopy } from '../../utils/copy';
 
 const downloadImg = require('../../images/DownloadingLoop.svg');
 const infoImg = require('../../images/InfoCircleLine.svg');
+const copyImg = require('../../images/copyColor.svg');
+const copyConfirmedImage = require('../../images/confirmAnimated.svg');
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
@@ -38,7 +42,35 @@ function removeTooltipsFromDOM() {
       tooltip.remove();
     });
 }
+function removeAllCopyFromDOM() {
+  const copiesBtn = document.getElementsByClassName(CODEMIRROR_COPY_URL_CLASS);
+  copiesBtn &&
+    Array.from(copiesBtn).forEach(btn => {
+      btn.remove();
+    });
+}
 
+function createCopyButton(url: string) {
+  const copyBtn = document.createElement('div');
+  const img = copyBtn.appendChild(document.createElement('img'));
+  const copied = copyBtn.appendChild(document.createElement('span'));
+  copyBtn.className = CODEMIRROR_COPY_URL_CLASS;
+  img.className = 'url-copy-icon';
+
+  img.src = copyImg;
+  copyBtn.onclick = () => {
+    triggerCopy(url);
+    img.src = copyConfirmedImage;
+    copied.innerText = 'copied to clipboard';
+    copied.className = 'copied';
+    copyBtn.classList.add('copied');
+    const timeoutId = setTimeout(() => {
+      copyBtn.remove();
+      clearTimeout(timeoutId);
+    }, 1000);
+  };
+  return copyBtn;
+}
 function createTooltipNode({
   tag,
   title,
@@ -276,14 +308,16 @@ function useEditorTooltip({
 
       return tooltip;
     }
-
     async function onMouseOver(ev: MouseEvent) {
       const node = ev.target as HTMLElement;
       if (node && !node.classList.contains('cm-property')) {
-        const { url } = getTokenAndPosAt(ev, currentEditor);
+        const { url, pos } = getTokenAndPosAt(ev, currentEditor);
         if (url && mayBeResolvableLink(url)) {
-          node.classList.add('wait-for-tooltip');
+          removeAllCopyFromDOM();
           removeTooltipsFromDOM();
+          node.classList.add('wait-for-tooltip');
+          const copyBtn = createCopyButton(url);
+          currentEditor.addWidget(pos!, copyBtn, false);
           editorLinkResolutionHandler({
             nexus,
             apiEndpoint,
