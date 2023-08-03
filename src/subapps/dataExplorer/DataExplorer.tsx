@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { Resource } from '@bbp/nexus-sdk';
+import { useHistory } from 'react-router';
+import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';
 import { find, merge, unionWith } from 'lodash';
 import { DataExplorerTable } from './DataExplorerTable';
@@ -89,8 +91,12 @@ const getSelectedFiltersCached = () => {
 const clearSelectedColumnsCached = () => {
   sessionStorage.removeItem(SELECTED_COLUMNS_CACHED_KEY);
 };
+const clearSelectedFiltersCached = () => {
+  sessionStorage.removeItem(SELECTED_FILTERS_CACHED_KEY);
+};
 
 export const DataExplorer: React.FC<{}> = () => {
+  const history = useHistory();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
@@ -229,6 +235,24 @@ export const DataExplorer: React.FC<{}> = () => {
     .filter(column => column.selected)
     .map(column => column.value);
 
+  useEffect(() => {
+    const unlisten = history.listen(location => {
+      // if we will not be in a resource page,
+      // if we will not be in the graph flow page
+      // then we clear the selected columns and filters
+      // meaning: if the user navigate to a page different than a resource page/graph flow page we clear the cache
+      const matchedResourcePath = matchPath(location.pathname, {
+        path: '/:orgLabel/:projectLabel/resources/:resourceId',
+      });
+      const matchedGraphGlow =
+        location.pathname === '/data-explorer/graph-flow';
+      if (!matchedResourcePath && !matchedGraphGlow) {
+        clearSelectedColumnsCached();
+        clearSelectedFiltersCached();
+      }
+    });
+    return () => unlisten();
+  }, []);
   return (
     <div className="data-explorer-contents" ref={containerRef}>
       {isLoading && <Spin className="loading" />}

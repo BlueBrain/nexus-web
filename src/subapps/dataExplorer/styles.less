@@ -306,63 +306,6 @@
   background: @fusion-blue-8;
   border-radius: 4px;
 }
-
-.data-explorer-speed-arrows {
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  left: 0;
-  bottom: 0px;
-  padding: 10px;
-
-  .left,
-  .right {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .left-speed-arrow,
-  .right-speed-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: @fusion-blue-8;
-    padding: 10px;
-    cursor: pointer;
-
-    &--hidden {
-      display: none;
-    }
-
-    svg {
-      font-size: 20px;
-      color: white !important;
-    }
-  }
-
-  .left-arrow,
-  .right-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: @fusion-main-color;
-    padding: 10px;
-    cursor: pointer;
-
-    &--hidden {
-      display: none;
-    }
-
-    svg {
-      font-size: 20px;
-      color: white !important;
-    }
-  }
-  .right {
-    margin-left: auto;
 .columns-selector {
   display: flex;
   align-items: center;
@@ -439,5 +382,63 @@
       box-shadow: none;
       outline: none;
     }
+  }
+}
+.data-explorer-speed-arrows {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  left: 0;
+  bottom: 0px;
+  padding: 10px;
+
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .left-speed-arrow,
+  .right-speed-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: @fusion-blue-8;
+    padding: 10px;
+    cursor: pointer;
+
+    &--hidden {
+      display: none;
+    }
+
+    svg {
+      font-size: 20px;
+      color: white !important;
+    }
+  }
+
+  .left-arrow,
+  .right-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: @fusion-main-color;
+    padding: 10px;
+    cursor: pointer;
+
+    &--hidden {
+      display: none;
+    }
+
+    svg {
+      font-size: 20px;
+      color: white !important;
+    }
+  }
+  .right {
+    margin-left: auto;
   }
 }
