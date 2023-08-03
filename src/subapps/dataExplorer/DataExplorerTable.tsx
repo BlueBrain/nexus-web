@@ -94,7 +94,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       defaultCurrent: 0,
       current: offset / pageSize + 1,
       onChange: (page, _) => {
-        updateTableConfiguration({ offset: (page - 1) * pageSize })
+        updateTableConfiguration({ offset: (page - 1) * pageSize });
         updateSelectedFiltersCached({ offset: (page - 1) * pageSize });
       },
       onShowSizeChange: (_, size) => {
