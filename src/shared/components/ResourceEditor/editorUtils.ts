@@ -31,6 +31,7 @@ export type TEditorPopoverResolvedData = {
   left: number;
   results?: TDELink | TDELink[];
   resolvedAs: TEditorPopoverResolvedAs;
+  resolver?: 'resolver-api' | 'search-api';
   error?: any;
 };
 type TDeltaError = Error & {
@@ -48,6 +49,7 @@ type TReturnedResolvedData = Omit<
 export const LINE_HEIGHT = 15;
 export const INDENT_UNIT = 4;
 export const CODEMIRROR_HOVER_CLASS = 'CodeMirror-hover-tooltip';
+export const CODEMIRROR_COPY_URL_CLASS = 'CodeMirror-url-copy';
 export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 const isDownloadableLink = (resource: Resource) => {
@@ -104,6 +106,7 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
     if (token && url === text) {
       return {
         url,
+        pos,
         coords: {
           left: editorRect.left,
           top: coords.top + LINE_HEIGHT,
@@ -187,6 +190,7 @@ export async function editorLinkResolutionHandler({
       // next-action: open resource editor
       return {
         resolvedAs: 'resource',
+        resolver: 'resolver-api',
         results: {
           isDownloadable,
           _self: details._self,
@@ -217,6 +221,7 @@ export async function editorLinkResolutionHandler({
         const entity = getOrgAndProjectFromResourceObject(result);
         return {
           resolvedAs: 'resource',
+          resolver: 'search-api',
           results: {
             isDownloadable,
             _self: result._self,
@@ -233,6 +238,7 @@ export async function editorLinkResolutionHandler({
       // next-action: open resources list in the popover
       return {
         resolvedAs: 'resources',
+        resolver: 'search-api',
         results: details._results.map((item: Resource) => {
           const isDownloadable = isDownloadableLink(item);
           const entity = getOrgAndProjectFromResourceObject(item);

@@ -99,23 +99,7 @@ const NavigationStackItem = ({
       }
     >
       {collapseRightBtn()}
-      <div className="navigation-stack-item__wrapper">
-        <Tooltip
-          placement="bottomRight"
-          overlayClassName="navigation-item-tooltip"
-          title={
-            <div>
-              {orgProject && <Tag>{orgProject}</Tag>}
-              <span className="tooltip-self">{decodeURIComponent(_self)}</span>
-            </div>
-          }
-        >
-          <FullscreenOutlined
-            className="icon"
-            role="open-navigation-item"
-            onClick={onClick}
-          />
-        </Tooltip>
+      <div className="navigation-stack-item__wrapper" onClick={onClick}>
         {orgProject && <span className="org-project">{orgProject}</span>}
         {title && <div className="title">{title}</div>}
         {types && (
