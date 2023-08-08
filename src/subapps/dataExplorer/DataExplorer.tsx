@@ -16,15 +16,12 @@ import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
-<<<<<<< HEAD
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-=======
 import { RootState } from '../../shared/store/reducers';
 import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
 import { TType } from '../../shared/molecules/TypeSelector/types';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
->>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
 import './styles.less';
 
 const $update = <T,>(
@@ -53,9 +50,7 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
   sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
 };
 
-export const updateSelectedFiltersCached = (
-  options: Record<string, string | number | boolean | undefined>
-) => {
+export const updateSelectedFiltersCached = (options: Record<string, any>) => {
   const data = JSON.parse(
     sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY) ?? '{}'
   );
@@ -82,7 +77,7 @@ const getSelectedFiltersCached = () => {
     return {
       org: parsed.org ?? undefined,
       project: parsed.project ?? undefined,
-      type: parsed.type ?? undefined,
+      types: parsed.types ?? undefined,
       deprecated: parsed.deprecated ?? false,
       showMetadata: parsed.showMetadata ?? false,
       showEmptyCells: parsed.showEmptyCells ?? true,
@@ -99,11 +94,31 @@ const clearSelectedColumnsCached = () => {
 };
 const clearSelectedFiltersCached = () => {
   sessionStorage.removeItem(SELECTED_FILTERS_CACHED_KEY);
-export const updateSelectedColumnsCached = (columns: TColumn[]) => {
-  sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
 };
 
-export const DataExplorer: React.FC<{}> = () => {
+export const columnsFromDataSource = (
+  resources: Resource[],
+  showMetadataColumns: boolean,
+  selectedPath: string | null
+): string[] => {
+  const columnNames = new Set<string>();
+
+  resources.forEach(resource => {
+    Object.keys(resource).forEach(key => columnNames.add(key));
+  });
+
+  if (showMetadataColumns) {
+    return Array.from(columnNames).sort(sortColumns);
+  }
+
+  const selectedMetadataColumn = columnFromPath(selectedPath);
+  return Array.from(columnNames)
+    .filter(
+      colName => isUserColumn(colName) || colName === selectedMetadataColumn
+    )
+    .sort(sortColumns);
+};
+const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
@@ -144,12 +159,8 @@ export const DataExplorer: React.FC<{}> = () => {
     pageSize,
     offset,
     orgAndProject,
-<<<<<<< HEAD
-    type,
     deprecated,
-=======
     types: types?.map(t => t.value),
->>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -213,7 +224,7 @@ export const DataExplorer: React.FC<{}> = () => {
           selectedFilters.org && selectedFilters.project
             ? [selectedFilters.org, selectedFilters.project]
             : undefined,
-        type: selectedFilters.type,
+        types: selectedFilters.types,
         deprecated: selectedFilters.deprecated ?? deprecated,
       });
       setShowMetadataColumns(
@@ -242,7 +253,7 @@ export const DataExplorer: React.FC<{}> = () => {
     });
     updateSelectedColumnsCached(newColumns);
   };
-  
+
   const displayedColumns = columns
     .filter(column => column.selected)
     .map(column => column.value);
@@ -302,16 +313,7 @@ export const DataExplorer: React.FC<{}> = () => {
               }}
             />
             <TypeSelector
-<<<<<<< HEAD
-              defaultValue={type}
-              orgAndProject={orgAndProject}
-              onSelect={selectedType => {
-                updateTableConfiguration({ type: selectedType });
-                clearSelectedColumnsCached();
-                updateSelectedFiltersCached({
-                  type: selectedType,
-                });
-=======
+              defaultValue={types}
               org={orgAndProject?.[0]}
               project={orgAndProject?.[1]}
               types={types}
@@ -321,7 +323,13 @@ export const DataExplorer: React.FC<{}> = () => {
                 selector: {
                   '--types-background-color': 'white',
                 } as React.CSSProperties,
->>>>>>> 7f87a604 (f-4096/update: add multitype selector to data explorer)
+              }}
+              afterUpdate={types => {
+                updateTableConfiguration({ types: types });
+                clearSelectedColumnsCached();
+                updateSelectedFiltersCached({
+                  types: types?.map(t => t.value),
+                });
               }}
             />
             <PredicateSelector
@@ -345,7 +353,7 @@ export const DataExplorer: React.FC<{}> = () => {
         <div className="flex-container">
           <DatasetCount
             orgAndProject={orgAndProject}
-            type={type}
+            types={types}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
             totalFiltered={predicate ? displayedDataSource.length : undefined}
@@ -392,7 +400,7 @@ export const DataExplorer: React.FC<{}> = () => {
         tableOffsetFromTop={headerHeight}
       />
       <DateExplorerScrollArrows
-        type={type}
+        types={types}
         orgAndProject={orgAndProject}
         showEmptyDataCells={showEmptyDataCells}
         showMetadataColumns={showMetadataColumns}
@@ -404,25 +412,4 @@ export const DataExplorer: React.FC<{}> = () => {
   );
 };
 
-export const columnsFromDataSource = (
-  resources: Resource[],
-  showMetadataColumns: boolean,
-  selectedPath: string | null
-): string[] => {
-  const columnNames = new Set<string>();
-
-  resources.forEach(resource => {
-    Object.keys(resource).forEach(key => columnNames.add(key));
-  });
-
-  if (showMetadataColumns) {
-    return Array.from(columnNames).sort(sortColumns);
-  }
-
-  const selectedMetadataColumn = columnFromPath(selectedPath);
-  return Array.from(columnNames)
-    .filter(
-      colName => isUserColumn(colName) || colName === selectedMetadataColumn
-    )
-    .sort(sortColumns);
-};
+export default DataExplorer;
