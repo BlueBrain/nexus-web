@@ -22,7 +22,7 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { render, screen, waitFor } from '../../utils/testUtil';
-import { DataExplorer } from './DataExplorer';
+import DataExplorer from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
 import {

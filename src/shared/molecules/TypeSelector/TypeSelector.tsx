@@ -106,6 +106,8 @@ const TypeSelector = ({
   types,
   styles,
   updateOptions,
+  defaultValue,
+  afterUpdate,
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
@@ -157,11 +159,13 @@ const TypeSelector = ({
   ) => {
     e.preventDefault();
     e.stopPropagation();
+    const newTypes = types?.find((item: TType) => item.value === type.value)
+      ? []
+      : [type];
     updateOptions({
-      types: types?.find((item: TType) => item.value === type.value)
-        ? []
-        : [type],
+      types: newTypes,
     });
+    afterUpdate?.(newTypes);
   };
   const renderedTypes = typeSearchValue ? typesOptionsArray : typeOptions ?? [];
 
@@ -169,7 +173,8 @@ const TypeSelector = ({
     <div className="types-selector" style={styles?.container}>
       <div className="types-selector-wrapper">
         <Select
-          id="columns-selector"
+          id="types-selector"
+          defaultValue={defaultValue}
           mode="tags"
           virtual={false}
           value={types}

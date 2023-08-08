@@ -35,5 +35,7 @@ export type TTypeSelectorProps = {
   project?: string;
   types?: TType[];
   styles?: TTypeSelectorStyle;
+  defaultValue?: TType[];
   updateOptions: (options: { types?: TType[] }) => void;
+  afterUpdate?: (types?: TType[]) => void;
 };

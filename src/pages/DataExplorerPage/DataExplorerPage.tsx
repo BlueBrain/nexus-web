@@ -1,4 +1,4 @@
-import { DataExplorer } from '../../subapps/dataExplorer/DataExplorer';
+import DataExplorer from '../../subapps/dataExplorer/DataExplorer';
 
 const DataExplorerPage = () => {
   return (
