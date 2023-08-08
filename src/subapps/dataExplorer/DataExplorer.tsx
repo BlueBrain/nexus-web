@@ -325,7 +325,7 @@ const DataExplorer: React.FC<{}> = () => {
                 } as React.CSSProperties,
               }}
               afterUpdate={types => {
-                updateTableConfiguration({ types: types });
+                updateTableConfiguration({ types });
                 clearSelectedColumnsCached();
                 updateSelectedFiltersCached({
                   types: types?.map(t => t.value),
