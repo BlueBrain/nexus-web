@@ -22,7 +22,7 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { render, screen, waitFor } from '../../utils/testUtil';
-import { DataExplorer } from './DataExplorer';
+import DataExplorer from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
 import {
@@ -103,6 +103,7 @@ describe('DataExplorer', () => {
   const DropdownSelector = '.ant-select-dropdown';
   const DropdownOptionSelector = 'div.ant-select-item-option-content';
   const CustomOptionSelector = 'div.ant-select-item-option-content > span';
+  const TypeOptionSelector = 'div.select-row .ant-col > span';
 
   const PathMenuLabel = 'path-selector';
   const PredicateMenuLabel = 'predicate-selector';
@@ -632,7 +633,7 @@ describe('DataExplorer', () => {
 
   it('shows resources filtered by the selected type', async () => {
     await expectRowCountToBe(10);
-    await selectOptionFromMenu(TypeMenuLabel, 'file', CustomOptionSelector);
+    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
 
     visibleTableRows().forEach(row =>
       expect(typeFromRow(row)).toMatch(/file/i)
@@ -643,10 +644,7 @@ describe('DataExplorer', () => {
     await expectRowCountToBe(10);
 
     await openMenuFor(TypeMenuLabel);
-    const optionBefore = await getDropdownOption(
-      'Dataset',
-      CustomOptionSelector
-    );
+    const optionBefore = await getDropdownOption('Dataset', TypeOptionSelector);
     expect(optionBefore).toBeInTheDocument();
 
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
@@ -654,7 +652,7 @@ describe('DataExplorer', () => {
 
     await openMenuFor(TypeMenuLabel);
     expect(
-      getDropdownOption('Dataset', CustomOptionSelector)
+      getDropdownOption('Dataset', TypeOptionSelector)
     ).rejects.toThrowError();
   });
 
@@ -963,7 +961,7 @@ describe('DataExplorer', () => {
 
   it('does not reset values in filters when header was hidden due to scroll', async () => {
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-    await selectOptionFromMenu(TypeMenuLabel, 'file', CustomOptionSelector);
+    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
     await selectPath('@type');
 
     await scrollWindow(500);

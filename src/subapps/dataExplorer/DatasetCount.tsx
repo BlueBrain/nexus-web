@@ -2,6 +2,7 @@ import React from 'react';
 import * as pluralize from 'pluralize';
 import { isNil } from 'lodash';
 import { getTypesTrancated } from '../../shared/molecules/MyDataTable/MyDataTable';
+import { TType } from '../../shared/molecules/TypeSelector/types';
 import './styles.less';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
   totalFiltered?: number;
   totalOnPage: number;
   orgAndProject?: [string, string];
-  type?: string;
+  types?: TType[];
 }
 
 export const DatasetCount: React.FC<Props> = ({
@@ -17,7 +18,7 @@ export const DatasetCount: React.FC<Props> = ({
   totalOnPage,
   totalFiltered,
   orgAndProject,
-  type,
+  types,
 }: Props) => {
   return (
     <div className="data-explorer-count">
@@ -35,9 +36,14 @@ export const DatasetCount: React.FC<Props> = ({
             </b>
           </span>
         )}{' '}
-        {type && (
+        {!!types?.length && (
           <span>
-            of type <b>{getTypesTrancated(type).types}</b>
+            of types{' '}
+            <b>
+              {getTypesTrancated(types.map(o => o.value))
+                .types.split('\n')
+                .join(', ')}
+            </b>
           </span>
         )}
       </span>

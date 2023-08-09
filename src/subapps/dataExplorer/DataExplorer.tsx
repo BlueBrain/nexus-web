@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+
 import { Resource } from '@bbp/nexus-sdk';
 import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
@@ -14,11 +15,13 @@ import {
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
-import { TypeSelector } from './TypeSelector';
-import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-
+import { RootState } from '../../shared/store/reducers';
+import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
+import { TType } from '../../shared/molecules/TypeSelector/types';
+import ColumnsSelector, { TColumn } from './ColumnsSelector';
+import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
 import './styles.less';
 
 const $update = <T,>(
@@ -34,7 +37,7 @@ export interface DataExplorerConfiguration {
   pageSize: number;
   offset: number;
   orgAndProject?: [string, string];
-  type: string | undefined;
+  types?: TType[];
   predicate: ((resource: Resource) => boolean) | null;
   selectedPath: string | null;
   deprecated: boolean;
@@ -47,9 +50,7 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
   sessionStorage.setItem(SELECTED_COLUMNS_CACHED_KEY, JSON.stringify(columns));
 };
 
-export const updateSelectedFiltersCached = (
-  options: Record<string, string | number | boolean | undefined>
-) => {
+export const updateSelectedFiltersCached = (options: Record<string, any>) => {
   const data = JSON.parse(
     sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY) ?? '{}'
   );
@@ -76,7 +77,7 @@ const getSelectedFiltersCached = () => {
     return {
       org: parsed.org ?? undefined,
       project: parsed.project ?? undefined,
-      type: parsed.type ?? undefined,
+      types: parsed.types ?? undefined,
       deprecated: parsed.deprecated ?? false,
       showMetadata: parsed.showMetadata ?? false,
       showEmptyCells: parsed.showEmptyCells ?? true,
@@ -95,7 +96,29 @@ const clearSelectedFiltersCached = () => {
   sessionStorage.removeItem(SELECTED_FILTERS_CACHED_KEY);
 };
 
-export const DataExplorer: React.FC<{}> = () => {
+export const columnsFromDataSource = (
+  resources: Resource[],
+  showMetadataColumns: boolean,
+  selectedPath: string | null
+): string[] => {
+  const columnNames = new Set<string>();
+
+  resources.forEach(resource => {
+    Object.keys(resource).forEach(key => columnNames.add(key));
+  });
+
+  if (showMetadataColumns) {
+    return Array.from(columnNames).sort(sortColumns);
+  }
+
+  const selectedMetadataColumn = columnFromPath(selectedPath);
+  return Array.from(columnNames)
+    .filter(
+      colName => isUserColumn(colName) || colName === selectedMetadataColumn
+    )
+    .sort(sortColumns);
+};
+const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
@@ -106,7 +129,7 @@ export const DataExplorer: React.FC<{}> = () => {
       offset,
       orgAndProject,
       predicate,
-      type,
+      types,
       selectedPath,
       deprecated,
       columns,
@@ -124,7 +147,7 @@ export const DataExplorer: React.FC<{}> = () => {
       pageSize: 50,
       offset: 0,
       orgAndProject: undefined,
-      type: undefined,
+      types: [],
       predicate: null,
       selectedPath: null,
       deprecated: false,
@@ -136,8 +159,8 @@ export const DataExplorer: React.FC<{}> = () => {
     pageSize,
     offset,
     orgAndProject,
-    type,
     deprecated,
+    types: types?.map(t => t.value),
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
@@ -192,7 +215,6 @@ export const DataExplorer: React.FC<{}> = () => {
     updateTableConfiguration({ columns: newColumns });
     updateSelectedColumnsCached(newColumns);
   };
-
   useEffect(() => {
     const selectedFilters = getSelectedFiltersCached();
     if (selectedFilters) {
@@ -201,7 +223,7 @@ export const DataExplorer: React.FC<{}> = () => {
           selectedFilters.org && selectedFilters.project
             ? [selectedFilters.org, selectedFilters.project]
             : undefined,
-        type: selectedFilters.type,
+        types: selectedFilters.types,
         deprecated: selectedFilters.deprecated ?? deprecated,
       });
       setShowMetadataColumns(
@@ -290,13 +312,22 @@ export const DataExplorer: React.FC<{}> = () => {
               }}
             />
             <TypeSelector
-              defaultValue={type}
-              orgAndProject={orgAndProject}
-              onSelect={selectedType => {
-                updateTableConfiguration({ type: selectedType });
+              defaultValue={types}
+              org={orgAndProject?.[0]}
+              project={orgAndProject?.[1]}
+              types={types}
+              updateOptions={updateTableConfiguration}
+              styles={{
+                container: { width: '250px' },
+                selector: {
+                  '--types-background-color': 'white',
+                } as React.CSSProperties,
+              }}
+              afterUpdate={types => {
+                updateTableConfiguration({ types });
                 clearSelectedColumnsCached();
                 updateSelectedFiltersCached({
-                  type: selectedType,
+                  types: types && types.length > 0 ? types : undefined,
                 });
               }}
             />
@@ -321,7 +352,7 @@ export const DataExplorer: React.FC<{}> = () => {
         <div className="flex-container">
           <DatasetCount
             orgAndProject={orgAndProject}
-            type={type}
+            types={types}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
             totalFiltered={predicate ? displayedDataSource.length : undefined}
@@ -368,7 +399,7 @@ export const DataExplorer: React.FC<{}> = () => {
         tableOffsetFromTop={headerHeight}
       />
       <DateExplorerScrollArrows
-        type={type}
+        types={types}
         orgAndProject={orgAndProject}
         showEmptyDataCells={showEmptyDataCells}
         showMetadataColumns={showMetadataColumns}
@@ -380,25 +411,4 @@ export const DataExplorer: React.FC<{}> = () => {
   );
 };
 
-export const columnsFromDataSource = (
-  resources: Resource[],
-  showMetadataColumns: boolean,
-  selectedPath: string | null
-): string[] => {
-  const columnNames = new Set<string>();
-
-  resources.forEach(resource => {
-    Object.keys(resource).forEach(key => columnNames.add(key));
-  });
-
-  if (showMetadataColumns) {
-    return Array.from(columnNames).sort(sortColumns);
-  }
-
-  const selectedMetadataColumn = columnFromPath(selectedPath);
-  return Array.from(columnNames)
-    .filter(
-      colName => isUserColumn(colName) || colName === selectedMetadataColumn
-    )
-    .sort(sortColumns);
-};
+export default DataExplorer;

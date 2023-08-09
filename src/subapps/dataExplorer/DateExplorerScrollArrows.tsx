@@ -5,6 +5,7 @@ import RightSpeedArrow, {
 import LeftSpeedArrow, {
   LeftArrow,
 } from '../../shared/components/Icons/LeftSpeedArrow';
+import { TType } from '../../shared/molecules/TypeSelector/types';
 import { clsx } from 'clsx';
 
 type TArrowsDisplay = {
@@ -23,7 +24,7 @@ type TDateExplorerScrollArrowsProps = {
   container: HTMLDivElement | null;
   table: HTMLDivElement | null;
   orgAndProject: [string, string] | undefined;
-  type: string | undefined;
+  types: TType[] | undefined;
   showEmptyDataCells: boolean;
   showMetadataColumns: boolean;
 };
@@ -32,7 +33,7 @@ const DateExplorerScrollArrows = ({
   table,
   isLoading,
   orgAndProject,
-  type,
+  types,
   showEmptyDataCells,
   showMetadataColumns,
 }: TDateExplorerScrollArrowsProps) => {
@@ -133,7 +134,7 @@ const DateExplorerScrollArrows = ({
       recalculateColumnsOffsetLeft: false,
       lastColumnScrollToIndex: 0,
     });
-  }, [orgAndProject, type, showEmptyDataCells, showMetadataColumns]);
+  }, [orgAndProject, types, showEmptyDataCells, showMetadataColumns]);
 
   const tableRect = table?.getBoundingClientRect();
   const hideRightArrows = tableRect

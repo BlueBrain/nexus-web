@@ -11,24 +11,22 @@ export const usePaginatedExpandedResources = ({
   pageSize,
   offset,
   orgAndProject,
-  type,
   deprecated,
+  types,
 }: PaginatedResourcesParams) => {
   const nexus = useNexusContext();
-
   return useQuery({
-    queryKey: [
-      'data-explorer',
-      { pageSize, offset, orgAndProject, type, deprecated },
-    ],
+    queryKey: ['data-explorer', { pageSize, offset, orgAndProject, types }],
     retry: false,
     queryFn: async () => {
       const resultWithPartialResources = await nexus.Resource.list(
         orgAndProject?.[0],
         orgAndProject?.[1],
         {
-          type,
           deprecated,
+          // @ts-ignore
+          type: types,
+          typeOperator: 'or',
           from: offset,
           size: pageSize,
         }
@@ -186,8 +184,8 @@ interface PaginatedResourcesParams {
   pageSize: number;
   offset: number;
   orgAndProject?: string[];
-  type?: string;
   deprecated: boolean;
+  types?: string[];
 }
 
 export const useTimeoutMessage = ({
