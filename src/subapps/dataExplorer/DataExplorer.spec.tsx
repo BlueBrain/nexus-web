@@ -39,6 +39,7 @@ import configureStore from '../../shared/store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
 window.scrollTo = jest.fn();
+
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
   const mockResourcesOnPage1: Resource[] = getCompleteResources();
@@ -91,6 +92,7 @@ describe('DataExplorer', () => {
   afterEach(async () => {
     server.resetHandlers();
     await userEvent.click(container); // Close any open dropdowns
+    sessionStorage.clear(); // Clear the selected columns and filters in session storage.
   });
 
   afterAll(() => {
@@ -196,12 +198,12 @@ describe('DataExplorer', () => {
   };
 
   const projectFromRow = (row: Element) => {
-    const projectColumn = row.querySelector('td.data-explorer-column-_project'); // first column is the project column
+    const projectColumn = row.querySelector('td.data-explorer-column-_project');
     return projectColumn?.textContent;
   };
 
   const typeFromRow = (row: Element) => {
-    const typeColumn = row.querySelectorAll('td')[1]; // second column is the type column
+    const typeColumn = row.querySelector('td.data-explorer-column-\\@type');
     return typeColumn?.textContent;
   };
 

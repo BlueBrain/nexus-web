@@ -12,19 +12,27 @@ import {
   isUserColumn,
   sortColumns,
 } from './DataExplorerUtils';
+import { TColumn } from './ColumnsSelector';
 import './styles.less';
 
 interface Props {
+  columns: TColumn[];
   dataSource: Resource[];
   onPredicateChange: React.Dispatch<Partial<DataExplorerConfiguration>>;
+  onResetCallback: (column: string, checked: boolean) => void;
 }
 
 export const PredicateSelector: React.FC<Props> = ({
+  columns,
   dataSource,
   onPredicateChange,
+  onResetCallback,
 }: Props) => {
   const formRef = useRef<FormInstance>(null);
-
+  const pathRef = useRef<{ path: string; selected: boolean }>({
+    path: '',
+    selected: false,
+  });
   const predicateFilterOptions: PredicateFilterOptions[] = [
     { value: EXISTS },
     { value: DOES_NOT_EXIST },
@@ -87,10 +95,11 @@ export const PredicateSelector: React.FC<Props> = ({
         } else {
           onPredicateChange({ predicate: null, selectedPath: null });
         }
-
         break;
-      default:
+      default: {
         onPredicateChange({ predicate: null, selectedPath: null });
+        break;
+      }
     }
   };
 
@@ -105,11 +114,12 @@ export const PredicateSelector: React.FC<Props> = ({
   };
 
   const onReset = () => {
+    onResetCallback(pathRef.current.path, pathRef.current.selected);
     const form = formRef.current;
     if (form) {
       form.resetFields();
     }
-
+    pathRef.current = { path: '', selected: false };
     onPredicateChange({ predicate: null, selectedPath: null });
   };
 
@@ -150,14 +160,19 @@ export const PredicateSelector: React.FC<Props> = ({
       {getFormFieldValue(PATH_FIELD) && (
         <>
           <span className="label">= </span>
-
           <Form.Item name="predicate" noStyle>
             <Select
               options={predicateFilterOptions}
               onSelect={(predicateLabel: PredicateFilterOptions['value']) => {
                 setFormField(PREDICATE_FIELD, predicateLabel);
                 setFormField(SEARCH_TERM_FIELD, '');
-
+                pathRef.current = {
+                  path: getFormFieldValue(PATH_FIELD),
+                  selected:
+                    columns.find(
+                      column => column.value === getFormFieldValue(PATH_FIELD)
+                    )?.selected ?? false,
+                };
                 predicateSelected(
                   getFormFieldValue(PATH_FIELD),
                   predicateLabel,

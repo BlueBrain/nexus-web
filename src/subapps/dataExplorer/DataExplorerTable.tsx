@@ -18,7 +18,10 @@ import {
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
-import { DataExplorerConfiguration } from './DataExplorer';
+import {
+  DataExplorerConfiguration,
+  updateSelectedFiltersCached,
+} from './DataExplorer';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
 import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
 import {
@@ -90,10 +93,13 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       defaultPageSize: 50,
       defaultCurrent: 0,
       current: offset / pageSize + 1,
-      onChange: (page, _) =>
-        updateTableConfiguration({ offset: (page - 1) * pageSize }),
+      onChange: (page, _) => {
+        updateTableConfiguration({ offset: (page - 1) * pageSize });
+        updateSelectedFiltersCached({ offset: (page - 1) * pageSize });
+      },
       onShowSizeChange: (_, size) => {
         updateTableConfiguration({ pageSize: size, offset: 0 });
+        updateSelectedFiltersCached({ pageSize: size, offset: 0 });
       },
       showQuickJumper: true,
       showSizeChanger: true,
@@ -253,7 +259,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       >
         <Table<Resource>
           ref={ref}
-          columns={columnsConfig(columns, showEmptyDataCells)}
+          columns={columnsConfig(columns, showEmptyDataCells, dataSource)}
           dataSource={dataSource}
           rowKey={record => record._self}
           onRow={resource => ({
@@ -292,10 +298,11 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
  */
 export const columnsConfig = (
   columnNames: string[],
-  showEmptyDataCells: boolean
+  showEmptyDataCells: boolean,
+  dataSource: Resource[]
 ): ColumnType<Resource>[] => {
   const colNameToConfig = new Map(
-    columnNames.length === 0 ? [] : initialTableConfig(showEmptyDataCells)
+    dataSource.length === 0 ? [] : initialTableConfig(showEmptyDataCells)
   );
 
   for (const columnName of columnNames) {

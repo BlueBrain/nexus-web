@@ -5,6 +5,7 @@ import { notification } from 'antd';
 import { useQuery } from 'react-query';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { isString } from 'lodash';
+import { useEffect } from 'react';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -188,3 +189,26 @@ interface PaginatedResourcesParams {
   type?: string;
   deprecated: boolean;
 }
+
+export const useTimeoutMessage = ({
+  show,
+  timeout,
+  cb,
+}: {
+  timeout: number;
+  cb: Function;
+  show: boolean;
+}) => {
+  useEffect(() => {
+    let timeoutId: number;
+    if (show) {
+      timeoutId = window.setTimeout(() => {
+        cb();
+        clearTimeout(timeoutId);
+      }, timeout);
+    }
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [show]);
+};
