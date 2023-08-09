@@ -30,16 +30,17 @@ type TTypeSelectorStyle = {
   container?: React.CSSProperties;
   selector?: React.CSSProperties;
 };
+export type TTypeOperator = 'AND' | 'OR';
 export type TTypeSelectorProps = {
   org?: string;
   project?: string;
   types?: TType[];
   styles?: TTypeSelectorStyle;
   defaultValue?: TType[];
-  typeOperator?: 'AND' | 'OR';
+  typeOperator: TTypeOperator;
   updateOptions(options: {
     types?: TType[];
-    typeOperator?: 'AND' | 'OR';
+    typeOperator: TTypeOperator;
   }): void;
-  afterUpdate?: (types?: TType[]) => void;
+  afterUpdate?: (typeOperator: TTypeOperator, types?: TType[]) => void;
 };

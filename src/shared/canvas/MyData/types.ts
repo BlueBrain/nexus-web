@@ -1,5 +1,5 @@
 import { MenuProps } from 'antd';
-import { TType } from '../../molecules/TypeSelector/types';
+import { TType, TTypeOperator } from '../../molecules/TypeSelector/types';
 
 export type TIssuer = 'createdBy' | 'updatedBy';
 export type TDateField = 'createdAt' | 'updatedAt';
@@ -18,7 +18,7 @@ export type TFilterOptions = {
   sort: string[];
   locate: boolean;
   issuer: TIssuer;
-  typeOperator: 'AND' | 'OR';
+  typeOperator: TTypeOperator;
 };
 export type TCurrentDate = Pick<
   TFilterOptions,

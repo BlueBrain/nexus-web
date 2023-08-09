@@ -1,11 +1,12 @@
-import { Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import PromisePool from '@supercharge/promise-pool';
-import { notification } from 'antd';
-import { useQuery } from 'react-query';
-import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
-import { isString } from 'lodash';
 import { useEffect } from 'react';
+import { Resource } from '@bbp/nexus-sdk';
+import { useQuery } from 'react-query';
+import { useNexusContext } from '@bbp/react-nexus';
+import { notification } from 'antd';
+import { isString } from 'lodash';
+import PromisePool from '@supercharge/promise-pool';
+import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
+import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -13,10 +14,14 @@ export const usePaginatedExpandedResources = ({
   orgAndProject,
   deprecated,
   types,
+  typeOperator,
 }: PaginatedResourcesParams) => {
   const nexus = useNexusContext();
   return useQuery({
-    queryKey: ['data-explorer', { pageSize, offset, orgAndProject, types }],
+    queryKey: [
+      'data-explorer',
+      { pageSize, offset, orgAndProject, types, typeOperator },
+    ],
     retry: false,
     queryFn: async () => {
       const resultWithPartialResources = await nexus.Resource.list(
@@ -25,8 +30,9 @@ export const usePaginatedExpandedResources = ({
         {
           deprecated,
           // @ts-ignore
+          typeOperator,
+          // @ts-ignore
           type: types,
-          typeOperator: 'or',
           from: offset,
           size: pageSize,
         }
@@ -186,6 +192,7 @@ interface PaginatedResourcesParams {
   orgAndProject?: string[];
   deprecated: boolean;
   types?: string[];
+  typeOperator: TTypeOperator;
 }
 
 export const useTimeoutMessage = ({
