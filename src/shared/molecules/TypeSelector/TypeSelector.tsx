@@ -1,7 +1,15 @@
 import React, { useCallback, useRef, useState, ReactElement } from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Checkbox, Col, Input, Radio, Row, Select } from 'antd';
+import {
+  Checkbox,
+  Col,
+  Input,
+  Radio,
+  RadioChangeEvent,
+  Row,
+  Select,
+} from 'antd';
 import { isString, startCase } from 'lodash';
 import { useQuery } from 'react-query';
 import { prettifyNumber } from '../../../utils/formatNumber';
@@ -14,6 +22,11 @@ import {
 } from './types';
 import isValidUrl from '../../../utils/validUrl';
 import './style.less';
+
+const typesOperatorOptions = [
+  { label: 'AND', value: 'AND' },
+  { label: 'OR', value: 'OR' },
+];
 
 const getTypesByAggregation = async ({
   nexus,
@@ -105,6 +118,7 @@ const TypeSelector = ({
   project,
   types,
   styles,
+  typeOperator,
   updateOptions,
   defaultValue,
   afterUpdate,
@@ -165,15 +179,19 @@ const TypeSelector = ({
     e.preventDefault();
     e.stopPropagation();
     const newTypes = types?.find((item: TType) => item.value === type.value)
-      ? []
-      : [type];
+      ? types.filter((item: TType) => item.value !== type.value)
+      : [...(types ? types : []), type];
     updateOptions({
       types: newTypes,
     });
     afterUpdate?.(newTypes);
   };
   const renderedTypes = typeSearchValue ? typesOptionsArray : typeOptions ?? [];
-
+  const onTypeOperatorChange = ({ target: { value } }: RadioChangeEvent) => {
+    updateOptions({
+      typeOperator: value,
+    });
+  };
   return (
     <div className="types-selector" style={styles?.container}>
       <div className="types-selector-wrapper">
@@ -197,12 +215,15 @@ const TypeSelector = ({
           aria-label="type-filter"
           dropdownRender={() => (
             <>
-              <div className=''>
-                  <label htmlFor="typeOperator">Select Type Operator</label>
-                  <Radio.Group name='typeOperator'>
-                    <Radio.Button value="AND">AND</Radio.Button>
-                    <Radio.Button value="OR">OR</Radio.Button>
-                  </Radio.Group>
+              <div className="type-operator-selector">
+                <div>Select Type Operator</div>
+                <Radio.Group
+                  value={typeOperator}
+                  optionType="default"
+                  name="typeOperator"
+                  options={typesOperatorOptions}
+                  onChange={onTypeOperatorChange}
+                />
               </div>
               <div className="types-selector-search-container">
                 <Input.Search

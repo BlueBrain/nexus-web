@@ -11,6 +11,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
   setFilterOptions,
   locate,
   issuer,
+  typeOperator,
 }) => {
   return (
     <div className="my-data-header">
@@ -32,6 +33,7 @@ const MyDataHeader: React.FC<THeaderProps> = ({
           locate,
           setFilterOptions,
           issuer,
+          typeOperator,
         }}
       />
     </div>
