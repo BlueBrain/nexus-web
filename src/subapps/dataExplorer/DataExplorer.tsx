@@ -12,16 +12,17 @@ import {
   sortColumns,
   usePaginatedExpandedResources,
 } from './DataExplorerUtils';
+import {
+  TType,
+  TTypeOperator,
+} from '../../shared/molecules/TypeSelector/types';
+import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
 import { ProjectSelector } from './ProjectSelector';
 import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-import { RootState } from '../../shared/store/reducers';
-import { UpdateDataExplorerOrigin } from '../../shared/store/reducers/data-explorer';
-import { TType } from '../../shared/molecules/TypeSelector/types';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
-import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
 import './styles.less';
 
 const $update = <T,>(
@@ -42,6 +43,7 @@ export interface DataExplorerConfiguration {
   selectedPath: string | null;
   deprecated: boolean;
   columns: TColumn[];
+  typeOperator: TTypeOperator;
 }
 const SELECTED_COLUMNS_CACHED_KEY = 'data-explorer-selected-columns';
 const SELECTED_FILTERS_CACHED_KEY = 'data-explorer-selected-filters';
@@ -83,6 +85,7 @@ const getSelectedFiltersCached = () => {
       showEmptyCells: parsed.showEmptyCells ?? true,
       pageSize: parsed.pageSize ?? 50,
       offset: parsed.offset ?? 0,
+      typeOperator: parsed.typeOperator ?? 'OR',
     };
   } catch (e) {
     return null;
@@ -133,6 +136,7 @@ const DataExplorer: React.FC<{}> = () => {
       selectedPath,
       deprecated,
       columns,
+      typeOperator,
     },
     updateTableConfiguration,
   ] = useReducer(
@@ -152,6 +156,7 @@ const DataExplorer: React.FC<{}> = () => {
       selectedPath: null,
       deprecated: false,
       columns: [],
+      typeOperator: 'OR',
     }
   );
 
@@ -160,6 +165,7 @@ const DataExplorer: React.FC<{}> = () => {
     offset,
     orgAndProject,
     deprecated,
+    typeOperator,
     types: types?.map(t => t.value),
   });
 
@@ -225,6 +231,7 @@ const DataExplorer: React.FC<{}> = () => {
             : undefined,
         types: selectedFilters.types,
         deprecated: selectedFilters.deprecated ?? deprecated,
+        typeOperator: selectedFilters.typeOperator ?? typeOperator,
       });
       setShowMetadataColumns(
         selectedFilters.showMetadata ?? showMetadataColumns
@@ -312,10 +319,12 @@ const DataExplorer: React.FC<{}> = () => {
               }}
             />
             <TypeSelector
+              key={'data-explorer-type-selector'}
               defaultValue={types}
               org={orgAndProject?.[0]}
               project={orgAndProject?.[1]}
               types={types}
+              typeOperator={typeOperator}
               updateOptions={updateTableConfiguration}
               styles={{
                 container: { width: '250px' },
@@ -323,10 +332,11 @@ const DataExplorer: React.FC<{}> = () => {
                   '--types-background-color': 'white',
                 } as React.CSSProperties,
               }}
-              afterUpdate={types => {
-                updateTableConfiguration({ types });
+              afterUpdate={(typeOperator, types) => {
+                updateTableConfiguration({ types, typeOperator });
                 clearSelectedColumnsCached();
                 updateSelectedFiltersCached({
+                  typeOperator,
                   types: types && types.length > 0 ? types : undefined,
                 });
               }}
