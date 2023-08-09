@@ -36,6 +36,10 @@ export type TTypeSelectorProps = {
   types?: TType[];
   styles?: TTypeSelectorStyle;
   defaultValue?: TType[];
-  updateOptions: (options: { types?: TType[] }) => void;
+  typeOperator?: 'AND' | 'OR';
+  updateOptions(options: {
+    types?: TType[];
+    typeOperator?: 'AND' | 'OR';
+  }): void;
   afterUpdate?: (types?: TType[]) => void;
 };

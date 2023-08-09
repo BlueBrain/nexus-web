@@ -36,6 +36,7 @@ const MyDataHeaderTitle = ({
 
 const MyDataHeaderFilters = ({
   types,
+  typeOperator,
   dateField,
   setFilterOptions,
 }: THeaderFilterProps) => {
@@ -47,6 +48,7 @@ const MyDataHeaderFilters = ({
       <TypeSelector
         {...{
           types,
+          typeOperator,
           updateOptions: setFilterOptions,
           styles: {
             container: { width: '300px' },

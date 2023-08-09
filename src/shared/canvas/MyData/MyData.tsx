@@ -31,6 +31,7 @@ const HomeMyData: React.FC<{}> = () => {
       locate,
       issuer,
       types,
+      typeOperator,
     },
     setFilterOptions,
   ] = React.useReducer(
@@ -51,6 +52,7 @@ const HomeMyData: React.FC<{}> = () => {
       locate: false,
       issuer: 'createdBy',
       types: [],
+      typeOperator: 'OR',
     }
   );
 
@@ -88,6 +90,7 @@ const HomeMyData: React.FC<{}> = () => {
         issuer,
         date,
         order,
+        typeOperator,
         types: resourceTypes,
       },
     ],
@@ -95,6 +98,7 @@ const HomeMyData: React.FC<{}> = () => {
     queryFn: () =>
       nexus.Resource.list(undefined, undefined, {
         size,
+        typeOperator,
         from: offset,
         [issuer]: issuerUri,
         ...(locate && query.trim().length
@@ -144,6 +148,7 @@ const HomeMyData: React.FC<{}> = () => {
           locate,
           issuer,
           setFilterOptions,
+          typeOperator,
         }}
       />
       <MyDataTable
