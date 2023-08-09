@@ -144,14 +144,19 @@ const TypeSelector = ({
       );
     }
   };
-  const onDeselectTypesChange = (value: any) =>
+  const onDeselectTypesChange = (value: any) => {
+    const newTypes = types?.filter((item: TType) => item.value !== value);
     updateOptions({
-      types: types?.filter((item: TType) => item.value !== value),
+      types: newTypes,
     });
-  const onClearTypesChange = () =>
+    afterUpdate?.(newTypes);
+  };
+  const onClearTypesChange = () => {
     updateOptions({
       types: [],
     });
+    afterUpdate?.([]);
+  };
 
   const handleOnCheckType = (
     e: React.MouseEvent<HTMLElement, MouseEvent>,
@@ -173,6 +178,7 @@ const TypeSelector = ({
     <div className="types-selector" style={styles?.container}>
       <div className="types-selector-wrapper">
         <Select
+          allowClear
           id="types-selector"
           defaultValue={defaultValue}
           mode="tags"

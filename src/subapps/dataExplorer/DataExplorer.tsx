@@ -215,7 +215,6 @@ const DataExplorer: React.FC<{}> = () => {
     updateTableConfiguration({ columns: newColumns });
     updateSelectedColumnsCached(newColumns);
   };
-
   useEffect(() => {
     const selectedFilters = getSelectedFiltersCached();
     if (selectedFilters) {
@@ -328,7 +327,7 @@ const DataExplorer: React.FC<{}> = () => {
                 updateTableConfiguration({ types });
                 clearSelectedColumnsCached();
                 updateSelectedFiltersCached({
-                  types: types?.map(t => t.value),
+                  types: types && types.length > 0 ? types : undefined,
                 });
               }}
             />
