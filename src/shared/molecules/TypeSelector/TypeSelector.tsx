@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState, ReactElement } from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Checkbox, Col, Input, Row, Select } from 'antd';
+import { Checkbox, Col, Input, Radio, Row, Select } from 'antd';
 import { isString, startCase } from 'lodash';
 import { useQuery } from 'react-query';
 import { prettifyNumber } from '../../../utils/formatNumber';
@@ -197,6 +197,13 @@ const TypeSelector = ({
           aria-label="type-filter"
           dropdownRender={() => (
             <>
+              <div className=''>
+                  <label htmlFor="typeOperator">Select Type Operator</label>
+                  <Radio.Group name='typeOperator'>
+                    <Radio.Button value="AND">AND</Radio.Button>
+                    <Radio.Button value="OR">OR</Radio.Button>
+                  </Radio.Group>
+              </div>
               <div className="types-selector-search-container">
                 <Input.Search
                   allowClear
