@@ -118,10 +118,10 @@ const TypeSelector = ({
   project,
   types,
   styles,
-  typeOperator,
   updateOptions,
   defaultValue,
   afterUpdate,
+  typeOperator = 'OR',
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
@@ -161,15 +161,17 @@ const TypeSelector = ({
   const onDeselectTypesChange = (value: any) => {
     const newTypes = types?.filter((item: TType) => item.value !== value);
     updateOptions({
+      typeOperator,
       types: newTypes,
     });
-    afterUpdate?.(newTypes);
+    afterUpdate?.(typeOperator, newTypes);
   };
   const onClearTypesChange = () => {
     updateOptions({
+      typeOperator,
       types: [],
     });
-    afterUpdate?.([]);
+    afterUpdate?.('OR', []);
   };
 
   const handleOnCheckType = (
@@ -182,9 +184,10 @@ const TypeSelector = ({
       ? types.filter((item: TType) => item.value !== type.value)
       : [...(types ? types : []), type];
     updateOptions({
+      typeOperator,
       types: newTypes,
     });
-    afterUpdate?.(newTypes);
+    afterUpdate?.(typeOperator, newTypes);
   };
   const renderedTypes = typeSearchValue ? typesOptionsArray : typeOptions ?? [];
   const onTypeOperatorChange = ({ target: { value } }: RadioChangeEvent) => {

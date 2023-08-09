@@ -46,6 +46,7 @@ const MyDataHeaderFilters = ({
       <DateFieldSelector {...{ dateField, setFilterOptions }} />
       <DateSelector {...{ dateField, setFilterOptions }} />
       <TypeSelector
+        key={'my-data-type-selector'}
         {...{
           types,
           typeOperator,
