@@ -18,6 +18,7 @@ export type TFilterOptions = {
   sort: string[];
   locate: boolean;
   issuer: TIssuer;
+  typeOperator: 'AND' | 'OR';
 };
 export type TCurrentDate = Pick<
   TFilterOptions,
@@ -34,7 +35,7 @@ export type TTitleProps = {
 };
 export type THeaderFilterProps = Pick<
   THeaderProps,
-  'types' | 'dateField' | 'setFilterOptions'
+  'types' | 'dateField' | 'setFilterOptions' | 'typeOperator'
 >;
 export type THeaderTitleProps = Pick<
   THeaderProps,
