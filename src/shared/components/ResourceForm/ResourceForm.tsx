@@ -83,6 +83,8 @@ export interface ResourceFormProps {
   }): Promise<boolean>;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
+  orgLabel: string;
+  projectLabel: string;
 }
 
 /**
@@ -94,6 +96,8 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   onSubmit,
   onDeprecate = () => {},
   mode = 'create',
+  orgLabel,
+  projectLabel,
 }) => {
   const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
     DEFAULT_RESOURCE
@@ -175,8 +179,8 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             onSubmit={handleSubmit}
             showExpanded={false}
             showMetadataToggle={false}
-            orgLabel=""
-            projectLabel=""
+            orgLabel={orgLabel}
+            projectLabel={projectLabel}
             onFullScreen={() => {}}
             showFullScreen={false}
           />
