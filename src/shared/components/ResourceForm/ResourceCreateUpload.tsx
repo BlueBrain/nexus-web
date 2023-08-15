@@ -46,7 +46,12 @@ const ResourceCreateUpload: React.FunctionComponent<{
   return (
     <div className="add-resource">
       <div className="add-resource__editor">
-        <ResourceForm onSubmit={(r: any) => saveAndCreate(r)} busy={formBusy} />
+        <ResourceForm
+          onSubmit={(r: any) => saveAndCreate(r)}
+          busy={formBusy}
+          orgLabel={orgLabel}
+          projectLabel={projectLabel}
+        />
       </div>
       <div className="add-resource__upload">
         <FileUploadContainer orgLabel={orgLabel} projectLabel={projectLabel} />
