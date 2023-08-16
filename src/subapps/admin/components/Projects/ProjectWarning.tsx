@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert } from 'antd';
-import  moment from 'moment';
+import moment from 'moment';
 
 import './ProjectWarning.scss';
 import { getDateString } from '../../../../shared/utils';

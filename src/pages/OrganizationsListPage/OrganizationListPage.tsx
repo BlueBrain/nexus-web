@@ -256,7 +256,7 @@ const OrganizationListView: React.FC<{}> = () => {
             )
           }
           alt="sscx"
-          bg={ layoutSettings.organizationImg || organizationImg }
+          bg={layoutSettings.organizationImg || organizationImg}
           createLabel="Create Organization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}

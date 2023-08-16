@@ -151,10 +151,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
       <div className="logo-container">
         <Link to="/">
           <div className="logo-container__logo">
-            <img
-              src={logoImg || fusionLogo}
-              alt="Logo"
-            />
+            <img src={logoImg || fusionLogo} alt="Logo" />
           </div>
         </Link>
       </div>
