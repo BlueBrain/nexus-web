@@ -1,0 +1,11 @@
+
+
+.resource-actions {
+  display: flex;
+  padding: 0 0 @default-pad 0;
+  font-size: 0.8rem;
+
+  button {
+    margin-right: 5px;
+  }
+}

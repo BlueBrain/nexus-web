@@ -25,7 +25,7 @@ import { orderBy, isNil, isArray, isObject } from 'lodash';
 import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
 
-import './ImagePreview.less';
+import './ImagePreview.scss';
 
 type Props = {
   resource: Resource;

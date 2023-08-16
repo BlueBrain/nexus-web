@@ -1,0 +1,22 @@
+
+
+.view-form {
+  width: 100%;
+  > form {
+    margin: 0 auto;
+  }
+  .code {
+    max-height: 600;
+    overflow: 'scroll';
+    margin-bottom: 1rem;
+  }
+  .ant-card-body {
+    overflow: scroll;
+  }
+  .results .empty {
+    color: #ff4d4f;
+  }
+  .react-json-view {
+    overflow-x: scroll;
+  }
+}

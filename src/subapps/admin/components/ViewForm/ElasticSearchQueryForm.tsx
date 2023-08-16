@@ -11,7 +11,7 @@ import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 
-import './view-form.less';
+import './view-form.scss';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;

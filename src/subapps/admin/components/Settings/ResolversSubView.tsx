@@ -9,7 +9,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import ReactJson from 'react-json-view';
 import { easyValidURL } from '../../../../utils/validUrl';
-import './styles.less';
+import './styles.scss';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';

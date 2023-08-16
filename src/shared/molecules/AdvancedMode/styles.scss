@@ -1,0 +1,47 @@
+
+
+.advanced-mode-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-right: 15px;
+  .ant-switch {
+    margin-right: 10px;
+    &[aria-checked='true'] {
+      background-color: white !important;
+      .ant-switch-handle::before {
+        background-color: #050a56 !important;
+      }
+    }
+    &[aria-checked='false'] {
+      background-color: transparent !important;
+      border: 1px solid white;
+      .ant-switch-handle {
+        top: 1px !important;
+      }
+      .ant-switch-handle::before {
+        background-color: white !important;
+      }
+    }
+  }
+
+  .advanced,
+  .beta {
+    user-select: none;
+    line-height: 130%;
+    letter-spacing: 0.01em;
+  }
+
+  .advanced {
+    color: white;
+    white-space: nowrap;
+    margin-right: 4px;
+    font-weight: 400;
+  }
+
+  .beta {
+    color: #ff4d4f;
+    font-weight: 600;
+  }
+}

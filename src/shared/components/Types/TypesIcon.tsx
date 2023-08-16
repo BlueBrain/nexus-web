@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tooltip, Tag } from 'antd';
-import './Types.less';
 import { labelOf } from '../../utils';
+import './Types.scss';
 
 export interface TypesIconProps {
   type: string;

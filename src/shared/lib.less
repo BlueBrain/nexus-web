@@ -118,6 +118,7 @@
 @bounce: cubic-bezier(0.645, 0.045, 0.355, 1);
 @interfaceTransition: 0.3s @bounce;
 
+// Antd style overrride
 @maxConstrainedItemWidth: 1240px;
 
 @primary-card: #f5f6f7;
@@ -152,19 +153,7 @@
   Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
   'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-@primary-color: @fusion-primary-color; // primary color for all components
-@link-color: @fusion-active-link-color; // link color
-@link-hover-color: @fusion-hover-link-color;
-@success-color: @fusion-success-color; // success state color
-@warning-color: @fusion-warning-color; // warning state color
-@error-color: @fusion-danger-color; // error state color
 
-@font-size-base: @fusion-base-font-size; // major text font size
-@heading-1-size: @fusion-heading-1-size;
-@heading-2-size: @fusion-heading-2-size;
-@heading-3-size: @fusion-heading-3-size;
-@heading-4-size: @fusion-heading-4-size;
-@heading-5-size: @fusion-heading-5-size;
 
 @heading-color: @fusion-primary-text-color; // heading text color
 @text-color: @fusion-primary-text-color; // major text color
@@ -182,11 +171,12 @@
 @component-background: @fusion-component-background-color;
 
 .ant-tabs-nav {
-  background-color: @fusion-component-background-color;
+  background-color: #f2f2f2;
 }
 
 // Top-level styles
 body {
+  background-color: #fff;
   background-size: cover;
   background-repeat: no-repeat;
   background-color: @fusion-background-color;
@@ -194,7 +184,7 @@ body {
 
 h1 {
   .ellipsis();
-  font-size: @heading-1-size;
+  font-size: 28px;
 }
 
 // Mixins
@@ -223,9 +213,9 @@ h1 {
 }
 
 .ant-tag-blue {
-  border-color: @fusion-secondary-color;
-  background-color: fade(@fusion-secondary-color, 10%);
-  color: @fusion-secondary-color;
+  background-color: fade(#7cb4fa, 10%);
+  color: #7cb4fa;
+  border-color: #7cb4fa;
 }
 
 .textLoadingGradient () {
@@ -233,17 +223,16 @@ h1 {
   animation: Gradient 4s ease infinite;
   background: linear-gradient(
     -45deg,
-    @success-color,
-    @primary-color,
-    @nexus-dark,
-    @link-color
+    #52c41a,
+    #0083cb,
+    #1d3b61,
+    #0070c9
   );
   background-size: 400% 400%;
   -webkit-text-fill-color: transparent;
 }
 .blockLoadingGradient () {
-  animation: Gradient 4s ease infinite;
-  background: linear-gradient(-45deg, @box-shadow-color, white);
+  background: linear-gradient(-45deg, #abbac9, white);
   background-size: 400% 400%;
 }
 
@@ -264,8 +253,9 @@ h1 {
 }
 
 .cardlike() {
-  box-shadow: @box-shadow-base;
-  border-radius: @border-radius-base;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 2px;
   background-color: @background-color-subtle;
   padding: @default-pad;
   height: fit-content;
@@ -280,6 +270,7 @@ h1 {
 }
 
 .constrainedWidth() {
+  max-width: 1240px;
   margin: 0 auto;
   max-width: @maxConstrainedItemWidth;
 }
@@ -295,11 +286,11 @@ h1 {
   }
   /* Track */
   ::-webkit-scrollbar-track {
-    background: @header-background-color;
+    background: fade(#f2f2f2, 50%);
   }
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: shade(@header-background-color, 20%);
+    background: shade(fade(#f2f2f2, 50%), 20%);
   }
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
@@ -309,12 +300,13 @@ h1 {
 
 @keyframes TextFlash {
   0% {
+    text-shadow: 0px 0px 6px #faad14;
     color: white;
     text-shadow: 0px 0px 6px @warning-color;
   }
   100% {
-    color: @text-color-secondary;
-    text-shadow: 0px 0px 0px @warning-color;
+    text-shadow: 0px 0px 0px #faad14;
+    color: #333333-secondary;
   }
 }
 

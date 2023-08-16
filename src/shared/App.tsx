@@ -21,7 +21,7 @@ import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
 import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
 
-import './App.less';
+import './App.scss';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();

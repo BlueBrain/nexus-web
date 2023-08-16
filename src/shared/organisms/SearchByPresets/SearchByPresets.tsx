@@ -18,7 +18,7 @@ import {
   SearchLayout,
 } from '../../../subapps/search/hooks/useGlobalSearch';
 import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {};
 type TLayout = {

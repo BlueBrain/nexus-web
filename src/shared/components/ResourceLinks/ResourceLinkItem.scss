@@ -1,0 +1,22 @@
+
+
+.link-item {
+  .label {
+    font-weight: bold;
+    color: black;
+  }
+
+  .description {
+    margin-bottom: 0;
+    color: red;
+  }
+
+  .types {
+    margin-top: 5px;
+  }
+}
+
+.resource-links {
+  height: 95%;
+  overflow: scroll;
+}

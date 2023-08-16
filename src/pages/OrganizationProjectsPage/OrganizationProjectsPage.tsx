@@ -39,8 +39,8 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
 import formatNumber from '../../utils/formatNumber';
-
-import '../../shared/styles/route-layout.less';
+import hippocampus from '../../shared/images/hippocampus.png'
+import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = true;
@@ -333,10 +333,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
             )
           }
           alt="hippocampus"
-          bg={
-            layoutSettings.projectsImg ||
-            require('../../shared/images/hippocampus.png')
-          }
+          bg={ layoutSettings.projectsImg || hippocampus }
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}

@@ -6,11 +6,11 @@ import {
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import * as moment from 'moment';
+import  moment from 'moment';
 import * as React from 'react';
 import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
-import './FileInfo.less';
+import './FileInfo.scss';
 
 type FileInfoProps = {
   text: string;

@@ -30,7 +30,7 @@ import DateFilterOptions from '../containers/DateFilterOptions';
 import NumberFilterOptions from '../containers/NumberFilterOptions';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
-import '../containers/SearchContainer.less';
+import '../containers/SearchContainer.scss';
 
 export type SearchConfigField =
   | {

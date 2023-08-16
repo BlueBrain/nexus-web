@@ -31,8 +31,9 @@ import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver'
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import formatNumber from '../../utils/formatNumber';
-import '../../shared/styles/route-layout.less';
-import { isNil } from 'lodash';
+import organizationImg from '../../shared/images/sscx-by-layers-v3.png';
+
+import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;

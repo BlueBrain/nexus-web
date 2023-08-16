@@ -13,9 +13,9 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
-import './FilterOptions.less';
+import './FilterOptions.scss';
 import { createKeyWord } from './FilterOptions';
-import './NumberFilterOptionsContainer.less';
+import './NumberFilterOptionsContainer.scss';
 import { Line, Column } from '@ant-design/charts';
 
 type ConfigField =
@@ -288,7 +288,7 @@ const NumberFilterOptions: React.FC<{
               size: 5,
               shape: 'diamon',
             }}
-            color="#0083cb" // @fusion-primary-color
+            color="#0083cb" // #0083cb
           />
         )}
         {graphValue === 'bar' && (
@@ -297,7 +297,7 @@ const NumberFilterOptions: React.FC<{
             data={histoValues}
             yField="doc_count"
             xField="key"
-            color="#0083cb" // @fusion-primary-color
+            color="#0083cb" // #0083cb
           />
         )}
       </Form.Item>

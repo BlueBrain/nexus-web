@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Spin } from 'antd';
 import ListItem from '../../../shared/components/List/Item';
 
-import './Studio.less';
+import './Studio.scss';
 
 type StudioItemProps = {
   id: string;
