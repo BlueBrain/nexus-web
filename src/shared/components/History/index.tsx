@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Timeline, Card } from 'antd';
 import { StarOutlined } from '@ant-design/icons';
-import  moment from 'moment';
+import moment from 'moment';
 
 import './History.scss';
 import FriendlyTimeAgo from '../FriendlyDate';

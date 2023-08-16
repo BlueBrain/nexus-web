@@ -254,7 +254,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
           )
         }
         alt="hippocampus"
-        bg={ layoutSettings.projectsImg || defaultProjectsImg }
+        bg={layoutSettings.projectsImg || defaultProjectsImg}
         createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}

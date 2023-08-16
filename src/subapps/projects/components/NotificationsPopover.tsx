@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Tooltip } from 'antd';
-import  moment from 'moment';
+import moment from 'moment';
 
 import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 import TypesIconList from '../../../shared/components/Types/TypesIcon';

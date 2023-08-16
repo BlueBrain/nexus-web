@@ -12,7 +12,7 @@ import {
   Modal,
 } from 'antd';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import  moment from 'moment';
+import moment from 'moment';
 
 import { Status, StepResource, WorkflowStepMetadata } from '../../types';
 import { isEmptyInput } from '../../utils';

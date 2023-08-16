@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, forwardRef, useReducer } from 'react';
-import  moment from 'moment';
+import moment from 'moment';
 import './styles.scss';
 
 type TDInput = {
