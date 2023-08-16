@@ -4,7 +4,7 @@ import { ACL } from '@bbp/nexus-sdk';
 
 import ACLCard from './ACLCard';
 
-import './ACLs.less';
+import './ACLs.scss';
 
 interface ACLsFormProps {
   acls: ACL[];

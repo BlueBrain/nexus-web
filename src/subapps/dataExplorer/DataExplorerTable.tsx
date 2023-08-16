@@ -33,7 +33,7 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
-import './styles.less';
+import './styles.scss';
 
 interface TDataExplorerTable {
   isLoading: boolean;

@@ -6,11 +6,12 @@ import OrganizationListPage from '../../pages/OrganizationsListPage/Organization
 import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
 import ProjectView from '../../pages/ProjectPage/ProjectPage';
 import { SubApp } from '..';
+import icon from '../../shared/images/dbIcon.svg';
+
 
 const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';
-const icon = require('../../shared/images/dbIcon.svg');
 const requireLogin = true;
 const description = 'Manage, edit, and query your Nexus Delta knowledge graph';
 
@@ -23,10 +24,10 @@ const adminSubappProps = {
   description,
 };
 const organisationSubappProps = {
+  icon,
   subAppType: 'internal',
   title: 'Organizations',
   namespace: 'orgs',
-  icon: require('../../shared/images/dbIcon.svg'),
   requireLogin: true,
   description:
     'Browse through different  group of datasets gather by those providing datas',
@@ -81,10 +82,10 @@ export const OrganizationsSubappProviderHOC = (
 };
 export const Organizations: SubApp = () => {
   return {
+    icon,
     subAppType: 'internal',
     title: 'Organizations',
     namespace: 'orgs',
-    icon: require('../../shared/images/dbIcon.svg'),
     requireLogin: true,
     description:
       'Browse through different  group of datasets gather by those providing datas',

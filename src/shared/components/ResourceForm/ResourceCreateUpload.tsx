@@ -1,7 +1,7 @@
 import * as React from 'react';
 import FileUploadContainer from '../../containers/FileUploadContainer';
 import ResourceForm from './ResourceForm';
-import './ResourceCreateUpload.less';
+import './ResourceCreateUpload.scss';
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
 import { notification } from 'antd';
 import { camelCaseToTitleCase } from '../../utils';
@@ -46,12 +46,7 @@ const ResourceCreateUpload: React.FunctionComponent<{
   return (
     <div className="add-resource">
       <div className="add-resource__editor">
-        <ResourceForm
-          onSubmit={(r: any) => saveAndCreate(r)}
-          busy={formBusy}
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-        />
+        <ResourceForm onSubmit={(r: any) => saveAndCreate(r)} busy={formBusy} />
       </div>
       <div className="add-resource__upload">
         <FileUploadContainer orgLabel={orgLabel} projectLabel={projectLabel} />

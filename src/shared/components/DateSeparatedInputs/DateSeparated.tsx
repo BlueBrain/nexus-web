@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer, useRef } from 'react';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { clsx } from 'clsx';
 import useDateTimeInputs from './useDateTimeInputs';
 import { DATE_PATTERN } from '../../canvas/MyData/types';
-import './styles.less';
+import './styles.scss';
 
 type TDate = {
   day: string;

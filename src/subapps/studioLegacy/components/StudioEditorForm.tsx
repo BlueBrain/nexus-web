@@ -7,7 +7,7 @@ import {
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import './StudioEditorForm.less';
+import './StudioEditorForm.scss';
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import usePlugins from '../../../shared/hooks/usePlugins';

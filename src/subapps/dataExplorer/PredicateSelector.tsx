@@ -16,7 +16,7 @@ import {
   sortColumns,
   useGraphAnalyticsPath,
 } from './DataExplorerUtils';
-import './styles.less';
+import './styles.scss';
 
 interface Props {
   columns: TColumn[];

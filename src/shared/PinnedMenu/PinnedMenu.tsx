@@ -8,7 +8,7 @@ import {
   HomeOutlined,
 } from '@ant-design/icons';
 import { RootState } from '../../shared/store/reducers';
-import './styles.less';
+import './styles.scss';
 
 type Props = {};
 type TMenuItem = {
@@ -36,7 +36,7 @@ const Menu = new Map<string, TMenuItem>([
       id: 'pinned-menu/search',
       title: 'Search',
       url: '/search',
-      bg: '#003A8C',
+      bg: '#003a8c',
       icon: <SearchOutlined style={{ fontSize: ICON_SIZE, color: 'white' }} />,
     },
   ],

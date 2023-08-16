@@ -1,0 +1,38 @@
+
+
+.legend {
+  position: absolute;
+  bottom: 0;
+  padding: 1em;
+  margin: 1em;
+}
+
+.legend .node {
+  display: inline-block;
+  height: 1em;
+  width: 1em;
+  border-radius: 50%;
+  margin-right: 5px;
+  background-color: white;
+  &.-external {
+    border: 2px solid #0070c9;
+  }
+
+  &.-internal {
+    background-color: #ff6666;
+  }
+
+  &.-blank-node {
+    width: 10px;
+    height: 10px;
+    border: 2px solid #faad14;
+  }
+
+  &.-origin {
+    border-radius: 0;
+    border: 2px solid #ff6666;
+    height: 14px;
+    width: 14px;
+    transform: rotateY(0deg) rotate(45deg);
+  }
+}

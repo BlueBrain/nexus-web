@@ -70,7 +70,7 @@ import {
   pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
 import { getNormalizedFileExtension } from '../../../utils/contentTypes';
-import './styles.less';
+import './styles.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 

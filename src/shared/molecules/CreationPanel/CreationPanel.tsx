@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { camelCase } from 'lodash';
 import { RootState } from '../../store/reducers';
 import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
-import './styles.less';
+import './styles.scss';
 
 type TCreationButton = {
   title: string;

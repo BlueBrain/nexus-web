@@ -8,7 +8,7 @@ import NewProjectContainer from '../containers/NewProjectContainer';
 import { RootState } from '../../../shared/store/reducers';
 import { userOrgLabel } from '../utils';
 
-import './ProjectsListView.less';
+import './ProjectsListView.scss';
 
 const MAX_PROJECTS = 300;
 

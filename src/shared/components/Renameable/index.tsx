@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Input, Tooltip } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
-import './Renameable.less';
+import './Renameable.scss';
 
 interface RenameableItemProps {
   defaultValue: string;

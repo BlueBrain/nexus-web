@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { normalizeString } from '../../utils/stringUtils';
 import isValidUrl from '../../utils/validUrl';
 import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.less';
+import './styles.scss';
 import Select, { DefaultOptionType } from 'antd/lib/select';
 
 interface Props {

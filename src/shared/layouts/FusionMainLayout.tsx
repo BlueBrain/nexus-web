@@ -9,7 +9,7 @@ import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
 import getUserManager from '../../client/userManager';
 import useLocalStorage from '../hooks/useLocalStorage';
-import './FusionMainLayout.less';
+import './FusionMainLayout.scss';
 
 const { Content } = Layout;
 

@@ -1,0 +1,7 @@
+
+.renameable-item {
+  cursor: pointer;
+  > .-editing {
+    cursor: text;
+  }
+}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import './ActionButton.less';
+import './ActionButton.scss';
 
 const addIcon = require('../../../shared/images/addIcon.svg');
 

@@ -30,7 +30,9 @@ import timeago from '../../utils/timeago';
 import formatNumber from '../../utils/formatNumber';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
-import '../../shared/styles/route-layout.less';
+import defaultProjectsImg from '../../shared/images/hippocampus.png';
+
+import '../../shared/styles/route-layout.scss';
 
 type TProjectOptions = {
   from: number;
@@ -252,10 +254,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
           )
         }
         alt="hippocampus"
-        bg={
-          layoutSettings.projectsImg ||
-          require('../../shared/images/hippocampus.png')
-        }
+        bg={ layoutSettings.projectsImg || defaultProjectsImg }
         createLabel="Create Project"
         onCreateClick={() => updateCreateModelVisibility(true)}
         permissions={['projects/create']}

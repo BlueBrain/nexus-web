@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Identity } from '@bbp/nexus-sdk';
 
-import './ACLs.less';
+import './ACLs.scss';
 
 const getTitle = (identity: Identity): React.ReactElement<any> => {
   switch (identity['@type']) {

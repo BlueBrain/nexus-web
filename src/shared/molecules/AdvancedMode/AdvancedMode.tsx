@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useLocation, useHistory } from 'react-router';
 import { match as pmatch } from 'ts-pattern';
 import { Switch } from 'antd';
-import './styles.less';
+import './styles.scss';
 
 export const advancedModeBlackList = ['/studios', '/studio'];
 type TAMLocationState = {

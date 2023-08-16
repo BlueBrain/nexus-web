@@ -17,10 +17,10 @@ import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
 import { triggerCopy } from '../../utils/copy';
 
-const downloadImg = require('../../images/DownloadingLoop.svg');
-const infoImg = require('../../images/InfoCircleLine.svg');
-const copyImg = require('../../images/copyColor.svg');
-const copyConfirmedImage = require('../../images/confirmAnimated.svg');
+import downloadImg from '../../images/DownloadingLoop.svg';
+import infoImg from '../../images/InfoCircleLine.svg';
+import copyImg from '../../images/copyColor.svg';
+import copyConfirmedImage from '../../images/confirmAnimated.svg';
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,

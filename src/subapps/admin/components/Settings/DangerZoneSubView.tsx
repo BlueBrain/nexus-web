@@ -11,7 +11,7 @@ import DangerZoneAction, {
   TDangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.less';
+import './styles.scss';
 
 type TDangerZoneItem = {
   key: React.Key;

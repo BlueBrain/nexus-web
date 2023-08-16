@@ -20,7 +20,9 @@ import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AdvancedModeToggle } from '../../molecules';
 import useNotification from '../../hooks/useNotification';
-import './Header.less';
+import fusionLogo from '../../images/fusion_logo.png';
+
+import './Header.scss';
 
 export interface HeaderProps {
   name?: string;
@@ -150,7 +152,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <Link to="/">
           <div className="logo-container__logo">
             <img
-              src={logoImg || require('../../images/fusion_logo.png')}
+              src={logoImg || fusionLogo}
               alt="Logo"
             />
           </div>

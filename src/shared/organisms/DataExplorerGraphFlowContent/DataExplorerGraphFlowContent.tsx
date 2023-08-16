@@ -4,7 +4,7 @@ import { RootState } from '../../store/reducers';
 import ResourceViewContainer from '../../containers/ResourceViewContainer';
 import ResourceEditorContainer from '../../containers/ResourceEditor';
 import { DEFGContentFullscreenHeader } from '../../molecules/DataExplorerGraphFlowMolecules';
-import './styles.less';
+import './styles.scss';
 
 const DataExplorerContentPage = ({}) => {
   const { current, fullscreen } = useSelector(

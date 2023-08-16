@@ -1,0 +1,34 @@
+@import '../../../shared';
+
+.facet-group {
+  h4 {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .item {
+    cursor: pointer;
+    margin-bottom: 0.5em;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .label {
+      flex-grow: 1;
+      margin: 0 0.5em;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .chevron {
+    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    &.hidden {
+      transform: rotate(-90deg);
+    }
+    &.empty {
+      color: @disabled-color;
+    }
+  }
+}

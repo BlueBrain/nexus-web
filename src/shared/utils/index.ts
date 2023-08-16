@@ -7,7 +7,7 @@ import {
   isArray,
   last,
 } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import isValidUrl from '../../utils/validUrl';
 
 /**

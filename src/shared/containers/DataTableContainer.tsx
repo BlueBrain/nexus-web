@@ -22,7 +22,7 @@ import {
   SmallDashOutlined,
 } from '@ant-design/icons';
 
-import '../styles/data-table.less';
+import '../styles/data-table.scss';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';

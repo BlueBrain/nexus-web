@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Menu, Dropdown } from 'antd';
 
-import './AddComponentButton.less';
+import './AddComponentButton.scss';
 
 const addIconClear = require('../../../shared/images/addIconClear.svg');
 

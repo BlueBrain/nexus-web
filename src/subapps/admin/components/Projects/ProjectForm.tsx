@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
-import './ProjectForm.less';
+import './ProjectForm.scss';
 
 export interface PrefixMappingGroupInputState {
   prefix: string;

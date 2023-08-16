@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, Button, Input, Select, Typography } from 'antd';
-import './NewReportForm.less';
+import './NewReportForm.scss';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
 import { without } from 'lodash';

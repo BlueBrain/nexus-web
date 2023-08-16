@@ -29,7 +29,9 @@ import {
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
 import timeago from '../../utils/timeago';
-import '../../shared/styles/route-layout.less';
+import  defaultStudiosImg from '../../shared/images/neocortex.png';
+
+import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';
@@ -72,7 +74,7 @@ type TFetchStudiosListProps = TStudiosOptions & {
 };
 type TNewPaginationList = PaginatedList & { _next: string };
 export const sortBackgroundColor = (sort: TSort, value: TSort) =>
-  sort === value ? '#003A8C' : '#BFBFBF';
+  sort === value ? '#003a8c' : '#BFBFBF';
 const fetchStudios = async ({
   nexus,
   query,
@@ -291,10 +293,7 @@ const FusionStudiosPage: React.FC = () => {
             )
           }
           alt="hippocampus"
-          bg={
-            layoutSettings.studiosImg ||
-            require('../../shared/images/neocortex.png')
-          }
+          bg={ layoutSettings.studiosImg || defaultStudiosImg }
           path={
             orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
           }

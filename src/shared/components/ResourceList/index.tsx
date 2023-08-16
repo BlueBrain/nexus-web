@@ -33,7 +33,7 @@ import useMeasure from '../../hooks/useMeasure';
 import { DEFAULT_LIST } from '../../../shared/containers/ResourceListBoardContainer';
 import Copy from '../Copy';
 
-import './ResourceList.less';
+import './ResourceList.scss';
 
 const { Search } = Input;
 

@@ -19,7 +19,7 @@ import {
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
-import './WorkflowStepsContainer.less';
+import './WorkflowStepsContainer.scss';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;

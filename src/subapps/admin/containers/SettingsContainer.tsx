@@ -7,7 +7,7 @@ import StoragesSVComponent from '../components/Settings/StoragesSubView';
 import ResolversSVComponent from '../components/Settings/ResolversSubView';
 import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
-import './SettingsContainer.less';
+import './SettingsContainer.scss';
 
 type Props = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;

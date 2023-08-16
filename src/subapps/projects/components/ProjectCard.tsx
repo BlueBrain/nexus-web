@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import StatusIcon from './StatusIcon';
 import { Status } from '../types';
 
-import './ProjectCard.less';
+import './ProjectCard.scss';
 
 const arrowIcon = require('../../../shared/images/arrow.svg');
 const editIcon = require('../../../shared/images/pencil.svg');

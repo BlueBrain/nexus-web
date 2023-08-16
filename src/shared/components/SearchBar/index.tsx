@@ -4,7 +4,7 @@ import { AutoComplete, Input } from 'antd';
 import Hit, { globalSearchOption } from './Hit';
 import { focusOnSlash } from '../../utils/keyboardShortcuts';
 
-import './SearchBar.less';
+import './SearchBar.scss';
 import {
   LastVisited,
   ProjectSearchHit,

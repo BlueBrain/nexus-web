@@ -11,8 +11,8 @@ import { without, intersection, uniq, flatten, map } from 'lodash';
 import * as React from 'react';
 import { getUsername } from '../../../shared/utils';
 import FriendlyTimeAgo from '../FriendlyDate';
-import './AnalysisPlugin.less';
-import * as moment from 'moment';
+import './AnalysisPlugin.scss';
+import  moment from 'moment';
 import CategoryWidget from './CategoryWidget';
 import TypeWidget from './TypeWidget';
 import TypeEditWidget from './TypeEditWidget';
@@ -306,7 +306,7 @@ const AnalysisPlugin = ({
                       currentlyBeingEditedAnalysisReportId ===
                         analysisReport.id && (
                         <>
-                          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>
+                          <h4 style={{ marginTop: '10px', color: '#003a8c' }}>
                             Name
                           </h4>
                           <Input
@@ -493,7 +493,7 @@ const AnalysisPlugin = ({
                       currentlyBeingEditedAnalysisReportId ===
                         analysisReport.id && (
                         <>
-                          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>
+                          <h4 style={{ marginTop: '10px', color: '#003a8c' }}>
                             Description
                           </h4>
                           <Input.TextArea
@@ -541,7 +541,7 @@ const AnalysisPlugin = ({
                             fontWeight: 500,
                             fontSize: '14px',
                             lineHeight: '136%',
-                            color: '#003A8C',
+                            color: '#003a8c',
                           }}
                         >
                           Tools

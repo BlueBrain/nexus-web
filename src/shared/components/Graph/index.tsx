@@ -6,7 +6,7 @@ import style from './style';
 
 import GraphLegend from './GraphLegend';
 
-import './GraphComponent.less';
+import './GraphComponent.scss';
 import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
 export type ElementNodeData = {

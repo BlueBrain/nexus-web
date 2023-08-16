@@ -5,7 +5,7 @@ import { SparqlViewQueryResponse } from '@bbp/nexus-sdk';
 import SparqlQueryResults, { NexusSparqlError } from './SparqlQueryResults';
 import SparqlQueryInput from './SparqlQueryInput';
 
-import './view-form.less';
+import './view-form.scss';
 
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;

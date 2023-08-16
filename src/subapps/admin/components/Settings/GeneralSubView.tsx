@@ -7,7 +7,7 @@ import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import useNotification from '../../../../shared/hooks/useNotification';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {
   project: {

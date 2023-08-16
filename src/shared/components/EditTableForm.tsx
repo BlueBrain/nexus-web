@@ -34,7 +34,7 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
-import './EditTableForm.less';
+import './EditTableForm.scss';
 import { isNil, isObject } from 'lodash';
 import { ErrorComponent } from './ErrorComponent';
 

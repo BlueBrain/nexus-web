@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import './Item.less';
+import './Item.scss';
 
 const Item: React.FunctionComponent<{
   onClick?: () => void;

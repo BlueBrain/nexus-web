@@ -3,11 +3,11 @@ import { SubApp } from '..';
 import StudioView from './views/StudioView';
 import FusionStudiosPage from '../../pages/StudiosPage/StudiosPage';
 // import StudioAdminView from './views/StudioAdminView';
+import icon from '../../shared/images/gridIcon.svg';
 
 const subAppType = 'internal';
 const title = 'Studios';
 const namespace = 'studios';
-const icon = require('../../shared/images/gridIcon.svg');
 const requireLogin = false;
 const description =
   'Visualize query results from Nexus Delta in customizable views';

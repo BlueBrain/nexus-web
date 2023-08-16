@@ -1,4 +1,4 @@
-@import '../../../shared/lib.less';
+@import '../../../shared';
 
 .project-panel {
   display: flex;
@@ -7,7 +7,7 @@
   height: 52px;
   padding: 0 1.5em;
   background-color: #fff;
-  box-shadow: @box-shadow-base;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease-out;
 
   // sticky project panel
@@ -47,13 +47,13 @@
 
     &:hover {
       opacity: 1;
-      color: @text-color;
-      border-color: @text-color;
+      color: #333333;
+      border-color: #333333;
     }
 
     &:focus {
-      color: @text-color;
-      border-color: @text-color;
+      color: #333333;
+      border-color: #333333;
       opacity: 0.9;
     }
   }

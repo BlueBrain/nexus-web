@@ -1,4 +1,4 @@
-@import '../../../shared/lib.less';
+@import '../../../shared';
 
 .workflow-step-view {
   height: 100%;
@@ -14,7 +14,7 @@
     height: 52px;
     align-items: center;
     background-color: #fff;
-    box-shadow: @box-shadow-base;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     padding: 0 1.5em 0 1em;
     transition: all 0.2s ease-out;
 
@@ -32,13 +32,13 @@
 
     &:hover {
       opacity: 1;
-      color: @text-color;
-      border-color: @text-color;
+      color: #333333;
+      border-color: #333333;
     }
 
     &:focus {
-      color: @text-color;
-      border-color: @text-color;
+      color: #333333;
+      border-color: #333333;
       opacity: 0.9;
     }
   }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { PlusOutlined } from '@ant-design/icons';
 import CreateOrganization from '../../modals/CreateOrganization/CreateOrganization';
 import CreateProject from '../../modals/CreateProject/CreateProject';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {
   id: string;

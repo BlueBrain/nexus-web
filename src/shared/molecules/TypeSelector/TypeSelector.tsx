@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState, ReactElement } from 'react';
 import { NexusClient } from '@bbp/nexus-sdk';
+import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Checkbox,
@@ -21,10 +22,10 @@ import {
   TTypesAggregatedBucket,
 } from './types';
 import isValidUrl from '../../../utils/validUrl';
-import './style.less';
-import { useSelector } from 'react-redux';
+
 import { RootState } from 'shared/store/reducers';
 import { TIssuer } from 'shared/canvas/MyData/types';
+import './style.scss';
 
 const typesOperatorOptions = [
   { label: 'AND', value: 'AND' },

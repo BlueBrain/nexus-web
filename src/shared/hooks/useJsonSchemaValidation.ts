@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
+import AJV from 'ajv-errors';
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
-require('ajv-errors')(ajv, { singleError: true });
+AJV(ajv, { singleError: true });
 
 export default function useJsonSchemaValidation(schema: any, deps?: any[]) {
   const validate = React.useMemo(() => ajv.compile(schema), deps);

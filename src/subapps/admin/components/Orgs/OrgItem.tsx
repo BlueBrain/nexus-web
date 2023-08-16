@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tag } from 'antd';
 import { OrgResponseCommon } from '@bbp/nexus-sdk';
 
-import './OrgItem.less';
+import './OrgItem.scss';
 
 export const OrgItem: React.FunctionComponent<OrgResponseCommon> = props => {
   return (

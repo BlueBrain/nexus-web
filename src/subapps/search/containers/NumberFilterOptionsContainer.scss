@@ -1,0 +1,35 @@
+;
+
+.ant-tooltip-inner {
+  .ant-input-number {
+    padding: 0px;
+    margin: 0 !important;
+    width: 65px;
+    background-color: #fff;
+  }
+}
+.filter-slider.ant-slider {
+  margin: 10px 15px 10px 10px !important;
+
+  .ant-slider-track {
+    background-color: #0083cb;
+    &:hover {
+      background-color: #7cb4fa;
+    }
+  }
+  .ant-slider-handle {
+    border-color: #0083cb;
+    &:hover {
+      border-color: #7cb4fa;
+    }
+  }
+
+  &:hover {
+    .ant-slider-track {
+      background-color: #7cb4fa;
+    }
+    .ant-slider-handle:not(.ant-tooltip-open) {
+      border-color: #7cb4fa;
+    }
+  }
+}

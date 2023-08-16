@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Collapse, Drawer, Popover, Button } from 'antd';
 import { labelOf } from '../../../../shared/utils';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import './ResourceInfoPanel.less';
+import './ResourceInfoPanel.scss';
 
 const ResourceInfoPanel: React.FC<{
   typeStats: any;

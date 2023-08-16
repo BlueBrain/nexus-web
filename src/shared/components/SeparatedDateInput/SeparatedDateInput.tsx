@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useReducer } from 'react';
-import * as moment from 'moment';
-import './styles.less';
+import  moment from 'moment';
+import './styles.scss';
 
 type TDInput = {
   id: string;
