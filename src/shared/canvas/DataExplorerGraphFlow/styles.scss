@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
 @import '../../lib.scss';
+========
+
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
 
 .navigation-stack-item {
   display: flex;
@@ -19,13 +23,21 @@
     padding: 10px 5px;
     height: 100%;
     min-height: 0;
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
     background-color: $fusion-main-bg;
+========
+    background-color: #f5f5f5;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
     position: relative;
     user-select: none;
     cursor: pointer;
     &:hover {
       background-color: white;
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
       color: $fusion-primary-color;
+========
+      color: #0083cb;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
       box-shadow: 0 2px 12px rgba(#333, 0.12);
     }
 
@@ -98,13 +110,21 @@
 
   &.right {
     .navigation-stack-item__wrapper {
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
       border-left: 1px solid $fusion-neutral-6;
+========
+      border-left: 1px solid #bfbfbf;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
     }
   }
 
   &.left {
     .navigation-stack-item__wrapper {
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
       border-right: 1px solid $fusion-neutral-6;
+========
+      border-right: 1px solid #bfbfbf;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
     }
   }
 
@@ -124,7 +144,11 @@
     appearance: none;
     -webkit-appearance: none;
     padding: 8px 8px;
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
     background-color: $fusion-blue-8;
+========
+    background-color: #003a8c;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
     display: flex;
     align-items: center;
     justify-content: center;
@@ -191,7 +215,11 @@
   span {
     font-weight: 700;
     font-size: 16px;
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
     color: $fusion-daybreak-8;
+========
+    color: #0050b3;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
   }
 
   &:disabled {
@@ -213,7 +241,11 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 140%;
+<<<<<<<< HEAD:src/shared/canvas/DataExplorerGraphFlow/styles.scss
     color: $fusion-menu-color;
+========
+    color: #050a56;
+>>>>>>>> 358b0a08 (clean files for vite):src/shared/molecules/DataExplorerGraphFlowMolecules/styles.scss
   }
 }
 

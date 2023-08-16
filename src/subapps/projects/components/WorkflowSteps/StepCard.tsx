@@ -14,6 +14,9 @@ import editIcon from '../../../../shared/images/pencil.svg';
 
 import './StepCard.scss';
 
+const settingIcon = require('../../../../shared/images/settingIcon.svg');
+const editIcon = require('../../../../shared/images/pencil.svg');
+
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
 const BOX_OFFSET_Y = 54; // half of the default step card height (108px)

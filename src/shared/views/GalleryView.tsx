@@ -6,6 +6,7 @@ import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
+import './GalleryView.scss';
 
 const getUrlParameter = (name: string) => {
   const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');

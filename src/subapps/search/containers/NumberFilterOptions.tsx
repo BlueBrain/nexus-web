@@ -14,9 +14,10 @@ import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
+import './FilterOptions.scss';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.scss';
-import './FilterOptions.scss';
+import { Line, Column } from '@ant-design/charts';
 
 type ConfigField =
   | {

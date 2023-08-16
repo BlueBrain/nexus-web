@@ -27,7 +27,9 @@ import SettingsContainer from '../../subapps/admin/containers/SettingsContainer'
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 import './styles.scss';
 
-const ProjectView: React.FC = () => {
+import './styles.scss';
+
+const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();

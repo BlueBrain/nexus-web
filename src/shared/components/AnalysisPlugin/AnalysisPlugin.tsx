@@ -308,6 +308,9 @@ const AnalysisPlugin = ({
                               <>
                                 <h4
                                   style={{
+                                    backgroundColor: '#F5F5F5',
+                                    borderColor: '#F5F5F5',
+                                    outline: 'none',
                                     marginTop: '10px',
                                     color: '#003a8c',
                                   }}
