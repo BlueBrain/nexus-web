@@ -255,11 +255,8 @@ const OrganizationListView: React.FC<{}> = () => {
               'No organizations found'
             )
           }
-          alt="Organization image"
-          bg={
-            layoutSettings.organizationImg ||
-            require('../../shared/images/sscx-by-layers-v3.png')
-          }
+          alt="sscx"
+          bg={layoutSettings.organizationImg || organizationImg}
           createLabel="Create Organization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}

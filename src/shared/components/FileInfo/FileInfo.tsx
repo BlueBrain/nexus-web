@@ -6,7 +6,7 @@ import {
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
-import  moment from 'moment';
+import moment from 'moment';
 import * as React from 'react';
 import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
