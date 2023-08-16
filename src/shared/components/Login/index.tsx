@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Card, Dropdown, Menu, Button } from 'antd';
 import { LoginOutlined, DownOutlined } from '@ant-design/icons';
 
-import './Login.less';
+import './Login.scss';
 
 const logo = require('../../images/logo.svg');
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { Input, Table, Button, Tooltip, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { omit, difference } from 'lodash';
 import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
 import { download } from '../../utils/download';
-import './../../styles/result-table.less';
+import './../../styles/result-table.scss';
 import useNotification from '../../hooks/useNotification';
 import FriendlyTimeAgo from '../FriendlyDate';
 

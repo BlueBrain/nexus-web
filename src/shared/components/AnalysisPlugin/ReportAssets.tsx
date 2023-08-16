@@ -2,7 +2,7 @@ import { Button, Checkbox } from 'antd';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import FriendlyTimeAgo from '../FriendlyDate';
 import { getUsername } from '../../../shared/utils';
-import * as moment from 'moment';
+import  moment from 'moment';
 
 import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
 

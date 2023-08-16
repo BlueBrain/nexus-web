@@ -1,0 +1,15 @@
+@import '../../../shared';
+
+.studio-workspace-list {
+  .workspace-title {
+    color: #0070c9;
+  }
+
+  .list-item:last-child > p {
+    margin-bottom: 0;
+  }
+
+  .no-workspaces-message {
+    margin-bottom: 0;
+  }
+}

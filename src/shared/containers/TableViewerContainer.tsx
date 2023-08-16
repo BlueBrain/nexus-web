@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as csvParser from 'csv-string';
+// import * as csvParser from 'csv-string';
 
 import TableViewer from '../components/TableViewer';
 import useNotification from '../hooks/useNotification';
@@ -34,9 +34,9 @@ const TableViewerContainer: React.FC<{
       }
     )
       .then(response => {
-        const tableData = csvParser.parse(response as string);
+        // const tableData = csvParser.parse(response as string);
 
-        setTableData(tableData);
+        // setTableData(tableData);
       })
       .catch(() => {
         notification.error({

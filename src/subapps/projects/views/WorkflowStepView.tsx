@@ -20,7 +20,7 @@ import { StepResource, WorkflowStepMetadata } from '../types';
 import NewTableContainer from '../containers/NewTableContainer';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 
-import './WorkflowStepView.less';
+import './WorkflowStepView.scss';
 import { makeInputTable, makeActivityTable } from '../utils/tableUtils';
 import { labelOf } from '../../../shared/utils';
 import useNotification, {

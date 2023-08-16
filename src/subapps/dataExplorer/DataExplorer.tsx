@@ -23,7 +23,7 @@ import { DatasetCount } from './DatasetCount';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
-import './styles.less';
+import './styles.scss';
 
 const $update = <T,>(
   array: T[],

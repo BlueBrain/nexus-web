@@ -1,0 +1,86 @@
+
+
+.types-selector-select {
+  width: 100%;
+  max-width: 300px;
+
+  &::placeholder {
+    color: #002766 !important;
+  }
+
+  .ant-select-selector {
+    background-color: var(--types-background-color) !important;
+  }
+}
+
+.types-selector-wrapper {
+  width: 100%;
+}
+
+.types-selector-popup {
+  background-color: white !important;
+  padding: 0 !important;
+}
+
+.type-operator-selector {
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.types-selector-search-container {
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  .count {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 125%;
+    color: #8c8c8c;
+    align-self: flex-end;
+  }
+}
+
+.types-selector-search-input {
+  background-color: white !important;
+  border-bottom: 1px solid #d9d9d9 !important;
+
+  .ant-input,
+  .ant-btn {
+    border: none !important;
+    background-color: white !important;
+  }
+
+  .ant-input:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .ant-input-affix-wrapper {
+    border: none;
+    background-color: transparent;
+
+    &-focused {
+      box-shadow: none;
+      outline: none;
+    }
+  }
+}
+
+.no-types-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  span {
+    user-select: none;
+    font-size: 12px;
+    color: #8c8c8c;
+  }
+}

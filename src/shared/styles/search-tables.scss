@@ -1,0 +1,230 @@
+
+
+.height-test-wrapper {
+  height: calc(100vh - 82px);
+}
+
+// .thead-borders() {
+//   border-top: 1px rgba(178, 178, 178, 1) outset;
+//   border-right: 1px rgba(178, 178, 178, 1) inset;
+//   border-bottom: 2px rgba(178, 178, 178, 1) outset;
+
+//   &:nth-child(1) {
+//     border-left: 1px rgba(178, 178, 178, 1) outset;
+//   }
+// }
+
+// .td-borders() {
+//   border-right: 1px rgba(178, 178, 178, 1) solid;
+//   border-bottom: 1px rgba(178, 178, 178, 1) solid;
+
+//   &:nth-child(1) {
+//     border-left: 1px rgba(178, 178, 178, 1) outset;
+//   }
+// }
+
+html {
+  .ant-tooltip {
+    .ant-tooltip-content {
+      border-radius: 4px;
+
+      .ant-tooltip-arrow {
+        visibility: hidden;
+      }
+
+      .ant-tooltip-inner {
+        font-weight: 200;
+        color: rgba(0, 0, 0, 0.65);
+        background: rgba(252, 253, 253, 1);
+        padding: 10px 15px;
+        box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+          rgba(17, 17, 26, 0.1) 0px 8px 24px,
+          rgba(17, 17, 26, 0.1) 0px 16px 56px;
+      }
+    }
+  }
+}
+
+.search-container {
+  padding: 1em;
+  margin-top: 52px;
+}
+.search-tools-menu {
+  width: 100%;
+}
+.result-table {
+  // width: auto;
+  font-weight: 200;
+
+  // margin-right: 10px;
+  .ant-table {
+    line-height: 1.2em;
+
+    thead.ant-table-thead > tr > th {
+      font-weight: 400;
+      background: #f5f5f5 !important;
+      width: 200px;
+      padding: 10px 15px;
+      border: none !important;
+
+      &.ant-table-selection-column {
+        text-align: left !important;
+      }
+
+      // FILTER ICON PLAYGROUND
+      .ant-table-filter-column {
+        display: grid;
+        margin: unset;
+        grid-template-columns: 20px 1fr;
+        grid-auto-flow: dense;
+
+        .ant-table-filter-column-title {
+          grid-column: 2;
+          grid-row: 1;
+          padding: 0;
+
+          .ant-table-column-sorter {
+            position: absolute;
+            right: 20px;
+          }
+        }
+
+        .ant-table-filter-trigger-container {
+          grid-column: 1;
+          grid-row: 1;
+          position: unset;
+          right: unset;
+          display: unset;
+
+          &:hover {
+            background: none;
+          }
+
+          .ant-table-filter-trigger > .anticon {
+            left: 20px;
+          }
+        }
+      }
+    }
+
+    .ant-table-body {
+      table {
+        background: rgba(252, 253, 253, 1);
+
+        .ant-table-thead
+          th.ant-table-column-has-sorters
+          .ant-table-column-sorters {
+          padding: 0;
+        }
+
+        td.ant-table-cell {
+          &.ant-table-selection-column {
+            text-align: left !important;
+          }
+
+          .row-index {
+            display: block;
+            font-size: 12px;
+            font-variant: tabular-nums;
+            line-height: 1;
+          }
+
+          // &:hover {
+          //   background: rgba(244, 244, 244, 1) !important;
+          //   .row-select {
+          //     display: block;
+          //     padding-left: 35%;
+          //   }
+          //   // .row-index {
+          //   //   display: none;
+          //   // }
+          // }
+
+          .row-selection-checkbox {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            column-gap: 6px;
+            // height: 20px;
+          }
+
+          padding: 15px;
+          width: 200px;
+
+          pre {
+            margin: unset;
+          }
+        }
+
+        td.ant-table-cell,
+        td.ant-table-cell > div,
+        td.ant-table-cell > pre {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        // Overriding select background color
+        .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+          background: rgba(252, 253, 253, 1);
+        }
+
+        .ant-checkbox-wrapper:hover .ant-checkbox-inner,
+        .ant-checkbox:hover .ant-checkbox-inner,
+        .ant-checkbox-input:focus + .ant-checkbox-inner {
+          border-color: rgba(51, 51, 51, 0.8);
+        }
+
+        .ant-checkbox-checked::after {
+          border: 1px solid rgba(51, 51, 51, 0.8);
+        }
+
+        .ant-checkbox-checked .ant-checkbox-inner {
+          background: rgba(51, 51, 51, 0.8);
+          border: 1px solid rgba(51, 51, 51, 0.8);
+        }
+
+        .ant-table-tbody > tr.ant-table-row-selected > td {
+          background: rgba(217, 230, 248, 1);
+        }
+      }
+
+      // OVERRIDING THE ICON TAG DISPLAY FOR THIS TABLE ONLY, ACTUAL STLYING FOUND IN Types.scss
+      .types-list {
+        display: inline;
+        list-style: none;
+
+        .types-icon {
+          display: inline;
+        }
+
+        .types-icon:after {
+          content: ', ';
+        }
+
+        .types-icon:last-child:after {
+          content: '';
+        }
+      }
+    }
+
+    .ant-table-placeholder {
+      background-color: #f5f5f5;
+
+      td {
+        border: none !important;
+      }
+
+      .ant-empty-description {
+        color: #333;
+      }
+    }
+  }
+}
+
+.search-tooltip {
+  position: fixed;
+  top: 0;
+  right: 200px;
+  z-index: 999;
+}

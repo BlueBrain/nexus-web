@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Tooltip } from 'antd';
-import './Categories.less';
+import './Categories.scss';
 import { CategoryWidgetProps } from '../../types/plugins/report';
 import { InfoCircleOutlined } from '@ant-design/icons';
 

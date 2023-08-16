@@ -21,7 +21,7 @@ import {
   TTypesAggregatedBucket,
 } from './types';
 import isValidUrl from '../../../utils/validUrl';
-import './style.less';
+import './style.scss';
 
 const typesOperatorOptions = [
   { label: 'AND', value: 'AND' },

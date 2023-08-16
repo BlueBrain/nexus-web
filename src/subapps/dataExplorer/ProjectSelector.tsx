@@ -2,7 +2,7 @@ import { AutoComplete, Input } from 'antd';
 import React, { useState } from 'react';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.less';
+import './styles.scss';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { normalizeString } from '../../utils/stringUtils';
 

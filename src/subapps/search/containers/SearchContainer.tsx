@@ -31,7 +31,7 @@ import {
   DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
-import './SearchContainer.less';
+import './SearchContainer.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,

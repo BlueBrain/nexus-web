@@ -13,7 +13,7 @@ import {
   sortColumns,
 } from './DataExplorerUtils';
 import { TColumn } from './ColumnsSelector';
-import './styles.less';
+import './styles.scss';
 
 interface Props {
   columns: TColumn[];

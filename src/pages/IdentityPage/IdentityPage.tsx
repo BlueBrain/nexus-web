@@ -9,8 +9,11 @@ import { RootState } from '../../shared/store/reducers';
 import useClickOutside from '../../shared/hooks/useClickOutside';
 import * as authActions from '../../shared/store/actions/auth';
 import * as configActions from '../../shared/store/actions/config';
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
+import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
 
-import './styles.less';
+import './styles.scss';
 
 const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   <video
@@ -18,13 +21,13 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     muted
     autoPlay
     className="home-authentication-fusion"
-    poster={require('../../shared/images/BrainRegionsNexusPage.jpg')}
+    poster={BrainRegionsNexusPage}
     preload="auto"
     controls={false}
   >
     <source
       type="video/mp4"
-      src={videoUrl || require('../../shared/images/BrainRegionsNexusPage.mp4')}
+      src={videoUrl ||BrainRegionsNexusPageVideo}
     />
   </video>
 );
@@ -64,8 +67,7 @@ const IdentityPage: React.FC<{}> = () => {
     >
       <img
         src={
-          layoutSettings.landingPosterImg ||
-          require('../../shared/images/EPFL_BBP_logo.png')
+          layoutSettings.landingPosterImg || landingPosterImg
         }
         className="home-authentication-epfl"
       />

@@ -12,7 +12,7 @@ import * as Sentry from '@sentry/browser';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.less';
+import './styles.scss';
 
 type TViewType = {
   key: string;

@@ -2,7 +2,7 @@ import React from 'react';
 import { SubAppCardItem } from '../../molecules';
 import { useDispatch } from 'react-redux';
 import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
-import './styles.less';
+import './styles.scss';
 
 type AppDetails = {
   key: React.Key;
