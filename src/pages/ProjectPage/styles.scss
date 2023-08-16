@@ -1,0 +1,28 @@
+
+.project-view {
+  margin-top: 60px;
+  .view-container {
+    max-width: 100%;
+  }
+
+  .tabs-container {
+    .ant-tabs-top > .ant-tabs-nav {
+      margin: 0 !important;
+    }
+
+    .ant-tabs-content-holder {
+      background: #fff;
+      padding: 0 1rem;
+    }
+
+    .ant-tabs-nav {
+      padding: 0 1rem;
+      box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a;
+      z-index: 10;
+
+      .ant-tabs-tab-active .ant-tabs-tab-btn {
+        text-shadow: unset;
+      }
+    }
+  }
+}

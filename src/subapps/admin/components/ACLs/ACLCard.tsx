@@ -4,7 +4,7 @@ import { Identity } from '@bbp/nexus-sdk';
 
 import IdentityBadge from './IdentityBadge';
 
-import './ACLs.less';
+import './ACLs.scss';
 
 type GroupedPermission = {
   name: string;

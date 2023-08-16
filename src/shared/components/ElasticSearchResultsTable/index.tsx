@@ -12,7 +12,7 @@ import {
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
 
-import './../../styles/result-table.less';
+import './../../styles/result-table.scss';
 import { parseESResults, addColumnsForES } from '../../utils/parseESResults';
 import { antTableFilterConfig } from '../../../shared/hooks/useAccessDataForTable';
 import { useSelector } from 'react-redux';

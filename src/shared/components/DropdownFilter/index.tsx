@@ -5,7 +5,7 @@ import { SelectValue } from 'antd/lib/select';
 import { labelOf, getProp } from '../../utils';
 import DropdownItem from './DropdownItem';
 
-import './DropdownFilter.less';
+import './DropdownFilter.scss';
 
 const DropdownFilter: React.FunctionComponent<{
   placeholder?: string;

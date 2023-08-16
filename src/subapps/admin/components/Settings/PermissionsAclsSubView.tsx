@@ -8,7 +8,7 @@ import { Identity, NexusClient } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { match as pmatch } from 'ts-pattern';
 import { useOrganisationsSubappContext } from '../../../../subapps/admin';
-import './styles.less';
+import './styles.scss';
 
 type TError = Error & { cause: any };
 type Props = {};

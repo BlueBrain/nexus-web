@@ -10,7 +10,7 @@ import {
   DEFAULT_RESOURCES,
 } from './defaultResourcePayloads';
 
-import './ResourceForm.less';
+import './ResourceForm.scss';
 
 const AVAILABLE_SCHEMAS: DefaultOptionType[] = [
   {
@@ -83,8 +83,6 @@ export interface ResourceFormProps {
   }): Promise<boolean>;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
-  orgLabel: string;
-  projectLabel: string;
 }
 
 /**
@@ -96,8 +94,6 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   onSubmit,
   onDeprecate = () => {},
   mode = 'create',
-  orgLabel,
-  projectLabel,
 }) => {
   const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
     DEFAULT_RESOURCE
@@ -179,8 +175,8 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
             onSubmit={handleSubmit}
             showExpanded={false}
             showMetadataToggle={false}
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
+            orgLabel=""
+            projectLabel=""
             onFullScreen={() => {}}
             showFullScreen={false}
           />

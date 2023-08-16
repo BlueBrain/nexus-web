@@ -14,7 +14,7 @@ import {
 import { RootState } from '../../store/reducers';
 import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
 import NavigationCollapseButton from './NavigationCollapseButton';
-import './styles.less';
+import './styles.scss';
 
 export type TNavigationStackItem = {
   _self: string;

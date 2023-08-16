@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Progress, Tooltip, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { Statistics } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import FriendlyTimeAgo from '../../../../shared/components/FriendlyDate';

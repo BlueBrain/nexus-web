@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tag } from 'antd';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 
-import './ProjectItem.less';
+import './ProjectItem.scss';
 
 const ProjectItem: React.FunctionComponent<ProjectResponseCommon> = props => {
   return (

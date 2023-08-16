@@ -4,7 +4,7 @@ import { DownOutlined } from '@ant-design/icons';
 
 import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
-import './GraphControlPanel.less';
+import './GraphControlPanel.scss';
 import { downloadCanvasAsImage } from '../../utils/download';
 
 const GraphControlPanel: React.FunctionComponent<{

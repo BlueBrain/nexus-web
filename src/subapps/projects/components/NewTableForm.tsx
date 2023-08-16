@@ -3,7 +3,7 @@ import { Form, Input, Button, Spin } from 'antd';
 
 import { isEmptyInput } from '../utils';
 
-import './NewTableForm.less';
+import './NewTableForm.scss';
 
 const { Item } = Form;
 

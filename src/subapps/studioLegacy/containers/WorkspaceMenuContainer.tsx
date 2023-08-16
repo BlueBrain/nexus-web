@@ -29,7 +29,7 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { ErrorComponent } from '../../../shared/components/ErrorComponent';
-import '../studio.less';
+import '../studio.scss';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 

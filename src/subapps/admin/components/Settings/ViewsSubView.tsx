@@ -9,20 +9,20 @@ import { NexusClient, View } from '@bbp/nexus-sdk';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
+import {
+  MinusCircleTwoTone,
+  PlusCircleTwoTone,
+} from '@ant-design/icons';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.less';
+
 import {
   IndexingErrorResults,
   ViewIndexingErrors,
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
-import {
-  MinusCircleTwoTone,
-  PlusCircleTwoTone,
-  WarningOutlined,
-} from '@ant-design/icons';
+import './styles.scss';
 
 type TViewType = {
   key: string;

@@ -25,8 +25,7 @@ import SettingsContainer from '../../subapps/admin/containers/SettingsContainer'
 import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
 import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
 
-// import './ProjectView.less';
-import './styles.less';
+import './styles.scss';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();

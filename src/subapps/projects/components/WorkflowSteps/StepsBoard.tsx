@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import './StepsBoard.less';
+import './StepsBoard.scss';
 
 const StepsBoard: React.FC<{
   children: React.ReactNode;

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructFilterSet, constructQuery } from '../utils';
 import { labelOf } from '../../../shared/utils';
-import './FilterOptions.less';
+import './FilterOptions.scss';
 
 type ConfigField =
   | {

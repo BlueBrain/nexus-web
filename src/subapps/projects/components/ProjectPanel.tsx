@@ -4,7 +4,7 @@ import { Button } from 'antd';
 import ProjectMetaContaier from '../containers/ProjectMetaContainer';
 import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
 
-import './ProjectPanel.less';
+import './ProjectPanel.scss';
 
 const ProjectPanel: React.FC<{
   projectLabel: string;

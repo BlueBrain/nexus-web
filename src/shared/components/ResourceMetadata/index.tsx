@@ -3,7 +3,7 @@ import { Col, Row, Tag } from 'antd';
 import { Link } from 'react-router-dom';
 import { getUsername } from '../../utils';
 import { Resource } from '@bbp/nexus-sdk/lib/types';
-import * as moment from 'moment';
+import  moment from 'moment';
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const ResourceMetadata: React.FC<{

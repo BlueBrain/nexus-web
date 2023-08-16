@@ -8,7 +8,7 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import './Hit.less';
+import './Hit.scss';
 
 export const globalSearchOption = (value: string | undefined) => {
   return (

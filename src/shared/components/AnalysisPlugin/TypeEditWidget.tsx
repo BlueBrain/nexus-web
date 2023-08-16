@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Radio, Form } from 'antd';
 import { intersection } from 'lodash';
-import './CategoryTypeEdits.less';
+import './CategoryTypeEdits.scss';
 import { TypeEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisTypes } from '../../slices/plugins/report';
 import { useSelector } from 'react-redux';
@@ -27,7 +27,7 @@ const TypesEditWidget = ({
     <>
       {typeLabels && typeLabels.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'typeEdits'}>
-          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Report Type</h4>
+          <h4 style={{ marginTop: '10px', color: '#003a8c' }}>Report Type</h4>
           <Form layout={'vertical'}>
             <Form.Item label="" aria-label="Analysis Types">
               {current && (

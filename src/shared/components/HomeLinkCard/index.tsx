@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from 'antd';
 
-import './HomeLinkCard.less';
+import './HomeLinkCard.scss';
 
 const HomeLinkCard: React.FunctionComponent<{
   route: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as moment from 'moment';
+import  moment from 'moment';
 import { Card, Button, Tooltip, Divider } from 'antd';
 import { DownOutlined, CheckOutlined, CopyOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
@@ -8,7 +8,7 @@ import TypesIcon from '../Types/TypesIcon';
 import Copy from '../Copy';
 import { getUsername, getResourceLabel } from '../../utils';
 
-import './ResourceCard.less';
+import './ResourceCard.scss';
 import SchemaLink from '../SchemaLink';
 import FriendlyTimeAgo from '../FriendlyDate';
 

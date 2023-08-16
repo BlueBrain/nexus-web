@@ -6,7 +6,7 @@ import 'codemirror/theme/base16-light.css';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
 
-import './SparqlQueryInput.less';
+import './SparqlQueryInput.scss';
 
 const SparqlQueryInput: React.FunctionComponent<{
   value?: string;

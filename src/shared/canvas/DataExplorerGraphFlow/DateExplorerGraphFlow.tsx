@@ -21,7 +21,7 @@ import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavi
 import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
 import DataExplorerGraphFlowEmpty from './DataExplorerGraphFlowEmpty';
 
-import './styles.less';
+import './styles.scss';
 
 const DataExplorerGraphFlow = () => {
   const history = useHistory();

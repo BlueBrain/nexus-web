@@ -28,7 +28,7 @@ import { RootState } from '../../../shared/store/reducers';
 import { TFilterOptions } from '../../../shared/canvas/MyData/types';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
-import './styles.less';
+import './styles.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,

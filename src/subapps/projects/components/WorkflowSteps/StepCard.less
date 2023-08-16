@@ -1,4 +1,4 @@
-@import '../../../../shared/lib.less';
+
 
 .step-card {
   margin: 1em;
@@ -6,28 +6,28 @@
   width: 270px;
   border-radius: 10px;
   padding: 0;
-  box-shadow: @box-shadow-base;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   z-index: 2;
 
   &__status {
     text-align: center;
-    background-color: @blocked-color;
+    background-color: ff4d4f;
     border-radius: 10px 10px 0 0;
 
     &--blocked {
-      background-color: @blocked-color;
+      background-color: ff4d4f;
     }
 
     &--in-progress {
-      background-color: @in-progress-color;
+      background-color: #faad14;
     }
 
     &--done {
-      background-color: @success-color;
+      background-color: #52c41a;
     }
 
     &--not-started {
-      background-color: @not-started-color;
+      background-color: #828a8e;
     }
   }
 
@@ -56,7 +56,7 @@
 
   &__add-button-container {
     width: 25px;
-    background-color: @medium-gray;
+    background-color: #a5afb4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -152,7 +152,7 @@
   }
 
   &__list-container::-webkit-scrollbar-thumb {
-    background-color: @not-started-color;
+    background-color: #828a8e;
     border-radius: 10px;
   }
 }

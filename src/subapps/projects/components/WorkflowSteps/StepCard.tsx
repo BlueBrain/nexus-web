@@ -10,7 +10,7 @@ import SubStepItem from './SubStepItem';
 import { isEmptyInput } from '../../utils';
 import { labelOf } from '../../../../shared/utils';
 
-import './StepCard.less';
+import './StepCard.scss';
 
 const settingIcon = require('../../../../shared/images/settingIcon.svg');
 const editIcon = require('../../../../shared/images/pencil.svg');
