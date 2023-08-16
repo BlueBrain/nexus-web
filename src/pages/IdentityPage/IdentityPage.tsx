@@ -25,10 +25,7 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     preload="auto"
     controls={false}
   >
-    <source
-      type="video/mp4"
-      src={videoUrl ||BrainRegionsNexusPageVideo}
-    />
+    <source type="video/mp4" src={videoUrl || BrainRegionsNexusPageVideo} />
   </video>
 );
 
@@ -66,9 +63,7 @@ const IdentityPage: React.FC<{}> = () => {
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
       <img
-        src={
-          layoutSettings.landingPosterImg || landingPosterImg
-        }
+        src={layoutSettings.landingPosterImg || landingPosterImg}
         className="home-authentication-epfl"
       />
       <LandingVideo videoUrl={layoutSettings.landingVideo} />
