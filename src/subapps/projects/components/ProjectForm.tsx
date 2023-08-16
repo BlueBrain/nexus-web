@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
-import  moment from 'moment';
+import moment from 'moment';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { isEmptyInput } from '../utils';
 

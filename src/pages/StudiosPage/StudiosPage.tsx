@@ -29,7 +29,7 @@ import {
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
 import timeago from '../../utils/timeago';
-import  defaultStudiosImg from '../../shared/images/neocortex.png';
+import defaultStudiosImg from '../../shared/images/neocortex.png';
 
 import '../../shared/styles/route-layout.scss';
 
@@ -293,7 +293,7 @@ const FusionStudiosPage: React.FC = () => {
             )
           }
           alt="hippocampus"
-          bg={ layoutSettings.studiosImg || defaultStudiosImg }
+          bg={layoutSettings.studiosImg || defaultStudiosImg}
           path={
             orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
           }

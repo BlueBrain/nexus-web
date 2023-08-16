@@ -8,7 +8,6 @@ import ProjectView from '../../pages/ProjectPage/ProjectPage';
 import { SubApp } from '..';
 import icon from '../../shared/images/dbIcon.svg';
 
-
 const subAppType = 'internal';
 const title = 'Admin';
 const namespace = 'admin';

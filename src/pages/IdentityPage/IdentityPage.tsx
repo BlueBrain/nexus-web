@@ -28,15 +28,7 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     preload="auto"
     controls={false}
   >
-    <source
-      type="video/mp4"
-      src={videoUrl || require('../../shared/videos/BrainRegionsNexusPage.mp4')}
-    />
-    {/* Load an image as a Fallback */}
-    <img
-      alt="Landing page image"
-      src={require('../../shared/images/BrainRegionsNexusPage.jpg')}
-    />
+    <source type="video/mp4" src={videoUrl || BrainRegionsNexusPageVideo} />
   </video>
 );
 
@@ -74,6 +66,11 @@ const IdentityPage: React.FC<{}> = () => {
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
+      <img
+        src={layoutSettings.landingPosterImg || landingPosterImg}
+        className="home-authentication-epfl"
+      />
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
         <h1 className="title">Nexus.Fusion</h1>
         <nav
