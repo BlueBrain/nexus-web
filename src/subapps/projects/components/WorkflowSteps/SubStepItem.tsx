@@ -5,7 +5,7 @@ import { Tooltip } from 'antd';
 import StatusIcon from '../StatusIcon';
 import { StepResource } from '../../types';
 
-import './SubStepItem.less';
+import './SubStepItem.scss';
 
 const MAX_TITLE_LENGTH = 45;
 

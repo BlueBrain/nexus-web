@@ -9,8 +9,14 @@ import { performLogin } from '../../shared/store/actions/auth';
 import { setPreferredRealm } from '../../shared/store/actions/config';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
+import useClickOutside from '../../shared/hooks/useClickOutside';
+import * as authActions from '../../shared/store/actions/auth';
+import * as configActions from '../../shared/store/actions/config';
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
+import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
 
-import './styles.less';
+import './styles.scss';
 
 const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   <video
@@ -18,6 +24,7 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     muted
     autoPlay
     className="home-authentication-fusion"
+    poster={BrainRegionsNexusPage}
     preload="auto"
     controls={false}
   >

@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Alert, Button } from 'antd';
 import { Document, Page, pdfjs } from 'react-pdf';
 pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
-import './PDFThumbnail.less';
-import './PDFPreview.less';
+import './PDFThumbnail.scss';
+import './PDFPreview.scss';
 import {
   CloseOutlined,
   EyeOutlined,

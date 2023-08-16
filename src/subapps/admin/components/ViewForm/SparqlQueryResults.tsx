@@ -9,7 +9,7 @@ import {
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk';
 
-import './view-form.less';
+import './view-form.scss';
 import useNotification from '../../../../shared/hooks/useNotification';
 import { ErrorComponent } from '../../../../shared/components/ErrorComponent';
 

@@ -6,7 +6,7 @@ import {
 import { Button } from 'antd';
 import * as React from 'react';
 import { ESSortField } from '../../hooks/useGlobalSearch';
-import './SortMenuOptions.less';
+import './SortMenuOptions.scss';
 
 export enum SortDirection {
   DESCENDING = 'desc',

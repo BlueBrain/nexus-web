@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import './styles.less';
+import './styles.scss';
 
 type NavigationArrowDirection = 'back' | 'forward';
 

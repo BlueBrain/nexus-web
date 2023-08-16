@@ -12,12 +12,12 @@ import {
   Modal,
 } from 'antd';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import * as moment from 'moment';
+import  moment from 'moment';
 
 import { Status, StepResource, WorkflowStepMetadata } from '../../types';
 import { isEmptyInput } from '../../utils';
 
-import './WorkflowStepWithActivityForm.less';
+import './WorkflowStepWithActivityForm.scss';
 
 const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;

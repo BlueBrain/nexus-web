@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
 
-import './ResourceActions.less';
+import './ResourceActions.scss';
 import useNotification from '../../hooks/useNotification';
 
 export type ActionType = {

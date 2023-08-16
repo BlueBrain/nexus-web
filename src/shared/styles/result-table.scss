@@ -1,0 +1,49 @@
+
+
+.result-table {
+  width: 100%;
+
+  .header {
+    margin: 1px;
+    display: flex;
+    justify-content: space-between;
+
+    .title {
+      width: auto;
+      display: inline-block;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      width: 30%;
+      .search {
+        margin-right: 0px;
+      }
+    }
+
+    .total {
+      margin: 0 15px 0 6px;
+    }
+  }
+
+  a {
+    color: #333333;
+
+    &:hover {
+      color: #333333;
+    }
+  }
+
+  // overrides default blue table row highlight
+  .ant-table-tbody
+    > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
+    > td {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}
+
+.result-column {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.9);
+}

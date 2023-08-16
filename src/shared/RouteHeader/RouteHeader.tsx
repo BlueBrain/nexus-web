@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { PlusOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { RootState } from '../../shared/store/reducers';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {
   title: string;

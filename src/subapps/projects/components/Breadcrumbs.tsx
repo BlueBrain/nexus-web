@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Breadcrumb, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 
-import './Breadcrumbs.less';
+import './Breadcrumbs.scss';
 
 type BreadcrumbItem = {
   label: string;

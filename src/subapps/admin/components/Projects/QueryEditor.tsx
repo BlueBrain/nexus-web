@@ -10,7 +10,7 @@ import SparqlQueryView from '../../views/SparqlQueryView';
 import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
 import useNotification from '../../../../shared/hooks/useNotification';
 import { useOrganisationsSubappContext } from '../..';
-import './QueryEditor.less';
+import './QueryEditor.scss';
 
 const QueryEditor: React.FC<{
   orgLabel: string;

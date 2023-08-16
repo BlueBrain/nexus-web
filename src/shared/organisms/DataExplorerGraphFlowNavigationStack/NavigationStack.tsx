@@ -6,7 +6,7 @@ import {
   NavigationStackShrinkedItem,
 } from '../../molecules/DataExplorerGraphFlowMolecules';
 import useNavigationStackManager from './useNavigationStack';
-import './styles.less';
+import './styles.scss';
 
 const NavigationStack = ({ side }: { side: TNavigationStackSide }) => {
   const {

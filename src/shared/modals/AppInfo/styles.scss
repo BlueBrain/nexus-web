@@ -1,0 +1,144 @@
+
+
+.app-information-modal {
+  .ant-modal-content {
+    padding: 25px 20px !important;
+    background-color: white !important;
+    .ant-modal-close-x {
+      position: absolute;
+      top: -45px;
+      right: -50px;
+      color: white;
+      svg {
+        width: 1.6em;
+        height: 1.6em;
+      }
+    }
+  }
+  .description {
+    h3 {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      color: #000000;
+      margin-bottom: 0.2em;
+    }
+
+    p {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 115%;
+      letter-spacing: 0.03em;
+      color: #000000;
+    }
+  }
+
+  .copyright {
+    font-family: 'Titillium Web';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: #595959;
+    display: flex;
+    align-items: center;
+    img {
+      height: 17px;
+      margin-left: 20px;
+    }
+  }
+
+  .versions {
+    .nexus-services {
+      color: #595959;
+      font-size: 14px;
+      display: inline-block;
+      margin-right: 12px;
+    }
+
+    .tag {
+      border-radius: 8px;
+    }
+
+    .nexus-service-header {
+      position: relative;
+    }
+
+    .copy-icon {
+      position: absolute;
+      right: 0px;
+      font-size: 14px;
+    }
+
+    &-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    &-title {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 14px;
+      line-height: 135%;
+      letter-spacing: 0.03em;
+      color: #595959;
+      margin-bottom: 10px;
+    }
+    .version-item {
+      border-radius: 4px;
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 125%;
+      font-feature-settings: 'tnum' on, 'lnum' on;
+      color: #003a8c;
+      padding: 15px 15px;
+      background: #bae7ff;
+      box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
+      border-radius: 4px;
+      text-transform: capitalize;
+      word-wrap: break-word;
+      div {
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      p {
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 110%;
+        font-feature-settings: 'tnum' on, 'lnum' on;
+        color: #003a8c;
+      }
+    }
+  }
+  .repository {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 10px;
+    .gh-link {
+      font-family: 'Titillium Web';
+      font-style: normal;
+      font-weight: 300;
+      font-size: 14px;
+      line-height: 135%;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      a {
+        margin-left: 5px;
+        color: #595959 !important;
+      }
+    }
+  }
+  .ant-divider {
+    margin-top: 13px !important;
+    margin-bottom: 13px !important;
+  }
+}

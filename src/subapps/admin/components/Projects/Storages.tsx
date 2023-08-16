@@ -4,7 +4,7 @@ import { Table } from 'antd';
 import { labelOf } from '../../../../shared/utils';
 import { StorageData } from '../../containers/StoragesContainer';
 
-import './Storages.less';
+import './Storages.scss';
 
 const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
   const columns = [
