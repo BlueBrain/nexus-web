@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource, NexusClient } from '@bbp/nexus-sdk';
+import { Resource, NexusClient } from '@bbp/nexus-sdk/es';
 import {
   Input,
   Form,

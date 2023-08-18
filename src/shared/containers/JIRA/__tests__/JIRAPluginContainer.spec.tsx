@@ -1,5 +1,5 @@
 import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';

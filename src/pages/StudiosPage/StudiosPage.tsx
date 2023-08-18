@@ -9,10 +9,10 @@ import {
   ResourceList,
   Resource,
   PaginatedList,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { match as pmatch } from 'ts-pattern';
 import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 
 import {
   getOrgAndProjectFromProjectId,

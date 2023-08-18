@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, ResourceLink } from '@bbp/nexus-sdk';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk/es';
 import ResourceLinks from '../components/ResourceLinks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/reducers';

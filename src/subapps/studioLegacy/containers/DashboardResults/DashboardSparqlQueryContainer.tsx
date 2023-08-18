@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SparqlView } from '@bbp/nexus-sdk';
+import { SparqlView } from '@bbp/nexus-sdk/es';
 import { Alert, Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import SparqlResultsTable, {

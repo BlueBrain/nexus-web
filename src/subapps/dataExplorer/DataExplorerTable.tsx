@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, forwardRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, isNil, isString, startCase } from 'lodash';

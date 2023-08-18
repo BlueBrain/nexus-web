@@ -1,9 +1,9 @@
 import { FilterFilled } from '@ant-design/icons';
-import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
+import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
-import * as bodybuilder from 'bodybuilder';
+import bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
   isArray,

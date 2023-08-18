@@ -11,7 +11,7 @@ import {
   Select,
 } from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useParams, useRouteMatch } from 'react-router';

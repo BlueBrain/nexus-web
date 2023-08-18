@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tag } from 'antd';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 
 import './ProjectItem.scss';
 

@@ -1,4 +1,4 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import * as Sentry from '@sentry/browser';
 import { compact, flatMap, isArray, isNil, sum } from 'lodash';
 import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';

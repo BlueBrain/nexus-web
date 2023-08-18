@@ -1,4 +1,4 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ThunkAction } from '..';
 import { ResultTableFields } from '../../types/search';

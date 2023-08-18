@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Modal, Input, Button, notification } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useMutation } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';

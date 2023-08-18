@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { match } from 'ts-pattern';
 import { UseSearchResponse } from '../hooks/useSearchQuery';
 import TypesIconList from '../components/Types/TypesIcon';

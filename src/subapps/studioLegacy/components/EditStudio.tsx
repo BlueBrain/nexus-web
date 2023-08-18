@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { SaveImageHandler } from 'react-mde';
 import { Button, Modal } from 'antd';
 import { EditOutlined } from '@ant-design/icons';

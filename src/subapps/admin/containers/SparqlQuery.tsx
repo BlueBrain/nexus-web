@@ -3,7 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import {
   DEFAULT_SPARQL_VIEW_ID,
   SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 
 import SparqlQueryForm from '../components/ViewForm/SparqlQueryForm';
 

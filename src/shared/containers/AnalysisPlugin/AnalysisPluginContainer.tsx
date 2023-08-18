@@ -1,4 +1,4 @@
-import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';

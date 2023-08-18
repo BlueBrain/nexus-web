@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';

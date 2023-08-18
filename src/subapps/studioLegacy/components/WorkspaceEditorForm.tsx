@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Input, Form, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';

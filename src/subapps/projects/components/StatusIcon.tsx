@@ -1,14 +1,14 @@
 import * as React from 'react';
+import progressIcon from '../../../shared/images/progressIcon.svg';
+import blockedIcon from '../../../shared/images/blockedStatus.svg';
+import todoIcon from '../../../shared/images/todoStatus.svg';
+import doneIcon from '../../../shared/images/done.svg';
+import progressIconMini from '../../../shared/images/progressIconMini.svg';
+import blockedIconMini from '../../../shared/images/blockedIconMini.svg';
+import doneIconMini from '../../../shared/images/doneIconMini.svg';
 
 import { Status } from '../types';
 
-const progressIcon = require('../../../shared/images/progressIcon.svg');
-const blockedIcon = require('../../../shared/images/blockedStatus.svg');
-const todoIcon = require('../../../shared/images/todoStatus.svg');
-const doneIcon = require('../../../shared/images/done.svg');
-const progressIconMini = require('../../../shared/images/progressIconMini.svg');
-const blockedIconMini = require('../../../shared/images/blockedIconMini.svg');
-const doneIconMini = require('../../../shared/images/doneIconMini.svg');
 
 const StatusIcon: React.FC<{
   status: Status;

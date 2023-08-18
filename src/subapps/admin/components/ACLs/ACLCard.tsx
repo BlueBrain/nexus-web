@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Card, Checkbox, Divider, List } from 'antd';
-import { Identity } from '@bbp/nexus-sdk';
+import { Identity } from '@bbp/nexus-sdk/es';
 
 import IdentityBadge from './IdentityBadge';
 

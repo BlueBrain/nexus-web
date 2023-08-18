@@ -5,7 +5,7 @@ import {
   GetFileOptions,
   NexusFile,
   ArchivePayload,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { Button, Collapse, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';

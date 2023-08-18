@@ -3,11 +3,11 @@ import SubApps, { SubAppObject, SubApp } from '../../subapps/index';
 import { RootState } from '../store/reducers';
 import { useSelector } from 'react-redux';
 
-function addExternalSubApps(
+async function addExternalSubApps(
   subApps: Map<string, SubAppObject>,
   eSubbApps: ExternalSubApp[]
 ) {
-  const defaultIcon = require('../images/noteIcon.svg');
+  const defaultIcon = (await import('../images/noteIcon.svg')).default;
   eSubbApps.forEach(e => {
     subApps.set(e.title, {
       icon: e.icon ? e.icon : defaultIcon,

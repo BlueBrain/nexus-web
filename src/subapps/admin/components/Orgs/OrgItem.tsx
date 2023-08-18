@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tag } from 'antd';
-import { OrgResponseCommon } from '@bbp/nexus-sdk';
+import { OrgResponseCommon } from '@bbp/nexus-sdk/es';
 
 import './OrgItem.scss';
 

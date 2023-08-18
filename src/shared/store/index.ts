@@ -9,7 +9,7 @@ import thunk, { ThunkAction as ReduxThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import reducers from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
 

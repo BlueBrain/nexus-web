@@ -1,5 +1,5 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk';
+import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk/es';
 import getUserManager from '../../../client/userManager';
 import { RootState } from '../reducers';
 import { ThunkAction } from '..';

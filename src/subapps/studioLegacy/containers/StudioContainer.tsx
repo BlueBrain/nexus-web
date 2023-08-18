@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';

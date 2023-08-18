@@ -1,5 +1,5 @@
 import { Form, Select, Checkbox, Row, Input } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructFilterSet, constructQuery } from '../utils';

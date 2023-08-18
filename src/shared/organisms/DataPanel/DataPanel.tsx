@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { Link } from 'react-router-dom';
 
-import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk';
+import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import {
   Button,
@@ -52,7 +52,7 @@ import {
   FileZipOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
 import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';

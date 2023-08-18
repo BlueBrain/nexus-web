@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DownOutlined } from '@ant-design/icons';
-import { Context, Resource } from '@bbp/nexus-sdk';
+import { Context, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Dropdown, Menu, Row, notification } from 'antd';
 import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';

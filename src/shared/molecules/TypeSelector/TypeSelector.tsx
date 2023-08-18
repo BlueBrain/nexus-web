@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, ReactElement } from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
 import { useSelector } from 'react-redux';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Checkbox,

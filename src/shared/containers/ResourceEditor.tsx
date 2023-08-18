@@ -1,10 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import {
   ExpandedResource,
   ResourceSource,
   Resource,
   NexusClient,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useHistory, useLocation } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { pick } from 'lodash';

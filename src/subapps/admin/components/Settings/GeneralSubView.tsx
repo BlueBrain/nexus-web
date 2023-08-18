@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import { Form, Input, Button, Spin, Tooltip } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import useNotification from '../../../../shared/hooks/useNotification';
 import './styles.scss';

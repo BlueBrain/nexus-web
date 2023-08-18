@@ -1,5 +1,5 @@
 import React, { useState, useRef, createRef } from 'react';
-import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk/es';
 import {
   Button,
   Collapse,

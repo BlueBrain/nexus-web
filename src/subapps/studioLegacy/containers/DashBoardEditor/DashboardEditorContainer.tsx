@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk';
+import { DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk/es';
 import { Modal, message, Spin } from 'antd';
 
 import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';

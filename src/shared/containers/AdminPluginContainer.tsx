@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Tabs, Collapse, Alert } from 'antd';
 import HistoryContainer from '../containers/HistoryContainer';
 import ResourceLinksContainer from '../containers/ResourceLinks';

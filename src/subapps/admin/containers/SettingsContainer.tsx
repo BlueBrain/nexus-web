@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { Menu, MenuProps } from 'antd';
 import GeneralSVComponent from '../components/Settings/GeneralSubView';
 import ViewsSVComponent from '../components/Settings/ViewsSubView';

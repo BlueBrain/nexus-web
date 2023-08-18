@@ -13,10 +13,10 @@ import {
   NexusClient,
   ProjectList,
   ProjectResponseCommon,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { Alert, Input, InputRef, List, Spin } from 'antd';
 import { match as pmatch } from 'ts-pattern';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import {
   LoadMoreFooter,

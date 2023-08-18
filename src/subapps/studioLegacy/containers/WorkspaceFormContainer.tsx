@@ -5,7 +5,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   DEFAULT_SPARQL_VIEW_ID,
   ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Alert,

@@ -5,7 +5,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
   Resource,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 
 import ResourceListComponent, {
   ResourceBoardList,

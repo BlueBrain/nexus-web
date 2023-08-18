@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Modal, Spin } from 'antd';
 import { useProjectsSubappContext } from '..';
 import ProjectPanel from '../components/ProjectPanel';

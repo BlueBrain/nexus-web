@@ -4,7 +4,7 @@ import { Table, Button, Spin, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useQuery } from 'react-query';
-import { NexusClient, Storage } from '@bbp/nexus-sdk';
+import { NexusClient, Storage } from '@bbp/nexus-sdk/es';
 import moment from 'moment';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 

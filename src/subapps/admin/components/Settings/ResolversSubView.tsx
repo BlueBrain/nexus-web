@@ -5,14 +5,11 @@ import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
 import ReactJson from 'react-json-view';
 import { easyValidURL } from '../../../../utils/validUrl';
 import './styles.scss';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 type Props = {};
 type TDataType = {
@@ -244,14 +241,14 @@ const ResolversSubView = (props: Props) => {
                 }
                 style={{ marginBottom: 10 }}
               />
-              <ReactJson
+              {/* <ReactJson
                 collapsed
                 name={data!['@id']}
                 src={data as object}
                 enableClipboard={false}
                 displayObjectSize={false}
                 displayDataTypes={false}
-              />
+              /> */}
             </>
           )}
           {error && (
@@ -264,7 +261,7 @@ const ResolversSubView = (props: Props) => {
                 description={error.cause.message}
                 style={{ marginBottom: 10 }}
               />
-              {// @ts-ignore
+              {/* {// @ts-ignore
               isObject(error.cause) && (
                 <ReactJson
                   name="Error"
@@ -274,7 +271,7 @@ const ResolversSubView = (props: Props) => {
                   displayObjectSize={false}
                   displayDataTypes={false}
                 />
-              )}
+              )} */}
             </>
           )}
         </div>

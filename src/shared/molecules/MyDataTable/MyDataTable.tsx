@@ -13,7 +13,7 @@ import {
   VerticalAlignMiddleOutlined,
 } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 import { isString, isArray, isNil } from 'lodash';
 import { clsx } from 'clsx';
 import { useSelector } from 'react-redux';

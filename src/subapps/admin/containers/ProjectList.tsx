@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 

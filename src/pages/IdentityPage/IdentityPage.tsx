@@ -3,7 +3,7 @@ import { Button, Divider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk/es';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
 import useClickOutside from '../../shared/hooks/useClickOutside';
@@ -12,6 +12,7 @@ import * as configActions from '../../shared/store/actions/config';
 import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
 import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
+import pluralize from 'pluralize';
 
 import './styles.scss';
 
