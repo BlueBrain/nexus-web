@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "commonjs",
+    "noEmit": false
+  },
+  "exclude": [
+    "node_modules",
+    "src/**/*.(test|spec).ts*",
+    "src/**/*.stories.ts*"
+  ],
+  "include": [
+    "server/**/*.ts",
+    "src/constants/**/*.ts",
+    "src/_server/server.js",
+    "src/_server/constants.js"
+  ]
+}

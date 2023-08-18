@@ -2,27 +2,32 @@
   "compilerOptions": {
     "rootDir": "./",
     "outDir": "./dist",
-    "module": "commonjs",
-    "target": "es2018",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "experimentalDecorators": true,
     "sourceMap": true,
     "strict": true,
     "allowJs": true,
-    "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noEmitOnError": true,
-    "lib": ["dom", "esnext", "dom.iterable"],
+    "lib": ["dom", "esnext", "ES2020", "dom.iterable"],
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
       "testUtil": ["./utils/testUtil"]
-    }
+    },
+    /* Linting */
+    // "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
+  "include": ["src", "server"],
+  "references": [{ "path": "./tsconfig.node.json" }],
   "files": ["custom.d.ts"],
-  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "src/**/*.(test|spec).ts*",
@@ -30,5 +35,6 @@
   ],
   "awesomeTypescriptLoaderOptions": {
     "errorsAsWarnings": true
-  }
+  },
+  "types": ["vite/client"]
 }
