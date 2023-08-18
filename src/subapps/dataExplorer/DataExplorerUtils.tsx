@@ -20,7 +20,17 @@ export const usePaginatedExpandedResources = ({
   return useQuery({
     queryKey: [
       'data-explorer',
-      { pageSize, offset, orgAndProject, types, typeOperator },
+      {
+        pageSize,
+        offset,
+        orgAndProject,
+        ...(types?.length
+          ? {
+              types,
+              typeOperator,
+            }
+          : {}),
+      },
     ],
     retry: false,
     queryFn: async () => {
