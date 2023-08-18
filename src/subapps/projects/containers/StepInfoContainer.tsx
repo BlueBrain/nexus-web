@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer, Button } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import {
   fetchChildrenForStep,
   fetchTablesForStep,

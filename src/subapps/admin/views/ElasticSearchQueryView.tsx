@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID, View } from '@bbp/nexus-sdk';
+import { ViewList, DEFAULT_ELASTIC_SEARCH_VIEW_ID, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Row, Select } from 'antd';
-import * as queryString from 'query-string';
+import queryString from 'query-string';
 import { useOrganisationsSubappContext } from '..';
 import { getResourceLabel } from '../../../shared/utils';
 import useNotification from '../../../shared/hooks/useNotification';

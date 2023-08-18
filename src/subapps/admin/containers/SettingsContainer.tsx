@@ -1,4 +1,5 @@
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import * as React from 'react';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { Menu, MenuProps } from 'antd';
 import * as React from 'react';
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';

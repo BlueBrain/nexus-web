@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
 import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';

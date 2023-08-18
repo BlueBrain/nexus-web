@@ -1,9 +1,9 @@
-import * as React from 'react';
+
 import CodeMirror from 'codemirror';
 import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import {
   CODEMIRROR_COPY_URL_CLASS,
   CODEMIRROR_HOVER_CLASS,

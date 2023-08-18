@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
 import {

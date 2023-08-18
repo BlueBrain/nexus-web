@@ -1,5 +1,5 @@
 import { Form, Checkbox, DatePicker } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import './FilterOptions.scss';

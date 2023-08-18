@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
-import { diff, detailedDiff } from 'deep-object-diff';
-import { Resource } from '@bbp/nexus-sdk';
+import { detailedDiff } from 'deep-object-diff';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import { blacklistKeys, getUsername } from '../utils';

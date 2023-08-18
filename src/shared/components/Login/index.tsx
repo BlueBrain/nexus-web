@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Card, Dropdown, Menu, Button } from 'antd';
 import { LoginOutlined, DownOutlined } from '@ant-design/icons';
+import logo from '../../images/logo.svg';
 
 import './Login.scss';
 
-const logo = require('../../images/logo.svg');
 
 export interface LoginProps {
   realms: string[];

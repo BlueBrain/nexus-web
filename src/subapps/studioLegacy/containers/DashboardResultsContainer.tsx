@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Empty, message, Skeleton } from 'antd';
-import { ElasticSearchView, Resource, SparqlView, View } from '@bbp/nexus-sdk';
+import { ElasticSearchView, Resource, SparqlView, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { match, when } from 'ts-pattern';
 

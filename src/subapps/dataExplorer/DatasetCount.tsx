@@ -1,5 +1,5 @@
 import React from 'react';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { isNil } from 'lodash';
 import { getTypesTrancated } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TType } from '../../shared/molecules/TypeSelector/types';

@@ -1,13 +1,12 @@
-import * as React from 'react';
 import { Card, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
-import * as hash from 'object-hash';
+import hash from 'object-hash';
 import { matchResultUrls } from '../../../../shared/utils';
 import {
   AskQueryResponse,
   SelectQueryResponse,
   SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 
 import './view-form.scss';
 import useNotification from '../../../../shared/hooks/useNotification';

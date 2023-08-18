@@ -21,7 +21,7 @@ import {
   SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { ResourceList, Resource } from '@bbp/nexus-sdk';
+import { ResourceList, Resource } from '@bbp/nexus-sdk/es';
 import { debounce } from 'lodash';
 
 import RenameableItem from '../Renameable';

@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, Resource } from '@bbp/nexus-sdk';
-import { isEmpty } from 'lodash';
+import {
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ElasticSearchViewQueryResponse,
+  Resource,
+} from '@bbp/nexus-sdk/es';
 
 import ResourceListComponent, {
   ResourceBoardList,

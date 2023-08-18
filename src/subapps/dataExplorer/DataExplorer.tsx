@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';

@@ -1,7 +1,6 @@
-import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as bodybuilder from 'bodybuilder';
-import { Resource } from '@bbp/nexus-sdk';
+import bodybuilder from 'bodybuilder';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 import useAsyncCall, { AsyncCall } from './useAsynCall';
 import { parseURL } from '../utils/nexusParse';

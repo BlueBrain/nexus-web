@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tabs } from 'antd';
-import { ACL } from '@bbp/nexus-sdk';
+import { ACL } from '@bbp/nexus-sdk/es';
 
 import ACLCard from './ACLCard';
 

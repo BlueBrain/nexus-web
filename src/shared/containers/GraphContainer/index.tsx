@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource } from '@bbp/nexus-sdk/es';
 
 import { getResourceLabel, getOrgAndProjectFromResource } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';

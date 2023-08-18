@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ResourcePayload } from '@bbp/nexus-sdk';
+import { ResourcePayload } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import ResourceCreateUpload from '../components/ResourceForm/ResourceCreateUpload';
 

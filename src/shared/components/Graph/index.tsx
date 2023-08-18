@@ -1,6 +1,6 @@
-import * as React from 'react';
-import * as cytoscape from 'cytoscape';
-import * as cola from 'cytoscape-cola';
+
+import cytoscape from 'cytoscape';
+import cola from 'cytoscape-cola';
 
 import style from './style';
 

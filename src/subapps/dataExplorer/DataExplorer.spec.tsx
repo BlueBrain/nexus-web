@@ -1,4 +1,4 @@
-import { Resource, createNexusClient } from '@bbp/nexus-sdk';
+import { Resource, createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
 import { RenderResult, act, fireEvent, within } from '@testing-library/react';

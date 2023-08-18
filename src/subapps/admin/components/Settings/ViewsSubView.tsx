@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/browser';
 import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
 import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { NexusClient, View } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
 import { isArray, isString, orderBy } from 'lodash';
 import { useMutation, useQuery } from 'react-query';
