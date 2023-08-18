@@ -329,7 +329,7 @@ const DataExplorer: React.FC<{}> = () => {
               typeOperator={typeOperator}
               updateOptions={updateTableConfiguration}
               styles={{
-                container: { width: '250px' },
+                container: { width: '260px' },
                 selector: {
                   '--types-background-color': 'white',
                 } as React.CSSProperties,
