@@ -245,7 +245,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         );
       };
     }, []);
-
+    const tableColumns = columnsConfig(columns, showEmptyDataCells, dataSource);
     return (
       <div
         style={{
@@ -261,7 +261,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       >
         <Table<Resource>
           ref={ref}
-          columns={columnsConfig(columns, showEmptyDataCells, dataSource)}
+          columns={tableColumns}
           dataSource={dataSource}
           rowKey={record => record._self}
           onRow={resource => ({
@@ -319,8 +319,7 @@ export const columnsConfig = (
   return Array.from(colNameToConfig.values());
 };
 
-export const getColumnTitle = (colName: string) =>
-  startCase(colName).toUpperCase();
+export const getColumnTitle = (colName: string) => startCase(colName);
 
 const defaultColumnConfig = (
   colName: string,
@@ -353,7 +352,7 @@ const initialTableConfig = (showEmptyDataCells: boolean) => {
 
   const projectConfig: ColumnType<Resource> = {
     ...defaultColumnConfig(projectKey, showEmptyDataCells),
-    title: 'PROJECT',
+    title: '_project',
     render: text => {
       if (text) {
         const { org, project } = makeOrgProjectTuple(text);
@@ -370,7 +369,7 @@ const initialTableConfig = (showEmptyDataCells: boolean) => {
   };
   const typeConfig: ColumnType<Resource> = {
     ...defaultColumnConfig(typeKey, showEmptyDataCells),
-    title: 'TYPE',
+    title: '@type',
     render: text => {
       let types = '';
       if (isArray(text)) {

@@ -22,7 +22,9 @@ type TColumnsSelectorState = {
 const ColumnItem = ({ value }: TColumn) => {
   return (
     <Col span={20}>
-      <span title={value}>{value}</span>
+      <span title={value} className="column-name">
+        {value}
+      </span>
     </Col>
   );
 };
