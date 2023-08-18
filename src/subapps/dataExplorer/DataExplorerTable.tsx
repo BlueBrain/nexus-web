@@ -45,6 +45,7 @@ interface TDataExplorerTable {
   columns: string[];
   showEmptyDataCells: boolean;
   tableOffsetFromTop: number;
+  typeFilterFocused: boolean;
 }
 
 type TDateExplorerTableData = {
@@ -66,6 +67,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       updateTableConfiguration,
       showEmptyDataCells,
       tableOffsetFromTop,
+      typeFilterFocused,
     },
     ref
   ) => {
@@ -271,7 +273,8 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
           className={clsx(
             'data-explorer-table',
             tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
-              'data-explorer-header-collapsed'
+              'data-explorer-header-collapsed',
+            typeFilterFocused && 'data-explorer-not-sticky'
           )}
           rowClassName="data-explorer-row"
           scroll={{ x: 'max-content' }}

@@ -41,7 +41,7 @@ const MyDataHeaderFilters = ({
   setFilterOptions,
 }: THeaderFilterProps) => {
   return (
-    <div className="my-data-header-actions">
+    <div className="my-data-header-actions" id="my-data-header-actions">
       <span className="filter-heading">Filter: </span>
       <DateFieldSelector {...{ dateField, setFilterOptions }} />
       <DateSelector {...{ dateField, setFilterOptions }} />
@@ -55,6 +55,9 @@ const MyDataHeaderFilters = ({
             container: { width: '300px' },
           },
         }}
+        popupContainer={() =>
+          document.getElementById('my-data-header-actions')!
+        }
       />
     </div>
   );

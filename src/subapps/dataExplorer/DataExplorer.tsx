@@ -126,6 +126,11 @@ const DataExplorer: React.FC<{}> = () => {
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
+  const [typeFilterFocused, setTypeFilterFocused] = useState(false);
+  const handleTypeFilterFocused = (open: boolean) => setTypeFilterFocused(open);
+
   const [
     {
       pageSize,
@@ -201,9 +206,6 @@ const DataExplorer: React.FC<{}> = () => {
     selectedPath,
     showMetadataColumns,
   ]);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     updateTableConfiguration({ columns: buildColumns });
@@ -291,7 +293,7 @@ const DataExplorer: React.FC<{}> = () => {
           setHeaderHeight(offsetHeight);
         }}
       >
-        <div className="data-explorer-filters">
+        <div className="data-explorer-filters" id="data-explorer-filters">
           <div className="left">
             <ProjectSelector
               defaultValue={
@@ -340,6 +342,10 @@ const DataExplorer: React.FC<{}> = () => {
                   types: types && types.length > 0 ? types : undefined,
                 });
               }}
+              onVisibilityChange={handleTypeFilterFocused}
+              popupContainer={() =>
+                document.getElementById('data-explorer-filters')!
+              }
             />
             <PredicateSelector
               columns={columns}
@@ -407,6 +413,7 @@ const DataExplorer: React.FC<{}> = () => {
         updateTableConfiguration={updateTableConfiguration}
         showEmptyDataCells={showEmptyDataCells}
         tableOffsetFromTop={headerHeight}
+        typeFilterFocused={typeFilterFocused}
       />
       <DateExplorerScrollArrows
         types={types}
