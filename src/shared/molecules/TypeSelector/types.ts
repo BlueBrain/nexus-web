@@ -43,4 +43,5 @@ export type TTypeSelectorProps = {
     typeOperator: TTypeOperator;
   }): void;
   afterUpdate?: (typeOperator: TTypeOperator, types?: TType[]) => void;
+  popupContainer: () => HTMLElement;
 };

@@ -125,6 +125,7 @@ const TypeSelector = ({
   defaultValue,
   afterUpdate,
   typeOperator = 'OR',
+  popupContainer,
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
@@ -220,7 +221,7 @@ const TypeSelector = ({
           onDeselect={onDeselectTypesChange}
           onClear={onClearTypesChange}
           style={styles?.selector}
-          dropdownStyle={{ position: 'fixed' }}
+          getPopupContainer={popupContainer}
           className="types-selector-select"
           popupClassName="types-selector-popup"
           aria-label="type-filter"

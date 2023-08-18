@@ -291,7 +291,7 @@ const DataExplorer: React.FC<{}> = () => {
           setHeaderHeight(offsetHeight);
         }}
       >
-        <div className="data-explorer-filters">
+        <div className="data-explorer-filters" id="data-explorer-filters">
           <div className="left">
             <ProjectSelector
               defaultValue={
@@ -340,6 +340,9 @@ const DataExplorer: React.FC<{}> = () => {
                   types: types && types.length > 0 ? types : undefined,
                 });
               }}
+              popupContainer={() =>
+                document.getElementById('data-explorer-filters')!
+              }
             />
             <PredicateSelector
               columns={columns}
