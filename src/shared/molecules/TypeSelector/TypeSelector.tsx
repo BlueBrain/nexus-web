@@ -134,6 +134,7 @@ const TypeSelector = ({
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
 
   const selectCallback = useCallback((data: TTypeAggregationsResult) => {
+    console.log('@@selectCallback', data);
     const options = (
       data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])
     ).map<TType>(item => typesOptionsBuilder(item));
