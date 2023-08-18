@@ -1,4 +1,4 @@
-import { Resource, Identity } from '@bbp/nexus-sdk';
+import { Resource, Identity } from '@bbp/nexus-sdk/es';
 import {
   isMatch,
   isMatchWith,

@@ -20,10 +20,10 @@ import {
   NexusClient,
   ProjectList,
   ProjectResponseCommon,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useDispatch, useSelector } from 'react-redux';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';

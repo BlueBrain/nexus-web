@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Upload, message, Select, Typography } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
-import { NexusFile, Storage } from '@bbp/nexus-sdk';
+import { NexusFile, Storage } from '@bbp/nexus-sdk/es';
 
 import { labelOf } from '../../utils';
 import useNotification from '../../hooks/useNotification';

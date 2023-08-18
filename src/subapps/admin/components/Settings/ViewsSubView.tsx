@@ -5,7 +5,7 @@ import { useMutation, useQuery } from 'react-query';
 import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
 import { isArray, isString, orderBy } from 'lodash';
 import { ColumnsType } from 'antd/es/table';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';

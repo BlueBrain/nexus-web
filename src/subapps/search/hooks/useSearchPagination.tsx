@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { debounce } from 'lodash';
 import useMeasure from '../../../shared/hooks/useMeasure';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 
 export type SearchPagination = {
   numRowsFitOnPage: number;

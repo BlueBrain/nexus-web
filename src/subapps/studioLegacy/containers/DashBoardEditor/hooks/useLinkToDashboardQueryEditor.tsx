@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { View } from '@bbp/nexus-sdk';
+import { View } from '@bbp/nexus-sdk/es';
 import { Tooltip } from 'antd';
 
 const useLinkToDashboardQueryEditor = (

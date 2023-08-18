@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { Button, Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';

@@ -1,4 +1,4 @@
-import { createNexusClient } from '@bbp/nexus-sdk';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';

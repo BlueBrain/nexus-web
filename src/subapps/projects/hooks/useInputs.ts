@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk';
+import {
+  SelectQueryResponse,
+  SparqlViewQueryResponse,
+} from '@bbp/nexus-sdk/es';
 import { notification } from 'antd';
 import {
   distanceFromTopToDisplay,

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { Empty, Spin } from 'antd';
-import { ACL } from '@bbp/nexus-sdk';
+import { ACL } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import ACLsForm from '../components/ACLs/ACLsForm';

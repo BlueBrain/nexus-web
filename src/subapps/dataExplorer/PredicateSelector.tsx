@@ -1,5 +1,5 @@
 import { UndoOutlined } from '@ant-design/icons';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Button, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';

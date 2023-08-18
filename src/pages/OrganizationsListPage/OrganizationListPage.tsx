@@ -19,10 +19,10 @@ import {
   NexusClient,
   OrganizationList,
   OrgResponseCommon,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';

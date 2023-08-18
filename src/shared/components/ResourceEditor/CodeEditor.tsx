@@ -1,9 +1,13 @@
 import React, { forwardRef } from 'react';
-import codemiror, { EditorConfiguration } from 'codemirror';
+import { EditorConfiguration } from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
 import { clsx } from 'clsx';
 import { Spin } from 'antd';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
 
 type TCodeEditor = {
   busy: boolean;
@@ -13,11 +17,14 @@ type TCodeEditor = {
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
 };
+
+
 type TEditorConfiguration = EditorConfiguration & {
   foldCode: boolean;
 };
 
-const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
+
+const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
   ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
     return (
       <Spin spinning={busy}>
@@ -51,7 +58,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemiror.Editor>).current = editor;
+            (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
           }}
         />
       </Spin>

@@ -6,7 +6,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Identity } from '@bbp/nexus-sdk';
+import { Identity } from '@bbp/nexus-sdk/es';
 
 import './ACLs.scss';
 

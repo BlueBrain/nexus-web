@@ -6,9 +6,9 @@ import { Image } from 'antd';
 import AnalysisPlugin, { AnalysisReport } from './AnalysisPlugin';
 import { AnalysesAction } from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
 // import sample1 from './sample-images/sample1.png';
-const sample1 = require('./sample-images/sample1.png');
-const sample2 = require('./sample-images/sample2.png');
-const sample3 = require('./sample-images/sample3.png');
+import sample1 from './sample-images/sample1.png';
+import sample2 from './sample-images/sample2.png';
+import sample3 from './sample-images/sample3.png';
 
 const baseReportData = {
   name: 'Example analysis report',
