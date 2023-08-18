@@ -241,7 +241,7 @@ const TypeSelector = ({
               <div className="types-selector-search-container">
                 <Input.Search
                   allowClear
-                  placeholder="Search column"
+                  placeholder="Search type"
                   className="types-selector-search-input"
                   value={typeSearchValue}
                   onChange={onChangeTypeChange}
