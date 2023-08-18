@@ -9,6 +9,9 @@ import 'codemirror/theme/base16-light.css';
 import 'codemirror/lib/codemirror.css';
 import './SparqlQueryInput.scss';
 
+
+
+
 const SparqlQueryInput: React.FunctionComponent<{
   value?: string;
   onChange?: (query: string) => void;

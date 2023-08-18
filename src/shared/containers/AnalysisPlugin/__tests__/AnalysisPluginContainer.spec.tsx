@@ -1,6 +1,8 @@
 import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
+import * as React from 'react';
+import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';

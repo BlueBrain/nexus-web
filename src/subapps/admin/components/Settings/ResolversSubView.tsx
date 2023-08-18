@@ -9,9 +9,6 @@ import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
 import { easyValidURL } from '../../../../utils/validUrl';
 import './styles.scss';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 
 type Props = {};
 type TDataType = {

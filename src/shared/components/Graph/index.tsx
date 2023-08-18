@@ -1,4 +1,4 @@
-import * as React from 'react';
+
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
 

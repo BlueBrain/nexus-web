@@ -14,28 +14,28 @@ import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
-import './FilterOptions.scss';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.scss';
-import { Line, Column } from '@ant-design/charts';
+import './FilterOptions.scss';
+
 
 type ConfigField =
   | {
-      name: string;
-      label: string;
-      array: boolean;
-      optional: boolean;
-      fields: { name: string; format: string }[];
-      format?: undefined;
-    }
+    name: string;
+    label: string;
+    array: boolean;
+    optional: boolean;
+    fields: { name: string; format: string }[];
+    format?: undefined;
+  }
   | {
-      name: string;
-      label: string;
-      format: string;
-      array: boolean;
-      optional: boolean;
-      fields?: undefined;
-    };
+    name: string;
+    label: string;
+    format: string;
+    array: boolean;
+    optional: boolean;
+    fields?: undefined;
+  };
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;

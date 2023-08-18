@@ -14,7 +14,7 @@ import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/lib/codemirror.css';
 
-import './ElasticSearchQueryInput.scss';
+
 
 const ElasticSearchQueryInput: React.FunctionComponent<{
   value?: string;

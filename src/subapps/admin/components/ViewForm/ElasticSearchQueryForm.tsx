@@ -10,7 +10,7 @@ import * as codemirror from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
-
+// import 'react-json-view';
 import './view-form.scss';
 
 const FormItem = Form.Item;
@@ -62,12 +62,12 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     setInitialQuery(formattedInitialQuery);
   }, []);
 
-  const data =
-    response && response.hits.hits.map(result => result._source || []);
-  const total =
-    (response && response.hits.total && response.hits.total.value) || 0;
-  const totalPages = Math.ceil(total / size);
-  const current = Math.floor((totalPages / total) * from + 1);
+    const data =
+      response && response.hits.hits.map(result => result._source || []);
+    const total =
+      (response && response.hits.total && response.hits.total.value) || 0;
+    const totalPages = Math.ceil(total / size);
+    const current = Math.floor((totalPages / total) * from + 1);
 
   const handleChange = (_: any, __: any, value: string) => {
     try {
@@ -84,24 +84,25 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     onChangePageSize(size);
   };
 
-  return (
-    <div className="view-form">
-      <Form
-        onFinish={() => {
-          value && onQueryChange(JSON.parse(value));
-        }}
-        layout="vertical"
-      >
-        <>
-          <div className="control-panel">
-            <div>
-              <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                {valid ? (
-                  <CheckCircleOutlined />
-                ) : (
-                  <ExclamationCircleOutlined />
-                )}{' '}
-                {valid ? 'Valid JSON' : 'Invalid JSON'}
+    return (
+      <div className="view-form">
+        <Form
+          onFinish={() => {
+            value && onQueryChange(JSON.parse(value));
+          }}
+          layout="vertical"
+        >
+          <>
+            <div className="control-panel">
+              <div>
+                <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
+                  {valid ? (
+                    <CheckCircleOutlined />
+                  ) : (
+                    <ExclamationCircleOutlined />
+                  )}{' '}
+                  {valid ? 'Valid JSON' : 'Invalid JSON'}
+                </div>
               </div>
             </div>
           </div>
