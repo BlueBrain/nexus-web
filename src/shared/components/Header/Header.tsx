@@ -145,7 +145,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   if (notShowDefaultHeader) return null;
   return (
-    <header id="header" className="Header">
+    <header id="main-header" className="Header">
       <div className="logo-container">
         <Link to="/">
           <div className="logo-container__logo">
@@ -176,6 +176,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
               trigger={['click']}
               overlay={menu}
               overlayClassName="menu-overlay-custom"
+              getPopupContainer={() => document.getElementById('main-header')!}
             >
               <a className="menu-dropdown ant-dropdown-link">
                 <UserOutlined />
