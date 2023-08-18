@@ -42,6 +42,7 @@ export type TTypeSelectorProps = {
     types?: TType[];
     typeOperator: TTypeOperator;
   }): void;
-  afterUpdate?: (typeOperator: TTypeOperator, types?: TType[]) => void;
-  popupContainer: () => HTMLElement;
+  afterUpdate?(typeOperator: TTypeOperator, types?: TType[]): void;
+  popupContainer(): HTMLElement;
+  onVisibilityChange?(open: boolean): void;
 };

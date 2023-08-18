@@ -126,6 +126,7 @@ const TypeSelector = ({
   afterUpdate,
   typeOperator = 'OR',
   popupContainer,
+  onVisibilityChange,
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
@@ -133,7 +134,6 @@ const TypeSelector = ({
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
 
   const selectCallback = useCallback((data: TTypeAggregationsResult) => {
-    console.log('@@selectCallback', data);
     const options = (
       data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])
     ).map<TType>(item => typesOptionsBuilder(item));
@@ -224,6 +224,7 @@ const TypeSelector = ({
           getPopupContainer={popupContainer}
           className="types-selector-select"
           popupClassName="types-selector-popup"
+          onDropdownVisibleChange={onVisibilityChange}
           aria-label="type-filter"
           dropdownRender={() => (
             <>
