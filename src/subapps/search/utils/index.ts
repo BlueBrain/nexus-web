@@ -1,4 +1,4 @@
-import * as bodybuilder from 'bodybuilder';
+import bodybuilder from 'bodybuilder';
 import { ESSortField } from '../hooks/useGlobalSearch';
 import { ESMaxResultWindowSize } from '../hooks/useSearchPagination';
 

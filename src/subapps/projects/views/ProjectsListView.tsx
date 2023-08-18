@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 
 import ProjectsListContainer from '../containers/ProjectsListContainer';
 import NewProjectContainer from '../containers/NewProjectContainer';

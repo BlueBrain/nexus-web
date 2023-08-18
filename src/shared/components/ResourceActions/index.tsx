@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Tooltip, Button, Popconfirm } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
-import useNotification from '../../hooks/useNotification';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 import './ResourceActions.scss';
 import useNotification from '../../hooks/useNotification';

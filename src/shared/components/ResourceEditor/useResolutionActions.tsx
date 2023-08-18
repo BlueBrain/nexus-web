@@ -1,7 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import {
   TDELink,
   AddNewNodeDataExplorerGraphFlow,

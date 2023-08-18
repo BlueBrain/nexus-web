@@ -4,6 +4,7 @@ import { Button, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import useClickOutside from '../../shared/hooks/useClickOutside';
 import { performLogin } from '../../shared/store/actions/auth';
 import { setPreferredRealm } from '../../shared/store/actions/config';
@@ -15,6 +16,7 @@ import * as configActions from '../../shared/store/actions/config';
 import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
 import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
+import pluralize from 'pluralize';
 
 import './styles.scss';
 

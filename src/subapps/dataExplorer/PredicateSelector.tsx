@@ -1,6 +1,6 @@
 import { UndoOutlined } from '@ant-design/icons';
-import { Resource } from '@bbp/nexus-sdk';
 import { Button, Form, Input, Select, Tooltip } from 'antd';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';
 import React, { useEffect, useRef } from 'react';

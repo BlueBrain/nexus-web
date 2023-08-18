@@ -4,7 +4,7 @@ import * as React from 'react';
 import { message, Drawer } from 'antd';
 import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
 import './GalleryView.scss';
 

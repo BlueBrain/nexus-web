@@ -1,5 +1,5 @@
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useHistory, useLocation } from 'react-router-dom';
 import React, { Key, useEffect, useReducer, useState } from 'react';
 import {

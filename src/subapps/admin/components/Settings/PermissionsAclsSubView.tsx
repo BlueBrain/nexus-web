@@ -4,7 +4,7 @@ import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
-import { Identity, NexusClient } from '@bbp/nexus-sdk';
+import { Identity, NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { match as pmatch } from 'ts-pattern';
 import { useOrganisationsSubappContext } from '../../../../subapps/admin';

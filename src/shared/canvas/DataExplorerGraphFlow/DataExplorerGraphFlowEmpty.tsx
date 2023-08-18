@@ -1,11 +1,12 @@
-import React from 'react';
+
+import graphNodes from '../../images/graphNodes.svg';
 
 const DataExplorerGraphFlowEmpty = () => {
   return (
     <div className="data-explorer-resolver no-current">
       <div className="empty">
         <img
-          src={require('../../images/graphNodes.svg')}
+          src={graphNodes}
           alt="nodes"
           style={{ width: 500 }}
         />

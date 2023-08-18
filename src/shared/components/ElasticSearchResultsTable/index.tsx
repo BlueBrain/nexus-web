@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Table, Button, Input, Select } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { sortBy } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 

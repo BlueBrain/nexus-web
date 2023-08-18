@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Progress } from 'antd';
-import { ProjectStatistics, Quota } from '@bbp/nexus-sdk';
+import { ProjectStatistics, Quota } from '@bbp/nexus-sdk/es';
 
 import './ProjectQuotas.scss';
 

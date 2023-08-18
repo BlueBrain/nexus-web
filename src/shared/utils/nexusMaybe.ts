@@ -1,4 +1,4 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 const DEFAULT_ELASTIC_SEARCH_VIEW_ID = 'documents';
 const NEXUS_FILE_TYPE = 'File';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useQuery, useQueries } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';

@@ -90,7 +90,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
+            (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
           }}
         />
       </Spin>

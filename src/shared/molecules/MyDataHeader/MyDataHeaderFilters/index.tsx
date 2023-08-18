@@ -1,4 +1,4 @@
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import TypeSelector from '../../TypeSelector/TypeSelector';
 import DateSelector from './DateSelector';
 import DateFieldSelector from './DateFieldSelector';
