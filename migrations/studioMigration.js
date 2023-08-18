@@ -1,4 +1,4 @@
-import { createNexusClient } from '@bbp/nexus-sdk';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
 import fetch from 'node-fetch';
 import minimist from 'minimist';
 

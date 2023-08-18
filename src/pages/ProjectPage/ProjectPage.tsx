@@ -5,7 +5,7 @@ import {
   ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   Statistics,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';

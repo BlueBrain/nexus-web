@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import StudioContainer from '../containers/StudioContainer';
 import useQueryString from '../../../shared/hooks/useQueryString';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, ACL } from '@bbp/nexus-sdk';
+import { NexusClient, ACL } from '@bbp/nexus-sdk/es';
 import StudioReactContext from './../contexts/StudioContext';
 
 const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {

@@ -1,5 +1,5 @@
 import { UserManager, WebStorageStateStore } from 'oidc-client';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk/es';
 
 import { RootState } from '../shared/store/reducers';
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input, Form, Tooltip, Button, Alert } from 'antd';
-import { View } from '@bbp/nexus-sdk';
+import { View } from '@bbp/nexus-sdk/es';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import TextArea from 'antd/lib/input/TextArea';
 

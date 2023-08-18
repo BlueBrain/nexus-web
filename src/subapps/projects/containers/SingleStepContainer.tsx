@@ -11,7 +11,7 @@ import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;

@@ -2,7 +2,7 @@ import * as React from 'react';
 import FileUploadContainer from '../../containers/FileUploadContainer';
 import ResourceForm from './ResourceForm';
 import './ResourceCreateUpload.scss';
-import { Resource, ResourcePayload } from '@bbp/nexus-sdk';
+import { Resource, ResourcePayload } from '@bbp/nexus-sdk/es';
 import { notification } from 'antd';
 import { camelCaseToTitleCase } from '../../utils';
 

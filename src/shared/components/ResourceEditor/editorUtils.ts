@@ -1,4 +1,4 @@
-import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { has } from 'lodash';
 import isValidUrl, {
   isAllowedProtocol,

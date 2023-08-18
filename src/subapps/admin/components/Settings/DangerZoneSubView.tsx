@@ -4,7 +4,7 @@ import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
 import { useMutation } from 'react-query';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import DangerZoneAction, {

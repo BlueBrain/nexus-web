@@ -1,8 +1,8 @@
 import * as React from 'react';
+import addIcon from '../../../shared/images/addIcon.svg';
 
 import './ActionButton.scss';
 
-const addIcon = require('../../../shared/images/addIcon.svg');
 
 const ActionButton: React.FC<{
   title?: string;

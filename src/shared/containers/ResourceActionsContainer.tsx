@@ -2,7 +2,7 @@ import * as React from 'react';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import ResourceDownloadButton from './ResourceDownloadContainer';
 import ResourceActions from '../components/ResourceActions';

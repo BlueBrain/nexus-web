@@ -9,32 +9,33 @@ import {
   Descriptions,
   Statistic,
 } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import * as charts from '@ant-design/charts'
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
-import './FilterOptions.scss';
 import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.scss';
-import { Line, Column } from '@ant-design/charts';
+import './FilterOptions.scss';
+
 
 type ConfigField =
   | {
-      name: string;
-      label: string;
-      array: boolean;
-      optional: boolean;
-      fields: { name: string; format: string }[];
-      format?: undefined;
-    }
+    name: string;
+    label: string;
+    array: boolean;
+    optional: boolean;
+    fields: { name: string; format: string }[];
+    format?: undefined;
+  }
   | {
-      name: string;
-      label: string;
-      format: string;
-      array: boolean;
-      optional: boolean;
-      fields?: undefined;
-    };
+    name: string;
+    label: string;
+    format: string;
+    array: boolean;
+    optional: boolean;
+    fields?: undefined;
+  };
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;
@@ -279,7 +280,7 @@ const NumberFilterOptions: React.FC<{
       </Form.Item>
       <Form.Item>
         {graphValue === 'line' && (
-          <Line
+          <charts.Line
             data={histoValues}
             height={100}
             xField="key"
@@ -292,7 +293,7 @@ const NumberFilterOptions: React.FC<{
           />
         )}
         {graphValue === 'bar' && (
-          <Column
+          <charts.Column
             height={100}
             data={histoValues}
             yField="doc_count"

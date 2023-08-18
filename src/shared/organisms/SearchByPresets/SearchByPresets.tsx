@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { Alert, Spin } from 'antd';
 import { orderBy } from 'lodash';
 import { match as pmatch } from 'ts-pattern';

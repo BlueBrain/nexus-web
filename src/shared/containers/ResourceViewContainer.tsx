@@ -8,9 +8,9 @@ import {
   useRouteMatch,
 } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
-import * as queryString from 'query-string';
+import queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
+import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk/es';
 import { useSelector, useDispatch } from 'react-redux';
 import { intersection, isArray } from 'lodash';
 import AdminPlugin from '../containers/AdminPluginContainer';

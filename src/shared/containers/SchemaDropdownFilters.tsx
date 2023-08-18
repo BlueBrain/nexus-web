@@ -3,7 +3,7 @@ import { useNexus } from '@bbp/react-nexus';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 
 import DropdownFilter from '../components/DropdownFilter';
 

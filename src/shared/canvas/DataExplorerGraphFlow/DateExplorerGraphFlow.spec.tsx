@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { RenderResult, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { NexusClient, createNexusClient } from '@bbp/nexus-sdk';
+import { NexusClient, createNexusClient } from '@bbp/nexus-sdk/es';
 import { AnyAction, Store } from 'redux';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createMemoryHistory, MemoryHistory } from 'history';

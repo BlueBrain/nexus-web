@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   DEFAULT_SPARQL_VIEW_ID,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import SparqlQueryView from '../../views/SparqlQueryView';
 import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';

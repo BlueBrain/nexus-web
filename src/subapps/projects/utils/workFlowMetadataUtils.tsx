@@ -6,7 +6,7 @@ import {
   PROJECT_METADATA_CONTEXT,
 } from '../fusionContext';
 import { Exception } from 'handlebars';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 /**
  *
  * @param userOrgLabel

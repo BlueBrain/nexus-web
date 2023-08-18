@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk/es';
 import { push } from 'connected-react-router';
 import { UserManager } from 'oidc-client';
 
