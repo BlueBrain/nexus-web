@@ -235,7 +235,7 @@ const GeneralSubView = ({
               initialValue={base ?? ''}
               rules={[{ required: false }]}
             >
-              <Input disabled placeholder="Base" />
+              <Input placeholder="Base" />
             </Form.Item>
             <Form.Item
               {...formItemLayout}
