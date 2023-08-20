@@ -20,6 +20,7 @@
 .types-selector-popup {
   background-color: white !important;
   padding: 0 !important;
+  z-index: 10 !important;
 }
 
 .type-operator-selector {
@@ -83,4 +84,16 @@
     font-size: 12px;
     color: #8c8c8c;
   }
+}
+
+.type-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 400;
+  height: 100%;
+  word-wrap: break-word;
 }

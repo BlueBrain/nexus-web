@@ -44,12 +44,16 @@
     margin-bottom: 28px;
     align-items: flex-start;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
 
     .left,
     .right {
       display: flex;
       align-items: center;
       justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
     }
   }
 
@@ -120,7 +124,7 @@
       letter-spacing: 0.01em;
       text-align: left;
       color: @fusion-blue-8;
-      margin: 0 10px;
+      margin: 0 10px 0 0;
     }
 
     .search-input {
@@ -220,6 +224,10 @@
     }
   }
 
+  [aria-label='path-selector'] {
+    margin-right: 10px;
+  }
+
   .predicate-value-input {
     color: @fusion-blue-8;
     background: transparent;
@@ -235,6 +243,7 @@
 
 .data-explorer-table {
   margin-bottom: 60px;
+
   table {
     width: auto;
     min-width: 90vw !important; // This is needed to make sure that the table headers and table body columns are aligned when the table is rerendered (eg when user selects a predicate, project, or, type).
@@ -246,16 +255,16 @@
 
   .ant-table-thead > tr > th.data-explorer-column {
     background-color: #f5f5f5 !important;
-    font-family: 'Titillium Web';
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
     line-height: 130%;
     letter-spacing: 0.04em;
-    text-transform: uppercase;
     color: #8c8c8c;
     height: 52px;
     min-width: 72px;
+    width: 100%;
+    max-width: fit-content;
   }
 
   .ant-table-thead > tr > th::before {
@@ -275,6 +284,7 @@
   .ant-table-tbody > tr.data-explorer-row > td {
     border-bottom: 1px solid #d9d9d9;
   }
+
   .ant-table-column-sorters {
     justify-content: center !important;
   }
@@ -306,11 +316,37 @@
   background: @fusion-blue-8;
   border-radius: 4px;
 }
+
 .columns-selector {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
+  overflow-x: hidden;
+  label {
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    color: #003a8c;
+    margin: 0 10px;
+  }
+}
+.columns-selector-container {
+  .select-row {
+    .column-name {
+      display: -webkit-box !important;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-size: 14px;
+      line-height: 18px;
+      font-weight: 400;
+      height: 100%;
+      word-wrap: break-word;
+    }
+  }
 }
 
 .columns-selector-dropdown {
@@ -384,6 +420,7 @@
     }
   }
 }
+
 .data-explorer-speed-arrows {
   width: 100vw;
   display: flex;
@@ -438,7 +475,14 @@
       color: white !important;
     }
   }
+
   .right {
     margin-left: auto;
+  }
+}
+
+.data-explorer-not-sticky {
+  .ant-table-header.ant-table-sticky-holder {
+    z-index: 0;
   }
 }

@@ -10,7 +10,7 @@ import {
   Row,
   Select,
 } from 'antd';
-import { isString, startCase } from 'lodash';
+import { isString, orderBy } from 'lodash';
 import { useQuery } from 'react-query';
 import { prettifyNumber } from '../../../utils/formatNumber';
 import {
@@ -72,7 +72,7 @@ const typesOptionsBuilder = (typeBucket: TTypesAggregatedBucket): TType => {
   return {
     key: typeKey,
     value: typeKey,
-    label: startCase(typeLabel),
+    label: String(typeLabel),
     docCount: typeBucket.doc_count,
   };
 };
@@ -80,7 +80,9 @@ const typesOptionsBuilder = (typeBucket: TTypesAggregatedBucket): TType => {
 const TypeItem = ({ value, docCount, label }: TType) => {
   return (
     <Col span={20}>
-      <span title={`${value}, (${docCount})`}>{label}</span>
+      <span title={`${value}, (${docCount})`} className="type-label">
+        {label}
+      </span>
     </Col>
   );
 };
@@ -97,6 +99,7 @@ export const RowRenderer = <T,>({
       align="top"
       className="select-row"
       onClick={e => onCheck(e, value)}
+      gutter={2}
     >
       {titleComponent(value)}
       <Col
@@ -122,6 +125,8 @@ const TypeSelector = ({
   defaultValue,
   afterUpdate,
   typeOperator = 'OR',
+  popupContainer,
+  onVisibilityChange,
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
@@ -129,6 +134,7 @@ const TypeSelector = ({
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
 
   const selectCallback = useCallback((data: TTypeAggregationsResult) => {
+    console.log('@@selectCallback', data);
     const options = (
       data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])
     ).map<TType>(item => typesOptionsBuilder(item));
@@ -189,7 +195,11 @@ const TypeSelector = ({
     });
     afterUpdate?.(typeOperator, newTypes);
   };
-  const renderedTypes = typeSearchValue ? typesOptionsArray : typeOptions ?? [];
+  const renderedTypes = orderBy(
+    typeSearchValue ? typesOptionsArray : typeOptions ?? [],
+    ['label'],
+    ['asc']
+  );
   const onTypeOperatorChange = ({ target: { value } }: RadioChangeEvent) => {
     updateOptions({
       typeOperator: value,
@@ -212,9 +222,10 @@ const TypeSelector = ({
           onDeselect={onDeselectTypesChange}
           onClear={onClearTypesChange}
           style={styles?.selector}
-          dropdownStyle={{ position: 'fixed' }}
+          getPopupContainer={popupContainer}
           className="types-selector-select"
           popupClassName="types-selector-popup"
+          onDropdownVisibleChange={onVisibilityChange}
           aria-label="type-filter"
           dropdownRender={() => (
             <>
@@ -231,7 +242,7 @@ const TypeSelector = ({
               <div className="types-selector-search-container">
                 <Input.Search
                   allowClear
-                  placeholder="Search column"
+                  placeholder="Search type"
                   className="types-selector-search-input"
                   value={typeSearchValue}
                   onChange={onChangeTypeChange}
