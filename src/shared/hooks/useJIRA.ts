@@ -8,6 +8,7 @@ import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
 
 export function useJiraPlugin() {
+  console.log('JIRA Plugin Hook');
   const [
     jiraInaccessibleBecauseOfVPN,
     setJiraInaccessibleBecauseOfVPN,
@@ -31,6 +32,7 @@ export function useJiraPlugin() {
       return false;
     }
     try {
+      console.log('Fetch Project - Jira plugin');
       const response = await fetch(`${jiraAPIBaseUrl}/project`, {
         method: 'GET',
         headers: {
@@ -52,9 +54,11 @@ export function useJiraPlugin() {
     }
   };
 
-  isInaccessibleBecauseNotOnVPN().then(value => {
-    setJiraInaccessibleBecauseOfVPN(value);
-  });
+  React.useEffect(() => {
+    isInaccessibleBecauseNotOnVPN().then(value => {
+      setJiraInaccessibleBecauseOfVPN(value);
+    });
+  }, []);
 
   return { isUserInSupportedJiraRealm, jiraInaccessibleBecauseOfVPN };
 }
@@ -73,6 +77,7 @@ function useJIRA({
   projectLabel: string;
   resource?: Resource;
 }) {
+  console.log('Use Jira');
   const nexus = useNexusContext();
   const {
     jiraResourceCustomFieldName: nexusResourceFieldName,
@@ -152,6 +157,7 @@ function useJIRA({
   };
 
   const getProjects = () => {
+    console.log('Use Jira - Get projects');
     return nexus
       .httpGet({
         path: `${jiraAPIBaseUrl}/project`,
