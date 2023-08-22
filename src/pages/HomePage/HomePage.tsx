@@ -7,7 +7,7 @@ import IdentityPage from '../../pages/IdentityPage/IdentityPage';
 
 const Home: React.FunctionComponent = () => {
   const oidc = useSelector((state: RootState) => state.oidc);
-  const userAuthenticated = oidc && !!oidc.user?.id_token;
+  const userAuthenticated = oidc && !!oidc.user?.access_token;
   if (!userAuthenticated) {
     return <IdentityPage />;
   }
