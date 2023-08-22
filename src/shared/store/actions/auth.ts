@@ -1,10 +1,10 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk/es';
-import getUserManager from '../../../client/userManager';
 import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
+import getUserManager from '../../../client/userManager';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
@@ -28,7 +28,7 @@ type FetchIdentitiesFulfilledAction = FetchFulfilledAction<
   AuthActionTypes.IDENTITY_FULFILLED,
   IdentityList
 >;
-const fetchIdentitiesFulfilledAction: ActionCreator<FetchIdentitiesFulfilledAction> = (
+export const fetchIdentitiesFulfilledAction: ActionCreator<FetchIdentitiesFulfilledAction> = (
   identities: IdentityList
 ) => ({
   type: AuthActionTypes.IDENTITY_FULFILLED,
@@ -143,6 +143,7 @@ function performLogin(state: TLocationState) {
   ): Promise<any> => {
     const userManager = getUserManager(getState());
     const baseURl = getState().config.basePath;
+    console.log('@@baseURl', baseURl);
     try {
       // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
       // use baseURl instead of window location to get the real location
@@ -159,6 +160,7 @@ function performLogin(state: TLocationState) {
           redirect_uri: redirectUri,
         }));
     } catch (error) {
+      console.log('@@error', error);
       return dispatch(authFailedAction(error));
     }
   };
