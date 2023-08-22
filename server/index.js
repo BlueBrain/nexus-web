@@ -1,83 +1,11 @@
-// //e.g server.js
-// import express from "express";
-// import path from "path";
-
-// import ViteExpress from "vite-express";
-// import { fileURLToPath } from 'url';
-
-
-// const app = express();
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// const isProduction = process.env.NODE_ENV === 'production';
-
-
-
-
-// let templateHtml = path.join(__dirname, './index.html');
-// // app.use(ViteExpress.static(path.join(__dirname, "public")));
-
-// // function transformer(html, req) {
-// //   console.log('@@req', req)
-// //   return html.replace(
-// //     "<!-- placeholder -->",
-// //     `<meta name="custom" content="${req.baseUrl}"/>`
-// //   )
-// // }
-// // const base = process.env.BASE || '/'
-// // let vite
-// // if (!isProduction) {
-// //   const { createServer } = await import('vite')
-// //   vite = await createServer({
-// //     server: { middlewareMode: true },
-// //     appType: 'custom',
-// //     base
-// //   })
-// //   app.use(vite.middlewares)
-// // } else {
-// //   const compression = (await import('compression')).default
-// //   const sirv = (await import('sirv')).default
-// //   app.use(compression())
-// //   app.use(base, sirv('./fuison-build/client', { extensions: [] }))
-// // }
-
-// app.get('*', async (req, res) => {
-//   // const url = req.originalUrl.replace(base, '')
-//   // let template
-//   // let render
-//   // if (!isProduction) {
-//   //   // Always read fresh template in development
-//   //   template = fs.readFileSync('./index.html', { encoding: 'utf-8' })
-//   //   template = await vite.transformIndexHtml(url, template)
-//   // } else {
-//   //   template = templateHtml
-//   // }
-
-//   // const html = template
-//   //   .replace(`<!--app-html-->`, template ?? '');
-//   // // .replace(`<!--app-head-->`, rendered.head ?? '')
-
-//   // const url = req.originalUrl.replace(base, '');
-//   // res.status(200).set({ 'Content-Type': 'text/html' }).end(templateHtml)
-//   if (!isProduction) {
-//     return res.sendFile(templateHtml);
-//   } else {
-//     const compression = (await import('compression')).default
-//     const sirv = (await import('sirv')).default
-//     app.use(compression())
-//     app.use('/', sirv('./fusion-build', { extensions: [] }))
-//     return res.sendFile(templateHtml);
-//   }
-
-// });
-
-
-// // ViteExpress.config({ transformer })
-// ViteExpress.listen(app, 4000, () => console.log("Server is listening..."));
-
 
 import express from "express";
 import ViteExpress from "vite-express";
+import pc from "picocolors";
+import path from 'path';
+import fs from 'fs';
+import Helmet from 'react-helmet';
+import silentRefreshHtml, { htmlDev as silentRefreshHtmlDev } from './server_silent_refresh.js';
 
 import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
@@ -85,11 +13,14 @@ import {
   DEFAULT_REPORT_TYPES,
 } from './constants.js';
 
+
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+const NODE_ENV = process.env.NODE_ENV;
+const PORT = process.env.PORT || 8000;
+
 const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
 const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
-const app = express();
 const rawBase = process.env.BASE_PATH || '';
-
 // to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
 const pluginsManifestPath =
   process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
@@ -122,14 +53,95 @@ const subAppsManifestPath =
 
 const base = rawBase.replace(/\/$/, '');
 
-app.get("/hello", (_, res) => {
-  res.send("Hello Vite + React + TypeScript!");
+const app = express();
+
+app.get("/health", (_, res) => {
+  return res.send("100% running");
 });
 
+const Config = {
+  mode: (NODE_ENV === "production" ? "production" : "development")
+};
 
-function transformer(html, req) {
+async function startServer(server) {
+  const { createServer } = await import("vite");
+
+  const vite = await createServer({
+    clearScreen: false,
+    appType: "custom",
+    server: { middlewareMode: true },
+  });
+
+  server.on("close", () => vite.close());
+
+  return vite;
+}
+
+async function resolveConfig() {
+  const root = process.cwd();
+  const base = "/";
+  const build = { outDir: "dist" };
+
+  return { root, base, build };
+}
+
+async function getDistPath() {
+  const config = await resolveConfig();
+  return path.resolve(config.root, config.build.outDir);
+}
+
+async function serveStatic() {
+  const distPath = await getDistPath();
+
+  if (!fs.existsSync(distPath)) {
+    console.info(`${pc.red(`Static files at ${pc.gray(distPath)} not found!`)}`);
+    console.info(
+      `${pc.yellow(
+        `Did you forget to run ${pc.bold(pc.green("vite build"))} command?`
+      )}`
+    );
+  } else {
+    console.info(`${pc.green(`Serving static files from ${pc.gray(distPath)}`)}`);
+  }
+
+  return express.static(distPath, { index: false });
+}
+
+const stubMiddleware = (req, res, next) => next();
+
+async function injectStaticMiddleware(
+  app,
+  middleware,
+) {
+  const config = await resolveConfig();
+  const base = config.base || "/";
+  app.use(base, middleware);
+
+  const stubMiddlewareLayer = app._router.stack.find(
+    ({ handle }) => handle === stubMiddleware
+  );
+
+  if (stubMiddlewareLayer !== undefined) {
+    const serveStaticLayer = app._router.stack.pop();
+    app._router.stack = app._router.stack.map((layer) => {
+      return layer === stubMiddlewareLayer ? serveStaticLayer : layer;
+    });
+  }
+}
+
+async function transformer(html, req) {
+  let realms, identities;
+  try {
+    realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json();
+    identities = await ((await fetch(`${process.env.API_ENDPOINT}/identities`))).json();
+  } catch (error) {
+    console.log('@@error', error);
+  }
   const preloadedState = {
-    auth: {},
+    auth: {
+      realms: { data: realms },
+      identities: { data: identities }
+    },
     config: {
       searchSettings,
       layoutSettings,
@@ -177,7 +189,7 @@ function transformer(html, req) {
         process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN ||
         'x-requires-vpn',
     },
-    uiSettings:  {
+    uiSettings: {
       openCreationPanel: false,
       pageSizes: {
         orgsListPageSize: 5,
@@ -187,7 +199,7 @@ function transformer(html, req) {
       },
       currentResourceView: null,
       isAdvancedModeEnabled: false,
-    },    
+    },
     oidc: {
       user: undefined,
       isLoadingUser: false,
@@ -214,7 +226,10 @@ function transformer(html, req) {
       origin: '',
     },
   };
-  return html.replace(
+  console.log('@@preloadedState', preloadedState)
+  // const helmet = Helmet.renderStatic();
+
+  let dom = html.replace(
     '<!--app-state-->',
     `<script>
       window.__BASE__ = '/';
@@ -226,10 +241,82 @@ function transformer(html, req) {
     )};
     </script>`
   )
+  return dom;
 }
 
-ViteExpress.config({ transformer })
+function isStaticFilePath(path) {
+  return path.match(/(\.\w+$)|@vite|@id|@react-refresh/);
+}
 
-ViteExpress.listen(app, 3000, () =>
-  console.log("Server is listening on port 3000...")
-);
+async function injectDevIndexMiddleware(
+  app,
+  server,
+) {
+  const config = await resolveConfig();
+  // app.get(
+  //   `${base}/silent_refresh`,
+  //   (req, res) => {
+  //     res.send(silentRefreshHtmlDev());
+  //   }
+  // );
+  app.get("/*", async (req, res, next) => {
+    const template = fs.readFileSync(
+      path.resolve(config.root, "index.html"),
+      "utf8"
+    );
+
+    if (isStaticFilePath(req.path)) next();
+    else {
+      const html = await server.transformIndexHtml(req.originalUrl, template);
+      const dom = await transformer(html, req);
+      return res.send(dom);
+    }
+  });
+}
+
+async function injectProdIndexMiddleware(app) {
+  const distPath = await getDistPath();
+  app.get(
+    `${base}/silent_refresh`,
+    (req, res) => {
+      res.send(silentRefreshHtml());
+    }
+  );
+  app.use("*", async (req, res) => {
+    const html = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+    const dom = await transformer(html, req);
+    return res.send(dom);
+  });
+}
+
+async function bind(
+  app,
+  server,
+  callback
+) {
+  if (Config.mode === "development") {
+    console.info(`Fusion is up an running (development) ${PORT}`)
+    const vite = await startServer(server);
+    await injectStaticMiddleware(app, vite.middlewares);
+    await injectDevIndexMiddleware(app, vite);
+    return;
+  } else {
+    console.info(`Fusion is up an running (production) ${PORT}`)
+    await injectStaticMiddleware(app, await serveStatic());
+    await injectProdIndexMiddleware(app);
+    return;
+  }
+
+  callback?.();
+}
+
+function listen(app, port, callback) {
+  const server = app.listen(port, () => bind(app, server, callback));
+  return server;
+}
+
+
+listen(app, PORT);
+
+
+
