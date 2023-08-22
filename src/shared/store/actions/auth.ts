@@ -5,6 +5,7 @@ import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
+import getUserManager from '../../../client/userManager';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',
@@ -142,6 +143,8 @@ function performLogin() {
     getState: () => RootState
   ): Promise<any> => {
     const userManager = getUserManager(getState());
+    const baseURl = getState().config.basePath;
+    console.log('@@baseURl', baseURl);
     try {
       // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
       // use baseURl instead of window location to get the real location
