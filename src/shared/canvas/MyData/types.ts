@@ -35,7 +35,7 @@ export type TTitleProps = {
 };
 export type THeaderFilterProps = Pick<
   THeaderProps,
-  'types' | 'dateField' | 'setFilterOptions' | 'typeOperator'
+  'types' | 'dateField' | 'setFilterOptions' | 'typeOperator' | 'issuer'
 >;
 export type THeaderTitleProps = Pick<
   THeaderProps,
