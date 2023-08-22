@@ -1,14 +1,7 @@
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
-import {
-  RenderResult,
-  act,
-  fireEvent,
-  queryByRole,
-  waitForElementToBeRemoved,
-  within,
-} from '@testing-library/react';
+import { RenderResult, act, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
