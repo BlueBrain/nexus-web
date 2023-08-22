@@ -10,8 +10,9 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk/es';
-import reducers from './reducers';
+import reducers, { RootState } from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
+import { createLogger } from 'redux-logger';
 
 export type Services = {
   nexus: NexusClient;
@@ -31,11 +32,15 @@ try {
   composeEnhancers = compose;
 }
 
+const logger = createLogger({
+  // ...options
+});
+
 export default function configureStore(
   history: History,
   { nexus }: { nexus: NexusClient },
   preloadedState: any = {}
-): Store {
+): Store<RootState> {
   // ignore server lists, fetch from local storage when available
   const store = createStore(
     // @ts-ignore
@@ -49,7 +54,8 @@ export default function configureStore(
       applyMiddleware(
         thunk.withExtraArgument({ nexus }),
         routerMiddleware(history),
-        DataExplorerFlowSliceListener.middleware
+        DataExplorerFlowSliceListener.middleware,
+        logger
       )
     )
   );

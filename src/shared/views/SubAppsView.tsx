@@ -1,5 +1,4 @@
 import { Location } from 'history';
-import * as React from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import NotFound from './404';
 

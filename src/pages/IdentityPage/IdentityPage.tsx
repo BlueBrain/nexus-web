@@ -16,7 +16,6 @@ import * as configActions from '../../shared/store/actions/config';
 import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
 import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
-import pluralize from 'pluralize';
 
 import './styles.scss';
 
@@ -44,14 +43,9 @@ const IdentityPage: React.FC<{}> = () => {
   const history = useHistory();
   const dispatch = useDispatch<any>();
   const location = useLocation();
-  const { layoutSettings } = useSelector((state: RootState) => state.config);
-  const {
-    auth,
-    config: { serviceAccountsRealm },
-  } = useSelector((state: RootState) => ({
-    auth: state.auth,
-    config: state.config,
-  }));
+  const auth = useSelector((state: RootState) => state.auth);
+  const { layoutSettings, serviceAccountsRealm } = useSelector((state: RootState) => state.config);
+  
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
@@ -60,6 +54,7 @@ const IdentityPage: React.FC<{}> = () => {
   const realmsFilter = realms.filter(
     r => r._label !== serviceAccountsRealm && !r._deprecated
   );
+
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
 

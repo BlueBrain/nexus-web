@@ -1,7 +1,7 @@
-import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import SubApps, { SubAppObject, SubApp } from '../../subapps/index';
 import { RootState } from '../store/reducers';
-import { useSelector } from 'react-redux';
 
 async function addExternalSubApps(
   subApps: Map<string, SubAppObject>,
@@ -31,7 +31,7 @@ type ExternalSubApp = {
 const useSubApps = () => {
   const subAppsManifestPath =
     useSelector((state: RootState) => state.config.subAppsManifestPath) || [];
-  const [subAppError, setSubAppError] = React.useState<Error>();
+  const [subAppError, setSubAppError] = useState<Error>();
   const apps: Map<string, SubAppObject> = Array.from(SubApps.values()).reduce(
     (memo: Map<string, SubAppObject>, subApp: SubApp) => {
       const app = subApp();
@@ -41,13 +41,13 @@ const useSubApps = () => {
     new Map()
   );
 
-  const [subAppsState, setSubAppsState] = React.useState<
-    Map<string, SubAppObject>
-  >(apps);
+  const [subAppsState, setSubAppsState] = useState<Map<string, SubAppObject>>(
+    apps
+  );
 
   const abortController = new AbortController();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (subAppsManifestPath) {
       fetch(`${subAppsManifestPath as string}/manifest.json`, {
         signal: abortController.signal,
@@ -85,7 +85,7 @@ const useSubApps = () => {
     }
   }, []);
 
-  const subAppRoutes = React.useMemo(() => {
+  const subAppRoutes = useMemo(() => {
     return Array.from(subAppsState.values())
       .map((subApp: SubAppObject) => {
         return subApp.routes.map((route: any) => {
@@ -106,7 +106,7 @@ const useSubApps = () => {
       }, []);
   }, [subAppsState]);
 
-  const subAppProps = React.useMemo(() => {
+  const subAppProps = useMemo(() => {
     return Array.from(subAppsState.values()).map(subApp => ({
       label: subApp.title,
       key: subApp.title,
