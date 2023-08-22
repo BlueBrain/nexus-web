@@ -1,10 +1,13 @@
 /** @type {import('vite').UserConfig} */
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
 import svgrPlugin from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import commonjs from 'vite-plugin-commonjs';
 import 'vite-compatible-readable-stream';
+
+
 export default defineConfig({
     plugins: [
         react(),
@@ -36,17 +39,21 @@ export default defineConfig({
             transformMixedEsModules: true
         },
         rollupOptions: {
+            input: {
+                main: fileURLToPath(new URL('./index.html', import.meta.url)),
+                refresh: fileURLToPath(new URL('./src/client_silent_refresh.ts', import.meta.url)),
+            },
             output: {
                 manualChunks: {
                     lodash: ['lodash'],
                     pdfjs: ['node_modules/pdfjs-dist/build/pdf.js'],
-                    nexussdk: ["@bbp/nexus-sdk"]
+                    codemirror: ["codemirror", "react-codemirror2"]
                 }
             }
         }
     },
-    optimizeDeps: {
-        exclude: ["@bbp/nexus-sdk"]
-    },
+    // optimizeDeps: {
+    //     exclude: ["@bbp/nexus-sdk", "@bbp/nexus-link"]
+    // },
     assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4']
 });
