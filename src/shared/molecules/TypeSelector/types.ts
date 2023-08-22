@@ -1,4 +1,5 @@
 import { ReactElement } from 'react';
+import { TIssuer } from '../../../shared/canvas/MyData/types';
 
 export type TType = {
   key: string;
@@ -45,4 +46,5 @@ export type TTypeSelectorProps = {
   afterUpdate?(typeOperator: TTypeOperator, types?: TType[]): void;
   popupContainer(): HTMLElement;
   onVisibilityChange?(open: boolean): void;
+  issuer?: TIssuer;
 };

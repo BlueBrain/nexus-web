@@ -22,6 +22,9 @@ import {
 } from './types';
 import isValidUrl from '../../../utils/validUrl';
 import './style.less';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+import { TIssuer } from 'shared/canvas/MyData/types';
 
 const typesOperatorOptions = [
   { label: 'AND', value: 'AND' },
@@ -32,13 +35,18 @@ const getTypesByAggregation = async ({
   nexus,
   orgLabel,
   projectLabel,
+  issuer,
+  issuerUri,
 }: {
   nexus: NexusClient;
   orgLabel?: string;
   projectLabel?: string;
+  issuer?: TIssuer;
+  issuerUri?: string;
 }) => {
   return await nexus.Resource.list(orgLabel, projectLabel, {
     aggregations: true,
+    ...(issuer ? { [issuer]: issuerUri } : {}),
   });
 };
 
@@ -47,17 +55,34 @@ const useTypesAggregation = ({
   org,
   project,
   selectCallback,
+  issuer,
+  issuerUri,
 }: {
   nexus: NexusClient;
   org?: string;
   project?: string;
   selectCallback: (data: any) => TType[];
+  issuer?: TIssuer;
+  issuerUri?: string;
 }) => {
   return useQuery({
     refetchOnWindowFocus: false,
-    queryKey: ['types-aggregation-results', { org, project }],
+    queryKey: [
+      'types-aggregation-results',
+      {
+        org,
+        project,
+        ...(issuer ? { issuer, issuerUri } : {}),
+      },
+    ],
     queryFn: () =>
-      getTypesByAggregation({ nexus, orgLabel: org, projectLabel: project }),
+      getTypesByAggregation({
+        nexus,
+        issuer,
+        issuerUri,
+        orgLabel: org,
+        projectLabel: project,
+      }),
     select: selectCallback,
   });
 };
@@ -127,11 +152,18 @@ const TypeSelector = ({
   typeOperator = 'OR',
   popupContainer,
   onVisibilityChange,
+  issuer,
 }: TTypeSelectorProps) => {
   const nexus = useNexusContext();
   const originTypes = useRef<TType[]>([]);
   const [typeSearchValue, updateSearchType] = useState('');
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
+  const identities = useSelector(
+    (state: RootState) => state.auth.identities?.data?.identities
+  );
+  const issuerUri = identities?.find((item: any) => item['@type'] === 'User')?.[
+    '@id'
+  ];
 
   const selectCallback = useCallback((data: TTypeAggregationsResult) => {
     console.log('@@selectCallback', data);
@@ -147,6 +179,8 @@ const TypeSelector = ({
     org,
     project,
     selectCallback,
+    issuer,
+    issuerUri,
   });
 
   const onChangeTypeChange = ({
