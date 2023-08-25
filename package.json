@@ -12,8 +12,8 @@
   "scripts": {
     "vdev": "vite",
     "vbuild": "tsc && vite build",
-    "dev": "concurrently 'vite' 'node ./server'",
-    "build": "vite build",
+    "dev": "rm -rf ./dist && concurrently 'vite build -c ./vite.config.refresh.js' 'vite' 'node ./server'",
+    "build": "rm -rf ./dist && vite build -c ./vite.config.refresh.js && vite build",
     "preview": "cross-env NODE_ENV=production node server"
   },
   "dependencies": {
@@ -101,7 +101,7 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-mock-store": "^1.5.4",
-    "redux-oidc": "^4.0.0-beta1",
+    "redux-oidc": "3.1.7",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "rollup-plugin-node-builtins": "^2.1.2",
@@ -115,6 +115,7 @@
     "vite-express": "^0.9.2",
     "vite-plugin-commonjs": "^0.8.2",
     "vite-plugin-mkcert": "^1.16.0",
+    "vite-plugin-singlefile": "^0.13.5",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
   },
@@ -155,6 +156,7 @@
     "@types/react-redux": "^7.1.24",
     "@types/react-router": "^5.1.13",
     "@types/react-router-dom": "^5.1.7",
+    "@types/redux-logger": "^3.0.9",
     "@types/showdown": "^1.9.3",
     "@types/storybook__addon-actions": "^3.4.2",
     "@types/storybook__addon-info": "^4.1.0",

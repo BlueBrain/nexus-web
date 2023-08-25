@@ -1,4 +1,4 @@
-
+import React from 'react';
 import CodeMirror from 'codemirror';
 import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -260,7 +260,7 @@ function useEditorTooltip({
   React.useEffect(() => {
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
       ?.current;
-    const editorWrapper = currentEditor.getWrapperElement();
+    const editorWrapper = currentEditor && currentEditor.getWrapperElement();
 
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
@@ -368,15 +368,15 @@ function useEditorTooltip({
     }
     // allow the tooltip only when the editor is not in edition mode
     // and the popover is not open
-    allowTooltip && editorWrapper.addEventListener('mouseover', onMouseOver);
+    allowTooltip && editorWrapper && editorWrapper.addEventListener('mouseover', onMouseOver);
     // remove the event listener when not allwoed
-    !allowTooltip &&
+    !allowTooltip && editorWrapper &&
       editorWrapper.removeEventListener('mouseover', onMouseOver);
 
     // cleanup
     // remove the event listener when the component is unmounted
     return () => {
-      allowTooltip &&
+      allowTooltip && editorWrapper &&
         editorWrapper.removeEventListener('mouseover', onMouseOver);
     };
   }, [
@@ -408,7 +408,7 @@ function useEditorPopover({
   React.useEffect(() => {
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
       ?.current;
-    const editorWrapper = currentEditor.getWrapperElement();
+    const editorWrapper = currentEditor && currentEditor.getWrapperElement();
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
@@ -500,9 +500,9 @@ function useEditorPopover({
         }
       }
     }
-    currentEditor.on('mousedown', onMouseDown);
+    currentEditor && currentEditor.on('mousedown', onMouseDown);
     return () => {
-      currentEditor.off('mousedown', onMouseDown);
+      currentEditor && currentEditor.off('mousedown', onMouseDown);
     };
   }, [
     (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,

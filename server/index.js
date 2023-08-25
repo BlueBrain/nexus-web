@@ -4,8 +4,7 @@ import ViteExpress from "vite-express";
 import pc from "picocolors";
 import path from 'path';
 import fs from 'fs';
-import Helmet from 'react-helmet';
-import silentRefreshHtml, { htmlDev as silentRefreshHtmlDev } from './server_silent_refresh.js';
+import { Helmet } from 'react-helmet';
 
 import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
@@ -77,21 +76,24 @@ async function startServer(server) {
   return vite;
 }
 
-async function resolveConfig() {
+function resolveConfig() {
   const root = process.cwd();
   const base = "/";
-  const build = { outDir: "dist" };
+  const build = { outDir: "dist", refreshOutDir: 'dist_refresh' };
 
   return { root, base, build };
 }
 
-async function getDistPath() {
-  const config = await resolveConfig();
-  return path.resolve(config.root, config.build.outDir);
+function getDistPath() {
+  const config = resolveConfig();
+  return {
+    dist: path.resolve(config.root, config.build.outDir),
+    dist_refresh: path.resolve(config.root, config.build.refreshOutDir),
+  };
 }
 
 async function serveStatic() {
-  const distPath = await getDistPath();
+  const distPath = getDistPath().dist;
 
   if (!fs.existsSync(distPath)) {
     console.info(`${pc.red(`Static files at ${pc.gray(distPath)} not found!`)}`);
@@ -130,17 +132,13 @@ async function injectStaticMiddleware(
 }
 
 async function transformer(html, req) {
-  let realms, identities;
-  try {
-    realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json();
-    identities = await ((await fetch(`${process.env.API_ENDPOINT}/identities`))).json();
-  } catch (error) {
-    console.log('@@error', error);
-  }
+  const realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json().catch((error) => {
+    console.error('[ERROR] Fetch Realms Server Side', error);
+  });
   const preloadedState = {
     auth: {
       realms: { data: realms },
-      identities: { data: identities }
+      identities: { data: null }
     },
     config: {
       searchSettings,
@@ -226,21 +224,34 @@ async function transformer(html, req) {
       origin: '',
     },
   };
-  console.log('@@preloadedState', preloadedState)
-  // const helmet = Helmet.renderStatic();
+  const helmet = Helmet.renderStatic();
+  const regexBody = /<body(.*?)/gi;
+  const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
+  const regexHtml = /<html(.*?)/gi;
+  const htmlTag = `<html ${helmet.htmlAttributes.toString()}`;
+  let dom = html
+    .replace(regexHtml, htmlTag)
+    .replace(regexBody, bodyTag)
+    .replace('<!--app-head-->',
+      `
+        ${helmet.title.toString()}
+        ${helmet.meta.toString()}
+        ${helmet.link.toString()}
+      `
+    )
+    .replace(
+      '<!--app-state-->',
+      `<script>
+        window.__BASE__ = '/';
+        // WARNING: See the following for security issues around embedding JSON in HTML:
+        // http://redux.js.org/recipes/ServerRendering.html#security-considerations
+        window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
+        /</g,
+        '\\u003c'
+      )};
+      </script>`
+    );
 
-  let dom = html.replace(
-    '<!--app-state-->',
-    `<script>
-      window.__BASE__ = '/';
-      // WARNING: See the following for security issues around embedding JSON in HTML:
-      // http://redux.js.org/recipes/ServerRendering.html#security-considerations
-      window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
-      /</g,
-      '\\u003c'
-    )};
-    </script>`
-  )
   return dom;
 }
 
@@ -253,12 +264,14 @@ async function injectDevIndexMiddleware(
   server,
 ) {
   const config = await resolveConfig();
-  // app.get(
-  //   `${base}/silent_refresh`,
-  //   (req, res) => {
-  //     res.send(silentRefreshHtmlDev());
-  //   }
-  // );
+  app.get(
+    `${base}/silent_refresh`,
+    (req, res) => {
+      const distPath = getDistPath().dist_refresh;
+      const html = fs.readFileSync(path.join(distPath, "/silent_refresh/silent_refresh.html"), "utf-8");
+      return res.send(html);
+    }
+  );
   app.get("/*", async (req, res, next) => {
     const template = fs.readFileSync(
       path.resolve(config.root, "index.html"),
@@ -275,15 +288,17 @@ async function injectDevIndexMiddleware(
 }
 
 async function injectProdIndexMiddleware(app) {
-  const distPath = await getDistPath();
+  const distPath = getDistPath();
   app.get(
     `${base}/silent_refresh`,
     (req, res) => {
-      res.send(silentRefreshHtml());
+      const distPath = getDistPath();
+      const html = fs.readFileSync(path.join(distPath.dist_refresh, "/silent_refresh/silent_refresh.html"), "utf-8");
+      res.send(html);
     }
   );
   app.use("*", async (req, res) => {
-    const html = fs.readFileSync(path.resolve(distPath, "index.html"), "utf-8");
+    const html = fs.readFileSync(path.resolve(distPath.dist, "index.html"), "utf-8");
     const dom = await transformer(html, req);
     return res.send(dom);
   });
@@ -306,8 +321,6 @@ async function bind(
     await injectProdIndexMiddleware(app);
     return;
   }
-
-  callback?.();
 }
 
 function listen(app, port, callback) {
