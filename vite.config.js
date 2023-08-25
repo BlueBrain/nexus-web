@@ -39,10 +39,7 @@ export default defineConfig({
             transformMixedEsModules: true
         },
         rollupOptions: {
-            input: {
-                main: fileURLToPath(new URL('./index.html', import.meta.url)),
-                refresh: fileURLToPath(new URL('./src/client_silent_refresh.ts', import.meta.url)),
-            },
+            input: fileURLToPath(new URL('./index.html', import.meta.url)),
             output: {
                 manualChunks: {
                     lodash: ['lodash'],
