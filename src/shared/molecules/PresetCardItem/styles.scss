@@ -62,6 +62,8 @@
     min-height: unset;
     background: $fusion-neutral-2;
     border-radius: 6px;
+    box-sizing: border-box;
+    font-weight: 700;
     &:hover {
       background: $fusion-daybreak-7;
       // radial-gradient(

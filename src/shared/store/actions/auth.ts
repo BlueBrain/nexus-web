@@ -5,7 +5,6 @@ import { RootState } from '../reducers';
 import { ThunkAction } from '..';
 import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
-import getUserManager from '../../../client/userManager';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',

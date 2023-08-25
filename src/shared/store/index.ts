@@ -13,7 +13,6 @@ import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk';
 import reducers, { RootState } from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
-import { createLogger } from 'redux-logger';
 
 export type Services = {
   nexus: NexusClient;
