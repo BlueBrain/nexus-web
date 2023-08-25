@@ -4666,6 +4666,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/redux-logger@^3.0.9":
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/@types/redux-logger/-/redux-logger-3.0.9.tgz#9193b3d51bb6ab98d25514ba7764e4f98a64d3ec"
+  integrity sha512-cwYhVbYNgH01aepeMwhd0ABX6fhVB2rcQ9m80u8Fl50ZODhsZ8RhQArnLTkE7/Zrfq4Sz/taNoF7DQy9pCZSKg==
+  dependencies:
+    redux "^4.0.0"
+
 "@types/redux-mock-store@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@types/redux-mock-store/-/redux-mock-store-1.0.3.tgz#895de4a364bc4836661570aec82f2eef5989d1fb"
@@ -11064,6 +11071,11 @@ immer@^9.0.21, immer@^9.0.7:
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.21.tgz#1e025ea31a40f24fb064f1fef23e931496330176"
   integrity sha512-bc4NBHqOqSfRW7POMkHd51LvClaeMXpm8dx0e8oE2GORbq5aRK7Bxl4FyzVLdGtLmvLKL7BTDBG5ACQm4HWjTA==
 
+immutable@>=3.6.0:
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.3.3.tgz#8934ff6826d996a7642c8dc4b46e694dd19561e3"
+  integrity sha512-808ZFYMsIRAjLAu5xkKo0TsbY9LBy9H5MazTKIEHerNkg0ymgilGfBPMR/3G7d/ihGmuK2Hw8S1izY2d3kd3wA==
+
 "immutable@^3.8.1 || ^4.0.0", immutable@^4.0.0:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.3.2.tgz#f89d910f8dfb6e15c03b2cae2faaf8c1f66455fe"
@@ -13708,7 +13720,7 @@ micromatch@^3.0.4, micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-micromatch@^4.0.0, micromatch@^4.0.2, micromatch@^4.0.4:
+micromatch@^4.0.0, micromatch@^4.0.2, micromatch@^4.0.4, micromatch@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/micromatch/-/micromatch-4.0.5.tgz#bc8999a7cbbf77cdc89f132f6e467051b49090c6"
   integrity sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==
@@ -16865,10 +16877,12 @@ redux-mock-store@^1.5.4:
   dependencies:
     lodash.isplainobject "^4.0.6"
 
-redux-oidc@^4.0.0-beta1:
-  version "4.0.0-beta1"
-  resolved "https://registry.yarnpkg.com/redux-oidc/-/redux-oidc-4.0.0-beta1.tgz#db4ed8843595214d879d6f2399ae1db6ea33c12c"
-  integrity sha512-tv9Jyhu+Ki491+MOuzq672s5dd/jTmZyQ4FYAhP7f/tqWQN9CPiHfZFqn3kLzdmqbeXXgf82EVMnjfUoWwIS/g==
+redux-oidc@3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/redux-oidc/-/redux-oidc-3.1.7.tgz#04cc1476a813296b05abff794a35b255cb23b6c6"
+  integrity sha512-Xlo5UQf6MhGPf9it9iHv3pLjkP5NXqCFkmKXd6QE/xpoLfiTVwwQKs2bIVXZw4WroR09p54aLUzbMHw30Tte0g==
+  optionalDependencies:
+    immutable ">=3.6.0"
 
 redux-thunk@^2.3.0, redux-thunk@^2.4.2:
   version "2.4.2"
@@ -19649,6 +19663,13 @@ vite-plugin-mkcert@^1.16.0:
     axios "^1.2.2"
     debug "^4.3.4"
     picocolors "^1.0.0"
+
+vite-plugin-singlefile@^0.13.5:
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/vite-plugin-singlefile/-/vite-plugin-singlefile-0.13.5.tgz#9465dbb0b06afb2a73600a50fcce4b51c8d10999"
+  integrity sha512-y/aRGh8qHmw2f1IhaI/C6PJAaov47ESYDvUv1am1YHMhpY+19B5k5Odp8P+tgs+zhfvak6QB1ykrALQErEAo7g==
+  dependencies:
+    micromatch "^4.0.5"
 
 vite-plugin-svgr@^3.2.0:
   version "3.2.0"
