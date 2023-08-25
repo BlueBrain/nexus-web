@@ -3,16 +3,14 @@ import { StrictMode } from 'react';
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
 import store from './store';
-import EntryPoint from './EntryPoint';
+import EntryPoint from './entry';
+import { getUserManager, setupUserSession } from 'authManager';
+import './styles';
 
-import '@fontsource/titillium-web';
-import './global.scss';
-import { getUserManager, setupUserSession } from 'useAuthProvider';
 
 const root = document.getElementById('root')!;
-
-
 async function prerun() {
+    localStorage.removeItem('nexus__token');
     const userManager = getUserManager(store.getState());
     if (userManager) await setupUserSession(userManager);
 }

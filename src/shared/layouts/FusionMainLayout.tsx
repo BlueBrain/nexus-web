@@ -7,9 +7,9 @@ import { RootState } from '../store/reducers';
 import Header from '../components/Header/Header';
 import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
-import getUserManager from '../../client/userManager';
 import useLocalStorage from '../hooks/useLocalStorage';
 import './FusionMainLayout.scss';
+import { getUserManager } from 'authManager';
 
 const { Content } = Layout;
 
