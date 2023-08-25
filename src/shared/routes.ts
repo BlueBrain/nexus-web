@@ -54,6 +54,12 @@ const routes: TRoutePropsExtended[] = [
     protected: true,
   },
   {
+    path: 'client_silent_refresh',
+    exact: true,
+    component: () => null,
+    protected: false,
+  },
+  {
     path: '/:orgLabel/:projectLabel/resources/:resourceId',
     component: ResourceView,
     exact: true,

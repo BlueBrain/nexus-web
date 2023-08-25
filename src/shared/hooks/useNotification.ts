@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { notification as antdNotification } from 'antd';
-import { NotificationPlacement } from 'antd/es/notification';
+import { NotificationPlacement } from 'antd/es/notification/interface';
 
 export type NotificationContextType = {
   error: (args: {
@@ -100,7 +100,7 @@ export const getNotificationContextValue = () => {
         /* Close any existing notifications. If already closed
          it won't have any effect */
         for (let i = 0; i < notificationMessage.number; i += 1) {
-          antdNotification.close(`${message}_${i}`);
+          antdNotification.destroy(`${message}_${i}`);
         }
       }
       /* Open new notifications. Will have no effect if already open */
@@ -116,7 +116,6 @@ export const getNotificationContextValue = () => {
             return withoutMessageState;
           });
         },
-        top: distanceFromTopToDisplay,
       });
     });
   }, [notifications]);
