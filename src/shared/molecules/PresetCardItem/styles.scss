@@ -61,6 +61,8 @@
     min-height: unset;
     background: #fafafa;
     border-radius: 6px;
+    box-sizing: border-box;
+    font-weight: 700;
     &:hover {
       background: #0050b3;
       // radial-gradient(

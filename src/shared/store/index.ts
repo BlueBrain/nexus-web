@@ -8,11 +8,11 @@ import {
 import thunk, { ThunkAction as ReduxThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
+import { createLogger } from 'redux-logger';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import reducers, { RootState } from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
-import { createLogger } from 'redux-logger';
 
 export type Services = {
   nexus: NexusClient;
