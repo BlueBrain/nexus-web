@@ -17,10 +17,15 @@
     "resolveJsonModule": true,
     "baseUrl": "src",
     "paths": {
-      "testUtil": ["./utils/testUtil"]
+      "testUtil": ["./utils/testUtil"],
+      "@/*": ["./src/*"],
+      "pages/*": ["./src/pages/*"],
+      "components/*": ["./src/shared/components/*"],
+      "molecules/*": ["./src/shared/molecules/*"],
+      "modals/*": ["./src/shared/modals/*"],
+      "hooks/*": ["./src/shared/hooks/*"],
+      "server/*": ["./server/*"]
     },
-    /* Linting */
-    // "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
