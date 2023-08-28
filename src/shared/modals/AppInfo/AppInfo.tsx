@@ -13,12 +13,10 @@ import bbpLogo from '../../images/EPFL_BBP_logo.png';
 
 import './styles.scss';
 
-// declare var FUSION_VERSION: string;
-// declare var COMMIT_HASH: string;
+declare var FUSION_VERSION: string;
+declare var COMMIT_HASH: string;
 
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
-const FUSION_VERSION = '1.9.3';
-const COMMIT_HASH = 'dadsklnin334R1R413431E113';
 
 export type TNexusEco = {
   delta: string;

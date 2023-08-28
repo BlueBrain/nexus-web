@@ -1,4 +1,3 @@
-import * as React from 'react';
 import JIRA, { AuthorizeJiraUI, CreateIssueUI, LinkIssueUI } from '../JIRA';
 import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';

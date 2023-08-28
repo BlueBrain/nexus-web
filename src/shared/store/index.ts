@@ -10,7 +10,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
 import { createLogger } from 'redux-logger';
 import { History } from 'history';
-import { NexusClient } from '@bbp/nexus-sdk/es';
+import { NexusClient } from '@bbp/nexus-sdk';
 import reducers, { RootState } from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
 
