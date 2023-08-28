@@ -11,6 +11,7 @@ import {
 import './view-form.scss';
 import useNotification from '../../../../shared/hooks/useNotification';
 import { ErrorComponent } from '../../../../shared/components/ErrorComponent';
+import { TError } from '../../../../utils/types';
 
 export type NexusSparqlError =
   | string
@@ -55,7 +56,7 @@ const SparqlQueryResults: React.FunctionComponent<{
     } catch (error) {
       notification.error({
         message: `Could not parse ${entry}`,
-        description: error.message,
+        description: (error as TError).message,
       });
     }
     return entry;

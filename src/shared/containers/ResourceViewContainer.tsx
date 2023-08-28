@@ -41,6 +41,10 @@ import { StudioResource } from '../../subapps/studioLegacy/containers/StudioCont
 import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
 import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import {
+  TErrorWithType,
+  TUpdateResourceFunctionError,
+} from '../../utils/types';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -237,21 +241,23 @@ const ResourceViewContainer: React.FunctionComponent<{
           projectLabel,
           resourceId
         )) as Resource;
-        error.wasUpdated = potentiallyUpdatedResource._rev !== resource._rev;
+        (error as TUpdateResourceFunctionError).wasUpdated =
+          potentiallyUpdatedResource._rev !== resource._rev;
 
-        error.action = 'update';
-        if ('@context' in error) {
-          if ('rejections' in error) {
-            error.message = 'An error occurred whilst updating the resource';
+        (error as TUpdateResourceFunctionError).action = 'update';
+        if ('@context' in (error as TUpdateResourceFunctionError)) {
+          if ('rejections' in (error as TUpdateResourceFunctionError)) {
+            (error as TUpdateResourceFunctionError).message =
+              'An error occurred whilst updating the resource';
           } else {
-            error.message = error.reason;
+            (error as TUpdateResourceFunctionError).message = (error as TUpdateResourceFunctionError).reason;
           }
         }
 
         notification.error({
           message: 'An error occurred whilst updating the resource',
         });
-        if (error.wasUpdated) {
+        if ((error as TUpdateResourceFunctionError).wasUpdated) {
           const expandedResources = (await nexus.Resource.get(
             orgLabel,
             projectLabel,
@@ -263,7 +269,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
           const expandedResource = expandedResources[0];
           setResource({
-            error,
+            error: error as TUpdateResourceFunctionError,
             resource: {
               ...potentiallyUpdatedResource,
               '@id': expandedResource['@id'],
@@ -275,7 +281,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         } else {
           setResource({
             resource,
-            error,
+            error: error as Error,
             busy: false,
           });
         }
@@ -349,7 +355,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     } catch (error) {
       let errorMessage;
 
-      if (error['@type'] === 'AuthorizationFailed') {
+      if ((error as TErrorWithType)['@type'] === 'AuthorizationFailed') {
         nexus.Identity.list().then(({ identities }) => {
           const user = identities.find(i => i['@type'] === 'User');
 
@@ -368,10 +374,10 @@ const ResourceViewContainer: React.FunctionComponent<{
         });
 
         errorMessage = `You don't have the access rights for this resource located in ${orgLabel} / ${projectLabel}.`;
-      } else if (error['@type'] === 'ResourceNotFound') {
+      } else if ((error as TErrorWithType)['@type'] === 'ResourceNotFound') {
         errorMessage = `Resource '${resourceId}' not found`;
       } else {
-        errorMessage = error.reason;
+        errorMessage = (error as TErrorWithType).reason;
       }
       const jsError = new Error(errorMessage);
 
