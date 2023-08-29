@@ -15,6 +15,7 @@ import { act } from 'react-dom/test-utils';
 import FilterOptions from '../FilterOptions';
 import { ConfigField } from 'subapps/search/hooks/useGlobalSearch';
 
+
 const mockFiltersResponse = {
   aggregations: {
     '(missing)': { doc_count: 0 },
@@ -415,6 +416,7 @@ describe('Filter Options Container', () => {
 
     // Test that each of the aggregations is in the list of filters
     const aggregations = mockFiltersResponse.aggregations.suggestions.buckets;
+
     aggregations.forEach(async b => {
       const element = await screen.findByText(b.key);
       expect(element).toBeInTheDocument();
