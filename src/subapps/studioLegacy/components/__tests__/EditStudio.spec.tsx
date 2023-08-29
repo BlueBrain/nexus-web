@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import EditStudio, { StudioResource } from '../EditStudio';
 import * as React from 'react';
 import { Context } from '@bbp/nexus-sdk';
@@ -17,9 +18,9 @@ describe('EditStudio', () => {
     render(
       <EditStudio
         studio={mockStudioResource}
-        onSave={jest.fn()}
-        onSaveImage={jest.fn()}
-        markdownViewer={jest.fn()}
+        onSave={vi.fn()}
+        onSaveImage={vi.fn()}
+        markdownViewer={vi.fn()}
       />
     );
     const button = screen.getByRole('button');

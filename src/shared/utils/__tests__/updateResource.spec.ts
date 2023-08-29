@@ -87,8 +87,9 @@ describe('getUpdateResourceFunction() with Realm type resource', () => {
     resourceId
   );
   it('resource with @type including Realm should target Realm endpoint', () => {
+    console.log('@@fn.toString()', fn.toString());
     expect(fn.toString()).toMatch(
-      "nexus.Realm.update(originalResource['_label'], revision, resource)"
+      `nexus.Realm.update(originalResource["_label"], revision, resource)`
     );
   });
 });
@@ -149,6 +150,7 @@ describe('getUpdateResourceFunction() with Storage type resource', () => {
     resourceId
   );
   it('resource with @type including Storage should target Storage endpoint', () => {
+    console.log('@@fn.toString()', fn.toString());
     expect(fn.toString()).toMatch(
       'nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource)'
     );
@@ -279,7 +281,7 @@ describe('getUpdateResourceFunction() with unexpected types', () => {
       resourceId
     );
     expect(fn.toString()).toMatch(
-      'nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource)'
+      `nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource)`
     );
   });
 });

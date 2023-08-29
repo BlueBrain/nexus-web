@@ -1,4 +1,7 @@
 {
+  "globals": {
+    "vi": true
+  },
   "defaultSeverity": "error",
   "extends": [
     "tslint-config-airbnb",
