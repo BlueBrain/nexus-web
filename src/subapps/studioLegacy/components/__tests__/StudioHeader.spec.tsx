@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import StudioHeader from '../StudioHeader';
 import { Resource, Context } from '@bbp/nexus-sdk';
 import { render, screen } from '../../../../utils/testUtil';
@@ -13,7 +14,7 @@ describe('StudioHeader', () => {
   } as unknown) as Resource;
   it('Renders StudioHeader with a title', () => {
     render(
-      <StudioHeader resource={mockStudioResource} markdownViewer={jest.fn()} />
+      <StudioHeader resource={mockStudioResource} markdownViewer={vi.fn()} />
     );
     const title = screen.getByRole('heading');
     expect(title).toHaveTextContent('a label');

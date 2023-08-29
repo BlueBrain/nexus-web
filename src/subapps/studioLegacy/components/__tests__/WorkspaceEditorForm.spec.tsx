@@ -2,6 +2,8 @@ import WorkspaceEditorForm, { WorkspaceResource } from '../WorkspaceEditorForm';
 import { Context } from '@bbp/nexus-sdk';
 import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+
 
 describe('WorkspaceEditorForm', () => {
   const context = {
@@ -12,7 +14,7 @@ describe('WorkspaceEditorForm', () => {
     label: 'a label',
   } as unknown) as WorkspaceResource;
   it('Renders WorkspaceEditorForm and allows submission', async () => {
-    const saveWorkspace = jest.fn();
+    const saveWorkspace = vi.fn();
     render(
       <WorkspaceEditorForm
         saveWorkspace={saveWorkspace}
