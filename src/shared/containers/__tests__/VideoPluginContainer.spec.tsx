@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
@@ -66,7 +67,7 @@ describe('VideoPluginContainer', () => {
             orgLabel="org"
             projectLabel="project"
             collapsed={false}
-            handleCollapseChanged={jest.fn}
+            handleCollapseChanged={vi.fn}
           ></VideoPluginContainer>
         </NexusProvider>
       );
@@ -141,7 +142,7 @@ describe('VideoPluginContainer', () => {
             orgLabel="org"
             projectLabel="project"
             collapsed={false}
-            handleCollapseChanged={jest.fn}
+            handleCollapseChanged={vi.fn}
           ></VideoPluginContainer>
         </NexusProvider>
       );
@@ -150,7 +151,7 @@ describe('VideoPluginContainer', () => {
   });
 
   it('When clicked fires collapse event handler', async () => {
-    const collapseHandler = jest.fn();
+    const collapseHandler = vi.fn();
     await act(async () => {
       const { container } = await render(
         <NexusProvider nexusClient={nexus}>

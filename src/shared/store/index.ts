@@ -59,9 +59,6 @@ export default function configureStore(
       )
     )
   );
-  // DEVELOPMENT ONLY
-  // if Hot module Replacement is enabled
-  // replace store's reducers with new ones.
 
   return store;
 }

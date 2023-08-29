@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import fetch from 'node-fetch';
@@ -13,6 +14,7 @@ import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import FilterOptions from '../FilterOptions';
 import { ConfigField } from 'subapps/search/hooks/useGlobalSearch';
+
 
 const mockFiltersResponse = {
   aggregations: {
@@ -379,7 +381,7 @@ describe('Filter Options Container', () => {
   });
 
   it('displays a filter for each aggregation as well as a missing option', async () => {
-    const onFinish = jest.fn();
+    const onFinish = vi.fn();
     const filter: ConfigField = {
       name: '',
       label: '',
@@ -396,7 +398,7 @@ describe('Filter Options Container', () => {
       })
     );
 
-    act(() => {
+    await act(() => {
       render(
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
@@ -414,8 +416,10 @@ describe('Filter Options Container', () => {
 
     // Test that each of the aggregations is in the list of filters
     const aggregations = mockFiltersResponse.aggregations.suggestions.buckets;
+
     aggregations.forEach(async b => {
-      expect(await screen.findByText(b.key)).toBeInTheDocument();
+      const element = await screen.findByText(b.key);
+      expect(element).toBeInTheDocument();
     });
 
     const list = await screen.findByRole('list');
@@ -433,7 +437,7 @@ describe('Filter Options Container', () => {
   });
 
   it('filter is checked when in list of applied filters', async () => {
-    const onFinish = jest.fn();
+    const onFinish = vi.fn();
     const filter: ConfigField = {
       name: 'project',
       label: 'Project',
@@ -453,7 +457,7 @@ describe('Filter Options Container', () => {
       })
     );
 
-    act(() => {
+    await act(() => {
       render(
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
@@ -482,7 +486,7 @@ describe('Filter Options Container', () => {
   });
 
   it('checking a filter option causes the onFinish callback to be fired with applied filter options', async () => {
-    const onFinish = jest.fn();
+    const onFinish = vi.fn();
     const filter: ConfigField = {
       name: '',
       label: '',
@@ -499,7 +503,7 @@ describe('Filter Options Container', () => {
       })
     );
 
-    act(() => {
+    await act(() => {
       render(
         <NexusProvider nexusClient={nexus}>
           <FilterOptions

@@ -36,7 +36,7 @@ describe('StudiosPage', () => {
   });
   const queryClient = new QueryClient();
   const store = configureStore(history, { nexus }, {});
-  xit('renders studios in a list', async () => {
+  it('renders studios in a list', async () => {
     await act(async () => {
       await render(
         <Provider store={store}>

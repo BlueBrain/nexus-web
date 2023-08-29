@@ -37,7 +37,7 @@ describe('ProjectsPage', () => {
   });
   const queryClient = new QueryClient();
   const store = configureStore(history, { nexus }, {});
-  xit('renders organization projects in a list', async () => {
+  it('renders organization projects in a list', async () => {
     await act(async () => {
       await render(
         <Provider store={store}>

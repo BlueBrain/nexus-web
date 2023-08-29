@@ -51,6 +51,11 @@ export default defineConfig(() => {
             FUSION_VERSION: JSON.stringify(version),
             COMMIT_HASH: JSON.stringify(commitHash),
         },
+        test: {
+            globals: true,
+            environment: 'jsdom',
+            setupFiles: "./setupFile.js",
+        },
         build: {
             manifest: true,
             commonjsOptions: {

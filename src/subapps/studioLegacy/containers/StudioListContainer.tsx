@@ -3,12 +3,12 @@ import { useQuery, useQueries } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
-import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
-import StudioList from '../components/StudioList';
-import CreateStudioContainer from './CreateStudioContainer';
 import { Empty } from 'antd';
 import { parseInt } from 'lodash';
 import { useSelector } from 'react-redux';
+import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
+import StudioList from '../components/StudioList';
+import CreateStudioContainer from './CreateStudioContainer';
 import { RootState } from '../../../shared/store/reducers';
 
 const DEFAULT_STUDIO_TYPE =

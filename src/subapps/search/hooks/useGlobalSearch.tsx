@@ -4,7 +4,7 @@ import { Button, Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { useQueries } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus/es';
 import {
   CaretDownOutlined,
   EyeInvisibleOutlined,

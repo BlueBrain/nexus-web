@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
@@ -48,7 +49,7 @@ describe('Analysis Plugin', () => {
     const ActualReactRedux = jest.requireActual('react-redux');
     return {
       ...ActualReactRedux,
-      useSelector: jest.fn().mockImplementation(() => {
+      useSelector: vi.fn().mockImplementation(() => {
         return mockState;
       }),
     };
