@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import * as React from 'react';
 import { render, waitFor } from '../../../utils/testUtil';
 import { resourceResolverApi } from '__mocks__/handlers/ResourceEditor/handlers';
@@ -8,13 +9,13 @@ import codemiror from 'codemirror';
 document.createRange = () => {
   const range = new Range();
 
-  range.getBoundingClientRect = jest.fn();
+  range.getBoundingClientRect = vi.fn();
 
   range.getClientRects = () => {
     return {
       item: () => null,
       length: 0,
-      [Symbol.iterator]: jest.fn(),
+      [Symbol.iterator]: vi.fn(),
     };
   };
 

@@ -21,9 +21,7 @@ import {
 import StudioReactContext, {
   StudioContextType,
 } from '../../contexts/StudioContext';
-
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { ButtonHTMLType } from 'antd/lib/button/button';
 
 describe('workSpaceMenu', () => {
   const history = createMemoryHistory({});
