@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
 import JIRAPluginUI, { AuthorizeJiraUI } from '../../components/JIRA/JIRA';
 import useJIRA from '../../hooks/useJIRA';

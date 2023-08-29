@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { act, fireEvent, render, screen } from '../../../utils/testUtil';
 import Copy from '.';
 import { Button, Tooltip } from 'antd';
@@ -6,12 +7,12 @@ import * as CopyUtils from '../../utils/copy';
 
 Object.defineProperty(document, 'queryCommandSupported', {
   writable: true,
-  value: jest.fn().mockImplementation(query => true),
+  value: vi.fn().mockImplementation(query => true),
 });
 
 Object.defineProperty(document, 'execCommand', {
   writable: true,
-  value: jest.fn().mockImplementation(query => true),
+  value: vi.fn().mockImplementation(query => true),
 });
 
 describe('CopyComponent', () => {
@@ -46,7 +47,7 @@ describe('CopyComponent', () => {
   });
 
   it('triggers copy of text', async () => {
-    const triggerCopySpy = jest.spyOn(CopyUtils, 'triggerCopy');
+    const triggerCopySpy = vi.spyOn(CopyUtils, 'triggerCopy');
     const copyBtn = await screen.getByRole('button');
 
     await act(async () => {

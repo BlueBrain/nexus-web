@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { downloadArchive } from './DataPanel';
 import { ParsedNexusUrl } from 'shared/utils/nexusParse';
@@ -7,7 +8,7 @@ import {
   resourceWithDistributionArray,
   resourceWithoutDistrition,
 } from 'shared/utils/__mocks__/data_panel_download_resource';
-
+import { vi as jest } from 'vitest';
 const mockNexus = createNexusClient({
   uri: 'https://localhost',
   fetch: {},
@@ -29,7 +30,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
-    mockNexus.Archive.create = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.Archive.create = vi.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -52,7 +53,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
-    mockNexus.Archive.create = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.Archive.create = vi.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -76,7 +77,7 @@ describe('DataPanel', () => {
       .mockRejectedValueOnce(new Error('Mock resource 3 not found'));
 
     const mockEndpointError = new Error('Test Mock Error');
-    mockNexus.Archive.create = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.Archive.create = vi.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -105,7 +106,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
-    mockNexus.httpGet = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.httpGet = vi.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -139,7 +140,7 @@ describe('DataPanel', () => {
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
-    mockNexus.httpGet = jest.fn().mockRejectedValue(mockEndpointError);
+    mockNexus.httpGet = vi.fn().mockRejectedValue(mockEndpointError);
 
     try {
       await downloadArchive({
@@ -170,7 +171,7 @@ describe('DataPanel', () => {
     mockNexus.Archive.create = jest
       .fn()
       .mockResolvedValue('Archive create passed');
-    mockNexus.httpGet = jest.fn().mockResolvedValue(new Blob());
+    mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
       nexus: mockNexus,
@@ -199,7 +200,7 @@ describe('DataPanel', () => {
     mockNexus.Archive.create = jest
       .fn()
       .mockResolvedValue('Archive create passed');
-    mockNexus.httpGet = jest.fn().mockResolvedValue(new Blob());
+    mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
       nexus: mockNexus,

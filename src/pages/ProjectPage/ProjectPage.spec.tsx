@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import * as React from 'react';
 import fetch from 'node-fetch';
 import { rest } from 'msw';
@@ -33,7 +34,7 @@ describe('ProjectPage', () => {
     uri: 'https://localhost:3000',
   });
 
-  const mockState = {
+  const mockState = vi.hoisted(() => ({
     config: {
       apiEndpoint: 'https://localhost:3000',
       analysisPluginSparqlDataQuery: 'detailedCircuit',
@@ -73,14 +74,14 @@ describe('ProjectPage', () => {
         expires_at: 1657624870,
       },
     },
-  };
+  }));
   const queryClient = new QueryClient();
   const mockStore = configureStore();
-  jest.mock('react-redux', () => {
-    const ActualReactRedux = jest.requireActual('react-redux');
+  vi.mock('react-redux', async () => {
+    const ActualReactRedux = await vi.importActual<any>('react-redux');
     return {
       ...ActualReactRedux,
-      useSelector: jest.fn().mockImplementation(() => {
+      useSelector: vi.fn().mockImplementation(() => {
         return mockState;
       }),
     };

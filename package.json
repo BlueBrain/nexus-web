@@ -16,7 +16,8 @@
     "build": "rm -rf ./dist && vite build -c ./vite.config.refresh.js && vite build",
     "preview": "cross-env NODE_ENV=production node server",
     "knip": "knip",
-    "test": "jest"
+    "test": "vitest watch",
+    "test:no-watch": "vitest run"
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
@@ -158,24 +159,17 @@
     "@types/storybook__addon-links": "^3.3.4",
     "@types/storybook__react": "^4.0.1",
     "@types/string-similarity": "^4.0.0",
-    "@types/webpack-env": "^1.13.9",
     "@vitejs/plugin-react": "^4.0.4",
     "babel-loader": "^8.0.4",
     "browserify-zlib": "^0.2.0",
-    "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^2.1.1",
     "cypress": "^12.17.0",
     "cypress-file-upload": "^5.0.8",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
     "file-loader": "^3.0.1",
-    "git-revision-vite-plugin": "^0.0.9",
     "husky": "^1.3.1",
-    "jest": "27",
-    "jest-environment-enzyme": "^7.0.2",
-    "jest-environment-jsdom-fifteen": "^1.0.2",
-    "jest-environment-jsdom-sixteen": "^2.0.0",
-    "jest-enzyme": "^7.0.2",
+    "jsdom": "^22.1.0",
     "knip": "^2.20.2",
     "less": "^4.2.0",
     "lint-staged": "^9.5.0",
@@ -204,37 +198,8 @@
     "util": "^0.12.5",
     "vite": "^4.4.9",
     "vite-compatible-readable-stream": "^3.6.1",
-    "vite-plugin-dynamic-import": "^1.5.0"
-  },
-  "jest": {
-    "modulePaths": [
-      "<rootDir>/src"
-    ],
-    "collectCoverage": true,
-    "preset": "ts-jest",
-    "setupFilesAfterEnv": [
-      "jest-enzyme",
-      "./jest.setup.js"
-    ],
-    "testEnvironment": "jsdom",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
-      "\\.(css|less|scss)$": "<rootDir>/src/__mocks__/styleMock.js"
-    },
-    "testPathIgnorePatterns": [
-      "<rootDir>/cypress/",
-      "<rootDir>/migrations/"
-    ],
-    "globals": {
-      "FUSION_VERSION": "1.0.0",
-      "COMMIT_HASH": "9013fa343",
-      "ts-jest": {
-        "isolatedModules": true
-      }
-    },
-    "watchPathIgnorePatterns": [
-      "node_modules"
-    ]
+    "vite-plugin-dynamic-import": "^1.5.0",
+    "vitest": "^0.34.3"
   },
   "prettier": {
     "singleQuote": true,
@@ -257,7 +222,8 @@
     }
   },
   "resolutions": {
-    "d3-interpolate": "2.0.1"
+    "d3-interpolate": "2.0.1",
+    "headers-polyfill": "3.0.10"
   },
   "overrides": {
     "d3-interpolate": "2.0.1"

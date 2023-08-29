@@ -1,17 +1,17 @@
+import '@testing-library/jest-dom';
+import * as React from 'react';
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
-import * as React from 'react';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import JIRAPluginContainer from '../JIRAPluginContainer';
 import { rest } from 'msw';
-import { render, server, waitFor, screen } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
+import JIRAPluginContainer from '../JIRAPluginContainer';
+import { render, server, waitFor, screen } from '../../../../utils/testUtil';
 import {
   getNotificationContextValue,
   NotificationContext,
@@ -31,20 +31,20 @@ describe('Jira Plugin Container', () => {
     fetch,
     uri: 'https://localhost:3000',
   });
-  const mockState = {
+  const mockState = vi.hoisted(() => ({
     config: {
       apiEndpoint: 'https://localhost:3000',
       analysisPluginSparqlDataQuery: 'detailedCircuit',
       jiraUrl: 'https://localhost:3000/jira/project/devissues',
     },
-  };
+  }));
   const queryClient = new QueryClient();
   const mockStore = configureStore();
-  jest.mock('react-redux', () => {
-    const ActualReactRedux = jest.requireActual('react-redux');
+  vi.mock('react-redux', async () => {
+    const ActualReactRedux = await (vi.importActual<any>('react-redux'));
     return {
       ...ActualReactRedux,
-      useSelector: jest.fn().mockImplementation(() => {
+      useSelector: vi.fn().mockImplementation(() => {
         return mockState;
       }),
     };

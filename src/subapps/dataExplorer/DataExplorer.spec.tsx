@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
@@ -34,7 +35,7 @@ import { Provider } from 'react-redux';
 import configureStore from '../../shared/store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
-window.scrollTo = jest.fn();
+window.scrollTo = vi.fn();
 
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
