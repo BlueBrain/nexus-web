@@ -5,7 +5,7 @@ import pc from "picocolors";
 import path from 'path';
 import fs from 'fs';
 import { Helmet } from 'react-helmet';
-
+import compression from 'compression';
 import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
   DEFAULT_REPORT_CATEGORIES,
@@ -53,6 +53,7 @@ const subAppsManifestPath =
 const base = rawBase.replace(/\/$/, '');
 
 const app = express();
+app.use(compression());
 
 app.get("/health", (_, res) => {
   return res.send("100% running");
