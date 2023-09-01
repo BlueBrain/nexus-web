@@ -454,7 +454,11 @@ const invalidSparqlQueryResponse = {
 };
 
 export const invalidSparqlHandler = rest.post(
-  deltaPath('/views/bbp/agents/graph/sparql'),
+  deltaPath(
+    `/views/bbp/agents/${encodeURIComponent(
+      'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
+    )}/sparql`
+  ),
   (req, res, ctx) => {
     return res(ctx.status(400), ctx.json(invalidSparqlQueryResponse));
   }
