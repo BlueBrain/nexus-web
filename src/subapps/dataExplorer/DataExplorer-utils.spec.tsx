@@ -1,4 +1,8 @@
 import {
+  GraphAnalyticsProperty,
+  getUniquePathsForProperties,
+} from './DataExplorerUtils';
+import {
   doesResourceContain,
   getAllPaths,
   checkPathExistence,
@@ -679,5 +683,101 @@ describe('DataExplorerSpec-Utils', () => {
     expect(
       checkPathExistence(resource, '@context.@vocab', 'does-not-exist')
     ).toEqual(true);
+  });
+
+  it('can get paths for propeties with no nesting', () => {
+    const mockProperties: GraphAnalyticsProperty[] = [
+      {
+        _name: 'prop1',
+        _properties: [],
+      },
+      {
+        _name: 'prop2',
+        _properties: [],
+      },
+      {
+        _name: 'prop3',
+        _properties: [],
+      },
+    ];
+
+    const actualPaths = getUniquePathsForProperties(mockProperties);
+    expect(actualPaths).toEqual(['prop1', 'prop2', 'prop3']);
+  });
+
+  it('gets paths for 1 level deep nested properties', () => {
+    const mockProperties: GraphAnalyticsProperty[] = [
+      {
+        _name: 'prop1',
+        _properties: [{ _name: 'sub1', _properties: [] }],
+      },
+      {
+        _name: 'prop2',
+        _properties: [],
+      },
+      {
+        _name: 'prop3',
+        _properties: [{ _name: 'sub1', _properties: [] }],
+      },
+    ];
+
+    const actualPaths = getUniquePathsForProperties(mockProperties);
+    expect(actualPaths).toEqual([
+      'prop1',
+      'prop1.sub1',
+      'prop2',
+      'prop3',
+      'prop3.sub1',
+    ]);
+  });
+
+  it('gets paths for multi level nested properties', () => {
+    const mockProperties: GraphAnalyticsProperty[] = [
+      {
+        _name: 'who',
+        _properties: [
+          {
+            _name: 'let',
+            _properties: [
+              {
+                _name: 'the',
+                _properties: [
+                  {
+                    _name: 'dogs',
+                    _properties: [{ _name: 'out?', _properties: [] }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        _name: 'who',
+        _properties: [
+          { _name: 'who', _properties: [{ _name: 'who?', _properties: [] }] },
+        ],
+      },
+      {
+        _name: 'by',
+        _properties: [
+          { _name: 'baha', _properties: [{ _name: 'men', _properties: [] }] },
+        ],
+      },
+    ];
+
+    const actualPaths = getUniquePathsForProperties(mockProperties);
+    expect(actualPaths).toEqual([
+      'who',
+      'who.let',
+      'who.let.the',
+      'who.let.the.dogs',
+      'who.let.the.dogs.out?',
+      'who.who',
+      'who.who.who?',
+      'by',
+      'by.baha',
+      'by.baha.men',
+    ]);
   });
 });

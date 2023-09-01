@@ -9,6 +9,7 @@ import {
   filterByProjectHandler,
   getCompleteResources,
   getMockResource,
+  graphAnalyticsTypeHandler,
   sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -35,17 +36,19 @@ window.scrollTo = jest.fn();
 
 describe('DataExplorer', () => {
   const defaultTotalResults = 500_123;
+  const ALWAYS_PRESENT_RESOURCE_PROPERTY = 'propertyAlwaysThere';
   const mockResourcesOnPage1: Resource[] = getCompleteResources();
   const mockResourcesForPage2: Resource[] = [
-    getMockResource('self1', { author: 'piggy', edition: 1 }),
-    getMockResource('self2', { author: ['iggy', 'twinky'] }),
-    getMockResource('self3', { year: 2013 }),
+    getMockResource('self1', { author: 'piggy', edition: 1 }, 'unhcr', 'file'),
+    getMockResource('self2', { author: ['iggy', 'twinky'] }, 'unhcr', 'file'),
+    getMockResource('self3', { year: 2013 }, 'unhcr', 'file'),
   ];
 
   const server = setupServer(
     dataExplorerPageHandler(undefined, defaultTotalResults),
     sourceResourceHandler(),
-    filterByProjectHandler()
+    filterByProjectHandler(),
+    graphAnalyticsTypeHandler()
   );
   const history = createMemoryHistory({});
 
@@ -106,6 +109,9 @@ describe('DataExplorer', () => {
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
+      rows.forEach(row => {
+        // console.log('MY ROW', row.innerHTML)
+      });
       expect(rows.length).toEqual(expectedRowsCount);
       return rows;
     });
@@ -265,7 +271,23 @@ describe('DataExplorer', () => {
     return menuDropdown;
   };
 
-  const selectPath = async (path: string) => {
+  const selectPath = async (
+    path: string,
+    project: string = 'unhcr',
+    type: string = 'file'
+  ) => {
+    // Select `project` project if it is not already selected
+    const projectInput = await getInputForLabel(ProjectMenuLabel);
+    if (!projectInput.value.match(new RegExp(project, 'i'))) {
+      await selectOptionFromMenu(ProjectMenuLabel, project);
+    }
+
+    // Select `type` type if it is not already selected
+    const typeInput = await getSelectedValueInMenu(TypeMenuLabel);
+    if (!typeInput?.match(new RegExp(type, 'i'))) {
+      await selectOptionFromMenu(TypeMenuLabel, type, TypeOptionSelector);
+    }
+
     await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
   };
 
@@ -330,6 +352,7 @@ describe('DataExplorer', () => {
     await expectRowCountToBe(10);
     await getRowsForNextPage(resources);
     await expectRowCountToBe(resources.length);
+    server.use(filterByProjectHandler(mockResourcesForPage2));
   };
 
   const getResetProjectButton = async () => {
@@ -365,8 +388,6 @@ describe('DataExplorer', () => {
     expect(pro).toBeVisible();
     const type = await getInputForLabel(TypeMenuLabel);
     expect(type).toBeVisible();
-    const predicate = await getInputForLabel(PathMenuLabel);
-    expect(predicate).toBeVisible();
     const totalResultsCount = await getTotalSizeOfDataset('500,123');
     expect(totalResultsCount).toBeVisible();
     const metadataSwitch = await showMetadataSwitch();
@@ -649,36 +670,14 @@ describe('DataExplorer', () => {
     ).rejects.toThrowError();
   });
 
-  it('shows paths as options in a select menu of path selector', async () => {
-    await expectRowCountToBe(10);
-    await openMenuFor('path-selector');
-
-    const pathOptions = getVisibleOptionsFromMenu(CustomOptionSelector);
-
-    const expectedPaths = getAllPaths(mockResourcesOnPage1);
-    expect(expectedPaths.length).toBeGreaterThanOrEqual(
-      Object.keys(mockResourcesOnPage1[0]).length
-    );
-
-    pathOptions.forEach((path, index) => {
-      expect(path.innerHTML).toMatch(
-        new RegExp(`${expectedPaths[index]}$`, 'i')
-      );
-    });
-
-    expect(pathOptions.length).toBeGreaterThanOrEqual(3); // Since antd options in a select menu are displayed in a virtual list (by default), not all expected options are in the DOM.
-  });
-
   it('shows resources that have path missing', async () => {
-    await updateResourcesShownInTable([
-      getMockResource('self1', { author: 'piggy', edition: 1 }),
-      getMockResource('self2', { author: ['iggy', 'twinky'] }),
-      getMockResource('self3', { year: 2013 }),
-    ]);
+    await updateResourcesShownInTable(mockResourcesForPage2);
 
     await selectPath('author');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(1);
+
+    await resetPredicate();
 
     await selectPath('edition');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
@@ -801,11 +800,7 @@ describe('DataExplorer', () => {
 
   it('shows total filtered count if predicate is selected', async () => {
     await expectRowCountToBe(10);
-    await updateResourcesShownInTable([
-      getMockResource('self1', { author: 'piggy', edition: 1 }),
-      getMockResource('self2', { author: ['iggy', 'twinky'] }),
-      getMockResource('self3', { year: 2013 }),
-    ]);
+    await updateResourcesShownInTable(mockResourcesForPage2);
 
     await selectPath('author');
     await userEvent.click(container);
@@ -841,7 +836,6 @@ describe('DataExplorer', () => {
 
     const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
     expect(selectedPathBefore).toMatch(/author/);
-
     await expectRowCountToBe(2);
 
     await resetPredicate();
@@ -854,8 +848,9 @@ describe('DataExplorer', () => {
 
   it('only shows predicate menu if path is selected', async () => {
     await expectRowCountToBe(10);
+
     expect(openMenuFor(PredicateMenuLabel)).rejects.toThrow();
-    await selectPath('@type');
+    await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
     expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
   });
 
@@ -953,9 +948,7 @@ describe('DataExplorer', () => {
   });
 
   it('does not reset values in filters when header was hidden due to scroll', async () => {
-    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
-    await selectPath('@type');
+    await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
 
     await scrollWindow(500);
     await waitForHeaderToBeHidden();
@@ -970,12 +963,16 @@ describe('DataExplorer', () => {
     expect(typeInput).toMatch(new RegExp('file', 'i'));
 
     const pathInput = await getSelectedValueInMenu(PathMenuLabel);
-    expect(pathInput).toMatch(new RegExp('@type', 'i'));
+    expect(pathInput).toMatch(
+      new RegExp(ALWAYS_PRESENT_RESOURCE_PROPERTY, 'i')
+    );
   });
 
   it('resets predicate search term when different predicate verb is selected', async () => {
     await updateResourcesShownInTable(mockResourcesForPage2);
+
     await selectPath('author');
+
     await selectPredicate(CONTAINS);
     const valueInput = await screen.getByPlaceholderText('Search for...');
     await userEvent.type(valueInput, 'iggy');
@@ -986,5 +983,19 @@ describe('DataExplorer', () => {
 
     const valueInputAfter = await screen.getByPlaceholderText('Search for...');
     expect((valueInputAfter as HTMLInputElement).value).not.toEqual('iggy');
+  });
+
+  it('does not show predicate selector if multiple types are selected', async () => {
+    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
+
+    expect(await getInputForLabel(PathMenuLabel)).toBeVisible();
+
+    await selectOptionFromMenu(
+      TypeMenuLabel,
+      'StudioDashboard',
+      TypeOptionSelector
+    );
+    expect(getInputForLabel(PathMenuLabel)).rejects.toThrow();
   });
 });

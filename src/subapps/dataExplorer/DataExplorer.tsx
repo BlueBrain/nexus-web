@@ -10,6 +10,7 @@ import {
   columnFromPath,
   isUserColumn,
   sortColumns,
+  useGraphAnalyticsPath,
   usePaginatedExpandedResources,
 } from './DataExplorerUtils';
 import {
@@ -284,6 +285,10 @@ const DataExplorer: React.FC<{}> = () => {
     });
     return () => unlisten();
   }, []);
+
+  const shouldShowPredicateSelector =
+    orgAndProject?.length === 2 && types?.length === 1;
+
   return (
     <div className="data-explorer-contents" ref={containerRef}>
       {isLoading && <Spin className="loading" />}
@@ -347,12 +352,16 @@ const DataExplorer: React.FC<{}> = () => {
                 document.getElementById('data-explorer-filters')!
               }
             />
-            <PredicateSelector
-              columns={columns}
-              dataSource={currentPageDataSource}
-              onPredicateChange={updateTableConfiguration}
-              onResetCallback={onResetPredicateCallback}
-            />
+            {shouldShowPredicateSelector ? (
+              <PredicateSelector
+                columns={columns}
+                onPredicateChange={updateTableConfiguration}
+                onResetCallback={onResetPredicateCallback}
+                org={orgAndProject![0]}
+                project={orgAndProject![1]}
+                types={types!.map(type => type.value)}
+              />
+            ) : null}
           </div>
           <div className="right">
             <ColumnsSelector
