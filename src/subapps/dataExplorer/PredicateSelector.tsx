@@ -3,7 +3,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import { Button, Form, Input, Select } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { normalizeString } from '../../utils/stringUtils';
 import { DataExplorerConfiguration } from './DataExplorer';
 import {
@@ -11,22 +11,27 @@ import {
   isObject,
   isUserColumn,
   sortColumns,
+  useGraphAnalyticsPath,
 } from './DataExplorerUtils';
 import { TColumn } from './ColumnsSelector';
 import './styles.less';
 
 interface Props {
   columns: TColumn[];
-  dataSource: Resource[];
   onPredicateChange: React.Dispatch<Partial<DataExplorerConfiguration>>;
   onResetCallback: (column: string, checked: boolean) => void;
+  org: string;
+  project: string;
+  types: string[];
 }
 
 export const PredicateSelector: React.FC<Props> = ({
   columns,
-  dataSource,
   onPredicateChange,
   onResetCallback,
+  org,
+  project,
+  types,
 }: Props) => {
   const formRef = useRef<FormInstance>(null);
   const pathRef = useRef<{ path: string; selected: boolean }>({
@@ -40,9 +45,10 @@ export const PredicateSelector: React.FC<Props> = ({
     { value: DOES_NOT_CONTAIN },
   ];
 
-  const allPathOptions = useMemo(
-    () => pathOptions([...getAllPaths(dataSource)]),
-    [dataSource]
+  const { data: paths, isLoading: arePathsLoading } = useGraphAnalyticsPath(
+    org,
+    project,
+    types
   );
 
   const predicateSelected = (
@@ -133,7 +139,7 @@ export const PredicateSelector: React.FC<Props> = ({
 
       <Form.Item name="path" noStyle>
         <Select
-          options={allPathOptions}
+          options={pathOptions(paths ?? [])}
           showSearch={true}
           onSelect={pathLabel => {
             setFormField(PATH_FIELD, pathLabel);
@@ -143,6 +149,7 @@ export const PredicateSelector: React.FC<Props> = ({
               getFormFieldValue(SEARCH_TERM_FIELD)
             );
           }}
+          loading={arePathsLoading}
           allowClear={true}
           onClear={() => {
             onReset();

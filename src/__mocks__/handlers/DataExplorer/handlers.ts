@@ -38,6 +38,44 @@ export const dataExplorerPageHandler = (
   });
 };
 
+export const graphAnalyticsTypeHandler = () => {
+  return rest.get(
+    deltaPath('/graph-analytics/:org/:project/properties/:type'),
+    (req, res, ctx) => {
+      const mockResponse = {
+        '@context':
+          'https://bluebrain.github.io/nexus/contexts/properties.json',
+        '@id': 'http://schema.org/Dataset',
+        _count: 50,
+        _name: 'Dataset',
+        _properties: [
+          {
+            '@id': 'https://neuroshapes.org/tag__apical',
+            _count: 30,
+            _name: 'author',
+          },
+          {
+            '@id': 'https://neuroshapes.org/nr__reconstruction_type',
+            _count: 30,
+            _name: 'propertyAlwaysThere',
+          },
+          {
+            '@id': 'https://neuroshapes.org/nr__number_stems',
+            _count: 30,
+            _name: '_createdBy',
+          },
+          {
+            '@id': 'https://neuroshapes.org/nr__number_stems',
+            _count: 30,
+            _name: 'edition',
+          },
+        ],
+      };
+      return res(ctx.status(200), ctx.json(mockResponse));
+    }
+  );
+};
+
 const propertiesOnlyInSource = { userProperty1: { subUserProperty1: 'bar' } };
 
 export const sourceResourceHandler = (
@@ -205,6 +243,8 @@ export const getMockResource = (
   '@type': type,
   _constrainedBy:
     'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+  propertyAlwaysThere:
+    'Mock property in all test resources in DataExplorer spec',
   _createdAt: '2023-06-21T09:39:47.217Z',
   _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/antonel',
   _deprecated: false,
