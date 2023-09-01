@@ -128,6 +128,53 @@ export const useAggregations = (
   });
 };
 
+export type GraphAnalyticsProperty = {
+  _name: string;
+  _count?: number;
+  _properties: GraphAnalyticsProperty[];
+};
+
+type GraphAnalyticsResponse = {
+  _properties: GraphAnalyticsProperty[];
+};
+
+export const useGraphAnalyticsPath = (
+  org: string,
+  project: string,
+  types: string[]
+) => {
+  const nexus = useNexusContext();
+  return useQuery({
+    queryKey: ['graph-analytics-paths', org, project, types],
+    retry: false,
+    staleTime: Infinity,
+    queryFn: async () => {
+      return (await nexus.GraphAnalytics.properties(
+        project,
+        org,
+        types[0]
+      )) as GraphAnalyticsResponse;
+    },
+    select: data => {
+      return getUniquePathsForProperties(data._properties);
+    },
+  });
+};
+
+export const getUniquePathsForProperties = (
+  properties: GraphAnalyticsProperty[],
+  paths: string[] = [],
+  pathSoFar?: string
+): string[] => {
+  properties?.forEach(property => {
+    const name = pathSoFar ? `${pathSoFar}.${property._name}` : property._name;
+    paths.push(name);
+    getUniquePathsForProperties(property._properties ?? [], paths, name);
+  });
+
+  return Array.from(new Set(paths));
+};
+
 export const sortColumns = (a: string, b: string) => {
   // Sorts paths alphabetically. Additionally all paths starting with an underscore are sorted at the end of the list (because they represent metadata).
   const columnA = columnFromPath(a);
