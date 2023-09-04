@@ -20,7 +20,6 @@ export default defineConfig({
     fileServerFolder: '/cypress',
     defaultCommandTimeout: 50000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-    testIsolation: false,
     chromeWebSecurity: false,
 
     env: {
