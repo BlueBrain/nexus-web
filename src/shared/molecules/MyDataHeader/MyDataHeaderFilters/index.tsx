@@ -39,6 +39,7 @@ const MyDataHeaderFilters = ({
   typeOperator,
   dateField,
   setFilterOptions,
+  issuer,
 }: THeaderFilterProps) => {
   return (
     <div className="my-data-header-actions" id="my-data-header-actions">
@@ -48,6 +49,7 @@ const MyDataHeaderFilters = ({
       <TypeSelector
         key={'my-data-type-selector'}
         {...{
+          issuer,
           types,
           typeOperator,
           updateOptions: setFilterOptions,

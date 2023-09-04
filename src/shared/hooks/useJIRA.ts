@@ -52,9 +52,11 @@ export function useJiraPlugin() {
     }
   };
 
-  isInaccessibleBecauseNotOnVPN().then(value => {
-    setJiraInaccessibleBecauseOfVPN(value);
-  });
+  React.useEffect(() => {
+    isInaccessibleBecauseNotOnVPN().then(value => {
+      setJiraInaccessibleBecauseOfVPN(value);
+    });
+  }, []);
 
   return { isUserInSupportedJiraRealm, jiraInaccessibleBecauseOfVPN };
 }
@@ -464,9 +466,14 @@ function useJIRA({
       getRequestToken();
       return;
     }
-    fetchProjects();
-    fetchLinkedIssues();
-  }, [isJiraConnected, projectSelf]);
+  }, [isJiraConnected]);
+
+  React.useEffect(() => {
+    if (projectSelf && isJiraConnected) {
+      fetchProjects();
+      fetchLinkedIssues();
+    }
+  }, [projectSelf, isJiraConnected]);
 
   return {
     isLoading,

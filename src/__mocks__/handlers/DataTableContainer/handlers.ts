@@ -129,7 +129,11 @@ export const ORIGINAL_6_SORTED_5 = 'sterling';
 export const MOCK_VAR = 'Given Name';
 
 export const sparqlViewSingleResult = rest.post(
-  deltaPath('/views/bbp/agents/graph/sparql'),
+  deltaPath(
+    `/views/bbp/agents/${encodeURIComponent(
+      'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
+    )}/sparql`
+  ),
   (req, res, ctx) => {
     const mockResponse = {
       head: {
@@ -287,7 +291,9 @@ export const sparqlViewResultHandler = (
   studioRows: ReturnType<typeof getMockStudioResource>[]
 ) => {
   return rest.post(
-    deltaPath('/views/bbp/agents/graph/sparql'),
+    deltaPath(
+      '/views/bbp/agents/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex/sparql'
+    ),
     (req, res, ctx) => {
       const mockResponse = {
         head: {

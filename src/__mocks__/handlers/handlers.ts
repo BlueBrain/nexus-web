@@ -588,133 +588,149 @@ export const handlers = [
       );
     }
   ),
-  rest.post(deltaPath('/views/org/project/graph/sparql'), (req, res, ctx) => {
-    const mockResponse = {
-      head: { vars: ['self', 'p', 'o'] },
-      results: {
-        bindings: [
-          {
-            o: { type: 'bnode', value: 't78' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+  rest.post(
+    deltaPath(
+      `/views/org/project/${encodeURIComponent(
+        'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
+      )}/sparql`
+    ),
+    (req, res, ctx) => {
+      const mockResponse = {
+        head: { vars: ['self', 'p', 'o'] },
+        results: {
+          bindings: [
+            {
+              o: { type: 'bnode', value: 't78' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien1'),
+              },
             },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien1'),
+            {
+              o: { type: 'bnode', value: 't87' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien2'),
+              },
             },
-          },
-          {
-            o: { type: 'bnode', value: 't87' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            {
+              o: { type: 'bnode', value: 't91' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien3'),
+              },
             },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien2'),
+            {
+              o: { type: 'bnode', value: 't97' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien4'),
+              },
             },
-          },
-          {
-            o: { type: 'bnode', value: 't91' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            {
+              o: { type: 'bnode', value: 't98' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien5'),
+              },
             },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien3'),
+            {
+              o: { type: 'bnode', value: 't100' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien6'),
+              },
             },
-          },
-          {
-            o: { type: 'bnode', value: 't97' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            {
+              o: { type: 'bnode', value: 't114' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien7'),
+              },
             },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien4'),
+            {
+              o: { type: 'bnode', value: 't120' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien8'),
+              },
             },
-          },
-          {
-            o: { type: 'bnode', value: 't98' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+            {
+              o: { type: 'bnode', value: 't127' },
+              p: {
+                type: 'uri',
+                value:
+                  'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien9'),
+              },
             },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien5'),
+            {
+              o: {
+                type: 'uri',
+                value: 'https://bbp.epfl.ch/neurosciencegraph/data/',
+              },
+              p: {
+                type: 'uri',
+                value: 'https://bluebrain.github.io/nexus/vocabulary/base',
+              },
+              self: {
+                type: 'uri',
+                value: deltaPath('/nexus/v1/projects/nise/kerrien10'),
+              },
             },
-          },
-          {
-            o: { type: 'bnode', value: 't100' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-            },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien6'),
-            },
-          },
-          {
-            o: { type: 'bnode', value: 't114' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-            },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien7'),
-            },
-          },
-          {
-            o: { type: 'bnode', value: 't120' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-            },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien8'),
-            },
-          },
-          {
-            o: { type: 'bnode', value: 't127' },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/apiMappings',
-            },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien9'),
-            },
-          },
-          {
-            o: {
-              type: 'uri',
-              value: 'https://bbp.epfl.ch/neurosciencegraph/data/',
-            },
-            p: {
-              type: 'uri',
-              value: 'https://bluebrain.github.io/nexus/vocabulary/base',
-            },
-            self: {
-              type: 'uri',
-              value: deltaPath('/nexus/v1/projects/nise/kerrien10'),
-            },
-          },
-        ],
-      },
-    };
-    return res(
-      // Respond with a 200 status code
-      ctx.status(200),
-      ctx.json(mockResponse)
-    );
-  }),
+          ],
+        },
+      };
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    }
+  ),
   rest.get(deltaPath('/views/org/project'), (req, res, ctx) => {
     const mockResponse = {
       '@context': [
