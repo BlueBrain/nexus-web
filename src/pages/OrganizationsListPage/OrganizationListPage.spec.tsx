@@ -21,6 +21,8 @@ import { vi } from 'vitest';
 import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
 import { setupServer } from 'msw/node';
 
+describe('OrganizationListPage', () => {
+  const history = createBrowserHistory({ basename: '/' });
 vi.mock('react-router', async () => {
   const actual: Object = await vi.importActual('react-router');
   return {

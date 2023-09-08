@@ -208,6 +208,7 @@ function useJIRA({
   };
 
   const handleJiraError = (e: any) => {
+    console.log('@@error jira', e);
     if (!isJiraConnected) {
       // ignore if we are not connected
       return;

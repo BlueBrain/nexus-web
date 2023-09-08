@@ -1,8 +1,6 @@
 import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
-import * as React from 'react';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -31,8 +29,34 @@ import {
 } from '../../../../constants';
 import { configureStore } from '../../../../store';
 
+
 describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();
+
+  const queryClient = new QueryClient();
+  const mockStore = configureStore();
+
+  const  mockState = {
+    config: {
+      apiEndpoint: deltaPath(),
+      analysisPluginSparqlDataQuery: 'detailedCircuit',
+      analysisPluginTypes: DEFAULT_REPORT_TYPES,
+      analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
+    },
+    auth: {
+      identities: [],
+    },
+  };
+
+  vi.mock('react-redux', () => {
+    const ActualReactRedux = vi.importActual<any>('react-redux');
+    return {
+      ...ActualReactRedux,
+      useSelector: vi.fn().mockImplementation(() => {
+        return mockState;
+      }),
+    };
+  });
 
   // establish API mocking before all tests
   beforeAll(() => server.listen());

@@ -645,13 +645,19 @@ describe('Jira Plugin Container', () => {
         </Router>
       );
     };
-    render(<App />);
+    const component = render(<App />);
+    const container = component.container;
 
-    const table = await screen.findByRole('table');
-    expect(table).toBeInTheDocument();
-
-    const jiraIssueLink = screen.getByRole('link', {
-      name: 'test1',
+    await waitFor(() => {
+      const table = container.querySelector("jira-table");
+      expect(table).toBeInTheDocument();
+      const jiraIssueLink = screen.getByRole('link', {
+        name: 'test1',
+      });
+      expect(jiraIssueLink).toHaveAttribute(
+        'href',
+        'https://localhost:3000/jira/project/devissues/browse/NEXUS-57'
+      );
     });
     expect(jiraIssueLink).toHaveAttribute(
       'href',

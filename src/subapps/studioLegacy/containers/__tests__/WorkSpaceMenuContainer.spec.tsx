@@ -103,8 +103,6 @@ describe('workSpaceMenu', () => {
       if (component) {
         component.unmount();
       }
-
-      component = await render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
             <NexusProvider nexusClient={nexus}>
@@ -114,6 +112,8 @@ describe('workSpaceMenu', () => {
                     workspaceIds={['w1']}
                     studioResource={resource}
                     onListUpdate={vi.fn}
+
+      component = await render(
                   />
                 </StudioReactContext.Provider>
               </QueryClientProvider>
