@@ -16,7 +16,6 @@ import {
   InitNewVisitDataExplorerGraphView,
   TDataExplorerState,
 } from '../../../shared/store/reducers/data-explorer';
-import configureStore from '../../store';
 import DateExplorerGraphFlow from './DateExplorerGraphFlow';
 import {
   initialResource,
