@@ -11,7 +11,7 @@
     "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watch --maxWorkers=4",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
@@ -212,7 +212,10 @@
     ],
     "globals": {
       "FUSION_VERSION": "1.0.0",
-      "COMMIT_HASH": "9013fa343"
+      "COMMIT_HASH": "9013fa343",
+      "ts-jest": {
+        "isolatedModules": true
+      }
     },
     "watchPathIgnorePatterns": [
       "node_modules"

@@ -1,19 +1,21 @@
 import { UndoOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, Select, Tooltip } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { TType } from 'shared/molecules/TypeSelector/types';
 import { normalizeString } from '../../utils/stringUtils';
+import { TColumn } from './ColumnsSelector';
 import { DataExplorerConfiguration } from './DataExplorer';
 import {
+  PropertyPath,
   columnFromPath,
   isObject,
   isUserColumn,
   sortColumns,
   useGraphAnalyticsPath,
 } from './DataExplorerUtils';
-import { TColumn } from './ColumnsSelector';
 import './styles.less';
 
 interface Props {
@@ -22,7 +24,7 @@ interface Props {
   onResetCallback: (column: string, checked: boolean) => void;
   org: string;
   project: string;
-  types: string[];
+  types: TType[] | undefined;
 }
 
 export const PredicateSelector: React.FC<Props> = ({
@@ -38,6 +40,7 @@ export const PredicateSelector: React.FC<Props> = ({
     path: '',
     selected: false,
   });
+
   const predicateFilterOptions: PredicateFilterOptions[] = [
     { value: EXISTS },
     { value: DOES_NOT_EXIST },
@@ -48,62 +51,91 @@ export const PredicateSelector: React.FC<Props> = ({
   const { data: paths, isLoading: arePathsLoading } = useGraphAnalyticsPath(
     org,
     project,
-    types
+    types?.map(t => t.value) ?? []
   );
 
+  // NOTE: Right now, the `EXISTS` and `DOES_NOT_EXIST` predicates run on the backend and update the `backendPredicateQuery` parameter.
+  // `CONTAINS` and `DOES_NOT_CONTAIN` predicates on the other hand, only run on frontend and update `frontendPredicate` parameter.
+  // When we implement running all the predicates on backend, we should discard `frontendPredicate` parameter completely.
   const predicateSelected = (
-    path: string,
+    path: DefaultOptionType,
     predicate: PredicateFilterOptions['value'] | null,
     searchTerm: string | null
   ) => {
     if (!path || !predicate) {
-      onPredicateChange({ predicate: null, selectedPath: null });
+      onPredicateChange({
+        frontendPredicate: null,
+        selectedPath: null,
+        backendPredicateQuery: null,
+      });
     }
 
     switch (predicate) {
-      case EXISTS:
+      case EXISTS: {
         onPredicateChange({
-          predicate: (resource: Resource) =>
-            checkPathExistence(resource, path, 'exists'),
-          selectedPath: path,
+          backendPredicateQuery: getPredicateQuery(
+            predicate,
+            types![0].value,
+            path.value as string
+          ),
+          frontendPredicate: null,
+          selectedPath: path.key,
         });
         break;
-      case DOES_NOT_EXIST:
+      }
+      case DOES_NOT_EXIST: {
         onPredicateChange({
-          predicate: (resource: Resource) =>
-            checkPathExistence(resource, path, 'does-not-exist'),
-          selectedPath: path,
+          backendPredicateQuery: getPredicateQuery(
+            predicate,
+            types![0].value,
+            path.value as string
+          ),
+          frontendPredicate: null,
+          selectedPath: path.key,
         });
         break;
+      }
       case CONTAINS:
         if (searchTerm) {
           onPredicateChange({
-            predicate: (resource: Resource) =>
-              doesResourceContain(resource, path, searchTerm, 'contains'),
-            selectedPath: path,
+            frontendPredicate: (resource: Resource) =>
+              doesResourceContain(resource, path.key, searchTerm, 'contains'),
+            selectedPath: path.key,
           });
         } else {
-          onPredicateChange({ predicate: null, selectedPath: null });
+          onPredicateChange({
+            frontendPredicate: null,
+            selectedPath: null,
+            backendPredicateQuery: null,
+          });
         }
         break;
       case DOES_NOT_CONTAIN:
         if (searchTerm) {
           onPredicateChange({
-            predicate: (resource: Resource) =>
+            frontendPredicate: (resource: Resource) =>
               doesResourceContain(
                 resource,
-                path,
+                path.key,
                 searchTerm,
                 'does-not-contain'
               ),
-            selectedPath: path,
+            selectedPath: path.key,
           });
         } else {
-          onPredicateChange({ predicate: null, selectedPath: null });
+          onPredicateChange({
+            frontendPredicate: null,
+            selectedPath: null,
+            backendPredicateQuery: null,
+          });
         }
         break;
       default: {
-        onPredicateChange({ predicate: null, selectedPath: null });
+        onPredicateChange({
+          frontendPredicate: null,
+          selectedPath: null,
+          backendPredicateQuery: null,
+        });
         break;
       }
     }
@@ -113,7 +145,10 @@ export const PredicateSelector: React.FC<Props> = ({
     return formRef.current?.getFieldValue(fieldName) ?? '';
   };
 
-  const setFormField = (fieldName: string, fieldValue: string) => {
+  const setFormField = (
+    fieldName: string,
+    fieldValue: string | DefaultOptionType
+  ) => {
     if (formRef.current) {
       formRef.current.setFieldValue(fieldName, fieldValue);
     }
@@ -126,10 +161,23 @@ export const PredicateSelector: React.FC<Props> = ({
       form.resetFields();
     }
     pathRef.current = { path: '', selected: false };
-    onPredicateChange({ predicate: null, selectedPath: null });
+    onPredicateChange({
+      frontendPredicate: null,
+      backendPredicateQuery: null,
+      selectedPath: null,
+    });
   };
 
+  useEffect(() => {
+    onReset();
+  }, [types]);
+
   const shouldShowValueInput =
+    getFormFieldValue(PREDICATE_FIELD) === CONTAINS ||
+    getFormFieldValue(PREDICATE_FIELD) === DOES_NOT_CONTAIN;
+
+  const disablePredicateSelection = types?.length !== 1;
+  const isFrontendPredicateSelected =
     getFormFieldValue(PREDICATE_FIELD) === CONTAINS ||
     getFormFieldValue(PREDICATE_FIELD) === DOES_NOT_CONTAIN;
 
@@ -138,64 +186,79 @@ export const PredicateSelector: React.FC<Props> = ({
       <span className="label">with </span>
 
       <Form.Item name="path" noStyle>
-        <Select
-          options={pathOptions(paths ?? [])}
-          showSearch={true}
-          onSelect={pathLabel => {
-            setFormField(PATH_FIELD, pathLabel);
-            predicateSelected(
-              pathLabel,
-              getFormFieldValue(PREDICATE_FIELD),
-              getFormFieldValue(SEARCH_TERM_FIELD)
-            );
-          }}
-          loading={arePathsLoading}
-          allowClear={true}
-          onClear={() => {
-            onReset();
-          }}
-          virtual={true}
-          className="select-menu"
-          popupClassName="search-menu"
-          optionLabelProp="label"
-          aria-label="path-selector"
-          style={{ width: 200, minWidth: 'max-content' }}
-          dropdownMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
-        />
+        <Tooltip
+          title={
+            disablePredicateSelection
+              ? 'Please select (only 1) type to enable predicate selection.'
+              : null
+          }
+          placement="top"
+        >
+          <Select
+            options={pathOptions(paths ?? [])}
+            showSearch={true}
+            labelInValue
+            onSelect={(pathLabel: DefaultOptionType) => {
+              setFormField(PATH_FIELD, pathLabel);
+              predicateSelected(
+                pathLabel,
+                getFormFieldValue(PREDICATE_FIELD),
+                getFormFieldValue(SEARCH_TERM_FIELD)
+              );
+            }}
+            disabled={disablePredicateSelection}
+            loading={arePathsLoading}
+            allowClear={true}
+            onClear={() => {
+              onReset();
+            }}
+            virtual={true}
+            className="select-menu"
+            popupClassName="search-menu"
+            optionLabelProp="label"
+            aria-label="path-selector"
+            style={{ width: 200, minWidth: 'max-content' }}
+            dropdownMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
+          />
+        </Tooltip>
       </Form.Item>
 
       {getFormFieldValue(PATH_FIELD) && (
         <>
           <span className="label">= </span>
-          <Form.Item name="predicate" noStyle>
-            <Select
-              options={predicateFilterOptions}
-              onSelect={(predicateLabel: PredicateFilterOptions['value']) => {
-                setFormField(PREDICATE_FIELD, predicateLabel);
-                setFormField(SEARCH_TERM_FIELD, '');
-                pathRef.current = {
-                  path: getFormFieldValue(PATH_FIELD),
-                  selected:
-                    columns.find(
-                      column => column.value === getFormFieldValue(PATH_FIELD)
-                    )?.selected ?? false,
-                };
-                predicateSelected(
-                  getFormFieldValue(PATH_FIELD),
-                  predicateLabel,
-                  ''
-                );
-              }}
-              aria-label="predicate-selector"
-              className="select-menu reduced-width"
-              popupClassName="search-menu"
-              autoFocus={true}
-              allowClear={true}
-              onClear={() => {
-                predicateSelected(getFormFieldValue(PATH_FIELD), null, '');
-              }}
-            />
-          </Form.Item>
+          <div className="flex">
+            <Form.Item name="predicate" noStyle>
+              <Select
+                options={predicateFilterOptions}
+                onSelect={(predicateLabel: PredicateFilterOptions['value']) => {
+                  setFormField(PREDICATE_FIELD, predicateLabel);
+                  setFormField(SEARCH_TERM_FIELD, '');
+                  const selectedPath = getFormFieldValue(PATH_FIELD);
+                  pathRef.current = {
+                    path: selectedPath.key,
+                    selected:
+                      columns.find(column => column.value === selectedPath)
+                        ?.selected ?? false,
+                  };
+
+                  predicateSelected(selectedPath, predicateLabel, '');
+                }}
+                aria-label="predicate-selector"
+                className="select-menu reduced-width"
+                popupClassName="search-menu"
+                autoFocus={true}
+                allowClear={true}
+                onClear={() => {
+                  predicateSelected(getFormFieldValue(PATH_FIELD), null, '');
+                }}
+              />
+            </Form.Item>
+            {isFrontendPredicateSelected && (
+              <span className="predicate-warning">
+                {FRONTEND_PREDICATE_WARNING}
+              </span>
+            )}
+          </div>
         </>
       )}
 
@@ -237,6 +300,9 @@ export const EXISTS = 'Exists';
 export const CONTAINS = 'Contains';
 export const DOES_NOT_CONTAIN = 'Does not contain';
 
+export const FRONTEND_PREDICATE_WARNING =
+  'This predicate will only run on the resources loaded in the current page.';
+
 const PATH_FIELD = 'path';
 const PREDICATE_FIELD = 'predicate';
 const SEARCH_TERM_FIELD = 'searchTerm';
@@ -252,23 +318,93 @@ type PredicateFilterOptions = {
   value: Exclude<PredicateFilterT, null>;
 };
 
+const getPredicateQuery = (
+  predicateVerb: typeof EXISTS | typeof DOES_NOT_EXIST,
+  type: string,
+  path: string
+) => {
+  if (predicateVerb === EXISTS) {
+    return {
+      query: {
+        bool: {
+          filter: [
+            {
+              terms: {
+                '@type': [type],
+              },
+            },
+            {
+              term: {
+                _deprecated: false,
+              },
+            },
+            {
+              nested: {
+                path: 'properties',
+                query: {
+                  term: { 'properties.path': path },
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+  }
+  if (predicateVerb === DOES_NOT_EXIST) {
+    return {
+      query: {
+        bool: {
+          filter: [
+            {
+              terms: {
+                '@type': [type],
+              },
+            },
+            {
+              term: {
+                _deprecated: false,
+              },
+            },
+            {
+              bool: {
+                must_not: {
+                  nested: {
+                    path: 'properties',
+                    query: {
+                      term: { 'properties.path': path },
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    };
+  }
+
+  return null;
+};
+
 // Creates <Option /> element for each path. Also adds a class of "first-metadata-path" for the first path generated for a metadata column.
-export const pathOptions = (paths: string[]) => {
+const pathOptions = (paths: PropertyPath[]) => {
   let firstMetadataFound = false;
   const pathOptions: DefaultOptionType[] = [];
 
   paths.forEach(path => {
-    const column = columnFromPath(path);
+    const column = columnFromPath(path.label);
     const isFirstMetadataPath = !isUserColumn(column) && !firstMetadataFound;
 
     pathOptions.push({
-      value: path,
+      key: path.label,
+      value: path.value,
       label: (
         <span
           className={isFirstMetadataPath ? 'first-metadata-path' : ''}
-          title={path}
+          title={path.label}
         >
-          {path}
+          {path.label}
         </span>
       ),
     });

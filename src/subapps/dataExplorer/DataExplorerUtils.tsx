@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
@@ -7,6 +7,10 @@ import { isString } from 'lodash';
 import PromisePool from '@supercharge/promise-pool';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
+import * as bodybuilder from 'bodybuilder';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+import { SearchResponse } from 'shared/types/search';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -15,8 +19,10 @@ export const usePaginatedExpandedResources = ({
   deprecated,
   types,
   typeOperator,
+  predicateQuery,
 }: PaginatedResourcesParams) => {
   const nexus = useNexusContext();
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
   return useQuery({
     queryKey: [
       'data-explorer',
@@ -24,6 +30,7 @@ export const usePaginatedExpandedResources = ({
         pageSize,
         offset,
         orgAndProject,
+        predicateQuery,
         ...(types?.length
           ? {
               types,
@@ -34,6 +41,18 @@ export const usePaginatedExpandedResources = ({
     ],
     retry: false,
     queryFn: async () => {
+      if (predicateQuery && orgAndProject) {
+        return getResultsForPredicateQuery(
+          nexus,
+          apiEndpoint,
+          orgAndProject[0],
+          orgAndProject[1],
+          predicateQuery,
+          pageSize,
+          offset
+        );
+      }
+
       const resultWithPartialResources = await nexus.Resource.list(
         orgAndProject?.[0],
         orgAndProject?.[1],
@@ -129,6 +148,7 @@ export const useAggregations = (
 };
 
 export type GraphAnalyticsProperty = {
+  '@id'?: string; // TODO Make necessory
   _name: string;
   _count?: number;
   _properties: GraphAnalyticsProperty[];
@@ -156,9 +176,57 @@ export const useGraphAnalyticsPath = (
       )) as GraphAnalyticsResponse;
     },
     select: data => {
-      return getUniquePathsForProperties(data._properties);
+      return getPathsForProperties(data._properties);
     },
   });
+};
+
+const getResultsForPredicateQuery = async (
+  nexus: ReturnType<typeof useNexusContext>,
+  apiEndpoint: string,
+  org: string,
+  project: string,
+  query: Object,
+  pageSize: number,
+  offset: number
+) => {
+  const searchResults: SearchResponse<{ '@id': string }> = await nexus.httpPost(
+    {
+      path: `${apiEndpoint}/graph-analytics/${org}/${project}/_search`,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        from: offset,
+        size: pageSize,
+        ...query,
+      }),
+    }
+  );
+
+  const { results: matchingResources } = await PromisePool.withConcurrency(4)
+    .for(searchResults.hits.hits)
+    .handleError((err, item) => {
+      console.error(
+        `There was an error retrieving matching resource ${item._source['@id']} for query.`,
+        query,
+        err
+      );
+    })
+    .process(async matchingHit => {
+      return (await nexus.Resource.get(
+        org,
+        project,
+        encodeURIComponent(matchingHit._source['@id']),
+        { annotate: true }
+      )) as Resource;
+    });
+
+  return {
+    _results: matchingResources,
+    _total: searchResults.hits.total.value,
+  } as PaginatedList<Resource>;
 };
 
 export const getUniquePathsForProperties = (
@@ -173,6 +241,30 @@ export const getUniquePathsForProperties = (
   });
 
   return Array.from(new Set(paths));
+};
+
+export type PropertyPath = {
+  label: string;
+  value: string;
+};
+
+export const getPathsForProperties = (
+  properties: GraphAnalyticsProperty[],
+  paths: PropertyPath[] = [],
+  pathSoFar?: string,
+  valueSoFar?: string
+): PropertyPath[] => {
+  properties?.forEach(property => {
+    const label = pathSoFar ? `${pathSoFar}.${property._name}` : property._name;
+    const value = valueSoFar
+      ? `${valueSoFar} / ${property['@id']!}`
+      : property['@id']!;
+    paths.push({ label, value });
+    getPathsForProperties(property._properties ?? [], paths, label, value);
+  });
+
+  const uniquePaths = new Set(paths.map(path => path.value));
+  return paths.filter(path => uniquePaths.has(path.value));
 };
 
 export const sortColumns = (a: string, b: string) => {
@@ -250,6 +342,7 @@ interface PaginatedResourcesParams {
   deprecated: boolean;
   types?: string[];
   typeOperator: TTypeOperator;
+  predicateQuery: Object | null;
 }
 
 export const useTimeoutMessage = ({

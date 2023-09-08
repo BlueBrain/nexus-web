@@ -60,12 +60,12 @@ export const graphAnalyticsTypeHandler = () => {
             _name: 'propertyAlwaysThere',
           },
           {
-            '@id': 'https://neuroshapes.org/nr__number_stems',
+            '@id': 'https://neuroshapes.org/createdBy',
             _count: 30,
             _name: '_createdBy',
           },
           {
-            '@id': 'https://neuroshapes.org/nr__number_stems',
+            '@id': 'https://neuroshapes.org/edition',
             _count: 30,
             _name: 'edition',
           },
@@ -145,6 +145,29 @@ export const filterByProjectHandler = (
     };
     return res(ctx.status(200), ctx.json(mockResponse));
   });
+};
+
+export const elasticSearchQueryHandler = (ids: string[]) => {
+  return rest.post(
+    deltaPath('/graph-analytics/:org/:project/_search'),
+    (req, res, ctx) => {
+      const esResponse = {
+        hits: {
+          hits: ids.map(id => ({
+            _id: id,
+            _source: {
+              '@id': id,
+            },
+          })),
+          max_score: 0,
+          total: {
+            value: 479,
+          },
+        },
+      };
+      return res(ctx.status(200), ctx.json(esResponse));
+    }
+  );
 };
 
 const mockAggregationsResult = (
