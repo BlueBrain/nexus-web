@@ -638,7 +638,7 @@ describe('Jira Plugin Container', () => {
                     projectLabel="projectLabel"
                     orgLabel="orgLabel"
                     resource={mockResource}
-                  ></JIRAPluginContainer>
+                  />
                 </NexusProvider>
               </QueryClientProvider>
             </NotificationContext.Provider>
@@ -646,13 +646,11 @@ describe('Jira Plugin Container', () => {
         </Router>
       );
     };
-
-    await act(async () => {
-      await render(<App />);
-    });
+    const component = render(<App />);
+    const container = component.container;
 
     await waitFor(() => {
-      const table = screen.getByRole('table');
+      const table = container.querySelector("jira-table");
       expect(table).toBeInTheDocument();
       const jiraIssueLink = screen.getByRole('link', {
         name: 'test1',

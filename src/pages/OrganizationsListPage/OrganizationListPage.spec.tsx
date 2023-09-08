@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks/dom';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
@@ -15,10 +15,10 @@ import {
   screen,
   server,
 } from '../../utils/testUtil';
-import configureStore from '../../shared/store';
 import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
+import { configureStore } from '../../store';
 
 describe('OrganizationListPage', () => {
   const history = createBrowserHistory({ basename: '/' });
@@ -39,6 +39,7 @@ describe('OrganizationListPage', () => {
   });
   const queryClient = new QueryClient();
   const store = configureStore(history, { nexus }, {});
+
   it('renders organization projects in a list', async () => {
     await act(async () => {
       await render(
@@ -61,6 +62,7 @@ describe('OrganizationListPage', () => {
       expect(pageTitleExtra).toBeInTheDocument();
     });
   });
+
   it('Test inifinite fetching of organisation list', async () => {
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
@@ -75,34 +77,11 @@ describe('OrganizationListPage', () => {
         }),
       { wrapper }
     );
-
+        console.log('@@result', result)
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
     expect(
       (result.current.data?.pages?.[0] as OrganizationList)._total
     ).toEqual(3);
   });
-
-  // it('check if search (orgs) functionality is working', async () => {
-  //     await act(async () => {
-  //         await render(
-  //             <Provider store={store}>
-  //                 <ConnectedRouter history={history}>
-  //                     <NexusProvider nexusClient={nexus}>
-  //                         <QueryClientProvider client={queryClient}>
-  //                             <OrganizationListPage />
-  //                         </QueryClientProvider>
-  //                     </NexusProvider>
-  //                 </ConnectedRouter>
-  //             </Provider>
-  //         );
-  //     });
-
-  //     const search = screen.getByRole('search');
-  //     await fireEvent.change(search, { target: { value: 'test1' } });
-  //     await waitFor(async () => {
-  //         const organizations = await screen.getAllByRole('routeitem-org');
-  //         expect(organizations.length).toBe(1);
-  //     });
-  // });
 });

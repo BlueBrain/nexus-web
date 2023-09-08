@@ -12,13 +12,9 @@ import 'vite-compatible-readable-stream';
 import { execSync } from "child_process"
 
 export default defineConfig(() => {
-
     const commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
     const version = execSync('git describe --tags').toString().trimEnd();
-    console.log('@@git revision', {
-        commitHash,
-        version
-    })
+    
     return ({
         plugins: [
             react(),
@@ -30,6 +26,7 @@ export default defineConfig(() => {
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
+                'shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
                 'pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
                 'components': fileURLToPath(new URL('./src/shared/components', import.meta.url)),
                 'molecules': fileURLToPath(new URL('./src/shared/molecules', import.meta.url)),
@@ -51,13 +48,13 @@ export default defineConfig(() => {
         },
         define: {
             'process.env': process.env,
-            FUSION_VERSION: JSON.stringify(version),
+            FUSION_VERSION: process.env.NODE_ENV === 'test' ? JSON.stringify('1.0.0') : JSON.stringify(version),
             COMMIT_HASH: JSON.stringify(commitHash),
         },
         test: {
             globals: true,
             environment: 'jsdom',
-            setupFiles: "./setupFile.js",
+            setupFiles: ["./vitest-setup.js"],
         },
         build: {
             manifest: true,

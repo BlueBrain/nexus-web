@@ -1,8 +1,6 @@
 import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
-import * as React from 'react';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -31,8 +29,13 @@ import {
   DEFAULT_REPORT_TYPES,
 } from '../../../../constants';
 
+
 describe('Analysis Plugin', () => {
-  const mockState = {
+
+  const queryClient = new QueryClient();
+  const mockStore = configureStore();
+
+  const  mockState = {
     config: {
       apiEndpoint: deltaPath(),
       analysisPluginSparqlDataQuery: 'detailedCircuit',
@@ -43,10 +46,9 @@ describe('Analysis Plugin', () => {
       identities: [],
     },
   };
-  const queryClient = new QueryClient();
-  const mockStore = configureStore();
-  jest.mock('react-redux', () => {
-    const ActualReactRedux = jest.requireActual('react-redux');
+
+  vi.mock('react-redux', () => {
+    const ActualReactRedux = vi.importActual<any>('react-redux');
     return {
       ...ActualReactRedux,
       useSelector: vi.fn().mockImplementation(() => {
@@ -85,7 +87,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -185,7 +187,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -234,7 +236,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -285,7 +287,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -333,7 +335,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -365,7 +367,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -398,7 +400,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -423,7 +425,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -449,7 +451,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -479,7 +481,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -513,7 +515,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -554,7 +556,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>

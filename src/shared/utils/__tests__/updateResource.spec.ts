@@ -24,8 +24,15 @@ describe('getUpdateResourceFunction() with generic resource', () => {
     resourceId
   );
   it('resource with no type should match to generic Resource endpoint', () => {
+    console.log('@getUpdateResourceFunction().toString()', fn.toString());
     expect(fn.toString()).toMatch(
-      'nexus.Resource.update(orgLabel, projectLabel, resourceId, revision, resource)'
+      `() => nexus.Resource.update(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        revision,
+        resource
+      )`
     );
   });
 });

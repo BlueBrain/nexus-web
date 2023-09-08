@@ -115,8 +115,8 @@ const OrganizationItem = ({
     queryFn: () => nexus.Project.list(title),
   });
   return (
-    <List.Item className="route-result-list_item" role="routeitem-org">
-      <div className="route-result-list_item_wrapper">
+    <List.Item className="route-result-list_item">
+      <div className="route-result-list_item_wrapper" role="routeitem-org">
         <div className="org">
           <Link to={to}>
             <h3>{title}</h3>

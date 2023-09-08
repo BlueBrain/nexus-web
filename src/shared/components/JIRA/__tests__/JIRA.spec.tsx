@@ -105,7 +105,7 @@ describe('JIRA', () => {
   });
   it('shows create modal', async () => {
     const createIssue = vi.fn();
-    const { container } = render(
+    render(
       <JIRA
         projects={[]}
         issues={[]}
@@ -134,7 +134,7 @@ describe('JIRA', () => {
   it('renders createIssue UI', async () => {
     const createIssueCallBack = vi.fn();
     const cancelBack = vi.fn();
-    const { container } = render(
+    render(
       <CreateIssueUI
         displayType={'resource'}
         projects={[
@@ -154,7 +154,7 @@ describe('JIRA', () => {
   it('renders linkIssue UI', async () => {
     const linkIssueCallBack = vi.fn();
     const cancelBack = vi.fn();
-    const { container } = render(
+    render(
       <LinkIssueUI
         searchJiraLink={'jiralink'}
         onOk={linkIssueCallBack}
@@ -169,7 +169,7 @@ describe('JIRA', () => {
     expect(linkIssueCallBack).toHaveBeenCalled();
   });
   it('shows link modal', async () => {
-    const { container } = render(
+    render(
       <JIRA
         projects={[]}
         issues={[]}

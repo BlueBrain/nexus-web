@@ -32,7 +32,7 @@ import {
 import { createMemoryHistory } from 'history';
 import { Router } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import configureStore from '../../shared/store';
+import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
 window.scrollTo = vi.fn();

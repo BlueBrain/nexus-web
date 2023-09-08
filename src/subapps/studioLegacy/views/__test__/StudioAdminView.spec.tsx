@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 
-import configureStore from '../../../../shared/store';
+import { configureStore } from '../../../../store';
 import fetch from 'node-fetch';
 import { render, screen, server } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';

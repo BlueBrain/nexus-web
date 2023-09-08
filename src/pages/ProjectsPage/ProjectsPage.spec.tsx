@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks/dom';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
@@ -15,7 +15,7 @@ import {
   screen,
   server,
 } from '../../utils/testUtil';
-import configureStore from '../../shared/store';
+import { configureStore } from '../../store'
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
 
 describe('ProjectsPage', () => {

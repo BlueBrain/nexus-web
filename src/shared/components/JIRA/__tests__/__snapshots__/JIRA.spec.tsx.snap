@@ -703,26 +703,39 @@ exports[`JIRA > shows loading spinner 1`] = `
     style="width: 100%; display: flex; margin-bottom: 10px; margin-top: 10px; height: 200px; justify-content: center; align-items: center;"
   >
     <div
-      aria-busy="true"
-      aria-live="polite"
-      class="ant-spin ant-spin-lg ant-spin-spinning ant-spin-show-text css-dev-only-do-not-override-17a39f8"
+      class="ant-spin-nested-loading css-dev-only-do-not-override-17a39f8"
     >
-      <span
-        class="ant-spin-dot ant-spin-dot-spin"
+      <div>
+        <div
+          aria-busy="true"
+          aria-live="polite"
+          class="ant-spin ant-spin-lg ant-spin-spinning css-dev-only-do-not-override-17a39f8"
+        >
+          <span
+            class="ant-spin-dot ant-spin-dot-spin"
+          >
+            <i
+              class="ant-spin-dot-item"
+            />
+            <i
+              class="ant-spin-dot-item"
+            />
+            <i
+              class="ant-spin-dot-item"
+            />
+            <i
+              class="ant-spin-dot-item"
+            />
+          </span>
+        </div>
+      </div>
+      <div
+        class="ant-spin-container ant-spin-blur"
       >
-        <i
-          class="ant-spin-dot-item"
-        />
-        <i
-          class="ant-spin-dot-item"
-        />
-        <i
-          class="ant-spin-dot-item"
-        />
-        <i
-          class="ant-spin-dot-item"
-        />
-      </span>
+        <span>
+          Loading...
+        </span>
+      </div>
     </div>
   </div>
 </div>

@@ -15,7 +15,6 @@ import {
   InitNewVisitDataExplorerGraphView,
   TDataExplorerState,
 } from '../../../shared/store/reducers/data-explorer';
-import configureStore from '../../store';
 import DateExplorerGraphFlow from './DateExplorerGraphFlow';
 import {
   initialResource,
@@ -24,6 +23,7 @@ import {
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import userEvent from '@testing-library/user-event';
+import { configureStore } from '../../../store';
 
 const initialDataExplorerState: TDataExplorerState = {
   current: {

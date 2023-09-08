@@ -166,8 +166,8 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item" role="routeitem-org-project">
-      <div className="route-result-list_item_wrapper">
+    <List.Item className="route-result-list_item">
+      <div className="route-result-list_item_wrapper" role="routeitem-org-project">
         <div className="org">
           <Link to={to}>
             <h3>
@@ -220,6 +220,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
+
 const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
@@ -241,17 +242,20 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     }),
     { sort: 'asc' }
   );
+
   const { data: organization, error: organisationError } = useQuery({
     enabled: !!orgLabel,
     queryKey: ['organization-projects', { orgLabel, sort }],
     queryFn: () => fetchOrganizationDetails({ nexus, orgLabel: orgLabel! }),
   });
+
   const updateCreateModelVisibility = (payload?: boolean) => {
     dispatch({
       payload,
       type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
     });
   };
+  
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {

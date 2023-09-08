@@ -63,4 +63,5 @@ const store = configureStore(
 export { nexus, history };
 export type TStore = typeof store;
 
+export { configureStore };
 export default store;

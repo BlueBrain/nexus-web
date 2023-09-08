@@ -36,7 +36,7 @@ const logger = createLogger({
   // ...options
 });
 
-export default function configureStore(
+function configureStore(
   history: History,
   { nexus }: { nexus: NexusClient },
   preloadedState: any = {}
@@ -62,3 +62,5 @@ export default function configureStore(
 
   return store;
 }
+
+export default configureStore;

@@ -275,7 +275,9 @@ const JIRAPluginUI = ({
           alignItems: 'center',
         }}
       >
-        <Spin tip="Loading..." spinning={true} size="large"></Spin>
+        <Spin spinning={true} size="large">
+          <span>Loading...</span>
+        </Spin>
       </div>
     );
   }
@@ -360,6 +362,7 @@ const JIRAPluginUI = ({
       {issues.length > 0 && (
         <Table
           size="small"
+          className='jira-table'
           dataSource={issues}
           columns={[
             displayType === 'project'

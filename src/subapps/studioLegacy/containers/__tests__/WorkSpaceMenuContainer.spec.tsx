@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import * as React from 'react';
+import { vi } from 'vitest';
 import { rest } from 'msw';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ConnectedRouter } from 'connected-react-router';
 import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
-import configureStore from '../../../../shared/store';
+import { configureStore } from '../../../../store';
 import {
   render,
   fireEvent,
@@ -196,7 +196,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>
@@ -217,7 +217,7 @@ describe('workSpaceMenu', () => {
   });
   it('shows edit buttons for a user with  edit access', async () => {
     await act(async () => {
-      const { container } = await render(
+      await render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
             <NexusProvider nexusClient={nexus}>
@@ -226,8 +226,8 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
-                  ></WorkSpaceMenu>
+                    onListUpdate={vi.fn}
+                  />
                 </StudioReactContext.Provider>
               </QueryClientProvider>
             </NexusProvider>
@@ -313,7 +313,7 @@ describe('workSpaceMenu', () => {
                     <WorkSpaceMenu
                       workspaceIds={['w1']}
                       studioResource={resource}
-                      onListUpdate={jest.fn}
+                      onListUpdate={vi.fn}
                     ></WorkSpaceMenu>
                   </StudioReactContext.Provider>
                 </QueryClientProvider>
@@ -340,7 +340,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>
@@ -373,7 +373,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>
@@ -416,7 +416,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>
@@ -458,7 +458,7 @@ describe('workSpaceMenu', () => {
                 <WorkSpaceMenu
                   workspaceIds={['w1']}
                   studioResource={resource}
-                  onListUpdate={jest.fn}
+                  onListUpdate={vi.fn}
                 ></WorkSpaceMenu>
               </StudioReactContext.Provider>
             </QueryClientProvider>
@@ -501,7 +501,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>
@@ -533,7 +533,7 @@ describe('workSpaceMenu', () => {
                   <WorkSpaceMenu
                     workspaceIds={['w1']}
                     studioResource={resource}
-                    onListUpdate={jest.fn}
+                    onListUpdate={vi.fn}
                   ></WorkSpaceMenu>
                 </StudioReactContext.Provider>
               </QueryClientProvider>

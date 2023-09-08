@@ -1,5 +1,7 @@
 fetch = require('node-fetch');
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
+
 window.fetch = fetch;
 
 Object.defineProperty(window, 'matchMedia', {
