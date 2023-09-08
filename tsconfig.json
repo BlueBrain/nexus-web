@@ -20,6 +20,7 @@
       "testUtil": ["./utils/testUtil"],
       "@/*": ["./src/*"],
       "pages/*": ["./src/pages/*"],
+      "shared/*": ["./src/shared/*"],
       "components/*": ["./src/shared/components/*"],
       "molecules/*": ["./src/shared/molecules/*"],
       "modals/*": ["./src/shared/modals/*"],
@@ -41,5 +42,5 @@
   "awesomeTypescriptLoaderOptions": {
     "errorsAsWarnings": true
   },
-  "types": ["vite/client", "vitest/globals"]
+  "types": ["vite/client", "vitest/globals", "vitest-dom/extend-expect"]
 }

@@ -206,6 +206,7 @@ function useJIRA({
   };
 
   const handleJiraError = (e: any) => {
+    console.log('@@error jira', e);
     if (!isJiraConnected) {
       // ignore if we are not connected
       return;
@@ -400,7 +401,7 @@ function useJIRA({
         const issuesResponse = await (resource
           ? getResourceIssues(resource._self)
           : getProjectIssues());
-
+        console.log('@@issuesResponse', issuesResponse, resource._self);
         if (issuesResponse.issues) {
           const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
             (a: any, b: any) =>

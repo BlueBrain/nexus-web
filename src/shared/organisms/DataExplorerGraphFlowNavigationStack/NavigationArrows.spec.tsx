@@ -10,7 +10,8 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { NexusProvider } from '@bbp/react-nexus';
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
-import configureStore from '../../store';
+import { configureStore } from '../../../store';
+
 import {
   ResetDataExplorerGraphFlow,
   TDataExplorerState,
@@ -119,6 +120,7 @@ const getButtonElement = (container: HTMLElement, side: 'back' | 'forward') => {
     `.navigation-arrow-btn[aria-label="${side}-arrow"]`
   );
 };
+
 describe('NavigationStack', () => {
   let app: JSX.Element;
   let component: RenderResult;

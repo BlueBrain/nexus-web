@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react-hooks/dom';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
@@ -14,7 +14,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
 import { render, waitFor, screen, server } from '../../utils/testUtil';
-import configureStore from '../../shared/store';
+import { configureStore } from '../../store';
 import OrganizationProjectsPage, {
   useInfiniteOrganizationProjectsQuery,
 } from './OrganizationProjectsPage';

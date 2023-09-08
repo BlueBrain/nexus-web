@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
@@ -28,7 +29,7 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import configureStore from '../store';
+import { configureStore } from '../../store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
 import { notification } from 'antd';
@@ -403,7 +404,7 @@ describe('DataTableContainer - Selection', () => {
       getMockStudioResource('Malory', 'another-different-self'),
       getMockStudioResource('Malory', 'totally-different-self'),
     ];
-    const spy = jest.spyOn(notification, 'info');
+    const spy = vi.spyOn(notification, 'info');
 
     server.use(sparqlViewResultHandler(resourcesWithRepeatedSelf));
     component.unmount();

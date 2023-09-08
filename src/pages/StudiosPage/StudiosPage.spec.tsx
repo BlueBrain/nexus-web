@@ -14,7 +14,7 @@ import {
   screen,
   server,
 } from '../../utils/testUtil';
-import configureStore from '../../shared/store';
+import { configureStore } from '../../store';
 import StudiosPage from './StudiosPage';
 
 describe('StudiosPage', () => {
