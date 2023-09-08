@@ -101,8 +101,8 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item" role="routeitem-project">
-      <div className="route-result-list_item_wrapper">
+    <List.Item className="route-result-list_item">
+      <div className="route-result-list_item_wrapper" role="routeitem-project">
         <div className="org">
           <Link to={to}>
             <h3>

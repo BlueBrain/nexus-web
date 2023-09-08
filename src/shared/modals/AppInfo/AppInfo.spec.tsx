@@ -5,14 +5,13 @@ import { createNexusClient } from '@bbp/nexus-sdk';
 import configureStore from 'redux-mock-store';
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
 import AppInfo, { EnvironmentInfo } from './AppInfo';
-import { vi } from 'vitest';
 
-vi.stubEnv('FUSION_VERSION', '1.0.0');
 
 describe('AppInfo', () => {
   beforeAll(async () => {
     server.listen();
   });
+
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
   const mockStore = configureStore();
@@ -98,7 +97,6 @@ describe('AppInfo', () => {
   );
 
   it('shows nexus environment information', async () => {
-    console.log('@@env', process.env)
     await act(async () => {
       await render(<App />);
     });
