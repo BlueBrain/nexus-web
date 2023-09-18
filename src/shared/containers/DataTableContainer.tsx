@@ -438,12 +438,12 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               <span className="table-row-count">
                 {/* If the user filters a column (i.e. updates) or enters a serch term (i.e. update dataResult), show the total rows in format <rows shown to user>/<total rows>, otherwise only show total rows. */}
                 {displayedRows &&
-                displayedRows !== tableData.dataResult.data?.items?.length
+                  displayedRows !== tableData.dataResult.data?.items?.length
                   ? `${displayedRows} / `
                   : tableData.dataResult?.data?.items.length !==
                     tableData.dataResult.data?.total
-                  ? `${tableData.dataResult.data?.items?.length} /`
-                  : ''}
+                    ? `${tableData.dataResult.data?.items?.length} /`
+                    : ''}
                 {`${tableData.dataResult?.data?.total ?? 0} `}
                 Results
               </span>
@@ -528,9 +528,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                   antnotifcation.info({
                     duration: 5,
                     message: `${additionalSelectedRows -
-                      1} other resources with same metadata have also been automatically ${
-                      selected ? 'selected' : 'unselected'
-                    } for download.`,
+                      1} other resources with same metadata have also been automatically ${selected ? 'selected' : 'unselected'
+                      } for download.`,
                   });
                 }
               },
@@ -571,9 +570,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 if (additionalSelectedRows > 0) {
                   antnotifcation.info({
                     duration: 5,
-                    message: `${additionalSelectedRows} other resources with same metadata have also been automatically ${
-                      selected ? 'selected' : 'unselected'
-                    } for download.`,
+                    message: `${additionalSelectedRows} other resources with same metadata have also been automatically ${selected ? 'selected' : 'unselected'
+                      } for download.`,
                   });
                 }
 

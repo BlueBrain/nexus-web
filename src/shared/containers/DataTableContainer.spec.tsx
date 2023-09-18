@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { vi, describe, it, test } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
@@ -34,11 +34,11 @@ import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
 import { notification } from 'antd';
 
+
 describe.only('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
   let dataTableContainer: JSX.Element;
   let container: HTMLElement;
-  let rerender: (ui: React.ReactElement) => void;
   let user: UserEvent;
   let server: ReturnType<typeof setupServer>;
   let component: RenderResult;
@@ -52,6 +52,9 @@ describe.only('DataTableContainer.spec.tsx', () => {
     );
 
     server.listen();
+
+    const { getComputedStyle } = window;
+    window.getComputedStyle = (elt) => getComputedStyle(elt);
   });
 
   beforeEach(async () => {
@@ -83,14 +86,19 @@ describe.only('DataTableContainer.spec.tsx', () => {
       </Provider>
     );
 
-    component = render(dataTableContainer);
-
-    container = component.container;
-    rerender = component.rerender;
-    user = userEvent.setup();
+    renderContainer(dataTableContainer);
 
     await waitForTableRows(6);
   });
+
+  const renderContainer = (containerToRender: JSX.Element) => {
+    if (component) {
+      component.unmount();
+    }
+    component = render(containerToRender);
+    container = component.container;
+    user = userEvent.setup();
+  }
 
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
@@ -215,10 +223,10 @@ describe.only('DataTableContainer.spec.tsx', () => {
       return within(screen.getByRole('menu')).getByText('sterling');
     });
     // NOTE: unfortunately using `userEvent.click(filterMenuOption` does not work because antd dropdown does not have the right css rules to allow pointer events.
-    Simulate.click(filterMenuOption);
+    await user.click(filterMenuOption)
 
     const submitFilter = screen.getByRole('button', { name: 'OK' });
-    Simulate.click(submitFilter);
+    await user.click(submitFilter);
 
     assertDataOrderInColumn('givenName', [
       ORIGINAL_4_SORTED_4,
@@ -230,8 +238,7 @@ describe.only('DataTableContainer.spec.tsx', () => {
     server.use(dashboardErrorHandler);
 
     // Rerender the component, this time using a handler that sends an error.
-    component.unmount();
-    rerender(dataTableContainer);
+    renderContainer(dataTableContainer);
 
     await waitForTableRows(0);
 
@@ -239,7 +246,7 @@ describe.only('DataTableContainer.spec.tsx', () => {
     expect(errorMsg).toBeInTheDocument();
 
     const expandIcon = screen.getByRole('img', { name: 'right' });
-    expandIcon.click();
+    await user.click(expandIcon);
 
     const errorDetails = screen.getByText(dashboardErrorResponse['@type']);
     expect(errorDetails).toBeInTheDocument();
@@ -249,10 +256,10 @@ describe.only('DataTableContainer.spec.tsx', () => {
   it('shows table as well as error when sparql query is invalid', async () => {
     server.use(invalidSparqlHandler);
     // Rerender the component, this time using a handler that sends a sparql error.
-    component.unmount();
-    rerender(dataTableContainer);
 
-    // The table should is still be visible.
+    renderContainer(dataTableContainer);
+
+    // The table should still be visible.
     await waitForTableRows(6);
 
     const errorMsg = await screen.findByText(invalidSparqlQueryResponse.reason);

@@ -14,9 +14,10 @@
     "dev": "rm -rf ./dist && concurrently 'vite build -c ./vite.config.refresh.js' 'vite' 'node ./server'",
     "build": "rm -rf ./dist && vite build -c ./vite.config.refresh.js && vite build",
     "preview": "cross-env NODE_ENV=production node server",
-    "test:watch": "vitest watch --single-thread",
-    "test:ci": "vitest run",
-    "test:ui": "vitest --ui",
+    "test:watch": "vitest watch DataTableContainer --single-thread",
+    "test:ci": "vitest DataTableContainer run",
+    "test": "vitest",
+    "test:ui": "vitest DataTableContainer --ui",
     "knip": "knip"
   },
   "dependencies": {
