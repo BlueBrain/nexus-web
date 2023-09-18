@@ -34,7 +34,7 @@ import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
 import { notification } from 'antd';
 
-describe('DataTableContainer.spec.tsx', () => {
+describe.only('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
   let dataTableContainer: JSX.Element;
   let container: HTMLElement;
