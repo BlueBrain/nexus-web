@@ -15,3 +15,4 @@ cypress.env.json
 *.sops*
 .sops-*.*
 *.key
+*.asdcas
