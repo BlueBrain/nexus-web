@@ -93,7 +93,6 @@ describe('getUpdateResourceFunction() with Realm type resource', () => {
     resourceId
   );
   it('resource with @type including Realm should target Realm endpoint', () => {
-    console.log('@@fn.toString()', fn.toString());
     expect(fn.toString()).toMatch(
       `nexus.Realm.update(originalResource["_label"], revision, resource)`
     );
