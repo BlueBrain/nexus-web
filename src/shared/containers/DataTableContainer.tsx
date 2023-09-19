@@ -30,13 +30,13 @@ import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
 import { ErrorComponent } from '../components/ErrorComponent';
 import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../organisms/DataPanel/DataPanel';
 import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
+import { RootState } from '../../shared/store/reducers';
 
 export type TableColumn = {
   '@type': string;
@@ -231,7 +231,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             history.push(hist, { background: location });
           });
       })
-      .catch(error => {
+      .catch(() => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
   };
@@ -259,16 +259,16 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     return deprecated;
   };
   const deprecateTableResource = useMutation(deprecateTable, {
-    onMutate: (data: TableResource) => {
+    onMutate: () => {
       Modal.destroyAll();
     },
-    onSuccess: data => {
+    onSuccess: () => {
       onDeprecate && onDeprecate();
       notification.success({
         message: 'Table deprecated',
       });
     },
-    onError: error => {
+    onError: () => {
       notification.error({
         message: 'Failed to delete table',
       });
@@ -301,11 +301,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     onMutate: (data: TableResource | UnsavedTableResource) => {
       onSave && onSave(data);
     },
-    onSuccess: data => {
+    onSuccess: () => {
       setTableDataError(null);
       setShowEditForm(false);
     },
-    onError: error => {
+    onError: () => {
       notification.error({
         message: 'Failed to save table data',
       });
@@ -438,12 +438,12 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               <span className="table-row-count">
                 {/* If the user filters a column (i.e. updates) or enters a serch term (i.e. update dataResult), show the total rows in format <rows shown to user>/<total rows>, otherwise only show total rows. */}
                 {displayedRows &&
-                  displayedRows !== tableData.dataResult.data?.items?.length
+                displayedRows !== tableData.dataResult.data?.items?.length
                   ? `${displayedRows} / `
                   : tableData.dataResult?.data?.items.length !==
                     tableData.dataResult.data?.total
-                    ? `${tableData.dataResult.data?.items?.length} /`
-                    : ''}
+                  ? `${tableData.dataResult.data?.items?.length} /`
+                  : ''}
                 {`${tableData.dataResult?.data?.total ?? 0} `}
                 Results
               </span>
@@ -524,12 +524,14 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                   (item: StudioTableRow) =>
                     getStudioLocalStorageKey(item) === selectedStorageKey
                 ).length;
+
                 if (additionalSelectedRows > 1) {
                   antnotifcation.info({
                     duration: 5,
                     message: `${additionalSelectedRows -
-                      1} other resources with same metadata have also been automatically ${selected ? 'selected' : 'unselected'
-                      } for download.`,
+                      1} other resources with same metadata have also been automatically ${
+                      selected ? 'selected' : 'unselected'
+                    } for download.`,
                   });
                 }
               },
@@ -570,8 +572,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 if (additionalSelectedRows > 0) {
                   antnotifcation.info({
                     duration: 5,
-                    message: `${additionalSelectedRows} other resources with same metadata have also been automatically ${selected ? 'selected' : 'unselected'
-                      } for download.`,
+                    message: `${additionalSelectedRows} other resources with same metadata have also been automatically ${
+                      selected ? 'selected' : 'unselected'
+                    } for download.`,
                   });
                 }
 

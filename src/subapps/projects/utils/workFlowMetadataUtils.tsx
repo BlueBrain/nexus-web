@@ -9,7 +9,6 @@ import { Exception } from 'handlebars';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { TErrorWithType } from '../../../utils/types';
 
-
 /**
  *
  * @param userOrgLabel

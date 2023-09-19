@@ -9,7 +9,6 @@ import FileUploader from '../../../shared/components/FileUpload';
 import { TError } from '../../../utils/types';
 import './InputsContainer.scss';
 
-
 export const DATASET_KEY = 'nexus-dataset';
 const InputsContainer: React.FC<{
   orgLabel: string;
