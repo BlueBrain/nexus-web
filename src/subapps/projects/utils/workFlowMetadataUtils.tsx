@@ -9,7 +9,6 @@ import {
 import { TErrorWithType } from '../../../utils/types';
 import fusionConfig from '../config';
 
-
 /**
  *
  * @param userOrgLabel

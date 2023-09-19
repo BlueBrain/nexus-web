@@ -3,7 +3,6 @@ import addIcon from '../../../shared/images/addIcon.svg';
 
 import './ActionButton.scss';
 
-
 const ActionButton: React.FC<{
   title?: string;
   onClick(): void;

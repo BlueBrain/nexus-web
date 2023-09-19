@@ -9,7 +9,6 @@ import doneIconMini from '../../../shared/images/doneIconMini.svg';
 
 import { Status } from '../types';
 
-
 const StatusIcon: React.FC<{
   status: Status;
   mini?: boolean;

@@ -77,7 +77,7 @@ describe('OrganizationListPage', () => {
         }),
       { wrapper }
     );
-        console.log('@@result', result)
+    console.log('@@result', result);
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
     expect(
