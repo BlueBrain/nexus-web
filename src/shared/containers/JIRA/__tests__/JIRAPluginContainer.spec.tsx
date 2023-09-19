@@ -1,17 +1,15 @@
 import '@testing-library/jest-dom';
 import * as React from 'react';
-import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { rest } from 'msw';
-import { act } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
+import { configureStore } from '../../../../store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import JIRAPluginContainer from '../JIRAPluginContainer';
-import { render, server, waitFor, screen } from '../../../../utils/testUtil';
+import { render, server, screen } from '../../../../utils/testUtil';
 import {
   getNotificationContextValue,
   NotificationContext,
@@ -31,24 +29,8 @@ describe('Jira Plugin Container', () => {
     fetch,
     uri: 'https://localhost:3000',
   });
-  const mockState = vi.hoisted(() => ({
-    config: {
-      apiEndpoint: 'https://localhost:3000',
-      analysisPluginSparqlDataQuery: 'detailedCircuit',
-      jiraUrl: 'https://localhost:3000/jira/project/devissues',
-    },
-  }));
+
   const queryClient = new QueryClient();
-  const mockStore = configureStore();
-  vi.mock('react-redux', async () => {
-    const ActualReactRedux = await vi.importActual<any>('react-redux');
-    return {
-      ...ActualReactRedux,
-      useSelector: vi.fn().mockImplementation(() => {
-        return mockState;
-      }),
-    };
-  });
 
   const mockResource = {
     '@context': [
@@ -589,7 +571,7 @@ describe('Jira Plugin Container', () => {
     server.use(
       rest.get(
         'https://localhost:3000/projects/orgLabel/projectLabel',
-        (req, res, ctx) => {
+        (_, res, ctx) => {
           return res(
             // Respond with a 200 status code
             ctx.status(200),
@@ -597,14 +579,14 @@ describe('Jira Plugin Container', () => {
           );
         }
       ),
-      rest.get('https://localhost:3000/jira/project', (req, res, ctx) => {
+      rest.get('https://localhost:3000/jira/project', (_, res, ctx) => {
         return res(
           // Respond with a 200 status code
           ctx.status(200),
           ctx.json(mockJiraProjectResponse)
         );
       }),
-      rest.post('https://localhost:3000/jira/search', (req, res, ctx) => {
+      rest.post('https://localhost:3000/jira/search', (_, res, ctx) => {
         return res(
           // Respond with a 200 status code
           ctx.status(200),
@@ -613,7 +595,7 @@ describe('Jira Plugin Container', () => {
       }),
       rest.get(
         'https://localhost:3000/jira/issue/NEXUS-57',
-        (req, res, ctx) => {
+        (_, res, ctx) => {
           return res(
             // Respond with a 200 status code
             ctx.status(200),
@@ -624,7 +606,15 @@ describe('Jira Plugin Container', () => {
     );
 
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+
+    const store = configureStore(history, { nexus }, {
+      config: {
+        apiEndpoint: 'https://localhost:3000',
+        analysisPluginSparqlDataQuery: 'detailedCircuit',
+        jiraUrl: 'https://localhost:3000/jira/project/devissues',
+      },
+    });
+
     const App: React.FC = () => {
       const notificationData: NotificationContextType = getNotificationContextValue();
 
@@ -646,19 +636,17 @@ describe('Jira Plugin Container', () => {
         </Router>
       );
     };
-    const component = render(<App />);
-    const container = component.container;
+    render(<App />);
 
-    await waitFor(() => {
-      const table = container.querySelector('jira-table');
-      expect(table).toBeInTheDocument();
-      const jiraIssueLink = screen.getByRole('link', {
-        name: 'test1',
-      });
-      expect(jiraIssueLink).toHaveAttribute(
-        'href',
-        'https://localhost:3000/jira/project/devissues/browse/NEXUS-57'
-      );
+    const table = await screen.findByRole('table');
+    expect(table).toBeInTheDocument();
+
+    const jiraIssueLink = screen.getByRole('link', {
+      name: 'test1',
     });
+    expect(jiraIssueLink).toHaveAttribute(
+      'href',
+      'https://localhost:3000/jira/project/devissues/browse/NEXUS-57'
+    );
   });
 });
