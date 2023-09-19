@@ -119,7 +119,6 @@ const ProjectView: React.FunctionComponent = () => {
   }>();
 
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
-
   React.useEffect(() => {
     setActiveKey(tabFromPath(match.path));
   }, [match.path]);
