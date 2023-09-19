@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import * as React from 'react';
-import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -645,19 +644,13 @@ describe('Jira Plugin Container', () => {
         </Router>
       );
     };
-    const component = render(<App />);
-    const container = component.container;
+    render(<App />);
 
-    await waitFor(() => {
-      const table = container.querySelector('jira-table');
-      expect(table).toBeInTheDocument();
-      const jiraIssueLink = screen.getByRole('link', {
-        name: 'test1',
-      });
-      expect(jiraIssueLink).toHaveAttribute(
-        'href',
-        'https://localhost:3000/jira/project/devissues/browse/NEXUS-57'
-      );
+    const table = await screen.findByRole('table');
+    expect(table).toBeInTheDocument();
+
+    const jiraIssueLink = screen.getByRole('link', {
+      name: 'test1',
     });
     expect(jiraIssueLink).toHaveAttribute(
       'href',
