@@ -167,7 +167,10 @@ const ProjectItem = ({
   const datasets = data?._total;
   return (
     <List.Item className="route-result-list_item">
-      <div className="route-result-list_item_wrapper" role="routeitem-org-project">
+      <div
+        className="route-result-list_item_wrapper"
+        role="routeitem-org-project"
+      >
         <div className="org">
           <Link to={to}>
             <h3>
@@ -255,7 +258,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
       type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
     });
   };
-  
+
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {

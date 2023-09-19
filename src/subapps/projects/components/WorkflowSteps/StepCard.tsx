@@ -9,11 +9,10 @@ import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewe
 import SubStepItem from './SubStepItem';
 import { isEmptyInput } from '../../utils';
 import { labelOf } from '../../../../shared/utils';
-import  settingIcon from '../../../../shared/images/settingIcon.svg';
-import  editIcon from '../../../../shared/images/pencil.svg';
+import settingIcon from '../../../../shared/images/settingIcon.svg';
+import editIcon from '../../../../shared/images/pencil.svg';
 
 import './StepCard.scss';
-
 
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;

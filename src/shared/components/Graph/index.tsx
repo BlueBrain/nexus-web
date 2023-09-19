@@ -1,4 +1,3 @@
-
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
 

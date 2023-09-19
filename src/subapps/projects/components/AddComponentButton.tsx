@@ -4,7 +4,6 @@ import addIconClear from '../../../shared/images/addIconClear.svg';
 
 import './AddComponentButton.scss';
 
-
 const AddComponentButton: React.FC<{
   addNewStep: () => void;
   addDataTable?: () => void;

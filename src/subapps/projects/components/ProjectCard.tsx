@@ -9,7 +9,6 @@ import editIcon from '../../../shared/images/pencil.svg';
 
 import './ProjectCard.scss';
 
-
 type ProjectCardProps = {
   name: string;
   description: string;

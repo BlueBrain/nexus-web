@@ -1,4 +1,3 @@
-
 import { vi } from 'vitest';
 import {
   render,
@@ -10,7 +9,6 @@ import {
 import '@testing-library/jest-dom';
 import SearchLayouts from '..';
 import { SearchLayout } from '../../../../../subapps/search/hooks/useGlobalSearch';
-
 
 describe('SearchLayouts', () => {
   // @ts-ignore
