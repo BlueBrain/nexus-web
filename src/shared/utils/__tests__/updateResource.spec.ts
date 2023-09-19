@@ -24,15 +24,14 @@ describe('getUpdateResourceFunction() with generic resource', () => {
     resourceId
   );
   it('resource with no type should match to generic Resource endpoint', () => {
-    console.log('@getUpdateResourceFunction().toString()', fn.toString());
-    expect(fn.toString()).toMatch(
-      `() => nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        revision,
-        resource
-      )`
+    expect(
+      fn
+        .toString()
+        .trim()
+        .replaceAll('\n', ' ')
+        .replaceAll(' ', '')
+    ).toMatch(
+      `()=>nexus.Resource.update(orgLabel,projectLabel,resourceId,revision,resource)`
     );
   });
 });
@@ -94,7 +93,6 @@ describe('getUpdateResourceFunction() with Realm type resource', () => {
     resourceId
   );
   it('resource with @type including Realm should target Realm endpoint', () => {
-    console.log('@@fn.toString()', fn.toString());
     expect(fn.toString()).toMatch(
       `nexus.Realm.update(originalResource["_label"], revision, resource)`
     );
@@ -117,7 +115,13 @@ describe('getUpdateResourceFunction() with Resolver type resource', () => {
   );
   it('resource with @type including Resolver should target Resolver endpoint', () => {
     expect(fn.toString()).toMatch(
-      'nexus.Resolver.update(orgLabel, projectLabel, resourceId, revision, resource)'
+      `() => nexus.Resolver.update(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        revision,
+        resource
+      )`
     );
   });
 });
@@ -136,9 +140,14 @@ describe('getUpdateResourceFunction() with Schema type resource', () => {
     resourceId
   );
   it('resource with @type including Schema should target Schema endpoint', () => {
-    expect(fn.toString()).toMatch(
-      'nexus.Schema.update(orgLabel, projectLabel, resourceId, revision, resource)'
-    );
+    const expected = `() => nexus.Schema.update(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        revision,
+        resource
+      )`;
+    expect(fn.toString()).toMatch(expected);
   });
 });
 
@@ -157,9 +166,14 @@ describe('getUpdateResourceFunction() with Storage type resource', () => {
     resourceId
   );
   it('resource with @type including Storage should target Storage endpoint', () => {
-    console.log('@@fn.toString()', fn.toString());
-    expect(fn.toString()).toMatch(
-      'nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource)'
+    expect(
+      fn
+        .toString()
+        .trim()
+        .replaceAll('\n', ' ')
+        .replaceAll(' ', '')
+    ).toMatch(
+      `()=>nexus.Storage.update(orgLabel,projectLabel,resourceId,revision,resource)`
     );
   });
 });
@@ -288,7 +302,13 @@ describe('getUpdateResourceFunction() with unexpected types', () => {
       resourceId
     );
     expect(fn.toString()).toMatch(
-      `nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource)`
+      `() => nexus.Storage.update(
+        orgLabel,
+        projectLabel,
+        resourceId,
+        revision,
+        resource
+      )`
     );
   });
 });
