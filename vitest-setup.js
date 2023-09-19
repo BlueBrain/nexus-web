@@ -18,6 +18,9 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+const { getComputedStyle } = window;
+window.getComputedStyle = elt => getComputedStyle(elt);
+
 vi.mock('resize-observer-polyfill', () => ({
   __esModule: true,
   default: vi.fn().mockImplementation(() => ({
