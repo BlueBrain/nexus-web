@@ -18,11 +18,9 @@ type TCodeEditor = {
   handleChange(editor: any, data: any, value: any): void;
 };
 
-
 type TEditorConfiguration = EditorConfiguration & {
   foldCode: boolean;
 };
-
 
 const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
   ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {

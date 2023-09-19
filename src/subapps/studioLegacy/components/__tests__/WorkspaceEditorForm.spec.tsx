@@ -4,7 +4,6 @@ import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
-
 describe('WorkspaceEditorForm', () => {
   const context = {
     id: 'context-id',

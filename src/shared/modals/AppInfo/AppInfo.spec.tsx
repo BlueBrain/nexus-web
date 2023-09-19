@@ -6,7 +6,6 @@ import configureStore from 'redux-mock-store';
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
 import AppInfo, { EnvironmentInfo } from './AppInfo';
 
-
 describe('AppInfo', () => {
   beforeAll(async () => {
     server.listen();
