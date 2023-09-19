@@ -7,26 +7,22 @@ import EntryPoint from './entry';
 import { getUserManager, setupUserSession } from 'authManager';
 import './styles';
 
-
 const root = document.getElementById('root')!;
 async function prerun() {
-    localStorage.removeItem('nexus__token');
-    const userManager = getUserManager(store.getState());
-    if (userManager) await setupUserSession(userManager);
+  localStorage.removeItem('nexus__token');
+  const userManager = getUserManager(store.getState());
+  if (userManager) await setupUserSession(userManager);
 }
 
 async function run() {
-    await prerun();
-    return ReactDOM
-        .createRoot(root)
-        .render(
-            <StrictMode>
-                <Provider store={store}>
-                    <EntryPoint />
-                </Provider>
-            </StrictMode>
-        );
+  await prerun();
+  return ReactDOM.createRoot(root).render(
+    <StrictMode>
+      <Provider store={store}>
+        <EntryPoint />
+      </Provider>
+    </StrictMode>
+  );
 }
 
 run();
-

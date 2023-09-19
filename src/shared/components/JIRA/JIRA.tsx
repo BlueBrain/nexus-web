@@ -362,7 +362,7 @@ const JIRAPluginUI = ({
       {issues.length > 0 && (
         <Table
           size="small"
-          className='jira-table'
+          className="jira-table"
           dataSource={issues}
           columns={[
             displayType === 'project'

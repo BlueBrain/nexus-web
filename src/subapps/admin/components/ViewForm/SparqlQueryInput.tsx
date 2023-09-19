@@ -1,4 +1,4 @@
-import  React from 'react';
+import React from 'react';
 import 'codemirror/mode/javascript/javascript';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
@@ -7,9 +7,6 @@ import 'codemirror/theme/base16-light.css';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
 import './SparqlQueryInput.scss';
-
-
-
 
 const SparqlQueryInput: React.FunctionComponent<{
   value?: string;

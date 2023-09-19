@@ -5,7 +5,6 @@ import logo from '../../images/logo.svg';
 
 import './Login.scss';
 
-
 export interface LoginProps {
   realms: string[];
   selectedRealm?: string;

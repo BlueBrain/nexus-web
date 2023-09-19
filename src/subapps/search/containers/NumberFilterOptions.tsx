@@ -9,7 +9,7 @@ import {
   Descriptions,
   Statistic,
 } from 'antd';
-import * as charts from '@ant-design/charts'
+import * as charts from '@ant-design/charts';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
@@ -18,24 +18,23 @@ import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.scss';
 import './FilterOptions.scss';
 
-
 type ConfigField =
   | {
-    name: string;
-    label: string;
-    array: boolean;
-    optional: boolean;
-    fields: { name: string; format: string }[];
-    format?: undefined;
-  }
+      name: string;
+      label: string;
+      array: boolean;
+      optional: boolean;
+      fields: { name: string; format: string }[];
+      format?: undefined;
+    }
   | {
-    name: string;
-    label: string;
-    format: string;
-    array: boolean;
-    optional: boolean;
-    fields?: undefined;
-  };
+      name: string;
+      label: string;
+      format: string;
+      array: boolean;
+      optional: boolean;
+      fields?: undefined;
+    };
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;

@@ -15,7 +15,7 @@ import {
   screen,
   server,
 } from '../../utils/testUtil';
-import { configureStore } from '../../store'
+import { configureStore } from '../../store';
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
 
 describe('ProjectsPage', () => {

@@ -8,7 +8,7 @@ import { createBrowserHistory, History } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import AdvancedModeToggle from './AdvancedMode';
-import { configureStore } from '../../../store'
+import { configureStore } from '../../../store';
 import { render, fireEvent, waitFor, screen } from '../../../utils/testUtil';
 
 describe('AdvancedModeToggle', () => {

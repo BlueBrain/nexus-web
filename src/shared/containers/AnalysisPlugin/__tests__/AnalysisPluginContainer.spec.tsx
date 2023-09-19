@@ -29,13 +29,11 @@ import {
   DEFAULT_REPORT_TYPES,
 } from '../../../../constants';
 
-
 describe('Analysis Plugin', () => {
-
   const queryClient = new QueryClient();
   const mockStore = configureStore();
 
-  const  mockState = {
+  const mockState = {
     config: {
       apiEndpoint: deltaPath(),
       analysisPluginSparqlDataQuery: 'detailedCircuit',

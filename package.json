@@ -18,7 +18,10 @@
     "test:ci": "vitest DataTableContainer run",
     "test": "vitest",
     "test:ui": "vitest DataTableContainer --ui",
-    "knip": "knip"
+    "knip": "knip",
+    "lint": "tslint --project tsconfig.json",
+    "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
+    "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\""
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",

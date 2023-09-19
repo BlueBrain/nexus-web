@@ -6,12 +6,8 @@ import {
   PROJECT_METADATA_CONTEXT,
 } from '../fusionContext';
 import { Exception } from 'handlebars';
-<<<<<<< HEAD
 import { NexusClient } from '@bbp/nexus-sdk/es';
-=======
-import { NexusClient } from '@bbp/nexus-sdk';
 import { TErrorWithType } from '../../../utils/types';
->>>>>>> 6266cc77 (f-4117/update: update ts version to the latest 5.1.6)
 /**
  *
  * @param userOrgLabel

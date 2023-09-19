@@ -1,9 +1,8 @@
-import { vi, describe, it, test } from 'vitest';
+import { describe, it } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
-import { Simulate } from 'react-dom/test-utils';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
@@ -32,10 +31,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { configureStore } from '../../store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
-import { notification } from 'antd';
 
-
-describe.only('DataTableContainer.spec.tsx', () => {
+describe('DataTableContainer.spec.tsx', () => {
   const queryClient = new QueryClient();
   let dataTableContainer: JSX.Element;
   let container: HTMLElement;
@@ -54,7 +51,7 @@ describe.only('DataTableContainer.spec.tsx', () => {
     server.listen();
 
     const { getComputedStyle } = window;
-    window.getComputedStyle = (elt) => getComputedStyle(elt);
+    window.getComputedStyle = elt => getComputedStyle(elt);
   });
 
   beforeEach(async () => {
@@ -98,7 +95,7 @@ describe.only('DataTableContainer.spec.tsx', () => {
     component = render(containerToRender);
     container = component.container;
     user = userEvent.setup();
-  }
+  };
 
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
@@ -223,7 +220,7 @@ describe.only('DataTableContainer.spec.tsx', () => {
       return within(screen.getByRole('menu')).getByText('sterling');
     });
     // NOTE: unfortunately using `userEvent.click(filterMenuOption` does not work because antd dropdown does not have the right css rules to allow pointer events.
-    await user.click(filterMenuOption)
+    await user.click(filterMenuOption);
 
     const submitFilter = screen.getByRole('button', { name: 'OK' });
     await user.click(submitFilter);
@@ -273,16 +270,27 @@ describe('DataTableContainer - Selection', () => {
   const queryClient = new QueryClient();
   let dataTableContainer: JSX.Element;
   let container: HTMLElement;
-  let rerender: (ui: React.ReactElement) => void;
   let user: UserEvent;
   let server: ReturnType<typeof setupServer>;
   let component: RenderResult;
+  const repeatedSelf =
+    'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
+
+  const resourcesWithRepeatedSelf = [
+    getMockStudioResource('Malory', repeatedSelf),
+    getMockStudioResource('Lana', 'not-a-repeated-self'),
+    getMockStudioResource('Malory', repeatedSelf),
+    getMockStudioResource('Malory', repeatedSelf),
+    getMockStudioResource('Malory', 'another-different-self'),
+    getMockStudioResource('Malory', 'totally-different-self'),
+  ];
 
   beforeAll(() => {
     server = setupServer(
       dashboardResource,
       dashboardVocabulary,
-      fetchResourceForDownload
+      fetchResourceForDownload,
+      sparqlViewResultHandler(resourcesWithRepeatedSelf)
     );
 
     server.listen();
@@ -317,19 +325,26 @@ describe('DataTableContainer - Selection', () => {
       </Provider>
     );
 
-    component = render(dataTableContainer);
-
-    container = component.container;
-    rerender = component.rerender;
-    user = userEvent.setup();
+    renderContainer(dataTableContainer);
+    localStorage.clear();
+    await waitForTableRows(6);
   });
+
+  const renderContainer = (containerToRender: JSX.Element) => {
+    if (component) {
+      component.unmount();
+    }
+
+    component = render(containerToRender);
+    container = component.container;
+    user = userEvent.setup();
+  };
 
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
   afterEach(() => {
     cleanup();
     queryClient.clear();
-    localStorage.clear();
   });
 
   afterAll(() => {
@@ -358,25 +373,6 @@ describe('DataTableContainer - Selection', () => {
   };
 
   it('selects other rows with same self when user selects a row', async () => {
-    localStorage.clear();
-
-    const repeatedSelf =
-      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
-
-    const resourcesWithRepeatedSelf = [
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Lana', 'not-a-repeated-self'),
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Malory', 'another-different-self'),
-      getMockStudioResource('Malory', 'totally-different-self'),
-    ];
-
-    // Rerender the component, this time using a handler that returns rows with same self.
-    server.use(sparqlViewResultHandler(resourcesWithRepeatedSelf));
-    component.unmount();
-    rerender(dataTableContainer);
-    await waitForTableRows(6);
     const secondRowCheckbox = await getSelectCheckboxForRow(2);
     await user.click(secondRowCheckbox!);
 
@@ -398,34 +394,14 @@ describe('DataTableContainer - Selection', () => {
   });
 
   it('shows info to user if selecting one row automatically selected other rows', async () => {
-    localStorage.clear();
-
-    const repeatedSelf =
-      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
-
-    const resourcesWithRepeatedSelf = [
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Lana', 'not-a-repeated-self'),
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Malory', repeatedSelf),
-      getMockStudioResource('Malory', 'another-different-self'),
-      getMockStudioResource('Malory', 'totally-different-self'),
-    ];
-    const spy = vi.spyOn(notification, 'info');
-
-    server.use(sparqlViewResultHandler(resourcesWithRepeatedSelf));
-    component.unmount();
-    rerender(dataTableContainer);
-    await waitForTableRows(6);
-
     const secondRowCheckbox = await getSelectCheckboxForRow(2);
     expect(secondRowCheckbox).toBeInTheDocument();
 
     await user.click(secondRowCheckbox!);
-    expect(spy).toHaveBeenCalledWith({
-      duration: 5,
-      message: `2 other resources with same metadata have also been automatically selected for download.`,
-    });
+
+    await screen.findByText(
+      '2 other resources with same metadata have also been automatically selected for download.'
+    );
   });
 });
 
@@ -448,7 +424,7 @@ const dashboardErrorHandler = rest.get(
       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937'
     )}`
   ),
-  (req, res, ctx) => {
+  (_, res, ctx) => {
     return res(ctx.status(404), ctx.json(dashboardErrorResponse));
   }
 );

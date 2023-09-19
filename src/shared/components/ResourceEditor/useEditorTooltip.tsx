@@ -368,15 +368,19 @@ function useEditorTooltip({
     }
     // allow the tooltip only when the editor is not in edition mode
     // and the popover is not open
-    allowTooltip && editorWrapper && editorWrapper.addEventListener('mouseover', onMouseOver);
+    allowTooltip &&
+      editorWrapper &&
+      editorWrapper.addEventListener('mouseover', onMouseOver);
     // remove the event listener when not allwoed
-    !allowTooltip && editorWrapper &&
+    !allowTooltip &&
+      editorWrapper &&
       editorWrapper.removeEventListener('mouseover', onMouseOver);
 
     // cleanup
     // remove the event listener when the component is unmounted
     return () => {
-      allowTooltip && editorWrapper &&
+      allowTooltip &&
+        editorWrapper &&
         editorWrapper.removeEventListener('mouseover', onMouseOver);
     };
   }, [
