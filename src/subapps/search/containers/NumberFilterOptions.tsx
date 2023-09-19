@@ -18,24 +18,23 @@ import { createKeyWord } from './FilterOptions';
 import './NumberFilterOptionsContainer.scss';
 import './FilterOptions.scss';
 
-
 type ConfigField =
   | {
-    name: string;
-    label: string;
-    array: boolean;
-    optional: boolean;
-    fields: { name: string; format: string }[];
-    format?: undefined;
-  }
+      name: string;
+      label: string;
+      array: boolean;
+      optional: boolean;
+      fields: { name: string; format: string }[];
+      format?: undefined;
+    }
   | {
-    name: string;
-    label: string;
-    format: string;
-    array: boolean;
-    optional: boolean;
-    fields?: undefined;
-  };
+      name: string;
+      label: string;
+      format: string;
+      array: boolean;
+      optional: boolean;
+      fields?: undefined;
+    };
 
 const NumberFilterOptions: React.FC<{
   field: ConfigField;

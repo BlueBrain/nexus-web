@@ -29,14 +29,13 @@ import {
 } from '../../../../constants';
 import { configureStore } from '../../../../store';
 
-
 describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();
 
   const queryClient = new QueryClient();
   const mockStore = configureStore();
 
-  const  mockState = {
+  const mockState = {
     config: {
       apiEndpoint: deltaPath(),
       analysisPluginSparqlDataQuery: 'detailedCircuit',

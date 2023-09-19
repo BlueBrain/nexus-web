@@ -649,7 +649,7 @@ describe('Jira Plugin Container', () => {
     const container = component.container;
 
     await waitFor(() => {
-      const table = container.querySelector("jira-table");
+      const table = container.querySelector('jira-table');
       expect(table).toBeInTheDocument();
       const jiraIssueLink = screen.getByRole('link', {
         name: 'test1',

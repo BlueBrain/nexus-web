@@ -62,12 +62,12 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     setInitialQuery(formattedInitialQuery);
   }, []);
 
-    const data =
-      response && response.hits.hits.map(result => result._source || []);
-    const total =
-      (response && response.hits.total && response.hits.total.value) || 0;
-    const totalPages = Math.ceil(total / size);
-    const current = Math.floor((totalPages / total) * from + 1);
+  const data =
+    response && response.hits.hits.map(result => result._source || []);
+  const total =
+    (response && response.hits.total && response.hits.total.value) || 0;
+  const totalPages = Math.ceil(total / size);
+  const current = Math.floor((totalPages / total) * from + 1);
 
   const handleChange = (_: any, __: any, value: string) => {
     try {
@@ -129,6 +129,99 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
                 (wrapper.current as { hydrated: boolean }).hydrated = false;
               }
             }}
+          />
+        </>
+        <FormItem>
+          <Button type="primary" htmlType="submit" disabled={!valid}>
+            Execute ElasticSearch query
+          </Button>
+        </FormItem>
+      </Form>
+      <Card bordered className="results">
+        {error && (
+          <Empty
+            description={`An error occurred: ${error.reason ||
+              (error.error && error.error.reason)}`}
+          />
+        )}
+        {!error && (
+          <List
+            bordered
+            size="small"
+            className="elasticsearch-results"
+            itemLayout="vertical"
+            loading={busy}
+            header={
+              <p className="result">{`Found ${total} result${
+                total > 1 ? 's' : ''
+              }`}</p>
+            }
+            dataSource={data || []}
+            pagination={{
+              total,
+              current,
+              pageSize,
+              onChange: onPaginationChange,
+              position: 'both',
+              showSizeChanger: true,
+              onShowSizeChange: changePageSize,
+            }}
+            renderItem={(result?: object) => (
+              <ListItem>
+                {(result && (
+                  <ReactJson
+                    src={result}
+                    name={null}
+                    enableClipboard={false}
+                    displayObjectSize={false}
+                    displayDataTypes={false}
+                  />
+                )) ||
+                  ''}
+              </ListItem>
+            )}
+          />
+        )}
+      </Card>
+    </div>
+  );
+};
+
+  const changePageSize = (current: number, size: number) => {
+    setPageSize(size);
+    onChangePageSize(size);
+  };
+
+  return (
+    <div className="view-form">
+      <Form
+        onFinish={() => {
+          value && onQueryChange(JSON.parse(value));
+        }}
+        layout="vertical"
+      >
+        <>
+          <div className="control-panel">
+            <div>
+              <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
+                {valid ? (
+                  <CheckCircleOutlined />
+                ) : (
+                  <ExclamationCircleOutlined />
+                )}{' '}
+                {valid ? 'Valid JSON' : 'Invalid JSON'}
+              </div>
+            </div>
+          </div>
+          <CodeMirror
+            value={initialQuery}
+            options={{
+              mode: { name: 'javascript', json: true },
+              theme: 'base16-light',
+              placeholder: 'Enter a valid ElasticSearch query',
+              viewportMargin: Infinity,
+            }}
+            onChange={handleChange}
           />
         </>
         <FormItem>
