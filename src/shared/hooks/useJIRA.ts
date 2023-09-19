@@ -147,6 +147,7 @@ function useJIRA({
         setIsJiraConnected(true);
       })
       .catch(e => {
+        console.log('JIRA NOT COONECTED');
         handleJiraError(e);
       });
   };
@@ -158,6 +159,7 @@ function useJIRA({
         headers: { 'Content-Type': 'application/json' },
       })
       .catch(e => {
+        console.log('GET PROJECTS', jiraAPIBaseUrl);
         handleJiraError(e);
       });
   };
@@ -207,6 +209,7 @@ function useJIRA({
 
   const handleJiraError = (e: any) => {
     console.log('@@error jira', e);
+    console.log('MESSAGTE', Object.keys(e));
     if (!isJiraConnected) {
       // ignore if we are not connected
       return;
@@ -401,7 +404,6 @@ function useJIRA({
         const issuesResponse = await (resource
           ? getResourceIssues(resource._self)
           : getProjectIssues());
-        console.log('@@issuesResponse', issuesResponse, resource._self);
         if (issuesResponse.issues) {
           const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
             (a: any, b: any) =>
