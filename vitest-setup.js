@@ -18,7 +18,6 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-
 vi.mock('resize-observer-polyfill', () => ({
   __esModule: true,
   default: vi.fn().mockImplementation(() => ({

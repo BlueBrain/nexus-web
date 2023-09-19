@@ -41,7 +41,7 @@ describe('Jira Plugin Container', () => {
   const queryClient = new QueryClient();
   const mockStore = configureStore();
   vi.mock('react-redux', async () => {
-    const ActualReactRedux = await (vi.importActual<any>('react-redux'));
+    const ActualReactRedux = await vi.importActual<any>('react-redux');
     return {
       ...ActualReactRedux,
       useSelector: vi.fn().mockImplementation(() => {
@@ -650,7 +650,7 @@ describe('Jira Plugin Container', () => {
     const container = component.container;
 
     await waitFor(() => {
-      const table = container.querySelector("jira-table");
+      const table = container.querySelector('jira-table');
       expect(table).toBeInTheDocument();
       const jiraIssueLink = screen.getByRole('link', {
         name: 'test1',

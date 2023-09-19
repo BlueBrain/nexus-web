@@ -7,7 +7,7 @@ import { render, server, screen, fireEvent } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
-import { RenderResult, } from '@testing-library/react';
+import { RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 

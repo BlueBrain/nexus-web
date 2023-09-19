@@ -44,8 +44,10 @@ const IdentityPage: React.FC<{}> = () => {
   const dispatch = useDispatch<any>();
   const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
-  const { layoutSettings, serviceAccountsRealm } = useSelector((state: RootState) => state.config);
-  
+  const { layoutSettings, serviceAccountsRealm } = useSelector(
+    (state: RootState) => state.config
+  );
+
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
