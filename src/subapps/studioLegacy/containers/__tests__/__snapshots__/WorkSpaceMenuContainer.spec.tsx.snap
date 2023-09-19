@@ -177,32 +177,8 @@ exports[`workSpaceMenu > renders with a single workspace and dashboard  1`] = `
           <div
             class="ant-spin-nested-loading css-dev-only-do-not-override-17a39f8"
           >
-            <div>
-              <div
-                aria-busy="true"
-                aria-live="polite"
-                class="ant-spin ant-spin-spinning css-dev-only-do-not-override-17a39f8"
-              >
-                <span
-                  class="ant-spin-dot ant-spin-dot-spin"
-                >
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                  <i
-                    class="ant-spin-dot-item"
-                  />
-                </span>
-              </div>
-            </div>
             <div
-              class="ant-spin-container ant-spin-blur"
+              class="ant-spin-container"
             >
               <div
                 class="ant-table ant-table-bordered ant-table-scroll-horizontal"
