@@ -194,7 +194,7 @@ exports[`JIRA > renders with issues 1`] = `
     </button>
   </div>
   <div
-    class="ant-table-wrapper css-dev-only-do-not-override-17a39f8"
+    class="ant-table-wrapper jira-table css-dev-only-do-not-override-17a39f8"
   >
     <div
       class="ant-spin-nested-loading css-dev-only-do-not-override-17a39f8"
@@ -459,7 +459,7 @@ exports[`JIRA > renders with projects 1`] = `
     </button>
   </div>
   <div
-    class="ant-table-wrapper css-dev-only-do-not-override-17a39f8"
+    class="ant-table-wrapper jira-table css-dev-only-do-not-override-17a39f8"
   >
     <div
       class="ant-spin-nested-loading css-dev-only-do-not-override-17a39f8"
