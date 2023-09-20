@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
 import { renderHook } from '@testing-library/react-hooks/dom';
 import fetch from 'node-fetch';
-import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import {
   Organization,
@@ -10,7 +9,7 @@ import {
   createNexusClient,
 } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { createBrowserHistory, createMemoryHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
@@ -21,10 +20,7 @@ import OrganizationProjectsPage, {
 } from './OrganizationProjectsPage';
 import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { MemoryRouter, Route, useRouteMatch } from 'react-router';
 import { vi } from 'vitest';
-
-// vi.spyOn(reactRouter, 'useRouteMatch').mockReturnValue({ url: '/orgs/orgLabel', params: { orgLabel: 'orgLabel' }, path: '/orgs/orgLabel', isExact: true })
 
 vi.mock("react-router", async () => {
   const actual: Object = await vi.importActual("react-router");
@@ -61,9 +57,7 @@ describe('OrganizationProjectsPage', () => {
   const store = configureStore(history, { nexus }, {});
 
   it('renders organization projects in a list', async () => {
-    server.use(aclHandler);
-    server.use(orgProjectsHandler);
-    server.use(orgHandler);
+    server.use(...[aclHandler, orgProjectsHandler, orgHandler]);
 
     await render(
       <Provider store={store}>
@@ -113,7 +107,7 @@ describe('OrganizationProjectsPage', () => {
   });
 });
 
-const aclHandler = rest.get(deltaPath('/acls/:orgLabel'), (_, res, ctx) => {
+export const aclHandler = rest.get(deltaPath('/acls/:orgLabel'), (_, res, ctx) => {
   const mockResponse = {
     '@context': [
       'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -178,7 +172,7 @@ const aclHandler = rest.get(deltaPath('/acls/:orgLabel'), (_, res, ctx) => {
   );
 });
 
-const orgProjectsHandler = rest.get(deltaPath('/org/orgLabel'), (req, res, ctx) => {
+export const orgProjectsHandler = rest.get(deltaPath('/org/orgLabel'), (_, res, ctx) => {
   const label = 'orgLabel';
   const mockResponse = [
     {
@@ -266,7 +260,7 @@ const orgProjectsHandler = rest.get(deltaPath('/org/orgLabel'), (req, res, ctx) 
   return res(ctx.status(200), ctx.json(mockResponse));
 });
 
-const orgHandler = rest.get(deltaPath('/orgs/orgLabel'), (req, res, ctx) => {
+export const orgHandler = rest.get(deltaPath('/orgs/orgLabel'), (_, res, ctx) => {
   const mockResponse: Organization = {
     '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/orgLabel',
     '@type': 'Organization',
