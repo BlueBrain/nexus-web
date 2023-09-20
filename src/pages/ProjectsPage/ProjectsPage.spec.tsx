@@ -11,7 +11,6 @@ import {
   render,
   screen,
   server,
-  waitFor,
 } from '../../utils/testUtil';
 import { configureStore } from '../../store';
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
