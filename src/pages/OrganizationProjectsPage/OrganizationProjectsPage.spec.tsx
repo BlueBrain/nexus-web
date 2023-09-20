@@ -10,6 +10,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createMemoryHistory } from 'history';
+import { createBrowserHistory, createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 
