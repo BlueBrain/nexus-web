@@ -1185,59 +1185,6 @@ export const handlers = [
               'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
             _prefix: 'documents',
           },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-            _prefix: 'defaultResolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-            _prefix: 'schema',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: 'resource',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: '_',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
-            _prefix: 'view',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/storages.json',
-            _prefix: 'storage',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
-            _prefix: 'file',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-            _prefix: 'resolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-            _prefix: 'graph',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/archives.json',
-            _prefix: 'archive',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-            _prefix: 'defaultStorage',
-          },
         ],
         _label: 'test1-pr1',
         _markedForDeletion: false,
@@ -1280,64 +1227,6 @@ export const handlers = [
           {
             _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
             _prefix: 'nxv',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-            _prefix: 'documents',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-            _prefix: 'defaultResolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-            _prefix: 'schema',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: 'resource',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: '_',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
-            _prefix: 'view',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/storages.json',
-            _prefix: 'storage',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
-            _prefix: 'file',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-            _prefix: 'resolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-            _prefix: 'graph',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/archives.json',
-            _prefix: 'archive',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-            _prefix: 'defaultStorage',
           },
         ],
         _label: 'test1-pr2',

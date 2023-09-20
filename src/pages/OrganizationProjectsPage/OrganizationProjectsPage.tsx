@@ -114,6 +114,7 @@ const fetchOrganizationProjectsList = async ({
     });
   }
 };
+
 export const useInfiniteOrganizationProjectsQuery = ({
   nexus,
   orgLabel,
@@ -162,7 +163,7 @@ const ProjectItem = ({
     queryFn: () =>
       nexus.Resource.list(organization, title, {
         type: DATA_SET_TYPE,
-      }),
+      })
   });
   const datasets = data?._total;
   return (
@@ -224,7 +225,7 @@ const ProjectItem = ({
   );
 };
 
-const OrganizationProjectsPage: React.FC<{}> = ({}) => {
+const OrganizationProjectsPage: React.FC<{}> = ({ }) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
   const queryInputRef = useRef<InputRef>(null);
