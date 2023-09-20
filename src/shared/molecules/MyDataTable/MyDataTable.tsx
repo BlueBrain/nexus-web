@@ -583,7 +583,7 @@ const MyDataTable: React.FC<TProps> = ({
         clsx(
           `my-data-table-row`,
           record._self === currentResourceView?._self &&
-            'ant-table-row-selected'
+          'ant-table-row-selected'
         )
       }
       scroll={{ x: 1300 }}
