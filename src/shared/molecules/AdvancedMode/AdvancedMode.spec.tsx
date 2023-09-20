@@ -71,7 +71,6 @@ describe('AdvancedModeToggle', () => {
       toggleSwitch = await screen.getByTestId('advanced-mode-toggle');
       fireEvent.click(toggleSwitch);
       const ariaChecked = toggleSwitch.getAttribute('aria-checked');
-      console.log('@@ariaChecked', ariaChecked);
       expect(ariaChecked).toEqual('true');
     });
     const currentPath = history.location.pathname;
