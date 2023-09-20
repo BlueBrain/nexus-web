@@ -1,16 +1,14 @@
 import '@testing-library/jest-dom';
 import { renderHook } from '@testing-library/react-hooks/dom';
 import fetch from 'node-fetch';
-import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import { OrganizationList, createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { createBrowserHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import {
   render,
-  fireEvent,
   waitFor,
   screen,
   server,
@@ -19,9 +17,22 @@ import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
 import { configureStore } from '../../store';
+import { orgProjectsHandler, orgHandler } from '../OrganizationProjectsPage/OrganizationProjectsPage.spec';
+import { vi } from 'vitest';
+import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
+
+vi.mock("react-router", async () => {
+  const actual: Object = await vi.importActual("react-router");
+  return ({
+    ...actual,
+    useRouteMatch: vi.fn().mockImplementation(() => {
+      return ({ params: { orgLabel: 'orgLabel' } })
+    })
+  })
+})
 
 describe('OrganizationListPage', () => {
-  const history = createBrowserHistory({ basename: '/' });
+  const history = createMemoryHistory({});
 
   // establish API mocking before all tests
   beforeAll(() => {
@@ -41,26 +52,24 @@ describe('OrganizationListPage', () => {
   const store = configureStore(history, { nexus }, {});
 
   it('renders organization projects in a list', async () => {
-    await act(async () => {
-      await render(
-        <Provider store={store}>
-          <ConnectedRouter history={history}>
-            <NexusProvider nexusClient={nexus}>
-              <QueryClientProvider client={queryClient}>
-                <OrganizationListPage />
-              </QueryClientProvider>
-            </NexusProvider>
-          </ConnectedRouter>
-        </Provider>
-      );
-    });
+    server.use(...[aclHandler, orgProjectsHandler, orgHandler]);
 
-    await waitFor(async () => {
-      const organizations = await screen.getAllByRole('routeitem-org');
-      expect(organizations.length).toBe(3);
-      const pageTitleExtra = await screen.findAllByText('Total of 3 Projects');
-      expect(pageTitleExtra).toBeInTheDocument();
-    });
+    await render(
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <NexusProvider nexusClient={nexus}>
+            <QueryClientProvider client={queryClient}>
+              <OrganizationListPage />
+            </QueryClientProvider>
+          </NexusProvider>
+        </ConnectedRouter>
+      </Provider>
+    );
+
+    const organizations = await screen.findAllByRole('routeitem-org');
+    expect(organizations.length).toEqual(3);
+    const pageTitleExtra = await screen.findByText('Total of 3 Organizations');
+    expect(pageTitleExtra).toBeInTheDocument();
   });
 
   it('Test inifinite fetching of organisation list', async () => {
@@ -77,7 +86,6 @@ describe('OrganizationListPage', () => {
         }),
       { wrapper }
     );
-    console.log('@@result', result);
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
     expect(
