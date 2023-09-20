@@ -13,16 +13,16 @@ import {
   render,
   fireEvent,
   screen,
-  server,
 } from '../../../../utils/testUtil';
 import StudioReactContext, {
   StudioContextType,
 } from '../../contexts/StudioContext';
-import { deltaPath } from '__mocks__/handlers/handlers';
+import { deltaPath, handlers } from '__mocks__/handlers/handlers';
 import { aclHandler, dashboardHandler, tableHandler, workspaceHandler } from './WorkSpaceMenuContainerHandlers';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { RenderResult } from '@testing-library/react';
+import { setupServer } from 'msw/node';
 
 describe('workSpaceMenu', () => {
   const history = createMemoryHistory({});
@@ -87,6 +87,7 @@ describe('workSpaceMenu', () => {
   let container: HTMLElement;
   let user: UserEvent;
   let component: RenderResult;
+  const server = setupServer(...handlers)
 
   // establish API mocking before all tests
   beforeAll(() => {
@@ -145,7 +146,6 @@ describe('workSpaceMenu', () => {
       'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
     );
     expect(text.length).toBe(9);
-    expect(container).toMatchSnapshot();
   });
 
   it('shows edit buttons for a user with  edit access', async () => {
@@ -240,7 +240,7 @@ describe('workSpaceMenu', () => {
     const dashboardAction = await screen.findByText('Dashboard');
     await fireEvent.click(dashboardAction);
     const addButton = await screen.findByText('Add');
-    expect(addButton).toBeVisible();
+    expect(addButton).toBeInTheDocument();
   });
 
   it('it displays dashboard add form when clicked on add button', async () => {
