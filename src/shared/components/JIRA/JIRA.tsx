@@ -367,9 +367,9 @@ const JIRAPluginUI = ({
           columns={[
             displayType === 'project'
               ? {
-                title: 'Link type',
-                render: issue => (issue.resourceId ? 'Resource' : 'Project'),
-              }
+                  title: 'Link type',
+                  render: issue => (issue.resourceId ? 'Resource' : 'Project'),
+                }
               : {},
             {
               title: 'Issue',
@@ -383,19 +383,19 @@ const JIRAPluginUI = ({
             },
             displayType === 'project'
               ? {
-                title: 'Resource',
-                render: issue =>
-                  issue.resourceSelfUrl && (
-                    <a
-                      onClick={() =>
-                        onNavigateToResource &&
-                        onNavigateToResource(issue.resourceSelfUrl)
-                      }
-                    >
-                      {issue.resourceLabel}
-                    </a>
-                  ),
-              }
+                  title: 'Resource',
+                  render: issue =>
+                    issue.resourceSelfUrl && (
+                      <a
+                        onClick={() =>
+                          onNavigateToResource &&
+                          onNavigateToResource(issue.resourceSelfUrl)
+                        }
+                      >
+                        {issue.resourceLabel}
+                      </a>
+                    ),
+                }
               : {},
             {
               title: 'Last updated',

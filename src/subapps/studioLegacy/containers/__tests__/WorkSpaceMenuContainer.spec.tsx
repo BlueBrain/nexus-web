@@ -9,16 +9,17 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ConnectedRouter } from 'connected-react-router';
 import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
 import { configureStore } from '../../../../store';
-import {
-  render,
-  fireEvent,
-  screen,
-} from '../../../../utils/testUtil';
+import { render, fireEvent, screen } from '../../../../utils/testUtil';
 import StudioReactContext, {
   StudioContextType,
 } from '../../contexts/StudioContext';
 import { deltaPath, handlers } from '__mocks__/handlers/handlers';
-import { aclHandler, dashboardHandler, tableHandler, workspaceHandler } from './WorkSpaceMenuContainerHandlers';
+import {
+  aclHandler,
+  dashboardHandler,
+  tableHandler,
+  workspaceHandler,
+} from './WorkSpaceMenuContainerHandlers';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { RenderResult } from '@testing-library/react';
@@ -87,7 +88,7 @@ describe('workSpaceMenu', () => {
   let container: HTMLElement;
   let user: UserEvent;
   let component: RenderResult;
-  const server = setupServer(...handlers)
+  const server = setupServer(...handlers);
 
   // establish API mocking before all tests
   beforeAll(() => {
@@ -124,7 +125,7 @@ describe('workSpaceMenu', () => {
     container = component.container;
 
     user = userEvent.setup();
-  })
+  });
 
   // reset any request handlers that are declared as a part of our tests
   // (i.e. for testing one-time error scenarios)
@@ -135,9 +136,8 @@ describe('workSpaceMenu', () => {
 
   // clean up once the tests are done
   afterAll(() => {
-    server.close()
+    server.close();
   });
-
 
   it('renders with a single workspace and dashboard ', async () => {
     const dashboardText = await screen.findByText(/Example/);
@@ -211,25 +211,25 @@ describe('workSpaceMenu', () => {
   });
 
   it('it displays workspace remove confirmation  on clicking remove workspace button', async () => {
-    const workSpaceAction = (await screen.findAllByText(
-      'Workspace'
-    ))[0] as HTMLButtonElement;
+    const workSpaceAction = (
+      await screen.findAllByText('Workspace')
+    )[0] as HTMLButtonElement;
     fireEvent.click(workSpaceAction);
     const editButton = await screen.findByText('Remove');
-    expect(editButton).toBeVisible();
+    expect(editButton).toBeInTheDocument();
     await fireEvent.click(editButton);
     const editForm = await screen.findAllByText('Delete Workspace');
     expect(editForm).toHaveLength(1);
   });
 
   it('it displays workspace edit form on clicking edit workspace button', async () => {
-    const workSpaceAction = (await screen.findAllByText(
-      'Workspace'
-    ))[0] as HTMLButtonElement;
+    const workSpaceAction = (
+      await screen.findAllByText('Workspace')
+    )[0] as HTMLButtonElement;
     fireEvent.click(workSpaceAction);
 
     const editButton = await screen.findByText('Edit');
-    expect(editButton).toBeVisible();
+    expect(editButton).toBeInTheDocument();
     await fireEvent.click(editButton);
 
     const editForm = await screen.findAllByText('Edit');

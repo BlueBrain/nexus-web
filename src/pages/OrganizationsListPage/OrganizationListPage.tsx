@@ -94,8 +94,8 @@ export const useInfiniteOrganizationQuery = ({
     getNextPageParam: lastPage =>
       (lastPage as TNewOrganizationList)._next
         ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get(
-          'from'
-        )
+            'from'
+          )
         : undefined,
   });
 };
@@ -246,7 +246,8 @@ const OrganizationListView: React.FC<{}> = () => {
             total && !query ? (
               `Total of ${total} ${pluralize('Organization', total)}`
             ) : total && query ? (
-              `Filtering ${total} of ${totalOrganizationRef.current
+              `Filtering ${total} of ${
+                totalOrganizationRef.current
               }  ${pluralize('Organization', total)}`
             ) : isLoading ? (
               <LoadingOutlined />

@@ -161,7 +161,7 @@ export const useInfiniteProjectsQuery = ({
         : undefined,
   });
 };
-const ProjectsPage: React.FC<{}> = ({ }) => {
+const ProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const queryInputRef = useRef<InputRef>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);

@@ -7,11 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import {
-  render,
-  screen,
-  server,
-} from '../../utils/testUtil';
+import { render, screen, server } from '../../utils/testUtil';
 import { configureStore } from '../../store';
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
 import { aclHandler, infiniteProjectsHandler } from './ProjectsPageHandlers';
