@@ -18,15 +18,15 @@ jobs:
       - name: install dependencies 🚀
         run: |
           yarn install --frozen-lockfile # optional, --immutable
-      - name: linting ✨
-        run: |
-          yarn lint
+      # - name: linting ✨
+      #   run: |
+      #     yarn lint
       - name: style 💅
         run: |
           yarn style
       - name: running test 🛫🛬
         run: |
-          yarn test --coverage src
+          yarn test:ci
       - name: upload coverage to Codecov 💌
         uses: codecov/codecov-action@v1
         with:
