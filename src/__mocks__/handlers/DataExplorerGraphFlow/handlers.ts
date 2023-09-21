@@ -713,9 +713,7 @@ const initialResourceExpanded = {
 
 const getDataExplorerGraphFlowResourceObject = rest.get(
   deltaPath(
-    `resources/public/sscx/_/${encodeURIComponent(
-      initialResource['@id']
-    )}?format=expanded`
+    `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}`
   ),
   (req, res, ctx) => {
     const format = req.url.searchParams.get('format');
@@ -725,6 +723,18 @@ const getDataExplorerGraphFlowResourceObject = rest.get(
     return res(ctx.status(200), ctx.json(initialResource));
   }
 );
+
+const getDataExplorerGraphFlowResourceSource = rest.get(
+  deltaPath(
+    `resources/public/sscx/_/${encodeURIComponent(
+      initialResource['@id']
+    )}/source`
+  ),
+  (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(initialResource));
+  }
+);
+
 const getDataExplorerGraphFlowResourceObjectTags = rest.get(
   deltaPath(
     `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}/tags`
@@ -745,4 +755,5 @@ export {
   initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
+  getDataExplorerGraphFlowResourceSource,
 };
