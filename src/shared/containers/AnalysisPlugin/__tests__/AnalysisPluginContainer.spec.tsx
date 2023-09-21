@@ -35,27 +35,17 @@ describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();
   const mockStore = configureStore();
 
-  const mockState = {
-    config: {
-      apiEndpoint: deltaPath(),
-      analysisPluginSparqlDataQuery: 'detailedCircuit',
-      analysisPluginTypes: DEFAULT_REPORT_TYPES,
-      analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
-    },
-    auth: {
-      identities: [],
-    },
-  };
-
-  vi.mock('react-redux', () => {
-    const ActualReactRedux = vi.importActual<any>('react-redux');
-    return {
-      ...ActualReactRedux,
-      useSelector: vi.fn().mockImplementation(() => {
-        return mockState;
-      }),
-    };
-  });
+  // const mockState = {
+  //   config: {
+  //     apiEndpoint: deltaPath(),
+  //     analysisPluginSparqlDataQuery: 'detailedCircuit',
+  //     analysisPluginTypes: DEFAULT_REPORT_TYPES,
+  //     analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
+  //   },
+  //   auth: {
+  //     identities: [],
+  //   },
+  // };
 
   // establish API mocking before all tests
   beforeAll(() => server.listen());
