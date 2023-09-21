@@ -13,7 +13,6 @@ import {
 } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import userEvent from '@testing-library/user-event';
@@ -28,32 +27,22 @@ import {
   DEFAULT_REPORT_CATEGORIES,
   DEFAULT_REPORT_TYPES,
 } from '../../../../constants';
+import { configureStore } from '../../../../store';
 
 describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();
-  const mockStore = configureStore();
 
-  const mockState = {
-    config: {
-      apiEndpoint: deltaPath(),
-      analysisPluginSparqlDataQuery: 'detailedCircuit',
-      analysisPluginTypes: DEFAULT_REPORT_TYPES,
-      analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
-    },
-    auth: {
-      identities: [],
-    },
-  };
-
-  vi.mock('react-redux', () => {
-    const ActualReactRedux = vi.importActual<any>('react-redux');
-    return {
-      ...ActualReactRedux,
-      useSelector: vi.fn().mockImplementation(() => {
-        return mockState;
-      }),
-    };
-  });
+  // const mockState = {
+  //   config: {
+  //     apiEndpoint: deltaPath(),
+  //     analysisPluginSparqlDataQuery: 'detailedCircuit',
+  //     analysisPluginTypes: DEFAULT_REPORT_TYPES,
+  //     analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
+  //   },
+  //   auth: {
+  //     identities: [],
+  //   },
+  // };
 
   // establish API mocking before all tests
   beforeAll(() => server.listen());
@@ -71,11 +60,28 @@ describe('Analysis Plugin', () => {
     uri: deltaPath(),
   });
 
+  const history = createMemoryHistory({});
+  const store = configureStore(
+    history,
+    { nexus },
+    {
+      config: {
+        apiEndpoint: deltaPath(),
+        analysisPluginSparqlDataQuery: 'detailedCircuit',
+        analysisPluginTypes: DEFAULT_REPORT_TYPES,
+        analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
+      },
+      auth: {
+        identities: [],
+      },
+    }
+  );
+
   it('add new Analysis Report button is present', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
 
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -104,7 +110,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    // // const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -175,7 +181,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    // const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -224,7 +230,7 @@ describe('Analysis Plugin', () => {
     );
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -275,7 +281,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -323,7 +329,7 @@ describe('Analysis Plugin', () => {
     );
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -355,7 +361,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -388,7 +394,7 @@ describe('Analysis Plugin', () => {
   it('on initial load the first analysis report is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -413,7 +419,7 @@ describe('Analysis Plugin', () => {
   it('when no analysis report selected, zoom options are hidden', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -438,7 +444,7 @@ describe('Analysis Plugin', () => {
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     const user = userEvent.setup();
     render(
       <Router history={history}>
@@ -469,7 +475,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -503,7 +509,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -544,7 +550,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>

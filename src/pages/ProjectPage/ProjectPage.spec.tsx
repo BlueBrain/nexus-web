@@ -434,14 +434,18 @@ describe('ProjectPage', () => {
       uri: 'https://localhost:3000',
     });
 
-    const store = configureStore(history, { nexus }, {
-      config: {
-        apiEndpoint: 'https://localhost:3000',
-        analysisPluginSparqlDataQuery: 'detailedCircuit',
-        jiraUrl: 'https://localhost:3000/jira/project/devissues',
-        httpHeaderForInaccessibleDueToVPN: true
-      },
-    });
+    const store = configureStore(
+      history,
+      { nexus },
+      {
+        config: {
+          apiEndpoint: 'https://localhost:3000',
+          analysisPluginSparqlDataQuery: 'detailedCircuit',
+          jiraUrl: 'https://localhost:3000/jira/project/devissues',
+          httpHeaderForInaccessibleDueToVPN: true,
+        },
+      }
+    );
 
     const App: React.FC = () => {
       const notificationData: NotificationContextType = getNotificationContextValue();
@@ -873,13 +877,17 @@ describe('ProjectPage', () => {
       uri: 'https://localhost:3000',
     });
 
-    const store = configureStore(history, { nexus }, {
-      config: {
-        apiEndpoint: 'https://localhost:3000',
-        analysisPluginSparqlDataQuery: 'detailedCircuit',
-        jiraUrl: 'https://localhost:3000/jira/project/devissues',
-      },
-    });
+    const store = configureStore(
+      history,
+      { nexus },
+      {
+        config: {
+          apiEndpoint: 'https://localhost:3000',
+          analysisPluginSparqlDataQuery: 'detailedCircuit',
+          jiraUrl: 'https://localhost:3000/jira/project/devissues',
+        },
+      }
+    );
     const App: React.FC = () => {
       const notificationData: NotificationContextType = getNotificationContextValue();
 
