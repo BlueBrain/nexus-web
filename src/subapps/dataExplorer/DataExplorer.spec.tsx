@@ -2,14 +2,7 @@ import { vi } from 'vitest';
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
-import {
-  RenderResult,
-  act,
-  fireEvent,
-  queryByRole,
-  waitForElementToBeRemoved,
-  within,
-} from '@testing-library/react';
+import { RenderResult, act, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -264,8 +257,8 @@ describe('DataExplorer', () => {
 
   const openMenuFor = async (ariaLabel: string) => {
     const menuInput = await getInputForLabel(ariaLabel);
-    await userEvent.click(menuInput, { pointerEventsCheck: 0 });
     await act(async () => {
+      await userEvent.click(menuInput, { pointerEventsCheck: 0 });
       fireEvent.mouseDown(menuInput);
     });
     const menuDropdown = document.querySelector(DropdownSelector);
@@ -286,6 +279,7 @@ describe('DataExplorer', () => {
     optionLabel: string,
     optionSelector?: string
   ) => {
+    await userEvent.click(container); // Close any other open menus
     await openMenuFor(menuAriaLabel);
     const option = await getDropdownOption(optionLabel, optionSelector);
     await userEvent.click(option, { pointerEventsCheck: 0 });
