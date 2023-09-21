@@ -268,8 +268,8 @@ describe('DataExplorer', () => {
 
   const openMenuFor = async (ariaLabel: string) => {
     const menuInput = await getInputForLabel(ariaLabel);
-    await userEvent.click(menuInput, { pointerEventsCheck: 0 });
     await act(async () => {
+      await userEvent.click(menuInput, { pointerEventsCheck: 0 });
       fireEvent.mouseDown(menuInput);
     });
     const menuDropdown = document.querySelector(DropdownSelector);
@@ -306,6 +306,7 @@ describe('DataExplorer', () => {
     optionLabel: string,
     optionSelector?: string
   ) => {
+    await userEvent.click(container); // Close any other open menus
     await openMenuFor(menuAriaLabel);
     const option = await getDropdownOption(optionLabel, optionSelector);
     await userEvent.click(option, { pointerEventsCheck: 0 });

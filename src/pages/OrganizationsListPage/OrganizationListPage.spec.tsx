@@ -7,29 +7,27 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import {
-  render,
-  waitFor,
-  screen,
-  server,
-} from '../../utils/testUtil';
+import { render, waitFor, screen, server } from '../../utils/testUtil';
 import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
 import { configureStore } from '../../store';
-import { orgProjectsHandler, orgHandler } from '../OrganizationProjectsPage/OrganizationProjectsPage.spec';
+import {
+  orgProjectsHandler,
+  orgHandler,
+} from '../OrganizationProjectsPage/OrganizationProjectsPage.spec';
 import { vi } from 'vitest';
 import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
 
-vi.mock("react-router", async () => {
-  const actual: Object = await vi.importActual("react-router");
-  return ({
+vi.mock('react-router', async () => {
+  const actual: Object = await vi.importActual('react-router');
+  return {
     ...actual,
     useRouteMatch: vi.fn().mockImplementation(() => {
-      return ({ params: { orgLabel: 'orgLabel' } })
-    })
-  })
-})
+      return { params: { orgLabel: 'orgLabel' } };
+    }),
+  };
+});
 
 describe('OrganizationListPage', () => {
   const history = createMemoryHistory({});

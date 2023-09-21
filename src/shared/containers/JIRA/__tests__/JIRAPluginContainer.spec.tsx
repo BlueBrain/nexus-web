@@ -593,27 +593,28 @@ describe('Jira Plugin Container', () => {
           ctx.json(mockJiraSearchResponse)
         );
       }),
-      rest.get(
-        'https://localhost:3000/jira/issue/NEXUS-57',
-        (_, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json(mockJiraIssueResponse)
-          );
-        }
-      )
+      rest.get('https://localhost:3000/jira/issue/NEXUS-57', (_, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json(mockJiraIssueResponse)
+        );
+      })
     );
 
     const history = createMemoryHistory({});
 
-    const store = configureStore(history, { nexus }, {
-      config: {
-        apiEndpoint: 'https://localhost:3000',
-        analysisPluginSparqlDataQuery: 'detailedCircuit',
-        jiraUrl: 'https://localhost:3000/jira/project/devissues',
-      },
-    });
+    const store = configureStore(
+      history,
+      { nexus },
+      {
+        config: {
+          apiEndpoint: 'https://localhost:3000',
+          analysisPluginSparqlDataQuery: 'detailedCircuit',
+          jiraUrl: 'https://localhost:3000/jira/project/devissues',
+        },
+      }
+    );
 
     const App: React.FC = () => {
       const notificationData: NotificationContextType = getNotificationContextValue();

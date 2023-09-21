@@ -345,6 +345,7 @@ describe('DataTableContainer - Selection', () => {
   afterEach(() => {
     cleanup();
     queryClient.clear();
+    localStorage.clear();
   });
 
   afterAll(() => {
@@ -382,8 +383,11 @@ describe('DataTableContainer - Selection', () => {
       studioRow,
     ] of resourcesWithRepeatedSelf.entries()) {
       const rowCheckbox = await getSelectCheckboxForRow(index);
+
       if (studioRow.self.value === repeatedSelf) {
-        expect(rowCheckbox as HTMLInputElement).toBeChecked();
+        await waitFor(() =>
+          expect(rowCheckbox as HTMLInputElement).toBeChecked()
+        );
         checkedBoxesCount = checkedBoxesCount + 1;
       } else {
         expect(rowCheckbox as HTMLInputElement).not.toBeChecked();

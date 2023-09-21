@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { RenderResult, waitFor } from '@testing-library/react';
+import { RenderResult, act, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { NexusClient, createNexusClient } from '@bbp/nexus-sdk/es';
 import { AnyAction, Store } from 'redux';
@@ -21,6 +21,7 @@ import {
   initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
+  getDataExplorerGraphFlowResourceSource,
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { getResourceLabel } from '../../../shared/utils';
@@ -57,7 +58,8 @@ describe('DataExplorerGraphFlow', () => {
     });
     server = setupServer(
       getDataExplorerGraphFlowResourceObject,
-      getDataExplorerGraphFlowResourceObjectTags
+      getDataExplorerGraphFlowResourceObjectTags,
+      getDataExplorerGraphFlowResourceSource
     );
 
     server.listen();
@@ -145,23 +147,32 @@ describe('DataExplorerGraphFlow', () => {
     expect(dataExplorerState.fullscreen).toBe(false);
   });
 
-  it.skip('should the fullscren toggle present in the screen if the user in fullscreen mode', async () => {
+  it('should the fullscren toggle present in the screen if the user in fullscreen mode', async () => {
     store.dispatch(
       InitNewVisitDataExplorerGraphView({
         current: initialDataExplorerState.current,
         fullscreen: true,
       })
     );
+
     rerender(app);
+
     const fullscreenSwitch = container.querySelector(
       'button[aria-label="fullscreen switch"]'
     );
+
     const fullscreenTitle = container.querySelector(
       'h1[aria-label="fullscreen title"]'
     );
+
     expect(fullscreenSwitch).toBeInTheDocument();
+
     expect(fullscreenTitle).toBeInTheDocument();
-    await user.click(fullscreenSwitch as HTMLButtonElement);
-    expect(store.getState().dataExplorer.fullscreen).toBe(false);
+
+    act(async () => {
+      await user.click(fullscreenSwitch as HTMLButtonElement);
+    });
+
+    waitFor(() => expect(store.getState().dataExplorer.fullscreen).toBe(false));
   });
 });
