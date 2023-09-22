@@ -55,8 +55,7 @@ export const TypeSelector: React.FC<Props> = ({
         removeIcon={true}
         suffixIcon={showClearIcon ? <CloseOutlined /> : <SearchOutlined />}
         showSearch={true}
-        allowClear={true}
-        clearIcon={<CloseOutlined data-testid="reset-type-button" />}
+        allowClear={{ clearIcon: <CloseOutlined data-testid="reset-type-button" /> }}
         onClear={() => {
           setDisplayedOptions(optionsRef.current);
           setShowClearIcon(false);

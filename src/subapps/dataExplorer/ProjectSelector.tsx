@@ -47,8 +47,7 @@ export const ProjectSelector: React.FC<Props> = ({
             onSelect(org, project);
           }
         }}
-        allowClear={true}
-        clearIcon={<CloseOutlined data-testid="reset-project-button" />}
+        allowClear={{ clearIcon: <CloseOutlined data-testid="reset-project-button" /> }}
         onClear={() => onSelect(undefined, undefined)}
         aria-label="project-filter"
         bordered={false}
