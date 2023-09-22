@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
 import * as React from 'react';
 import fetch from 'node-fetch';
 import { rest } from 'msw';
@@ -442,7 +441,7 @@ describe('ProjectPage', () => {
           apiEndpoint: 'https://localhost:3000',
           analysisPluginSparqlDataQuery: 'detailedCircuit',
           jiraUrl: 'https://localhost:3000/jira/project/devissues',
-          httpHeaderForInaccessibleDueToVPN: true,
+          httpHeaderForInaccessibleDueToVPN: 'x-requires-vpn',
         },
       }
     );
@@ -467,9 +466,7 @@ describe('ProjectPage', () => {
       );
     };
 
-    await act(async () => {
-      await render(<App />);
-    });
+    render(<App />)
 
     const jiraTab = screen.queryByText(/Jira/);
     expect(jiraTab).not.toBeInTheDocument();
