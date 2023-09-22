@@ -167,7 +167,7 @@ describe('DataExplorerGraphFlow', () => {
 
     expect(fullscreenTitle).toBeInTheDocument();
 
-    act(async () => {
+    await act(async () => {
       await user.click(fullscreenSwitch as HTMLButtonElement);
     });
 

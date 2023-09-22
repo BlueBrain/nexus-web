@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { render, waitFor, screen, server } from '../../utils/testUtil';
+import { render, screen, server } from '../../utils/testUtil';
 import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
@@ -15,9 +15,11 @@ import { configureStore } from '../../store';
 import {
   orgProjectsHandler,
   orgHandler,
+  orgsHandler,
 } from '../OrganizationProjectsPage/OrganizationProjectsPage.spec';
 import { vi } from 'vitest';
 import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
+import { setupServer } from 'msw/node';
 
 vi.mock('react-router', async () => {
   const actual: Object = await vi.importActual('react-router');
@@ -31,7 +33,7 @@ vi.mock('react-router', async () => {
 
 describe('OrganizationListPage', () => {
   const history = createMemoryHistory({});
-
+  const server = setupServer();
   // establish API mocking before all tests
   beforeAll(() => {
     server.listen();
@@ -50,7 +52,7 @@ describe('OrganizationListPage', () => {
   const store = configureStore(history, { nexus }, {});
 
   it('renders organization projects in a list', async () => {
-    server.use(...[aclHandler, orgProjectsHandler, orgHandler]);
+    server.use(...[aclHandler, orgProjectsHandler, orgHandler, orgsHandler]);
 
     await render(
       <Provider store={store}>

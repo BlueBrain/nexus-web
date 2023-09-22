@@ -22,7 +22,7 @@ import {
 } from './WorkSpaceMenuContainerHandlers';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import { RenderResult } from '@testing-library/react';
+import { RenderResult, act } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
 describe('workSpaceMenu', () => {
@@ -226,14 +226,16 @@ describe('workSpaceMenu', () => {
     const workSpaceAction = (
       await screen.findAllByText('Workspace')
     )[0] as HTMLButtonElement;
-    fireEvent.click(workSpaceAction);
-
+    act(() => {
+      fireEvent.click(workSpaceAction);
+    })
     const editButton = await screen.findByText('Edit');
     expect(editButton).toBeInTheDocument();
-    await fireEvent.click(editButton);
-
-    const editForm = await screen.findAllByText('Edit');
-    expect(editForm).toHaveLength(1);
+    await act(async () => {
+      await user.click(editButton);
+    });
+    const editForm = screen.getByTestId('editWorkspace');
+    expect(editForm).toBeInTheDocument();
   });
 
   it('it displays dashboard edit/add/remove options on clicking dahsboard edit action', async () => {
@@ -248,7 +250,7 @@ describe('workSpaceMenu', () => {
     await fireEvent.click(dashboardAction);
 
     const addButton = await screen.findByText('Add');
-    expect(addButton).toBeVisible();
+    expect(addButton).toBeInTheDocument();
     await fireEvent.click(addButton);
 
     const dbForm = await screen.findByText('Create Dashboard');

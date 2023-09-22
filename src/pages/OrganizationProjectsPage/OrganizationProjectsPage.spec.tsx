@@ -278,3 +278,74 @@ export const orgHandler = rest.get(
     return res(ctx.status(200), ctx.json(mockResponse));
   }
 );
+
+export const orgsHandler = rest.get(deltaPath('/orgs'), (req, res, ctx) => {
+  const mockResponse = [
+    {
+      '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST1',
+      '@type': 'Organization',
+      description: '',
+      _constrainedBy:
+        'https://bluebrain.github.io/nexus/schemas/organizations.json',
+      _createdAt: '2022-06-24T07:52:52.146Z',
+      _createdBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test1',
+      _deprecated: false,
+      _label: 'TEST1',
+      _rev: 1,
+      _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+      _updatedAt: '2023-04-20T07:52:52.146Z',
+      _updatedBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test1',
+      _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+    },
+    {
+      '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST2',
+      '@type': 'Organization',
+      description: '',
+      _constrainedBy:
+        'https://bluebrain.github.io/nexus/schemas/organizations.json',
+      _createdAt: '2022-06-24T07:52:52.146Z',
+      _createdBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test2',
+      _deprecated: false,
+      _label: 'TEST2',
+      _rev: 1,
+      _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+      _updatedAt: '2023-04-20T07:52:52.146Z',
+      _updatedBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test2',
+      _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+    },
+    {
+      '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST3',
+      '@type': 'Organization',
+      description: '',
+      _constrainedBy:
+        'https://bluebrain.github.io/nexus/schemas/organizations.json',
+      _createdAt: '2022-06-24T07:52:52.146Z',
+      _createdBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test3',
+      _deprecated: false,
+      _label: 'TEST3',
+      _rev: 1,
+      _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/Analysis-Plugin',
+      _updatedAt: '2023-04-20T07:52:52.146Z',
+      _updatedBy:
+        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/test3',
+      _uuid: '8ae298d5-ccfd-4412-b066-788c57e328f8',
+    },
+  ];
+  return res(
+    ctx.status(200),
+    ctx.json({
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/metadata.json',
+        'https://bluebrain.github.io/nexus/contexts/search.json',
+        'https://bluebrain.github.io/nexus/contexts/organizations.json',
+      ],
+      _results: mockResponse,
+      _total: 3,
+    })
+  );
+});
