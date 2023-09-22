@@ -153,7 +153,7 @@ export const PredicateSelector: React.FC<Props> = ({
           optionLabelProp="label"
           aria-label="path-selector"
           style={{ width: 200, minWidth: 'max-content' }}
-          dropdownMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
+          popupMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
         />
       </Form.Item>
 
