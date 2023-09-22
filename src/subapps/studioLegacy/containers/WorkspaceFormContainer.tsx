@@ -261,7 +261,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         setViews([]);
         setError(e);
       });
-  });
+  }, []);
 
   React.useEffect(() => {
     if (workspace && dashboards.length > 0) {
@@ -335,6 +335,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       {workspace ? (
         <Modal
           title={`Edit ${workspace['label']}`}
+          data-testid="editWorkspace"
           open={true}
           footer={null}
           onCancel={() => onCancel()}
