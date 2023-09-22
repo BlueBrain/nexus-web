@@ -47,7 +47,7 @@ describe('DataExplorer', () => {
   ];
 
   const server = setupServer(
-    dataExplorerPageHandler(undefined, defaultTotalResults),
+    ...dataExplorerPageHandler(undefined, defaultTotalResults),
     sourceResourceHandler(),
     filterByProjectHandler(),
     graphAnalyticsTypeHandler()
@@ -241,7 +241,7 @@ describe('DataExplorer', () => {
   ) => {
     server.use(
       sourceResourceHandler(resources),
-      dataExplorerPageHandler(resources, total)
+      ...dataExplorerPageHandler(resources, total)
     );
 
     const pageInput = await screen.getByRole('listitem', { name: '2' });
@@ -368,9 +368,7 @@ describe('DataExplorer', () => {
     const matchingResources = resources.filter(res =>
       predicate === EXISTS ? res[path] : !res[path]
     );
-    server.use(
-      elasticSearchQueryHandler(matchingResources.map(res => res['@id']))
-    );
+    server.use(elasticSearchQueryHandler(matchingResources));
   };
 
   const getResetProjectButton = async () => {
@@ -531,7 +529,7 @@ describe('DataExplorer', () => {
       mock100Resources.push(getMockResource(`self${i}`, {}));
     }
 
-    server.use(dataExplorerPageHandler(mock100Resources));
+    server.use(...dataExplorerPageHandler(mock100Resources));
 
     const pageSizeChanger = await screen.getByRole('combobox', {
       name: 'Page Size',
@@ -893,6 +891,7 @@ describe('DataExplorer', () => {
     mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
 
     await selectPath('author');
+
     await selectPredicate(EXISTS);
 
     const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
