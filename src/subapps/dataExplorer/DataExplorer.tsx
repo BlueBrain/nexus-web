@@ -123,6 +123,7 @@ export const columnsFromDataSource = (
     )
     .sort(sortColumns);
 };
+
 const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);

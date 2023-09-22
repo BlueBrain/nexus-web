@@ -7,7 +7,6 @@ import { isString } from 'lodash';
 import PromisePool from '@supercharge/promise-pool';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
-import * as bodybuilder from 'bodybuilder';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 import { SearchResponse } from 'shared/types/search';
@@ -67,39 +66,14 @@ export const usePaginatedExpandedResources = ({
         }
       );
 
-      // If we failed to fetch the expanded source for some resources, we can use the compact/partial resource as a fallback.
-      const fallbackResources: Resource[] = [];
-      const { results: expandedResources } = await PromisePool.withConcurrency(
-        4
-      )
-        .for(resultWithPartialResources._results)
-        .handleError(async (err, partialResource) => {
-          console.log(
-            `@@error in fetching resource with id: ${partialResource['@id']}`,
-            err
-          );
-          fallbackResources.push(partialResource);
-          return;
-        })
-        .process(async partialResource => {
-          if (partialResource._project) {
-            const { org, project } = makeOrgProjectTuple(
-              partialResource._project
-            );
-
-            return (await nexus.Resource.get(
-              org,
-              project,
-              encodeURIComponent(partialResource['@id']),
-              { annotate: true }
-            )) as Resource;
-          }
-
-          return partialResource;
-        });
+      const expandedResources = await fetchMultipleResources(
+        nexus,
+        apiEndpoint,
+        resultWithPartialResources._results
+      );
       return {
         ...resultWithPartialResources,
-        _results: [...expandedResources, ...fallbackResources],
+        _results: expandedResources,
       };
     },
     onError: error => {
@@ -119,6 +93,62 @@ export const usePaginatedExpandedResources = ({
     },
     staleTime: Infinity,
   });
+};
+
+export type NexusResourceFormats =
+  | 'source'
+  | 'compacted'
+  | 'expanded'
+  | 'n-triples'
+  | 'dot';
+export type NexusMultiFetchResponse = {
+  format: NexusResourceFormats;
+  resources: { value: Resource }[];
+};
+
+type PartialResource = Pick<Resource, '@id' | '_project'>;
+
+export const fetchMultipleResources = async (
+  nexus: ReturnType<typeof useNexusContext>,
+  apiEndpoint: string,
+  partialResources: PartialResource[],
+  orgAndProject?: string
+): Promise<Resource[]> => {
+  const resourceData = partialResources
+    .filter(resource => resource._project)
+    .map(resource => {
+      if (orgAndProject) {
+        return {
+          id: resource['@id'],
+          project: orgAndProject,
+        };
+      }
+
+      const { org, project } = makeOrgProjectTuple(resource._project);
+
+      return {
+        id: resource['@id'],
+        project: `${org}/${project}`,
+      };
+    });
+  console.log(
+    'Going to multi fetch',
+    resourceData.map(r => r.id)
+  );
+  const multipleResources: NexusMultiFetchResponse = await nexus
+    .httpPost({
+      path: `${apiEndpoint}/multi-fetch/resources`,
+      headers: { Accept: 'application/json' },
+      body: JSON.stringify({
+        format: 'compacted',
+        resources: resourceData,
+      }),
+    })
+    .catch(() => {
+      return { format: 'compacted', value: [] };
+    });
+
+  return multipleResources.resources.map(({ value }) => ({ ...value }));
 };
 
 export const useAggregations = (
@@ -190,38 +220,35 @@ const getResultsForPredicateQuery = async (
   pageSize: number,
   offset: number
 ) => {
-  const searchResults: SearchResponse<{ '@id': string }> = await nexus.httpPost(
-    {
-      path: `${apiEndpoint}/graph-analytics/${org}/${project}/_search`,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        from: offset,
-        size: pageSize,
-        ...query,
-      }),
-    }
-  );
+  const searchResults: SearchResponse<{
+    '@id': string;
+    _project: string;
+  }> = await nexus.httpPost({
+    path: `${apiEndpoint}/graph-analytics/${org}/${project}/_search`,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      from: offset,
+      size: pageSize,
+      ...query,
+    }),
+  });
 
-  const { results: matchingResources } = await PromisePool.withConcurrency(4)
-    .for(searchResults.hits.hits)
-    .handleError((err, item) => {
-      console.error(
-        `There was an error retrieving matching resource ${item._source['@id']} for query.`,
-        query,
-        err
-      );
-    })
-    .process(async matchingHit => {
-      return (await nexus.Resource.get(
-        org,
-        project,
-        encodeURIComponent(matchingHit._source['@id']),
-        { annotate: true }
-      )) as Resource;
-    });
+  const resourcesToFetch = searchResults.hits.hits.map(matching => ({
+    '@id': matching._source['@id'],
+    _project: matching._source['_project'],
+  }));
+  console.log(
+    'Requesting matching resources',
+    resourcesToFetch.map(r => r['@id'])
+  );
+  const matchingResources = await fetchMultipleResources(
+    nexus,
+    apiEndpoint,
+    resourcesToFetch
+  );
 
   return {
     _results: matchingResources,
