@@ -152,6 +152,8 @@ describe('DataExplorer', () => {
     });
 
     expect(header).toBeInTheDocument();
+    console.log('HEADER', header);
+    console.log('Inner text', header.innerText, header.textContent)
     return header;
   };
 
@@ -164,8 +166,13 @@ describe('DataExplorer', () => {
     return Array.from(container.querySelectorAll('th'));
   };
 
-  const expectColumHeaderToNotExist = async (name: string) => {
-    expect(expectColumHeaderToExist(name)).rejects.toThrow();
+  const expectColumHeaderToNotExist = (name: string) => {
+    const nameReg = new RegExp(getColumnTitle(name), 'i');
+    const header = screen.queryByText(nameReg, {
+      selector: 'th .ant-table-column-title',
+      exact: false,
+    });
+    expect(header).toBeFalsy();
   };
 
   const getTextForColumn = async (resource: Resource, colName: string) => {
@@ -876,7 +883,7 @@ describe('DataExplorer', () => {
     mockElasticSearchHits(metadataProperty, EXISTS, mockResourcesOnPage1);
     await expectRowCountToBe(10);
 
-    await expectColumHeaderToNotExist(metadataProperty);
+    expectColumHeaderToNotExist(metadataProperty);
 
     const originalColumns = getTotalColumns().length;
 
