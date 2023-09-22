@@ -55,8 +55,11 @@ describe('DataExplorer', () => {
   let component: RenderResult;
   let dataExplorerPage: JSX.Element;
 
-  beforeEach(async () => {
+  beforeAll(() => {
     server.listen();
+  });
+
+  beforeEach(async () => {
     const queryClient = new QueryClient();
     const nexus = createNexusClient({
       fetch,
@@ -76,6 +79,7 @@ describe('DataExplorer', () => {
       </Provider>
     );
 
+    sessionStorage.clear();
     component = render(dataExplorerPage);
 
     container = component.container;
@@ -132,7 +136,7 @@ describe('DataExplorer', () => {
 
   const expectColumHeaderToExist = async (name: string) => {
     const nameReg = new RegExp(getColumnTitle(name), 'i');
-    const header = await screen.getByText(nameReg, {
+    const header = await screen.findByText(nameReg, {
       selector: 'th .ant-table-column-title',
       exact: false,
     });
