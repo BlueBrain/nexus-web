@@ -3,7 +3,7 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 import fetch from 'node-fetch';
-import { render, server, screen, fireEvent } from '../../../utils/testUtil';
+import { render, server } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
@@ -61,6 +61,18 @@ describe('VideoPluginContainer', () => {
         );
       }
     )
+  );
+
+  server.use(
+    rest.get('https://noembed.com/embed', (req, res, ctx) => {
+      const mockResponse = resource;
+
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
   );
   it('renders with well formatted data', async () => {
     await act(async () => {

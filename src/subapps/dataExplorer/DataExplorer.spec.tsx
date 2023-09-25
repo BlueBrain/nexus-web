@@ -152,8 +152,6 @@ describe('DataExplorer', () => {
     });
 
     expect(header).toBeInTheDocument();
-    console.log('HEADER', header);
-    console.log('Inner text', header.innerText, header.textContent)
     return header;
   };
 
