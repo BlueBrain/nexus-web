@@ -6,7 +6,7 @@ import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { RenderResult, within } from '@testing-library/react';
+import { RenderResult, act, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -83,7 +83,9 @@ describe('DataTableContainer.spec.tsx', () => {
       </Provider>
     );
 
-    renderContainer(dataTableContainer);
+    await act(async () => {
+      await renderContainer(dataTableContainer);
+    });
 
     await waitForTableRows(6);
   });
@@ -153,16 +155,18 @@ describe('DataTableContainer.spec.tsx', () => {
   };
 
   it('displays unsorted data (i.e. in same order as received in server response) in table originally', async () => {
-    await waitFor(() => {
-      assertDataOrderInColumn('givenName', [
-        ORIGINAL_1_SORTED_2,
-        ORIGINAL_2_SORTED_1,
-        ORIGINAL_3_SORTED_3,
-        ORIGINAL_4_SORTED_4,
-        ORIGINAL_5_SORTED_6,
-        ORIGINAL_6_SORTED_5,
-      ]);
-    });
+    const expectedCellsInColumn = [
+      ORIGINAL_1_SORTED_2,
+      ORIGINAL_2_SORTED_1,
+      ORIGINAL_3_SORTED_3,
+      ORIGINAL_4_SORTED_4,
+      ORIGINAL_5_SORTED_6,
+      ORIGINAL_6_SORTED_5,
+    ];
+
+    await waitForTableRows(6);
+
+    assertDataOrderInColumn('givenName', expectedCellsInColumn);
   });
 
   it('sorts rows in ascending order when header column clicked once', async () => {

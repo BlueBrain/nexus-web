@@ -54,7 +54,6 @@ export const dashboardHandler = rest.get(
 export const tableHandler = rest.get(
   deltaPath('/resources/org/project/_/dataTable1'),
   (req, res, ctx) => {
-    console.log('Table Handler');
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
