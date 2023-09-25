@@ -727,6 +727,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
                     label: dash.label,
                     updatedAt: dash._updatedAt,
                     key: `${item.workspace['@id']}*${dash['@id']}`,
+                    dataTestId: `dashboard-item-${dash.label}`,
                     onClick: () => {
                       setSelectedDashboard(dash);
                       setSelectedKeys([

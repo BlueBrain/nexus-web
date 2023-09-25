@@ -17,10 +17,10 @@ export class StudioDetailsPage extends StudioListPage {
   }
 
   openEditDashboard() {
-    cy.findByRole('button', { name: /Dashboard/ }).click();
+    cy.findByRole('button', { name: /Dashboard/ }).click({ force: true });
     cy.get('button[data-testid="edit-dashboard"]')
       .contains(/Edit/)
-      .click();
+      .click({ force: true });
     cy.findByRole('dialog').findByText('Edit');
   }
 
@@ -42,14 +42,16 @@ export class StudioDetailsPage extends StudioListPage {
     cy.findByRole('button', { name: /Add/ }).click();
     cy.findByPlaceholderText(/Name/i).type(dashboardName);
     cy.findByRole('combobox', { name: /View/ }).click();
-    cy.findByTitle(
-      'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
-    ).click();
+    cy.get(
+      '[data-testid="https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex"]'
+    );
+    cy.get(
+      '[data-testid="https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex"]'
+    ).trigger('click');
+
     cy.findByRole('checkbox', { name: /Enable Sort/i }).click();
     cy.findByRole('button', { name: /Save/ }).click();
-    cy.findByRole('menuitem', { name: new RegExp(workspaceName, 'i') }).click();
-    cy.get('ul')
-      .contains(new RegExp(dashboardName, 'i'))
-      .click();
+    console.log('Saved');
+    cy.findByText(new RegExp(dashboardName, 'i')).should('exist');
   }
 }

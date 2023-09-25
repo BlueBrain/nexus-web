@@ -4,7 +4,7 @@ import {
   createNexusOrgAndProject,
   createResource,
   deprecateNexusOrgAndProject,
-} from './cypress/plugins/nexus';
+} from './cypress/support/Utils/nexus';
 import { uuidv4 } from './src/shared/utils';
 import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
 
@@ -14,14 +14,14 @@ export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
   video: true,
+  screenshotOnRunFailure: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
     fileServerFolder: '/cypress',
     defaultCommandTimeout: 50000,
     specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
-    // @ts-ignore
-    experimentalSessionAndOrigin: true,
-    // testIsolation: false,
+    chromeWebSecurity: false,
+
     env: {
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
@@ -29,8 +29,19 @@ export default defineConfig({
     },
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
+        launchOptions.args.push('--window-size=1920,1080');
         if (browser.name == 'chrome') {
           launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--no-sandbox');
+
+          launchOptions.args.push('--disable-web-security');
+          launchOptions.args.push(
+            '--unsafely-treat-insecure-origin-as-secure=http://keycloak.test:8080'
+          );
+          if (!browser.isHeaded) {
+            console.log('Pushing Headless New');
+            launchOptions.args.push('--headless=new');
+          }
         }
         return launchOptions;
       }),
@@ -65,7 +76,7 @@ export default defineConfig({
             const projectLabel = `${projectLabelBase}-${uuidv4()}`;
             const projectDescription =
               'An project used for Cypress automated tests';
-
+            console.log('Auth TOKEN', authToken);
             try {
               const nexus = createNexusClient({
                 uri: nexusApiUrl,
