@@ -24,6 +24,9 @@ jobs:
       - name: style 💅
         run: |
           yarn style
+      - name: stats
+        run: |
+          lscpu
       - name: running test 🛫🛬
         run: |
           yarn test:ci
