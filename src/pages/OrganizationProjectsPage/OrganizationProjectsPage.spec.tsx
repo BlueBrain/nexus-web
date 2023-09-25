@@ -74,6 +74,9 @@ describe('OrganizationProjectsPage', () => {
     await waitFor(async () => {
       const orgProjects = await screen.findAllByRole('routeitem-org-project');
       expect(orgProjects.length).toBe(2);
+    });
+
+    await waitFor(async () => {
       const pageTitleExtra = await screen.findByText('Total of 2 Projects');
       expect(pageTitleExtra).toBeInTheDocument();
     });

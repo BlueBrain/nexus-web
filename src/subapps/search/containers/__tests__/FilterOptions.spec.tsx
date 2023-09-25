@@ -415,7 +415,6 @@ describe('Filter Options Container', () => {
 
     // Test that each of the aggregations is in the list of filters
     const aggregations = mockFiltersResponse.aggregations.suggestions.buckets;
-    console.log('@@aggregations', aggregations);
     aggregations.forEach(async b => {
       const element = await screen.findByText(b.key);
       expect(element).toBeInTheDocument();

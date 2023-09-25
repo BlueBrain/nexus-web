@@ -466,7 +466,7 @@ describe('ProjectPage', () => {
       );
     };
 
-    render(<App />)
+    render(<App />);
 
     const jiraTab = screen.queryByText(/Jira/);
     expect(jiraTab).not.toBeInTheDocument();
