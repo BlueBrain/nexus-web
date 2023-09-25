@@ -228,7 +228,7 @@ describe('workSpaceMenu', () => {
     )[0] as HTMLButtonElement;
     act(() => {
       fireEvent.click(workSpaceAction);
-    })
+    });
     const editButton = await screen.findByText('Edit');
     expect(editButton).toBeInTheDocument();
     await act(async () => {
