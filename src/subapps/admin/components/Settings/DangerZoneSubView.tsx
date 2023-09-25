@@ -179,7 +179,7 @@ const DangerZoneSubView = ({ project }: Props) => {
   const dangerZoneDataSource: TDangerZoneItem[] = [
     {
       key: 'deprecate-project-section',
-      title: 'Deprecte this project',
+      title: 'Deprecate this project',
       description: 'Mark this project as deprecated and read-only.',
       action: (
         <AccessControl
