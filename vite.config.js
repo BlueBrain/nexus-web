@@ -14,7 +14,7 @@ import { execSync } from "child_process"
 export default defineConfig(() => {
     const commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
     const version = execSync('git describe --tags').toString().trimEnd();
-    
+
     return ({
         plugins: [
             react(),
@@ -55,6 +55,13 @@ export default defineConfig(() => {
             globals: true,
             environment: 'jsdom',
             setupFiles: ["./vitest-setup.js"],
+            minThreads: 2,
+            maxThreads: 4,
+            // reporters: 'html',
+            sequence: {
+                shuffle: true,
+                seed: 1695645744795,
+            }
         },
         build: {
             manifest: true,
