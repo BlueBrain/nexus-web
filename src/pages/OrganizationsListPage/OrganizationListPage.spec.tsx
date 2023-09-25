@@ -73,6 +73,8 @@ describe('OrganizationListPage', () => {
   });
 
   it('Test inifinite fetching of organisation list', async () => {
+    server.use(...[aclHandler, orgProjectsHandler, orgHandler, orgsHandler]);
+
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
