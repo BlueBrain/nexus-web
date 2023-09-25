@@ -54,8 +54,7 @@ function configureStore(
       applyMiddleware(
         thunk.withExtraArgument({ nexus }),
         routerMiddleware(history),
-        DataExplorerFlowSliceListener.middleware,
-        logger
+        DataExplorerFlowSliceListener.middleware
       )
     )
   );

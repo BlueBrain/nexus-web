@@ -177,8 +177,9 @@ describe('workSpaceMenu', () => {
     );
 
     await screen.findAllByText('No dashboards available');
-    const buttons = await screen.findAllByRole('button');
-    expect(buttons).toHaveLength(2);
+
+    const editButton = screen.queryByText('Edit');
+    expect(editButton).toBeFalsy();
   });
 
   it('it displays workspace action on clicking  workspace action button', async () => {
