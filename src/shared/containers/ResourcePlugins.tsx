@@ -25,32 +25,32 @@ const ResourcePlugins: React.FunctionComponent<{
   builtInPlugins,
   handleCollapseChange,
 }) => {
-  const nexus = useNexusContext();
-  const { data: pluginManifest } = usePlugins();
-  const availablePlugins = Object.keys(pluginManifest || {});
+    const nexus = useNexusContext();
+    const { data: pluginManifest } = usePlugins();
+    const availablePlugins = Object.keys(pluginManifest || {});
 
-  if (!resource) {
-    return null;
-  }
-  const includedPlugins =
-    pluginManifest &&
-    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
+    if (!resource) {
+      return null;
+    }
+    const includedPlugins =
+      pluginManifest &&
+      matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
-  const excludedPlugins =
-    pluginManifest &&
-    matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
+    const excludedPlugins =
+      pluginManifest &&
+      matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
 
-  const filteredPlugins = includedPlugins
-    ?.filter(plugin => !excludedPlugins?.includes(plugin))
-    .filter(plugin => {
-      if (!studioDefinedPluginsToInclude) {
-        return plugin;
-      }
-      return studioDefinedPluginsToInclude.includes(plugin);
-    });
+    const filteredPlugins = includedPlugins
+      ?.filter(plugin => !excludedPlugins?.includes(plugin))
+      .filter(plugin => {
+        if (!studioDefinedPluginsToInclude) {
+          return plugin;
+        }
+        return studioDefinedPluginsToInclude.includes(plugin);
+      });
 
-  const pluginDataMap = filteredPlugins
-    ? filteredPlugins
+    const pluginDataMap = filteredPlugins
+      ? filteredPlugins
         .map(pluginName => {
           if (pluginManifest) {
             return { key: pluginName, ...pluginManifest[pluginName] };
@@ -66,21 +66,21 @@ const ResourcePlugins: React.FunctionComponent<{
           }
           return 0;
         })
-    : [];
+      : [];
 
-  const pluginsToDisplay = studioDefinedPluginsToInclude
-    ? studioDefinedPluginsToInclude
-    : [...pluginDataMap.map(p => p?.key), ...builtInPlugins.map(p => p.key)];
+    const pluginsToDisplay = studioDefinedPluginsToInclude
+      ? studioDefinedPluginsToInclude
+      : [...pluginDataMap.map(p => p?.key), ...builtInPlugins.map(p => p.key)];
 
-  const Fallback = () => (
-    <>
-      <h1>Something went wrong</h1>
-      <p>
-        Check that the shape of the resources matches that required by the
-        plugin.
-      </p>
-    </>
-  );
+    const Fallback = () => (
+      <>
+        <h1>Something went wrong</h1>
+        <p>
+          Check that the shape of the resources matches that required by the
+          plugin.
+        </p>
+      </>
+    );
 
   return (
     <>

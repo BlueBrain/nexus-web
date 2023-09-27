@@ -126,7 +126,7 @@ const GalleryView: React.FC = () => {
             key="resource-modal"
             path={'/:orgLabel/:projectLabel/resources/:resourceId'}
             render={() => (
-              <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+              <div ref={wrapperRef}>
                 <ResourceViewContainer />
               </div>
             )}
