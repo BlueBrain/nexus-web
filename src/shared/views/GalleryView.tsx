@@ -63,7 +63,13 @@ const GalleryView: React.FC = () => {
     location.state && (location.state as { background?: Location }).background;
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
-
+  const closeGalleryView = () => {
+    // @ts-ignore
+    history.push(`${background.pathname}${background.search}`, {
+      refresh: true,
+    });
+    setDrawerVisible(false);
+  }
   /* custom logic for hiding drawer component when clicking outside of it */
   React.useEffect(() => {
     const handleClickOutsideWrapper = (event: Event) => {
@@ -83,11 +89,7 @@ const GalleryView: React.FC = () => {
           // @ts-ignore
           event.target.closest('.ant-drawer-close')
         ) {
-          // @ts-ignore
-          history.push(`${background.pathname}${background.search}`, {
-            refresh: true,
-          });
-          setDrawerVisible(false);
+          closeGalleryView();
         }
       }
     };
@@ -109,20 +111,21 @@ const GalleryView: React.FC = () => {
     <>
       {background && (
         <Drawer
+          keyboard
           className="gallery-drawer"
-          maskClosable={false}
-          destroyOnClose={false}
+          maskClosable={true}
+          destroyOnClose={true}
           open={drawerVisible}
-          // placement="right"
-          // getContainer={false}
-          // style={{ position: 'absolute' }}
-          width="" // intentionally blank, specified in css
+          onClose={closeGalleryView}
+          placement="right"
+          getContainer={false}
+          width="50%"
         >
           <Route
             key="resource-modal"
             path={'/:orgLabel/:projectLabel/resources/:resourceId'}
             render={() => (
-              <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
+              <div ref={wrapperRef}>
                 <ResourceViewContainer />
               </div>
             )}
