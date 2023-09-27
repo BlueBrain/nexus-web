@@ -128,8 +128,8 @@ const ResourceViewActionsContainer: React.FC<{
           resourceType && isArray(resourceType)
             ? resourceType.includes('View')
             : isString(resourceType)
-            ? resourceType === 'View'
-            : false;
+              ? resourceType === 'View'
+              : false;
         if (isView) {
           setView(resource as Resource);
         }
@@ -205,7 +205,7 @@ const ResourceViewActionsContainer: React.FC<{
     };
   }, [resource._self]);
   return (
-    <Row>
+    <Row gutter={5}>
       <Col>
         <Dropdown overlay={revisionMenuItems}>
           <Button>
@@ -233,8 +233,7 @@ const ResourceViewActionsContainer: React.FC<{
 
                   if (!isLatest) {
                     triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}?rev=${
-                        resource._rev
+                      `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
                       }`
                     );
                   } else {
@@ -275,8 +274,7 @@ const ResourceViewActionsContainer: React.FC<{
                         )}`;
 
                         triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${
-                            resource._rev
+                          `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev
                           }`
                         );
                       }}
