@@ -8,13 +8,14 @@ import {
 } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 import { AccessControl } from '@bbp/react-nexus';
-// import CodeMirror from 'codemirror';
+import CodeMirror from 'codemirror';
 
-// import CodeEditor from './CodeEditor';
 import { RootState } from '../../store/reducers';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import ResourceResolutionCache from './ResourcesLRUCache';
+import CodeEditor from './CodeEditor';
+
 import './ResourceEditor.scss';
 
 
@@ -65,17 +66,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
-  const {
-    dataExplorer: { fullscreen },
-    oidc,
-  } = useSelector((state: RootState) => ({
-    dataExplorer: state.dataExplorer,
-    oidc: state.oidc,
-    config: state.config,
-  }));
-  const keyFoldCode = (cm: any) => {
-    cm.foldCode(cm.getCursor());
-  };
+  const { fullscreen } = useSelector((state: RootState) => state.dataExplorer);
+  const keyFoldCode = (cm: any) => cm.foldCode(cm.getCursor());
   const codeMirorRef = React.useRef<CodeMirror.Editor>();
   const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
   const onFoldChange = () => {
@@ -252,7 +244,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
           </div>
         </div>
       )}
-      {/* <CodeEditor
+      <CodeEditor
         busy={busy}
         ref={codeMirorRef}
         value={stringValue}
@@ -260,7 +252,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         fullscreen={fullscreen}
-      /> */}
+      />
     </div>
   );
 };
