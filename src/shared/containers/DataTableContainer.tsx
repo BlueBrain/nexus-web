@@ -503,6 +503,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 const self = data._self || data.self.value;
                 goToStudioResource(self);
               },
+              'data-testid': 'data-table-row',
             })}
             pagination={{
               pageSize: 50,

@@ -1,6 +1,7 @@
 .cache/
 .DS_Store
 dist/
+dist_refresh/
 /plugins/
 node_modules/
 storybook-static/
