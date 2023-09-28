@@ -358,7 +358,7 @@ describe('DataTableContainer - Selection', () => {
   });
 
   const visibleTableRows = () => {
-    return container.querySelectorAll('table tbody tr.data-table-row');
+    return screen.getAllByTestId('data-table-row');
   };
 
   const waitForTableRows = async (expectedRowsCount: number) => {
@@ -372,7 +372,7 @@ describe('DataTableContainer - Selection', () => {
   const getSelectCheckboxForRow = async (index: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
-      const checkbox = rows[index].querySelector('input[type="checkbox"');
+      const checkbox = rows[index].querySelector('input[type="checkbox"]');
       return checkbox;
     });
   };
