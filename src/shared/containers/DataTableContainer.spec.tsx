@@ -273,7 +273,6 @@ describe('DataTableContainer.spec.tsx', () => {
 describe('DataTableContainer - Selection', () => {
   const queryClient = new QueryClient();
   let dataTableContainer: JSX.Element;
-  let container: HTMLElement;
   let user: UserEvent;
   let server: ReturnType<typeof setupServer>;
   let component: RenderResult;
@@ -340,7 +339,6 @@ describe('DataTableContainer - Selection', () => {
     }
 
     component = render(containerToRender);
-    container = component.container;
     user = userEvent.setup();
   };
 
