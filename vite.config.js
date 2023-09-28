@@ -60,7 +60,7 @@ export default defineConfig(() => {
             // reporters: 'html',
             sequence: {
                 shuffle: true,
-                seed: 1695803934123,
+                // seed: 1695803934123,
             }
         },
         build: {
