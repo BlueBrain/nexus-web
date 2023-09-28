@@ -6,7 +6,6 @@ import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
-import './GalleryView.scss';
 
 const getUrlParameter = (name: string) => {
   const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -111,21 +110,22 @@ const GalleryView: React.FC = () => {
     <>
       {background && (
         <Drawer
+          mask={false}
           keyboard
-          className="gallery-drawer"
           maskClosable={true}
           destroyOnClose={true}
           open={drawerVisible}
           onClose={closeGalleryView}
           placement="right"
-          getContainer={false}
+          rootStyle={{ height: '100%' }}
+          bodyStyle={{ height: '100%' }}
           width="50%"
         >
           <Route
             key="resource-modal"
             path={'/:orgLabel/:projectLabel/resources/:resourceId'}
             render={() => (
-              <div ref={wrapperRef}>
+              <div ref={wrapperRef} style={{ width: '100%', height: '100%'}}>
                 <ResourceViewContainer />
               </div>
             )}
