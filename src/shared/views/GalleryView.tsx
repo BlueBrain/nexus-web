@@ -6,7 +6,6 @@ import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
-import './GalleryView.scss';
 
 const getUrlParameter = (name: string) => {
   const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -126,7 +125,7 @@ const GalleryView: React.FC = () => {
             key="resource-modal"
             path={'/:orgLabel/:projectLabel/resources/:resourceId'}
             render={() => (
-              <div ref={wrapperRef}>
+              <div ref={wrapperRef} style={{ width: '100%', height: '100%'}}>
                 <ResourceViewContainer />
               </div>
             )}
