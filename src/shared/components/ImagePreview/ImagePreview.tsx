@@ -198,10 +198,20 @@ const ImagePreview: React.FC<Props> = ({
     setDisplayOption(value);
 
   const sortOptions = (
-    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
-      <Menu.Item key="-_createdAt">Newest</Menu.Item>
-      <Menu.Item key="_createdAt">Oldest</Menu.Item>
-    </Menu>
+    <Menu
+      onClick={onChangeSort}
+      selectedKeys={[sortOption]}
+      items={[
+        {
+          key: '-_createdAt',
+          label: 'Newest',
+        },
+        {
+          key: '_createdAt',
+          label: 'Oldest',
+        },
+      ]}
+    />
   );
 
   const type: Partial<ListProps<TDataSource>> =
@@ -252,114 +262,124 @@ const ImagePreview: React.FC<Props> = ({
       <Collapse
         onChange={handleCollapseChanged}
         activeKey={collapsed ? 'imagePreview' : undefined}
-      >
-        <Collapse.Panel header="Image Preview" key="imagePreview">
-          <div className="preview-menu">
-            <Search
-              placeholder="Seach by name"
-              onChange={onSearchChange}
-              allowClear
-            />
-            <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
-              <Tooltip title="Sort resources">
-                <Button
-                  ghost
-                  type="primary"
-                  icon={
-                    sortOption === '_createdAt' ? (
-                      <SortAscendingOutlined />
-                    ) : (
-                      <SortDescendingOutlined />
-                    )
-                  }
-                />
-              </Tooltip>
-            </Dropdown>
-            <Radio.Group
-              options={imageDisplayOptions}
-              onChange={onChangeDisplayOption}
-              value={displayOption}
-              optionType="button"
-              buttonStyle="solid"
-            />
-          </div>
-          <div
-            className={`preview-content ${
-              displayOption === 'grid' ? 'grid' : 'list'
-            }`}
-          >
-            <Spin spinning={status === 'loading'}>
-              {status === 'success' && (
-                <List
-                  {...type}
-                  dataSource={dataSource}
-                  renderItem={item =>
-                    displayOption === 'list' ? (
-                      <List.Item
-                        style={{ flexDirection: 'row-reverse' }}
-                        key={`list-${item.id}`}
-                        extra={
-                          <div style={{ width: '30%' }}>
-                            <Image
-                              src={item.imageSrc}
-                              preview={{ src: item.imageSrc }}
-                            />
-                          </div>
+        items={[
+          {
+            key: 'imagePreview',
+            label: 'Image Preview',
+            children: (
+              <>
+                <div className="preview-menu">
+                  <Search
+                    placeholder="Seach by name"
+                    onChange={onSearchChange}
+                    allowClear
+                  />
+                  <Dropdown
+                    dropdownRender={() => sortOptions}
+                    trigger={['hover', 'click']}
+                  >
+                    <Tooltip title="Sort resources">
+                      <Button
+                        ghost
+                        type="primary"
+                        icon={
+                          sortOption === '_createdAt' ? (
+                            <SortAscendingOutlined />
+                          ) : (
+                            <SortDescendingOutlined />
+                          )
                         }
-                      >
-                        <div className="item-content">
-                          <div>{item.title}</div>
-                          <div>{item.size}</div>
-                          <Button
-                            onClick={e => downloadImageHandler(e, item)}
-                            type="link"
-                            style={{ padding: '4px 0px' }}
-                          >
-                            <DownloadOutlined />
-                            Download
-                          </Button>
-                        </div>
-                      </List.Item>
-                    ) : (
-                      <List.Item key={`grid-${item.id}`}>
-                        <div className="image-grid-container">
-                          <Image
-                            src={item.imageSrc}
-                            preview={{
-                              src: item.imageSrc,
-                              maskStyle: {
-                                'background-color': 'rgba(0, 0, 0, 0.75)',
-                              },
-                            }}
-                            style={{
-                              maxWidth: '100%',
-                              width: '100%',
-                            }}
-                          />
-                          <Button
-                            icon={<DownloadOutlined />}
-                            className="download-image-grid"
-                            onClick={e => downloadImageHandler(e, item)}
-                          />
-                        </div>
-                      </List.Item>
-                    )
-                  }
-                />
-              )}
-              {status === 'error' && (
-                <Alert
-                  // @ts-ignore
-                  message={error.message}
-                  // @ts-ignore
-                  description={error.cause.message}
-                  type="error"
-                />
-              )}
-            </Spin>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
+                      />
+                    </Tooltip>
+                  </Dropdown>
+                  <Radio.Group
+                    options={imageDisplayOptions}
+                    onChange={onChangeDisplayOption}
+                    value={displayOption}
+                    optionType="button"
+                    buttonStyle="solid"
+                  />
+                </div>
+                <div
+                  className={`preview-content ${
+                    displayOption === 'grid' ? 'grid' : 'list'
+                  }`}
+                >
+                  <Spin spinning={status === 'loading'}>
+                    {status === 'success' && (
+                      <List
+                        {...type}
+                        dataSource={dataSource}
+                        renderItem={item =>
+                          displayOption === 'list' ? (
+                            <List.Item
+                              style={{ flexDirection: 'row-reverse' }}
+                              key={`list-${item.id}`}
+                              extra={
+                                <div style={{ width: '30%' }}>
+                                  <Image
+                                    src={item.imageSrc}
+                                    preview={{ src: item.imageSrc }}
+                                  />
+                                </div>
+                              }
+                            >
+                              <div className="item-content">
+                                <div>{item.title}</div>
+                                <div>{item.size}</div>
+                                <Button
+                                  onClick={e => downloadImageHandler(e, item)}
+                                  type="link"
+                                  style={{ padding: '4px 0px' }}
+                                >
+                                  <DownloadOutlined />
+                                  Download
+                                </Button>
+                              </div>
+                            </List.Item>
+                          ) : (
+                            <List.Item key={`grid-${item.id}`}>
+                              <div className="image-grid-container">
+                                <Image
+                                  src={item.imageSrc}
+                                  preview={{
+                                    src: item.imageSrc,
+                                    maskStyle: {
+                                      'background-color': 'rgba(0, 0, 0, 0.75)',
+                                    },
+                                  }}
+                                  style={{
+                                    maxWidth: '100%',
+                                    width: '100%',
+                                  }}
+                                />
+                                <Button
+                                  icon={<DownloadOutlined />}
+                                  className="download-image-grid"
+                                  onClick={e => downloadImageHandler(e, item)}
+                                />
+                              </div>
+                            </List.Item>
+                          )
+                        }
+                      />
+                    )}
+                    {status === 'error' && (
+                      <Alert
+                        // @ts-ignore
+                        message={error.message}
+                        // @ts-ignore
+                        description={error.cause.message}
+                        type="error"
+                      />
+                    )}
+                  </Spin>
+                </div>
+              </>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 };

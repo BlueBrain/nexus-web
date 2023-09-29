@@ -56,7 +56,7 @@ const DropdownFilter: React.FunctionComponent<{
   return (
     <div className="dropdown-filter">
       <AutoComplete
-        dropdownMatchSelectWidth={false}
+        popupMatchSelectWidth={false}
         placeholder={placeholder}
         onChange={handleInputChange}
         onSelect={handleChange}

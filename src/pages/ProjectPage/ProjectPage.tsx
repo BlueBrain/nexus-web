@@ -284,85 +284,108 @@ const ProjectView: React.FC = () => {
             />
           )}
           <div className="tabs-container">
-            <Tabs onChange={handleTabChange} activeKey={activeKey}>
-              <TabPane tab="Browse" key="browse">
-                <div className="list-board">
-                  <div className="wrapper">
-                    <ResourceListBoardContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                      refreshLists={refreshLists}
+            <Tabs
+              onChange={handleTabChange}
+              activeKey={activeKey}
+              items={[
+                {
+                  key: 'browse',
+                  label: 'Browse',
+                  children: (
+                    <div className="list-board">
+                      <div className="wrapper">
+                        <ResourceListBoardContainer
+                          orgLabel={orgLabel}
+                          projectLabel={projectLabel}
+                          refreshLists={refreshLists}
+                        />
+                      </div>
+                    </div>
+                  ),
+                },
+                {
+                  key: 'query',
+                  label: 'Query',
+                  children: (
+                    <div style={{ flexGrow: 1 }}>
+                      <QueryEditor
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                        onUpdate={() => {
+                          setRefreshLists(!refreshLists);
+                          // Statistics aren't immediately updated so pause polling briefly
+                          pauseStatisticsPolling(5000);
+                        }}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  key: 'create_upload',
+                  label: 'Create and Upload',
+                  children: (
+                    <AccessControl
+                      path={`/${orgLabel}/${projectLabel}`}
+                      permissions={['files/write']}
+                      noAccessComponent={() => (
+                        <Empty>
+                          You don't have the access to create/upload. Please
+                          contact the Administrator for access.
+                        </Empty>
+                      )}
+                    >
+                      <ResourceCreateUploadContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    </AccessControl>
+                  ),
+                },
+                {
+                  key: 'stats',
+                  label: 'Statistics',
+                  children: (
+                    <AccessControl
+                      key="quotas-access-control"
+                      path={`/${orgLabel}/${projectLabel}`}
+                      permissions={['test']}
+                      noAccessComponent={() => (
+                        <Empty>
+                          You don't have read access to quotas. Please contact
+                          the Administrator for access.
+                        </Empty>
+                      )}
+                    >
+                      <QuotasContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                      <StoragesContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    </AccessControl>
+                  ),
+                },
+                {
+                  key: 'settings',
+                  label: 'Settings',
+                  children: (
+                    <SettingsContainer
+                      project={{
+                        _label: project._label,
+                        _rev: project._rev,
+                        description: project.description || '',
+                        base: project.base,
+                        vocab: project.vocab,
+                        _deprecated: project._deprecated,
+                      }}
+                      apiMappings={project.apiMappings}
+                      mode="edit"
                     />
-                  </div>
-                </div>
-              </TabPane>
-              <TabPane tab="Query" key="query">
-                <div style={{ flexGrow: 1 }}>
-                  <QueryEditor
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                    onUpdate={() => {
-                      setRefreshLists(!refreshLists);
-                      // Statistics aren't immediately updated so pause polling briefly
-                      pauseStatisticsPolling(5000);
-                    }}
-                  />
-                </div>
-              </TabPane>
-              <TabPane tab="Create and Upload" key="create_upload">
-                <AccessControl
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['files/write']}
-                  noAccessComponent={() => (
-                    <Empty>
-                      You don't have the access to create/upload. Please contact
-                      the Administrator for access.
-                    </Empty>
-                  )}
-                >
-                  <ResourceCreateUploadContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-              </TabPane>
-              <TabPane tab="Statistics" key="stats">
-                <AccessControl
-                  key="quotas-access-control"
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['test']}
-                  noAccessComponent={() => (
-                    <Empty>
-                      You don't have read access to quotas. Please contact the
-                      Administrator for access.
-                    </Empty>
-                  )}
-                >
-                  <QuotasContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                  <StoragesContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-              </TabPane>
-              <TabPane tab="Settings" key="settings">
-                <SettingsContainer
-                  project={{
-                    _label: project._label,
-                    _rev: project._rev,
-                    description: project.description || '',
-                    base: project.base,
-                    vocab: project.vocab,
-                    _deprecated: project._deprecated,
-                  }}
-                  apiMappings={project.apiMappings}
-                  mode="edit"
-                />
-              </TabPane>
-              {deltaPlugins &&
+                  ),
+                },
+                ...(deltaPlugins &&
                 'jira' in deltaPlugins &&
                 isUserInSupportedJiraRealm &&
                 !jiraInaccessibleBecauseOfVPN && (

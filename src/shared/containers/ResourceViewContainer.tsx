@@ -559,17 +559,24 @@ const ResourceViewContainer: FC<{
           pluginCollapsedToggle('jira');
         }}
         activeKey={openPlugins.includes('jira') ? 'jira' : undefined}
-      >
-        <Collapse.Panel header="JIRA" key="jira">
-          {openPlugins.includes('jira') && (
-            <JIRAPluginContainer
-              resource={resource}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
-          )}
-        </Collapse.Panel>
-      </Collapse>
+        items={[
+          {
+            key: 'jira',
+            label: 'JIRA',
+            children: (
+              <>
+                {openPlugins.includes('jira') && (
+                  <JIRAPluginContainer
+                    resource={resource}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
     );
 
   const { analysisPluginShowOnTypes, analysisPluginExcludeTypes } = useSelector(
@@ -597,17 +604,24 @@ const ResourceViewContainer: FC<{
           pluginCollapsedToggle('analysis');
         }}
         activeKey={openPlugins.includes('analysis') ? 'analysis' : undefined}
-      >
-        <Collapse.Panel header="Report" key="analysis">
-          {openPlugins.includes('analysis') && (
-            <AnalysisPluginContainer
-              resourceId={resource['@id']}
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
-          )}
-        </Collapse.Panel>
-      </Collapse>
+        items={[
+          {
+            key: 'analysis',
+            label: 'Report',
+            children: (
+              <>
+                {openPlugins.includes('analysis') && (
+                  <AnalysisPluginContainer
+                    resourceId={resource['@id']}
+                    orgLabel={orgLabel}
+                    projectLabel={projectLabel}
+                  />
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
     );
 
   const builtInPlugins = [
@@ -691,14 +705,20 @@ const ResourceViewContainer: FC<{
                     {error.message}
                   </Typography.Paragraph>
                   {error.rejections && (
-                    <Collapse bordered={false} ghost>
-                      <Collapse.Panel key={1} header="More detail...">
-                        <>
-                          <ul>
-                            {error.rejections.map((el, ix) => (
-                              <li key={ix}>{el.reason}</li>
-                            ))}
-                          </ul>
+                    <Collapse
+                      bordered={false}
+                      ghost
+                      items={[
+                        {
+                          key: '1',
+                          label: 'More detail...',
+                          children: (
+                            <>
+                              <ul>
+                                {error.rejections.map((el, ix) => (
+                                  <li key={ix}>{el.reason}</li>
+                                ))}
+                              </ul>
 
                           <p>
                             For further information please refer to the API
@@ -835,12 +855,10 @@ const ResourceViewContainer: FC<{
                   {!!resource['@type'] &&
                     typeof resource['@type'] === 'string' &&
                     nonEditableResourceTypes.includes(resource['@type']) && (
-                      <p>
-                        <Alert
-                          message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
-                          type="info"
-                        />
-                      </p>
+                      <Alert
+                        message="This resource is not editable because it is of the type 'File'. For further information please contact the administrator."
+                        type="info"
+                      />
                     )}
                 </>
               )}

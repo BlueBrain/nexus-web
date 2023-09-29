@@ -6,7 +6,6 @@ import {
   Tooltip,
   Button,
   Switch,
-  FormInstance,
   Modal,
   Select,
   Row,
@@ -20,10 +19,10 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useParams, useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { useForm } from 'antd/lib/form/Form';
+import { useForm, useWatch } from 'antd/lib/form/Form';
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 import { updateStudioModalVisibility } from '../../../shared/store/actions/modals';
 import { RootState } from '../../../shared/store/reducers';
@@ -33,19 +32,6 @@ import usePlugins from '../../../shared/hooks/usePlugins';
 import STUDIO_CONTEXT from '../../../subapps/studioLegacy/components/StudioContext';
 import { useStudioLegacySubappContext } from '../../../subapps/studioLegacy';
 
-type StudioResource = Resource<{
-  label: string;
-  description?: string;
-  workspaces?: [string];
-  plugins?: {
-    customise: boolean;
-    plugins: {
-      key: string;
-      name: string;
-      expanded: boolean;
-    }[];
-  };
-}>;
 type TCreationStudio = {
   isPluginsCustomised: boolean;
   selectAllPlugin: boolean;
@@ -335,6 +321,7 @@ const CreateStudio = () => {
       plugins: [...nexusBuiltInPlugins, ...otherAvailablePlugins],
     });
   }, [pluginManifest]);
+
   return (
     <Modal
       centered
@@ -462,14 +449,18 @@ const CreateStudio = () => {
               initialValue={''}
             >
               <MarkdownEditorFormItemComponent
+                key={`${useWatch('organizationName', form)}-${useWatch(
+                  'projectName',
+                  form
+                )}`}
                 resource={{} as Resource}
                 rmeProps={{
                   maxEditorHeight: 300,
                 }}
                 onSaveImage={saveImage(
                   nexus,
-                  form.getFieldValue('orgLabel'),
-                  form.getFieldValue('projectLabel')
+                  useWatch('organizationName', form),
+                  useWatch('projectName', form)
                 )}
                 markdownViewer={MarkdownViewerContainer}
               />
@@ -557,7 +548,7 @@ const CreateStudio = () => {
                 }}
               >
                 <Droppable droppableId="droppable">
-                  {(provided, snapshot) => (
+                  {provided => (
                     <div
                       className="plugin-options"
                       {...provided.droppableProps}
@@ -571,7 +562,7 @@ const CreateStudio = () => {
                             draggableId={el.key}
                             index={ix}
                           >
-                            {(provided, snapshot) => (
+                            {provided => (
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
@@ -648,7 +639,7 @@ const CreateStudio = () => {
                                         ? 'Collapse plugin on load'
                                         : 'Expand plugin on load'
                                     }
-                                    onClick={e => {
+                                    onClick={() => {
                                       updateState({
                                         plugins: plugins.map(p => {
                                           if (p.key === el.key) {

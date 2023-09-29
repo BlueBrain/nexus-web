@@ -341,43 +341,50 @@ const Preview: React.FC<{
       <Collapse
         onChange={handleCollapsedChanged}
         activeKey={collapsed ? 'preview' : undefined}
-      >
-        <Collapse.Panel header="Preview" key="preview">
-          <AccessControl
-            path={`/${orgLabel}/${projectLabel}`}
-            permissions={['archives/write']}
-            noAccessComponent={() => downloadButton(true)}
-            loadingComponent={downloadButton(false)}
-          >
-            {downloadButton(false)}
-          </AccessControl>
-          <Table
-            rowSelection={{
-              checkStrictly: false,
-              onSelect: (record: any, selected: any) => {
-                if (selected) {
-                  setSelectedRows([...selectedRows, record]);
-                } else {
-                  const currentRows = selectedRows.filter(
-                    s => s.key !== record.key
-                  );
-                  setSelectedRows(currentRows);
-                }
-              },
-              onSelectAll: (select, selectedRows) => {
-                if (select) {
-                  setSelectedRows(selectedRows);
-                } else {
-                  setSelectedRows([]);
-                }
-              },
-            }}
-            columns={columns}
-            dataSource={getResourceAssets(resource)}
-            bordered={true}
-          ></Table>
-        </Collapse.Panel>
-      </Collapse>
+        items={[
+          {
+            key: 'preview',
+            label: 'Preview',
+            children: (
+              <>
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['archives/write']}
+                  noAccessComponent={() => downloadButton(true)}
+                  loadingComponent={downloadButton(false)}
+                >
+                  {downloadButton(false)}
+                </AccessControl>
+                <Table
+                  rowSelection={{
+                    checkStrictly: false,
+                    onSelect: (record: any, selected: any) => {
+                      if (selected) {
+                        setSelectedRows([...selectedRows, record]);
+                      } else {
+                        const currentRows = selectedRows.filter(
+                          s => s.key !== record.key
+                        );
+                        setSelectedRows(currentRows);
+                      }
+                    },
+                    onSelectAll: (select, selectedRows) => {
+                      if (select) {
+                        setSelectedRows(selectedRows);
+                      } else {
+                        setSelectedRows([]);
+                      }
+                    },
+                  }}
+                  columns={columns}
+                  dataSource={getResourceAssets(resource)}
+                  bordered={true}
+                ></Table>
+              </>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 };
