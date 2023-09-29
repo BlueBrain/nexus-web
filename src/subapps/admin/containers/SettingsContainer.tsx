@@ -114,11 +114,11 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
         selectedKeys={[selectedKey]}
         onSelect={handleOnSelectSubMenuItem}
         multiple={false}
-      >
-        {menuItems.map(item => (
-          <Menu.Item key={item.key}>{item.label}</Menu.Item>
-        ))}
-      </Menu>
+        items={menuItems.map(item => ({
+          key: item.key,
+          label: item.label,
+        }))}
+      />
       <div className="settings-content">
         {subViewSelectedComponenet({ project, apiMappings, mode })}
       </div>

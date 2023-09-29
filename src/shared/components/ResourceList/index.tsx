@@ -164,10 +164,20 @@ const ResourceListComponent: React.FunctionComponent<{
   };
 
   const sortOptions = (
-    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
-      <Menu.Item key="-_createdAt">Newest</Menu.Item>
-      <Menu.Item key="_createdAt">Oldest</Menu.Item>
-    </Menu>
+    <Menu
+      onClick={onChangeSort}
+      selectedKeys={[sortOption]}
+      items={[
+        {
+          key: '-_createdAt',
+          label: 'Newest',
+        },
+        {
+          key: '_createdAt',
+          label: 'Oldest',
+        },
+      ]}
+    ></Menu>
   );
 
   const hiddenListForCalculatingDimensionsForPageSize = (
@@ -277,7 +287,10 @@ const ResourceListComponent: React.FunctionComponent<{
             )}
           />
           {!list.query.q && (
-            <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
+            <Dropdown
+              dropdownRender={() => sortOptions}
+              trigger={['hover', 'click']}
+            >
               <Tooltip title="Sort resources">
                 <Button
                   ghost
