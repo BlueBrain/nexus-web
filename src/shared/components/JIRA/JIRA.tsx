@@ -316,19 +316,22 @@ const JIRAPluginUI = ({
           }}
         >
           <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item
-                  key="create"
-                  onClick={() => setCreateIssueVisible(true)}
-                >
-                  Create issue
-                </Menu.Item>
-                <Menu.Item key="link" onClick={() => setLinkIssueVisible(true)}>
-                  Link issue
-                </Menu.Item>
-              </Menu>
-            }
+            dropdownRender={() => (
+              <Menu
+                items={[
+                  {
+                    key: 'create',
+                    onClick: () => setCreateIssueVisible(true),
+                    label: 'Create issue',
+                  },
+                  {
+                    key: 'link',
+                    onClick: () => setLinkIssueVisible(true),
+                    label: 'Link issue',
+                  },
+                ]}
+              />
+            )}
           >
             <Button type="primary" style={{ marginLeft: 'auto' }}>
               Add <DownOutlined />
@@ -422,16 +425,17 @@ const JIRAPluginUI = ({
                   <>
                     <Dropdown.Button
                       size="small"
-                      overlay={
-                        <Menu>
-                          <Menu.Item
-                            key="unlink"
-                            onClick={() => confirmUnlinkIssue(issue.key)}
-                          >
-                            Unlink
-                          </Menu.Item>
-                        </Menu>
-                      }
+                      dropdownRender={() => (
+                        <Menu
+                          items={[
+                            {
+                              key: 'unlink',
+                              label: 'Unlink',
+                              onClick: () => confirmUnlinkIssue(issue.key),
+                            },
+                          ]}
+                        />
+                      )}
                     >
                       Options
                     </Dropdown.Button>

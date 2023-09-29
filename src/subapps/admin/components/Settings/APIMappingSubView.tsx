@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Spin, Row } from 'antd';
+import { Form, Input, Button, Spin, Row, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useRouteMatch } from 'react-router';
@@ -26,7 +26,7 @@ const PrefixMappingGroupInput: React.FC<{
   value?: any;
 }> = ({ groupId, value }) => {
   return (
-    <Input.Group className="project-form__item-inputs">
+    <Space.Compact className="project-form__item-inputs">
       <Form.Item
         noStyle
         name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
@@ -53,7 +53,7 @@ const PrefixMappingGroupInput: React.FC<{
       >
         <Input style={{ width: '65%' }} placeholder="namespace" />
       </Form.Item>
-    </Input.Group>
+    </Space.Compact>
   );
 };
 

@@ -186,23 +186,23 @@ const ResourceViewActionsContainer: React.FC<{
 
   const revisionMenuItems = React.useMemo(
     () => (
-      <Menu>
-        {[...Array(latestResource?._rev).keys()]
+      <Menu
+        items={[...Array(latestResource?._rev).keys()]
           .map(k => k + 1)
           .sort((a, b) => b - a)
-          .map(rev => (
-            <Menu.Item
-              key={rev}
-              onClick={() => {
-                goToResource(orgLabel, projectLabel, encodedResourceId, rev);
-              }}
-            >
-              Revision {rev}
-              {revisionLabels(rev).length > 0 &&
-                ` (${revisionLabels(rev).join(', ')})`}
-            </Menu.Item>
-          ))}
-      </Menu>
+          .map(rev => ({
+            key: rev,
+            onClick: () =>
+              goToResource(orgLabel, projectLabel, encodedResourceId, rev),
+            label: (
+              <>
+                Revision {rev}
+                {revisionLabels(rev).length > 0 &&
+                  ` (${revisionLabels(rev).join(', ')})`}
+              </>
+            ),
+          }))}
+      />
     ),
     [resource, latestResource, tags]
   );
@@ -321,18 +321,21 @@ const ResourceViewActionsContainer: React.FC<{
                     );
                   }
                 }}
-                overlay={
-                  <Menu>
-                    <Menu.Item
-                      onClick={() => {
-                        const pathToResource = `${basePath}${generatePath(
-                          '/:orgLabel/:projectLabel/resources/:resourceId',
-                          {
-                            orgLabel,
-                            projectLabel,
-                            resourceId: encodedResourceId,
-                          }
-                        )}`;
+                dropdownRender={() => (
+                  <Menu
+                    items={[
+                      {
+                        key: 'url',
+                        label: 'URL',
+                        onClick: () => {
+                          const pathToResource = `${basePath}${generatePath(
+                            '/:orgLabel/:projectLabel/resources/:resourceId',
+                            {
+                              orgLabel,
+                              projectLabel,
+                              resourceId: encodedResourceId,
+                            }
+                          )}`;
 
                         triggerCopy(
                           `${window.location.origin.toString()}${pathToResource}`

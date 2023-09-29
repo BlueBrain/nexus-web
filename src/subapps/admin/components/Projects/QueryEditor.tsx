@@ -60,8 +60,6 @@ const QueryEditor: React.FC<{
     }
   }, [orgLabel, projectLabel]);
 
-  const { TabPane } = Tabs;
-
   if (loading) {
     return null;
   }
@@ -87,18 +85,27 @@ const QueryEditor: React.FC<{
           }}
           activeKey={activeKey}
           tabPosition="left"
-        >
-          <TabPane tab="SPARQL" key="sparql">
-            <div>
-              <SparqlQueryView />
-            </div>
-          </TabPane>
-          <TabPane tab="Elasticsearch" key="elasticsearch">
-            <div>
-              <ElasticSearchQueryView />
-            </div>
-          </TabPane>
-        </Tabs>
+          items={[
+            {
+              key: 'sparql',
+              label: 'SPARQL',
+              children: (
+                <div>
+                  <SparqlQueryView />
+                </div>
+              ),
+            },
+            {
+              key: 'elasticsearch',
+              label: 'Elasticsearch',
+              children: (
+                <div>
+                  <ElasticSearchQueryView />
+                </div>
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );
