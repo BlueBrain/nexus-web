@@ -29,17 +29,24 @@ const DateFieldSelector = ({
       defaultSelectedKeys={['']}
       selectedKeys={dateField ? [dateField] : undefined}
       className="my-data-date-type-popover"
-    >
-      <Menu.Item key="createdAt">{dateFieldName.createdAt}</Menu.Item>
-      <Menu.Item key="updatedAt">{dateFieldName.updatedAt}</Menu.Item>
-    </Menu>
+      items={[
+        {
+          key: 'createdAt',
+          label: dateFieldName.createdAt,
+        },
+        {
+          key: 'updatedAt',
+          label: dateFieldName.updatedAt,
+        },
+      ]}
+    />
   );
   return (
     <Dropdown
       className="date-field-selector"
       placement="bottomLeft"
       trigger={['click']}
-      overlay={DateFieldMenu}
+      dropdownRender={() => DateFieldMenu}
     >
       <Button
         type="link"

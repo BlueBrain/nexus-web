@@ -30,8 +30,6 @@ import {
   changeTools,
 } from '../../slices/plugins/report';
 
-const { Panel } = Collapse;
-
 import {
   AnalysisPluginProps,
   SoftwareContribution,
@@ -207,430 +205,463 @@ const AnalysisPlugin = ({
                     marginBottom: '40px',
                     border: '2px solid #d9d9d9',
                   }}
-                >
-                  <Panel
-                    style={{ border: 0 }}
-                    key={i}
-                    header={
-                      <>
-                        {analysisReport.name}
-                        {!!analysisReport.categories &&
-                          analysisReport.categories.length > 0 && (
-                            <span
-                              className="cat"
-                              style={{
-                                fontWeight: 500,
-                              }}
-                            >
-                              {analysisReport.categories.map((c, i) => (
-                                <span
-                                  key={i}
-                                  style={{ backgroundColor: '#E6F7FF' }}
-                                >
-                                  {c}
-                                </span>
-                              ))}{' '}
-                            </span>
-                          )}
-                        {!!analysisReport.types &&
-                          analysisReport.types.length > 0 && (
-                            <span className="types">
-                              {analysisReport.types.map((t, i) => (
-                                <span
-                                  key={i}
+                  items={[
+                    {
+                      key: i,
+                      label: (
+                        <>
+                          {analysisReport.name}
+                          {!!analysisReport.categories &&
+                            analysisReport.categories.length > 0 && (
+                              <span
+                                className="cat"
+                                style={{
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {analysisReport.categories.map((c, i) => (
+                                  <span
+                                    key={i}
+                                    style={{ backgroundColor: '#E6F7FF' }}
+                                  >
+                                    {c}
+                                  </span>
+                                ))}{' '}
+                              </span>
+                            )}
+                          {!!analysisReport.types &&
+                            analysisReport.types.length > 0 && (
+                              <span className="types">
+                                {analysisReport.types.map((t, i) => (
+                                  <span
+                                    key={i}
+                                    style={{
+                                      backgroundColor: '#F5F5F5',
+                                      borderColor: '#F5F5F5',
+                                      outline: 'none',
+                                    }}
+                                  >
+                                    {t}
+                                  </span>
+                                ))}{' '}
+                              </span>
+                            )}
+                        </>
+                      ),
+                      children: (
+                        <>
+                          {mode === 'edit' &&
+                            'id' in analysisReport &&
+                            currentlyBeingEditedAnalysisReportId ===
+                              analysisReport.id && (
+                              <div style={{ display: 'flex' }}>
+                                <div
+                                  className="actions"
                                   style={{
-                                    backgroundColor: '#F5F5F5',
-                                    borderColor: '#F5F5F5',
-                                    outline: 'none',
+                                    marginLeft: 'auto',
+                                    marginRight: '20px',
                                   }}
                                 >
-                                  {t}
-                                </span>
-                              ))}{' '}
-                            </span>
-                          )}
-                      </>
-                    }
-                  >
-                    {mode === 'edit' &&
-                      'id' in analysisReport &&
-                      currentlyBeingEditedAnalysisReportId ===
-                        analysisReport.id && (
-                        <div style={{ display: 'flex' }}>
-                          <div
-                            className="actions"
-                            style={{
-                              marginLeft: 'auto',
-                              marginRight: '20px',
-                            }}
-                          >
-                            <Button
-                              style={{ marginRight: '10px' }}
-                              type="default"
-                              aria-label="Cancel"
-                              onClick={() =>
-                                dispatch(
-                                  initialize({
-                                    scale: imagePreviewScale,
-                                    analysisReportId: analysisReport.id
-                                      ? [analysisReport.id]
-                                      : [],
-                                  })
-                                )
-                              }
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              type="primary"
-                              aria-label="Save"
-                              onClick={() => {
-                                currentlyBeingEditedAnalysisReportName &&
-                                  onSave(
-                                    currentlyBeingEditedAnalysisReportName,
-                                    currentlyBeingEditedAnalysisReportDescription,
-                                    analysisReport.id,
-                                    currentlyBeingEditedAnalysisReportCategories,
-                                    currentlyBeingEditedAnalysisReportTypes,
-                                    currentlyBeingEditedAnalysisReportTools
-                                  );
-                              }}
-                            >
-                              Save
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    {mode === 'edit' &&
-                      'id' in analysisReport &&
-                      currentlyBeingEditedAnalysisReportId ===
-                        analysisReport.id && (
-                        <>
-                          <h4 style={{ marginTop: '10px', color: '#003a8c' }}>
-                            Name
-                          </h4>
-                          <Input
-                            type="text"
-                            placeholder="Report Name"
-                            aria-label="Report Name"
-                            required={true}
-                            value={currentlyBeingEditedAnalysisReportName}
-                            onChange={e =>
-                              dispatch(
-                                changeAnalysisName({ name: e.target.value })
-                              )
-                            }
-                            style={{ maxWidth: '900px' }}
-                          />
-                        </>
-                      )}
-                    {mode === 'view' && (
-                      <>
-                        <div
-                          className="report-header"
-                          style={{ display: 'flex' }}
-                        >
-                          <section
-                            aria-label="Analysis Metadata"
-                            className="analysis-metadata"
-                          >
-                            <span className="created">
-                              <CalendarOutlined />{' '}
-                              <span style={{ fontWeight: 'bold' }}>
-                                {analysisReport.createdBy &&
-                                  getUsername(analysisReport.createdBy)}
-                              </span>
-                              <label>
-                                {' '}
-                                {analysisReport.createdAt && (
-                                  <FriendlyTimeAgo
-                                    date={moment(analysisReport.createdAt)}
-                                  />
-                                )}
-                              </label>
-                            </span>
-                            <span
-                              className="updated"
-                              style={{ marginLeft: '8px' }}
-                            >
-                              <span>
-                                <SyncOutlined />{' '}
-                                <span style={{ fontWeight: 'bold' }}>
-                                  {analysisReport.updatedBy &&
-                                    getUsername(analysisReport.updatedBy)}
-                                </span>
-                                <label>
-                                  {' '}
-                                  {analysisReport.updatedAt && (
-                                    <FriendlyTimeAgo
-                                      date={moment(analysisReport.updatedAt)}
-                                    />
-                                  )}
-                                </label>
-                              </span>
-                            </span>
-                          </section>
-                          <section
-                            className="report-actions"
-                            style={{ marginLeft: 'auto', marginRight: 0 }}
-                          >
-                            <Button
-                              type="default"
-                              aria-label="Edit Report"
-                              style={{
-                                background: 'transparent',
-                              }}
-                              icon={<EditOutlined />}
-                              title="Edit report"
-                              onClick={() =>
-                                analysisReport.id &&
-                                dispatch(
-                                  editReport({
-                                    analysisId: analysisReport.id,
-                                    analaysisName: analysisReport.name,
-                                    analysisDescription:
-                                      analysisReport.description,
-                                    categories: analysisReport.categories,
-                                    types: analysisReport.types,
-                                    tools: (analysisReport.contribution?.filter(
-                                      c =>
-                                        [c.agent]
-                                          .flat()
-                                          .find(a =>
-                                            [a['@type']]
-                                              .flat()
-                                              .includes('Software')
-                                          )
-                                    ) as SoftwareContribution[])?.map(s => ({
-                                      scriptPath: s.repository,
-                                      description: s.description,
-                                    })),
-                                  })
-                                )
-                              }
-                            ></Button>
-                            {analysisResourceType === 'individual_report' &&
-                              containerId && (
-                                <>
-                                  {' '}
+                                  <Button
+                                    style={{ marginRight: '10px' }}
+                                    type="default"
+                                    aria-label="Cancel"
+                                    onClick={() =>
+                                      dispatch(
+                                        initialize({
+                                          scale: imagePreviewScale,
+                                          analysisReportId: analysisReport.id
+                                            ? [analysisReport.id]
+                                            : [],
+                                        })
+                                      )
+                                    }
+                                  >
+                                    Cancel
+                                  </Button>
+                                  <Button
+                                    type="primary"
+                                    aria-label="Save"
+                                    onClick={() => {
+                                      currentlyBeingEditedAnalysisReportName &&
+                                        onSave(
+                                          currentlyBeingEditedAnalysisReportName,
+                                          currentlyBeingEditedAnalysisReportDescription,
+                                          analysisReport.id,
+                                          currentlyBeingEditedAnalysisReportCategories,
+                                          currentlyBeingEditedAnalysisReportTypes,
+                                          currentlyBeingEditedAnalysisReportTools
+                                        );
+                                    }}
+                                  >
+                                    Save
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          {mode === 'edit' &&
+                            'id' in analysisReport &&
+                            currentlyBeingEditedAnalysisReportId ===
+                              analysisReport.id && (
+                              <>
+                                <h4
+                                  style={{
+                                    marginTop: '10px',
+                                    color: '#003a8c',
+                                  }}
+                                >
+                                  Name
+                                </h4>
+                                <Input
+                                  type="text"
+                                  placeholder="Report Name"
+                                  aria-label="Report Name"
+                                  required={true}
+                                  value={currentlyBeingEditedAnalysisReportName}
+                                  onChange={e =>
+                                    dispatch(
+                                      changeAnalysisName({
+                                        name: e.target.value,
+                                      })
+                                    )
+                                  }
+                                  style={{ maxWidth: '900px' }}
+                                />
+                              </>
+                            )}
+                          {mode === 'view' && (
+                            <>
+                              <div
+                                className="report-header"
+                                style={{ display: 'flex' }}
+                              >
+                                <section
+                                  aria-label="Analysis Metadata"
+                                  className="analysis-metadata"
+                                >
+                                  <span className="created">
+                                    <CalendarOutlined />{' '}
+                                    <span style={{ fontWeight: 'bold' }}>
+                                      {analysisReport.createdBy &&
+                                        getUsername(analysisReport.createdBy)}
+                                    </span>
+                                    <label>
+                                      {' '}
+                                      {analysisReport.createdAt && (
+                                        <FriendlyTimeAgo
+                                          date={moment(
+                                            analysisReport.createdAt
+                                          )}
+                                        />
+                                      )}
+                                    </label>
+                                  </span>
+                                  <span
+                                    className="updated"
+                                    style={{ marginLeft: '8px' }}
+                                  >
+                                    <span>
+                                      <SyncOutlined />{' '}
+                                      <span style={{ fontWeight: 'bold' }}>
+                                        {analysisReport.updatedBy &&
+                                          getUsername(analysisReport.updatedBy)}
+                                      </span>
+                                      <label>
+                                        {' '}
+                                        {analysisReport.updatedAt && (
+                                          <FriendlyTimeAgo
+                                            date={moment(
+                                              analysisReport.updatedAt
+                                            )}
+                                          />
+                                        )}
+                                      </label>
+                                    </span>
+                                  </span>
+                                </section>
+                                <section
+                                  className="report-actions"
+                                  style={{ marginLeft: 'auto', marginRight: 0 }}
+                                >
                                   <Button
                                     type="default"
-                                    onClick={() =>
-                                      onClickRelatedResource(containerId)
-                                    }
+                                    aria-label="Edit Report"
                                     style={{
-                                      padding: '1',
-                                      maxWidth: '230px',
-                                      overflow: 'hidden',
                                       background: 'transparent',
                                     }}
-                                    aria-label="Go to parent resource"
-                                  >
-                                    Navigate to{' '}
-                                    {analysisReport.containerName
-                                      ? analysisReport.containerName
-                                      : 'parent resource'}
-                                    &nbsp;&#x2197;
-                                  </Button>
-                                </>
-                              )}
-                            {analysisResourceType !== 'individual_report' && (
-                              <Button
-                                type="default"
-                                title="Open discussion on report resource"
-                                aria-label="Open discussion on report resource"
-                                icon={<MessageOutlined />}
-                                style={{
-                                  maxWidth: '230px',
-                                  overflow: 'hidden',
-                                  background: 'transparent',
-                                }}
-                                onClick={() =>
-                                  analysisReport.id &&
-                                  onClickRelatedResource(analysisReport.id)
-                                }
-                              ></Button>
+                                    icon={<EditOutlined />}
+                                    title="Edit report"
+                                    onClick={() =>
+                                      analysisReport.id &&
+                                      dispatch(
+                                        editReport({
+                                          analysisId: analysisReport.id,
+                                          analaysisName: analysisReport.name,
+                                          analysisDescription:
+                                            analysisReport.description,
+                                          categories: analysisReport.categories,
+                                          types: analysisReport.types,
+                                          tools: (analysisReport.contribution?.filter(
+                                            c =>
+                                              [c.agent]
+                                                .flat()
+                                                .find(a =>
+                                                  [a['@type']]
+                                                    .flat()
+                                                    .includes('Software')
+                                                )
+                                          ) as SoftwareContribution[])?.map(
+                                            s => ({
+                                              scriptPath: s.repository,
+                                              description: s.description,
+                                            })
+                                          ),
+                                        })
+                                      )
+                                    }
+                                  ></Button>
+                                  {analysisResourceType ===
+                                    'individual_report' &&
+                                    containerId && (
+                                      <>
+                                        {' '}
+                                        <Button
+                                          type="default"
+                                          onClick={() =>
+                                            onClickRelatedResource(containerId)
+                                          }
+                                          style={{
+                                            padding: '1',
+                                            maxWidth: '230px',
+                                            overflow: 'hidden',
+                                            background: 'transparent',
+                                          }}
+                                          aria-label="Go to parent resource"
+                                        >
+                                          Navigate to{' '}
+                                          {analysisReport.containerName
+                                            ? analysisReport.containerName
+                                            : 'parent resource'}
+                                          &nbsp;&#x2197;
+                                        </Button>
+                                      </>
+                                    )}
+                                  {analysisResourceType !==
+                                    'individual_report' && (
+                                    <Button
+                                      type="default"
+                                      title="Open discussion on report resource"
+                                      aria-label="Open discussion on report resource"
+                                      icon={<MessageOutlined />}
+                                      style={{
+                                        maxWidth: '230px',
+                                        overflow: 'hidden',
+                                        background: 'transparent',
+                                      }}
+                                      onClick={() =>
+                                        analysisReport.id &&
+                                        onClickRelatedResource(
+                                          analysisReport.id
+                                        )
+                                      }
+                                    ></Button>
+                                  )}
+                                </section>
+                              </div>
+                            </>
+                          )}
+
+                          {(mode === 'view' ||
+                            ('id' in analysisReport &&
+                              currentlyBeingEditedAnalysisReportId !==
+                                analysisReport.id)) &&
+                            analysisReport.description !== undefined &&
+                            analysisReport.description !== '' && (
+                              <>
+                                <hr
+                                  style={{
+                                    border: 0,
+                                    borderTop: '1px solid #D9D9D9',
+                                  }}
+                                />
+                                <p
+                                  aria-label="Report Description"
+                                  style={{
+                                    width: '100%',
+                                    marginRight: '50px',
+                                    whiteSpace: 'pre-wrap',
+                                  }}
+                                >
+                                  {analysisReport.description}
+                                </p>
+                                <hr
+                                  style={{
+                                    border: 0,
+                                    borderTop: '1px solid #D9D9D9',
+                                  }}
+                                />
+                              </>
                             )}
+
+                          {mode === 'edit' &&
+                            'id' in analysisReport &&
+                            currentlyBeingEditedAnalysisReportId ===
+                              analysisReport.id && (
+                              <>
+                                <h4
+                                  style={{
+                                    marginTop: '10px',
+                                    color: '#003a8c',
+                                  }}
+                                >
+                                  Description
+                                </h4>
+                                <Input.TextArea
+                                  placeholder="Report Description"
+                                  aria-label="Report Description"
+                                  value={
+                                    currentlyBeingEditedAnalysisReportDescription
+                                  }
+                                  rows={10}
+                                  style={{ maxWidth: '900px' }}
+                                  onChange={e =>
+                                    dispatch(
+                                      changeAnalysisDescription({
+                                        description: e.currentTarget.value,
+                                      })
+                                    )
+                                  }
+                                />
+                              </>
+                            )}
+
+                          {mode === 'edit' && (
+                            <section>
+                              <CategoryEditWidget
+                                allCategories={
+                                  allReportCategoriesMatchingContainerType
+                                }
+                                dispatch={dispatch}
+                                currentlyBeingEditedAnalysisReportCategories={
+                                  currentlyBeingEditedAnalysisReportCategories
+                                }
+                              />
+                              <TypeEditWidget
+                                dispatch={dispatch}
+                                currentlyBeingEditedAnalysisReportTypes={
+                                  currentlyBeingEditedAnalysisReportTypes
+                                }
+                              />
+                            </section>
+                          )}
+                          {mode === 'edit' && (
+                            <>
+                              <h4
+                                style={{
+                                  fontWeight: 500,
+                                  fontSize: '14px',
+                                  lineHeight: '136%',
+                                  color: '#003a8c',
+                                }}
+                              >
+                                Tools
+                              </h4>
+                              <ToolsEdit
+                                tools={
+                                  currentlyBeingEditedAnalysisReportTools !==
+                                  undefined
+                                    ? currentlyBeingEditedAnalysisReportTools
+                                    : []
+                                }
+                                onUpdateTools={tools =>
+                                  dispatch(changeTools({ tools }))
+                                }
+                              />
+                            </>
+                          )}
+                          {mode === 'view' && (
+                            <Tools
+                              tools={(analysisReport.contribution?.filter(c =>
+                                [c.agent]
+                                  .flat()
+                                  .find(a =>
+                                    [a['@type']].flat().includes('Software')
+                                  )
+                              ) as SoftwareContribution[])?.map(s => ({
+                                scriptPath: s.repository,
+                                description: s.description,
+                              }))}
+                              onAddTool={() => {
+                                analysisReport.id &&
+                                  dispatch(
+                                    editReport({
+                                      analysisId: analysisReport.id,
+                                      analaysisName: analysisReport.name,
+                                      analysisDescription:
+                                        analysisReport.description,
+                                      categories: analysisReport.categories,
+                                      types: analysisReport.types,
+                                      tools: [
+                                        { scriptPath: '', description: '' },
+                                      ],
+                                    })
+                                  );
+                              }}
+                            />
+                          )}
+                          <section
+                            className="actionsPanel"
+                            aria-label="actions"
+                          >
+                            {mode === 'view' && (
+                              <>
+                                <Button
+                                  type="default"
+                                  hidden={true}
+                                  onClick={() => console.log('download')}
+                                  icon={<LeftSquareFilled />}
+                                >
+                                  Download
+                                </Button>
+                              </>
+                            )}
+                            {mode === 'edit' &&
+                              selectedAssets &&
+                              selectedAssets.length > 0 && (
+                                <Button
+                                  type="primary"
+                                  danger
+                                  style={{ marginLeft: '20px' }}
+                                  aria-label="Delete"
+                                  onClick={() => {
+                                    onDelete();
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              )}
                           </section>
-                        </div>
-                      </>
-                    )}
-
-                    {(mode === 'view' ||
-                      ('id' in analysisReport &&
-                        currentlyBeingEditedAnalysisReportId !==
-                          analysisReport.id)) &&
-                      analysisReport.description !== undefined &&
-                      analysisReport.description !== '' && (
-                        <>
-                          <hr
-                            style={{
-                              border: 0,
-                              borderTop: '1px solid #D9D9D9',
-                            }}
-                          />
-                          <p
-                            aria-label="Report Description"
-                            style={{
-                              width: '100%',
-                              marginRight: '50px',
-                              whiteSpace: 'pre-wrap',
-                            }}
-                          >
-                            {analysisReport.description}
-                          </p>
-                          <hr
-                            style={{
-                              border: 0,
-                              borderTop: '1px solid #D9D9D9',
-                            }}
-                          />
-                        </>
-                      )}
-
-                    {mode === 'edit' &&
-                      'id' in analysisReport &&
-                      currentlyBeingEditedAnalysisReportId ===
-                        analysisReport.id && (
-                        <>
-                          <h4 style={{ marginTop: '10px', color: '#003a8c' }}>
-                            Description
-                          </h4>
-                          <Input.TextArea
-                            placeholder="Report Description"
-                            aria-label="Report Description"
-                            value={
-                              currentlyBeingEditedAnalysisReportDescription
-                            }
-                            rows={10}
-                            style={{ maxWidth: '900px' }}
-                            onChange={e =>
-                              dispatch(
-                                changeAnalysisDescription({
-                                  description: e.currentTarget.value,
-                                })
-                              )
+                          <div style={{ color: '#888888' }}>
+                            Total: {analysisReport.assets.length} assets
+                          </div>
+                          <br />
+                          <ReportAssets
+                            mode={mode}
+                            imagePreviewScale={imagePreviewScale}
+                            dispatch={dispatch}
+                            analysisReport={analysisReport}
+                            selectedAssets={selectedAssets}
+                            currentlyBeingEditedAnalysisReportId={
+                              currentlyBeingEditedAnalysisReportId
+                                ? currentlyBeingEditedAnalysisReportId
+                                : undefined
                             }
                           />
                         </>
-                      )}
-
-                    {mode === 'edit' && (
-                      <section>
-                        <CategoryEditWidget
-                          allCategories={
-                            allReportCategoriesMatchingContainerType
-                          }
-                          dispatch={dispatch}
-                          currentlyBeingEditedAnalysisReportCategories={
-                            currentlyBeingEditedAnalysisReportCategories
-                          }
-                        />
-                        <TypeEditWidget
-                          dispatch={dispatch}
-                          currentlyBeingEditedAnalysisReportTypes={
-                            currentlyBeingEditedAnalysisReportTypes
-                          }
-                        />
-                      </section>
-                    )}
-                    {mode === 'edit' && (
-                      <>
-                        <h4
-                          style={{
-                            fontWeight: 500,
-                            fontSize: '14px',
-                            lineHeight: '136%',
-                            color: '#003a8c',
-                          }}
-                        >
-                          Tools
-                        </h4>
-                        <ToolsEdit
-                          tools={
-                            currentlyBeingEditedAnalysisReportTools !==
-                            undefined
-                              ? currentlyBeingEditedAnalysisReportTools
-                              : []
-                          }
-                          onUpdateTools={tools =>
-                            dispatch(changeTools({ tools }))
-                          }
-                        />
-                      </>
-                    )}
-                    {mode === 'view' && (
-                      <Tools
-                        tools={(analysisReport.contribution?.filter(c =>
-                          [c.agent]
-                            .flat()
-                            .find(a => [a['@type']].flat().includes('Software'))
-                        ) as SoftwareContribution[])?.map(s => ({
-                          scriptPath: s.repository,
-                          description: s.description,
-                        }))}
-                        onAddTool={() => {
-                          analysisReport.id &&
-                            dispatch(
-                              editReport({
-                                analysisId: analysisReport.id,
-                                analaysisName: analysisReport.name,
-                                analysisDescription: analysisReport.description,
-                                categories: analysisReport.categories,
-                                types: analysisReport.types,
-                                tools: [{ scriptPath: '', description: '' }],
-                              })
-                            );
-                        }}
-                      />
-                    )}
-                    <section className="actionsPanel" aria-label="actions">
-                      {mode === 'view' && (
-                        <>
-                          <Button
-                            type="default"
-                            hidden={true}
-                            onClick={() => console.log('download')}
-                            icon={<LeftSquareFilled />}
-                          >
-                            Download
-                          </Button>
-                        </>
-                      )}
-                      {mode === 'edit' &&
-                        selectedAssets &&
-                        selectedAssets.length > 0 && (
-                          <Button
-                            type="primary"
-                            danger
-                            style={{ marginLeft: '20px' }}
-                            aria-label="Delete"
-                            onClick={() => {
-                              onDelete();
-                            }}
-                          >
-                            Delete
-                          </Button>
-                        )}
-                    </section>
-                    <div style={{ color: '#888888' }}>
-                      Total: {analysisReport.assets.length} assets
-                    </div>
-                    <br />
-                    <ReportAssets
-                      mode={mode}
-                      imagePreviewScale={imagePreviewScale}
-                      dispatch={dispatch}
-                      analysisReport={analysisReport}
-                      selectedAssets={selectedAssets}
-                      currentlyBeingEditedAnalysisReportId={
-                        currentlyBeingEditedAnalysisReportId
-                          ? currentlyBeingEditedAnalysisReportId
-                          : undefined
-                      }
-                    />
-                  </Panel>
-                </Collapse>
+                      ),
+                    },
+                  ]}
+                />
               ))}
           </>
         </div>

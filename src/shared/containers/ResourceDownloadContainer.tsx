@@ -52,11 +52,21 @@ const ResourceDownloadButton: React.FunctionComponent<{
         const format: formatType = clickparam.key.toString() as formatType;
         download(props.orgLabel, props.projectLabel, props.resourceId, format);
       }}
-    >
-      <Menu.Item key="json">JSON</Menu.Item>
-      <Menu.Item key="n-triples">N-triples</Menu.Item>
-      <Menu.Item key="vnd.graph-viz">Dot file</Menu.Item>
-    </Menu>
+      items={[
+        {
+          key: 'json',
+          label: 'JSON',
+        },
+        {
+          key: 'n-triples',
+          label: 'N-triples',
+        },
+        {
+          key: 'vnd.graph-viz',
+          label: 'Dot file',
+        },
+      ]}
+    />
   );
 
   return (
@@ -69,7 +79,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
       >
         download
       </a>
-      <Dropdown overlay={menu}>
+      <Dropdown dropdownRender={() => menu}>
         <Button icon={<DownOutlined />}>Download Metadata</Button>
       </Dropdown>
     </div>

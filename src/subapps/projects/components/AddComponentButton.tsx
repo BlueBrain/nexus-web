@@ -20,36 +20,65 @@ const AddComponentButton: React.FC<{
   addActivityTable,
 }) => {
   const menu = (
-    <Menu>
-      {addInputTable && (
-        <Menu.Item onClick={addInputTable}>
-          Canvas: Add New Input Table
-        </Menu.Item>
-      )}
-      {addActivityTable && (
-        <Menu.Item onClick={addActivityTable}>
-          Canvas: Add New Activity Table
-        </Menu.Item>
-      )}
-
-      <Menu.Item onClick={addNewStep}>Canvas: Add New Step</Menu.Item>
-      {addDataTable && (
-        <Menu.Item onClick={addDataTable}>Canvas: Add Data Table</Menu.Item>
-      )}
-      {addCode && (
-        <Menu.Item disabled onClick={addCode}>
-          Project: Create New Code Resource
-        </Menu.Item>
-      )}
-      {addDataset && (
-        <Menu.Item onClick={addDataset}>Project: Add New Dataset</Menu.Item>
-      )}
-    </Menu>
+    <Menu
+      items={[
+        ...(addInputTable
+          ? [
+              {
+                key: 'add_input_table',
+                label: 'Canvas: Add New Input Table',
+                onClick: () => addInputTable(),
+              },
+            ]
+          : []),
+        ...(addActivityTable
+          ? [
+              {
+                key: 'add_activity_table',
+                label: 'Canvas: Add New Activity Table',
+                onClick: () => addActivityTable(),
+              },
+            ]
+          : []),
+        {
+          key: 'add_new_step',
+          label: 'Canvas: Add New Step',
+          onClick: () => addNewStep(),
+        },
+        ...(addDataTable
+          ? [
+              {
+                key: 'add_data_table',
+                label: 'Canvas: Add Data Table',
+                onClick: () => addDataTable(),
+              },
+            ]
+          : []),
+        ...(addCode
+          ? [
+              {
+                key: 'add_code',
+                label: 'Project: Create New Code Resource',
+                onClick: () => addCode(),
+              },
+            ]
+          : []),
+        ...(addDataset
+          ? [
+              {
+                key: 'add_new_dataset',
+                label: 'Project: Add New Dataset',
+                onClick: () => addDataset(),
+              },
+            ]
+          : []),
+      ]}
+    />
   );
 
   return (
     <div className="add-component-button">
-      <Dropdown overlay={menu} placement="topRight">
+      <Dropdown dropdownRender={() => menu} placement="topRight">
         <img className="add-component-button__icon" src={addIconClear} />
       </Dropdown>
     </div>
