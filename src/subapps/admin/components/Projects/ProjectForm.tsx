@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Collapse, Form, Input, Button, Spin, Modal, Row, Col } from 'antd';
+import {
+  Collapse,
+  Form,
+  Input,
+  Button,
+  Spin,
+  Modal,
+  Row,
+  Col,
+  Space,
+} from 'antd';
 import { PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 import './ProjectForm.scss';
@@ -14,7 +24,7 @@ const PrefixMappingGroupInput: React.FC<{
   value?: any;
 }> = ({ groupId, value }) => {
   return (
-    <Input.Group className="project-form__item-inputs">
+    <Space.Compact className="project-form__item-inputs">
       <Form.Item
         noStyle
         name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
@@ -41,7 +51,7 @@ const PrefixMappingGroupInput: React.FC<{
       >
         <Input style={{ width: '65%' }} placeholder="namespace" />
       </Form.Item>
-    </Input.Group>
+    </Space.Compact>
   );
 };
 
@@ -80,7 +90,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
     activeKeys,
   });
 
-  const add = (k: any) => {
+  const add = () => {
     const { currentId, activeKeys } = prefixMappingKeys;
     const newId: number = currentId + 1;
     // @ts-ignore
@@ -119,34 +129,32 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   };
 
   // Dynamic form fields
-  const apiMappingsItems = prefixMappingKeys.activeKeys.map(
-    (key: number, index: number) => (
-      <Form.Item key={key}>
-        <div className="project-form__form-item">
-          <PrefixMappingGroupInput
-            groupId={key}
-            value={{
-              prefix:
-                (project &&
-                  project.apiMappings &&
-                  project.apiMappings[key - 1] &&
-                  project.apiMappings[key - 1].prefix) ||
-                '',
-              namespace:
-                (project &&
-                  project.apiMappings &&
-                  project.apiMappings[key - 1] &&
-                  project.apiMappings[key - 1].namespace) ||
-                '',
-            }}
-          />
-          {prefixMappingKeys.activeKeys.length > 0 ? (
-            <MinusCircleOutlined onClick={() => remove(key)} />
-          ) : null}
-        </div>
-      </Form.Item>
-    )
-  );
+  const apiMappingsItems = prefixMappingKeys.activeKeys.map((key: number) => (
+    <Form.Item key={key}>
+      <div className="project-form__form-item">
+        <PrefixMappingGroupInput
+          groupId={key}
+          value={{
+            prefix:
+              (project &&
+                project.apiMappings &&
+                project.apiMappings[key - 1] &&
+                project.apiMappings[key - 1].prefix) ||
+              '',
+            namespace:
+              (project &&
+                project.apiMappings &&
+                project.apiMappings[key - 1] &&
+                project.apiMappings[key - 1].namespace) ||
+              '',
+          }}
+        />
+        {prefixMappingKeys.activeKeys.length > 0 ? (
+          <MinusCircleOutlined onClick={() => remove(key)} />
+        ) : null}
+      </div>
+    </Form.Item>
+  ));
 
   const formItemLayout = {
     labelCol: {
@@ -191,37 +199,45 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
           <Input placeholder="Description" />
         </Form.Item>
         <Form.Item>
-          <Collapse>
-            <Collapse.Panel header="Advanced settings" key="1">
-              <Form.Item
-                label="Base"
-                name="base"
-                initialValue={project ? project.base : ''}
-                rules={[{ required: false }]}
-              >
-                <Input placeholder="Base" />
-              </Form.Item>
-              <Form.Item
-                label="Vocab"
-                name="vocab"
-                initialValue={project ? project.vocab : ''}
-                rules={[{ required: false }]}
-              >
-                <Input placeholder="Vocab" />
-              </Form.Item>
-              <h4>API Mappings</h4>
-              {apiMappingsItems}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={add}
-                  className="project-form__add-button"
-                >
-                  <PlusCircleOutlined /> Add API mapping
-                </Button>
-              </Form.Item>
-            </Collapse.Panel>
-          </Collapse>
+          <Collapse
+            items={[
+              {
+                key: '1',
+                label: 'Advanced settings',
+                children: (
+                  <>
+                    <Form.Item
+                      label="Base"
+                      name="base"
+                      initialValue={project ? project.base : ''}
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="Base" />
+                    </Form.Item>
+                    <Form.Item
+                      label="Vocab"
+                      name="vocab"
+                      initialValue={project ? project.vocab : ''}
+                      rules={[{ required: false }]}
+                    >
+                      <Input placeholder="Vocab" />
+                    </Form.Item>
+                    <h4>API Mappings</h4>
+                    {apiMappingsItems}
+                    <Form.Item>
+                      <Button
+                        type="dashed"
+                        onClick={add}
+                        className="project-form__add-button"
+                      >
+                        <PlusCircleOutlined /> Add API mapping
+                      </Button>
+                    </Form.Item>
+                  </>
+                ),
+              },
+            ]}
+          />
         </Form.Item>
         <Form.Item>
           <Row justify="end" gutter={16}>

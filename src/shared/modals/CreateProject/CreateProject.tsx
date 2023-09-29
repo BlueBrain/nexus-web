@@ -9,12 +9,13 @@ import {
   Collapse,
   Form,
   Select,
+  Space,
 } from 'antd';
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useParams, useRouteMatch } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import {
@@ -50,7 +51,7 @@ const PrefixMappingGroupInput: React.FC<{
   value?: any;
 }> = ({ groupId, value }) => {
   return (
-    <Input.Group className="project-form__item-inputs">
+    <Space.Compact className="project-form__item-inputs">
       <Form.Item
         noStyle
         name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
@@ -83,7 +84,7 @@ const PrefixMappingGroupInput: React.FC<{
           placeholder="namespace"
         />
       </Form.Item>
-    </Input.Group>
+    </Space.Compact>
   );
 };
 
@@ -332,18 +333,29 @@ const CreateProject: React.FC<{}> = ({}) => {
         >
           <Input placeholder="Vocab" />
         </Form.Item>
-        <Collapse style={{ margin: '0 -24px' }} bordered={false} ghost>
-          <Collapse.Panel header="Advanced settings" key="1">
-            <h4>
-              API Mappings
-              <PlusCircleOutlined
-                onClick={add}
-                style={{ marginLeft: 20, color: 'blue' }}
-              />
-            </h4>
-            {apiMappingsItems}
-          </Collapse.Panel>
-        </Collapse>
+        <Collapse
+          style={{ margin: '0 -24px' }}
+          bordered={false}
+          ghost
+          items={[
+            {
+              key: '1',
+              label: 'Advanced settings',
+              children: (
+                <>
+                  <h4>
+                    API Mappings
+                    <PlusCircleOutlined
+                      onClick={add}
+                      style={{ marginLeft: 20, color: 'blue' }}
+                    />
+                  </h4>
+                  {apiMappingsItems}
+                </>
+              ),
+            },
+          ]}
+        />
         <Row justify="end" gutter={16}>
           <Col>
             <Button

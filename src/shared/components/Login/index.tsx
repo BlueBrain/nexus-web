@@ -31,11 +31,11 @@ const Login: React.FunctionComponent<LoginProps> = ({
           onRealmSelected(realm);
         }
       }}
-    >
-      {realms.map(realm => (
-        <Menu.Item key={realm}>{realm}</Menu.Item>
-      ))}
-    </Menu>
+      items={realms.map(realm => ({
+        key: realm,
+        label: realm,
+      }))}
+    />
   );
 
   return (
@@ -63,7 +63,10 @@ const Login: React.FunctionComponent<LoginProps> = ({
             </Button>
             <div className="realm-holder">
               <span> with </span>
-              <Dropdown overlay={menu} trigger={['click', 'hover']}>
+              <Dropdown
+                dropdownRender={() => menu}
+                trigger={['click', 'hover']}
+              >
                 <span className="realm">
                   {realm} <DownOutlined />
                 </span>

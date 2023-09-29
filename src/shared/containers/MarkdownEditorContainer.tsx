@@ -61,8 +61,8 @@ export const saveImage = (
   nexus: NexusClient,
   orgLabel: string,
   projectLabel: string
-) =>
-  async function*(data: ArrayBuffer) {
+) => {
+  return async function*(data: ArrayBuffer) {
     const blob = new Blob([data]);
     const formData = new FormData();
     formData.append('file', blob);
@@ -77,6 +77,7 @@ export const saveImage = (
     // returns true meaning that the save was successful
     return true;
   };
+};
 
 const MarkdownEditorContainer: React.FC<{
   resourceId: string;

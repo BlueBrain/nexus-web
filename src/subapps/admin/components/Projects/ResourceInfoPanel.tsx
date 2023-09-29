@@ -94,101 +94,105 @@ const ResourceInfoPanel: React.FC<{
         </p>
         <p>{typeStats._count} resources</p>
         <br />
-        <Collapse>
-          <Panel
-            header="Properties (coverage in resources)"
-            key="1"
-            extra={
-              <Popover
-                content={() => {
-                  return (
-                    <div>
-                      <p>
-                        These are the properties that are used to describe a
-                        resource of this type. <br />
-                        It also include how many resources use them and overall
-                        coverage.
-                      </p>
-                    </div>
-                  );
-                }}
-                trigger="click"
-                placement="bottomRight"
-              >
-                <Button
-                  onClick={event => event.stopPropagation()}
-                  size="small"
-                  icon={<InfoCircleOutlined />}
-                />
-              </Popover>
-            }
-          >
-            <ul>
-              {typeStats._properties &&
-                typeStats._properties.map((property: any) => {
-                  const formattedProCount = new Intl.NumberFormat('en-IN', {
-                    maximumSignificantDigits: 3,
-                  }).format(property._count);
-                  return (
-                    <li key={property._name}>
-                      <span>
-                        <a href={property['@id']} target="_blank">
-                          {property._name}
-                        </a>
-                        : {formattedProCount}{' '}
-                        {`(${(
-                          (property._count / typeStats._count) *
-                          100
-                        ).toPrecision(4)}%)`}
-                      </span>
-                      {property._properties && (
-                        <ul>
-                          {property._properties.map((subProperty: any) => (
-                            <li key={subProperty._name}>
-                              <a href={subProperty['@id']} target="_blank">
-                                {subProperty._name}
-                              </a>
-                              : {subProperty._count}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  );
-                })}
-            </ul>
-          </Panel>
-          <Panel
-            header="Relationships"
-            key="2"
-            extra={
-              <Popover
-                content={() => {
-                  return (
-                    <div>
-                      <p>
-                        These are the known relations between resources of this
-                        type and other resources in this project.
-                        <br /> It also shows how many times these relations are
-                        observed.
-                      </p>
-                    </div>
-                  );
-                }}
-                trigger="click"
-                placement="bottomRight"
-              >
-                <Button
-                  onClick={event => event.stopPropagation()}
-                  size="small"
-                  icon={<InfoCircleOutlined />}
-                />
-              </Popover>
-            }
-          >
-            {relations && renderRelation(relations, typeStats)}
-          </Panel>
-        </Collapse>
+        <Collapse
+          items={[
+            {
+              key: '1',
+              label: 'Properties (coverage in resources)',
+              children: (
+                <ul>
+                  {typeStats._properties &&
+                    typeStats._properties.map((property: any) => {
+                      const formattedProCount = new Intl.NumberFormat('en-IN', {
+                        maximumSignificantDigits: 3,
+                      }).format(property._count);
+                      return (
+                        <li key={property._name}>
+                          <span>
+                            <a href={property['@id']} target="_blank">
+                              {property._name}
+                            </a>
+                            : {formattedProCount}{' '}
+                            {`(${(
+                              (property._count / typeStats._count) *
+                              100
+                            ).toPrecision(4)}%)`}
+                          </span>
+                          {property._properties && (
+                            <ul>
+                              {property._properties.map((subProperty: any) => (
+                                <li key={subProperty._name}>
+                                  <a href={subProperty['@id']} target="_blank">
+                                    {subProperty._name}
+                                  </a>
+                                  : {subProperty._count}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      );
+                    })}
+                </ul>
+              ),
+              extra: (
+                <Popover
+                  content={() => {
+                    return (
+                      <div>
+                        <p>
+                          These are the properties that are used to describe a
+                          resource of this type. <br />
+                          It also include how many resources use them and
+                          overall coverage.
+                        </p>
+                      </div>
+                    );
+                  }}
+                  trigger="click"
+                  placement="bottomRight"
+                >
+                  <Button
+                    onClick={event => event.stopPropagation()}
+                    size="small"
+                    icon={<InfoCircleOutlined />}
+                  />
+                </Popover>
+              ),
+            },
+            {
+              key: '2',
+              label: 'Relationships',
+              children: (
+                <>{relations && renderRelation(relations, typeStats)}</>
+              ),
+              extra: (
+                <Popover
+                  content={() => {
+                    return (
+                      <div>
+                        <p>
+                          These are the known relations between resources of
+                          this type and other resources in this project.
+                          <br /> It also shows how many times these relations
+                          are observed.
+                        </p>
+                      </div>
+                    );
+                  }}
+                  trigger="click"
+                  placement="bottomRight"
+                >
+                  <Button
+                    onClick={event => event.stopPropagation()}
+                    size="small"
+                    icon={<InfoCircleOutlined />}
+                  />
+                </Popover>
+              ),
+            },
+          ]}
+        />
       </div>
     </Drawer>
   );

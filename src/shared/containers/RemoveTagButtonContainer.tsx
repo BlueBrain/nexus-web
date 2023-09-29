@@ -75,13 +75,15 @@ const RemoveTagButton: React.FunctionComponent<{
       onClick={e => {
         setConfirm({ visible: true, tagName: e.key.toString(), busy: false });
       }}
-    >
-      {tags?.map(t => (
-        <Menu.Item key={t.tag}>
-          {t.tag} (<em>revision {t.rev} </em>)
-        </Menu.Item>
-      ))}
-    </Menu>
+      items={tags?.map(t => ({
+        key: t.tag,
+        label: (
+          <>
+            {t.tag} (<em>revision {t.rev} </em>)
+          </>
+        ),
+      }))}
+    />
   );
 
   return (
@@ -89,7 +91,7 @@ const RemoveTagButton: React.FunctionComponent<{
       <Spin spinning={confirm.busy}>
         <Popconfirm
           title={'Are you sure you want to remove the tag from the resource?'}
-          onConfirm={e => removeTag(confirm.tagName)}
+          onConfirm={() => removeTag(confirm.tagName)}
           okText="Yes"
           cancelText="No"
           onCancel={() =>
@@ -97,7 +99,7 @@ const RemoveTagButton: React.FunctionComponent<{
           }
           open={confirm.visible}
         >
-          <Dropdown disabled={!hasTags} overlay={menu}>
+          <Dropdown disabled={!hasTags} dropdownRender={() => menu}>
             <Button icon={<DeleteOutlined />}>
               Remove Tag <DownOutlined />
             </Button>
