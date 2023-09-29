@@ -8,8 +8,6 @@ import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 import ErrorBoundary from '../../shared/components/ErrorBoundary';
 
-const { Panel } = Collapse;
-
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
   goToResource?: (selfURL: string) => void;
@@ -112,15 +110,24 @@ const ResourcePlugins: React.FunctionComponent<{
           <div id={`plugin-collapsable-${index}`} style={{ marginBottom: 10 }}>
             <ErrorBoundary
               fallback={() => (
-                <Collapse key={pluginData.name}>
-                  <Panel key={pluginData.name} header={pluginData.name}>
-                    <h1>Something went wrong.</h1>
-                    <p>
-                      Check that the shape of the data matches the plugin's
-                      expectations.
-                    </p>
-                  </Panel>
-                </Collapse>
+                <Collapse
+                  key={pluginData.name}
+                  items={[
+                    {
+                      key: pluginData.name,
+                      label: pluginData.name,
+                      children: (
+                        <>
+                          <h1>Something went wrong.</h1>
+                          <p>
+                            Check that the shape of the data matches the
+                            plugin's expectations.
+                          </p>
+                        </>
+                      ),
+                    },
+                  ]}
+                />
               )}
               key={pluginData.name}
             >
@@ -132,26 +139,27 @@ const ResourcePlugins: React.FunctionComponent<{
                     ? pluginData.name
                     : undefined
                 }
-              >
-                <Panel
-                  header={pluginData.name}
-                  key={`${pluginData.name}`}
-                  extra={<PluginInfo plugin={pluginData} />}
-                >
-                  <div
-                    className="resource-plugin"
-                    key={`plugin-${pluginData.name}`}
-                  >
-                    <NexusPlugin
-                      nexusClient={nexus}
-                      url={pluginData.absoluteModulePath}
-                      pluginName={pluginData.name}
-                      resource={resource}
-                      goToResource={goToResource}
-                    />
-                  </div>
-                </Panel>
-              </Collapse>
+                items={[
+                  {
+                    key: `${pluginData.name}`,
+                    label: `${pluginData.name}`,
+                    children: (
+                      <div
+                        className="resource-plugin"
+                        key={`plugin-${pluginData.name}`}
+                      >
+                        <NexusPlugin
+                          nexusClient={nexus}
+                          url={pluginData.absoluteModulePath}
+                          pluginName={pluginData.name}
+                          resource={resource}
+                          goToResource={goToResource}
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </ErrorBoundary>
           </div>
         ) : null;

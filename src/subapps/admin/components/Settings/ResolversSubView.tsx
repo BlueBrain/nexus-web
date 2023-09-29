@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { isObject, orderBy } from 'lodash';
-import { Table, Button, Row, Input, Col, notification, Alert } from 'antd';
+import { orderBy } from 'lodash';
+import { Table, Button, Input, Alert } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useMutation, useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
-import ReactJson from 'react-json-view';
 import { easyValidURL } from '../../../../utils/validUrl';
 import './styles.scss';
 
@@ -115,7 +114,7 @@ const ResolversSubView = (props: Props) => {
       render: text => (
         <div>
           {text.map((item: string) => (
-            <div>{item}</div>
+            <div key={item}>{item}</div>
           ))}
         </div>
       ),

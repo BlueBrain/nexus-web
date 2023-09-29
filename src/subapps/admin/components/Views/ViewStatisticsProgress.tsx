@@ -37,7 +37,7 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
         </Button>
       ) : (
         <Tooltip title={label}>
-          <Progress type="circle" width={25} percent={percent} />
+          <Progress type="circle" size={25} percent={percent} />
         </Tooltip>
       )}
     </>

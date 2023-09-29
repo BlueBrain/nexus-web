@@ -171,23 +171,23 @@ const ResourceViewActionsContainer: React.FC<{
 
   const revisionMenuItems = React.useMemo(
     () => (
-      <Menu>
-        {[...Array(latestResource?._rev).keys()]
+      <Menu
+        items={[...Array(latestResource?._rev).keys()]
           .map(k => k + 1)
           .sort((a, b) => b - a)
-          .map(rev => (
-            <Menu.Item
-              key={rev}
-              onClick={() => {
-                goToResource(orgLabel, projectLabel, encodedResourceId, rev);
-              }}
-            >
-              Revision {rev}
-              {revisionLabels(rev).length > 0 &&
-                ` (${revisionLabels(rev).join(', ')})`}
-            </Menu.Item>
-          ))}
-      </Menu>
+          .map(rev => ({
+            key: rev,
+            onClick: () =>
+              goToResource(orgLabel, projectLabel, encodedResourceId, rev),
+            label: (
+              <>
+                Revision {rev}
+                {revisionLabels(rev).length > 0 &&
+                  ` (${revisionLabels(rev).join(', ')})`}
+              </>
+            ),
+          }))}
+      />
     ),
     [resource, latestResource, tags]
   );
@@ -207,7 +207,7 @@ const ResourceViewActionsContainer: React.FC<{
   return (
     <Row gutter={5}>
       <Col>
-        <Dropdown overlay={revisionMenuItems}>
+        <Dropdown dropdownRender={() => revisionMenuItems}>
           <Button>
             Revision {resource._rev}{' '}
             {revisionLabels(resource._rev).length > 0 &&
@@ -243,72 +243,78 @@ const ResourceViewActionsContainer: React.FC<{
                     );
                   }
                 }}
-                overlay={
-                  <Menu>
-                    <Menu.Item
-                      onClick={() => {
-                        const pathToResource = `${basePath}${generatePath(
-                          '/:orgLabel/:projectLabel/resources/:resourceId',
-                          {
-                            orgLabel,
-                            projectLabel,
-                            resourceId: encodedResourceId,
-                          }
-                        )}`;
+                dropdownRender={() => (
+                  <Menu
+                    items={[
+                      {
+                        key: 'url',
+                        label: 'URL',
+                        onClick: () => {
+                          const pathToResource = `${basePath}${generatePath(
+                            '/:orgLabel/:projectLabel/resources/:resourceId',
+                            {
+                              orgLabel,
+                              projectLabel,
+                              resourceId: encodedResourceId,
+                            }
+                          )}`;
 
-                        triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}`
-                        );
-                      }}
-                    >
-                      URL
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => {
-                        const pathToResource = `${basePath}${generatePath(
-                          '/:orgLabel/:projectLabel/resources/:resourceId',
-                          {
-                            orgLabel,
-                            projectLabel,
-                            resourceId: encodedResourceId,
-                          }
-                        )}`;
+                          triggerCopy(
+                            `${window.location.origin.toString()}${pathToResource}`
+                          );
+                        },
+                      },
+                      {
+                        key: 'url_with_revision',
+                        label: 'URL (with revision)',
+                        onClick: () => {
+                          const pathToResource = `${basePath}${generatePath(
+                            '/:orgLabel/:projectLabel/resources/:resourceId',
+                            {
+                              orgLabel,
+                              projectLabel,
+                              resourceId: encodedResourceId,
+                            }
+                          )}`;
 
-                        triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${
-                            resource._rev
-                          }`
-                        );
-                      }}
-                    >
-                      URL (with revision)
-                    </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
-                      ID
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() =>
-                        triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
-                      }
-                    >
-                      ID (with revision)
-                    </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
-                      Nexus address
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() =>
-                        triggerCopy(
-                          self
-                            ? `${self}?rev=${resource ? resource._rev : ''}`
-                            : ''
-                        )
-                      }
-                    >
-                      Nexus address (with revision)
-                    </Menu.Item>
-                  </Menu>
-                }
+                          triggerCopy(
+                            `${window.location.origin.toString()}${pathToResource}?rev=${
+                              resource._rev
+                            }`
+                          );
+                        },
+                      },
+                      {
+                        key: 'id',
+                        label: 'ID',
+                        onClick: () => triggerCopy(resource['@id']),
+                      },
+                      {
+                        key: 'id_with_revision',
+                        label: 'ID (with revision)',
+                        onClick: () =>
+                          triggerCopy(
+                            `${resource['@id']}?rev=${resource._rev}`
+                          ),
+                      },
+                      {
+                        key: 'nexus_address',
+                        label: 'Nexus address',
+                        onClick: () => triggerCopy(self ? self : ''),
+                      },
+                      {
+                        key: 'nexus_address_with_revision',
+                        label: 'Nexus address (with revision)',
+                        onClick: () =>
+                          triggerCopy(
+                            self
+                              ? `${self}?rev=${resource ? resource._rev : ''}`
+                              : ''
+                          ),
+                      },
+                    ]}
+                  />
+                )}
               >
                 {copySuccess ? 'Copied!' : 'Copy'}
               </Dropdown.Button>

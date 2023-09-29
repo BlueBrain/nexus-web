@@ -279,7 +279,7 @@ const MyDataTable: React.FC<TProps> = ({
             </div>
           );
         },
-        render: (text, record) => {
+        render: text => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
             return (
@@ -458,7 +458,7 @@ const MyDataTable: React.FC<TProps> = ({
 
   const onSelectAllChange = async (
     selected: boolean,
-    tSelectedRows: TMyDataTableRow[],
+    _: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
     const dataPanelLS: TResourceTableData = JSON.parse(
@@ -470,7 +470,7 @@ const MyDataTable: React.FC<TProps> = ({
     if (selected) {
       setFetchingResources(true);
 
-      const { results, errors } = await PromisePool.withConcurrency(4)
+      const { results } = await PromisePool.withConcurrency(4)
         .for(changeRows)
         .handleError(async err => {
           console.log(

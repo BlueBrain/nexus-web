@@ -166,7 +166,7 @@ const SearchBar: React.FC<{
     }
     return options;
   }, [value, projectList, studioList]);
-
+  console.log('SearchBar');
   return (
     <AutoComplete
       backfill={false}
@@ -178,8 +178,8 @@ const SearchBar: React.FC<{
       onSelect={handleSelect}
       onSearch={handleSearch}
       onKeyDown={handleKeyDown}
-      dropdownClassName="search-bar__drop"
-      dropdownMatchSelectWidth={false}
+      popupClassName="search-bar__drop"
+      popupMatchSelectWidth={false}
       /**
        * Autocomplete uses option value rather than key to differentiate so if there are multiple
        * options with the same value it's as if the last one was selected always which results in

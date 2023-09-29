@@ -194,6 +194,7 @@ const StoragesSubView = (props: Props) => {
               rowClassName="view-item-row"
               columns={columns}
               dataSource={(storagesData as TDataType[]) ?? []}
+              rowKey={item => item.id}
               sticky={true}
               size="small"
               pagination={false}

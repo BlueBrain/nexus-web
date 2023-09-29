@@ -217,12 +217,13 @@ const PermissionsAclsSubView = (props: Props) => {
               );
             }
             return (
-              <Collapse accordion bordered={false}>
-                {results?.map(({ id, path, data }, index) => (
-                  <Panel
-                    header={`Permissions applied to: ${path}`}
-                    key={`${id}:${index}`}
-                  >
+              <Collapse
+                accordion
+                bordered={false}
+                items={results?.map(({ id, path, data }, index) => ({
+                  key: `${id}:${index}`,
+                  label: `Permissions applied to: ${path}`,
+                  children: (
                     <Table
                       key={`table:${id}:${index}`}
                       className="views-table acls-table"
@@ -233,9 +234,9 @@ const PermissionsAclsSubView = (props: Props) => {
                       size="middle"
                       pagination={false}
                     />
-                  </Panel>
-                ))}
-              </Collapse>
+                  ),
+                }))}
+              />
             );
           })
           .otherwise(() => (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { animate, spring, glide } from 'motion';
+import { animate } from 'motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { AccessControl } from '@bbp/react-nexus';
 import { PlusOutlined } from '@ant-design/icons';
@@ -81,6 +81,7 @@ const CreationPanel: React.FC<{}> = () => {
             path={['/']}
             permissions={t.permissions}
             noAccessComponent={() => <></>}
+            key={t.title}
           >
             <CreationButton key={`cb-${camelCase(t.title)}`} {...{ ...t }} />
           </AccessControl>

@@ -1,3 +1,4 @@
+import React from 'react';
 import cytoscape from 'cytoscape';
 // @ts-ignore
 import avsdf from 'cytoscape-avsdf';

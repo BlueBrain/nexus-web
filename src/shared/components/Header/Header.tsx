@@ -59,88 +59,127 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   };
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   const menu = (
-    <Menu mode="inline" className="ant-menu-inline">
-      <Menu.Item className="link-menu-item" key="header-menu-my-profile">
-        <Link to="/user">
-          <UserOutlined style={headerIconStyle} />
-          My Profile
-        </Link>
-      </Menu.Item>
-      <Menu.Item className="link-menu-item" key="header-menu-my-date">
-        <Link to="/my-data">
-          <MenuOutlined style={headerIconStyle} />
-          My data
-        </Link>
-      </Menu.Item>
-      {token && (
-        <Menu.Item onClick={copyTokenCmd} key="header-menu-my-token">
-          <CopyOutlined style={headerIconStyle} />
-          Copy token
-        </Menu.Item>
-      )}
-      <Menu.SubMenu
-        key="header-menu-resources"
-        className="submenu-overlay-custom"
-        popupClassName="submenu-overlay-custom-popup"
-        title={
-          <>
-            <BookOutlined style={headerIconStyle} />
-            <span>Resources</span>
-          </>
-        }
-      >
-        <Menu.Item key="header-menu-resources-docs">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://bluebrainnexus.io/docs/index.html"
-          >
-            <FileTextOutlined style={headerIconStyle} />
-            <span>Documentation</span>
-          </a>
-        </Menu.Item>
-        <Menu.Item key="header-menu-resources-web">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://bbp.epfl.ch/nexus/webprotege/"
-          >
-            <LinkOutlined style={headerIconStyle} />
-            <span>Web Protégé</span>
-          </a>
-        </Menu.Item>
-        <Menu.Item key="header-menu-resources-atlas">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href={
-              environment === 'dev'
-                ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/'
-                : 'https://bbp.epfl.ch/nexus/cell-atlas/'
+    <Menu
+      className="ant-menu-inline"
+      items={[
+        {
+          key: 'header-menu-my-profile',
+          label: (
+            <Link to="/user">
+              <UserOutlined style={headerIconStyle} />
+              My Profile
+            </Link>
+          ),
+          className: 'link-menu-item',
+        },
+        {
+          key: 'header-menu-my-date',
+          label: (
+            <Link to="/my-data">
+              <MenuOutlined style={headerIconStyle} />
+              My data
+            </Link>
+          ),
+          className: 'link-menu-item',
+        },
+        ...(token
+          ? [
+              {
+                key: 'header-menu-my-token',
+                label: (
+                  <>
+                    <CopyOutlined style={headerIconStyle} />
+                    Copy token
+                  </>
+                ),
+                onClick: () => copyTokenCmd(),
+              },
+            ]
+          : []),
+        {
+          key: 'header-menu-resources',
+          label: (
+            <>
+              <BookOutlined style={headerIconStyle} />
+              <span>Resources</span>
+            </>
+          ),
+          className: 'submenu-overlay-custom',
+          popupClassName: 'submenu-overlay-custom-popup',
+          children: [
+            {
+              key: 'header-menu-resources-docs',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://bluebrainnexus.io/docs/index.html"
+                >
+                  <FileTextOutlined style={headerIconStyle} />
+                  <span>Documentation</span>
+                </a>
+              ),
+            },
+            {
+              key: 'header-menu-resources-web',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://bbp.epfl.ch/nexus/webprotege/"
+                >
+                  <LinkOutlined style={headerIconStyle} />
+                  <span>Web Protégé</span>
+                </a>
+              ),
+            },
+            {
+              key: 'header-menu-resources-atlas',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={
+                    environment === 'dev'
+                      ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/'
+                      : 'https://bbp.epfl.ch/nexus/cell-atlas/'
+                  }
+                >
+                  <LinkOutlined style={headerIconStyle} />
+                  <span>Atlas</span>
+                </a>
+              ),
+            },
+          ],
+        },
+        {
+          key: 'header-menu-about',
+          className: 'link-menu-item',
+          onClick: () => openAboutModal(),
+          label: (
+            <>
+              <SettingOutlined style={headerIconStyle} />
+              About
+            </>
+          ),
+        },
+        {
+          key: 'logout',
+          className: 'menu-item-logout',
+          onClick: event => {
+            if (handleLogout) {
+              handleLogout(event);
             }
-          >
-            <LinkOutlined style={headerIconStyle} />
-            <span>Atlas</span>
-          </a>
-        </Menu.Item>
-      </Menu.SubMenu>
-      <Menu.Item
-        key="header-menu-about"
-        className="link-menu-item"
-        onClick={openAboutModal}
-      >
-        <SettingOutlined style={headerIconStyle} />
-        About
-      </Menu.Item>
-      <Menu.Item
-        key="logout"
-        onClick={handleLogout}
-        className="menu-item-logout"
-      >
-        <LogoutOutlined style={headerIconStyle} />
-        Logout
-      </Menu.Item>
-    </Menu>
+          },
+          label: (
+            <>
+              <LogoutOutlined style={headerIconStyle} />
+              Logout
+            </>
+          ),
+        },
+      ]}
+    />
   );
   const showCreationPanel = location.pathname === '/search';
   const handleOpenCreationPanel = () =>
@@ -173,7 +212,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
           {name && (
             <Dropdown
               trigger={['click']}
-              overlay={menu}
+              dropdownRender={() => menu}
               overlayClassName="menu-overlay-custom"
               getPopupContainer={() => document.getElementById('main-header')!}
             >
