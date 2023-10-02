@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
@@ -7,6 +7,9 @@ import { isString } from 'lodash';
 import PromisePool from '@supercharge/promise-pool';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+import { SearchResponse } from 'shared/types/search';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -15,8 +18,10 @@ export const usePaginatedExpandedResources = ({
   deprecated,
   types,
   typeOperator,
+  predicateQuery,
 }: PaginatedResourcesParams) => {
   const nexus = useNexusContext();
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
   return useQuery({
     queryKey: [
       'data-explorer',
@@ -24,6 +29,7 @@ export const usePaginatedExpandedResources = ({
         pageSize,
         offset,
         orgAndProject,
+        predicateQuery,
         ...(types?.length
           ? {
               types,
@@ -34,6 +40,18 @@ export const usePaginatedExpandedResources = ({
     ],
     retry: false,
     queryFn: async () => {
+      if (predicateQuery && orgAndProject) {
+        return getResultsForPredicateQuery(
+          nexus,
+          apiEndpoint,
+          orgAndProject[0],
+          orgAndProject[1],
+          predicateQuery,
+          pageSize,
+          offset
+        );
+      }
+
       const resultWithPartialResources = await nexus.Resource.list(
         orgAndProject?.[0],
         orgAndProject?.[1],
@@ -48,39 +66,14 @@ export const usePaginatedExpandedResources = ({
         }
       );
 
-      // If we failed to fetch the expanded source for some resources, we can use the compact/partial resource as a fallback.
-      const fallbackResources: Resource[] = [];
-      const { results: expandedResources } = await PromisePool.withConcurrency(
-        4
-      )
-        .for(resultWithPartialResources._results)
-        .handleError(async (err, partialResource) => {
-          console.log(
-            `@@error in fetching resource with id: ${partialResource['@id']}`,
-            err
-          );
-          fallbackResources.push(partialResource);
-          return;
-        })
-        .process(async partialResource => {
-          if (partialResource._project) {
-            const { org, project } = makeOrgProjectTuple(
-              partialResource._project
-            );
-
-            return (await nexus.Resource.get(
-              org,
-              project,
-              encodeURIComponent(partialResource['@id']),
-              { annotate: true }
-            )) as Resource;
-          }
-
-          return partialResource;
-        });
+      const expandedResources = await fetchMultipleResources(
+        nexus,
+        apiEndpoint,
+        resultWithPartialResources._results
+      );
       return {
         ...resultWithPartialResources,
-        _results: [...expandedResources, ...fallbackResources],
+        _results: expandedResources,
       };
     },
     onError: error => {
@@ -100,6 +93,62 @@ export const usePaginatedExpandedResources = ({
     },
     staleTime: Infinity,
   });
+};
+
+export type NexusResourceFormats =
+  | 'source'
+  | 'compacted'
+  | 'expanded'
+  | 'n-triples'
+  | 'dot';
+export type NexusMultiFetchResponse = {
+  format: NexusResourceFormats;
+  resources: { value: Resource }[];
+};
+
+type PartialResource = Pick<Resource, '@id' | '_project'>;
+
+export const fetchMultipleResources = async (
+  nexus: ReturnType<typeof useNexusContext>,
+  apiEndpoint: string,
+  partialResources: PartialResource[],
+  orgAndProject?: string
+): Promise<Resource[]> => {
+  const resourceData = partialResources
+    .filter(resource => resource._project)
+    .map(resource => {
+      if (orgAndProject) {
+        return {
+          id: resource['@id'],
+          project: orgAndProject,
+        };
+      }
+
+      const { org, project } = makeOrgProjectTuple(resource._project);
+
+      return {
+        id: resource['@id'],
+        project: `${org}/${project}`,
+      };
+    });
+  console.log(
+    'Going to multi fetch',
+    resourceData.map(r => r.id)
+  );
+  const multipleResources: NexusMultiFetchResponse = await nexus
+    .httpPost({
+      path: `${apiEndpoint}/multi-fetch/resources`,
+      headers: { Accept: 'application/json' },
+      body: JSON.stringify({
+        format: 'compacted',
+        resources: resourceData,
+      }),
+    })
+    .catch(() => {
+      return { format: 'compacted', value: [] };
+    });
+
+  return multipleResources.resources.map(({ value }) => ({ ...value }));
 };
 
 export const useAggregations = (
@@ -129,6 +178,7 @@ export const useAggregations = (
 };
 
 export type GraphAnalyticsProperty = {
+  '@id'?: string; // TODO Make necessory
   _name: string;
   _count?: number;
   _properties: GraphAnalyticsProperty[];
@@ -156,9 +206,54 @@ export const useGraphAnalyticsPath = (
       )) as GraphAnalyticsResponse;
     },
     select: data => {
-      return getUniquePathsForProperties(data._properties);
+      return getPathsForProperties(data._properties);
     },
   });
+};
+
+const getResultsForPredicateQuery = async (
+  nexus: ReturnType<typeof useNexusContext>,
+  apiEndpoint: string,
+  org: string,
+  project: string,
+  query: Object,
+  pageSize: number,
+  offset: number
+) => {
+  const searchResults: SearchResponse<{
+    '@id': string;
+    _project: string;
+  }> = await nexus.httpPost({
+    path: `${apiEndpoint}/graph-analytics/${org}/${project}/_search`,
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      from: offset,
+      size: pageSize,
+      ...query,
+    }),
+  });
+
+  const resourcesToFetch = searchResults.hits.hits.map(matching => ({
+    '@id': matching._source['@id'],
+    _project: matching._source['_project'],
+  }));
+  console.log(
+    'Requesting matching resources',
+    resourcesToFetch.map(r => r['@id'])
+  );
+  const matchingResources = await fetchMultipleResources(
+    nexus,
+    apiEndpoint,
+    resourcesToFetch
+  );
+
+  return {
+    _results: matchingResources,
+    _total: searchResults.hits.total.value,
+  } as PaginatedList<Resource>;
 };
 
 export const getUniquePathsForProperties = (
@@ -173,6 +268,30 @@ export const getUniquePathsForProperties = (
   });
 
   return Array.from(new Set(paths));
+};
+
+export type PropertyPath = {
+  label: string;
+  value: string;
+};
+
+export const getPathsForProperties = (
+  properties: GraphAnalyticsProperty[],
+  paths: PropertyPath[] = [],
+  pathSoFar?: string,
+  valueSoFar?: string
+): PropertyPath[] => {
+  properties?.forEach(property => {
+    const label = pathSoFar ? `${pathSoFar}.${property._name}` : property._name;
+    const value = valueSoFar
+      ? `${valueSoFar} / ${property['@id']!}`
+      : property['@id']!;
+    paths.push({ label, value });
+    getPathsForProperties(property._properties ?? [], paths, label, value);
+  });
+
+  const uniquePaths = new Set(paths.map(path => path.value));
+  return paths.filter(path => uniquePaths.has(path.value));
 };
 
 export const sortColumns = (a: string, b: string) => {
@@ -250,6 +369,7 @@ interface PaginatedResourcesParams {
   deprecated: boolean;
   types?: string[];
   typeOperator: TTypeOperator;
+  predicateQuery: Object | null;
 }
 
 export const useTimeoutMessage = ({

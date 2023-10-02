@@ -40,7 +40,8 @@ export interface DataExplorerConfiguration {
   offset: number;
   orgAndProject?: [string, string];
   types?: TType[];
-  predicate: ((resource: Resource) => boolean) | null;
+  frontendPredicate: ((resource: Resource) => boolean) | null;
+  backendPredicateQuery: Object | null;
   selectedPath: string | null;
   deprecated: boolean;
   columns: TColumn[];
@@ -122,6 +123,7 @@ export const columnsFromDataSource = (
     )
     .sort(sortColumns);
 };
+
 const DataExplorer: React.FC<{}> = () => {
   const history = useHistory();
   const [showMetadataColumns, setShowMetadataColumns] = useState(false);
@@ -137,7 +139,11 @@ const DataExplorer: React.FC<{}> = () => {
       pageSize,
       offset,
       orgAndProject,
-      predicate,
+      // NOTE: Right now, the `EXISTS` and `DOES_NOT_EXIST` predicates run on the backend and update the `backendPredicateQuery` parameter.
+      // `CONTAINS` and `DOES_NOT_CONTAIN` predicates on the other hand, only run on frontend and update `frontendPredicate` parameter.
+      // When we implement running all the predicates on backend, we should discard `frontendPredicate` parameter completely.
+      frontendPredicate,
+      backendPredicateQuery,
       types,
       selectedPath,
       deprecated,
@@ -158,7 +164,8 @@ const DataExplorer: React.FC<{}> = () => {
       offset: 0,
       orgAndProject: undefined,
       types: [],
-      predicate: null,
+      frontendPredicate: null,
+      backendPredicateQuery: null,
       selectedPath: null,
       deprecated: false,
       columns: [],
@@ -173,12 +180,13 @@ const DataExplorer: React.FC<{}> = () => {
     deprecated,
     typeOperator,
     types: types?.map(t => t.value),
+    predicateQuery: backendPredicateQuery,
   });
 
   const currentPageDataSource: Resource[] = resources?._results || [];
 
-  const displayedDataSource = predicate
-    ? currentPageDataSource.filter(predicate)
+  const displayedDataSource = frontendPredicate
+    ? currentPageDataSource.filter(frontendPredicate)
     : currentPageDataSource;
 
   const buildColumns = useMemo(() => {
@@ -224,6 +232,7 @@ const DataExplorer: React.FC<{}> = () => {
     updateTableConfiguration({ columns: newColumns });
     updateSelectedColumnsCached(newColumns);
   };
+
   useEffect(() => {
     const selectedFilters = getSelectedFiltersCached();
     if (selectedFilters) {
@@ -286,8 +295,7 @@ const DataExplorer: React.FC<{}> = () => {
     return () => unlisten();
   }, []);
 
-  const shouldShowPredicateSelector =
-    orgAndProject?.length === 2 && types?.length === 1;
+  const shouldShowPredicateSelector = orgAndProject?.length === 2;
 
   return (
     <div className="data-explorer-contents" ref={containerRef}>
@@ -359,7 +367,7 @@ const DataExplorer: React.FC<{}> = () => {
                 onResetCallback={onResetPredicateCallback}
                 org={orgAndProject![0]}
                 project={orgAndProject![1]}
-                types={types!.map(type => type.value)}
+                types={types}
               />
             ) : null}
           </div>
@@ -380,7 +388,9 @@ const DataExplorer: React.FC<{}> = () => {
             types={types}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
-            totalFiltered={predicate ? displayedDataSource.length : undefined}
+            totalFiltered={
+              frontendPredicate ? displayedDataSource.length : undefined
+            }
           />
           <div className="data-explorer-toggles">
             <Switch

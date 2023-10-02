@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   dataExplorerPageHandler,
+  elasticSearchQueryHandler,
   filterByProjectHandler,
   getCompleteResources,
   getMockResource,
@@ -24,6 +25,7 @@ import {
   DOES_NOT_CONTAIN,
   DOES_NOT_EXIST,
   EXISTS,
+  FRONTEND_PREDICATE_WARNING,
   getAllPaths,
 } from './PredicateSelector';
 import { createMemoryHistory } from 'history';
@@ -45,7 +47,7 @@ describe('DataExplorer', () => {
   ];
 
   const server = setupServer(
-    dataExplorerPageHandler(undefined, defaultTotalResults),
+    ...dataExplorerPageHandler(undefined, defaultTotalResults),
     sourceResourceHandler(),
     filterByProjectHandler(),
     graphAnalyticsTypeHandler()
@@ -64,7 +66,12 @@ describe('DataExplorer', () => {
       fetch,
       uri: deltaPath(),
     });
-    const store = configureStore(history, { nexus }, {});
+
+    const store = configureStore(
+      history,
+      { nexus },
+      { config: { apiEndpoint: 'https://localhost:3000' } }
+    );
 
     dataExplorerPage = (
       <Provider store={store}>
@@ -109,9 +116,6 @@ describe('DataExplorer', () => {
   const expectRowCountToBe = async (expectedRowsCount: number) => {
     return await waitFor(() => {
       const rows = visibleTableRows();
-      rows.forEach(row => {
-        // console.log('MY ROW', row.innerHTML)
-      });
       expect(rows.length).toEqual(expectedRowsCount);
       return rows;
     });
@@ -141,6 +145,7 @@ describe('DataExplorer', () => {
       selector: 'th .ant-table-column-title',
       exact: false,
     });
+
     expect(header).toBeInTheDocument();
     return header;
   };
@@ -236,7 +241,7 @@ describe('DataExplorer', () => {
   ) => {
     server.use(
       sourceResourceHandler(resources),
-      dataExplorerPageHandler(resources, total)
+      ...dataExplorerPageHandler(resources, total)
     );
 
     const pageInput = await screen.getByRole('listitem', { name: '2' });
@@ -353,6 +358,17 @@ describe('DataExplorer', () => {
     await getRowsForNextPage(resources);
     await expectRowCountToBe(resources.length);
     server.use(filterByProjectHandler(mockResourcesForPage2));
+  };
+
+  const mockElasticSearchHits = (
+    path: string,
+    predicate: typeof EXISTS | typeof DOES_NOT_EXIST,
+    resources: Resource[]
+  ) => {
+    const matchingResources = resources.filter(res =>
+      predicate === EXISTS ? res[path] : !res[path]
+    );
+    server.use(elasticSearchQueryHandler(matchingResources));
   };
 
   const getResetProjectButton = async () => {
@@ -513,7 +529,7 @@ describe('DataExplorer', () => {
       mock100Resources.push(getMockResource(`self${i}`, {}));
     }
 
-    server.use(dataExplorerPageHandler(mock100Resources));
+    server.use(...dataExplorerPageHandler(mock100Resources));
 
     const pageSizeChanger = await screen.getByRole('combobox', {
       name: 'Page Size',
@@ -673,12 +689,14 @@ describe('DataExplorer', () => {
   it('shows resources that have path missing', async () => {
     await updateResourcesShownInTable(mockResourcesForPage2);
 
+    mockElasticSearchHits('author', DOES_NOT_EXIST, mockResourcesForPage2);
     await selectPath('author');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(1);
 
     await resetPredicate();
 
+    mockElasticSearchHits('edition', DOES_NOT_EXIST, mockResourcesForPage2);
     await selectPath('edition');
     await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
     await expectRowCountToBe(2);
@@ -718,11 +736,8 @@ describe('DataExplorer', () => {
   });
 
   it('shows resources that have a path when user selects exists predicate', async () => {
-    await updateResourcesShownInTable([
-      getMockResource('self1', { author: 'piggy', edition: 1 }),
-      getMockResource('self2', { author: ['iggy', 'twinky'] }),
-      getMockResource('self3', { year: 2013 }),
-    ]);
+    await updateResourcesShownInTable(mockResourcesForPage2);
+    mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
 
     await selectPath('author');
     await userEvent.click(container);
@@ -798,20 +813,61 @@ describe('DataExplorer', () => {
     expect(totalFromFrontend).toEqual(null);
   });
 
-  it('shows total filtered count if predicate is selected', async () => {
+  it('does not show total filtered count if backend predicate is selected', async () => {
     await expectRowCountToBe(10);
     await updateResourcesShownInTable(mockResourcesForPage2);
+    mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
 
     await selectPath('author');
     await userEvent.click(container);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
     await expectRowCountToBe(2);
-    const totalFromFrontendAfter = await getFilteredResultsCount(2);
-    expect(totalFromFrontendAfter).toBeVisible();
+    expect(await getFilteredResultsCount()).toBeFalsy();
+
+    mockElasticSearchHits('author', DOES_NOT_EXIST, mockResourcesForPage2);
+    await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_EXIST);
+    await expectRowCountToBe(1);
+    expect(await getFilteredResultsCount()).toBeFalsy();
+  });
+
+  it('shows filtered count if frontend predicate is selected', async () => {
+    await updateResourcesShownInTable(mockResourcesForPage2);
+
+    await selectPath('author');
+    await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
+    const valueInput = await screen.getByPlaceholderText('Search for...');
+    await userEvent.type(valueInput, 'twinky');
+    await expectRowCountToBe(1);
+
+    expect(await getFilteredResultsCount(1)).toBeVisible();
+  });
+
+  it('shows predicate warning if frontend predicate is selected', async () => {
+    await updateResourcesShownInTable(mockResourcesForPage2);
+
+    await selectPath('author');
+    await selectOptionFromMenu(PredicateMenuLabel, CONTAINS);
+
+    expect(await screen.getByText(FRONTEND_PREDICATE_WARNING)).toBeVisible();
+
+    await selectOptionFromMenu(PredicateMenuLabel, DOES_NOT_CONTAIN);
+    expect(await screen.getByText(FRONTEND_PREDICATE_WARNING)).toBeVisible();
+  });
+
+  it('does not show predicate warning if backend predicate is selected', async () => {
+    await updateResourcesShownInTable(mockResourcesForPage2);
+
+    await selectPath('author');
+    await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+
+    expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
+    await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+    expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
   });
 
   it('shows column for metadata path even if toggle for show metadata is off', async () => {
     const metadataProperty = '_createdBy';
+    mockElasticSearchHits(metadataProperty, EXISTS, mockResourcesOnPage1);
     await expectRowCountToBe(10);
 
     await expectColumHeaderToNotExist(metadataProperty);
@@ -820,6 +876,8 @@ describe('DataExplorer', () => {
 
     await selectPath(metadataProperty);
     await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+
+    await expectRowCountToBe(10);
 
     await expectColumHeaderToExist(metadataProperty);
     expect(getTotalColumns().length).toEqual(originalColumns + 1);
@@ -830,8 +888,10 @@ describe('DataExplorer', () => {
 
   it('resets predicate fields when reset predicate clicked', async () => {
     await updateResourcesShownInTable(mockResourcesForPage2);
+    mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
 
     await selectPath('author');
+
     await selectPredicate(EXISTS);
 
     const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
@@ -985,17 +1045,17 @@ describe('DataExplorer', () => {
     expect((valueInputAfter as HTMLInputElement).value).not.toEqual('iggy');
   });
 
-  it('does not show predicate selector if multiple types are selected', async () => {
+  it('disables predicate selector if multiple types are selected', async () => {
     await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
     await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
 
-    expect(await getInputForLabel(PathMenuLabel)).toBeVisible();
+    expect(await getInputForLabel(PathMenuLabel)).toBeEnabled();
 
     await selectOptionFromMenu(
       TypeMenuLabel,
       'StudioDashboard',
       TypeOptionSelector
     );
-    expect(getInputForLabel(PathMenuLabel)).rejects.toThrow();
+    expect(await getInputForLabel(PathMenuLabel)).toBeDisabled();
   });
 });

@@ -4,6 +4,7 @@ import { Resource } from '@bbp/nexus-sdk';
 import {
   AggregatedBucket,
   AggregationsResult,
+  NexusMultiFetchResponse,
 } from 'subapps/dataExplorer/DataExplorerUtils';
 
 export const getCompleteResources = (
@@ -16,26 +17,40 @@ export const dataExplorerPageHandler = (
   partialResources: Resource[] = defaultPartialResources,
   total: number = 300
 ) => {
-  return rest.get(deltaPath(`/resources`), (req, res, ctx) => {
-    if (req.url.searchParams.has('aggregations')) {
-      return res(ctx.status(200), ctx.json(mockAggregationsResult()));
-    }
-    const passedType = req.url.searchParams.get('type');
-    const mockResponse = {
-      '@context': [
-        'https://bluebrain.github.io/nexus/contexts/metadata.json',
-        'https://bluebrain.github.io/nexus/contexts/search.json',
-        'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-      ],
-      _total: total,
-      _results: passedType
-        ? partialResources.filter(res => res['@type'] === passedType)
-        : partialResources,
-      _next:
-        'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
-    };
-    return res(ctx.status(200), ctx.json(mockResponse));
-  });
+  return [
+    rest.get(deltaPath(`/resources`), (req, res, ctx) => {
+      if (req.url.searchParams.has('aggregations')) {
+        return res(ctx.status(200), ctx.json(mockAggregationsResult()));
+      }
+      const passedType = req.url.searchParams.get('type');
+      const mockResponse = {
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrain.github.io/nexus/contexts/search.json',
+          'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+        ],
+        _total: total,
+        _results: passedType
+          ? partialResources.filter(res => res['@type'] === passedType)
+          : partialResources,
+        _next:
+          'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
+      };
+      return res(ctx.status(200), ctx.json(mockResponse));
+    }),
+    rest.post(deltaPath('/multi-fetch/resources'), (req, res, ctx) => {
+      const requestedIds = ((req.body as any)?.resources).map(
+        (res: { id: string }) => res.id
+      );
+      const response: NexusMultiFetchResponse = {
+        format: 'compacted',
+        resources: partialResources
+          .filter(res => requestedIds.includes(res['@id']))
+          .map(r => ({ value: { ...r, ...propertiesOnlyInSource } })),
+      };
+      return res(ctx.status(200), ctx.json(response));
+    }),
+  ];
 };
 
 export const graphAnalyticsTypeHandler = () => {
@@ -60,12 +75,12 @@ export const graphAnalyticsTypeHandler = () => {
             _name: 'propertyAlwaysThere',
           },
           {
-            '@id': 'https://neuroshapes.org/nr__number_stems',
+            '@id': 'https://neuroshapes.org/createdBy',
             _count: 30,
             _name: '_createdBy',
           },
           {
-            '@id': 'https://neuroshapes.org/nr__number_stems',
+            '@id': 'https://neuroshapes.org/edition',
             _count: 30,
             _name: 'edition',
           },
@@ -145,6 +160,30 @@ export const filterByProjectHandler = (
     };
     return res(ctx.status(200), ctx.json(mockResponse));
   });
+};
+
+export const elasticSearchQueryHandler = (resources: Resource[]) => {
+  return rest.post(
+    deltaPath('/graph-analytics/:org/:project/_search'),
+    (req, res, ctx) => {
+      const esResponse = {
+        hits: {
+          hits: resources.map(resource => ({
+            _id: resource['@id'],
+            _source: {
+              '@id': resource['@id'],
+              _project: resource._project,
+            },
+          })),
+          max_score: 0,
+          total: {
+            value: 479,
+          },
+        },
+      };
+      return res(ctx.status(200), ctx.json(esResponse));
+    }
+  );
 };
 
 const mockAggregationsResult = (
