@@ -22,7 +22,7 @@ const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
 const rawBase = process.env.BASE_PATH || '';
 // to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
 const pluginsManifestPath =
-  process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
+  process.env.PLUGINS_MANIFEST_PATH || '/plugins';
 
 // configure instance logo
 const layoutSettings = {
@@ -133,9 +133,13 @@ async function injectStaticMiddleware(
 }
 
 async function transformer(html, req) {
-  const realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json().catch((error) => {
+  let realms;
+  try {
+    realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json()
+  } catch (error) {
     console.error('[ERROR] Fetch Realms Server Side', error);
-  });
+    realms = { _results: [], _total: 0 };
+  }
   const preloadedState = {
     auth: {
       realms: { data: realms },
@@ -147,6 +151,7 @@ async function transformer(html, req) {
       pluginsManifestPath,
       subAppsManifestPath,
       dataModelsLocation,
+      mode: Config.mode,
       apiEndpoint: process.env.PROXY
         ? '/proxy'
         : process.env.API_ENDPOINT || '',
@@ -230,6 +235,7 @@ async function transformer(html, req) {
   const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
   const regexHtml = /<html(.*?)/gi;
   const htmlTag = `<html ${helmet.htmlAttributes.toString()}`;
+
   let dom = html
     .replace(regexHtml, htmlTag)
     .replace(regexBody, bodyTag)
@@ -251,10 +257,26 @@ async function transformer(html, req) {
         '\\u003c'
       )};
       </script>`
+    )
+    .replace(
+      '<!--scripts-->',
+      `
+        <script src="https://www.unpkg.com/systemjs@6.1.7/dist/system.js"></script>
+        <script src="https://www.unpkg.com/systemjs@6.1.7/dist/extras/named-exports.js"></script>
+        <script type="systemjs-importmap">
+        {
+          "imports": {
+            "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
+            "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
+          }
+        }
+      </script>
+    `
     );
 
   return dom;
 }
+{/* <script src="https://unpkg.com/browse/antd@4.9.1/dist/antd.min.js"></script> */}
 
 function isStaticFilePath(path) {
   return path.match(/(\.\w+$)|@vite|@id|@react-refresh/);
