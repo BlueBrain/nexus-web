@@ -402,7 +402,6 @@ const MyDataTable: React.FC<TProps> = ({
     record,
     selected
   ) => {
-    console.log('@@onSelectRowChange', selected && 'selected', record['@id']);
     const recordKey = record._self;
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
@@ -462,7 +461,6 @@ const MyDataTable: React.FC<TProps> = ({
     _: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
-    console.log('@@onSelectAllChange', selected && 'selected', changeRows.length);
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -503,7 +501,6 @@ const MyDataTable: React.FC<TProps> = ({
 
       setFetchingResources(false);
     } else {
-      console.log('@@')
       const rowKeysToRemove = changeRows.map(r => r._self);
 
       selectedRowKeys = selectedRowKeys.filter(
@@ -594,9 +591,6 @@ const MyDataTable: React.FC<TProps> = ({
         selectedRowKeys,
         onSelect: onSelectRowChange,
         onSelectAll: onSelectAllChange,
-        onChange: (...args) => {
-          console.log('@@onChange', args)
-        }
       }}
       locale={{
         emptyText() {
