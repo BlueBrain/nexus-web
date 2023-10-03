@@ -32,9 +32,7 @@ try {
   composeEnhancers = compose;
 }
 
-const logger = createLogger({
-  // ...options
-});
+const logger = createLogger({});
 
 function configureStore(
   history: History,
@@ -54,7 +52,9 @@ function configureStore(
       applyMiddleware(
         thunk.withExtraArgument({ nexus }),
         routerMiddleware(history),
-        DataExplorerFlowSliceListener.middleware
+        DataExplorerFlowSliceListener.middleware,
+        // @ts-ignore
+        import.meta.env.MODE === 'development' && logger
       )
     )
   );
