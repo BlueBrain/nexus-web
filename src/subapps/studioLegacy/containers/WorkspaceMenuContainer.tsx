@@ -387,6 +387,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<EditOutlined />}
+              data-testid="editWorkspace"
               onClick={e => {
                 setShowEdit(true);
               }}
