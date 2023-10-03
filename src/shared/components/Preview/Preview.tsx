@@ -54,17 +54,21 @@ const Preview: React.FC<{
   collapsed,
   handleCollapseChanged: handleCollapsedChanged,
 }) => {
-    const { apiEndpoint } = useSelector((state: RootState) => state.config);
-    const notification = useNotification();
-    const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
-    const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
-    const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-    const renderFileSize = (contentSize: {
-      value: string;
-      unitCode?: string;
-    }) => {
-      if (!contentSize) {
-        return '-';
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+  const notification = useNotification();
+  const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
+  const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
+  const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
+  const renderFileSize = (contentSize: {
+    value: string;
+    unitCode?: string;
+  }) => {
+    if (!contentSize) {
+      return '-';
+    }
+    if (contentSize.unitCode) {
+      if (contentSize.unitCode.toLocaleLowerCase() === 'kilo bytes') {
+        return `${contentSize.value} KB`;
       }
       if (contentSize.unitCode.toLocaleLowerCase() === 'mega bytes') {
         return `${contentSize.value} MB`;
@@ -176,6 +180,11 @@ const Preview: React.FC<{
       if (sizeInMB !== '0.00') {
         return `${sizeInMB} MB`;
       }
+    }
+    const sizeInMB = (parseInt(contentSize.value, 10) / 1000000).toFixed(2);
+    if (sizeInMB !== '0.00') {
+      return `${sizeInMB} MB`;
+    }
 
       return `${contentSize.value} Bytes`;
     };
