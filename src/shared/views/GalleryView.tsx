@@ -68,7 +68,7 @@ const GalleryView: React.FC = () => {
       refresh: true,
     });
     setDrawerVisible(false);
-  }
+  };
   /* custom logic for hiding drawer component when clicking outside of it */
   React.useEffect(() => {
     const handleClickOutsideWrapper = (event: Event) => {
@@ -125,7 +125,7 @@ const GalleryView: React.FC = () => {
             key="resource-modal"
             path={'/:orgLabel/:projectLabel/resources/:resourceId'}
             render={() => (
-              <div ref={wrapperRef} style={{ width: '100%', height: '100%'}}>
+              <div ref={wrapperRef} style={{ width: '100%', height: '100%' }}>
                 <ResourceViewContainer />
               </div>
             )}
