@@ -93,9 +93,14 @@ const ResourcePlugins: React.FunctionComponent<{
             ?.pluginComponent;
           if (builtInComponent) {
             return (
-              <ErrorBoundary key={plugin} fallback={Fallback}>
-                {builtInComponent}
-              </ErrorBoundary>
+              <div
+                id={`plugin-collapsable-${index}`}
+                style={{ marginBottom: 10 }}
+              >
+                <ErrorBoundary key={plugin} fallback={Fallback}>
+                  {builtInComponent}
+                </ErrorBoundary>
+              </div>
             );
           }
           return null;
@@ -104,49 +109,51 @@ const ResourcePlugins: React.FunctionComponent<{
         const pluginData = pluginDataMap.find(p => p?.key === plugin);
 
         return pluginData ? (
-          <ErrorBoundary
-            fallback={() => (
-              <Collapse key={pluginData.name}>
-                <Panel key={pluginData.name} header={pluginData.name}>
-                  <h1>Something went wrong.</h1>
-                  <p>
-                    Check that the shape of the data matches the plugin's
-                    expectations.
-                  </p>
+          <div id={`plugin-collapsable-${index}`} style={{ marginBottom: 10 }}>
+            <ErrorBoundary
+              fallback={() => (
+                <Collapse key={pluginData.name}>
+                  <Panel key={pluginData.name} header={pluginData.name}>
+                    <h1>Something went wrong.</h1>
+                    <p>
+                      Check that the shape of the data matches the plugin's
+                      expectations.
+                    </p>
+                  </Panel>
+                </Collapse>
+              )}
+              key={pluginData.name}
+            >
+              <Collapse
+                key={pluginData.name}
+                onChange={e => handleCollapseChange(pluginData.name)}
+                activeKey={
+                  openPlugins.includes(pluginData.name)
+                    ? pluginData.name
+                    : undefined
+                }
+              >
+                <Panel
+                  header={pluginData.name}
+                  key={`${pluginData.name}`}
+                  extra={<PluginInfo plugin={pluginData} />}
+                >
+                  <div
+                    className="resource-plugin"
+                    key={`plugin-${pluginData.name}`}
+                  >
+                    <NexusPlugin
+                      nexusClient={nexus}
+                      url={pluginData.absoluteModulePath}
+                      pluginName={pluginData.name}
+                      resource={resource}
+                      goToResource={goToResource}
+                    />
+                  </div>
                 </Panel>
               </Collapse>
-            )}
-            key={pluginData.name}
-          >
-            <Collapse
-              key={pluginData.name}
-              onChange={e => handleCollapseChange(pluginData.name)}
-              activeKey={
-                openPlugins.includes(pluginData.name)
-                  ? pluginData.name
-                  : undefined
-              }
-            >
-              <Panel
-                header={pluginData.name}
-                key={`${pluginData.name}`}
-                extra={<PluginInfo plugin={pluginData} />}
-              >
-                <div
-                  className="resource-plugin"
-                  key={`plugin-${pluginData.name}`}
-                >
-                  <NexusPlugin
-                    nexusClient={nexus}
-                    url={pluginData.absoluteModulePath}
-                    pluginName={pluginData.name}
-                    resource={resource}
-                    goToResource={goToResource}
-                  />
-                </div>
-              </Panel>
-            </Collapse>
-          </ErrorBoundary>
+            </ErrorBoundary>
+          </div>
         ) : null;
       })}
     </>

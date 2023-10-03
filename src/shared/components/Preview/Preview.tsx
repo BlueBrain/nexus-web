@@ -6,7 +6,7 @@ import {
   NexusFile,
   ArchivePayload,
 } from '@bbp/nexus-sdk/es';
-import { Button, Collapse, Table, Tooltip } from 'antd';
+import { Button, Col, Collapse, Row, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { uuidv4 } from '../../utils';
@@ -116,23 +116,29 @@ const Preview: React.FC<{
         encodingFormat: string;
       }) => {
         return (
-          <>
-            <Button
-              onClick={() =>
-                downloadSingleFile(nexus, orgLabel, projectLabel, asset)
-              }
-              disabled={!isNexusFile(asset.url)}
-            >
-              Download
-            </Button>
-            <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
-            <Button
-              onClick={() => setPreviewAsset(asset)}
-              disabled={!isSupportedFile(asset)}
-            >
-              Preview
-            </Button>
-          </>
+          <Row gutter={5}>
+            <Col>
+              <Button
+                onClick={() =>
+                  downloadSingleFile(nexus, orgLabel, projectLabel, asset)
+                }
+                disabled={!isNexusFile(asset.url)}
+              >
+                Download
+              </Button>
+            </Col>
+            <Col>
+              <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
+            </Col>
+            <Col>
+              <Button
+                onClick={() => setPreviewAsset(asset)}
+                disabled={!isSupportedFile(asset)}
+              >
+                Preview
+              </Button>
+            </Col>
+          </Row>
         );
       },
     },

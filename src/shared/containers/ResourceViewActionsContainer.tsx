@@ -205,7 +205,7 @@ const ResourceViewActionsContainer: React.FC<{
     };
   }, [resource._self]);
   return (
-    <Row>
+    <Row gutter={5}>
       <Col>
         <Dropdown overlay={revisionMenuItems}>
           <Button>

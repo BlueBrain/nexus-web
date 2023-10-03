@@ -6,7 +6,6 @@ import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
-import './GalleryView.scss';
 
 const getUrlParameter = (name: string) => {
   const filteredName = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -63,7 +62,13 @@ const GalleryView: React.FC = () => {
     location.state && (location.state as { background?: Location }).background;
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
-
+  const closeGalleryView = () => {
+    // @ts-ignore
+    history.push(`${background.pathname}${background.search}`, {
+      refresh: true,
+    });
+    setDrawerVisible(false);
+  };
   /* custom logic for hiding drawer component when clicking outside of it */
   React.useEffect(() => {
     const handleClickOutsideWrapper = (event: Event) => {
@@ -83,11 +88,7 @@ const GalleryView: React.FC = () => {
           // @ts-ignore
           event.target.closest('.ant-drawer-close')
         ) {
-          // @ts-ignore
-          history.push(`${background.pathname}${background.search}`, {
-            refresh: true,
-          });
-          setDrawerVisible(false);
+          closeGalleryView();
         }
       }
     };
@@ -109,14 +110,16 @@ const GalleryView: React.FC = () => {
     <>
       {background && (
         <Drawer
-          className="gallery-drawer"
-          maskClosable={false}
-          destroyOnClose={false}
+          mask={false}
+          keyboard
+          maskClosable={true}
+          destroyOnClose={true}
           open={drawerVisible}
-          // placement="right"
-          // getContainer={false}
-          // style={{ position: 'absolute' }}
-          width="" // intentionally blank, specified in css
+          onClose={closeGalleryView}
+          placement="right"
+          rootStyle={{ height: '100%' }}
+          bodyStyle={{ height: '100%' }}
+          width="50%"
         >
           <Route
             key="resource-modal"
