@@ -46,7 +46,11 @@ export default function usePlugins() {
       fetch(`${pluginsPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
-        .then(resp => resp.json())
+        .then(async resp => {
+          const data = await resp.json();
+          console.log('@@data', data);
+          return data;
+        })
         .then(manifest =>
           setManifest({
             loading: false,
@@ -60,6 +64,7 @@ export default function usePlugins() {
           })
         )
         .catch(error => {
+          console.log('@@error', error);
           setManifest({
             error,
             loading: false,
