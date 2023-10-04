@@ -22,8 +22,7 @@ const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
 const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
 const rawBase = process.env.BASE_PATH || '';
 // to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
-const pluginsManifestPath =
-  process.env.PLUGINS_MANIFEST_PATH || '/plugins';
+const pluginsManifestPath = process.env.PLUGINS_MANIFEST_PATH || '/plugins';
 
 // configure instance logo
 const layoutSettings = {
@@ -135,10 +134,10 @@ async function injectStaticMiddleware(app: express.Express, middleware: any) {
   }
 }
 
-async function transformer(html, req) {
+async function transformer(html: string, req: Request) {
   let realms;
   try {
-    realms = await ((await fetch(`${process.env.API_ENDPOINT}/realms`))).json()
+    realms = await (await fetch(`${process.env.API_ENDPOINT}/realms`)).json();
   } catch (error) {
     console.error('[ERROR] Fetch Realms Server Side', error);
     realms = { _results: [], _total: 0 };
