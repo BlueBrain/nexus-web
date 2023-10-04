@@ -4,7 +4,7 @@ import { createBrowserHistory } from 'history';
 import { Link, Operation, Observable } from '@bbp/nexus-link';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import defaultState from './defaultState';
-import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from 'shared/store/actions/search';
+import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from './shared/store/actions/search';
 
 let preferredRealm, searchPrefenceLocalStorag;
 try {

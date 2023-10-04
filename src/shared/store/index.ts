@@ -31,7 +31,6 @@ try {
 } catch (e) {
   composeEnhancers = compose;
 }
-
 const logger = createLogger({});
 
 function configureStore(
@@ -39,7 +38,16 @@ function configureStore(
   { nexus }: { nexus: NexusClient },
   preloadedState: any = {}
 ): Store<RootState> {
-  // ignore server lists, fetch from local storage when available
+  let middlwares = [
+    thunk.withExtraArgument({ nexus }),
+    routerMiddleware(history),
+    DataExplorerFlowSliceListener.middleware,
+  ];
+
+  // @ts-ignore
+  if (import.meta.env.MODE === 'development') {
+    middlwares = [...middlwares, logger];
+  }
   const store = createStore(
     // @ts-ignore
     combineReducers({
@@ -48,15 +56,7 @@ function configureStore(
       ...reducers,
     }),
     preloadedState,
-    composeEnhancers(
-      applyMiddleware(
-        thunk.withExtraArgument({ nexus }),
-        routerMiddleware(history),
-        DataExplorerFlowSliceListener.middleware,
-        // @ts-ignore
-        import.meta.env.MODE === 'development' && logger
-      )
-    )
+    composeEnhancers(applyMiddleware(...middlwares))
   );
 
   return store;
