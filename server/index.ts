@@ -12,9 +12,10 @@ import {
 } from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
+const DISABLE_SSL = process.env.DISABLE_SSL;
 const PORT = Number(process.env.PORT) || 8000;
 // @ts-ignore
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = NODE_ENV === 'production' ? 1 : 0;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = DISABLE_SSL;
 
 const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
 const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
