@@ -79,9 +79,6 @@ export default defineConfig(() => {
                 }
             }
         },
-        // optimizeDeps: {
-        //     exclude: ["@bbp/nexus-sdk", "@bbp/nexus-link"]
-        // },
         assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4']
     })
 });
