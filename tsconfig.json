@@ -25,7 +25,7 @@
       "molecules/*": ["./src/shared/molecules/*"],
       "modals/*": ["./src/shared/modals/*"],
       "hooks/*": ["./src/shared/hooks/*"],
-      "server/*": ["server/*"]
+      "server/*": ["./server/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
