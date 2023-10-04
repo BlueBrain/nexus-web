@@ -10,8 +10,6 @@
   "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion",
   "type": "module",
   "scripts": {
-    "vdev": "vite",
-    "vbuild": "tsc && vite build",
     "dev": "rm -rf ./dist && concurrently 'vite build -c ./vite.config.refresh.js' 'vite' 'node ./server'",
     "build": "rm -rf ./dist && vite build -c ./vite.config.refresh.js && vite build",
     "preview": "cross-env NODE_ENV=production node server",
