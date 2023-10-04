@@ -10,7 +10,9 @@
   "type": "module",
   "scripts": {
     "dev": "rm -rf ./dist && concurrently 'vite build -c ./vite.config.refresh.js' 'vite' 'node ./server'",
-    "build": "rm -rf ./dist && vite build -c ./vite.config.refresh.js && vite build",
+    "clean": "rm -rf ./dist",
+    "build:server": "tsc --project tsconfig.node.json",
+    "build": "yarn clean && vite build -c ./vite.config.refresh.js && vite build && yarn build:server",
     "preview": "cross-env NODE_ENV=production node server",
     "test:watch": "vitest watch",
     "test:ci": "vitest run",
