@@ -46,11 +46,7 @@ export default function usePlugins() {
       fetch(`${pluginsPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
-        .then(async resp => {
-          const data = await resp.json();
-          console.log('@@data', data);
-          return data;
-        })
+        .then(resp => resp.json())
         .then(manifest =>
           setManifest({
             loading: false,
