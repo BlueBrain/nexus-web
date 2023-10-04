@@ -119,6 +119,7 @@ export const useAggregations = (
 };
 
 export const sortColumns = (a: string, b: string) => {
+  console.log('Sort Colums')
   // Sorts paths alphabetically. Additionally all paths starting with an underscore are sorted at the end of the list (because they represent metadata).
   const columnA = columnFromPath(a);
   const columnB = columnFromPath(b);
