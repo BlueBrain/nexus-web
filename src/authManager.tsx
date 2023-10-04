@@ -52,7 +52,6 @@ export const getUserManager = (state: RootState): UserManager | undefined => {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     ...realm,
   });
-  console.log('@@oidcConfig', oidcConfig);
   userManagerCache.has(cacheKey) ||
     userManagerCache.set(cacheKey, new UserManager(oidcConfig));
   return userManagerCache.get(cacheKey);
@@ -115,15 +114,19 @@ export const setupUserSession = async (userManager: UserManager) => {
     localStorage.removeItem('nexus__token');
   });
 
+  // Raised when a user session has been terminated.
+  userManager.events.addUserUnloaded(() => {
+    store.dispatch(sessionTerminated());
+    localStorage.removeItem('nexus__token');
+  });
+
   try {
     let user;
     // do we already have a user?
     user = await userManager.getUser();
     if (user) {
-      console.log('@@silent mode');
       // we've loaded a user, refresh it
       user = await userManager.signinSilent();
-      console.log('@@user in silent', user);
     }
     // nope, are we receiving a new token?
     else {
