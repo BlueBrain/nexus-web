@@ -1,7 +1,6 @@
 import { Server } from 'http';
 import { ViteDevServer } from 'vite';
 import express, { Express, Request, Response, NextFunction } from 'express';
-import pc from 'picocolors';
 import path from 'path';
 import fs from 'fs';
 import { Helmet } from 'react-helmet';
@@ -10,13 +9,12 @@ import {
   DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
   DEFAULT_REPORT_CATEGORIES,
   DEFAULT_REPORT_TYPES,
-} from './constants.js';
+} from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
 const PORT = Number(process.env.PORT) || 8000;
 // @ts-ignore
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-// NODE_ENV === "production" ? 1 : 0;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = NODE_ENV === 'production' ? 1 : 0;
 
 const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
 const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
@@ -97,18 +95,10 @@ async function serveStatic() {
   const distPath = getDistPath().dist;
 
   if (!fs.existsSync(distPath)) {
-    console.info(
-      `${pc.red(`Static files at ${pc.gray(distPath)} not found!`)}`
-    );
-    console.info(
-      `${pc.yellow(
-        `Did you forget to run ${pc.bold(pc.green('vite build'))} command?`
-      )}`
-    );
+    console.info(`Static files at ${distPath} not found!`);
+    console.info(`Did you forget to run 'vite build' command?`);
   } else {
-    console.info(
-      `${pc.green(`Serving static files from ${pc.gray(distPath)}`)}`
-    );
+    console.info(`Serving static files from ${distPath}`);
   }
 
   return express.static(distPath, { index: false });
