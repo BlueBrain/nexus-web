@@ -276,7 +276,6 @@ async function transformer(html, req) {
 
   return dom;
 }
-{/* <script src="https://unpkg.com/browse/antd@4.9.1/dist/antd.min.js"></script> */}
 
 function isStaticFilePath(path) {
   return path.match(/(\.\w+$)|@vite|@id|@react-refresh/);
