@@ -131,10 +131,11 @@ export const fetchMultipleResources = async (
         project: `${org}/${project}`,
       };
     });
-  console.log(
-    'Going to multi fetch',
-    resourceData.map(r => r.id)
-  );
+
+  if (resourceData.length === 0) {
+    return [];
+  }
+
   const multipleResources: NexusMultiFetchResponse = await nexus
     .httpPost({
       path: `${apiEndpoint}/multi-fetch/resources`,
