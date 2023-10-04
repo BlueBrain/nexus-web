@@ -280,10 +280,6 @@ async function transformer(html: string, req: Request) {
   return dom;
 }
 
-function isStaticFilePath(path: string) {
-  return path.match(/(\.\w+$)|@vite|@id|@react-refresh/);
-}
-
 async function injectDevIndexMiddleware(app: Express, server: ViteDevServer) {
   const config = await resolveConfig();
   app.get(`${base}/silent_refresh`, (_: Request, res: Response) => {
@@ -294,7 +290,7 @@ async function injectDevIndexMiddleware(app: Express, server: ViteDevServer) {
     );
     return res.send(html);
   });
-  app.get('/*', async (req: Request, res: Response, next: NextFunction) => {
+  app.get('/*', async (req: Request, res: Response) => {
     const template = fs.readFileSync(
       path.resolve(config.root, 'index.html'),
       'utf8'
@@ -322,7 +318,6 @@ async function injectProdIndexMiddleware(app: Express) {
       'utf-8'
     );
     const dom = await transformer(html, req);
-    console.log('@@dom', dom);
     return res.send(dom);
   });
 }
