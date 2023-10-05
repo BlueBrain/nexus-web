@@ -154,21 +154,9 @@ const subAppsManifestPath =
 const base = rawBase.replace(/\/$/, '');
 
 type TMode = 'production' | 'development';
-type TRealms = { _results: any[]; _total: number };
 
-const gePreloadedState = ({
-  req,
-  realms,
-  mode,
-}: {
-  req: Request;
-  realms: TRealms;
-  mode: TMode;
-}) => ({
-  auth: {
-    realms: { data: realms },
-    identities: { data: null },
-  },
+const gePreloadedState = ({ req, mode }: { req: Request; mode: TMode }) => ({
+  auth: {},
   config: {
     searchSettings,
     layoutSettings,
