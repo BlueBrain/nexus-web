@@ -65,7 +65,7 @@ const stubMiddleware = (_req: Request, _res: Response, next: NextFunction) =>
   next();
 
 async function injectStaticMiddleware(app: express.Express, middleware: any) {
-  const config = await resolveConfig();
+  const config = resolveConfig();
   const base = config.base || '/';
   app.use(base, middleware);
 
@@ -82,20 +82,14 @@ async function injectStaticMiddleware(app: express.Express, middleware: any) {
 }
 
 async function transformer(html: string, req: Request) {
-  let realms;
-  try {
-    realms = await (await fetch(`${process.env.API_ENDPOINT}/realms`)).json();
-  } catch (error) {
-    console.error('[ERROR] Fetch Realms Server Side', error);
-    realms = { _results: [], _total: 0 };
-  }
-
   const helmet = Helmet.renderStatic();
+  const preloadedState = gePreloadedState({ req, mode });
+
   const regexBody = /<body(.*?)/gi;
   const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
   const regexHtml = /<html(.*?)/gi;
   const htmlTag = `<html ${helmet.htmlAttributes.toString()}`;
-  const preloadedState = gePreloadedState({ req, realms, mode });
+
   let dom = html
     .replace(regexHtml, htmlTag)
     .replace(regexBody, bodyTag)
@@ -139,7 +133,7 @@ async function transformer(html: string, req: Request) {
 }
 
 async function injectDevIndexMiddleware(app: Express, server: ViteDevServer) {
-  const config = await resolveConfig();
+  const config = resolveConfig();
   app.get(`${base}/silent_refresh`, (_: Request, res: Response) => {
     const distPath = getDistPath().dist_refresh;
     const html = fs.readFileSync(
