@@ -1,66 +1,22 @@
-import { Server } from 'http';
-import { ViteDevServer } from 'vite';
-import express, { Express, Request, Response, NextFunction } from 'express';
 import path from 'path';
 import fs from 'fs';
-import { Helmet } from 'react-helmet';
 import compression from 'compression';
-import {
-  DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
-  DEFAULT_REPORT_CATEGORIES,
-  DEFAULT_REPORT_TYPES,
-} from './constants';
+import express, { Express, Request, Response, NextFunction } from 'express';
+
+import { Server } from 'http';
+import { ViteDevServer } from 'vite';
+import { Helmet } from 'react-helmet';
+import { base, gePreloadedState } from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
 const DISABLE_SSL = process.env.DISABLE_SSL;
 const PORT = Number(process.env.PORT) || 8000;
 // @ts-ignore
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = DISABLE_SSL;
-
-const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
-const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
-const rawBase = process.env.BASE_PATH || '';
-// to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
-const pluginsManifestPath = process.env.PLUGINS_MANIFEST_PATH || '/plugins';
-
-// configure instance logo
-const layoutSettings = {
-  docsLink: process.env.DOCS_LINK || '',
-  logoImg: process.env.LOGO_IMG || '',
-  forgeLink: process.env.FORGE_LINK || '',
-  organizationImg: process.env.ORGANIZATION_IMG || '',
-  projectsImg: process.env.PROJECTS_IMG || '',
-  studiosImg: process.env.STUDIOS_IMG || '',
-  projectImg: process.env.PROJECT_IMG || '',
-  landingVideo: process.env.LANDING_VIDEO || '',
-  landingPosterImg: process.env.LANDING_POSTER_IMG || '',
-  mainColor: process.env.MAIN_COLOR || '#062d68',
-};
-
-// configure search settings
-const searchSettings = {
-  searchConfigProject:
-    process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
-};
-
-// configure datamodels projects
-const dataModelsLocation = process.env.DATA_MODELS || '';
-
-const subAppsManifestPath =
-  process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
-
-const base = rawBase.replace(/\/$/, '');
+const mode = NODE_ENV === 'production' ? 'production' : 'development';
 
 const app = express();
 app.use(compression());
-
-app.get('/health', (_, res) => {
-  return res.send('100% running');
-});
-
-const Config = {
-  mode: NODE_ENV === 'production' ? 'production' : 'development',
-};
 
 async function startServer(server: Server) {
   const { createServer } = await import('vite');
@@ -92,7 +48,7 @@ function getDistPath() {
   };
 }
 
-async function serveStatic() {
+function serveStatic() {
   const distPath = getDistPath().dist;
 
   if (!fs.existsSync(distPath)) {
@@ -133,102 +89,13 @@ async function transformer(html: string, req: Request) {
     console.error('[ERROR] Fetch Realms Server Side', error);
     realms = { _results: [], _total: 0 };
   }
-  const preloadedState = {
-    auth: {
-      realms: { data: realms },
-      identities: { data: null },
-    },
-    config: {
-      searchSettings,
-      layoutSettings,
-      pluginsManifestPath,
-      subAppsManifestPath,
-      dataModelsLocation,
-      mode: Config.mode,
-      apiEndpoint: process.env.PROXY
-        ? '/proxy'
-        : process.env.API_ENDPOINT || '',
-      basePath: base,
-      clientId: process.env.CLIENT_ID || 'bbp-nise-dev-nexus-fusion',
-      redirectHostName: `${process.env.HOST_NAME ||
-        `${req.protocol}://${req.headers.host}`}${base}`,
-      serviceAccountsRealm:
-        process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
-      sentryDsn: process.env.SENTRY_DSN,
-      gtmCode: process.env.GTM_CODE,
-      studioView: process.env.STUDIO_VIEW || '',
-      jiraUrl: process.env.JIRA_URL || '',
-      jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
-      jiraResourceCustomFieldLabel:
-        process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
-      jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
-      jiraProjectCustomFieldLabel:
-        process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
-      ...(process.env.JIRA_SUPPORTED_REALMS && {
-        jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
-      }),
-      analysisPluginShowOnTypes: process.env.ANALYSIS_PLUGIN_SHOW_ON_TYPES
-        ? process.env.ANALYSIS_PLUGIN_SHOW_ON_TYPES.split(',')
-        : [],
-      analysisPluginExcludeTypes: process.env.ANALYSIS_PLUGIN_EXCLUDE_TYPES
-        ? process.env.ANALYSIS_PLUGIN_EXCLUDE_TYPES.split(',')
-        : [],
-      analysisPluginSparqlDataQuery:
-        process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY ||
-        DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
-      analysisPluginCategories: process.env.ANALYSIS_PLUGIN_CATEGORIES
-        ? JSON.parse(process.env.ANALYSIS_PLUGIN_CATEGORIES)
-        : DEFAULT_REPORT_CATEGORIES,
-      analysisPluginTypes: process.env.ANALYSIS_PLUGIN_TYPES
-        ? JSON.parse(process.env.ANALYSIS_PLUGIN_TYPES)
-        : DEFAULT_REPORT_TYPES,
-      httpHeaderForInaccessibleDueToVPN:
-        process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN ||
-        'x-requires-vpn',
-    },
-    uiSettings: {
-      openCreationPanel: false,
-      pageSizes: {
-        orgsListPageSize: 5,
-        projectsListPageSize: 5,
-        resourcesListPageSize: 20,
-        linksListPageSize: 10,
-      },
-      currentResourceView: null,
-      isAdvancedModeEnabled: false,
-    },
-    oidc: {
-      user: undefined,
-      isLoadingUser: false,
-    },
-    search: {
-      searchConfigs: {
-        isFetching: false,
-        data: null,
-        error: null,
-      },
-      searchPreference: null,
-    },
-    modals: {
-      isCreateOrganizationModelVisible: false,
-      isCreateProjectModelVisible: false,
-      isCreateStudioModelVisible: false,
-      isAboutModelVisible: false,
-    },
-    dataExplorer: {
-      current: null,
-      leftNodes: { links: [], shrinked: false },
-      rightNodes: { links: [], shrinked: false },
-      fullscreen: false,
-      origin: '',
-    },
-  };
+
   const helmet = Helmet.renderStatic();
   const regexBody = /<body(.*?)/gi;
   const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
   const regexHtml = /<html(.*?)/gi;
   const htmlTag = `<html ${helmet.htmlAttributes.toString()}`;
-
+  const preloadedState = gePreloadedState({ req, realms, mode });
   let dom = html
     .replace(regexHtml, htmlTag)
     .replace(regexBody, bodyTag)
@@ -260,8 +127,8 @@ async function transformer(html: string, req: Request) {
         <script type="systemjs-importmap">
         {
           "imports": {
-            "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
-            "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
+            "react": "https://unpkg.com/react@18.2.0/umd/react.production.min.js",
+            "react-dom": "https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"
           }
         }
       </script>
@@ -313,8 +180,12 @@ async function injectProdIndexMiddleware(app: Express) {
   });
 }
 
+app.get('/health', (_, res) => {
+  return res.send('100% running');
+});
+
 async function bind(app: Express, server: Server) {
-  if (Config.mode === 'development') {
+  if (mode === 'development') {
     console.info(`Fusion is up an running (development) ${PORT}`);
     const vite = await startServer(server);
     await injectStaticMiddleware(app, vite.middlewares);
