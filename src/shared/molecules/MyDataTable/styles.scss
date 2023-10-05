@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .my-data-table {
   margin-top: 30px;
@@ -15,12 +15,16 @@
       background-color: #f5f5f5 !important;
       font-family: 'Titillium Web';
       font-style: normal;
-      font-weight: 400;
+      font-weight: 400 !important;
       font-size: 12px;
       line-height: 130%;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: #8c8c8c;
+
+      .ant-table-cell-content {
+        font-size: 12px;
+      }
 
       &:hover {
         background-color: #f2f2f2 !important;

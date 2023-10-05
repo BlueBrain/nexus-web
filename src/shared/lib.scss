@@ -276,7 +276,7 @@ $component-background: $fusion-component-background-color;
 :root {
   --font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
   Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'
+  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 // Top-level styles
@@ -286,6 +286,7 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   font-family: $font-family;
+  color: #333333;
 }
 
 h1 {
