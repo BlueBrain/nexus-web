@@ -18,6 +18,8 @@ import AppInfo from './modals/AppInfo/AppInfo';
 import EntityCreation from './modals';
 
 import './App.scss';
+import { ConfigProvider } from 'antd';
+import { antdTheme } from 'theme/antd';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();
@@ -38,16 +40,20 @@ const App: React.FC = () => {
   });
 
   return (
-    <NotificationContext.Provider value={notificationData}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <FusionMainLayout environment={nexusEcosystem?.environment}>
-        <SubAppsView routesWithSubApps={routesWithSubApps} />
-        <AppInfo {...{ ...nexusEcosystem }} />
-        <DataPanel />
-        <GalleryView />
-        <EntityCreation />
-      </FusionMainLayout>
-    </NotificationContext.Provider>
+    <ConfigProvider
+      theme={antdTheme}
+    >
+      <NotificationContext.Provider value={notificationData}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <FusionMainLayout environment={nexusEcosystem?.environment}>
+          <SubAppsView routesWithSubApps={routesWithSubApps} />
+          <AppInfo {...{ ...nexusEcosystem }} />
+          <DataPanel />
+          <GalleryView />
+          <EntityCreation />
+        </FusionMainLayout>
+      </NotificationContext.Provider>
+    </ConfigProvider>
   );
 };
 
