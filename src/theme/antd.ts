@@ -5,6 +5,7 @@ export const antdTheme: ThemeConfig = {
     fontFamily: 'var(--font-family)',
     colorLink: '#0070c9', // $fusion-active-link-color
     borderRadius: 2,
+    colorBgContainer: '#f2f2f2',
   },
   components: {
     Modal: {
@@ -14,6 +15,10 @@ export const antdTheme: ThemeConfig = {
     },
     Table: {
       headerColor: '#8c8c8c', // $fusion-neutral-7
+    },
+    Menu: {
+      darkItemBg: '#050a56',
+      darkSubMenuItemBg: '#050a56',
     },
   },
   hashed: false,
