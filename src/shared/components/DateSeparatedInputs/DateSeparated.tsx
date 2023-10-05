@@ -22,12 +22,12 @@ const makeDate = (value?: string) => {
   const newValue =
     !value || !moment(value).isValid()
       ? {
-          day: '',
-          month: '',
-          year: '',
-        }
+        day: '',
+        month: '',
+        year: '',
+      }
       : moment(value).isValid()
-      ? {
+        ? {
           day: moment(value)
             .get('D')
             .toString(),
@@ -36,7 +36,7 @@ const makeDate = (value?: string) => {
             .get('year')
             .toString(),
         }
-      : {
+        : {
           day: '',
           month: '',
           year: '',

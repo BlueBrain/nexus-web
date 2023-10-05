@@ -39,13 +39,13 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
   const selectedDate =
     dateFilterType === 'range' && dateStart !== '' && dateEnd !== ''
       ? `${moment(dateStart).format(DATE_PATTERN)}  →  ${moment(dateEnd).format(
-          DATE_PATTERN
-        )}`
+        DATE_PATTERN
+      )}`
       : singleDate
-      ? `${capitalize(dateFilterType)} ${moment(singleDate).format(
+        ? `${capitalize(dateFilterType)} ${moment(singleDate).format(
           DATE_PATTERN
         )}`
-      : undefined;
+        : undefined;
   const [dateInputRef, { width: datePopWidth }] = useMeasure<
     HTMLInputElement
   >();
