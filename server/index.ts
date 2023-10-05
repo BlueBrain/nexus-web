@@ -2,10 +2,10 @@ import path from 'path';
 import fs from 'fs';
 import compression from 'compression';
 import express, { Express, Request, Response, NextFunction } from 'express';
+
 import { Server } from 'http';
 import { ViteDevServer } from 'vite';
 import { Helmet } from 'react-helmet';
-
 import { base, gePreloadedState } from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -127,8 +127,8 @@ async function transformer(html: string, req: Request) {
         <script type="systemjs-importmap">
         {
           "imports": {
-            "react": "https://unpkg.com/react@16.12.0/umd/react.production.min.js",
-            "react-dom": "https://unpkg.com/react-dom@16.12.0/umd/react-dom.production.min.js"
+            "react": "https://unpkg.com/react@18.2.0/umd/react.production.min.js",
+            "react-dom": "https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"
           }
         }
       </script>
