@@ -31,8 +31,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "server"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["src"],
   "files": ["custom.d.ts"],
   "exclude": [
     "node_modules",

@@ -1,19 +1,27 @@
 {
-  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
     "module": "commonjs",
-    "noEmit": false
+    "target": "es2020",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "strict": true,
+    "allowJs": true,
+    "noImplicitReturns": true,
+    "noEmitOnError": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": false,
+    "baseUrl": "server",
+    "outDir": "dist/server",
+    "noEmit": false,
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules",
     "src/**/*.(test|spec).ts*",
-    "src/**/*.stories.ts*"
+    "src/**/*.stories.ts*",
+    "dist/"
   ],
-  "include": [
-    "server/**/*.ts",
-    "src/constants/**/*.ts",
-    "src/_server/server.js",
-    "src/_server/constants.js"
-  ]
+  "include": ["server/**/*.ts"]
 }

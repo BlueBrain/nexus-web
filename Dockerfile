@@ -5,7 +5,8 @@ COPY . /tmp/nexus-web
 RUN yarn && yarn --max-old-space-size=6144 build
 
 FROM node:18-alpine
+ENV NODE_ENV=production
 WORKDIR /opt/nexus
-COPY --from=builder /tmp/nexus-web/dist /opt/nexus
+COPY --from=builder /tmp/nexus-web/dist /opt/nexus/dist
 EXPOSE 8000
-ENTRYPOINT ["npm", "run", "preview"]
+ENTRYPOINT ["node", "dist/server"]
