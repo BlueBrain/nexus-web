@@ -22,12 +22,12 @@ const makeDate = (value?: string) => {
   const newValue =
     !value || !moment(value).isValid()
       ? {
-          day: '',
-          month: '',
-          year: '',
-        }
+        day: '',
+        month: '',
+        year: '',
+      }
       : moment(value).isValid()
-      ? {
+        ? {
           day: moment(value)
             .get('D')
             .toString(),
@@ -36,7 +36,7 @@ const makeDate = (value?: string) => {
             .get('year')
             .toString(),
         }
-      : {
+        : {
           day: '',
           month: '',
           year: '',
@@ -111,7 +111,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={2}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Day"
       />
       <input
@@ -123,7 +122,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={2}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Month"
       />
       <input
@@ -135,7 +133,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={4}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Year"
       />
     </fieldset>
