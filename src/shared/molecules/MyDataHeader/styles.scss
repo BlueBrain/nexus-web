@@ -1,4 +1,4 @@
-
+@import "../../lib.scss";
 
 .my-data-header {
   display: flex;
@@ -141,7 +141,7 @@
 
     input::placeholder,
     input::-webkit-input-placeholder {
-      color: #0050b3 !important;
+      color: $fusion-main-color !important;
     }
   }
 
@@ -150,7 +150,7 @@
     max-width: 300px;
 
     .ant-select-selection-placeholder {
-      color: #0050b3 !important;
+      color: $fusion-main-color !important;
     }
   }
 }
@@ -247,12 +247,12 @@
 .my-data-date-picker,
 .my-data-type-filter,
 .my-data-type-picker {
-  background-color: #f5f5f5 !important;
-  border-color: #d9d9d9 !important;
+  background-color: $fusion-main-bg !important;
+  border-color: $fusion-neutral-5 !important;
 
   .ant-input::placeholder,
   .ant-select-selection-placeholder {
-    color: #002766 !important;
+    color: $fusion-daybreak-10 !important;
   }
 
   .ant-select-selection-overflow {
@@ -266,7 +266,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #002766;
+      background: $fusion-daybreak-10;
     }
   }
 }
