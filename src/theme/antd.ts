@@ -30,6 +30,10 @@ export const antdTheme: ThemeConfig = {
     Table: {
       headerColor: '#8c8c8c', // $fusion-neutral-7
     },
+    Menu: {
+      darkItemBg: '#050a56',
+      darkSubMenuItemBg: '#050a56',
+    },
   },
   hashed: false,
 };
