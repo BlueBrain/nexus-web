@@ -168,7 +168,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
     <Dropdown
       placement="bottomLeft"
       trigger={['click']}
-      overlay={
+      dropdownRender={() => (
         <Fragment>
           {dateFilterContainer && (
             <div ref={popoverRef} className="my-data-date-popover">
@@ -176,7 +176,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
             </div>
           )}
         </Fragment>
-      }
+      )}
       overlayStyle={{ width: datePopWidth }}
     >
       <Input

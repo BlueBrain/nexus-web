@@ -18,7 +18,7 @@ const SearchLayouts = ({
     suffixIcon={<TableOutlined />}
     onChange={layout => onChangeLayout(layout as string)}
     value={selectedLayout}
-    dropdownMatchSelectWidth={false}
+    popupMatchSelectWidth={false}
     className="search-layout"
     options={layouts?.map(o => ({ key: o.name, value: o.name }))}
   />

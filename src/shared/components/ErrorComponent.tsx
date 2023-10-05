@@ -5,7 +5,6 @@ interface ErrorComponentProps {
   message: string;
   details?: string;
 }
-const { Panel } = Collapse;
 
 export const ErrorComponent = ({ message, details }: ErrorComponentProps) => {
   return (
@@ -17,11 +16,14 @@ export const ErrorComponent = ({ message, details }: ErrorComponentProps) => {
             borderColor: '#ffccc7',
             margin: '20px',
           }}
-        >
-          <Panel header={message} key={message}>
-            <pre>{details}</pre>
-          </Panel>
-        </Collapse>
+          items={[
+            {
+              key: message,
+              label: message,
+              children: <pre>{details}</pre>,
+            },
+          ]}
+        />
       ) : (
         <Alert message={message} type="error" style={{ margin: '20px' }} />
       )}
