@@ -1,21 +1,83 @@
-.studio-list {
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
-  overflow: hidden;
+@import '../../shared/lib.scss';
+
+.menu-highlight-override {
+  color: #fff !important;
 }
 
-.studio-item {
-  .label {
-    .ellipsis();
-    font-weight: bold;
-    color: #0083cb;
-    margin-bottom: 6px;
+.studio-header {
+  display: flex;
+  margin-bottom: 25px;
+  .studio-search {
+    max-width: 400px;
   }
+}
 
-  .description {
-    .ellipsis();
-    margin-bottom: 0;
-    color: #333333-secondary;
+.dashboard-spinner {
+  margin-top: 20px;
+}
+.workspace-popup-classname {
+  .ant-menu-vertical {
+    .ant-menu-item {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    }
+  }
+}
+div.workspace-list-container {
+  min-height: 800px;
+  div.workspace-action {
+    height: 20px;
+    float: right;
+    padding-right: 10px;
+  }
+  div.top-menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: $fusion-menu-color;
+    height: 50px;
+    .ant-menu-item {
+      height: 50px;
+      width: 100%;
+    }
+    .actions-menu {
+      justify-self: flex-end;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-right: 10px;
+      margin-left: auto;
+    }
+  }
+}
+div.workspace {
+  margin-top: 10px;
+  padding-left: 10px;
+  > div {
+    width: 2489px;
+  }
+}
+
+.studio-list {
+  padding: 2em 1rem;
+  margin: 10 auto;
+  .studio-list-item {
+    list-style: none;
+    background-color: $fusion-component-background-color;
+    border-radius: 2px;
+    cursor: pointer;
+    margin: 2em 0;
+    padding: 0.5em;
+    position: relative;
+    justify-content: space-between;
+    max-width: 100%;
+    .studio {
+      font-weight: 900;
+      .studio-name {
+        color: $fusion-primary-color;
+      }
+    }
   }
 }
