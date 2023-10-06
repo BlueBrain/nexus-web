@@ -1,3 +1,4 @@
+@import '../../shared/lib.scss';
 
 .project-view {
   margin-top: 60px;
@@ -12,7 +13,7 @@
 
     .ant-tabs-content-holder {
       background: #fff;
-      padding: 0 1rem;
+      padding: 0 $default-pad;
     }
 
     .ant-tabs-nav {
