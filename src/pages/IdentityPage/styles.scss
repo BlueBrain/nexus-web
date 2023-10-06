@@ -1,3 +1,4 @@
+@import '../../shared/lib.scss';
 
 .home-authentication {
   position: relative;
@@ -73,7 +74,7 @@
         }
       }
       button:first-child {
-        color: #002766;
+        color: $fusion-daybreak-10;
         background-color: #fff;
         &.no-realms-btn {
           background-color: black;
@@ -87,7 +88,7 @@
         justify-content: center;
       }
       .nav-btn:hover {
-        color: #002766 !important;
+        color: $fusion-daybreak-10 !important;
         background-color: #fff !important;
       }
       button:last-child {
@@ -103,7 +104,7 @@
       button.connect-btn {
         font-weight: 400;
         font-size: 13px;
-        color: #002766;
+        color: $fusion-daybreak-10 !important;
         border: 1px solid #fff;
         &:hover {
           font-weight: 700;

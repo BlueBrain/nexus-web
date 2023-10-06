@@ -20,6 +20,11 @@ input, button, select, optgroup, textarea {
   line-height: inherit;
 }
 
+ol, ul, dl {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
 .ant-layout, .ant-layout * {
   box-sizing: border-box;
 }
