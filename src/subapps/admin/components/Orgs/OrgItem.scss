@@ -1,6 +1,6 @@
 @import '../../../../shared/lib.scss';
 
-.project-item {
+.org-item {
   .label {
     @include ellipsis;
     font-weight: bold;
@@ -9,7 +9,6 @@
 
   .description {
     @include ellipsis;
-    
     margin-bottom: 0;
     color: $text-color-secondary;
   }
