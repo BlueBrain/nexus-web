@@ -17,8 +17,9 @@ try {
   preferredRealm = undefined;
 }
 
-const rawBase: string = '/';
+const rawBase: string = (window as any)['__BASE__'] || '/';
 const base: string = rawBase.replace(/\/$/, '');
+
 const history = createBrowserHistory({ basename: base });
 const preloadedState: RootState = window.__PRELOADED_STATE__ || defaultState;
 
