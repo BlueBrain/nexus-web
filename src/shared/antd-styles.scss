@@ -25,6 +25,10 @@ ol, ul, dl {
   margin-bottom: 1em;
 }
 
+.ant-list-split .ant-list-item {
+  border-bottom: 1px solid #f0f0f0;
+}
+
 .ant-layout, .ant-layout * {
   box-sizing: border-box;
 }
