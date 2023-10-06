@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import compression from 'compression';
 import express, { Express, Request, Response, NextFunction } from 'express';
-
+import morgan from 'morgan';
 import { Server } from 'http';
 import { ViteDevServer } from 'vite';
 import { Helmet } from 'react-helmet';
@@ -17,6 +17,7 @@ const mode = NODE_ENV === 'production' ? 'production' : 'development';
 
 const app = express();
 app.use(compression());
+app.use(morgan('tiny'));
 
 async function startServer(server: Server) {
   const { createServer } = await import('vite');
@@ -34,22 +35,18 @@ async function startServer(server: Server) {
 
 function resolveConfig() {
   const root = process.cwd();
-  const base = '/';
-  const build = { outDir: 'dist', refreshOutDir: 'dist_refresh' };
+  const build = { outDir: 'dist' };
 
-  return { root, base, build };
+  return { root, build };
 }
 
 function getDistPath() {
-  const config = resolveConfig();
-  return {
-    dist: path.resolve(config.root, config.build.outDir),
-    dist_refresh: path.resolve(config.root, config.build.refreshOutDir),
-  };
+  const { root, build } = resolveConfig();
+  return path.resolve(root, build.outDir);
 }
 
 function serveStatic() {
-  const distPath = getDistPath().dist;
+  const distPath = getDistPath();
 
   if (!fs.existsSync(distPath)) {
     console.info(`Static files at ${distPath} not found!`);
@@ -58,15 +55,13 @@ function serveStatic() {
     console.info(`Serving static files from ${distPath}`);
   }
 
-  return express.static(distPath, { index: false });
+  return express.static(path.join(__dirname), { index: false });
 }
 
 const stubMiddleware = (_req: Request, _res: Response, next: NextFunction) =>
   next();
 
 async function injectStaticMiddleware(app: express.Express, middleware: any) {
-  const config = resolveConfig();
-  const base = config.base || '/';
   app.use(base, middleware);
 
   const stubMiddlewareLayer = app._router.stack.find(
@@ -96,6 +91,7 @@ async function transformer(html: string, req: Request) {
     .replace(
       '<!--app-head-->',
       `
+        <base href="${base}" />
         ${helmet.title.toString()}
         ${helmet.meta.toString()}
         ${helmet.link.toString()}
@@ -104,7 +100,7 @@ async function transformer(html: string, req: Request) {
     .replace(
       '<!--app-state-->',
       `<script>
-        window.__BASE__ = '/';
+        window.__BASE__ = '${base}';
         // WARNING: See the following for security issues around embedding JSON in HTML:
         // http://redux.js.org/recipes/ServerRendering.html#security-considerations
         window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
@@ -133,20 +129,19 @@ async function transformer(html: string, req: Request) {
 }
 
 async function injectDevIndexMiddleware(app: Express, server: ViteDevServer) {
-  const config = resolveConfig();
+  const { root } = resolveConfig();
+
   app.get(`${base}/silent_refresh`, (_: Request, res: Response) => {
-    const distPath = getDistPath().dist_refresh;
+    const distPath = getDistPath();
     const html = fs.readFileSync(
       path.join(distPath, '/silent_refresh/silent_refresh.html'),
       'utf-8'
     );
     return res.send(html);
   });
+
   app.get('/*', async (req: Request, res: Response) => {
-    const template = fs.readFileSync(
-      path.resolve(config.root, 'index.html'),
-      'utf8'
-    );
+    const template = fs.readFileSync(path.resolve(root, 'index.html'), 'utf8');
 
     const html = await server.transformIndexHtml(req.originalUrl, template);
     const dom = await transformer(html, req);
@@ -156,25 +151,23 @@ async function injectDevIndexMiddleware(app: Express, server: ViteDevServer) {
 
 async function injectProdIndexMiddleware(app: Express) {
   const distPath = getDistPath();
+
   app.get(`${base}/silent_refresh`, (_: Request, res: Response) => {
-    const distPath = getDistPath();
     const html = fs.readFileSync(
-      path.join(distPath.dist_refresh, '/silent_refresh/silent_refresh.html'),
+      path.join(__dirname, 'silent_refresh/silent_refresh.html'),
       'utf-8'
     );
     res.send(html);
   });
+
   app.use('*', async (req: Request, res: Response) => {
-    const html = fs.readFileSync(
-      path.resolve(distPath.dist, 'index.html'),
-      'utf-8'
-    );
+    const html = fs.readFileSync(path.resolve(distPath, 'index.html'), 'utf-8');
     const dom = await transformer(html, req);
     return res.send(dom);
   });
 }
 
-app.get('/health', (_, res) => {
+app.get(`${base}/status`, (_, res) => {
   return res.send('100% running');
 });
 
@@ -187,7 +180,7 @@ async function bind(app: Express, server: Server) {
     return;
   } else {
     console.info(`Fusion is up an running (production) ${PORT}`);
-    await injectStaticMiddleware(app, await serveStatic());
+    await injectStaticMiddleware(app, serveStatic());
     await injectProdIndexMiddleware(app);
     return;
   }
