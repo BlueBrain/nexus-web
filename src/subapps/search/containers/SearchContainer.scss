@@ -13,7 +13,7 @@
   transition: all 0.2s ease-out;
   /* background-color set here to prevent table overflow
   on scroll being seen above table header */
-  // background-color: #fff;
+  // background-color: @fusion-background-color;
   // max-width: 1240px;
   width: 100%;
   margin: 0 auto;
