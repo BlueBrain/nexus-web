@@ -1,7 +1,7 @@
-
+@import '../../../../shared/lib.scss';
 
 .project-tools {
-  .cardlike;
-  background-color: #f5f6f7;
+  @include cardlike;
+  background-color: $primary-card;
   width: 295px;
 }

@@ -3,11 +3,6 @@
 @import '../../../../node_modules/codemirror/addon/fold/foldgutter.css';
 @import '../../../../node_modules/codemirror/theme/base16-light.css';
 
-// codemirror styling
-.cm-s-base16-light span.cm-string {
-  // string values
-}
-
 .cm-s-base16-light span.cm-string.cm-property {
   color: #0070c9;
 }

@@ -1,3 +1,5 @@
+@import '../../../../shared/lib.scss';
+
 .templates-list {
   &__cards {
     display: flex;
@@ -13,23 +15,23 @@
 
     .ant-btn {
       font-weight: 300px;
-      background-color: #050a56;
+      background-color: $fusion-dark-bg;
       opacity: 0.8;
       border-radius: 6px;
       border: none;
-      border: 1px solid #050a56;
+      border: 1px solid $fusion-dark-bg;
 
       &:hover {
-        background-color: #050a56;
+        background-color: $fusion-dark-bg;
         opacity: 1;
-        border: 1px solid #050a56;
+        border: 1px solid $fusion-dark-bg;
       }
     }
 
     .ant-btn:focus,
     .ant-btn-primary:focus {
-      background-color: #050a56;
-      border: 1px solid #050a56;
+      background-color: $fusion-dark-bg;
+      border: 1px solid $fusion-dark-bg;
     }
   }
 }

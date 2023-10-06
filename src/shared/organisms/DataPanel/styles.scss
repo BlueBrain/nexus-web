@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .datapanel {
   position: fixed;
@@ -14,7 +14,7 @@
     flex-direction: row;
     justify-content: space-between;
     // align-items: center;
-    background: #002766;
+    background: $fusion-daybreak-10;
     padding: 0 0 0 10px;
 
     .left {
@@ -33,7 +33,7 @@
       }
 
       button {
-        color: #69c0ff;
+        color: $fusion-daybreak-4;
       }
     }
 
@@ -51,8 +51,8 @@
         grid-template-columns: repeat(2, max-content);
       }
       .download-size {
-        color: #0070c9;
-        border-left: 2px solid #0050b3;
+        color: $fusion-active-link-color;
+        border-left: 2px solid $fusion-daybreak-7;
         padding: 0 20px;
         height: 100%;
         display: flex;
@@ -89,12 +89,12 @@
       }
 
       .ant-checkbox-checked .ant-checkbox-inner {
-        background-color: #002766 !important;
+        background-color: $fusion-daybreak-10 !important;
         border-color: white !important;
       }
 
       .ant-checkbox-inner {
-        background-color: #002766 !important;
+        background-color: $fusion-daybreak-10 !important;
         border-radius: 4px !important;
       }
 
@@ -115,7 +115,7 @@
       width: 100%;
       height: 100%;
       // height: inherit;
-      background: #002766;
+      background: $fusion-daybreak-10;
       padding: 20px;
       margin-bottom: 60px;
 
@@ -131,7 +131,7 @@
           font-weight: 700;
           font-size: 20px;
           line-height: 140%;
-          color: #40a9ff;
+          color: $fusion-daybreak-5;
         }
 
         .clear-data {
@@ -156,11 +156,11 @@
 
 .my-data-panel-table {
   margin-bottom: 70px;
-  border: 1px solid #002766;
+  border: 1px solid $fusion-daybreak-10;
   .ant-table-thead {
     th {
       text-transform: uppercase;
-      background-color: #002766 !important;
+      background-color: $fusion-daybreak-10 !important;
       font-family: 'Titillium Web';
       font-style: normal;
       font-weight: 400;
@@ -169,10 +169,10 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: white;
-      border-bottom: 1px solid #0050b3 !important;
+      border-bottom: 1px solid $fusion-daybreak-8 !important;
 
       &:hover {
-        background-color: #f2f2f2 !important;
+        background-color: $fusion-component-background-color !important;
       }
 
       &:first-child {
@@ -190,14 +190,14 @@
         font-weight: 600;
       }
 
-      background-color: #002766 !important;
-      border-bottom: 1px solid #0050b3 !important;
+      background-color: $fusion-daybreak-10 !important;
+      border-bottom: 1px solid $fusion-daybreak-8 !important;
       color: white !important;
     }
 
     &:last-child {
       td {
-        border-color: #002766 !important;
+        border-color: $fusion-daybreak-10 !important;
       }
     }
 
@@ -209,18 +209,18 @@
 
     .ant-table-cell-fix-left,
     .ant-table-cell-fix-right {
-      background: #002766 !important;
+      background: $fusion-daybreak-10 !important;
     }
   }
 
   .ant-table-body {
-    background-color: #002766 !important;
+    background-color: $fusion-daybreak-10 !important;
 
     &::-webkit-scrollbar-thumb {
       width: 5px;
-      background: #69c0ff;
+      background: $fusion-daybreak-4;
       border-radius: 5px;
-      -webkit-box-shadow: inset 0 0 px #69c0ff;
+      -webkit-box-shadow: inset 0 0 px $fusion-daybreak-4;
       max-height: 4px;
     }
 
@@ -232,22 +232,22 @@
 
     &::-webkit-scrollbar {
       width: 5px;
-      background-color: #002766;
+      background-color: $fusion-daybreak-10;
     }
   }
 
   .org-project-tag {
-    background-color: #0050b3 !important;
+    background-color: $fusion-daybreak-8 !important;
     color: white !important;
   }
 
   .remove-data-item {
-    background-color: #002766;
-    color: #69c0ff;
+    background-color: $fusion-daybreak-10;
+    color: $fusion-daybreak-4;
     border: none;
 
     &:hover {
-      background-color: #002766;
+      background-color: $fusion-daybreak-10;
       border: none;
       color: white;
     }
@@ -256,7 +256,7 @@
 
 .types-dropdown {
   .ant-dropdown-menu {
-    background-color: #002766;
+    background-color: $fusion-daybreak-10;
     padding: 0 !important;
     bottom: 8px !important;
     border-radius: 0px !important;
@@ -267,7 +267,7 @@
     }
     &:hover {
       span:nth-child(2) {
-        color: #002766;
+        color: $fusion-daybreak-10;
       }
     }
   }
