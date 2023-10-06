@@ -1,4 +1,4 @@
-;
+@import '../../../shared/lib.scss';
 
 .ant-tooltip-inner {
   .ant-input-number {
@@ -12,24 +12,24 @@
   margin: 10px 15px 10px 10px !important;
 
   .ant-slider-track {
-    background-color: #0083cb;
+    background-color: $fusion-primary-color;
     &:hover {
-      background-color: #7cb4fa;
+      background-color: $fusion-secondary-color;
     }
   }
   .ant-slider-handle {
-    border-color: #0083cb;
+    border-color: $fusion-primary-color;
     &:hover {
-      border-color: #7cb4fa;
+      border-color: $fusion-secondary-color;
     }
   }
 
   &:hover {
     .ant-slider-track {
-      background-color: #7cb4fa;
+      background-color: $fusion-secondary-color;
     }
     .ant-slider-handle:not(.ant-tooltip-open) {
-      border-color: #7cb4fa;
+      border-color: $fusion-secondary-color;
     }
   }
 }

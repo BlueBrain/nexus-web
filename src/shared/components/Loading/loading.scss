@@ -1,3 +1,8 @@
+@import '../../lib.scss';
+
+$base-color: rgba(229, 233, 244, 0.5);
+$shine-color: #e6e6e6;
+$animation-duration: 1.4s;
 
 @keyframes shine {
   0% {
@@ -8,12 +13,12 @@
   }
 }
 
-.background-gradient {
+@mixin background-gradient {
   background-image: linear-gradient(
     90deg,
-    rgba(229, 233, 244, 0.5) 25%,
-    #e6e6e6 37%,
-    1.4s 63%
+    $base-color 25%,
+    $shine-color 37%,
+    $base-color 63%
   );
   background-size: 400% 100%;
 }
@@ -25,9 +30,10 @@
   transition: all ease-out 0.5s;
 
   &.in-progress {
-    border-radius: 2px;
-    background-color: rgba(229, 233, 244, 0.5);
-    animation: shine 1.4s infinite ease;
+    @include background-gradient;
+    border-radius: $border-radius-base;
+    background-color: $base-color;
+    animation: shine $animation-duration infinite ease;
     .message {
       opacity: 1;
     }

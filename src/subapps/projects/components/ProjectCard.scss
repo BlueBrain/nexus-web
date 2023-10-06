@@ -1,15 +1,15 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .project-card {
   display: flex;
-  border: 1px solid #d9d9d9;
+  border: 1px solid $border-color-base;
   border-radius: 10px;
   justify-content: space-between;
   align-items: center;
   padding: 0 0.7em;
   font-size: 13px;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow-base;
 
   p {
     margin: 0;

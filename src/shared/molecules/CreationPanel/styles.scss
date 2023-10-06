@@ -1,6 +1,7 @@
+@import '../../../shared/lib.scss';
 
 .creation-panel {
-  background: #003a8c;
+  background: $fusion-daybreak-9;
   height: 182px;
   display: none;
   &_container {
@@ -34,9 +35,9 @@
   color: white;
   &:hover {
     background-color: white;
-    color: #003a8c;
+    color: $fusion-daybreak-9;
     svg {
-      color: #003a8c;
+      color: $fusion-daybreak-9;
       transform: scale(1.2);
       transition: transform 0.2 ease-out;
     }

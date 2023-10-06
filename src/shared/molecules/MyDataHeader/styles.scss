@@ -1,4 +1,4 @@
-@import "../../lib.scss";
+@import '../../lib.scss';
 
 .my-data-header {
   display: flex;
@@ -44,7 +44,7 @@
     font-weight: 700;
     font-size: 30px;
     line-height: 110%;
-    color: #0050b3;
+    color: $fusion-main-color;
   }
 
   span:last-child {
@@ -62,7 +62,7 @@
   max-width: max-content;
 
   .ant-radio + span {
-    color: #0050b3;
+    color: $fusion-main-color;
   }
 }
 
@@ -84,18 +84,18 @@
 
     .ant-checkbox-inner {
       border-radius: 4px !important;
-      border-color: #0050b3 !important;
+      border-color: $fusion-main-color !important;
     }
   }
 
   .locate-text,
   .spread-text {
     user-select: none;
-    color: #0050b3;
+    color: $fusion-main-color;
   }
 
   .my-data-search {
-    border-bottom: 1px solid #0050b3 !important;
+    border-bottom: 1px solid $fusion-main-color !important;
     min-width: 350px;
     width: 100%;
 
@@ -104,7 +104,7 @@
     }
 
     .anticon.anticon-search {
-      color: #0050b3;
+      color: $fusion-main-color;
     }
   }
 }
@@ -123,7 +123,7 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 110%;
-    color: #8c8c8c;
+    color: $fusion-neutral-7;
   }
 
   .date-field-selector {
@@ -131,7 +131,7 @@
     max-width: max-content;
 
     span {
-      color: #0050b3;
+      color: $fusion-main-color;
     }
   }
 
@@ -300,7 +300,7 @@
   font-size: 15px;
   font-weight: 600;
   line-height: 15.6px;
-  color: #003a8c;
+  color: $fusion-blue-8;
   padding: 7px 10px;
 
   &:hover {

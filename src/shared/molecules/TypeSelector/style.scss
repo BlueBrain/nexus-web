@@ -1,11 +1,11 @@
-
+@import '../../lib.scss';
 
 .types-selector-select {
   width: 100%;
   max-width: 300px;
 
   &::placeholder {
-    color: #002766 !important;
+    color: $fusion-daybreak-10 !important;
   }
 
   .ant-select-selector {
@@ -49,7 +49,7 @@
 
 .types-selector-search-input {
   background-color: white !important;
-  border-bottom: 1px solid #d9d9d9 !important;
+  border-bottom: 1px solid $fusion-neutral-5 !important;
 
   .ant-input,
   .ant-btn {
