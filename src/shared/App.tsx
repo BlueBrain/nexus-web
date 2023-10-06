@@ -40,9 +40,7 @@ const App: React.FC = () => {
   });
 
   return (
-    <ConfigProvider
-      theme={antdTheme}
-    >
+    <ConfigProvider theme={antdTheme}>
       <NotificationContext.Provider value={notificationData}>
         <ReactQueryDevtools initialIsOpen={false} />
         <FusionMainLayout environment={nexusEcosystem?.environment}>
