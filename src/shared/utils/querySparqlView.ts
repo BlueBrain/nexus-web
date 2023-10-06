@@ -35,14 +35,14 @@ export const sparqlQueryExecutor = async (
     ? await nexus.View.compositeSparqlQuery(
         orgLabel,
         projectLabel,
-        encodeURIComponent(view['@id'] ?? viewId),
+        encodeURIComponent(viewId),
         encodeURIComponent(projectionId || '_'),
         dataQuery
       )
     : await nexus.View.sparqlQuery(
         orgLabel,
         projectLabel,
-        encodeURIComponent(view['@id'] ?? viewId),
+        encodeURIComponent(viewId),
         dataQuery
       );
   const data: SelectQueryResponse = result as SelectQueryResponse;
