@@ -7,21 +7,18 @@ export default defineConfig({
     plugins: [
         viteSingleFile(),
     ],
-    
     define: {
         'process.env': process.env
     },
-
     build: {
-        manifest: true,
-        outDir: 'dist_refresh',
+        minify: true,
+        manifest: false,
+        outDir: 'dist',
         commonjsOptions: {
             transformMixedEsModules: true
         },
         rollupOptions: {
-            input: {
-                silent_refresh: fileURLToPath(new URL('./silent_refresh/silent_refresh.html', import.meta.url)),
-            },
+            input: fileURLToPath(new URL('./silent_refresh/silent_refresh.html', import.meta.url))
         }
     },
 });
