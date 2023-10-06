@@ -1,3 +1,5 @@
+@import '../../lib.scss';
+
 .search-bar {
   width: 25%;
   min-width: 400px;
@@ -9,7 +11,7 @@
     }
     background-color: #fff !important;
     .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
-      background-color: #0070c9;
+      background-color: $link-color;
       color: #fff !important;
       .ant-select-item-option-content {
         color: #fff !important;
@@ -17,12 +19,12 @@
     }
 
     .ant-select-item {
-      border-bottom: 1px solid #888888;
+      border-bottom: 1px solid $fusion-secondary-text-color;
       margin-bottom: -1px;
     }
 
     .ant-select-item-option-content {
-      color: #888888;
+      color: $fusion-secondary-text-color;
     }
   }
 
@@ -40,7 +42,7 @@
     color: #fff !important;
     &.focused {
       background-color: #fff !important;
-      color: #333333 !important;
+      color: $fusion-primary-text-color !important;
     }
   }
 
@@ -52,7 +54,7 @@
       background-color: transparent;
       color: #fff;
       &:focus {
-        color: #333333;
+        color: $fusion-primary-text-color;
       }
     }
   }

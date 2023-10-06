@@ -1,3 +1,4 @@
+@import '../lib.scss';
 
 .main-route {
   position: relative;
@@ -45,7 +46,7 @@
         }
 
         .ant-input-wrapper {
-          border-bottom: 1px solid #d9d9d9;
+          border-bottom: 1px solid $fusion-neutral-5;
         }
 
         .ant-input-affix-wrapper {
@@ -53,7 +54,7 @@
           box-shadow: none !important;
           border: none !important;
           background-color: white !important;
-          border-bottom: 1px solid #d9d9d9;
+          border-bottom: 1px solid $fusion-neutral-5;
         }
       }
 
@@ -69,13 +70,13 @@
           font-size: 14px;
           line-height: 22px;
           letter-spacing: 0.01em;
-          color: #003a8c;
+          color: $fusion-daybreak-9;
         }
 
         .anticon {
           cursor: pointer;
           font-size: 18px;
-          background-color: #bfbfbf;
+          background-color: $fusion-neutral-6;
           padding: 3px;
           border-radius: 2px;
           color: white;
@@ -99,7 +100,7 @@
           cursor: pointer;
 
           &:hover {
-            background: rgba(#91d5ff, 0.12);
+            background: rgba($fusion-daybreak-3, 0.12);
           }
 
           &_wrapper {
@@ -117,7 +118,7 @@
                 font-weight: 600;
                 font-size: 24px;
                 line-height: 32px;
-                color: #003a8c;
+                color: $fusion-daybreak-9;
                 margin-bottom: 0.25em;
 
                 .organization-tag {
@@ -162,7 +163,7 @@
                 font-size: 14px;
                 line-height: 145%;
                 letter-spacing: 0.01em;
-                color: #003a8c;
+                color: $fusion-daybreak-9;
                 max-width: 80%;
               }
             }
@@ -188,7 +189,7 @@
                   font-size: 10px;
                   line-height: 14px;
                   letter-spacing: 0.02em;
-                  color: #003a8c;
+                  color: $fusion-daybreak-9;
                 }
 
                 div:nth-child(2) {
@@ -197,12 +198,12 @@
                   font-weight: 600;
                   font-size: 14px;
                   line-height: 136%;
-                  color: #003a8c;
+                  color: $fusion-daybreak-9;
                 }
               }
 
               .org-project-tag {
-                color: #0050b3 !important;
+                color: $fusion-main-color !important;
                 border: none;
               }
             }
@@ -214,7 +215,7 @@
               font-weight: 700;
               font-size: 12px;
               line-height: 32px;
-              color: #003a8c;
+              color: $fusion-daybreak-9;
 
               span {
                 margin-left: 6px;

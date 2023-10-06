@@ -1,4 +1,4 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .breadcrumbs {
   padding: 10px;
@@ -10,6 +10,6 @@
   }
 
   &__label:hover {
-    color: #4b4b4b;
+    color: $fusion-dark;
   }
 }

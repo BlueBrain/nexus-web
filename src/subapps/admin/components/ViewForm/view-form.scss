@@ -1,4 +1,4 @@
-
+@import '../../../../shared/lib.scss';
 
 .view-form {
   width: 100%;
@@ -8,13 +8,13 @@
   .code {
     max-height: 600;
     overflow: 'scroll';
-    margin-bottom: 1rem;
+    margin-bottom: $default-pad;
   }
   .ant-card-body {
     overflow: scroll;
   }
   .results .empty {
-    color: #ff4d4f;
+    color: $error-color;
   }
   .react-json-view {
     overflow-x: scroll;

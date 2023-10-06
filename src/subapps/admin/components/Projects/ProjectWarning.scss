@@ -1,6 +1,6 @@
-
+@import '../../../../shared/lib.scss';
 
 .project-warning {
-  padding: 0 1rem;
+  padding: 0 $default-pad;
   margin-top: 1rem;
 }

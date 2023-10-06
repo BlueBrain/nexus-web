@@ -1,5 +1,7 @@
+@import '../../lib.scss';
+
 .side-menu {
-  .highShadow();
+  @include highShadow;
   position: fixed;
   z-index: 5;
   right: 0;

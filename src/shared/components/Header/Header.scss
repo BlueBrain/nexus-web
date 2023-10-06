@@ -1,11 +1,11 @@
-
+@import '../../lib.scss';
 
 .Header {
   display: flex;
   justify-content: space-between;
   box-sizing: content-box;
   height: 52px;
-  background-color: #050a56;
+  background-color: $fusion-menu-color;
   position: fixed;
   width: 100%;
   z-index: 20;
@@ -26,7 +26,7 @@
   .menu-block {
     display: flex;
     justify-content: flex-end;
-    // padding-right: 1rem;
+    // padding-right: $default-pad;
     align-items: center;
     min-width: 120px;
     button,
@@ -44,14 +44,14 @@
       // margin: 5px 5px 4px;
       // bottom: 50px;
       width: 100%;
-      color: #fff;
+      color: $fusion-background-color;
       border: none;
       height: 100%;
-      // border-radius: 2px;
+      // border-radius: $border-radius-base;
       border-radius: 0 !important;
       padding: 5px 20px;
       // height: 32px;
-      background-color: #0050b3;
+      background-color: $fusion-main-color;
 
       span {
         user-select: none;
@@ -84,27 +84,27 @@
   .ui-header-info-button {
     margin: 5px 5px 4px;
     cursor: pointer;
-    border: 1px solid #fff;
-    border-radius: 2px;
+    border: 1px solid $fusion-background-color;
+    border-radius: $border-radius-base;
     padding: 5px;
     height: 32px;
   }
 
   .cart {
-    color: #fff;
-    background-color: #050a56;
+    color: $fusion-background-color;
+    background-color: $fusion-menu-color;
   }
 
   .copy-token-button {
     height: 32px;
     width: 115px;
-    border-radius: 2px;
+    border-radius: $border-radius-base;
     outline-style: none;
     line-height: 1rem;
     cursor: pointe r;
     font-size: 0.9rem;
     text-align: left;
-    border: 1px solid #fff;
+    border: 1px solid $fusion-background-color;
     display: flex;
     align-items: center;
     background-color: inherit;
@@ -112,21 +112,21 @@
 
     .button-text {
       margin-left: 0.4rem;
-      color: #fff;
+      color: $fusion-background-color;
     }
   }
 
   .forge-button {
     height: 32px;
     padding: 0 7px;
-    border-radius: 2px;
+    border-radius: $border-radius-base;
     outline-style: none;
     line-height: 1rem;
     cursor: pointer;
     font-size: 0.9rem;
     display: flex;
     align-items: center;
-    background-color: #2bad4e;
+    background-color: $alternative-button-color;
     margin-left: 0.4rem;
     color: #fff;
   }
@@ -154,7 +154,7 @@
   top: 52px !important;
 
   .ant-dropdown-menu {
-    background-color: #0050b3 !important;
+    background-color: $fusion-main-color !important;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     box-shadow: none !important;
@@ -166,12 +166,12 @@
 
     .ant-dropdown-menu-submenu-title,
     .ant-dropdown-menu-item {
-      color: #91d5ff;
+      color: $fusion-daybreak-3;
     }
   }
 
   .menu-item-logout {
-    background-color: #002766;
+    background-color: $fusion-daybreak-10;
   }
 }
 
@@ -182,8 +182,8 @@
 
   &:hover {
     .ant-dropdown-menu-submenu-title {
-      background-color: #91d5ff !important;
-      color: #003a8c !important;
+      background-color: $fusion-daybreak-3 !important;
+      color: $fusion-daybreak-9 !important;
     }
   }
 
@@ -200,7 +200,7 @@
   border-radius: 0 !important;
 
   .ant-dropdown-menu {
-    background-color: #91d5ff !important;
+    background-color: $fusion-daybreak-3 !important;
     box-shadow: none !important;
     margin-left: 0px !important;
     margin-right: 0px !important;
@@ -208,19 +208,19 @@
 
     .ant-dropdown-menu-item {
       line-height: 30px !important;
-      color: #003a8c !important;
+      color: $fusion-daybreak-9 !important;
     }
   }
 }
 
 .link-menu-item {
   a {
-    color: #91d5ff !important;
+    color: $fusion-daybreak-3 !important;
   }
 }
 
 .ant-popover-inner {
-  background-color: #fff !important;
+  background-color: $fusion-background-color !important;
 }
 
 .ant-popover-inner-content {

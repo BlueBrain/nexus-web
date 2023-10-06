@@ -1,3 +1,4 @@
+@import '../../../shared/lib.scss';
 
 .preset-card {
   all: unset;
@@ -9,7 +10,7 @@
 
   &:hover {
     &-container {
-      background: #8c8c8c;
+      background: $fusion-neutral-7;
       box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.12);
     }
   }
@@ -59,12 +60,10 @@
     padding: 20px 22px;
     min-width: unset;
     min-height: unset;
-    background: #fafafa;
+    background: $fusion-neutral-2;
     border-radius: 6px;
-    box-sizing: border-box;
-    font-weight: 700;
     &:hover {
-      background: #0050b3;
+      background: $fusion-daybreak-7;
       // radial-gradient(
       //   at left top,
       //   rgb(14, 165, 233),
@@ -77,7 +76,7 @@
       }
     }
     &.selected {
-      background: #0050b3;
+      background: $fusion-daybreak-7;
       box-shadow: 0px 20px 16px -16px rgba(0, 0, 0, 0.2);
       color: white;
       .preset-card-title {

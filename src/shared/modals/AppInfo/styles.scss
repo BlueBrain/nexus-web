@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .app-information-modal {
   .ant-modal-content {
@@ -22,7 +22,7 @@
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
-      color: #000000;
+      color: $fusion-neutral-0;
       margin-bottom: 0.2em;
     }
 
@@ -33,7 +33,7 @@
       font-size: 14px;
       line-height: 115%;
       letter-spacing: 0.03em;
-      color: #000000;
+      color: $fusion-neutral-0;
     }
   }
 
@@ -43,7 +43,7 @@
     font-weight: 300;
     font-size: 14px;
     letter-spacing: 0.03em;
-    color: #595959;
+    color: $fusion-neutral-8;
     display: flex;
     align-items: center;
     img {
@@ -54,7 +54,7 @@
 
   .versions {
     .nexus-services {
-      color: #595959;
+      color: $fusion-gray-7;
       font-size: 14px;
       display: inline-block;
       margin-right: 12px;
@@ -86,7 +86,7 @@
       font-size: 14px;
       line-height: 135%;
       letter-spacing: 0.03em;
-      color: #595959;
+      color: $fusion-neutral-8;
       margin-bottom: 10px;
     }
     .version-item {
@@ -97,9 +97,9 @@
       font-size: 13px;
       line-height: 125%;
       font-feature-settings: 'tnum' on, 'lnum' on;
-      color: #003a8c;
+      color: $fusion-daybreak-9;
       padding: 15px 15px;
-      background: #bae7ff;
+      background: $fusion-blue-1;
       box-shadow: 0px 10px 14px -6px rgba(0, 0, 0, 0.08);
       border-radius: 4px;
       text-transform: capitalize;
@@ -113,7 +113,7 @@
         font-weight: 400;
         line-height: 110%;
         font-feature-settings: 'tnum' on, 'lnum' on;
-        color: #003a8c;
+        color: $fusion-daybreak-9;
       }
     }
   }
@@ -133,7 +133,7 @@
       justify-content: center;
       a {
         margin-left: 5px;
-        color: #595959 !important;
+        color: $fusion-neutral-8 !important;
       }
     }
   }

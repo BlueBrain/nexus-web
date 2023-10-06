@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .preview-menu {
   display: grid;
@@ -24,7 +24,7 @@
           .download-image-grid {
             display: block;
             background: white !important;
-            color: #0083cb;
+            color: $fusion-primary-color;
           }
         }
       }

@@ -1,15 +1,15 @@
-
+@import '../../lib.scss';
 
 .list-board {
   // 82 = 40 (header) + 42 (project banner)
   height: calc(100vh - 82px);
   overflow: hidden;
   overflow-x: scroll;
-  padding: 1rem 1rem 0;
+  padding: $default-pad $default-pad 0;
   & > .wrapper {
     display: flex;
     width: fit-content;
-    padding-bottom: 1rem;
+    padding-bottom: $default-pad;
     height: 100%;
   }
   & > .wrapper > .resource-list {
@@ -18,7 +18,7 @@
     }
     &:last-child {
       // necessary beause the queries board padding doesn't contain last element
-      margin-right: 1rem;
+      margin-right: $default-pad;
     }
     margin: 0 0.5em;
   }

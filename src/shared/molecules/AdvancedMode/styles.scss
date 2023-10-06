@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .advanced-mode-toggle {
   display: flex;
@@ -11,7 +11,7 @@
     &[aria-checked='true'] {
       background-color: white !important;
       .ant-switch-handle::before {
-        background-color: #050a56 !important;
+        background-color: $fusion-menu-color !important;
       }
     }
     &[aria-checked='false'] {
@@ -41,7 +41,7 @@
   }
 
   .beta {
-    color: #ff4d4f;
+    color: $fusion-global-red-1;
     font-weight: 600;
   }
 }

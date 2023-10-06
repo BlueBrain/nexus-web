@@ -1,4 +1,4 @@
-
+@import './../lib.scss';
 
 .result-table {
   width: 100%;
@@ -28,10 +28,10 @@
   }
 
   a {
-    color: #333333;
+    color: $text-color;
 
     &:hover {
-      color: #333333;
+      color: $text-color;
     }
   }
 
@@ -39,7 +39,7 @@
   .ant-table-tbody
     > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected)
     > td {
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: $table-row-highlight-color !important;
   }
 }
 

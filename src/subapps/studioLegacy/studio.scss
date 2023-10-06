@@ -1,4 +1,4 @@
-;
+@import '../../shared/lib.scss';
 
 .menu-highlight-override {
   color: #fff !important;
@@ -65,7 +65,7 @@ div.workspace {
   margin: 10 auto;
   .studio-list-item {
     list-style: none;
-    background-color: #f2f2f2;
+    background-color: $fusion-component-background-color;
     border-radius: 2px;
     cursor: pointer;
     margin: 2em 0;
@@ -76,7 +76,7 @@ div.workspace {
     .studio {
       font-weight: 900;
       .studio-name {
-        color: #0083cb;
+        color: $fusion-primary-color;
       }
     }
   }

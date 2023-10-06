@@ -1,9 +1,9 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .add-component-button {
-  background-color: #0083cb;
+  background-color: $primary-color;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow-base;
   width: 70px;
   height: 70px;
   display: flex;

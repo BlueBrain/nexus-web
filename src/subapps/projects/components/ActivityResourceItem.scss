@@ -1,16 +1,16 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .activity-resource-item {
-  border: 1px solid #d9d9d9;
+  border: 1px solid $border-color-base;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow-base;
   padding: 0.7em;
   font-size: 13px;
   margin-bottom: 5px;
 
   &__permission {
     margin-left: 15px;
-    color: ff4d4f;
+    color: $blocked-color;
   }
 
   &__title {

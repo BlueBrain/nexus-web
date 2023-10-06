@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .pdf-preview {
   .loadingMessage {
@@ -7,7 +7,7 @@
     z-index: 1100;
     font-size: 50px;
     text-align: center;
-    color: #0083cb;
+    color: $fusion-primary-color;
   }
 
   .asset-preview-mask {
@@ -57,7 +57,7 @@
           .page-controls {
             display: flex;
             justify-content: space-between;
-            background: #fff;
+            background: $fusion-background-color;
             opacity: 1;
             transition: opacity ease-in-out 0.2s;
             box-shadow: 0 30px 40px 0 rgb(16 36 94 / 20%);

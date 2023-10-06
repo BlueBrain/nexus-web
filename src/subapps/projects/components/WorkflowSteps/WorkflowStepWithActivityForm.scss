@@ -1,3 +1,5 @@
+@import '../../../../shared/lib.scss';
+
 .workflow-step-form {
   .ant-form-item-label {
     text-align: left;
@@ -6,7 +8,7 @@
   &__title {
     margin-bottom: 1em;
     padding-bottom: 1em;
-    border-bottom: 1px solid #d9d9d9;
+    border-bottom: 1px solid $border-color-base;
   }
 
   &__buttons > button {

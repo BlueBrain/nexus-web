@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .subapp-card-item {
   display: flex;
@@ -61,7 +61,7 @@
     padding: 8px 16px;
     gap: 10px;
     // margin-top: 10px;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $fusion-neutral-5;
     cursor: pointer;
     &:hover {
       background: var(--bg-color);

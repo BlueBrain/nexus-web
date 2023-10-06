@@ -1,9 +1,9 @@
-
+@import '../../lib.scss';
 
 .image-preview {
-  background-color: fade(#f2f2f2, 50%);
-  margin-bottom: 1rem;
-  border-radius: 2px;
+  background-color: $header-background-color;
+  margin-bottom: $default-pad;
+  border-radius: $border-radius-base;
   > .wrapper {
     background-size: contain;
     background-position: 50%;
@@ -14,13 +14,13 @@
     display: flex;
     align-content: center;
     justify-content: center;
-    .textLoadingGradient();
+    @include textLoadingGradient;
   }
   > .wrapper.-loaded {
     cursor: zoom-in;
   }
   > .wrapper > .skeleton {
-    .blockLoadingGradient();
+    @include blockLoadingGradient;
     height: 300px;
     width: 500px;
   }

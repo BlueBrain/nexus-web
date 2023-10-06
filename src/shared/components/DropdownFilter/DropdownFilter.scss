@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .dropdown-filter {
   & > .ant-select {
@@ -10,6 +10,6 @@
   display: flex;
   justify-content: space-between;
   & > .label {
-    margin-right: 1rem;
+    margin-right: $default-pad;
   }
 }

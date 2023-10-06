@@ -1,11 +1,11 @@
-
+@import '../../lib.scss';
 
 /**
 * Infinite Search
 */
 .infinite-search {
   .search {
-    margin-bottom: 1rem;
+    margin-bottom: $default-pad;
   }
   .scroll > ul {
     padding: 0;

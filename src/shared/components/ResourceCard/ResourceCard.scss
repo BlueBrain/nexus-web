@@ -1,9 +1,9 @@
-
+@import '../../lib.scss';
 
 .resource-card {
   & .actions {
     button {
-      margin-left: 14px;
+      margin-left: $default-pad;
     }
   }
 }
