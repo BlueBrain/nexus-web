@@ -1,8 +1,8 @@
-
+@import '../../lib.scss';
 
 .resource-actions {
   display: flex;
-  padding: 1rem 0;
+  padding: $default-pad 0;
   font-size: 0.8rem;
 
   button {

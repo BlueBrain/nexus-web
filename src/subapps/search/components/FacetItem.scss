@@ -1,4 +1,4 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .facet-group {
   h4 {
@@ -23,12 +23,12 @@
   }
 
   .chevron {
-    transition: all 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    transition: $transition-all-bouncy;
     &.hidden {
       transform: rotate(-90deg);
     }
     &.empty {
-      color: @disabled-color;
+      color: $disabled-color;
     }
   }
 }

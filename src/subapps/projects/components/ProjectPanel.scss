@@ -1,4 +1,4 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .project-panel {
   display: flex;
@@ -7,7 +7,7 @@
   height: 52px;
   padding: 0 1.5em;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow-base;
   transition: all 0.2s ease-out;
 
   // sticky project panel
@@ -47,13 +47,13 @@
 
     &:hover {
       opacity: 1;
-      color: #333333;
-      border-color: #333333;
+      color: $text-color;
+      border-color: $text-color;
     }
 
     &:focus {
-      color: #333333;
-      border-color: #333333;
+      color: $text-color;
+      border-color: $text-color;
       opacity: 0.9;
     }
   }
