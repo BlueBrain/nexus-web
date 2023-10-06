@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .ant-image-preview-img-wrapper {
   margin-bottom: 130px !important;
@@ -10,13 +10,13 @@
     width: 100%;
     padding: 20px;
     display: flex;
-    background-color: #050a56;
-    color: #fff;
+    background-color: $fusion-menu-color;
+    color: $fusion-background-color;
     .file-metadata {
       flex: 1;
       .last-updated,
       .last-updated-by {
-        color: #7cb4fa;
+        color: $fusion-secondary-color;
       }
     }
     .description-container {

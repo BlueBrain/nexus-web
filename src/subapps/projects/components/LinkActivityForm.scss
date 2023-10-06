@@ -1,4 +1,4 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .link-activity-form {
   .ant-form-item-label {
@@ -8,7 +8,7 @@
   &__title {
     margin-bottom: 1em;
     padding-bottom: 1em;
-    border-bottom: 1px solid #d9d9d9;
+    border-bottom: 1px solid $border-color-base;
   }
 
   button {

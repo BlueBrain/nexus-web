@@ -1,14 +1,16 @@
-
+@import '../../lib.scss';
 
 .link-item {
   .label {
+    @include ellipsis;
     font-weight: bold;
-    color: black;
+    color: $text-color;
   }
 
   .description {
+    @include ellipsis;
     margin-bottom: 0;
-    color: red;
+    color: $text-color-secondary;
   }
 
   .types {

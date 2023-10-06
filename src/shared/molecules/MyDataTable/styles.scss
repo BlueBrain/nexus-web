@@ -12,7 +12,7 @@
   .ant-table-thead {
     th {
       text-transform: uppercase;
-      background-color: #f5f5f5 !important;
+      background-color: $fusion-main-bg !important;
       font-family: 'Titillium Web';
       font-style: normal;
       font-weight: 400 !important;
@@ -20,14 +20,14 @@
       line-height: 130%;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: #8c8c8c;
+      color: $fusion-neutral-7;
 
       .ant-table-cell-content {
         font-size: 12px;
       }
 
       &:hover {
-        background-color: #f2f2f2 !important;
+        background-color: $fusion-component-background-color !important;
       }
 
       &:first-child {
@@ -41,7 +41,7 @@
   &-row {
     &.ant-table-row-selected {
       td {
-        background-color: #002766 !important;
+        background-color: $fusion-daybreak-10 !important;
         color: white !important;
 
         button {
@@ -52,10 +52,10 @@
       &:hover {
         td {
           background: #fafafa !important;
-          color: #002766 !important;
+          color: $fusion-daybreak-10 !important;
 
           button {
-            color: #002766 !important;
+            color: $fusion-daybreak-10 !important;
           }
         }
       }
@@ -66,15 +66,15 @@
         padding-left: 0 !important;
       }
 
-      background-color: #f5f5f5 !important;
-      border-bottom: 1px solid #d9d9d9 !important;
-      color: #003a8c !important;
+      background-color: $fusion-main-bg !important;
+      border-bottom: 1px solid $fusion-neutral-5 !important;
+      color: $fusion-daybreak-9 !important;
     }
 
     &:hover {
       td {
         background: #cbefff !important;
-        color: #002766 !important;
+        color: $fusion-daybreak-10 !important;
       }
     }
   }
@@ -85,7 +85,7 @@
 }
 
 .org-project-tag {
-  color: #0050b3 !important;
+  color: $fusion-main-color !important;
 }
 
 .no-resource-with-locate {

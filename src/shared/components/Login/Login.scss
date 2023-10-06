@@ -1,4 +1,4 @@
-
+@import '../../lib.scss';
 
 .Login {
   background-color: #fff;
@@ -33,7 +33,7 @@
   }
 
   .realm {
-    color: #0083cb;
+    color: $primary-color;
     text-decoration: underline;
     text-decoration-style: dotted;
     cursor: pointer;
