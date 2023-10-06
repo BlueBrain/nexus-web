@@ -1,6 +1,8 @@
+@import '../lib.scss';
+
 .close-button {
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: all $interfaceTransition;
   &:hover {
     font-size: 1.1em;
   }
