@@ -9,4 +9,4 @@ ENV NODE_ENV=production
 WORKDIR /opt/nexus
 COPY --from=builder /tmp/nexus-web/dist /opt/nexus/dist
 EXPOSE 8000
-ENTRYPOINT ["node", "dist/server"]
+ENTRYPOINT ["node", "dist"]
