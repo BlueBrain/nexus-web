@@ -16,4 +16,3 @@ cypress.env.json
 *.sops*
 .sops-*.*
 *.key
-dist_refresh/manifest.json
