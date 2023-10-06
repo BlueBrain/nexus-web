@@ -1,10 +1,10 @@
-@import '../../../shared';
+@import '../../../shared/lib.scss';
 
 .resources-list {
   height: 420px;
   overflow-y: scroll;
   width: 67%;
-  border-left: 1px solid #d9d9d9;
+  border-left: 1px solid $border-color-base;
 
   &__resources {
     padding-left: 20px;

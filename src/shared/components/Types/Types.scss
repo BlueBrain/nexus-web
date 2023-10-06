@@ -1,10 +1,11 @@
-
+@import '../../lib.scss';
 
 /**
 * TypesIcon
 */
 
 .types-list {
+  @include unstyleList;
   position: relative;
   list-style: none;
   position: relative;
@@ -14,7 +15,7 @@
   margin: 0;
   & > .ellipsis {
     display: inline-block;
-    color: red;
+    color: $text-color-secondary;
     position: relative;
     top: -4px;
   }

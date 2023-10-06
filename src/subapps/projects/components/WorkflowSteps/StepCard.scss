@@ -1,31 +1,33 @@
+@import '../../../../shared/lib.scss';
+
 .step-card {
   margin: 1em;
   background-color: rgb(247, 245, 245);
   width: 270px;
   border-radius: 10px;
   padding: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: $box-shadow-base;
   z-index: 2;
 
   &__status {
     text-align: center;
-    background-color: ff4d4f;
+    background-color: $blocked-color;
     border-radius: 10px 10px 0 0;
 
     &--blocked {
-      background-color: ff4d4f;
+      background-color: $blocked-color;
     }
 
     &--in-progress {
-      background-color: #faad14;
+      background-color: $in-progress-color;
     }
 
     &--done {
-      background-color: #52c41a;
+      background-color: $success-color;
     }
 
     &--not-started {
-      background-color: #828a8e;
+      background-color: $not-started-color;
     }
   }
 
@@ -54,7 +56,7 @@
 
   &__add-button-container {
     width: 25px;
-    background-color: #a5afb4;
+    background-color: $medium-gray;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -150,7 +152,7 @@
   }
 
   &__list-container::-webkit-scrollbar-thumb {
-    background-color: #828a8e;
+    background-color: $not-started-color;
     border-radius: 10px;
   }
 }
