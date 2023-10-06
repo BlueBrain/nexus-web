@@ -64,7 +64,11 @@ export default defineConfig(() => {
             }
         },
         build: {
-            manifest: true,
+            minify: true,
+            cssMinify: true,
+            manifest: false,
+            emptyOutDir: false,
+            outDir: 'dist',
             commonjsOptions: {
                 transformMixedEsModules: true
             },
@@ -79,6 +83,6 @@ export default defineConfig(() => {
                 }
             }
         },
-        assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4']
+        assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4', '**/*.png', '**/*.svg']
     })
 });
