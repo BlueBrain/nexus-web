@@ -7,11 +7,9 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   dataExplorerPageHandler,
-  elasticSearchQueryHandler,
   filterByProjectHandler,
   getCompleteResources,
   getMockResource,
-  graphAnalyticsTypeHandler,
   sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
