@@ -8,6 +8,10 @@ import StudioRedirectView from './views/StudioRedirectView';
 import MyDataPage from '../pages/MyDataPage/MyDataPage';
 import DataExplorerGraphFlowPage from '../pages/DataExplorerGraphFlowPage/DataExplorerGraphFlowPage';
 import DataExplorerPage from '../pages/DataExplorerPage/DataExplorerPage';
+import {
+  IDResolveRedirectionPage,
+  IDResolvedManyPage,
+} from '../pages/IDResolutionPage';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
 
@@ -32,6 +36,18 @@ const routes: TRoutePropsExtended[] = [
   {
     path: '/projects',
     component: ProjectsPage,
+    exact: true,
+    protected: true,
+  },
+  {
+    path: '/resolve/:resourceId',
+    component: IDResolveRedirectionPage,
+    exact: true,
+    protected: true,
+  },
+  {
+    path: '/resolved/:resourceId',
+    component: IDResolvedManyPage,
     exact: true,
     protected: true,
   },
