@@ -43,7 +43,7 @@ const IDResolveRedirectionPage = () => {
 
   const { error, isError, isLoading } = useQuery({
     enabled: isAuthenticated,
-    queryKey: ['resolver', { apiEndpoint, resourceId }],
+    queryKey: ['resource-id-resolver', { apiEndpoint, resourceId }],
     queryFn: () =>
       nexus.httpGet({
         path: `${apiEndpoint}/resolve/${resourceId}`,
@@ -54,7 +54,6 @@ const IDResolveRedirectionPage = () => {
     onSuccess: data => console.log('@@dataResolution', data),
     onError: error => console.log('@@errorResolution', error),
   });
-  console.log('@@isError', isError, error, JSON.stringify(error, null, 2));
 
   const handleReconnection = () => {
     localStorage.removeItem('nexus__state');
