@@ -85,7 +85,9 @@ const IDResolvedManyPage = () => {
           </div>
         );
       }
-      if ('_results' in data && Boolean(data._total)) {
+      if (data._total === 0) {
+        return <div style={containerStyle}>No result found</div>;
+      } else if ('_results' in data && Boolean(data._total)) {
         return (
           <div style={containerStyle}>
             <Collapse onChange={onChangeKey} defaultActiveKey={expandedItem}>
