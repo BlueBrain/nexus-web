@@ -1,53 +1,44 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Modal } from 'antd';
-import { isEmpty } from 'lodash';
 
 import { RootState } from '../../shared/store/reducers';
-import { ResourceJSONPrettify } from './IDResolvedManyPage';
-
-const modalStyle = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  justifyContent: 'center',
-  flexDirection: 'column',
-} as CSSProperties;
-
-const calloutStyle = {
-  margin: 10,
-  width: '100%',
-  border: '1px solid #c11b1b3b',
-  padding: '4px',
-  borderRadius: '4px',
-  fontSize: 14,
-  fontWeight: 'bold',
-} as CSSProperties;
+import {
+  modalStyle,
+  calloutStyle,
+  checkIsAuthenticated,
+  ResourceJSONPrettify,
+} from './IDResolvedManyPage';
 
 const IDResolveRedirectionPage = () => {
   const nexus = useNexusContext();
-  const oidc = useSelector((state: RootState) => state.oidc);
-
-  const { push: navigate } = useHistory();
-  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+  const navigate = useHistory().push;
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
   const { resourceId } = useParams<{ resourceId: string }>();
 
-  const token = oidc && oidc.user && !!oidc.user.access_token;
-  const authenticated = !isEmpty(oidc.user);
-  const isAuthenticated = authenticated && token;
+  const checkAuthenticatedMemoized = useCallback(
+    (state: RootState) => checkIsAuthenticated(state),
+    []
+  );
+  const isAuthenticated = useSelector((state: RootState) =>
+    checkAuthenticatedMemoized(state)
+  );
 
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `/resolve/${encodeURIComponent(resourceId)}`;
 
-  const { error, isError, isLoading } = useQuery({
+  const { error, isError } = useQuery({
     enabled: isAuthenticated,
     queryKey: ['resource-id-resolver', { apiEndpoint, resourceId }],
     queryFn: () =>
       nexus.httpGet({
         path: `${apiEndpoint}/resolve/${resourceId}`,
-        // headers: { Accept: 'text/html' }
+        headers: { Accept: 'text/html' },
       }),
     retry: false,
     refetchOnWindowFocus: false,
@@ -59,8 +50,9 @@ const IDResolveRedirectionPage = () => {
     localStorage.removeItem('nexus__state');
     navigate(`/login?destination=${redirectUri}`);
   };
+  const handleHomeRedirect = () => navigate(`/`);
 
-  if (!isLoading && isError) {
+  if (isError) {
     return (
       <Modal open centered footer={null} closable={false} closeIcon={null}>
         <div style={modalStyle}>
@@ -71,23 +63,32 @@ const IDResolveRedirectionPage = () => {
             header={`Resolved ID: ${decodeURIComponent(resourceId)}`}
           />
           {(error as any)['@type'] === 'AuthorizationFailed' ? (
-            <p style={calloutStyle}>
-              Do you want to proceed for logout for new realm authentication
-            </p>
+            <>
+              <p style={calloutStyle}>
+                Do you want to proceed for logout for new realm authentication
+              </p>
+              <Button
+                type="primary"
+                style={{ alignSelf: 'flex-end' }}
+                onClick={handleReconnection}
+              >
+                Reconnect
+              </Button>
+            </>
           ) : (
-            <p style={calloutStyle}>
-              The redirection performance is suboptimal; further investigation
-              is required, Please check again
-            </p>
-          )}
-          {(error as any)['@type'] === 'AuthorizationFailed' && (
-            <Button
-              type="primary"
-              style={{ alignSelf: 'flex-end' }}
-              onClick={handleReconnection}
-            >
-              Reconnect
-            </Button>
+            <>
+              <p style={calloutStyle}>
+                The redirection performance is suboptimal; further investigation
+                is required, Please check again
+              </p>
+              <Button
+                type="primary"
+                style={{ alignSelf: 'flex-end' }}
+                onClick={handleHomeRedirect}
+              >
+                Return Home
+              </Button>
+            </>
           )}
         </div>
       </Modal>
