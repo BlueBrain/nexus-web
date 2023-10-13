@@ -16,9 +16,10 @@ import {
 const IDResolveRedirectionPage = () => {
   const nexus = useNexusContext();
   const navigate = useHistory().push;
-  const apiEndpoint = useSelector(
-    (state: RootState) => state.config.apiEndpoint
-  );
+  const { apiEndpoint, basePath } = useSelector((state: RootState) => ({
+    apiEndpoint: state.config.apiEndpoint,
+    basePath: state.config.basePath,
+  }));
   const { resourceId } = useParams<{ resourceId: string }>();
 
   const checkAuthenticatedMemoized = useCallback(
@@ -30,7 +31,7 @@ const IDResolveRedirectionPage = () => {
   );
 
   // we should encode it again due oidc returning the url not encoded
-  const redirectUri = `/resolve/${encodeURIComponent(resourceId)}`;
+  const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
 
   const { error, isError } = useQuery({
     enabled: isAuthenticated,
@@ -78,8 +79,8 @@ const IDResolveRedirectionPage = () => {
           ) : (
             <>
               <p style={calloutStyle}>
-                The redirection performance is suboptimal; further investigation
-                is required, Please check again
+                The redirection feature is in beta version, We have taken note
+                of this error and are working on improving the feature.
               </p>
               <Button
                 type="primary"
