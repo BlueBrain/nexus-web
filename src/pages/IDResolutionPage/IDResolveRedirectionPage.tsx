@@ -34,6 +34,7 @@ const IDResolveRedirectionPage = () => {
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
 
+  const ACInstance = new AbortController();
   useEffect(() => {
     if (resourceId && apiEndpoint) {
       (async () => {
@@ -43,18 +44,18 @@ const IDResolveRedirectionPage = () => {
             Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
           },
           redirect: 'manual',
+          signal: ACInstance.signal,
         })
           .then(res => {
-            setResolutionError(prev => ({ ...prev, isError: false }));
-            if (res.redirected) {
-              window.location.href = res.url;
-            }
+            window.location.replace(res.url);
           })
           .catch(error => {
             setResolutionError({ error, isError: true });
+            ACInstance.abort();
           });
       })();
     }
+    return () => ACInstance.abort();
   }, [apiEndpoint, resourceId]);
 
   const handleReconnection = () => {
