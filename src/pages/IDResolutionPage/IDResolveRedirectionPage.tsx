@@ -17,7 +17,7 @@ const IDResolveRedirectionPage = () => {
     apiEndpoint: state.config.apiEndpoint,
     basePath: state.config.basePath,
   }));
-  const [{ error, isError }, setResolutionState] = useState({
+  const [{ error, isError }, setResolutionError] = useState({
     isError: false,
     error: null,
   });
@@ -45,13 +45,13 @@ const IDResolveRedirectionPage = () => {
           redirect: 'manual',
         })
           .then(res => {
-            setResolutionState(prev => ({ ...prev, isError: false }));
+            setResolutionError(prev => ({ ...prev, isError: false }));
             if (res.redirected) {
               window.location.href = res.url;
             }
           })
           .catch(error => {
-            setResolutionState({ error, isError: true });
+            setResolutionError({ error, isError: true });
           });
       })();
     }
