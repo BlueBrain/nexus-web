@@ -1,8 +1,6 @@
-import { CSSProperties, useCallback, useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Modal } from 'antd';
 
 import { RootState } from '../../shared/store/reducers';
@@ -14,12 +12,15 @@ import {
 } from './IDResolvedManyPage';
 
 const IDResolveRedirectionPage = () => {
-  const nexus = useNexusContext();
   const navigate = useHistory().push;
   const { apiEndpoint, basePath } = useSelector((state: RootState) => ({
     apiEndpoint: state.config.apiEndpoint,
     basePath: state.config.basePath,
   }));
+  const [{ error, isError }, setResolutionState] = useState({
+    isError: false,
+    error: null,
+  });
   const { resourceId } = useParams<{ resourceId: string }>();
 
   const checkAuthenticatedMemoized = useCallback(
@@ -33,19 +34,28 @@ const IDResolveRedirectionPage = () => {
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
 
-  const { error, isError } = useQuery({
-    enabled: isAuthenticated,
-    queryKey: ['resource-id-resolver', { apiEndpoint, resourceId }],
-    queryFn: () =>
-      nexus.httpGet({
-        path: `${apiEndpoint}/resolve/${resourceId}`,
-        headers: { Accept: 'text/html' },
-      }),
-    retry: false,
-    refetchOnWindowFocus: false,
-    onSuccess: data => console.log('@@dataResolution', data),
-    onError: error => console.log('@@errorResolution', error),
-  });
+  useEffect(() => {
+    if (resourceId && apiEndpoint) {
+      (async () => {
+        fetch(`${apiEndpoint}/resolve/${resourceId}`, {
+          headers: {
+            Accept: 'text/html',
+            Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+          },
+          redirect: 'manual',
+        })
+          .then(res => {
+            setResolutionState(prev => ({ ...prev, isError: false }));
+            if (res.redirected) {
+              window.location.href = res.url;
+            }
+          })
+          .catch(error => {
+            setResolutionState({ error, isError: true });
+          });
+      })();
+    }
+  }, [apiEndpoint, resourceId]);
 
   const handleReconnection = () => {
     localStorage.removeItem('nexus__state');
