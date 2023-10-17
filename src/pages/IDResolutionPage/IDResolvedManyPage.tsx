@@ -43,6 +43,7 @@ export const checkIsAuthenticated = (state: RootState) => {
   const isAuthenticated = Boolean(!isEmpty(oidc.user) && token);
   return isAuthenticated;
 };
+
 export const ResourceJSONPrettify = ({
   data,
   showHeader = false,
