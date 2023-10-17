@@ -17,10 +17,7 @@ const IDResolveRedirectionPage = () => {
     apiEndpoint: state.config.apiEndpoint,
     basePath: state.config.basePath,
   }));
-  const [{ error, isError }, setResolutionError] = useState({
-    isError: false,
-    error: null,
-  });
+
   const { resourceId } = useParams<{ resourceId: string }>();
 
   const checkAuthenticatedMemoized = useCallback(
@@ -30,7 +27,7 @@ const IDResolveRedirectionPage = () => {
   const isAuthenticated = useSelector((state: RootState) =>
     checkAuthenticatedMemoized(state)
   );
-  console.log('@@authenticated', isAuthenticated);
+
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
 
@@ -42,66 +39,10 @@ const IDResolveRedirectionPage = () => {
             Accept: 'text/html',
             Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
           },
-          redirect: 'manual',
-        })
-          .then(res => {
-            window.location.replace(res.url);
-          })
-          .catch(error => {
-            setResolutionError({ error, isError: true });
-          });
+        });
       })();
     }
   }, [apiEndpoint, resourceId, isAuthenticated]);
-
-  const handleReconnection = () => {
-    localStorage.removeItem('nexus__state');
-    navigate(`/login?destination=${redirectUri}`);
-  };
-  const handleHomeRedirect = () => navigate(`/`);
-
-  if (isError) {
-    return (
-      <Modal open centered footer={null} closable={false} closeIcon={null}>
-        <div style={modalStyle}>
-          <h2 style={{ fontWeight: 'bold' }}>Error when resolving ID</h2>
-          <ResourceJSONPrettify
-            showHeader
-            data={error}
-            header={`Resolved ID: ${decodeURIComponent(resourceId)}`}
-          />
-          {(error as any)['@type'] === 'AuthorizationFailed' ? (
-            <>
-              <p style={calloutStyle}>
-                Do you want to proceed for logout for new realm authentication
-              </p>
-              <Button
-                type="primary"
-                style={{ alignSelf: 'flex-end' }}
-                onClick={handleReconnection}
-              >
-                Reconnect
-              </Button>
-            </>
-          ) : (
-            <>
-              <p style={calloutStyle}>
-                The redirection feature is in beta version, We have taken note
-                of this error and are working on improving the feature.
-              </p>
-              <Button
-                type="primary"
-                style={{ alignSelf: 'flex-end' }}
-                onClick={handleHomeRedirect}
-              >
-                Return Home
-              </Button>
-            </>
-          )}
-        </div>
-      </Modal>
-    );
-  }
 
   if (!isAuthenticated) {
     navigate(`/login?destination=${redirectUri}`);
