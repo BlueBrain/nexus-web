@@ -3,19 +3,54 @@ name: Review
 on: [pull_request]
 
 jobs:
-  publish-preview:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    timeout-minutes: 40
+  test-and-build:
+    runs-on: it
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Build
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+      - name: Prune containers
         run: |
-          docker build -t bluebrain/nexus-web:preview .
-      - name: Publish To DockerHub
+          docker system prune -af
+      - name: install dependencies 🚀
         run: |
-          echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
-          docker push bluebrain/nexus-web:preview
+          yarn install --frozen-lockfile # optional, --immutable
+      - name: linting ✨
+        run: |
+          yarn lint
+      - name: style 💅
+        run: |
+          yarn style
+      - name: running test 🛫🛬
+        run: |
+          yarn test --coverage src
+      - name: upload coverage to Codecov 💌
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: build fusion docker image
+        run: |
+          docker build . --tag=nexus-web:fresh
+      - name: Start services
+        run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
+      - name: Copy nexus-web into Cypress container
+        # avoids permission issue where cypress writes screenshots to host with root as user
+        # which we can't then delete easily
+        run: docker cp ./. cypress:/e2e
+      - name: e2e tests
+        run: >-
+          echo | timeout --verbose 20m docker exec
+          -e 'DEBUG=cypress:launcher:browsers'
+          -t
+          cypress
+          cypress run
+          --config-file cypress.config.ts
+          --browser chrome
+          --record
+          --key ${{ secrets.CYPRESS_RECORD_KEY }}
+      - name: Cleanup Docker Containers
+        if: ${{ always() }}
+        run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
