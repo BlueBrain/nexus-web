@@ -30,13 +30,12 @@ const IDResolveRedirectionPage = () => {
   const isAuthenticated = useSelector((state: RootState) =>
     checkAuthenticatedMemoized(state)
   );
-
+  console.log('@@authenticated', isAuthenticated);
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
 
-  const ACInstance = new AbortController();
   useEffect(() => {
-    if (resourceId && apiEndpoint) {
+    if (resourceId && apiEndpoint && isAuthenticated) {
       (async () => {
         fetch(`${apiEndpoint}/resolve/${resourceId}`, {
           headers: {
@@ -44,19 +43,16 @@ const IDResolveRedirectionPage = () => {
             Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
           },
           redirect: 'manual',
-          signal: ACInstance.signal,
         })
           .then(res => {
             window.location.replace(res.url);
           })
           .catch(error => {
             setResolutionError({ error, isError: true });
-            ACInstance.abort();
           });
       })();
     }
-    return () => ACInstance.abort();
-  }, [apiEndpoint, resourceId]);
+  }, [apiEndpoint, resourceId, isAuthenticated]);
 
   const handleReconnection = () => {
     localStorage.removeItem('nexus__state');
