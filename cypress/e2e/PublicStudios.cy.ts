@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
 describe('Public Studios', () => {
-  const RowsPerPage = 50;
+  const MaxRowsPerPage = 50;
 
   const sparqlEndpoint = (name: string) =>
     `https://bbp.epfl.ch/nexus/v1/views/public/${name}/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex/sparql`;
@@ -125,12 +125,14 @@ describe('Public Studios', () => {
   };
 
   const assertRowCount = async (expectedTotalRows: number) => {
-    const totalPaginationButtons = Math.ceil(expectedTotalRows / RowsPerPage);
+    const totalPaginationButtons = Math.ceil(
+      expectedTotalRows / MaxRowsPerPage
+    );
 
     cy.findByText(new RegExp(`${expectedTotalRows} Results`));
 
-    if (expectedTotalRows > RowsPerPage) {
-      cy.get(RowSelector).should('have.length.at.least', RowsPerPage);
+    if (expectedTotalRows > MaxRowsPerPage) {
+      cy.get(RowSelector).should('have.length.at.least', MaxRowsPerPage);
 
       cy.get(PaginationButtonsSelector).should(
         'have.length',

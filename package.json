@@ -15,6 +15,7 @@
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
+    "cy:publicstudios": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
     "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
     "codecov": "codecov",
     "lint": "tslint --project tsconfig.json",
