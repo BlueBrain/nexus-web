@@ -102,7 +102,7 @@
     "string-similarity": "^4.0.4",
     "ts-debounce": "^1.0.0",
     "ts-invariant": "^0.4.4",
-    "ts-pattern": "^1.1.0",
+    "ts-pattern": "3.3.4",
     "use-async-effect": "^2.2.1"
   },
   "devDependencies": {
