@@ -14,7 +14,7 @@ import { getOrgAndProjectFromResource } from '../../shared/utils';
 import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
 import ResolutionError from '../../shared/components/IDResolution/ErrorResolution';
 
-import './styles.scss';
+import './styles.less';
 
 const checkIsAuthenticated = (state: RootState) => {
   const oidc = state.oidc;
