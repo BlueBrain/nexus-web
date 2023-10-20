@@ -29,15 +29,11 @@ const isMultipleResults = isMatching({
 });
 
 const isSingleResult = isMatching({
-  '@context': P.string,
-  '@type': P.string,
   '@id': P.string,
   _project: P.string,
 });
 
 const isErrorResult = isMatching({
-  '@context': P.string,
-  '@type': P.string,
   reason: P.string,
 });
 
