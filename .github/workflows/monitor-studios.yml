@@ -1,0 +1,32 @@
+name: Test Public Studios
+on:
+  schedule:
+    - cron: '15 15 * * *' # Fire at 12:30 p.m. (noon) every day
+
+jobs:
+  e2e-studio-cron-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main # Test the main branch (usually contains the code in production)
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+      - name: Prune containers
+        run: |
+          docker system prune -af
+      - name: install dependencies 🚀
+        run: |
+          yarn install --frozen-lockfile # optional, --immutable
+      - name: run cypress tests
+        id: e2eTests
+        run: /
+          yarn cy:publicstudios
+      - name: Send error notification
+        if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
+        run: echo "We should send a slack notification in this case"
+      - name: Cleanup Docker Containers
+        if: ${{ always() }}
+        run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
