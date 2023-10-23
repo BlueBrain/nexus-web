@@ -122,8 +122,7 @@ LIMIT 1000`;
 const DEFAULT_SEARCH_CONFIG_PROJECT = 'webapps/nexus-web';
 const DEFAULT_SERVICE_ACCOUNTS_REALM = 'serviceaccounts';
 const rawBase = process.env.BASE_PATH || '';
-// to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
-const pluginsManifestPath = process.env.PLUGINS_MANIFEST_PATH || '/plugins';
+const pluginsManifestPath = process.env.PLUGINS_MANIFEST_PATH || `dist/plugins`;
 
 // configure instance logo
 const layoutSettings = {
@@ -149,7 +148,7 @@ const searchSettings = {
 const dataModelsLocation = process.env.DATA_MODELS || '';
 
 const subAppsManifestPath =
-  process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
+  process.env.SUB_APPS_MANIFEST_PATH || '/dist/sub-apps';
 
 const base = rawBase.replace(/\/$/, '');
 
