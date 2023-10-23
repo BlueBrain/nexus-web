@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - develop
-      - fusion-react-18-vite
 
 jobs:
   publish-preview:
