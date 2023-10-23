@@ -12,7 +12,6 @@ import commonjs from 'vite-plugin-commonjs';
 import viteCompression from 'vite-plugin-compression';
 import vitePluginCp from 'vite-plugin-cp';
 import 'vite-compatible-readable-stream';
-import { execSync } from "child_process"
 
 export default defineConfig(() => {
     let commitHash = '', version = '';
@@ -93,7 +92,7 @@ export default defineConfig(() => {
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
-            }
+            },
         },
         assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4', '**/*.png', '**/*.svg']
     })
