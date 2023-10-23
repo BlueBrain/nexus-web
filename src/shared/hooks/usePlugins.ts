@@ -60,7 +60,6 @@ export default function usePlugins() {
           })
         )
         .catch(error => {
-          console.log('@@error', error);
           setManifest({
             error,
             loading: false,

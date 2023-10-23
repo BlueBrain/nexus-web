@@ -2,26 +2,31 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'url';
 
+import { dynamicBase } from 'vite-plugin-dynamic-base';
+import { execSync } from "child_process";
 import react from '@vitejs/plugin-react';
 import svgrPlugin from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import commonjs from 'vite-plugin-commonjs';
 import viteCompression from 'vite-plugin-compression';
-
 import 'vite-compatible-readable-stream';
-import { execSync } from "child_process"
 
 export default defineConfig(() => {
     const commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
     const version = execSync('git describe --tags').toString().trimEnd();
 
     return ({
+        base: "/__BASE__/",
         plugins: [
             react(),
             tsconfigPaths(),
             svgrPlugin(),
             commonjs(),
             viteCompression(),
+            dynamicBase({
+                publicPath: 'window.__BASE__',
+                transformIndexHtml: true,
+            })
         ],
         resolve: {
             alias: {
@@ -66,9 +71,10 @@ export default defineConfig(() => {
         build: {
             minify: true,
             cssMinify: true,
-            manifest: false,
+            manifest: true,
             emptyOutDir: false,
             outDir: 'dist',
+            assetsDir: 'public',
             commonjsOptions: {
                 transformMixedEsModules: true
             },
@@ -81,7 +87,7 @@ export default defineConfig(() => {
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
-            }
+            },
         },
         assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4', '**/*.png', '**/*.svg']
     })
