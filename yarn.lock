@@ -4680,11 +4680,93 @@
     loader-utils "^1.2.3"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@testing-library/cypress@9.0.0":
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@testing-library/cypress/-/cypress-9.0.0.tgz#3facad49c4654a99bbd138f83f33b415d2d6f097"
   integrity sha512-c1XiCGeHGGTWn0LAU12sFUfoX3qfId5gcSE2yHode+vsyHDWraxDPALjVnHd4/Fa3j4KBcc5k++Ccy6A9qnkMA==
 =======
+=======
+"@swc/core-darwin-arm64@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.3.94.tgz#2fe8e513433cd5d5c987952e38ca06e6226de0f3"
+  integrity sha512-KNuE6opIy/wAXiGUWLhGWhCG3wA/AdjG6eYkv6dstrAURLaQMAoD8vDfVm8pxS8FA8Kx+0Z4QiDNPqk5aKIsqg==
+
+"@swc/core-darwin-x64@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-darwin-x64/-/core-darwin-x64-1.3.94.tgz#6b626013657e18eaf1e795370eac70e86dc7d300"
+  integrity sha512-HypemhyehQrLqXwfJv5ronD4BMAXdgMCP4Ei7rt3B6Ftmt9axwGvdwGiXxsYR9h1ncyxoVxN+coGxbNIhKhahw==
+
+"@swc/core-linux-arm-gnueabihf@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm-gnueabihf/-/core-linux-arm-gnueabihf-1.3.94.tgz#300483c9e9a3a4084d8264f59daee19102e1084b"
+  integrity sha512-KzKN54c7Y6X1db+bBVSXG4+bXmAPvXtDWk+TgwNJH4yYliOrnP/RKkHA5QZ9VFSnqJF06/sAO4kYBiL/aVQDBQ==
+
+"@swc/core-linux-arm64-gnu@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-gnu/-/core-linux-arm64-gnu-1.3.94.tgz#ac099db32d60e161c11bf01a9496ea0ada347247"
+  integrity sha512-iAcR8Ho0Uck/SLSrgYfXkpcGOXuN5waMZO7GlL/52QODr7GJtOfZ0H1MCZLbIFkPJp/iXoJpYgym4d/qSd477Q==
+
+"@swc/core-linux-arm64-musl@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-musl/-/core-linux-arm64-musl-1.3.94.tgz#e555791abf27d74831dc3581327662f65e2b62f2"
+  integrity sha512-VCHL1Mb9ENHx+sAeubSSg481MUeP9/PYzPPy9tfswunj/w35M+vEWflwK2dzQL9kUTFD3zcFTpAgsKnj6aX24w==
+
+"@swc/core-linux-x64-gnu@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.3.94.tgz#8d7d4104ba29ce0d7871472c69a7616db2908850"
+  integrity sha512-gjq7U6clhJi0Oel2a4gwR4MbSu+THQ2hmBNVCOSA3JjPZWZTkJXaJDpnh/r7PJxKBwUDlo0VPlwiwjepAQR2Rw==
+
+"@swc/core-linux-x64-musl@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.3.94.tgz#d7180fcff29339b7a2011670a1e1697a2075d13d"
+  integrity sha512-rSylruWyeol2ujZDHmwiovupMR5ukMXivlA7DDxmQ1dFUV9HuiPknQrU5rEbI3V2V3V5RkpbEKjnADen7AeMPQ==
+
+"@swc/core-win32-arm64-msvc@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-arm64-msvc/-/core-win32-arm64-msvc-1.3.94.tgz#1ddab334f90ba40fb2b7768476fb64f4e8f1d759"
+  integrity sha512-OenDUr5MQkz506ebVQq6ezoZ3GZ26nchgf5mPnwab4gx2TEiyR9zn7MdX5LWskTmOK3+FszPbGK0B5oLK6Y5yw==
+
+"@swc/core-win32-ia32-msvc@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-ia32-msvc/-/core-win32-ia32-msvc-1.3.94.tgz#e254b4ab6514cf0ebd89781c7bf348484d006b8b"
+  integrity sha512-mi6NcmtJKnaiHAxLtVz+WzunscsEwPdA0j15DuiYVx06Xo+MdRLJj4eVBgVLwGD1AI3IqKs4MVVx2cD7n0h5mg==
+
+"@swc/core-win32-x64-msvc@1.3.94":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.3.94.tgz#dc193537ccd87f40552e099038f543e0756f74de"
+  integrity sha512-Ba0ZLcGMnqPWWF9Xa+rWhhnkpvE7XoQegMP/VCF2JIHb2ieGBC8jChO6nKRFKZjib/3wghGzxakyDQx3LDhDug==
+
+"@swc/core@^1.3.61":
+  version "1.3.94"
+  resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.3.94.tgz#3719cbec7d05e8228fd5b5c7e0dec65ecf2d0422"
+  integrity sha512-jTHn8UJOGgERKZLy8euEixVAzC/w/rUSuMlM3e7hxgap/TC595hSkuQwtkpL238dsuEPveD44GMy2A5UBtSvjg==
+  dependencies:
+    "@swc/counter" "^0.1.1"
+    "@swc/types" "^0.1.5"
+  optionalDependencies:
+    "@swc/core-darwin-arm64" "1.3.94"
+    "@swc/core-darwin-x64" "1.3.94"
+    "@swc/core-linux-arm-gnueabihf" "1.3.94"
+    "@swc/core-linux-arm64-gnu" "1.3.94"
+    "@swc/core-linux-arm64-musl" "1.3.94"
+    "@swc/core-linux-x64-gnu" "1.3.94"
+    "@swc/core-linux-x64-musl" "1.3.94"
+    "@swc/core-win32-arm64-msvc" "1.3.94"
+    "@swc/core-win32-ia32-msvc" "1.3.94"
+    "@swc/core-win32-x64-msvc" "1.3.94"
+
+"@swc/counter@^0.1.1":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@swc/counter/-/counter-0.1.2.tgz#bf06d0770e47c6f1102270b744e17b934586985e"
+  integrity sha512-9F4ys4C74eSTEUNndnER3VJ15oru2NumfQxS8geE+f3eB5xvfxpWyqE5XlVnxb/R14uoXi6SLbBwwiDSkv+XEw==
+
+"@swc/types@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@swc/types/-/types-0.1.5.tgz#043b731d4f56a79b4897a3de1af35e75d56bc63a"
+  integrity sha512-myfUej5naTBWnqOCc/MdVOLVjXUXtIA+NpDrDBKJtLLg2shUjBu3cZmB/85RyitKc55+lUUyl7oRfLOvkr2hsw==
+
+>>>>>>> eb1f942c (add base url at runtime)
 "@testing-library/cypress@^8.0.3":
   version "8.0.7"
   resolved "https://registry.yarnpkg.com/@testing-library/cypress/-/cypress-8.0.7.tgz#18315eba3cf8852808afadf122e4858406384015"
@@ -8577,7 +8659,7 @@ css-select@^2.0.0:
     domutils "^1.7.0"
     nth-check "^1.0.2"
 
-css-select@^4.1.3:
+css-select@^4.1.3, css-select@^4.2.1:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/css-select/-/css-select-4.3.0.tgz#db7129b2846662fd8628cfc496abb2b59e41529b"
   integrity sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==
@@ -11503,7 +11585,7 @@ hastscript@^5.0.0:
     property-information "^5.0.0"
     space-separated-tokens "^1.0.0"
 
-he@^1.2.0:
+he@1.2.0, he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -14987,6 +15069,14 @@ node-fetch@^2.0.0, node-fetch@^2.6.0, node-fetch@^2.6.12, node-fetch@^2.6.7:
   integrity sha512-StxNAxh15zr77QvvkmveSQ8uCQ4+v5FkvNTj0OESmiHu+VRi/gXArXtkWMElOsOUNLtUEvI4yS+rdtOHZTwlQA==
   dependencies:
     whatwg-url "^5.0.0"
+
+node-html-parser@^5.3.3:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-5.4.2.tgz#93e004038c17af80226c942336990a0eaed8136a"
+  integrity sha512-RaBPP3+51hPne/OolXxcz89iYvQvKOydaqoePpOgXcrOKZhjVIzmpKZz+Hd/RBO2/zN2q6CNJhQzucVz+u3Jyw==
+  dependencies:
+    css-select "^4.2.1"
+    he "1.2.0"
 
 node-libs-browser@^2.2.1:
   version "2.2.1"
@@ -20578,6 +20668,14 @@ vite-plugin-compression@^0.5.1:
     chalk "^4.1.2"
     debug "^4.3.3"
     fs-extra "^10.0.0"
+
+vite-plugin-dynamic-base@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-dynamic-base/-/vite-plugin-dynamic-base-1.0.0.tgz#248714f7150f12d9c69bfe244a0d91b2ccc33d3c"
+  integrity sha512-BSfE7I2HCOk6Jmlxaq0hw3FWkBg8g7kGuwisj2tlDSRYPEQzJliKEvPkkvHZgd7jNJLwSMzEES1oWzc1BR+CSw==
+  dependencies:
+    "@swc/core" "^1.3.61"
+    node-html-parser "^5.3.3"
 
 vite-plugin-dynamic-import@^1.5.0:
   version "1.5.0"

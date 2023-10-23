@@ -91,6 +91,9 @@ async function transformer(html: string, req: Request) {
     .replace(
       '<!--app-head-->',
       `
+        <script>
+          window.__BASE__ = '${base}'
+        </script>
         <base href="${base}" />
         ${helmet.title.toString()}
         ${helmet.meta.toString()}
@@ -100,7 +103,6 @@ async function transformer(html: string, req: Request) {
     .replace(
       '<!--app-state-->',
       `<script>
-        window.__BASE__ = '${base}';
         // WARNING: See the following for security issues around embedding JSON in HTML:
         // http://redux.js.org/recipes/ServerRendering.html#security-considerations
         window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState).replace(
