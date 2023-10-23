@@ -1,14 +1,13 @@
-import { vi } from 'vitest';
+import { vi as jest } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { downloadArchive } from './DataPanel';
-import { ParsedNexusUrl } from 'shared/utils/nexusParse';
+import { ParsedNexusUrl } from '../../../shared/utils/nexusParse';
 import {
   getMockDistribution,
   getMockResource,
   resourceWithDistributionArray,
   resourceWithoutDistrition,
-} from 'shared/utils/__mocks__/data_panel_download_resource';
-import { vi as jest } from 'vitest';
+} from '../../../shared/utils/__mocks__/data_panel_download_resource';
 const mockNexus = createNexusClient({
   uri: 'https://localhost',
   fetch: {},
