@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { ConnectedRouter } from 'connected-react-router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { NexusProvider } from '@bbp/react-nexus';
