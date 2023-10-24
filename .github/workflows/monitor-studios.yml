@@ -1,7 +1,7 @@
 name: Test Public Studios
 on:
   schedule:
-    - cron: '15 15 * * *' # Fire at 12:30 p.m. (noon) every day
+    - cron: '30 12 * * *' # Fire at 12:30 p.m. (noon) every day
 
 jobs:
   e2e-studio-cron-test:
@@ -22,7 +22,7 @@ jobs:
           yarn install --frozen-lockfile # optional, --immutable
       - name: run cypress tests
         id: e2eTests
-        run: /
+        run: |
           yarn cy:publicstudios
       - name: Send error notification
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
