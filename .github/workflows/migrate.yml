@@ -1,8 +1,8 @@
-name: Preview
+name: Migration
 on:
   push:
     branches:
-      - develop
+      - fusion-react-18-vite
 
 jobs:
   publish-preview:
@@ -16,9 +16,9 @@ jobs:
           fetch-depth: 0
       - name: Build
         run: |
-          docker build -t bluebrain/nexus-web:preview .
+          docker build -t bluebrain/nexus-web:migrate .
       - name: Publish To DockerHub
         run: |
           echo ${{ secrets.DOCKER_PASS }} | docker login --username ${{ secrets.DOCKER_USER }} --password-stdin
-          docker push bluebrain/nexus-web:preview
+          docker push bluebrain/nexus-web:migrate
 
