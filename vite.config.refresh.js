@@ -11,7 +11,7 @@ export default defineConfig({
         'process.env': process.env
     },
     build: {
-        minify: true,
+        minify: false,
         manifest: false,
         outDir: 'dist',
         commonjsOptions: {
