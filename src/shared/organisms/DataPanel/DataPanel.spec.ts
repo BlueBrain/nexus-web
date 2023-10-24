@@ -8,6 +8,7 @@ import {
   resourceWithDistributionArray,
   resourceWithoutDistrition,
 } from '../../../shared/utils/__mocks__/data_panel_download_resource';
+
 const mockNexus = createNexusClient({
   uri: 'https://localhost',
   fetch: {},
@@ -25,7 +26,7 @@ const mockParsedDataFromUrl: ParsedNexusUrl = {
 
 describe('DataPanel', () => {
   it('throws errors when create archive endpoint throws', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
@@ -48,7 +49,7 @@ describe('DataPanel', () => {
   });
 
   it('does not contain warnings if all resources were found but archive create failed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
@@ -69,7 +70,7 @@ describe('DataPanel', () => {
   });
 
   it('contains warnings for each resource not found when archive creation failed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValueOnce(resourceWithoutDistrition)
       .mockRejectedValueOnce(new Error('Mock resource 2 not found'))
@@ -97,11 +98,11 @@ describe('DataPanel', () => {
   });
 
   it('throws errors when archive get endpoint failed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
 
-    mockNexus.Archive.create = jest
+    mockNexus.Archive.create = vi
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
@@ -129,13 +130,13 @@ describe('DataPanel', () => {
   });
 
   it('contains warnings for each resource not found when archive fetching failed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValueOnce(resourceWithoutDistrition)
       .mockRejectedValueOnce(new Error('Mock resource 2 not found'))
       .mockRejectedValueOnce(new Error('Mock resource 3 not found'));
 
-    mockNexus.Archive.create = jest
+    mockNexus.Archive.create = vi
       .fn()
       .mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
@@ -163,11 +164,11 @@ describe('DataPanel', () => {
   });
 
   it('does not throw if neither archive create nor archive fetch failed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithoutDistrition);
 
-    mockNexus.Archive.create = jest
+    mockNexus.Archive.create = vi
       .fn()
       .mockResolvedValue('Archive create passed');
     mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
@@ -190,13 +191,13 @@ describe('DataPanel', () => {
   });
 
   it('does not throw but contains warnings if some resources were not found but archive creation passed', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithoutDistrition)
       .mockRejectedValueOnce(new Error('Mock resource 2 not found'))
       .mockRejectedValueOnce(new Error('Mock resource 3 not found'));
 
-    mockNexus.Archive.create = jest
+    mockNexus.Archive.create = vi
       .fn()
       .mockResolvedValue('Archive create passed');
     mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
@@ -219,10 +220,10 @@ describe('DataPanel', () => {
   });
 
   it('contains warnings for every distributions within resources that could not be fetched', async () => {
-    mockNexus.Resource.get = jest
+    mockNexus.Resource.get = vi
       .fn()
       .mockResolvedValue(resourceWithDistributionArray); // resource with 4 distributions
-    mockNexus.httpGet = jest
+    mockNexus.httpGet = vi
       .fn()
       // Out of 4 distributions, 2 were not fetched
       .mockRejectedValueOnce(new Error('Distribution 1 could not be found')) // Error for 1st distribution
@@ -231,7 +232,7 @@ describe('DataPanel', () => {
       .mockReturnValueOnce(getMockDistribution('mockfilename')) // Successful response for 4th distribution
       .mockResolvedValueOnce(new Blob()); // Successful response for get archive
 
-    mockNexus.Archive.create = jest
+    mockNexus.Archive.create = vi
       .fn()
       .mockResolvedValue('Archive create passed');
 
