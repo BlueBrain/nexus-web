@@ -2,7 +2,7 @@ FROM timbru31/node-alpine-git as builder
 
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web
-RUN yarn && yarn --max-old-space-size=6144 build
+RUN yarn && yarn build
 
 FROM node:18-alpine
 ENV NODE_ENV=production
