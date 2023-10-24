@@ -73,7 +73,7 @@ export default defineConfig(() => {
             },
         },
         build: {
-            minify: true,
+            minify: false,
             cssMinify: true,
             manifest: true,
             emptyOutDir: false,
