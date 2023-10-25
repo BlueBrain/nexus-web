@@ -5,7 +5,7 @@ on:
       - fusion-react-18-vite
 
 jobs:
-  publish-preview:
+  publish-migration:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
