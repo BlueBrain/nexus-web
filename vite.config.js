@@ -75,6 +75,7 @@ export default defineConfig(() => {
             emptyOutDir: false,
             outDir: 'dist',
             assetsDir: 'public',
+            sourcemap: process.env.NODE_ENV !== 'production',
             commonjsOptions: {
                 transformMixedEsModules: true
             },
