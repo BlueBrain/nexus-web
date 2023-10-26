@@ -5,7 +5,7 @@ import CreateOrganization from './CreateOrganization/CreateOrganization';
 import CreateStudio from './CreateStudio/CreateStudio';
 import { RootState } from '../store/reducers';
 
-function EntityCreation() {
+const EntityCreation = () => {
   const oidc = useSelector((state: RootState) => state.oidc);
   const authenticated = !!oidc.user;
   const token = oidc.user && oidc.user.access_token;
