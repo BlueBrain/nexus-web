@@ -46,7 +46,7 @@ describe(
     ];
 
     const server = setupServer(
-      dataExplorerPageHandler(undefined, defaultTotalResults),
+      ...dataExplorerPageHandler(undefined, defaultTotalResults),
       sourceResourceHandler(),
       filterByProjectHandler()
     );

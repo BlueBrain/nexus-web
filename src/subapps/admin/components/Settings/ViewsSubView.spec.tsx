@@ -1,7 +1,6 @@
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import configureStore from '../../../../shared/store';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
@@ -20,6 +19,7 @@ import {
   viewWithNoIndexingErrors,
   viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
+import { configureStore } from '../../../../store';
 
 describe('ViewsSubView', () => {
   const mockOrganisation = 'copies';
