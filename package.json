@@ -43,7 +43,7 @@
     "ajv": "^8.10.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
-    "antd": "^5.9.4",
+    "antd": "^5.10.2",
     "bodybuilder": "^2.2.25",
     "clsx": "^1.2.1",
     "codemirror": "^5.58.2",
