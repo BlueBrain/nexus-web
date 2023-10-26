@@ -16,7 +16,7 @@ export default defineConfig(() => {
     const version = execSync('git describe --tags').toString().trimEnd();
 
     return ({
-        base: "/__BASE__/",
+        base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
         plugins: [
             react(),
             tsconfigPaths(),
