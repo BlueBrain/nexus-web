@@ -34,6 +34,7 @@ const HistoryComponent: React.FunctionComponent<{
             </Timeline.Item>
           );
         }
+
         return (
           <Timeline.Item
             key={index}
@@ -45,10 +46,20 @@ const HistoryComponent: React.FunctionComponent<{
               <FriendlyTimeAgo date={moment(revision.updatedAt)} />
               <div
                 className="changes"
-                style={{ width: 'max-content', marginTop: '1em' }}
+                style={{ width: '100%', marginTop: '1em' }}
               >
                 {revision.hasChanges ? (
-                  <Card>{JSON.stringify(revision.changes, null, 2)}</Card>
+                  <Card>
+                    <pre style={{ width: '100%' }}>
+                      {JSON.stringify(
+                        revision.changes,
+                        (key, value) => {
+                          return typeof value === 'undefined' ? null : value;
+                        },
+                        2
+                      )}
+                    </pre>
+                  </Card>
                 ) : (
                   'No changes'
                 )}
