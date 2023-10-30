@@ -52,9 +52,14 @@ const HistoryContainer: React.FunctionComponent<{
           metadataKeys
         );
         const current = blacklistKeys(revision, metadataKeys);
-        const changes = detailedDiff(previous, current);
-        const hasChanges = Object.entries(detailedDiff(previous, current)).some(
-          ([key, value]) => !isEmpty({ [key]: value })
+        const changes = Object.entries(detailedDiff(previous, current))
+          .filter(property => !isEmpty(property[1]))
+          .reduce(
+            (acc, [key, value]) => Object.assign(acc, { [key]: value }),
+            {}
+          );
+        const hasChanges = Object.entries(changes).some(
+          ([, value]) => !isEmpty(value)
         );
 
         return {
