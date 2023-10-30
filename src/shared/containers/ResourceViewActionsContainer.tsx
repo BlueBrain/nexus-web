@@ -2,10 +2,21 @@ import * as React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Context, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Col, Dropdown, Menu, Row, notification } from 'antd';
+import {
+  Button,
+  Col,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
+  Popover,
+  Row,
+  notification,
+} from 'antd';
 import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { isArray, isString, uniq } from 'lodash';
+import { useMutation } from 'react-query';
 import { makeResourceUri } from '../utils';
 import { RootState } from '../store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
@@ -38,7 +49,11 @@ const ResourceViewActionsContainer: React.FC<{
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
   const [isInCart, setIsInCart] = React.useState(() => false);
+
   const handleAddToCart = async () => {
     const recordKey = resource._self;
 
@@ -204,6 +219,65 @@ const ResourceViewActionsContainer: React.FC<{
       setIsInCart(false);
     };
   }, [resource._self]);
+
+  const { mutateAsync: mutateResourceTag } = useMutation({
+    mutationFn: async (tag: string) => {
+      try {
+        await nexus.httpPost({
+          path: `${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+            resource['@id']
+          )}/tags?rev=${latestResource._rev}`,
+          body: JSON.stringify({
+            tag,
+            rev: resource._rev,
+          }),
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+
+  const handleTagResource = ({ tag }: { tag: string }) => {
+    if (tag && tag.trim() !== '') {
+      mutateResourceTag(tag, {
+        onSuccess: () => {
+          notification.success({
+            message: <strong>Resource Tagging</strong>,
+            description: (
+              <div>
+                <p>
+                  Resource identified by <strong>@id: {resource['@id']}</strong>{' '}
+                  has been successfully tagged with <strong>{tag}</strong> for
+                  the revision <strong>{resource._rev}</strong>.
+                </p>
+              </div>
+            ),
+          });
+        },
+        onError: error => {
+          console.log('@@errror tagging the resource', error);
+          notification.error({
+            message: `Resource Tagging`,
+            description: (
+              <div>
+                <p>
+                  Tagging the resource of{' '}
+                  <strong>@id: {resource['@id']}</strong> with the tag {tag} has
+                  been failed.
+                </p>
+              </div>
+            ),
+          });
+        },
+      });
+    }
+  };
+
   return (
     <Row>
       <Col>
@@ -320,6 +394,63 @@ const ResourceViewActionsContainer: React.FC<{
         <Button onClick={handleAddToCart}>
           {isInCart ? 'Remove from' : 'Add to'} Cart
         </Button>
+      </Col>
+      <Col>
+        <Popover
+          destroyTooltipOnHide
+          showArrow={false}
+          key={resource._rev}
+          trigger={['click']}
+          title={
+            <div>
+              <div style={{ fontSize: 16 }}>
+                Tag Resource
+                <strong> Rev: {resource._rev}</strong>
+              </div>
+              <i style={{ fontSize: 12 }}>
+                The tag is to be applied to the specified revision.
+              </i>
+            </div>
+          }
+          content={
+            <Form<{ tag: string }>
+              autoComplete="off"
+              name="tag-resource-form"
+              initialValues={{ tag: '' }}
+              onFinish={handleTagResource}
+              style={{ width: 300, padding: '8px 8px O' }}
+            >
+              <Form.Item
+                name="tag"
+                rules={[
+                  {
+                    required: true,
+                    whitespace: true,
+                    pattern: /^\S+$/g,
+                    message: 'Tag must not contains spaces',
+                  },
+                  {
+                    pattern: /^[a-zA-Z0-9_-]+$/,
+                    message: 'Tag must contains only letters and numbers',
+                  },
+                ]}
+                style={{ marginBottom: 8 }}
+              >
+                <Input placeholder="Resource tag" style={{ width: '100%' }} />
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{ offset: 8, span: 8 }}
+                style={{ marginBottom: 0 }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Confirm
+                </Button>
+              </Form.Item>
+            </Form>
+          }
+        >
+          <Button>Tag Resource</Button>
+        </Popover>
       </Col>
       {view && (
         <Col>
