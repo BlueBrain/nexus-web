@@ -55,7 +55,10 @@ const HistoryContainer: React.FunctionComponent<{
         const changes = Object.entries(detailedDiff(previous, current))
           .filter(property => !isEmpty(property[1]))
           .reduce(
-            (acc, [key, value]) => Object.assign(acc, { [key]: value }),
+            (acc, [key, value]) =>
+              Object.assign(acc, {
+                [key]: key === 'deleted' ? Object.keys(value) : value,
+              }),
             {}
           );
         const hasChanges = Object.entries(changes).some(
