@@ -220,7 +220,7 @@ const ResourceViewActionsContainer: React.FC<{
     };
   }, [resource._self]);
 
-  const { mutateAsync: mutateResourceTag } = useMutation({
+  const { mutate: mutateResourceTag } = useMutation({
     mutationFn: async (tag: string) => {
       try {
         await nexus.httpPost({
