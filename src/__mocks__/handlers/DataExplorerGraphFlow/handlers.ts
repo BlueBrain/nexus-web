@@ -298,7 +298,6 @@ const initialResource = getMockResource(
       '@id': 'https://creativecommons.org/licenses/by/4.0/',
       '@type': 'License',
     },
-    name: 'tkb060126a2_ch3_bc_n_jh_100x_1',
     objectOfStudy: {
       '@id':
         'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
@@ -713,9 +712,7 @@ const initialResourceExpanded = {
 
 const getDataExplorerGraphFlowResourceObject = rest.get(
   deltaPath(
-    `resources/public/sscx/_/${encodeURIComponent(
-      initialResource['@id']
-    )}?format=expanded`
+    `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}`
   ),
   (req, res, ctx) => {
     const format = req.url.searchParams.get('format');
