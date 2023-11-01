@@ -118,7 +118,8 @@ const CreateOrganization: React.FC<{}> = () => {
             },
             {
               pattern: /^[a-zA-Z0-9_-]+$/,
-              message: 'Label must contains only letters and numbers',
+              message:
+                'Label should include only letters, numbers, underscores, and dashes.',
             },
           ]}
         >
