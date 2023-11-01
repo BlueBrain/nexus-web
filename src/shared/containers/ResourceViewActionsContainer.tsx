@@ -403,12 +403,10 @@ const ResourceViewActionsContainer: React.FC<{
           trigger={['click']}
           title={
             <div>
-              <div style={{ fontSize: 16 }}>
-                Tag Resource
-                <strong> Rev: {resource._rev}</strong>
-              </div>
+              <div style={{ fontSize: 16 }}>Tag Resource</div>
               <i style={{ fontSize: 12 }}>
-                The tag is to be applied to the specified revision.
+                The tag will be applied to revision{' '}
+                <strong>{resource._rev}</strong>
               </i>
             </div>
           }
@@ -431,7 +429,8 @@ const ResourceViewActionsContainer: React.FC<{
                   },
                   {
                     pattern: /^[a-zA-Z0-9_-]+$/,
-                    message: 'Tag must contains only letters and numbers',
+                    message:
+                      'Tag should include only letters, numbers, underscores, and dashes.',
                   },
                 ]}
                 style={{ marginBottom: 8 }}
