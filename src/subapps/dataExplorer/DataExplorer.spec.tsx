@@ -15,6 +15,10 @@ import {
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
 import { render, screen, waitFor } from '../../utils/testUtil';
 import DataExplorer from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
@@ -26,9 +30,6 @@ import {
   EXISTS,
   FRONTEND_PREDICATE_WARNING,
 } from './PredicateSelector';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
@@ -1074,5 +1075,5 @@ describe(
       expect(await getInputForLabel(PathMenuLabel)).toBeDisabled();
     });
   },
-  { retry: 3 }
+  // { retry: 3 }
 );
