@@ -114,7 +114,7 @@ describe('workSpaceMenu', () => {
                   workspaceIds={['w1']}
                   studioResource={resource}
                   onListUpdate={vi.fn}
-                ></WorkSpaceMenu>
+                />
               </StudioReactContext.Provider>
             </QueryClientProvider>
           </NexusProvider>

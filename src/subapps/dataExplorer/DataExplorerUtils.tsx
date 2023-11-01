@@ -7,8 +7,8 @@ import { isString } from 'lodash';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
 import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
-import { SearchResponse } from 'shared/types/search';
+import { RootState } from '../../shared/store/reducers';
+import { SearchResponse } from '../../shared/types/search';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -31,9 +31,9 @@ export const usePaginatedExpandedResources = ({
         predicateQuery,
         ...(types?.length
           ? {
-              types,
-              typeOperator,
-            }
+            types,
+            typeOperator,
+          }
           : {}),
       },
     ],
@@ -64,7 +64,6 @@ export const usePaginatedExpandedResources = ({
           size: pageSize,
         }
       );
-
       const expandedResources = await fetchMultipleResources(
         nexus,
         apiEndpoint,
@@ -134,7 +133,6 @@ export const fetchMultipleResources = async (
   if (resourceData.length === 0) {
     return [];
   }
-
   const multipleResources: NexusMultiFetchResponse = await nexus
     .httpPost({
       path: `${apiEndpoint}/multi-fetch/resources`,
@@ -240,10 +238,7 @@ const getResultsForPredicateQuery = async (
     '@id': matching._source['@id'],
     _project: matching._source['_project'],
   }));
-  console.log(
-    'Requesting matching resources',
-    resourcesToFetch.map(r => r['@id'])
-  );
+
   const matchingResources = await fetchMultipleResources(
     nexus,
     apiEndpoint,
