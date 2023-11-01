@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { RenderResult, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -23,7 +24,7 @@ import {
   getDataExplorerGraphFlowResourceObjectTags,
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import userEvent from '@testing-library/user-event';
+import { getResourceLabel } from '../../../shared/utils';
 
 const initialDataExplorerState: TDataExplorerState = {
   current: {
@@ -119,8 +120,9 @@ describe('DataExplorerGraphFlow', () => {
     );
     rerender(app);
     const resourceTitle = await waitFor(() =>
-      screen.getByText(initialResource.name)
+      screen.getByText(getResourceLabel(initialResource))
     );
+    expect(resourceTitle.innerHTML).toEqual(getResourceLabel(initialResource));
     expect(resourceTitle).toBeInTheDocument();
   });
   it('should clean the data explorer state when quit the page', async () => {
