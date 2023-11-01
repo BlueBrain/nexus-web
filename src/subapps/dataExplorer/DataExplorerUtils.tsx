@@ -31,9 +31,9 @@ export const usePaginatedExpandedResources = ({
         predicateQuery,
         ...(types?.length
           ? {
-            types,
-            typeOperator,
-          }
+              types,
+              typeOperator,
+            }
           : {}),
       },
     ],

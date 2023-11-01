@@ -9,10 +9,7 @@ import { NexusClient } from '@bbp/nexus-sdk/es';
 import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
-import {
-  MinusCircleTwoTone,
-  PlusCircleTwoTone,
-} from '@ant-design/icons';
+import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
