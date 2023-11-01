@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useAsyncEffect } from 'use-async-effect';
-import { diff } from 'deep-object-diff';
+import { diff, detailedDiff } from 'deep-object-diff';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 
 import { blacklistKeys, getUsername } from '../utils';
 import HistoryComponent from '../components/History';
+import { isEmpty } from 'lodash';
 
 const HistoryContainer: React.FunctionComponent<{
   resourceId: string;
@@ -51,8 +52,18 @@ const HistoryContainer: React.FunctionComponent<{
           metadataKeys
         );
         const current = blacklistKeys(revision, metadataKeys);
-        const changes = diff(previous, current);
-        const hasChanges = JSON.stringify(changes, null, 2) !== '{}';
+        const changes = Object.entries(detailedDiff(previous, current))
+          .filter(property => !isEmpty(property[1]))
+          .reduce(
+            (acc, [key, value]) =>
+              Object.assign(acc, {
+                [key]: key === 'deleted' ? Object.keys(value) : value,
+              }),
+            {}
+          );
+        const hasChanges = Object.entries(changes).some(
+          ([, value]) => !isEmpty(value)
+        );
 
         return {
           changes,
