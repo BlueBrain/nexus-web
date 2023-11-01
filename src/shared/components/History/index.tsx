@@ -40,18 +40,17 @@ const HistoryComponent: React.FunctionComponent<{
           {' '}
           {link && link(index + 1)} updated by <b>{revision.userName}</b>{' '}
           <FriendlyTimeAgo date={moment(revision.updatedAt)} />
-          <div
-            className="changes"
-            style={{ width: '100%', marginTop: '1em' }}
-          >
+          <div className="changes" style={{ width: '100%', marginTop: '1em' }}>
             {revision.hasChanges ? (
-              <Card>{JSON.stringify(
-                revision.changes,
-                (_, value) => {
-                  return typeof value === 'undefined' ? null : value;
-                },
-                2
-              )}</Card>
+              <Card>
+                {JSON.stringify(
+                  revision.changes,
+                  (_, value) => {
+                    return typeof value === 'undefined' ? null : value;
+                  },
+                  2
+                )}
+              </Card>
             ) : (
               'No changes'
             )}

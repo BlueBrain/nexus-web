@@ -94,7 +94,7 @@ describe('DataExplorerGraphFlow', () => {
   beforeEach(() => {
     history = createMemoryHistory({});
     const queryClient = new QueryClient();
-    
+
     nexus = createNexusClient({
       fetch,
       uri: deltaPath(),
@@ -109,7 +109,6 @@ describe('DataExplorerGraphFlow', () => {
               <DateExplorerGraphFlow />
             </NexusProvider>
           </Router>
-
         </QueryClientProvider>
       </Provider>
     );
