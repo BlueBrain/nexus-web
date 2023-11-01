@@ -1,7 +1,7 @@
 import { vi, describe } from 'vitest';
-import { Resource, createNexusClient } from '@bbp/nexus-sdk';
-import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
+import { Resource, createNexusClient } from '@bbp/nexus-sdk/es';
+import { NexusProvider } from '@bbp/react-nexus';
 import { RenderResult, act, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
@@ -15,6 +15,10 @@ import {
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
+
 import { render, screen, waitFor } from '../../utils/testUtil';
 import DataExplorer from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
@@ -26,9 +30,6 @@ import {
   EXISTS,
   getAllPaths,
 } from './PredicateSelector';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
 import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
@@ -67,7 +68,7 @@ describe(
         fetch,
         uri: deltaPath(),
       });
-      const store = configureStore(history, { nexus }, {});
+      const store = configureStore(history, { nexus }, { config: { apiEndpoint: deltaPath() }});
 
       dataExplorerPage = (
         <Provider store={store}>
@@ -507,7 +508,7 @@ describe(
         mock100Resources.push(getMockResource(`self${i}`, {}));
       }
 
-      server.use(dataExplorerPageHandler(mock100Resources));
+      server.use(...dataExplorerPageHandler(mock100Resources));
 
       const pageSizeChanger = await screen.getByRole('combobox', {
         name: 'Page Size',
@@ -1008,5 +1009,5 @@ describe(
       expect((valueInputAfter as HTMLInputElement).value).not.toEqual('iggy');
     });
   },
-  { retry: 3 }
+  // { retry: 3 }
 );

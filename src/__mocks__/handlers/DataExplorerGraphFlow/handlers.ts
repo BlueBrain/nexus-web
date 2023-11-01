@@ -313,6 +313,7 @@ const initialResource = getMockResource(
         label: 'Rattus norvegicus',
       },
     },
+    name: 'initial-resource',
   }
 );
 

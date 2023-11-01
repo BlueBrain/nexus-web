@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
 import fetch from 'node-fetch';
 import { rest } from 'msw';
