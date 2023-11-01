@@ -25,6 +25,7 @@ import {
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { getResourceLabel } from '../../../shared/utils';
+import { configureStore } from '../../../store';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const initialDataExplorerState: TDataExplorerState = {
@@ -92,7 +93,8 @@ describe('DataExplorerGraphFlow', () => {
 
   beforeEach(() => {
     history = createMemoryHistory({});
-
+    const queryClient = new QueryClient();
+    
     nexus = createNexusClient({
       fetch,
       uri: deltaPath(),
@@ -101,13 +103,14 @@ describe('DataExplorerGraphFlow', () => {
     store = configureStore(history, { nexus }, {});
     app = (
       <Provider store={store}>
-        <Router history={history}>
-          <NexusProvider nexusClient={nexus}>
-            <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <Router history={history}>
+            <NexusProvider nexusClient={nexus}>
               <DateExplorerGraphFlow />
-            </QueryClientProvider>
-          </NexusProvider>
-        </Router>
+            </NexusProvider>
+          </Router>
+
+        </QueryClientProvider>
       </Provider>
     );
     component = render(app);
@@ -125,9 +128,9 @@ describe('DataExplorerGraphFlow', () => {
     );
     rerender(app);
     const resourceTitle = await waitFor(() =>
-      screen.getByText(getResourceLabel(initialResource))
+      screen.getByText(initialResource.name)
     );
-    expect(resourceTitle.innerHTML).toEqual(getResourceLabel(initialResource));
+    expect(resourceTitle.innerHTML).toEqual(initialResource.name);
     expect(resourceTitle).toBeInTheDocument();
   });
   it('should clean the data explorer state when quit the page', async () => {

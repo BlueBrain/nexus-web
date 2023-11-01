@@ -1,3 +1,5 @@
+@import '../../shared/lib.scss';
+
 .view-container.data-explorer-container {
   // style the scroll bar
   &::-webkit-scrollbar {
@@ -7,7 +9,7 @@
 
   // style the scroll thumb
   &::-webkit-scrollbar-thumb {
-    background: @fusion-blue-8;
+    background: $fusion-blue-8;
     border-radius: 4px;
   }
 }

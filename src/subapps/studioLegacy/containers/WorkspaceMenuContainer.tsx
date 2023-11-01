@@ -858,7 +858,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             viewId={selectedWorkspace['dashboards'][0].view}
             setShowEditModal={setShowDashEditor}
             onSuccess={fetchAndSetupDashboards}
-          ></DashboardEditorContainer>
+          />
         )}
       </div>
     </div>

@@ -181,7 +181,6 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    // const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
