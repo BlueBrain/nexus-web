@@ -18,6 +18,7 @@
         "react-helmet": "Helmet"
       }
     ],
-    "variable-name": [true, "allow-pascal-case"]
+    "variable-name": [true, "allow-pascal-case"],
+    "no-parameter-reassignment": false
   }
 }
