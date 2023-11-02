@@ -11,7 +11,7 @@ import {
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
-import { fetchIdentitiesFulfilledAction } from 'shared/store/actions/auth';
+import { fetchIdentitiesFulfilledAction } from './shared/store/actions/auth';
 
 const userManagerCache: Map<string, UserManager> = new Map();
 

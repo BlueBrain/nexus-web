@@ -1,4 +1,4 @@
 {
-  "entry": ["./src/shared/App.tsx"],
+  "entry": ["./src/index.tsx"],
   "project": ["src/**/*.{ts,js,jsx,tsx}"]
 }
