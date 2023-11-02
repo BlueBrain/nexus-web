@@ -7,18 +7,16 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   dataExplorerPageHandler,
+  elasticSearchQueryHandler,
   filterByProjectHandler,
   getCompleteResources,
   getMockResource,
+  graphAnalyticsTypeHandler,
   sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
-
 import { render, screen, waitFor } from '../../utils/testUtil';
 import DataExplorer from './DataExplorer';
 import { AllProjects } from './ProjectSelector';
@@ -30,6 +28,9 @@ import {
   EXISTS,
   FRONTEND_PREDICATE_WARNING,
 } from './PredicateSelector';
+import { createMemoryHistory } from 'history';
+import { Router } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
@@ -58,18 +59,12 @@ describe(
       filterByProjectHandler(),
       graphAnalyticsTypeHandler()
     );
+    const history = createMemoryHistory({});
 
-    dataExplorerPage = (
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <Router history={history}>
-            <NexusProvider nexusClient={nexus}>
-              <DataExplorer />
-            </NexusProvider>
-          </Router>
-        </QueryClientProvider>
-      </Provider>
-    );
+    let container: HTMLElement;
+    let user: UserEvent;
+    let component: RenderResult;
+    let dataExplorerPage: JSX.Element;
 
     beforeEach(async () => {
       server.listen();
@@ -85,37 +80,182 @@ describe(
         { config: { apiEndpoint: 'https://localhost:3000' } }
       );
 
-    const pageInput = await screen.getByRole('listitem', { name: '2' });
-    expect(pageInput).toBeInTheDocument();
+    afterAll(() => {
+      server.resetHandlers();
+      server.close();
+    });
 
       component = render(dataExplorerPage);
 
-    await expectRowCountToBe(3);
-  };
+    const PathMenuLabel = 'path-selector';
+    const PredicateMenuLabel = 'predicate-selector';
+    const ProjectMenuLabel = 'project-filter';
+    const TypeMenuLabel = 'type-filter';
 
-  const getInputForLabel = async (label: string) => {
-    return (await screen.getByLabelText(label, {
-      selector: 'input',
-    })) as HTMLInputElement;
-  };
+    const expectRowCountToBe = async (expectedRowsCount: number) => {
+      return await waitFor(() => {
+        const rows = visibleTableRows();
+        expect(rows.length).toEqual(expectedRowsCount);
+        return rows;
+      });
+    };
 
-  const getSelectedValueInMenu = async (menuLabel: string) => {
-    const input = await getInputForLabel(menuLabel);
-    return input
-      .closest('.ant-select-selector')
-      ?.querySelector('.ant-select-selection-item')?.innerHTML;
-  };
+    const waitForHeaderToBeHidden = async () => {
+      return await waitFor(() => {
+        const dataExplorerHeader = document.querySelector(
+          '.data-explorer-header'
+        ) as HTMLDivElement;
+        expect(dataExplorerHeader).not.toBeVisible();
+      });
+    };
 
-  const openMenuFor = async (ariaLabel: string) => {
-    const menuInput = await getInputForLabel(ariaLabel);
-    await act(async () => {
+    const waitForHeaderToBeVisible = async () => {
+      return await waitFor(() => {
+        const dataExplorerHeader = document.querySelector(
+          '.data-explorer-header'
+        ) as HTMLDivElement;
+        expect(dataExplorerHeader).toBeVisible();
+      });
+    };
+
+    const expectColumHeaderToExist = async (name: string) => {
+      const nameReg = new RegExp(getColumnTitle(name), 'i');
+      const header = await screen.getByText(nameReg, {
+        selector: 'th .ant-table-column-title',
+        exact: false,
+      });
+
+      expect(header).toBeInTheDocument();
+      return header;
+    };
+
+    const getColumnSorter = async (colName: string) => {
+      const column = await expectColumHeaderToExist(colName);
+      return column.closest('.ant-table-column-sorters');
+    };
+
+    const getTotalColumns = () => {
+      return Array.from(container.querySelectorAll('th'));
+    };
+
+    const expectColumHeaderToNotExist = async (name: string) => {
+      expect(expectColumHeaderToExist(name)).rejects.toThrow();
+    };
+
+    const getTextForColumn = async (resource: Resource, colName: string) => {
+      const row = await screen.getByTestId(resource._self);
+
+      const allCellsForRow = Array.from(row.childNodes);
+      const colIndex = Array.from(
+        container.querySelectorAll('th')
+      ).findIndex(header =>
+        header.innerHTML.match(new RegExp(getColumnTitle(colName), 'i'))
+      );
+      return allCellsForRow[colIndex].textContent;
+    };
+
+    const getRowForResource = async (resource: Resource) => {
+      const row = await screen.getByTestId(resource._self);
+      expect(row).toBeInTheDocument();
+      return row!;
+    };
+
+    const openProjectAutocomplete = async () => {
+      const projectAutocomplete = await getProjectAutocomplete();
+      await userEvent.click(projectAutocomplete);
+      return projectAutocomplete;
+    };
+
+    const searchForProject = async (searchTerm: string) => {
+      const projectAutocomplete = await openProjectAutocomplete();
+      await userEvent.clear(projectAutocomplete);
+      await userEvent.type(projectAutocomplete, searchTerm);
+      return projectAutocomplete;
+    };
+
+    const expectProjectOptionsToMatch = async (searchTerm: string) => {
+      const projectOptions = await screen.getAllByRole('option');
+      expect(projectOptions.length).toBeGreaterThan(0);
+      projectOptions.forEach(option => {
+        expect(option.innerHTML).toMatch(new RegExp(searchTerm, 'i'));
+      });
+    };
+
+    const projectFromRow = (row: Element) => {
+      const projectColumn = row.querySelector(
+        'td.data-explorer-column-_project'
+      );
+      return projectColumn?.textContent;
+    };
+
+    const typeFromRow = (row: Element) => {
+      const typeColumn = row.querySelector('td.data-explorer-column-\\@type');
+      return typeColumn?.textContent;
+    };
+
+    const columnTextFromRow = (row: Element, colName: string) => {
+      const column = row.querySelector(`td.data-explorer-column-${colName}`);
+      return column?.textContent;
+    };
+
+    const visibleTableRows = () => {
+      return container.querySelectorAll('table tbody tr.data-explorer-row');
+    };
+
+    const getProjectAutocomplete = async () => {
+      return await screen.getByLabelText('project-filter', {
+        selector: 'input',
+      });
+    };
+
+    const getDropdownOption = async (
+      optionLabel: string,
+      selector: string = DropdownOptionSelector
+    ) =>
+      await screen.getByText(new RegExp(`${optionLabel}$`, 'i'), {
+        selector,
+      });
+
+    const getRowsForNextPage = async (
+      resources: Resource[],
+      total: number = 300
+    ) => {
+      server.use(
+        sourceResourceHandler(resources),
+        ...dataExplorerPageHandler(resources, total)
+      );
+
+      const pageInput = await screen.getByRole('listitem', { name: '2' });
+      expect(pageInput).toBeInTheDocument();
+
+      await user.click(pageInput);
+
+      await expectRowCountToBe(3);
+    };
+
+    const getInputForLabel = async (label: string) => {
+      return (await screen.getByLabelText(label, {
+        selector: 'input',
+      })) as HTMLInputElement;
+    };
+
+    const getSelectedValueInMenu = async (menuLabel: string) => {
+      const input = await getInputForLabel(menuLabel);
+      return input
+        .closest('.ant-select-selector')
+        ?.querySelector('.ant-select-selection-item')?.innerHTML;
+    };
+
+    const openMenuFor = async (ariaLabel: string) => {
+      const menuInput = await getInputForLabel(ariaLabel);
       await userEvent.click(menuInput, { pointerEventsCheck: 0 });
-      fireEvent.mouseDown(menuInput);
-    });
-    const menuDropdown = document.querySelector(DropdownSelector);
-    expect(menuDropdown).toBeInTheDocument();
-    return menuDropdown;
-  };
+      await act(async () => {
+        fireEvent.mouseDown(menuInput);
+      });
+      const menuDropdown = document.querySelector(DropdownSelector);
+      expect(menuDropdown).toBeInTheDocument();
+      return menuDropdown;
+    };
 
   const selectPath = async (path: string) => {
     await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
@@ -455,8 +595,6 @@ describe(
       if (!filteredCountLabel) {
         return filteredCountLabel;
       }
-    }
-  };
 
     const updateResourcesShownInTable = async (
       resources: Resource[] = mockResourcesForPage2
@@ -478,9 +616,8 @@ describe(
       server.use(elasticSearchQueryHandler(matchingResources));
     };
 
-  const scrollWindow = async (yPosition: number) => {
-    await fireEvent.scroll(window, { target: { scrollY: yPosition } });
-  };
+      await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
+    };
 
     const showMetadataSwitch = async () =>
       await screen.getByLabelText('Show metadata');
@@ -552,286 +689,189 @@ describe(
       const column = await expectColumHeaderToExist('userProperty1');
       expect(column).toBeInTheDocument();
     });
-    return buttonElement;
-  };
 
-  const expandHeaderButton = async () =>
-    await getButtonByLabel('expand-header');
+    it('shows rows for all fetched resources', async () => {
+      await expectRowCountToBe(10);
+    });
 
-  const collapseHeaderButton = async () =>
-    await getButtonByLabel('collapse-header');
+    it('shows only user columns for each top level property by default', async () => {
+      await expectRowCountToBe(10);
+      const seenColumns = new Set();
 
-  const clickExpandHeaderButton = async () => {
-    const expandHeaderButtonElement = await expandHeaderButton();
+      for (const mockResource of mockResourcesOnPage1) {
+        for (const topLevelProperty of Object.keys(mockResource)) {
+          if (!seenColumns.has(topLevelProperty)) {
+            seenColumns.add(topLevelProperty);
 
-    await userEvent.click(expandHeaderButtonElement);
-  };
+            if (ALWAYS_DISPLAYED_COLUMNS.has(topLevelProperty)) {
+              await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
+            } else if (isNexusMetadata(topLevelProperty)) {
+              expect(
+                expectColumHeaderToExist(getColumnTitle(topLevelProperty))
+              ).rejects.toThrow();
+            } else {
+              await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
+            }
+          }
+        }
+      }
 
-  const clickCollapseHeaderButton = async () => {
-    const collapseHeaderButtonElement = await collapseHeaderButton();
-    await userEvent.click(collapseHeaderButtonElement);
-  };
+      expect(seenColumns.size).toBeGreaterThan(1);
+    });
 
-  it('shows columns for fields that are only in source data', async () => {
-    await expectRowCountToBe(10);
-    const column = await expectColumHeaderToExist('userProperty1');
-    expect(column).toBeInTheDocument();
-  });
+    it('shows user columns for all top level properties when show user metadata clicked', async () => {
+      await expectRowCountToBe(10);
+      const showMetadataButton = await showMetadataSwitch();
+      await userEvent.click(showMetadataButton);
 
-  it('shows rows for all fetched resources', async () => {
-    await expectRowCountToBe(10);
-  });
+      const seenColumns = new Set();
 
-  it('shows only user columns for each top level property by default', async () => {
-    await expectRowCountToBe(10);
-    const seenColumns = new Set();
-
-    for (const mockResource of mockResourcesOnPage1) {
-      for (const topLevelProperty of Object.keys(mockResource)) {
-        if (!seenColumns.has(topLevelProperty)) {
-          seenColumns.add(topLevelProperty);
-
-          if (ALWAYS_DISPLAYED_COLUMNS.has(topLevelProperty)) {
-            await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
-          } else if (isNexusMetadata(topLevelProperty)) {
-            expect(
-              expectColumHeaderToExist(getColumnTitle(topLevelProperty))
-            ).rejects.toThrow();
-          } else {
+      for (const mockResource of mockResourcesOnPage1) {
+        for (const topLevelProperty of Object.keys(mockResource)) {
+          if (!seenColumns.has(topLevelProperty)) {
+            seenColumns.add(topLevelProperty);
             await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
           }
         }
       }
-    }
 
-    expect(seenColumns.size).toBeGreaterThan(1);
-  });
-
-  it('shows user columns for all top level properties when show user metadata clicked', async () => {
-    await expectRowCountToBe(10);
-    const showMetadataButton = await showMetadataSwitch();
-    await userEvent.click(showMetadataButton);
-
-    const seenColumns = new Set();
-
-    for (const mockResource of mockResourcesOnPage1) {
-      for (const topLevelProperty of Object.keys(mockResource)) {
-        if (!seenColumns.has(topLevelProperty)) {
-          seenColumns.add(topLevelProperty);
-          await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
-        }
-      }
-    }
-
-    expect(seenColumns.size).toBeGreaterThan(1);
-  });
-
-  it('shows project as the first column', async () => {
-    await expectRowCountToBe(10);
-    const firstColumn = container.querySelector('th.data-explorer-column');
-    expect(firstColumn?.textContent).toMatch(/project/i);
-  });
-
-  it('shows type as the second column', async () => {
-    await expectRowCountToBe(10);
-    const secondColumn = container.querySelectorAll(
-      'th.data-explorer-column'
-    )[1];
-    expect(secondColumn?.textContent).toMatch(/type/i);
-  });
-
-  it('updates columns when new page is selected', async () => {
-    await updateResourcesShownInTable([
-      getMockResource('self1', { author: 'piggy', edition: 1 }),
-      getMockResource('self2', { author: ['iggy', 'twinky'] }),
-      getMockResource('self3', { year: 2013 }),
-    ]);
-
-    await expectColumHeaderToExist('author');
-    await expectColumHeaderToExist('edition');
-    await expectColumHeaderToExist('year');
-  });
-
-  it('updates page size', async () => {
-    await expectRowCountToBe(10);
-
-    const mock100Resources: Resource[] = [];
-
-    for (let i = 0; i < 100; i = i + 1) {
-      mock100Resources.push(getMockResource(`self${i}`, {}));
-    }
-
-    server.use(...dataExplorerPageHandler(mock100Resources));
-
-    const pageSizeChanger = await screen.getByRole('combobox', {
-      name: 'Page Size',
+      expect(seenColumns.size).toBeGreaterThan(1);
     });
-    await userEvent.click(pageSizeChanger);
-    const twentyRowsOption = await screen.getByTitle('20 / page');
-    await userEvent.click(twentyRowsOption, { pointerEventsCheck: 0 });
-    await expectRowCountToBe(20);
-  });
 
-  it('shows No data text when values are missing for a column', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithMissingProperty = mockResourcesOnPage1.find(
-      res => !('specialProperty' in res)
-    )!;
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithMissingProperty,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).toMatch(/No data/i);
-  });
+    it('shows project as the first column', async () => {
+      await expectRowCountToBe(10);
+      const firstColumn = container.querySelector('th.data-explorer-column');
+      expect(firstColumn?.textContent).toMatch(/project/i);
+    });
 
-  it('shows No data text when values is undefined', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
-      res => res.specialProperty === undefined
-    )!;
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithUndefinedProperty,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).toMatch(/No data/i);
-  });
+    it('shows type as the second column', async () => {
+      await expectRowCountToBe(10);
+      const secondColumn = container.querySelectorAll(
+        'th.data-explorer-column'
+      )[1];
+      expect(secondColumn?.textContent).toMatch(/type/i);
+    });
 
-  it('does not show No data text when values is null', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
-      res => res.specialProperty === null
-    )!;
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithUndefinedProperty,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).not.toMatch(/No data/i);
-    expect(textForSpecialProperty).toMatch(/null/);
-  });
+    it('updates columns when new page is selected', async () => {
+      await updateResourcesShownInTable([
+        getMockResource('self1', { author: 'piggy', edition: 1 }),
+        getMockResource('self2', { author: ['iggy', 'twinky'] }),
+        getMockResource('self3', { year: 2013 }),
+      ]);
 
-  it('does not show No data when value is empty string', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithEmptyString = mockResourcesOnPage1.find(
-      res => res.specialProperty === ''
-    )!;
+      await expectColumHeaderToExist('author');
+      await expectColumHeaderToExist('edition');
+      await expectColumHeaderToExist('year');
+    });
 
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithEmptyString,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).not.toMatch(/No data/i);
-    expect(textForSpecialProperty).toEqual('""');
-  });
+    it('updates page size', async () => {
+      await expectRowCountToBe(10);
 
-  it('does not show No data when value is empty array', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithEmptyArray = mockResourcesOnPage1.find(
-      res =>
-        Array.isArray(res.specialProperty) && res.specialProperty.length === 0
-    )!;
+      const mock100Resources: Resource[] = [];
 
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithEmptyArray,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).not.toMatch(/No data/i);
-    expect(textForSpecialProperty).toEqual('[]');
-  });
+      for (let i = 0; i < 100; i = i + 1) {
+        mock100Resources.push(getMockResource(`self${i}`, {}));
+      }
 
-  it('does not show No data when value is empty object', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithEmptyObject = mockResourcesOnPage1.find(
-      res =>
-        typeof res.specialProperty === 'object' &&
-        res.specialProperty !== null &&
-        !Array.isArray(res.specialProperty) &&
-        Object.keys(res.specialProperty).length === 0
-    )!;
+      server.use(...dataExplorerPageHandler(mock100Resources));
 
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithEmptyObject,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).not.toMatch(/No data/i);
-    expect(textForSpecialProperty).toEqual('{}');
-  });
+      const pageSizeChanger = await screen.getByRole('combobox', {
+        name: 'Page Size',
+      });
+      await userEvent.click(pageSizeChanger);
+      const twentyRowsOption = await screen.getByTitle('20 / page');
+      await userEvent.click(twentyRowsOption, { pointerEventsCheck: 0 });
+      await expectRowCountToBe(20);
+    });
 
-  it('shows resources filtered by the selected project', async () => {
-    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-    visibleTableRows().forEach(row =>
-      expect(projectFromRow(row)).toMatch(/unhcr/i)
-    );
-  });
+    it('shows No data text when values are missing for a column', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithMissingProperty = mockResourcesOnPage1.find(
+        res => !('specialProperty' in res)
+      )!;
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithMissingProperty,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).toMatch(/No data/i);
+    });
 
-  it('resets selected project when user clicks reset button', async () => {
-    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+    it('shows No data text when values is undefined', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
+        res => res.specialProperty === undefined
+      )!;
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithUndefinedProperty,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).toMatch(/No data/i);
+    });
 
-    expect(visibleTableRows().length).toBeLessThan(10);
+    it('does not show No data text when values is null', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
+        res => res.specialProperty === null
+      )!;
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithUndefinedProperty,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).not.toMatch(/No data/i);
+      expect(textForSpecialProperty).toMatch(/null/);
+    });
 
-    const resetProjectButton = await getResetProjectButton();
-    await userEvent.click(resetProjectButton);
-    await expectRowCountToBe(10);
-  });
+    it('does not show No data when value is empty string', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithEmptyString = mockResourcesOnPage1.find(
+        res => res.specialProperty === ''
+      )!;
 
-  it('shows all projects when allProjects option is selected', async () => {
-    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithEmptyString,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).not.toMatch(/No data/i);
+      expect(textForSpecialProperty).toEqual('""');
+    });
 
-    expect(visibleTableRows().length).toBeLessThan(10);
+    it('does not show No data when value is empty array', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithEmptyArray = mockResourcesOnPage1.find(
+        res =>
+          Array.isArray(res.specialProperty) && res.specialProperty.length === 0
+      )!;
 
-    const resetProjectButton = await getResetProjectButton();
-    await userEvent.click(resetProjectButton);
-    await selectOptionFromMenu(ProjectMenuLabel, AllProjects);
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithEmptyArray,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).not.toMatch(/No data/i);
+      expect(textForSpecialProperty).toEqual('[]');
+    });
 
-    await expectRowCountToBe(10);
-  });
+    it('does not show No data when value is empty object', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithEmptyObject = mockResourcesOnPage1.find(
+        res =>
+          typeof res.specialProperty === 'object' &&
+          res.specialProperty !== null &&
+          !Array.isArray(res.specialProperty) &&
+          Object.keys(res.specialProperty).length === 0
+      )!;
 
-  it('shows autocomplete options for project filter', async () => {
-    await searchForProject('bbp');
-    await expectProjectOptionsToMatch('bbp');
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithEmptyObject,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).not.toMatch(/No data/i);
+      expect(textForSpecialProperty).toEqual('{}');
+    });
 
-    await searchForProject('bbc');
-    await expectProjectOptionsToMatch('bbc');
-  });
-
-  it('shows resources filtered by the selected type', async () => {
-    await expectRowCountToBe(10);
-    await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
-
-    visibleTableRows().forEach(row =>
-      expect(typeFromRow(row)).toMatch(/file/i)
-    );
-  });
-
-  it('only shows types that exist in selected project in type autocomplete', async () => {
-    await expectRowCountToBe(10);
-
-    await openMenuFor(TypeMenuLabel);
-    const optionBefore = await getDropdownOption('Dataset', TypeOptionSelector);
-    expect(optionBefore).toBeInTheDocument();
-
-    await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-    await expectRowCountToBe(2);
-
-    await openMenuFor(TypeMenuLabel);
-    expect(
-      getDropdownOption('Dataset', TypeOptionSelector)
-    ).rejects.toThrowError();
-  });
-
-  it('shows paths as options in a select menu of path selector', async () => {
-    await expectRowCountToBe(10);
-    await openMenuFor('path-selector');
-
-    const pathOptions = getVisibleOptionsFromMenu(CustomOptionSelector);
-
-    const expectedPaths = getAllPaths(mockResourcesOnPage1);
-    expect(expectedPaths.length).toBeGreaterThanOrEqual(
-      Object.keys(mockResourcesOnPage1[0]).length
-    );
-
-    pathOptions.forEach((path, index) => {
-      expect(path.innerHTML).toMatch(
-        new RegExp(`${expectedPaths[index]}$`, 'i')
+    it('shows resources filtered by the selected project', async () => {
+      await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
+      visibleTableRows().forEach(row =>
+        expect(projectFromRow(row)).toMatch(/unhcr/i)
       );
     });
 
@@ -1104,13 +1144,60 @@ describe(
       expect(selectedPathBefore).toMatch(/author/);
       await expectRowCountToBe(2);
 
-    await resetPredicate();
+      await selectPath('author');
+      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
 
-    await expectRowCountToBe(3);
+      expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
+      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+      expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
+    });
 
-    const selectedPathAfter = await getSelectedValueInMenu(PathMenuLabel);
-    expect(selectedPathAfter).toBeFalsy();
-  });
+    it('shows column for metadata path even if toggle for show metadata is off', async () => {
+      const metadataProperty = '_createdBy';
+      mockElasticSearchHits(metadataProperty, EXISTS, mockResourcesOnPage1);
+      await expectRowCountToBe(10);
+
+    it('only shows predicate menu if path is selected', async () => {
+      await expectRowCountToBe(10);
+
+      expect(openMenuFor(PredicateMenuLabel)).rejects.toThrow();
+      await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
+      expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
+    });
+    it('resets predicate fields when reset predicate clicked', async () => {
+      console.log('@@container', container.innerHTML);
+      await updateResourcesShownInTable(mockResourcesForPage2);
+      mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
+      await selectPath('author');
+
+      const originalColumns = getTotalColumns().length;
+
+      await selectPath(metadataProperty);
+      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
+
+      await expectRowCountToBe(10);
+
+      await expectColumHeaderToExist(metadataProperty);
+      expect(getTotalColumns().length).toEqual(originalColumns + 1);
+
+      await resetPredicate();
+      expect(getTotalColumns().length).toEqual(originalColumns);
+    });
+
+
+      await selectPredicate(EXISTS);
+
+      const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
+      expect(selectedPathBefore).toMatch(/author/);
+      await expectRowCountToBe(2);
+
+      await resetPredicate();
+
+      await expectRowCountToBe(3);
+
+      const selectedPathAfter = await getSelectedValueInMenu(PathMenuLabel);
+      expect(selectedPathAfter).toBeFalsy();
+    });
 
     it('only shows predicate menu if path is selected', async () => {
       await expectRowCountToBe(10);
@@ -1120,113 +1207,70 @@ describe(
       expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
     });
 
-  it('sorts table columns', async () => {
-    const dataSource = [
-      getMockResource('self1', { author: 'tweaty', edition: 1 }),
-      getMockResource('self2', { edition: 2001 }),
-      getMockResource('self3', { year: 2013, author: 'piggy' }),
-    ];
-    await updateResourcesShownInTable(dataSource);
+    it('sorts table columns', async () => {
+      const dataSource = [
+        getMockResource('self1', { author: 'tweaty', edition: 1 }),
+        getMockResource('self2', { edition: 2001 }),
+        getMockResource('self3', { year: 2013, author: 'piggy' }),
+      ];
+      await updateResourcesShownInTable(dataSource);
 
-    await expectRowsInOrder(dataSource);
+      await expectRowsInOrder(dataSource);
 
-    const authorColumnSorter = await getColumnSorter('author');
-    await userEvent.click(authorColumnSorter!);
+      const authorColumnSorter = await getColumnSorter('author');
+      await userEvent.click(authorColumnSorter!);
 
-    await expectRowsInOrder([dataSource[1], dataSource[2], dataSource[0]]);
-  });
+      await expectRowsInOrder([dataSource[1], dataSource[2], dataSource[0]]);
+    });
 
-  it('does not show "No data" cell if "Show empty data cells" toggle is turned off', async () => {
-    await expectRowCountToBe(10);
-    const resourceWithMissingProperty = mockResourcesOnPage1.find(
-      res => !('specialProperty' in res)
-    )!;
-    const textForSpecialProperty = await getTextForColumn(
-      resourceWithMissingProperty,
-      'specialProperty'
-    );
-    expect(textForSpecialProperty).toMatch(/No data/i);
+    it('does not show "No data" cell if "Show empty data cells" toggle is turned off', async () => {
+      await expectRowCountToBe(10);
+      const resourceWithMissingProperty = mockResourcesOnPage1.find(
+        res => !('specialProperty' in res)
+      )!;
+      const textForSpecialProperty = await getTextForColumn(
+        resourceWithMissingProperty,
+        'specialProperty'
+      );
+      expect(textForSpecialProperty).toMatch(/No data/i);
 
-    const button = await showEmptyDataCellsSwitch();
-    await userEvent.click(button);
+      const button = await showEmptyDataCellsSwitch();
+      await userEvent.click(button);
 
-    const textForSpecialPropertyAfter = await getTextForColumn(
-      resourceWithMissingProperty,
-      'specialProperty'
-    );
-    expect(textForSpecialPropertyAfter).toMatch('');
-  });
+      const textForSpecialPropertyAfter = await getTextForColumn(
+        resourceWithMissingProperty,
+        'specialProperty'
+      );
+      expect(textForSpecialPropertyAfter).toMatch('');
+    });
 
-  it('show data explorer header by default', async () => {
-    await expectDataExplorerHeaderToExist();
-  });
+    it('show data explorer header by default', async () => {
+      await expectDataExplorerHeaderToExist();
+    });
 
-  it('hides data explorer header when user scrolls past its height', async () => {
-    await expectDataExplorerHeaderToExist();
+    it('hides data explorer header when user scrolls past its height', async () => {
+      await expectDataExplorerHeaderToExist();
 
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
 
-    expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
-  });
-
-  it('shows expand header button when data explorer is not visible', async () => {
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
-
-    await clickExpandHeaderButton();
-
-    await expectDataExplorerHeaderToExist();
-  });
-
-  it('collapses header again when collapse button is clicked', async () => {
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
-
-    await clickExpandHeaderButton();
-    await expectDataExplorerHeaderToExist();
-
-    await clickCollapseHeaderButton();
-    expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
-  });
-
-  it('hides expand header button when user scrolls up', async () => {
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
-
-    expect(await expandHeaderButton()).toBeVisible();
-
-    await scrollWindow(0);
-    await waitForHeaderToBeVisible();
-
-    expect(expandHeaderButton()).rejects.toThrow();
-  });
-
-  it('hides collapse header button when user scrolls up', async () => {
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
-
-    await clickExpandHeaderButton();
-    expect(await collapseHeaderButton()).toBeVisible();
-
-    await scrollWindow(0);
-    expect(collapseHeaderButton()).rejects.toThrow();
-  });
+      expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
+    });
 
     it('does not reset values in filters when header was hidden due to scroll', async () => {
       await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
 
-    await scrollWindow(500);
-    await waitForHeaderToBeHidden();
+      await clickExpandHeaderButton();
 
-    await scrollWindow(0);
-    await waitForHeaderToBeVisible();
+      await expectDataExplorerHeaderToExist();
+    });
 
-    const projectInput = await getInputForLabel(ProjectMenuLabel);
-    expect(projectInput.value).toMatch(new RegExp('unhcr', 'i'));
+    it('collapses header again when collapse button is clicked', async () => {
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
 
-    const typeInput = await getSelectedValueInMenu(TypeMenuLabel);
-    expect(typeInput).toMatch(new RegExp('file', 'i'));
+      await clickExpandHeaderButton();
+      await expectDataExplorerHeaderToExist();
 
       const pathInput = await getSelectedValueInMenu(PathMenuLabel);
       expect(pathInput).toMatch(
@@ -1243,9 +1287,10 @@ describe(
       const valueInput = await screen.getByPlaceholderText('Search for...');
       await userEvent.type(valueInput, 'iggy');
 
-    await selectPredicate(EXISTS);
+      expect(await expandHeaderButton()).toBeVisible();
 
-    await selectPredicate(DOES_NOT_CONTAIN);
+      await scrollWindow(0);
+      await waitForHeaderToBeVisible();
 
       const valueInputAfter = await screen.getByPlaceholderText(
         'Search for...'
