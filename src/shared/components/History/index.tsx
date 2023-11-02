@@ -43,13 +43,15 @@ const HistoryComponent: React.FunctionComponent<{
           <div className="changes" style={{ width: '100%', marginTop: '1em' }}>
             {revision.hasChanges ? (
               <Card>
-                {JSON.stringify(
-                  revision.changes,
-                  (_, value) => {
-                    return typeof value === 'undefined' ? null : value;
-                  },
-                  2
-                )}
+                <pre style={{ width: '100%', overflow: 'scroll' }}>
+                  {JSON.stringify(
+                    revision.changes,
+                    (_, value) => {
+                      return typeof value === 'undefined' ? null : value;
+                    },
+                    2
+                  )}
+                </pre>
               </Card>
             ) : (
               'No changes'
