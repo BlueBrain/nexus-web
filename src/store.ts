@@ -6,7 +6,9 @@ import { createNexusClient } from '@bbp/nexus-sdk/es';
 import defaultState from './defaultState';
 import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from './shared/store/actions/search';
 
-let preferredRealm, searchPrefenceLocalStorag;
+let preferredRealm;
+let searchPrefenceLocalStorag;
+
 try {
   const realmData = JSON.parse(localStorage.getItem('nexus__realm') || '');
   realmData && (preferredRealm = realmData.label);

@@ -10,7 +10,7 @@ import {
 import { nexus, history } from './store';
 import App from './shared/App';
 
-function EntryPoint() {
+const EntryPoint = () => {
   const queryClient = useRef(new QueryClient());
   const notificationData: NotificationContextType = getNotificationContextValue();
 
