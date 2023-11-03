@@ -55,7 +55,7 @@ function serveStatic() {
     console.info(`Serving static files from ${distPath}`);
   }
 
-  return express.static(path.join(__dirname), { index: false });
+  return express.static(distPath, { index: false });
 }
 
 const stubMiddleware = (_req: Request, _res: Response, next: NextFunction) =>

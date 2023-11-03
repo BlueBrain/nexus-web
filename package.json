@@ -106,7 +106,6 @@
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "showdown": "^1.9.1",
-    "sirv": "^2.0.3",
     "string-similarity": "^4.0.4",
     "ts-invariant": "^0.4.4",
     "ts-pattern": "3.3.4",
