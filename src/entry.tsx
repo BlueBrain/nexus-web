@@ -26,6 +26,6 @@ const EntryPoint = () => {
       </QueryClientProvider>
     </NotificationContext.Provider>
   );
-}
+};
 
 export default EntryPoint;
