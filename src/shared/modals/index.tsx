@@ -20,6 +20,6 @@ const EntityCreation = () => {
       </React.Fragment>
     )
   );
-}
+};
 
 export default EntityCreation;
