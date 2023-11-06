@@ -1,4 +1,4 @@
-import { createNexusClient, ResourcePayload } from '@bbp/nexus-sdk/es';
+import { createNexusClient, ResourcePayload } from '@bbp/nexus-sdk';
 import { defineConfig } from 'cypress';
 import {
   createNexusOrgAndProject,
