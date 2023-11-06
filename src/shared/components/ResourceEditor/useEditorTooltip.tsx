@@ -249,11 +249,9 @@ function useEditorTooltip({
 }) {
   const nexus = useNexusContext();
   const { downloadBinaryAsyncHandler } = useResolutionActions();
-  const {
-    config: { apiEndpoint },
-  } = useSelector((state: RootState) => ({
-    config: state.config,
-  }));
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
 
   const allowTooltip = !isEditing;
 
@@ -403,11 +401,9 @@ function useEditorPopover({
     navigateResourceHandler,
     downloadBinaryAsyncHandler,
   } = useResolutionActions();
-  const {
-    config: { apiEndpoint },
-  } = useSelector((state: RootState) => ({
-    config: state.config,
-  }));
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
 
   React.useEffect(() => {
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)

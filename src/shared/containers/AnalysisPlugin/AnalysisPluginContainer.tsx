@@ -759,6 +759,7 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
+
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -867,14 +868,23 @@ const AnalysisPluginContainer = ({
             scripts?: ReportGeneration[]
           ) => {
             try {
-              mutateAnalysis.mutate({
-                name,
-                description,
-                id,
-                categories,
-                types,
-                scripts,
-              });
+              mutateAnalysis.mutate(
+                {
+                  name,
+                  description,
+                  id,
+                  categories,
+                  types,
+                  scripts,
+                },
+                {
+                  onSuccess: data => {
+                    notification.success({
+                      message: 'Report saved successfully',
+                    });
+                  },
+                }
+              );
             } catch (e) {
               notification.error({
                 message:
