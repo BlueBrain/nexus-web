@@ -59,7 +59,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [editable, setEditable] = React.useState(defaultEditable);
   const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
-  const [{ busy, resource, error }, setResource] = React.useState<{
+  const [{ busy, resource }, setResource] = React.useState<{
     busy: boolean;
     resource: ResourceSource | ExpandedResource | Resource | null;
     error: Error | null;

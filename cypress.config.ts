@@ -1,4 +1,4 @@
-import { createNexusClient, ResourcePayload } from '@bbp/nexus-sdk/es';
+import { createNexusClient, ResourcePayload } from '@bbp/nexus-sdk';
 import { defineConfig } from 'cypress';
 import {
   createNexusOrgAndProject,
@@ -7,8 +7,6 @@ import {
 } from './cypress/support/Utils/nexus';
 import { uuidv4 } from './src/shared/utils';
 import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
-
-const fetch = require('node-fetch');
 
 export default defineConfig({
   projectId: '1iihco',
@@ -76,7 +74,6 @@ export default defineConfig({
             const projectLabel = `${projectLabelBase}-${uuidv4()}`;
             const projectDescription =
               'An project used for Cypress automated tests';
-            console.log('Auth TOKEN', authToken);
             try {
               const nexus = createNexusClient({
                 uri: nexusApiUrl,

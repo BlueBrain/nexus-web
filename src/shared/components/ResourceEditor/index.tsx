@@ -115,8 +115,19 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const handleChange = (editor: any, data: any, value: any) => {
-    editor;
+  React.useEffect(() => {
+    setEditing(false);
+    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
+    setParsedValue(rawData); // Update parsed value for submit.
+
+    return () => setFoldCodeMiror(false);
+  }, [rawData]); // only runs when Editor receives new resource to edit
+
+  const handleChange = (
+    editor: CodeMirror.Editor,
+    data: CodeMirror.EditorChange,
+    value: string
+  ) => {
     if (!editable) {
       return;
     }

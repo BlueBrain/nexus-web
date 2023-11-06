@@ -36,7 +36,9 @@
   "exclude": [
     "node_modules",
     "src/**/*.(test|spec).ts*",
-    "src/**/*.stories.ts*"
+    "src/**/*.stories.ts*",
+    "cypress.config.ts",
+    "cypress"
   ],
   "awesomeTypescriptLoaderOptions": {
     "errorsAsWarnings": true

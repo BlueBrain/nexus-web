@@ -24,7 +24,12 @@
     "knip": "knip",
     "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
-    "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\""
+    "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
+    "e2e:open": "cypress open",
+    "e2e:run": "cypress run --config-file cypress.config.ts",
+    "e2e:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
+    "e2e:ps": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
+    "e2e:ui": "API_ENDPOINT=http://test start-server-and-test dev http://localhost:8000 cy:run"
   },
   "dependencies": {
     "@ant-design/charts": "^1.4.2",
@@ -173,7 +178,7 @@
     "babel-loader": "^8.0.4",
     "browserify-zlib": "^0.2.0",
     "css-loader": "^2.1.1",
-    "cypress": "^12.17.0",
+    "cypress": "^13.4.0",
     "cypress-file-upload": "^5.0.8",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
