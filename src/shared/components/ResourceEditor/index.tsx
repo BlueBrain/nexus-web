@@ -65,7 +65,9 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
   );
-  const { fullscreen } = useSelector((state: RootState) => state.dataExplorer);
+  const fullscreen = useSelector(
+    (state: RootState) => state.dataExplorer.fullscreen
+  );
   const keyFoldCode = (cm: any) => cm.foldCode(cm.getCursor());
   const codeMirorRef = React.useRef<CodeMirror.Editor>();
   const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
@@ -103,13 +105,15 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
-    return () => {
-      setFoldCodeMiror(false);
-    };
+
+    return () => setFoldCodeMiror(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
 
-  const handleChange = (editor: any, data: any, value: any) => {
-    editor;
+  const handleChange = (
+    editor: CodeMirror.Editor,
+    data: CodeMirror.EditorChange,
+    value: string
+  ) => {
     if (!editable) {
       return;
     }
