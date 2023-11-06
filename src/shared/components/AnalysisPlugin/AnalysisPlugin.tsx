@@ -60,12 +60,6 @@ const AnalysisPlugin = ({
   dispatch,
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
-  console.log(
-    '@@analysisResourceType',
-    analysisResourceType,
-    mode,
-    analysisReports
-  );
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
