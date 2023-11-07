@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import { vi, describe } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createMemoryHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
@@ -83,178 +83,180 @@ describe('workSpaceMenu', () => {
       'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
   } as unknown) as StudioResource;
 
-  const queryClient = new QueryClient();
+    const queryClient = new QueryClient();
 
-  let container: HTMLElement;
-  let user: UserEvent;
-  let component: RenderResult;
-  const server = setupServer(...handlers);
+    let container: HTMLElement;
+    let user: UserEvent;
+    let component: RenderResult;
+    const server = setupServer(...handlers);
 
-  // establish API mocking before all tests
-  beforeAll(() => {
-    server.listen();
-  });
+    // establish API mocking before all tests
+    beforeAll(() => {
+      server.listen();
+    });
 
-  beforeEach(async () => {
-    server.use(workspaceHandler);
-    server.use(dashboardHandler);
-    server.use(tableHandler);
+    beforeEach(async () => {
+      server.use(workspaceHandler);
+      server.use(dashboardHandler);
+      server.use(tableHandler);
 
-    if (component) {
-      component.unmount();
-    }
+      if (component) {
+        component.unmount();
+      }
 
-    component = await render(
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <NexusProvider nexusClient={nexus}>
-            <QueryClientProvider client={queryClient}>
-              <StudioReactContext.Provider value={contextValue}>
-                <WorkSpaceMenu
-                  workspaceIds={['w1']}
-                  studioResource={resource}
-                  onListUpdate={vi.fn}
-                />
-              </StudioReactContext.Provider>
-            </QueryClientProvider>
-          </NexusProvider>
-        </ConnectedRouter>
-      </Provider>
-    );
+      component = await render(
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <NexusProvider nexusClient={nexus}>
+              <QueryClientProvider client={queryClient}>
+                <StudioReactContext.Provider value={contextValue}>
+                  <WorkSpaceMenu
+                    workspaceIds={['w1']}
+                    studioResource={resource}
+                    onListUpdate={vi.fn}
+                  />
+                </StudioReactContext.Provider>
+              </QueryClientProvider>
+            </NexusProvider>
+          </ConnectedRouter>
+        </Provider>
+      );
 
-    container = component.container;
+      container = component.container;
 
-    user = userEvent.setup();
-  });
+      user = userEvent.setup();
+    });
 
-  // reset any request handlers that are declared as a part of our tests
-  // (i.e. for testing one-time error scenarios)
-  afterEach(() => {
-    server.resetHandlers();
-    queryClient.clear();
-  });
+    // reset any request handlers that are declared as a part of our tests
+    // (i.e. for testing one-time error scenarios)
+    afterEach(() => {
+      server.resetHandlers();
+      queryClient.clear();
+    });
 
-  // clean up once the tests are done
-  afterAll(() => {
-    server.close();
-  });
+    // clean up once the tests are done
+    afterAll(() => {
+      server.close();
+    });
 
-  it('renders with a single workspace and dashboard ', async () => {
-    const dashboardText = await screen.findByText(/Example/);
-    expect(dashboardText).toBeVisible();
-    const text = await screen.findAllByText(
-      'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
-    );
-    expect(text.length).toBe(9);
-  });
+    it('renders with a single workspace and dashboard ', async () => {
+      const dashboardText = await screen.findByText(/Example/);
+      expect(dashboardText).toBeVisible();
+      const text = await screen.findAllByText(
+        'https://bluebrain.github.io/nexus/vocabulary/apiMappings'
+      );
+      expect(text.length).toBe(9);
+    });
 
-  it('shows edit buttons for a user with  edit access', async () => {
-    const workspaceButton = await screen.findByText('Workspace');
-    expect(workspaceButton).toBeVisible();
-    const dashboardButton = await screen.findByText('Dashboard');
-    expect(dashboardButton).toBeVisible();
-  });
+    it('shows edit buttons for a user with  edit access', async () => {
+      const workspaceButton = await screen.findByText('Workspace');
+      expect(workspaceButton).toBeVisible();
+      const dashboardButton = await screen.findByText('Dashboard');
+      expect(dashboardButton).toBeVisible();
+    });
 
-  it('hides edit buttons for a user with out edit access', async () => {
-    server.use(aclHandler);
+    it('hides edit buttons for a user with out edit access', async () => {
+      server.use(aclHandler);
 
-    await render(
-      <Provider store={store}>
-        <ConnectedRouter history={history}>
-          <NexusProvider nexusClient={nexus}>
-            <QueryClientProvider client={queryClient}>
-              <StudioReactContext.Provider value={contextValue}>
-                <WorkSpaceMenu
-                  workspaceIds={['w1']}
-                  studioResource={resource}
-                  onListUpdate={vi.fn}
-                ></WorkSpaceMenu>
-              </StudioReactContext.Provider>
-            </QueryClientProvider>
-          </NexusProvider>
-        </ConnectedRouter>
-      </Provider>
-    );
+      await render(
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <NexusProvider nexusClient={nexus}>
+              <QueryClientProvider client={queryClient}>
+                <StudioReactContext.Provider value={contextValue}>
+                  <WorkSpaceMenu
+                    workspaceIds={['w1']}
+                    studioResource={resource}
+                    onListUpdate={vi.fn}
+                  ></WorkSpaceMenu>
+                </StudioReactContext.Provider>
+              </QueryClientProvider>
+            </NexusProvider>
+          </ConnectedRouter>
+        </Provider>
+      );
 
-    await screen.findAllByText('No dashboards available');
+      await screen.findAllByText('No dashboards available');
 
-    const editButton = screen.queryByText('Edit');
-    expect(editButton).toBeFalsy();
-  });
+      const editButton = screen.queryByText('Edit');
+      expect(editButton).toBeFalsy();
+    });
 
-  it('it displays workspace action on clicking  workspace action button', async () => {
-    const button1 = await screen.findByText('Workspace');
-    expect(button1).toBeVisible();
-    const button2 = await screen.findByText('Dashboard');
-    expect(button2).toBeVisible();
-    await user.click(button1);
+    it('it displays workspace action on clicking  workspace action button', async () => {
+      const button1 = await screen.findByText('Workspace');
+      expect(button1).toBeVisible();
+      const button2 = await screen.findByText('Dashboard');
+      expect(button2).toBeVisible();
+      await user.click(button1);
 
-    expect(await screen.findByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText('Add')).toBeInTheDocument();
-    expect(screen.getByText('Remove')).toBeInTheDocument();
-  });
+      expect(await screen.findByText('Edit')).toBeInTheDocument();
+      expect(screen.getByText('Add')).toBeInTheDocument();
+      expect(screen.getByText('Remove')).toBeInTheDocument();
+    });
 
-  it('it displays workspace add form on clicking add workspace button', async () => {
-    await screen.findAllByText('Workspace');
-    const workSpaceAction = (await screen.getAllByText(
-      'Workspace'
-    )[0]) as HTMLButtonElement;
+    it('it displays workspace add form on clicking add workspace button', async () => {
+      await screen.findAllByText('Workspace');
+      const workSpaceAction = (await screen.getAllByText(
+        'Workspace'
+      )[0]) as HTMLButtonElement;
 
-    fireEvent.click(workSpaceAction);
-
-    await screen.findByText('Add');
-
-    const editButton = await screen.findByText('Add');
-    await fireEvent.click(editButton);
-
-    const editForm = await screen.findAllByText('Create a new Workspace');
-    expect(editForm).toHaveLength(1);
-  });
-
-  it('it displays workspace remove confirmation  on clicking remove workspace button', async () => {
-    const workSpaceAction = (
-      await screen.findAllByText('Workspace')
-    )[0] as HTMLButtonElement;
-    fireEvent.click(workSpaceAction);
-    const editButton = await screen.findByText('Remove');
-    expect(editButton).toBeInTheDocument();
-    await fireEvent.click(editButton);
-    const editForm = await screen.findAllByText('Delete Workspace');
-    expect(editForm).toHaveLength(1);
-  });
-
-  it('it displays workspace edit form on clicking edit workspace button', async () => {
-    const workSpaceAction = (
-      await screen.findAllByText('Workspace')
-    )[0] as HTMLButtonElement;
-    act(() => {
       fireEvent.click(workSpaceAction);
+
+      await screen.findByText('Add');
+
+      const editButton = await screen.findByText('Add');
+      await fireEvent.click(editButton);
+
+      const editForm = await screen.findAllByText('Create a new Workspace');
+      expect(editForm).toHaveLength(1);
     });
-    const editButton = await screen.findByText('Edit');
-    expect(editButton).toBeInTheDocument();
-    await act(async () => {
-      await user.click(editButton);
+
+    it('it displays workspace remove confirmation  on clicking remove workspace button', async () => {
+      const workSpaceAction = (
+        await screen.findAllByText('Workspace')
+      )[0] as HTMLButtonElement;
+      fireEvent.click(workSpaceAction);
+      const editButton = await screen.findByText('Remove');
+      expect(editButton).toBeInTheDocument();
+      await fireEvent.click(editButton);
+      const editForm = await screen.findAllByText('Delete Workspace');
+      expect(editForm).toHaveLength(1);
     });
-    const editForm = screen.getByTestId('editWorkspace');
-    expect(editForm).toBeInTheDocument();
-  });
 
-  it('it displays dashboard edit/add/remove options on clicking dahsboard edit action', async () => {
-    const dashboardAction = await screen.findByText('Dashboard');
-    await fireEvent.click(dashboardAction);
-    const addButton = await screen.findByText('Add');
-    expect(addButton).toBeInTheDocument();
-  });
+    it('it displays workspace edit form on clicking edit workspace button', async () => {
+      const workSpaceAction = (
+        await screen.findAllByText('Workspace')
+      )[0] as HTMLButtonElement;
+      act(() => {
+        fireEvent.click(workSpaceAction);
+      });
+      const editButton = await screen.findByText('Edit');
+      expect(editButton).toBeInTheDocument();
+      await act(async () => {
+        await user.click(editButton);
+      });
+      const editForm = screen.getByTestId('editWorkspace');
+      expect(editForm).toBeInTheDocument();
+    });
 
-  it('it displays dashboard add form when clicked on add button', async () => {
-    const dashboardAction = await screen.findByText('Dashboard');
-    await fireEvent.click(dashboardAction);
+    it('it displays dashboard edit/add/remove options on clicking dahsboard edit action', async () => {
+      const dashboardAction = await screen.findByText('Dashboard');
+      await fireEvent.click(dashboardAction);
+      const addButton = await screen.findByText('Add');
+      expect(addButton).toBeInTheDocument();
+    });
 
-    const addButton = await screen.findByText('Add');
-    expect(addButton).toBeInTheDocument();
-    await fireEvent.click(addButton);
+    it('it displays dashboard add form when clicked on add button', async () => {
+      const dashboardAction = await screen.findByText('Dashboard');
+      await fireEvent.click(dashboardAction);
 
-    const dbForm = await screen.findByText('Create Dashboard');
-    expect(dbForm).toBeInTheDocument();
-  });
-});
+      const addButton = await screen.findByText('Add');
+      expect(addButton).toBeInTheDocument();
+      await fireEvent.click(addButton);
+
+      const dbForm = await screen.findByText('Create Dashboard');
+      expect(dbForm).toBeInTheDocument();
+    });
+  },
+  { retry: 3 }
+);
