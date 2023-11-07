@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { EditorConfiguration } from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
@@ -24,6 +24,7 @@ type TEditorConfiguration = EditorConfiguration & {
 
 const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
   ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
+    const wrapperRef = useRef(null);
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -53,10 +54,19 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
             'code-mirror-editor',
             fullscreen && 'full-screen-mode'
           )}
+          ref={wrapperRef}
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
             (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
+          }}
+          editorWillUnmount={() => {
+            const editor = (ref as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editor) editor.remove();
+            if (wrapperRef.current)
+              (wrapperRef.current as { hydrated: boolean }).hydrated = false;
           }}
         />
       </Spin>
