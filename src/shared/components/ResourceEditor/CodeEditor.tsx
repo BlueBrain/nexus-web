@@ -87,10 +87,19 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             'code-mirror-editor',
             fullscreen && 'full-screen-mode'
           )}
+          ref={wrapperRef}
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
             (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
+          }}
+          editorWillUnmount={() => {
+            const editor = (ref as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editor) editor.remove();
+            if (wrapperRef.current)
+              (wrapperRef.current as { hydrated: boolean }).hydrated = false;
           }}
         />
       </Spin>
