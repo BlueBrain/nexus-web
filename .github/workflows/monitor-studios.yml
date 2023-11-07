@@ -1,7 +1,7 @@
 name: Test Public Studios
 on:
   schedule:
-    - cron: '00 16 * * *' # Fire at 12:30 p.m. (noon) every day
+    - cron: '30 12 * * *' # Fire at 12:30 p.m. (noon) every day
 
 jobs:
   e2e-studio-cron-test:
