@@ -1041,8 +1041,6 @@ describe(
     });
 
     it('resets predicate search term when different predicate verb is selected', async () => {
-      console.log('@@1032');
-      console.log('@@1032', container.innerHTML);
       await updateResourcesShownInTable(mockResourcesForPage2);
 
       await selectPath('author');

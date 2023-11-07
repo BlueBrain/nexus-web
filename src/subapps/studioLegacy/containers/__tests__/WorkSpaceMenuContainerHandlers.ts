@@ -62,7 +62,7 @@ export const tableHandler = rest.get(
       '@id': 'dataTable1',
       '@type': 'FusionTable',
       description: `A test dataTable`,
-      label: `dataTable1`,
+      label: 'dataTable1',
       configuration: [
         {
           '@type': 'text',
