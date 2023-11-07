@@ -96,6 +96,9 @@ describe('Public Studios', () => {
               cy.wait(`@dashboardSparqlRequest-${dashboard.name}`, {
                 timeout: 30000,
               }).then(interception => {
+                cy.log(
+                  `Testing dashboard ${dashboard.name} in workspace ${workspace.name} in studio ${studio.title}`
+                );
                 cy.wrap(
                   assertColumns(
                     interception.response.body.head.vars,
