@@ -30,6 +30,7 @@ describe('Report (formerly Analysis) Plugin', () => {
         }).then(({ projectLabel }: { projectLabel: string }) => {
           cy.wrap(projectLabel).as('projectLabel');
           cy.fixture('AnalysisResource.json').then(resourcePayload => {
+            console.log('CY', cy.task);
             cy.task('resource:create', {
               nexusApiUrl: Cypress.env('NEXUS_API_URL'),
               authToken,
