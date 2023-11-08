@@ -333,7 +333,7 @@ const CreateStudio = () => {
       title={<strong>Create Studio</strong>}
       footer={null}
       width={800}
-      bodyStyle={{ padding: '10px 24px' }}
+      styles={{ body: { padding: '10px 24px' } }}
       afterClose={() => {
         form.resetFields();
         updateState({

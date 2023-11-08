@@ -118,7 +118,7 @@ const GalleryView: React.FC = () => {
           onClose={closeGalleryView}
           placement="right"
           rootStyle={{ height: '100%' }}
-          bodyStyle={{ height: '100%' }}
+          styles={{ body: { height: '100%' } }}
           width="50%"
         >
           <Route
