@@ -84,7 +84,7 @@ export default defineConfig(() => {
                 output: {
                     manualChunks: {
                         lodash: ['lodash'],
-                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.js'],
+                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.worker.min.js'],
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
