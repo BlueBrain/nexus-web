@@ -30,6 +30,7 @@ const FileInfo = ({
   const [mode, setMode] = React.useState<'minified' | 'expanded' | 'edit'>(
     'minified'
   );
+  console.log('Mode', mode)
   const [editedText, setEditedText] = React.useState(text);
   const [editedTitle, setEditedTitle] = React.useState(title);
 
@@ -91,11 +92,11 @@ const FileInfo = ({
                   ellipsis={
                     mode === 'minified'
                       ? {
-                          symbol: 'Read more',
-                          expandable: true,
-                          rows: 3,
-                          onExpand: () => setMode('expanded'),
-                        }
+                        symbol: 'Read more',
+                        expandable: true,
+                        rows: 3,
+                        onExpand: () => setMode('expanded'),
+                      }
                       : false
                   }
                 >
@@ -147,13 +148,14 @@ const FileInfo = ({
             </div>
           )}
         </div>
-        <div className="file-info-menu">
+        <div className="file-info-menu">{mode}
           {mode !== 'edit' && (
             <Button
               aria-label="Edit name and description"
               onClick={() => setMode('edit')}
               className="button-blend"
             >
+              Edit name and description
               <EditOutlined />
             </Button>
           )}
