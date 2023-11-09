@@ -181,7 +181,7 @@ const AnalysisPlugin = ({
                     selectedCategories.length > 0 &&
                     a.categories !== undefined &&
                     intersection(selectedCategories, a.categories).length !==
-                    selectedCategories.length
+                      selectedCategories.length
                   ) {
                     return false;
                   }
@@ -189,7 +189,7 @@ const AnalysisPlugin = ({
                     selectedTypes.length > 0 &&
                     a.types !== undefined &&
                     intersection(selectedTypes, a.types).length !==
-                    selectedTypes.length
+                      selectedTypes.length
                   ) {
                     return false;
                   }
@@ -210,7 +210,9 @@ const AnalysisPlugin = ({
                       key: i,
                       label: (
                         <>
-                          {analysisReport.name}
+                          <span style={{ color: 'white' }}>
+                            {analysisReport.name}
+                          </span>
                           {!!analysisReport.categories &&
                             analysisReport.categories.length > 0 && (
                               <span
@@ -253,7 +255,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <div style={{ display: 'flex' }}>
                                 <div
                                   className="actions"
@@ -302,7 +304,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -392,7 +394,6 @@ const AnalysisPlugin = ({
                                     icon={<EditOutlined />}
                                     title="Edit report"
                                     onClick={() => {
-                                      console.log('Edit report clicked')
                                       analysisReport.id &&
                                         dispatch(
                                           editReport({
@@ -400,7 +401,8 @@ const AnalysisPlugin = ({
                                             analaysisName: analysisReport.name,
                                             analysisDescription:
                                               analysisReport.description,
-                                            categories: analysisReport.categories,
+                                            categories:
+                                              analysisReport.categories,
                                             types: analysisReport.types,
                                             tools: (analysisReport.contribution?.filter(
                                               c =>
@@ -418,9 +420,8 @@ const AnalysisPlugin = ({
                                               })
                                             ),
                                           })
-                                        )
-                                    }
-                                    }
+                                        );
+                                    }}
                                   ></Button>
                                   {analysisResourceType ===
                                     'individual_report' &&
@@ -450,24 +451,24 @@ const AnalysisPlugin = ({
                                     )}
                                   {analysisResourceType !==
                                     'individual_report' && (
-                                      <Button
-                                        type="default"
-                                        title="Open discussion on report resource"
-                                        aria-label="Open discussion on report resource"
-                                        icon={<MessageOutlined />}
-                                        style={{
-                                          maxWidth: '230px',
-                                          overflow: 'hidden',
-                                          background: 'transparent',
-                                        }}
-                                        onClick={() =>
-                                          analysisReport.id &&
-                                          onClickRelatedResource(
-                                            analysisReport.id
-                                          )
-                                        }
-                                      ></Button>
-                                    )}
+                                    <Button
+                                      type="default"
+                                      title="Open discussion on report resource"
+                                      aria-label="Open discussion on report resource"
+                                      icon={<MessageOutlined />}
+                                      style={{
+                                        maxWidth: '230px',
+                                        overflow: 'hidden',
+                                        background: 'transparent',
+                                      }}
+                                      onClick={() =>
+                                        analysisReport.id &&
+                                        onClickRelatedResource(
+                                          analysisReport.id
+                                        )
+                                      }
+                                    ></Button>
+                                  )}
                                 </section>
                               </div>
                             </>
@@ -476,7 +477,7 @@ const AnalysisPlugin = ({
                           {(mode === 'view' ||
                             ('id' in analysisReport &&
                               currentlyBeingEditedAnalysisReportId !==
-                              analysisReport.id)) &&
+                                analysisReport.id)) &&
                             analysisReport.description !== undefined &&
                             analysisReport.description !== '' && (
                               <>
@@ -508,7 +509,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -571,7 +572,7 @@ const AnalysisPlugin = ({
                               <ToolsEdit
                                 tools={
                                   currentlyBeingEditedAnalysisReportTools !==
-                                    undefined
+                                  undefined
                                     ? currentlyBeingEditedAnalysisReportTools
                                     : []
                                 }
@@ -594,7 +595,6 @@ const AnalysisPlugin = ({
                                 description: s.description,
                               }))}
                               onAddTool={() => {
-                                console.log('Add Toold Clicked')
                                 analysisReport.id &&
                                   dispatch(
                                     editReport({
@@ -623,6 +623,7 @@ const AnalysisPlugin = ({
                                   hidden={true}
                                   onClick={() => console.log('download')}
                                   icon={<LeftSquareFilled />}
+                                  style={{ color: 'white' }}
                                 >
                                   Download
                                 </Button>

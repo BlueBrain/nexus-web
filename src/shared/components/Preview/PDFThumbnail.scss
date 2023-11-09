@@ -2,8 +2,17 @@
   height: 100%;
   width: 100%;
   .react-pdf__Page.pdf-thumbnail-page {
+    display: flex;
+    background: 1px solid #002766;
     .react-pdf__Page__svg {
       margin: auto;
     }
   }
+}
+
+.ant-image-mask {
+  flex: 1;
+  align-self: center;
+  cursor: pointer;
+  text-align: center;
 }
