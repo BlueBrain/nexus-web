@@ -270,7 +270,6 @@ const AnalysisPluginContainer = ({
     }
   );
 
-  console.log('Analysis Data', analysisData)
   const fetchImages = async () => {
     const imageSourceInitial: Promise<{
       id: string;
@@ -285,20 +284,6 @@ const AnalysisPluginContainer = ({
       return [];
     }
 
-    const isValidUrl = (urlString: string) => {
-      console.log('Validating', urlString)
-      try {
-        console.log('Result', Boolean(new URL(urlString)))
-        return Boolean(new URL(urlString));
-      }
-      catch (e) {
-        console.log('Error thrown for', urlString)
-        return false;
-      }
-    }
-
-
-
     const imageSources = Promise.all(
       analysisData.reduce((prev, current) => {
         const assets = current.assets.concat(unsavedAssets).map(async asset => {
@@ -306,8 +291,6 @@ const AnalysisPluginContainer = ({
             asset.filePath.lastIndexOf('/') + 1
           );
 
-          console.log('ImageId', imageId, isValidUrl(imageId));
-          console.log('Encoded URL component', encodeURIComponent(imageId))
           const fileResource = (await nexus.File.get(
             orgLabel,
             projectLabel,
@@ -458,8 +441,8 @@ const AnalysisPluginContainer = ({
         // Add user as contributor if not already
         const contributions = resource['contribution']
           ? [resource['contribution']]
-            .flat()
-            .filter(c => c.agent['@type'].includes('Person'))
+              .flat()
+              .filter(c => c.agent['@type'].includes('Person'))
           : [];
 
         if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
@@ -530,11 +513,11 @@ const AnalysisPluginContainer = ({
         derivation: { entity: { '@id': resourceId } },
         contribution: data.scripts
           ? data.scripts.map(s => ({
-            '@type': 'Contribution',
-            agent: { '@type': ['Software', 'Agent'] },
-            repository: s.scriptPath,
-            description: s.description,
-          }))
+              '@type': 'Contribution',
+              agent: { '@type': ['Software', 'Agent'] },
+              repository: s.scriptPath,
+              description: s.description,
+            }))
           : [],
       });
     },
@@ -664,7 +647,7 @@ const AnalysisPluginContainer = ({
                 {file._mediaType === 'application/pdf' && (
                   <PDFThumbnail
                     url={file['@id']}
-                    onPreview={() => { }}
+                    onPreview={() => {}}
                     previewDisabled={true}
                   />
                 )}
@@ -673,7 +656,7 @@ const AnalysisPluginContainer = ({
             {file._mediaType === 'application/pdf' && (
               <PDFThumbnail
                 url={file['@id']}
-                onPreview={() => { }}
+                onPreview={() => {}}
                 previewDisabled={true}
               />
             )}
@@ -753,30 +736,29 @@ const AnalysisPluginContainer = ({
 
   const containerResourceTypes = containerResource
     ? ([
-      ((containerResource as unknown) as Resource)['@type'],
-    ].flat() as string[])
+        ((containerResource as unknown) as Resource)['@type'],
+      ].flat() as string[])
     : [];
 
   const analysisDataWithImages = React.useMemo(() => {
     const newAnalysisReports: AnalysisReport[] =
       mode === 'create'
         ? [
-          {
-            name: currentlyBeingEditedAnalysisReportName || '',
-            description: currentlyBeingEditedAnalysisReportDescription || '',
-            categories: currentlyBeingEditedAnalysisReportCategories || [],
-            types: currentlyBeingEditedAnalysisReportTypes || [],
-            createdBy: '',
-            createdAt: '',
-            assets: [],
-          },
-        ]
+            {
+              name: currentlyBeingEditedAnalysisReportName || '',
+              description: currentlyBeingEditedAnalysisReportDescription || '',
+              categories: currentlyBeingEditedAnalysisReportCategories || [],
+              types: currentlyBeingEditedAnalysisReportTypes || [],
+              createdBy: '',
+              createdAt: '',
+              assets: [],
+            },
+          ]
         : [];
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
 
-    console.log('Image Data', imageData)
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -791,37 +773,36 @@ const AnalysisPluginContainer = ({
               lastUpdated: img?.lastUpdated,
               lastUpdatedBy: img?.lastUpdatedBy,
               preview: ({ mode }: { mode: string }) => {
-                console.log('Encoding Format', m.encodingFormat, img)
                 return (
                   <>
                     {m.encodingFormat.substring(0, 'image'.length) ===
                       'image' && (
-                        <ImageFileInfo
-                          previewDisabled={mode === 'edit'}
-                          src={img?.src}
-                          lastUpdated={img?.lastUpdated}
-                          lastUpdatedBy={img?.lastUpdatedBy}
-                          title={m.name}
-                          text={m.description}
-                          onSave={(name, description) => {
-                            try {
-                              a.id &&
-                                img &&
-                                mutateAsset.mutate({
-                                  resourceId: a.id,
-                                  assetContentUrl: img.contentUrl,
-                                  title: name,
-                                  caption: description,
-                                });
-                            } catch (e) {
-                              notification.error({
-                                message:
-                                  'An error occurred whilst trying to save. Please try again.',
+                      <ImageFileInfo
+                        previewDisabled={mode === 'edit'}
+                        src={img?.src}
+                        lastUpdated={img?.lastUpdated}
+                        lastUpdatedBy={img?.lastUpdatedBy}
+                        title={m.name}
+                        text={m.description}
+                        onSave={(name, description) => {
+                          try {
+                            a.id &&
+                              img &&
+                              mutateAsset.mutate({
+                                resourceId: a.id,
+                                assetContentUrl: img.contentUrl,
+                                title: name,
+                                caption: description,
                               });
-                            }
-                          }}
-                        />
-                      )}
+                          } catch (e) {
+                            notification.error({
+                              message:
+                                'An error occurred whilst trying to save. Please try again.',
+                            });
+                          }
+                        }}
+                      />
+                    )}
                     {m.encodingFormat === 'application/pdf' && img?.src && (
                       <PDFFileInfo
                         previewDisabled={mode === 'edit'}
@@ -876,7 +857,7 @@ const AnalysisPluginContainer = ({
           analysisReports={analysisDataWithImages}
           containerId={containerId}
           containerResourceTypes={containerResourceTypes}
-          onCancel={() => { }}
+          onCancel={() => {}}
           onSave={(
             name: string,
             description?: string,

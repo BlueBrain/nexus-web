@@ -181,7 +181,7 @@ const AnalysisPlugin = ({
                     selectedCategories.length > 0 &&
                     a.categories !== undefined &&
                     intersection(selectedCategories, a.categories).length !==
-                    selectedCategories.length
+                      selectedCategories.length
                   ) {
                     return false;
                   }
@@ -189,7 +189,7 @@ const AnalysisPlugin = ({
                     selectedTypes.length > 0 &&
                     a.types !== undefined &&
                     intersection(selectedTypes, a.types).length !==
-                    selectedTypes.length
+                      selectedTypes.length
                   ) {
                     return false;
                   }
@@ -255,7 +255,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <div style={{ display: 'flex' }}>
                                 <div
                                   className="actions"
@@ -304,7 +304,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -454,24 +454,24 @@ const AnalysisPlugin = ({
                                     )}
                                   {analysisResourceType !==
                                     'individual_report' && (
-                                      <Button
-                                        type="default"
-                                        title="Open discussion on report resource"
-                                        aria-label="Open discussion on report resource"
-                                        icon={<MessageOutlined />}
-                                        style={{
-                                          maxWidth: '230px',
-                                          overflow: 'hidden',
-                                          background: 'transparent',
-                                        }}
-                                        onClick={() =>
-                                          analysisReport.id &&
-                                          onClickRelatedResource(
-                                            analysisReport.id
-                                          )
-                                        }
-                                      ></Button>
-                                    )}
+                                    <Button
+                                      type="default"
+                                      title="Open discussion on report resource"
+                                      aria-label="Open discussion on report resource"
+                                      icon={<MessageOutlined />}
+                                      style={{
+                                        maxWidth: '230px',
+                                        overflow: 'hidden',
+                                        background: 'transparent',
+                                      }}
+                                      onClick={() =>
+                                        analysisReport.id &&
+                                        onClickRelatedResource(
+                                          analysisReport.id
+                                        )
+                                      }
+                                    ></Button>
+                                  )}
                                 </section>
                               </div>
                             </>
@@ -480,7 +480,7 @@ const AnalysisPlugin = ({
                           {(mode === 'view' ||
                             ('id' in analysisReport &&
                               currentlyBeingEditedAnalysisReportId !==
-                              analysisReport.id)) &&
+                                analysisReport.id)) &&
                             analysisReport.description !== undefined &&
                             analysisReport.description !== '' && (
                               <>
@@ -512,7 +512,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' &&
                             'id' in analysisReport &&
                             currentlyBeingEditedAnalysisReportId ===
-                            analysisReport.id && (
+                              analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -575,7 +575,7 @@ const AnalysisPlugin = ({
                               <ToolsEdit
                                 tools={
                                   currentlyBeingEditedAnalysisReportTools !==
-                                    undefined
+                                  undefined
                                     ? currentlyBeingEditedAnalysisReportTools
                                     : []
                                 }
@@ -598,7 +598,6 @@ const AnalysisPlugin = ({
                                 description: s.description,
                               }))}
                               onAddTool={() => {
-                                console.log('Add Toold Clicked')
                                 analysisReport.id &&
                                   dispatch(
                                     editReport({

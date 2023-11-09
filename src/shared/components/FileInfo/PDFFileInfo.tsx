@@ -22,7 +22,6 @@ export default ({
   lastUpdatedBy,
   previewDisabled,
 }: PDFPreviewProps) => {
-  console.log('PDF File Info - previewDisabled', previewDisabled)
   const [isVisible, setIsVisible] = React.useState(false);
 
   return (
@@ -55,10 +54,7 @@ export default ({
         <PDFThumbnail
           previewDisabled={previewDisabled}
           url={src}
-          onPreview={() => {
-            console.log('PDF Thumbnail Clicked', previewDisabled, isVisible)
-            !previewDisabled && setIsVisible(true)
-          }}
+          onPreview={() => !previewDisabled && setIsVisible(true)}
         />
       )}
       {isVisible && src && (
