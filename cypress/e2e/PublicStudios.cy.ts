@@ -30,7 +30,7 @@ describe('Public Studios', () => {
       cy.get('table').scrollIntoView(); // Scrolling the table into view triggers the request to fetch rows for the table.
 
       cy.wait('@studioQueryResult', { timeout: 30000 }).then(interception => {
-        expect(interception.response.statusCode).to.equal(200);
+        expect(interception.response.statusCode).to.equal(300);
         expect(interception.response.body.head.vars.length).to.be.equal(
           publicStudio.defaultDashboardColumnsCount
         );
