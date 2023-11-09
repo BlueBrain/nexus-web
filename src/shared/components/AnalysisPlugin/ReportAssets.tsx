@@ -22,16 +22,16 @@ const ReportAssets = ({
         (mode === 'edit' &&
           'id' in analysisReport &&
           currentlyBeingEditedAnalysisReportId === analysisReport.id)) && (
-        <div style={{ display: 'flex', width: '100%' }}>
-          <Button
-            type="link"
-            style={{ marginLeft: 'auto', marginBottom: '10px' }}
-            onClick={() => dispatch(openFileUploadDialog())}
-          >
-            Add Files to Report
-          </Button>
-        </div>
-      )}
+          <div style={{ display: 'flex', width: '100%' }}>
+            <Button
+              type="link"
+              style={{ marginLeft: 'auto', marginBottom: '10px' }}
+              onClick={() => dispatch(openFileUploadDialog())}
+            >
+              Add Files to Report
+            </Button>
+          </div>
+        )}
       <ul
         style={{
           gridTemplateColumns: `repeat(${10 - imagePreviewScale / 10}, 1fr)`,
@@ -39,6 +39,13 @@ const ReportAssets = ({
         }}
       >
         {analysisReport.assets.map((asset, i) => {
+          console.log('Mode in Map', mode);
+          console.log('Currently analuyzed', currentlyBeingEditedAnalysisReportId);
+          console.log('Analysis Report', analysisReport);
+          console.log('Statement ', mode === 'edit' &&
+            'id' in analysisReport &&
+            currentlyBeingEditedAnalysisReportId ===
+            analysisReport.id)
           const minThumbnailSize = 100;
           return (
             <li
@@ -48,12 +55,11 @@ const ReportAssets = ({
             >
               <div
                 aria-label="Report File"
-                className={`asset ${
-                  selectedAssets &&
-                  selectedAssets.findIndex(v => v === asset.id) > -1
+                className={`asset ${selectedAssets &&
+                    selectedAssets.findIndex(v => v === asset.id) > -1
                     ? 'selected'
                     : ''
-                }`}
+                  }`}
                 style={{
                   height:
                     (minThumbnailSize +
@@ -79,7 +85,7 @@ const ReportAssets = ({
                 {mode === 'edit' &&
                   'id' in analysisReport &&
                   currentlyBeingEditedAnalysisReportId ===
-                    analysisReport.id && (
+                  analysisReport.id && (
                     <Checkbox
                       checked={
                         selectedAssets &&
