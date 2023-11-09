@@ -25,8 +25,26 @@ jobs:
         run: |
           yarn cy:publicstudios
       - name: Send error notification
+        id: slack
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
-        run: echo "We should send a slack notification in this case"
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          channel-id: 'team-nise-alerts'
+          payload: |
+            {
+              "text": "Failure in the public studios e2e cron job",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "GitHub Action build ID: ${{ github.run_id }}\n URL: https://github.com/BlueBrain/nexus-web/actions/runs/${{ github.run_id }}\n ${{steps.e2eTests.outputs}}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       - name: Cleanup Docker Containers
         if: ${{ always() }}
         run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
