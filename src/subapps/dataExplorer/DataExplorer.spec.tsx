@@ -277,9 +277,6 @@ describe(
     const openMenuFor = async (ariaLabel: string) => {
       const menuInput = await getInputForLabel(ariaLabel);
       await userEvent.click(menuInput, { pointerEventsCheck: 0 });
-      await act(async () => {
-        fireEvent.mouseDown(menuInput);
-      });
       const menuDropdown = document.querySelector(DropdownSelector);
       expect(menuDropdown).toBeInTheDocument();
       return menuDropdown;
