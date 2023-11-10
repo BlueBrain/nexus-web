@@ -211,10 +211,15 @@ describe(
     const getDropdownOption = async (
       optionLabel: string,
       selector: string = DropdownOptionSelector
-    ) =>
-      await screen.getByText(new RegExp(`${optionLabel}$`, 'i'), {
-        selector,
-      });
+    ) => {
+      const option = await screen.findByText(
+        new RegExp(`${optionLabel}$`, 'i'),
+        {
+          selector,
+        }
+      );
+      return option;
+    };
 
     const getRowsForNextPage = async (
       resources: Resource[],
