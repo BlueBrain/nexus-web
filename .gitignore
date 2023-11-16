@@ -1,18 +1,38 @@
+# Cache files
 .cache/
+
+# macOS specific files
 .DS_Store
+
+# Environment files
+.env*
+
+# Distribution/build files
 dist/
 dist_refresh/
+
+# Plugins directory
 /plugins/
+
+# Packagge manager files
 node_modules/
-storybook-static/
-coverage/
-.vscode
 yarn-error.log
+
+# Storybook files
+storybook-static/
+
+# Testing files
+coverage/
 cypress/screenshots/
 cypress/videos/
 cypress.env.json
+
+# Editor-specific files
+.vscode/
 *.iml
-.idea
+.idea/
+
+# Others
 *.sops*
 .sops-*.*
 *.key
