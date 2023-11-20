@@ -78,7 +78,7 @@ const config = [
         },
         {
           test: /\.mp4$/,
-          use: 'file-loader?name=videos/[name].[ext]'
+          use: 'file-loader?name=public/videos/[name].[ext]',
         },
         {
           test: /\.(ttf)$/,
