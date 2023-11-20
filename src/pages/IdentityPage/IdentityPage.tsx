@@ -63,6 +63,7 @@ const IdentityPage: React.FC<{}> = () => {
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
       <img
+        alt="Landing page logo"
         src={
           layoutSettings.landingPosterImg ||
           require('../../shared/images/EPFL_BBP_logo.png')
