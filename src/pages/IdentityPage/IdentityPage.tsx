@@ -62,15 +62,6 @@ const IdentityPage: React.FC<{}> = () => {
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
-      <img
-        alt="Landing page logo"
-        src={
-          layoutSettings.landingPosterImg ||
-          require('../../shared/images/EPFL_BBP_logo.png')
-        }
-        className="home-authentication-epfl"
-      />
-      <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
         <div className="title">Nexus.Fusion</div>
         <div className="actions">
@@ -156,6 +147,15 @@ const IdentityPage: React.FC<{}> = () => {
           </Button>
         </div>
       </div>
+      <img
+        alt="Landing page logo"
+        src={
+          layoutSettings.landingPosterImg ||
+          require('../../shared/images/EPFL_BBP_logo.png')
+        }
+        className="home-authentication-epfl"
+      />
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
     </div>
   );
 };
