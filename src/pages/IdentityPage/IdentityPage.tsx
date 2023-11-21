@@ -63,8 +63,8 @@ const IdentityPage: React.FC<{}> = () => {
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
-      <div className="home-authentication-content">
-        <div className="title">Nexus.Fusion</div>
+      <main className="home-authentication-content">
+        <h1 className="title">Nexus.Fusion</h1>
         <nav
           className="actions"
           title="Main navigation"
@@ -161,7 +161,7 @@ const IdentityPage: React.FC<{}> = () => {
             About
           </Button>
         </nav>
-      </div>
+      </main>
       <img
         alt="Landing page logo"
         src={
