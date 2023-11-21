@@ -5,7 +5,7 @@ import { loginPage } from './index';
 Cypress.Commands.add('login', (id, realm, username, password) => {
   return cy.session(id, () => {
     cy.visit(loginPage);
-    cy.findByRole('button', { name: /identity-login/i  }).click();
+    cy.findByRole('button', { name: /Identity connect/i }).click();
     cy.get('ul')
       .contains(realm.name)
       .click();
@@ -17,7 +17,7 @@ Cypress.Commands.add('login', (id, realm, username, password) => {
         cy.get('#password').type(password);
         cy.get('input[name="login"]').click();
       }
-    )
+    );
     cy.wait(500);
   });
 });

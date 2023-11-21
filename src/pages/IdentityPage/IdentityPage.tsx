@@ -47,6 +47,7 @@ const IdentityPage: React.FC<{}> = () => {
     auth: state.auth,
     config: state.config,
   }));
+
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
@@ -69,19 +70,20 @@ const IdentityPage: React.FC<{}> = () => {
             {!realmsFilter.length ? (
               <Button
                 key="no-realms"
-                disabled
+                title="No realms available, please contact your administrator."
                 role="button"
                 size="large"
                 className="no-realms-btn"
               >
-                Connect
+                Connect unavailable
               </Button>
             ) : (
               <Button
                 key="realm-selector"
                 size="large"
                 role="button"
-                aria-label="identity-login"
+                title="Select a realm to connect to"
+                aria-label="Identity connect"
                 onClick={() => onPopoverVisibleChange(true)}
               >
                 Connect
@@ -115,6 +117,8 @@ const IdentityPage: React.FC<{}> = () => {
                       className="connect-btn"
                       size="large"
                       type="link"
+                      title={`Connect via ${item.name}`}
+                      aria-label={`Connect via ${item.name}`}
                       role="button"
                     >
                       {item.name}
@@ -128,6 +132,7 @@ const IdentityPage: React.FC<{}> = () => {
           <Button
             className="nav-btn"
             size="large"
+            title="View all available studios"
             onClick={() => history.push('/studios')}
           >
             View Studios
@@ -137,12 +142,18 @@ const IdentityPage: React.FC<{}> = () => {
             size="large"
             rel="noopener noreferrer"
             target="_blank"
+            title="View the documentation for Nexus Fusion"
             href="https://bluebrainnexus.io/docs/index.html"
             className="nav-btn"
           >
             Documentation
           </Button>
-          <Button className="nav-btn" size="large" onClick={openAboutModal}>
+          <Button
+            className="nav-btn"
+            size="large"
+            onClick={openAboutModal}
+            title="About Nexus Fusion"
+          >
             About
           </Button>
         </div>
