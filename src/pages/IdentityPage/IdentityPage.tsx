@@ -65,7 +65,11 @@ const IdentityPage: React.FC<{}> = () => {
     >
       <div className="home-authentication-content">
         <div className="title">Nexus.Fusion</div>
-        <div className="actions">
+        <nav
+          className="actions"
+          title="Main navigation"
+          aria-label="Main navigation"
+        >
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
               <Button
@@ -156,7 +160,7 @@ const IdentityPage: React.FC<{}> = () => {
           >
             About
           </Button>
-        </div>
+        </nav>
       </div>
       <img
         alt="Landing page logo"
