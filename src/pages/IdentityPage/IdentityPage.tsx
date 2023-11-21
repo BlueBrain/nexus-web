@@ -24,7 +24,7 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   >
     <source
       type="video/mp4"
-      src={videoUrl || require('../../shared/images/BrainRegionsNexusPage.mp4')}
+      src={videoUrl || require('../../shared/videos/BrainRegionsNexusPage.mp4')}
     />
   </video>
 );
