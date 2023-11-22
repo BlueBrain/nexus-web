@@ -254,7 +254,7 @@ const OrganizationListView: React.FC<{}> = () => {
               'No organizations found'
             )
           }
-          alt="sscx"
+          alt="Organization image"
           bg={
             layoutSettings.organizationImg ||
             require('../../shared/images/sscx-by-layers-v3.png')
