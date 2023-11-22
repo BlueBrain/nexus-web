@@ -165,7 +165,13 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 
 app.listen(PORT_NUMBER, () => {
   // tslint:disable-next-line:no-console
-  console.log(`Nexus Web is listening on a port ${PORT_NUMBER} ...`);
+  console.log(
+    `Nexus Fusion is listening on ${
+      process.env.SECURE ? 'https://' : 'http://'
+    }${process.env.HOST_NAME || 'localhost'}:${PORT_NUMBER}${
+      process.env.BASE_PATH ? process.env.BASE_PATH : ''
+    }`
+  );
 });
 
 export default app;
