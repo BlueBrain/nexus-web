@@ -78,7 +78,7 @@ const IdentityPage: React.FC<{}> = () => {
                 size="large"
                 className="no-realms-btn"
               >
-                Connect (unavailable)
+                Connect
               </Button>
             ) : (
               <Button
@@ -157,14 +157,23 @@ const IdentityPage: React.FC<{}> = () => {
           </Button>
         </nav>
       </div>
-      <img
-        alt="Landing page logo"
-        src={
-          layoutSettings.landingPosterImg ||
-          require('../../shared/images/EPFL_BBP_logo.png')
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={
+          layoutSettings.logoImgLink ||
+          'https://www.epfl.ch/research/domains/bluebrain'
         }
-        className="home-authentication-epfl"
-      />
+      >
+        <img
+          alt="Landing page logo"
+          src={
+            layoutSettings.landingPosterImg ||
+            require('../../shared/images/EPFL_BBP_logo.png')
+          }
+          className="home-authentication-epfl"
+        />
+      </a>
       <LandingVideo videoUrl={layoutSettings.landingVideo} />
     </div>
   );

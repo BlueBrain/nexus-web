@@ -35,6 +35,7 @@ const pluginsManifestPath =
 const layoutSettings = {
   docsLink: process.env.DOCS_LINK || '',
   logoImg: process.env.LOGO_IMG || '',
+  logoImgLink: process.env.LOGO_LINK || '',
   forgeLink: process.env.FORGE_LINK || '',
   organizationImg: process.env.ORGANIZATION_IMG || '',
   projectsImg: process.env.PROJECTS_IMG || '',
