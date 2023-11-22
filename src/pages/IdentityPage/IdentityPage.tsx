@@ -18,13 +18,17 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     muted
     autoPlay
     className="home-authentication-fusion"
-    poster={require('../../shared/images/BrainRegionsNexusPage.jpg')}
     preload="auto"
     controls={false}
   >
     <source
       type="video/mp4"
       src={videoUrl || require('../../shared/videos/BrainRegionsNexusPage.mp4')}
+    />
+    {/* Load an image as a Fallback */}
+    <img
+      alt="Landing page video"
+      src={require('../../shared/images/BrainRegionsNexusPage.jpg')}
     />
   </video>
 );
