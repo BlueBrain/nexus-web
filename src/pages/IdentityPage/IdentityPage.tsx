@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { Button, Divider } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
+import { Button, Divider } from 'antd';
+import { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import useClickOutside from '../../shared/hooks/useClickOutside';
+import { performLogin } from '../../shared/store/actions/auth';
+import { setPreferredRealm } from '../../shared/store/actions/config';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
-import useClickOutside from '../../shared/hooks/useClickOutside';
-import * as authActions from '../../shared/store/actions/auth';
-import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 
@@ -47,7 +47,6 @@ const IdentityPage: React.FC<{}> = () => {
     auth: state.auth,
     config: state.config,
   }));
-
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
@@ -58,12 +57,13 @@ const IdentityPage: React.FC<{}> = () => {
   );
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
+
   return (
     <div
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
-      <main className="home-authentication-content">
+      <div className="home-authentication-content">
         <h1 className="title">Nexus.Fusion</h1>
         <nav
           className="actions"
@@ -75,17 +75,15 @@ const IdentityPage: React.FC<{}> = () => {
               <Button
                 key="no-realms"
                 title="No realms available, please contact your administrator."
-                role="button"
                 size="large"
                 className="no-realms-btn"
               >
-                Connect unavailable
+                Connect (unavailable)
               </Button>
             ) : (
               <Button
                 key="realm-selector"
                 size="large"
-                role="button"
                 title="Select a realm to connect to"
                 aria-label="Identity connect"
                 onClick={() => onPopoverVisibleChange(true)}
@@ -111,11 +109,9 @@ const IdentityPage: React.FC<{}> = () => {
                     <Button
                       onClick={e => {
                         e.preventDefault();
-                        dispatch(configActions.setPreferredRealm(item.name));
+                        dispatch(setPreferredRealm(item.name));
                         dispatch(
-                          authActions.performLogin(
-                            location.state as TLocationState
-                          )
+                          performLogin(location.state as TLocationState)
                         );
                       }}
                       className="connect-btn"
@@ -123,7 +119,6 @@ const IdentityPage: React.FC<{}> = () => {
                       type="link"
                       title={`Connect via ${item.name}`}
                       aria-label={`Connect via ${item.name}`}
-                      role="button"
                     >
                       {item.name}
                     </Button>
@@ -161,7 +156,7 @@ const IdentityPage: React.FC<{}> = () => {
             About
           </Button>
         </nav>
-      </main>
+      </div>
       <img
         alt="Landing page logo"
         src={
