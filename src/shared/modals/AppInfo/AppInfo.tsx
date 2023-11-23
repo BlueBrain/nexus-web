@@ -81,7 +81,11 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       <Divider />
       <div className="copyright">
         <span>© 2017–{new Date().getFullYear()}</span>
-        <img src={require('../../images/EPFL_BBP_logo.png')} alt="epfl/bbp" />
+        <img
+          src={require('../../images/EPFL_BBP_logo.svg')}
+          alt="EPFL Blue Brain Project logo"
+          width={160}
+        />
       </div>
       <Divider />
       <div className="versions">

@@ -173,7 +173,7 @@ const IdentityPage: React.FC<{}> = () => {
           alt="Landing page logo"
           src={
             layoutSettings.landingPosterImg ||
-            require('../../shared/images/EPFL_BBP_logo.png')
+            require('../../shared/images/EPFL_BBP_logo.svg')
           }
           className="home-authentication-epfl"
         />

@@ -19,8 +19,9 @@
   &-epfl {
     position: absolute;
     top: 10px;
-    left: 15px;
+    left: 12px; // Slightly off to the left for optical alignment
     z-index: 10;
+    max-width: 250px;
     height: 26px;
   }
   &-content {
@@ -32,9 +33,9 @@
     width: 100%;
     height: 100%;
     .title {
+      margin-bottom: 0px;
       color: #ffffff;
       font-style: normal;
-      margin-bottom: 0px;
       font-weight: 700;
       font-size: 120px;
       line-height: 90%;
@@ -78,10 +79,10 @@
         background-color: #fff;
         color: @fusion-daybreak-10;
         &.no-realms-btn {
+          cursor: not-allowed;
           border: 1px solid black;
           background-color: black;
           color: white;
-          cursor: not-allowed;
         }
       }
       a {
