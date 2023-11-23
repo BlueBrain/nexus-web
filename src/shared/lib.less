@@ -40,10 +40,9 @@
 @fusion-neutral-8: #595959;
 @fusion-global-red-1: #ff4d4f;
 @fusion-green-light: #2ebd56;
-// additional colors
 @nexus-dark: #1d3b61;
 
-// typography
+// Typography
 @fusion-base-font-size: 14px;
 @fusion-heading-1-size: 28px;
 @fusion-heading-2-size: 23px;
@@ -53,64 +52,64 @@
 @fusion-body-small: 10px;
 
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: normal;
   src: url('./fonts/TitilliumWeb-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: normal;
   src: url('./fonts/TitilliumWeb-Italic.ttf') format('truetype');
-  font-weight: normal;
-  font-style: italic;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: bold;
   src: url('./fonts/TitilliumWeb-Bold.ttf') format('truetype');
-  font-weight: bold;
-  font-style: normal;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: bold;
   src: url('./fonts/TitilliumWeb-BoldItalic.ttf') format('truetype');
-  font-weight: bold;
-  font-style: italic;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 600;
   src: url('./fonts/TitilliumWeb-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 600;
   src: url('./fonts/TitilliumWeb-SemiBoldItalic.ttf') format('truetype');
-  font-weight: 600;
-  font-style: italic;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 300;
   src: url('./fonts/TitilliumWeb-Light.ttf') format('truetype');
-  font-weight: 300;
-  font-style: normal;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
+  font-style: italic;
+  font-weight: 300;
   src: url('./fonts/TitilliumWeb-LightItalic.ttf') format('truetype');
-  font-weight: 300;
-  font-style: italic;
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
-  src: url('./fonts/TitilliumWeb-ExtraLight.ttf') format('truetype');
-  font-weight: 100;
   font-style: normal;
+  font-weight: 100;
+  src: url('./fonts/TitilliumWeb-ExtraLight.ttf') format('truetype');
+  font-family: 'Titillium Web';
 }
 @font-face {
-  font-family: 'Titillium Web';
-  src: url('./fonts/TitilliumWeb-ExtraLightItalic.ttf') format('truetype');
-  font-weight: 100;
   font-style: italic;
+  font-weight: 100;
+  src: url('./fonts/TitilliumWeb-ExtraLightItalic.ttf') format('truetype');
+  font-family: 'Titillium Web';
 }
 
 // Fusion Variables
@@ -120,7 +119,6 @@
 @interfaceTransition: 0.3s @bounce;
 
 @maxConstrainedItemWidth: 1240px;
-// @maxConstrainedItemWidth: 980px;
 
 @primary-card: #f5f6f7;
 @default-card-width: 400px;
@@ -148,7 +146,7 @@
 @alternative-button-color: #2bad4e;
 @medium-gray: #a5afb4;
 
-// Antd style overrride
+// Ant Design style overrides
 
 @font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
   Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
@@ -179,7 +177,7 @@
   252,
   253,
   253
-); // for sublte highlighting in lists
+); // for subtle highlighting in lists
 
 @component-background: @fusion-component-background-color;
 
@@ -188,11 +186,10 @@
 }
 
 // Top-level styles
-
 body {
-  background-color: @fusion-background-color;
   background-size: cover;
   background-repeat: no-repeat;
+  background-color: @fusion-background-color;
 }
 
 h1 {
@@ -211,8 +208,8 @@ h1 {
 
 .fixed-minus-header {
   position: relative;
-  height: 100%;
   width: 100%;
+  height: 100%;
   max-height: calc(100vh - 40px);
 }
 
@@ -226,12 +223,14 @@ h1 {
 }
 
 .ant-tag-blue {
+  border-color: @fusion-secondary-color;
   background-color: fade(@fusion-secondary-color, 10%);
   color: @fusion-secondary-color;
-  border-color: @fusion-secondary-color;
 }
 
 .textLoadingGradient () {
+  -webkit-background-clip: text;
+  animation: Gradient 4s ease infinite;
   background: linear-gradient(
     -45deg,
     @success-color,
@@ -240,20 +239,18 @@ h1 {
     @link-color
   );
   background-size: 400% 400%;
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: Gradient 4s ease infinite;
 }
 .blockLoadingGradient () {
+  animation: Gradient 4s ease infinite;
   background: linear-gradient(-45deg, @box-shadow-color, white);
   background-size: 400% 400%;
-  animation: Gradient 4s ease infinite;
 }
 
 .ellipsis () {
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .oddListColor() {
@@ -267,24 +264,24 @@ h1 {
 }
 
 .cardlike() {
-  padding: @default-pad;
   box-shadow: @box-shadow-base;
   border-radius: @border-radius-base;
   background-color: @background-color-subtle;
+  padding: @default-pad;
   height: fit-content;
   height: -moz-max-content;
   height: -webkit-max-content;
 }
 
 .interactiveArea() {
-  background-color: white;
-  border: 1px solid #e8e8e8;
   transition: all 0.3s ease;
+  border: 1px solid #e8e8e8;
+  background-color: white;
 }
 
 .constrainedWidth() {
-  max-width: @maxConstrainedItemWidth;
   margin: 0 auto;
+  max-width: @maxConstrainedItemWidth;
 }
 
 .flash {
@@ -312,12 +309,12 @@ h1 {
 
 @keyframes TextFlash {
   0% {
-    text-shadow: 0px 0px 6px @warning-color;
     color: white;
+    text-shadow: 0px 0px 6px @warning-color;
   }
   100% {
-    text-shadow: 0px 0px 0px @warning-color;
     color: @text-color-secondary;
+    text-shadow: 0px 0px 0px @warning-color;
   }
 }
 
