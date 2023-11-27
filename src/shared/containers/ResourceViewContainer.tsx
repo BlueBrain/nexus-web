@@ -735,16 +735,24 @@ const ResourceViewContainer: React.FC<{
                           <div>
                             <DeleteOutlined /> This resource is deprecated. You
                             cannot modify it.
-                            <br />
-                            <Button
-                              icon={<UndoOutlined />}
-                              style={{ marginTop: '10px', marginBottom: '5px' }}
-                              onClick={() => {
-                                window.alert('Undoing deprecation...');
-                              }}
-                            >
-                              Undo deprecation
-                            </Button>
+
+                            {resource['@type'] === 'Data' ||
+                              resource['@type'] === 'File' ? (
+                                <>
+                              <br/>
+                              <Button
+                                icon={<UndoOutlined />}
+                                style={{ marginTop: '10px', marginBottom: '5px' }}
+                                onClick={() => {
+                                  window.alert('Undoing deprecation...');
+                                }}
+                                >
+                                Undo deprecation
+                              </Button>
+                                </>
+                            ) : (
+                              null
+                            )}
                           </div>
                         }
                       />
