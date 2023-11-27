@@ -1,45 +1,45 @@
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
+import { ExpandedResource, IncomingLink, Resource } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
+import { intersection, isArray } from 'lodash';
+import * as queryString from 'query-string';
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  useLocation,
-  useHistory,
   matchPath,
+  useHistory,
+  useLocation,
   useRouteMatch,
 } from 'react-router';
-import { Spin, Alert, Collapse, Typography, Divider, Button } from 'antd';
-import * as queryString from 'query-string';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
-import { useSelector, useDispatch } from 'react-redux';
-import { intersection, isArray } from 'lodash';
+import { Link } from 'react-router-dom';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
+import Preview from '../components/Preview/Preview';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import ResourceMetadata from '../components/ResourceMetadata';
 import AdminPlugin from '../containers/AdminPluginContainer';
-import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
-import ResourcePlugins from './ResourcePlugins';
-import usePlugins from '../hooks/usePlugins';
+import { useJiraPlugin } from '../hooks/useJIRA';
 import useMeasure from '../hooks/useMeasure';
+import useNotification from '../hooks/useNotification';
+import usePlugins from '../hooks/usePlugins';
+import { RootState } from '../store/reducers';
 import {
-  getResourceLabel,
-  getOrgAndProjectFromProjectId,
   getDestinationParam,
+  getOrgAndProjectFromProjectId,
+  getResourceLabel,
   labelOf,
   makeResourceUri,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
-import useNotification from '../hooks/useNotification';
-import Preview from '../components/Preview/Preview';
-import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
-import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
-import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
-import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import { RootState } from '../store/reducers';
-import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
-import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import ResourcePlugins from './ResourcePlugins';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
