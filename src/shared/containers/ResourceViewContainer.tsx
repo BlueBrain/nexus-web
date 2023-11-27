@@ -4,7 +4,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
+import type { ReactElement } from 'react';
 import * as React from 'react';
+import { useEffect } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -41,11 +43,10 @@ import ResourcePlugins from './ResourcePlugins';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 
+export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
-
-export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
@@ -60,16 +61,16 @@ const containsImages = (distribution: any[]) => {
   return intersection(encodingFormat, formats).length !== 0;
 };
 
-const ResourceViewContainer: React.FunctionComponent<{
+const ResourceViewContainer: React.FC<{
   render?: (
     resource: Resource<{
       [key: string]: any;
     }> | null
-  ) => React.ReactElement | null;
+  ) => ReactElement | null;
   deOrgLabel?: string;
   deProjectLabel?: string;
   deResourceId?: string;
-}> = ({ render, deOrgLabel, deProjectLabel, deResourceId }) => {
+}> = ({ deOrgLabel, deProjectLabel, deResourceId }) => {
   const history = useHistory();
   const nexus = useNexusContext();
   const notification = useNotification();
@@ -90,12 +91,12 @@ const ResourceViewContainer: React.FunctionComponent<{
         context: { as: 'json' },
       })
       .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
-        // do nothing
+      .catch(_error => {
+        // Do nothing
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchDeltaVersion();
   }, []);
 
@@ -103,7 +104,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     orgLabel: string;
     projectLabel: string;
     resourceId: string;
-  }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
+  }>('/:orgLabel/:projectLabel/resources/:resourceId');
 
   const orgLabel = match?.params.orgLabel! ?? deOrgLabel;
   const projectLabel = match?.params.projectLabel! ?? deProjectLabel;
@@ -116,7 +117,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     plugins: { key: string; expanded: boolean }[];
   }>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (location.state && location.state.background) {
       const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
@@ -128,7 +129,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       );
 
       if (studioPathMatch) {
-        // looks like we have us a studio
         const studioId = studioPathMatch.params.StudioId;
         nexus.Resource.get<StudioResource>(
           orgLabel,
@@ -383,17 +383,16 @@ const ResourceViewContainer: React.FunctionComponent<{
   };
 
   const nonEditableResourceTypes = ['File'];
-
   const refreshResource = () => setResources();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
   const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
       setOpenPlugins(
         JSON.parse(
@@ -405,15 +404,15 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem(
       LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
       JSON.stringify(openPlugins)
     );
   }, [openPlugins]);
 
-  React.useEffect(() => {
-    // if coming from studio, override what user has set in localstorage
+  useEffect(() => {
+    // if coming from studio, override what user has set in local storage
     if (studioPlugins?.customise && pluginManifest) {
       setOpenPlugins(
         studioPlugins.plugins
@@ -607,7 +606,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       dispatch({
         type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
