@@ -733,9 +733,7 @@ const ResourceViewContainer: React.FC<{
                         type="error"
                         message={
                           <div>
-                            <DeleteOutlined /> This resource is deprecated. You
-                            cannot modify it.
-
+                            <DeleteOutlined /> This resource is deprecated and not modifiable.
                             {resource['@type'] === 'Data' ||
                               resource['@type'] === 'File' ? (
                                 <>
@@ -751,7 +749,7 @@ const ResourceViewContainer: React.FC<{
                               </Button>
                                 </>
                             ) : (
-                              null
+                              ` As it's of type ${resource['@type']![0]}, the deprecation currently cannot be undone.`
                             )}
                           </div>
                         }
