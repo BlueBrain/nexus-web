@@ -6,7 +6,7 @@ import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
 import type { ReactElement } from 'react';
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -89,7 +89,7 @@ const ResourceViewContainer: React.FC<{
   const { data: pluginManifest } = usePlugins();
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
-  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+  const [deltaPlugins, setDeltaPlugins] = useState<{
     [key: string]: string;
   }>();
   const fetchDeltaVersion = async () => {
@@ -120,7 +120,7 @@ const ResourceViewContainer: React.FC<{
     match?.params.resourceId! ??
     (deResourceId ? encodeURIComponent(deResourceId) : '');
 
-  const [studioPlugins, setStudioPlugins] = React.useState<{
+  const [studioPlugins, setStudioPlugins] = useState<{
     customise: boolean;
     plugins: { key: string; expanded: boolean }[];
   }>();
@@ -182,7 +182,7 @@ const ResourceViewContainer: React.FC<{
 
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
-  const [{ busy, resource, error }, setResource] = React.useState<{
+  const [{ busy, resource, error }, setResource] = useState<{
     busy: boolean;
     resource: Resource | null;
     error:
@@ -197,7 +197,7 @@ const ResourceViewContainer: React.FC<{
     resource: null,
     error: null,
   });
-  const [latestResource, setLatestResource] = React.useState<
+  const [latestResource, setLatestResource] = useState<
     (Resource & { [key: string]: any }) | null
   >(null);
 
@@ -397,7 +397,7 @@ const ResourceViewContainer: React.FC<{
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
-  const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
+  const [openPlugins, setOpenPlugins] = useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
   useEffect(() => {
