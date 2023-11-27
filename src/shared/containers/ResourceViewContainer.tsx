@@ -44,9 +44,17 @@ import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
+
+interface CustomError extends Error {
+  action?: "update" | "view";
+  rejections?: { reason: string }[];
+  wasUpdated?: boolean;
+}
+
 
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
@@ -230,7 +238,7 @@ const ResourceViewContainer: React.FC<{
           message: 'Resource saved',
           description: getResourceLabel(resource),
         });
-      } catch (error) {
+      } catch (error: CustomError | any) {
         const potentiallyUpdatedResource = (await nexus.Resource.get(
           orgLabel,
           projectLabel,
@@ -345,7 +353,7 @@ const ResourceViewContainer: React.FC<{
         error: null,
         busy: false,
       });
-    } catch (error) {
+    } catch (error: CustomError | any) {
       let errorMessage;
 
       if (error['@type'] === 'AuthorizationFailed') {
