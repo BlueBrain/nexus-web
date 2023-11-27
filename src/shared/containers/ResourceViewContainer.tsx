@@ -420,7 +420,7 @@ const ResourceViewContainer: React.FC<{
   }, [openPlugins]);
 
   useEffect(() => {
-    // if coming from studio, override what user has set in local storage
+    // If coming from studio, override what user has set in local storage
     if (studioPlugins?.customise && pluginManifest) {
       setOpenPlugins(
         studioPlugins.plugins
@@ -671,9 +671,9 @@ const ResourceViewContainer: React.FC<{
                             documentation,{' '}
                             <a
                               target="_blank"
-                              href="https://bluebrainnexus.io/docs/delta/api/"
+                              href="https://bluebrainnexus.io/docs/delta/api"
                             >
-                              https://bluebrainnexus.io/docs/delta/api/
+                              https://bluebrainnexus.io/docs/delta/api
                             </a>
                           </p>
                         </>
@@ -742,6 +742,7 @@ const ResourceViewContainer: React.FC<{
                                 icon={<UndoOutlined />}
                                 style={{ marginTop: '10px', marginBottom: '5px' }}
                                 onClick={() => {
+                                  // TODO: Implement undo deprecation @danburonline
                                   window.alert('Undoing deprecation...');
                                 }}
                                 >
