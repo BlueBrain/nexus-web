@@ -9,7 +9,6 @@
   position: fixed;
   width: 100%;
   z-index: 20;
-  // padding-left: 350px;
 
   .selectors {
     display: flex;
@@ -26,12 +25,10 @@
   .menu-block {
     display: flex;
     justify-content: flex-end;
-    // padding-right: @default-pad;
     align-items: center;
     min-width: 120px;
     button,
     a {
-      // margin: 0 4px;
       font-weight: 400;
       font-size: 16px;
     }
@@ -41,16 +38,12 @@
       align-items: center;
       justify-content: center;
       align-self: center;
-      // margin: 5px 5px 4px;
-      // bottom: 50px;
       width: 100%;
       color: @fusion-background-color;
       border: none;
       height: 100%;
-      // border-radius: @border-radius-base;
       border-radius: 0 !important;
-      padding: 5px 20px;
-      // height: 32px;
+      padding: 5px 30px;
       background-color: @fusion-main-color;
 
       span {
@@ -76,7 +69,7 @@
     &:hover {
       svg {
         transform: scale(1.2);
-        transition: transorm 0.2 ease-out;
+        transition: transform 0.2 ease-out;
       }
     }
   }
@@ -132,20 +125,15 @@
   }
 
   .logo-container {
-    // overrides default `position: relative`
-    // position: fixed !important;
     z-index: 21;
 
     &__logo {
-      padding: 0.6rem 1.7rem;
+      padding: 0.85rem;
+      padding-left: 0.95rem;
       display: flex;
       letter-spacing: 1px;
       color: #ffffff;
-      height: 52px;
-
-      img {
-        height: 33px;
-      }
+      height: 100%;
     }
   }
 }
@@ -231,15 +219,9 @@
   padding: 0 0 5px 0;
 }
 
-// the gtm modal should appear on a top of a popover
 .ant-popover {
   z-index: 1000 !important;
 }
-
-/*
-  ##Device = Tablets, Ipads (portrait)
-  ##Screen = B/w 768px to 1024px
-*/
 
 @media (max-width: 1024px) {
   .hide-tablet {
