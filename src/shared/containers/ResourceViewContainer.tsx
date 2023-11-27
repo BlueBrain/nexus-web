@@ -3,11 +3,10 @@ import Helmet from 'react-helmet';
 import {
   useLocation,
   useHistory,
-  useParams,
   matchPath,
   useRouteMatch,
 } from 'react-router';
-import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
+import { Spin, Alert, Collapse, Typography, Divider, Button } from 'antd';
 import * as queryString from 'query-string';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
@@ -30,7 +29,7 @@ import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
 import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
@@ -726,10 +725,20 @@ const ResourceViewContainer: React.FunctionComponent<{
                       <Alert
                         type="error"
                         message={
-                          <>
+                          <div>
                             <DeleteOutlined /> This resource is deprecated. You
                             cannot modify it.
-                          </>
+                            <br />
+                            <Button
+                              icon={<UndoOutlined />}
+                              style={{ marginTop: '10px', marginBottom: '5px' }}
+                              onClick={() => {
+                                window.alert('Undoing deprecation...');
+                              }}
+                            >
+                              Undo deprecation
+                            </Button>
+                          </div>
                         }
                       />
                       <br />
