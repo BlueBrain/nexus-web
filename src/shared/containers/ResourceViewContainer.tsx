@@ -42,6 +42,7 @@ import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
+import { useMutation } from 'react-query';
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
@@ -622,6 +623,25 @@ const ResourceViewContainer: React.FC<{
       });
     };
   }, []);
+
+  const { mutate: unDeprecateResource } = useMutation({
+    mutationFn: async () => {
+      try {
+        await nexus.httpPut({
+          path: `${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/${encodeURIComponent(
+            resource!['@id']
+          )}/undeprecate?rev=${latestResource!._rev}`,
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+
   return (
     <>
       <div className="resource-details">
@@ -741,11 +761,10 @@ const ResourceViewContainer: React.FC<{
                               <Button
                                 icon={<UndoOutlined />}
                                 style={{ marginTop: '10px', marginBottom: '5px' }}
-                                onClick={() => {
-                                  // TODO: Implement undo deprecation @danburonline
-                                  window.alert('Undoing deprecation...');
+                                onClick={async () => {
+                                  unDeprecateResource()
                                 }}
-                                >
+                              >
                                 Undo deprecation
                               </Button>
                                 </>
