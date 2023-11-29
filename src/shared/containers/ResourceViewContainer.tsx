@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
-import React, { useEffect, useState, type ReactElement } from 'react';
+import React, { useEffect, useState, ReactElement } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -49,7 +49,7 @@ export type PluginMapping = {
 };
 
 interface CustomError extends Error {
-  action?: "update" | "view";
+  action?: 'update' | 'view';
   rejections?: { reason: string }[];
   wasUpdated?: boolean;
 }
@@ -628,7 +628,7 @@ const ResourceViewContainer: React.FC<{
         await nexus.httpPut({
           path: `${apiEndpoint}/files/${orgLabel}/${projectLabel}/${encodeURIComponent(
             resource!['@id']
-          )}/undeprecate?rev=${latestResource!._rev}`
+          )}/undeprecate?rev=${latestResource!._rev}`,
         });
 
         setLatestResource({
@@ -637,7 +637,9 @@ const ResourceViewContainer: React.FC<{
           _deprecated: false,
         });
 
-        goToResource(orgLabel, projectLabel, resourceId, { revision: latestResource!._rev + 1 });
+        goToResource(orgLabel, projectLabel, resourceId, {
+          revision: latestResource!._rev + 1,
+        });
       } catch (error) {
         throw error;
       }
@@ -755,28 +757,32 @@ const ResourceViewContainer: React.FC<{
                         type="error"
                         message={
                           <div>
-                            <DeleteOutlined /> This resource is deprecated and not modifiable.
+                            <DeleteOutlined /> This resource is deprecated and
+                            not modifiable.
                             {resource['@type'] === 'Data' ||
-                              resource['@type'] === 'File' ? (
-                                <>
-                              <br/>
-                              {
-                                // If not newest revision, then don't show the button
+                            resource['@type'] === 'File' ? (
+                              <>
+                                <br />
+                                {// If not newest revision, then don't show the button
                                 resource._rev === latestResource._rev ? (
                                   <Button
                                     icon={<UndoOutlined />}
-                                    style={{ marginTop: '10px', marginBottom: '5px' }}
+                                    style={{
+                                      marginTop: '10px',
+                                      marginBottom: '5px',
+                                    }}
                                     onClick={async () => {
-                                      unDeprecateResource()
+                                      unDeprecateResource();
                                     }}
                                   >
                                     Undo deprecation
                                   </Button>
-                                ) : null
-                              }
-                                </>
+                                ) : null}
+                              </>
                             ) : (
-                              ` As it's of type ${resource['@type']![0]}, the deprecation currently cannot be undone.`
+                              ` As it's of type ${
+                                resource['@type']![0]
+                              }, the deprecation currently cannot be undone.`
                             )}
                           </div>
                         }
