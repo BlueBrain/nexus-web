@@ -4,9 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
-import type { ReactElement } from 'react';
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactElement } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -99,7 +97,7 @@ const ResourceViewContainer: React.FC<{
         context: { as: 'json' },
       })
       .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(_error => {
+      .catch(error => {
         // Do nothing
       });
   };
