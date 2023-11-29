@@ -236,7 +236,7 @@ const ResourceViewContainer: React.FC<{
           message: 'Resource saved',
           description: getResourceLabel(resource),
         });
-      } catch (error: CustomError | any) {
+      } catch (error) {
         const potentiallyUpdatedResource = (await nexus.Resource.get(
           orgLabel,
           projectLabel,
@@ -351,7 +351,7 @@ const ResourceViewContainer: React.FC<{
         error: null,
         busy: false,
       });
-    } catch (error: CustomError | any) {
+    } catch (error) {
       let errorMessage;
 
       if (error['@type'] === 'AuthorizationFailed') {
@@ -626,9 +626,13 @@ const ResourceViewContainer: React.FC<{
     mutationFn: async () => {
       try {
         await nexus.httpPut({
-          path: `${apiEndpoint}/files/${orgLabel}/${projectLabel}/${encodeURIComponent(
-            resource!['@id']
-          )}/undeprecate?rev=${latestResource!._rev}`,
+          path: `${apiEndpoint}/${
+            resource!['@type'] === 'File' ? 'files' : 'resources'
+          }/${orgLabel}/${projectLabel}/${
+            resource!['@type'] === 'File' ? '' : '_/'
+          }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
+            latestResource!._rev
+          }`,
         });
 
         setLatestResource({
@@ -638,7 +642,7 @@ const ResourceViewContainer: React.FC<{
         });
 
         goToResource(orgLabel, projectLabel, resourceId, {
-          revision: latestResource!._rev + 1,
+          revision: latestResource!._rev + 1, // Go to the n+1 = latest revision after the un-deprecation
         });
       } catch (error) {
         throw error;
@@ -759,8 +763,12 @@ const ResourceViewContainer: React.FC<{
                           <div>
                             <DeleteOutlined /> This resource is deprecated and
                             not modifiable.
-                            {resource['@type'] === 'Data' ||
-                            resource['@type'] === 'File' ? (
+                            {// Don't show the undo deprecated button if the resource is of any unsupported resource
+                            // However, it needs to be shown e.g. for custom types of resources
+                            resource['@type']?.includes('Views') &&
+                            resource['@type']?.includes('Resolvers') &&
+                            resource['@type']?.includes('Storages') &&
+                            resource['@type']?.includes('Schema') ? (
                               <>
                                 <br />
                                 {// If not newest revision, then don't show the button
@@ -780,7 +788,8 @@ const ResourceViewContainer: React.FC<{
                                 ) : null}
                               </>
                             ) : (
-                              ` As it's of type ${
+                              // If unsupported resource type for undoing deprecation, then show the message to the user
+                              ` As it includes the type ${
                                 resource['@type']![0]
                               }, the deprecation currently cannot be undone.`
                             )}
