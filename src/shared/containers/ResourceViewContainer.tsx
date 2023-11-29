@@ -622,17 +622,33 @@ const ResourceViewContainer: React.FC<{
     };
   }, []);
 
+  function constructUnDeprecateUrl(
+    apiEndpoint: string,
+    resource: Resource,
+    latestResource: Resource,
+    orgLabel: string,
+    projectLabel: string
+  ) {
+    return `${apiEndpoint}/${
+      resource!['@type'] === 'File' ? 'files' : 'resources'
+    }/${orgLabel}/${projectLabel}/${
+      resource!['@type'] === 'File' ? '' : '_/'
+    }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
+      latestResource!._rev
+    }`;
+  }
+
   const { mutate: unDeprecateResource } = useMutation({
     mutationFn: async () => {
       try {
         await nexus.httpPut({
-          path: `${apiEndpoint}/${
-            resource!['@type'] === 'File' ? 'files' : 'resources'
-          }/${orgLabel}/${projectLabel}/${
-            resource!['@type'] === 'File' ? '' : '_/'
-          }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
-            latestResource!._rev
-          }`,
+          path: constructUnDeprecateUrl(
+            apiEndpoint,
+            resource!,
+            latestResource!,
+            orgLabel,
+            projectLabel
+          ),
         });
 
         setLatestResource({
