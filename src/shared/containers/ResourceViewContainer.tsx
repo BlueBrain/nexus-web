@@ -56,7 +56,6 @@ interface CustomError extends Error {
   wasUpdated?: boolean;
 }
 
-
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
   const formats = [
@@ -615,6 +614,7 @@ const ResourceViewContainer: React.FC<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
+
   useEffect(() => {
     return () => {
       dispatch({
@@ -624,17 +624,11 @@ const ResourceViewContainer: React.FC<{
     };
   }, []);
 
-  const { mutate: unDeprecateResource } = useMutation({
+  const { mutateAsync: unDeprecateResource } = useMutation({
     mutationFn: async () => {
       try {
         await nexus.httpPut({
-          path: `${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/${encodeURIComponent(
-            resource!['@id']
-          )}/undeprecate?rev=${latestResource!._rev}`,
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
+          path: `${resource!['@id']}/undeprecate?rev=2`,
         });
       } catch (error) {
         throw error;
