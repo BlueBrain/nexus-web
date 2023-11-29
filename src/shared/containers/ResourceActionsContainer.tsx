@@ -183,11 +183,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
           projectLabel={projectLabel}
           resourceId={encodeURIComponent(resourceId)}
         />
-        <ResourceActions
-          resource={resource}
-          actions={actions}
-          actionTypes={actionTypes}
-        />
+        {resource['@id']!.includes('defaultElasticSearchIndex') ? null : (
+          <ResourceActions
+            resource={resource}
+            actions={actions}
+            actionTypes={actionTypes}
+          />
+        )}
         {editable && (
           <RemoveTagButton
             orgLabel={orgLabel}
