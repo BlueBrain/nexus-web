@@ -624,7 +624,7 @@ const ResourceViewContainer: React.FC<{
     };
   }, []);
 
-  const { mutateAsync: unDeprecateResource } = useMutation({
+  const { mutate: unDeprecateResource } = useMutation({
     mutationFn: async () => {
       try {
         await nexus.httpPut({
