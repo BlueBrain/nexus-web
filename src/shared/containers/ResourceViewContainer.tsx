@@ -632,7 +632,14 @@ const ResourceViewContainer: React.FC<{
             resource!['@id']
           )}/undeprecate?rev=${latestResource!._rev}`
         });
-        // TODO Should refresh the component to the latest version of the resource
+
+        setLatestResource({
+          ...latestResource!,
+          _rev: latestResource!._rev + 1,
+          _deprecated: false,
+        });
+
+        goToResource(orgLabel, projectLabel, resourceId, { revision: latestResource!._rev + 1 });
       } catch (error) {
         throw error;
       }
@@ -755,15 +762,20 @@ const ResourceViewContainer: React.FC<{
                               resource['@type'] === 'File' ? (
                                 <>
                               <br/>
-                              <Button
-                                icon={<UndoOutlined />}
-                                style={{ marginTop: '10px', marginBottom: '5px' }}
-                                onClick={async () => {
-                                  unDeprecateResource()
-                                }}
-                              >
-                                Undo deprecation
-                              </Button>
+                              {
+                                // If not newest revision, then don't show the button
+                                resource._rev === latestResource._rev ? (
+                                  <Button
+                                    icon={<UndoOutlined />}
+                                    style={{ marginTop: '10px', marginBottom: '5px' }}
+                                    onClick={async () => {
+                                      unDeprecateResource()
+                                    }}
+                                  >
+                                    Undo deprecation
+                                  </Button>
+                                ) : null
+                              }
                                 </>
                             ) : (
                               ` As it's of type ${resource['@type']![0]}, the deprecation currently cannot be undone.`
