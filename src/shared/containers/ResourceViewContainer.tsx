@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
-import React, { useEffect, useState, ReactElement } from 'react';
+import React, { useEffect, useState, ReactElement, FC } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -67,7 +67,7 @@ const containsImages = (distribution: any[]) => {
   return intersection(encodingFormat, formats).length !== 0;
 };
 
-const ResourceViewContainer: React.FC<{
+const ResourceViewContainer: FC<{
   render?: (
     resource: Resource<{
       [key: string]: any;
