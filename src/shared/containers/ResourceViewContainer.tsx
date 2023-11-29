@@ -661,7 +661,11 @@ const ResourceViewContainer: React.FC<{
           revision: latestResource!._rev + 1, // Go to the n + 1 = latest revision after the un-deprecation
         });
       } catch (error) {
-        throw error;
+        notification.error({
+          message: `Error undoing deprecated resource`,
+          description:
+            'An error occurred whilst attempting to undo the deprecation of the resource. Please try again.',
+        });
       }
     },
   });
