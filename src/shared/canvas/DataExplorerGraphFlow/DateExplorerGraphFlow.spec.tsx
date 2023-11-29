@@ -25,6 +25,7 @@ import {
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { getResourceLabel } from '../../../shared/utils';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const initialDataExplorerState: TDataExplorerState = {
   current: {
@@ -95,12 +96,15 @@ describe('DataExplorerGraphFlow', () => {
       fetch,
       uri: deltaPath(),
     });
+    const queryClient = new QueryClient();
     store = configureStore(history, { nexus }, {});
     app = (
       <Provider store={store}>
         <Router history={history}>
           <NexusProvider nexusClient={nexus}>
-            <DateExplorerGraphFlow />
+            <QueryClientProvider client={queryClient}>
+              <DateExplorerGraphFlow />
+            </QueryClientProvider>
           </NexusProvider>
         </Router>
       </Provider>
