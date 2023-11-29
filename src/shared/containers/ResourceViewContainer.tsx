@@ -628,8 +628,11 @@ const ResourceViewContainer: React.FC<{
     mutationFn: async () => {
       try {
         await nexus.httpPut({
-          path: `${resource!['@id']}/undeprecate?rev=2`,
+          path: `${apiEndpoint}/files/${orgLabel}/${projectLabel}/${encodeURIComponent(
+            resource!['@id']
+          )}/undeprecate?rev=${latestResource!._rev}`
         });
+        // TODO Should refresh the component to the latest version of the resource
       } catch (error) {
         throw error;
       }
