@@ -48,12 +48,6 @@ export type PluginMapping = {
   [pluginKey: string]: object;
 };
 
-interface CustomError extends Error {
-  action?: 'update' | 'view';
-  rejections?: { reason: string }[];
-  wasUpdated?: boolean;
-}
-
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
   const formats = [
