@@ -658,7 +658,7 @@ const ResourceViewContainer: React.FC<{
         });
 
         goToResource(orgLabel, projectLabel, resourceId, {
-          revision: latestResource!._rev + 1, // Go to the n+1 = latest revision after the un-deprecation
+          revision: latestResource!._rev + 1, // Go to the n + 1 = latest revision after the un-deprecation
         });
       } catch (error) {
         throw error;
@@ -781,10 +781,10 @@ const ResourceViewContainer: React.FC<{
                             not modifiable.
                             {// Don't show the undo deprecated button if the resource is of any unsupported resource
                             // However, it needs to be shown e.g. for custom types of resources
-                            resource['@type']?.includes('Views') &&
-                            resource['@type']?.includes('Resolvers') &&
-                            resource['@type']?.includes('Storages') &&
-                            resource['@type']?.includes('Schema') ? (
+                            !resource['@type']?.includes('View') &&
+                            !resource['@type']?.includes('Resolver') &&
+                            !resource['@type']?.includes('Storage') &&
+                            !resource['@type']?.includes('Schema') ? (
                               <>
                                 <br />
                                 {// If not newest revision, then don't show the button
