@@ -779,10 +779,14 @@ const ResourceViewContainer: FC<{
                             not modifiable.
                             {// Don't show the undo deprecated button if the resource is of any unsupported resource
                             // However, it needs to be shown e.g. for custom types of resources
-                            !resource['@type']?.includes('View') &&
-                            !resource['@type']?.includes('Resolver') &&
-                            !resource['@type']?.includes('Storage') &&
-                            !resource['@type']?.includes('Schema') ? (
+                            !(resource['@type'] as [])?.some(type =>
+                              [
+                                'View',
+                                'Resolver',
+                                'Storage',
+                                'Schema',
+                              ].includes(type)
+                            ) ? (
                               <>
                                 <br />
                                 {// If not newest revision, then don't show the button
@@ -804,11 +808,20 @@ const ResourceViewContainer: FC<{
                             ) : (
                               <>
                                 {/* If unsupported resource type for undoing deprecation, then show the message to the user */}
-                                <br /> As it includes the type{' '}
+                                <br />
+                                As it includes at least one of the unsupported
+                                types (
                                 <span style={{ fontWeight: 'bold' }}>
-                                  {resource['@type']![0]}
+                                  {(resource['@type'] as []).find(type =>
+                                    [
+                                      'View',
+                                      'Resolver',
+                                      'Storage',
+                                      'Schema',
+                                    ].includes(type)
+                                  )}
                                 </span>
-                                , the deprecation currently cannot be undone.
+                                ), the deprecation currently cannot be undone.
                               </>
                             )}
                           </div>
