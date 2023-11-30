@@ -779,13 +779,11 @@ const ResourceViewContainer: FC<{
                             not modifiable.
                             {// Don't show the undo deprecated button if the resource is of any unsupported resource
                             // However, it needs to be shown e.g. for custom types of resources
-                            !(resource['@type'] as [])?.some(type =>
-                              [
-                                'View',
-                                'Resolver',
-                                'Storage',
-                                'Schema',
-                              ].includes(type)
+                            // check if resource['@type'] is an array, if so, check if it includes any of the unsupported types
+                            // otherwise, check if it is one of the unsupported types (                               'View', 'Resolver', 'Storage', 'Schema',
+                            // )
+                            !resource['@type']?.includes(
+                              'View' || 'Resolver' || 'Storage' || 'Schema'
                             ) ? (
                               <>
                                 <br />
