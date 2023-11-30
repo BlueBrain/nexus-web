@@ -36,7 +36,7 @@ describe('Studios', () => {
               projectLabel,
               resourcePayload,
             }).then((resource: Resource) => {
-              cy.wrap(resource['@id']).as('fullResourceId');
+              cy.wrap(resource['@id']).as('deprecatableResourceId');
             });
           });
         });
@@ -62,11 +62,42 @@ describe('Studios', () => {
     });
   });
 
-  it('can deprecate a file-type resource', function() {
+  it('can deprecate a deprecatable resource', function() {
+    // Visit the specified URL
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
-      }/resources/${encodeURIComponent(this.fullResourceId)}`
+      }/resources/${encodeURIComponent(this.deprecatableResourceId)}`
     );
+
+    // Click the "Advanced View" collapse header
+    cy.get('.ant-collapse-header')
+      .contains('Advanced View')
+      .click();
+
+    // Click the "Deprecate" button
+    cy.get('button')
+      .contains('Deprecate', {
+        timeout: 1000, // Needed for the popover animation to complete
+      })
+      .click();
+
+    cy.get('.ant-popover-buttons > .ant-btn-primary').click();
+
+    // wait for the page to reload
+    cy.wait(1000);
+
+    cy.contains('This resource is deprecated and not modifiable.');
+
+    cy.get('.ant-alert-message > div > .ant-btn').click();
+
+    cy.wait(1000);
+
+    // Click the "Advanced View" collapse header
+    cy.get('.ant-collapse-header')
+      .contains('Advanced View')
+      .click();
+
+    cy.get('.ant-alert-message').contains('You can edit this resource.');
   });
 });
