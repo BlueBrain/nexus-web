@@ -777,11 +777,9 @@ const ResourceViewContainer: FC<{
                           <div>
                             <DeleteOutlined /> This resource is deprecated and
                             not modifiable.
-                            {// Don't show the undo deprecated button if the resource is of any unsupported resource
-                            // However, it needs to be shown e.g. for custom types of resources
-                            // check if resource['@type'] is an array, if so, check if it includes any of the unsupported types
-                            // otherwise, check if it is one of the unsupported types (                               'View', 'Resolver', 'Storage', 'Schema',
-                            // )
+                            {// Don't show the undo deprecated button if the resource is
+                            // of any unsupported resource. However, it needs to be shown
+                            // e.g. for custom types of resources.
                             !resource['@type']?.includes(
                               'View' || 'Resolver' || 'Storage' || 'Schema'
                             ) ? (
