@@ -183,6 +183,10 @@ const ResourceActionsContainer: React.FunctionComponent<{
           projectLabel={projectLabel}
           resourceId={encodeURIComponent(resourceId)}
         />
+        {/*
+          Don't show the deprecation button for the default defaultElasticSearchIndex,
+          because it results into weird behavior in the application.
+        */}
         {resource['@id']!.includes('defaultElasticSearchIndex') ? null : (
           <ResourceActions
             resource={resource}
