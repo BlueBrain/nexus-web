@@ -4,7 +4,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import * as queryString from 'query-string';
-import React, { useEffect, useState, ReactElement, FC } from 'react';
+import { useEffect, useState, ReactElement, FC } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -802,10 +802,14 @@ const ResourceViewContainer: FC<{
                                 ) : null}
                               </>
                             ) : (
-                              // If unsupported resource type for undoing deprecation, then show the message to the user
-                              ` As it includes the type ${
-                                resource['@type']![0]
-                              }, the deprecation currently cannot be undone.`
+                              <>
+                                {/* If unsupported resource type for undoing deprecation, then show the message to the user */}
+                                <br /> As it includes the type{' '}
+                                <span style={{ fontWeight: 'bold' }}>
+                                  {resource['@type']![0]}
+                                </span>
+                                , the deprecation currently cannot be undone.
+                              </>
                             )}
                           </div>
                         }
