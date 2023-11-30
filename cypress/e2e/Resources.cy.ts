@@ -63,7 +63,7 @@ describe('Studios', () => {
   });
 
   it('can deprecate a deprecatable resource', function() {
-    // Visit the specified URL
+    // Visit the resource page
     cy.visit(
       `${Cypress.env('ORG_LABEL')}/${
         this.projectLabel
@@ -78,19 +78,27 @@ describe('Studios', () => {
     // Click the "Deprecate" button
     cy.get('button')
       .contains('Deprecate', {
-        timeout: 1000, // Needed for the popover animation to complete
+        timeout: 1000, // Just in case for the popover to appear
       })
       .click();
 
+    // Click the "Yes" button in the popover
     cy.get('.ant-popover-buttons > .ant-btn-primary').click();
 
-    // wait for the page to reload
+    // Just ot be sure that the page has been refreshed
     cy.wait(1000);
 
+    // Check if the deprecation message is displayed
     cy.contains('This resource is deprecated and not modifiable.');
+    // Check if deprecate button is not displayed
+    cy.get('button')
+      .contains('Deprecate')
+      .should('not.exist');
 
+    // Click the undo deprecation button
     cy.get('.ant-alert-message > div > .ant-btn').click();
 
+    // Just ot be sure that the page has been refreshed
     cy.wait(1000);
 
     // Click the "Advanced View" collapse header
@@ -98,6 +106,9 @@ describe('Studios', () => {
       .contains('Advanced View')
       .click();
 
+    // Check if the resource now is editable
     cy.get('.ant-alert-message').contains('You can edit this resource.');
+    // Check if the deprecate button is displayed again
+    cy.get('button').contains('Deprecate');
   });
 });
