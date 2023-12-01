@@ -787,7 +787,7 @@ const ResourceViewContainer: FC<{
                                       marginTop: '10px',
                                       marginBottom: '5px',
                                     }}
-                                    onClick={async () => {
+                                    onClick={() => {
                                       unDeprecateResource();
                                     }}
                                   >
