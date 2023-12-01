@@ -98,7 +98,6 @@ docker build . --tag=nexus-web
 - `CLIENT_ID`: The application name used for _OpenID Connect_ authentication (default is `nexus-web`)
 - `API_ENDPOINT`: The URL pointing to Nexus API. Default is '/'
 - `SERVICE_ACCOUNTS_REALM`: The realm that is configured for service accounts that should be hidden for Login. Default is 'serviceaccounts'.
-- `SECURE`: Is Nexus Fusion running in https or not. Default is `false`
 - `GTM_CODE`: The Google Analytics Identifier. GA won't be present unless an ID is specified.
 - `SENTRY_DSN`: The sentry URL Nexus Fusion needs to report errors to. Default is undefined.
 - `STUDIO_VIEW`: The location of the aggregate elastic search view that contains all the projects: `orgLabel/projectLabel/viewId`
