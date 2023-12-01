@@ -645,12 +645,6 @@ const ResourceViewContainer: FC<{
           ),
         });
 
-        setLatestResource({
-          ...latestResource!,
-          _rev: latestResource!._rev + 1,
-          _deprecated: false,
-        });
-
         goToResource(orgLabel, projectLabel, resourceId, {
           revision: latestResource!._rev + 1, // Go to the n + 1 = latest revision after the un-deprecation
         });
