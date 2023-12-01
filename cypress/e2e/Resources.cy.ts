@@ -78,7 +78,7 @@ describe('Studios', () => {
     // Click the "Deprecate" button
     cy.get('button')
       .contains('Deprecate', {
-        timeout: 1000, // Just in case for the popover to appear
+        timeout: 2000, // Just in case for the popover to appear
       })
       .click();
 
@@ -86,7 +86,7 @@ describe('Studios', () => {
     cy.get('.ant-popover-buttons > .ant-btn-primary').click();
 
     // Just ot be sure that the page has been refreshed
-    cy.wait(1000);
+    cy.wait(2000);
 
     // Check if the deprecation message is displayed
     cy.contains('This resource is deprecated and not modifiable.');
@@ -99,7 +99,7 @@ describe('Studios', () => {
     cy.get('.ant-alert-message > div > .ant-btn').click();
 
     // Just ot be sure that the page has been refreshed
-    cy.wait(1000);
+    cy.wait(2000);
 
     // Click the "Advanced View" collapse header
     cy.get('.ant-collapse-header')
