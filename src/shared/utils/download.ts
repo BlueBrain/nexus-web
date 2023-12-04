@@ -2,13 +2,13 @@ import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 
 export const download = (filename: string, mediaType: string, data: any) => {
   const blob = new Blob([data], { type: mediaType });
-  const extention = fileExtensionFromResourceEncoding(mediaType);
+  const extension = fileExtensionFromResourceEncoding(mediaType);
   if (window.navigator.msSaveBlob) {
     window.navigator.msSaveBlob(blob, filename);
   } else {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = extention ? `${filename}.${extention}` : filename;
+    link.download = extension ? `${filename}.${extension}` : filename;
     link.click();
   }
 };
