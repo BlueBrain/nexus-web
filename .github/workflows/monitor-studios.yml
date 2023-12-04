@@ -23,7 +23,7 @@ jobs:
       - name: run cypress tests
         id: e2eTests
         run: |
-          yarn cy:publicstudios
+          export CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY }}; yarn cy:publicstudios
       - name: Send error notification
         id: slack
         if: ${{ failure() && steps.e2eTests.conclusion == 'failure' }}
