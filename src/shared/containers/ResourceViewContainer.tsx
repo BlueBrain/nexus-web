@@ -645,9 +645,7 @@ const ResourceViewContainer: FC<{
           ),
         });
 
-        goToResource(orgLabel, projectLabel, resourceId, {
-          revision: latestResource!._rev + 1, // Go to the n + 1 = latest revision after the un-deprecation
-        });
+        goToResource(orgLabel, projectLabel, resourceId, {});
       } catch (error) {
         notification.error({
           message: `Error undoing deprecated resource`,
