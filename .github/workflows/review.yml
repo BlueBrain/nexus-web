@@ -21,7 +21,7 @@ jobs:
       - name: linting ✨
         run: |
           yarn lint
-      - name: style 💅
+      - name: style check 💅
         run: |
           yarn style
       - name: running test 🛫🛬
