@@ -184,10 +184,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
           resourceId={encodeURIComponent(resourceId)}
         />
         {/*
-          Don't show the deprecation button for the `defaultElasticSearchIndex`,
-          because it would break the listing operations, ergo the application.
+          Don't show the deprecation button for the `defaultElasticSearchIndex`
+          and `defaultSparqlIndex` resources because it would break the listing
+          operations, ergo the application.
         */}
-        {resource['@id']!.includes('defaultElasticSearchIndex') ? null : (
+
+        {resource['@id']!.includes('defaultElasticSearchIndex') ||
+        resource['@id']!.includes('defaultSparqlIndex') ? null : (
           <ResourceActions
             resource={resource}
             actions={actions}
