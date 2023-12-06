@@ -7,19 +7,16 @@ jest.mock('../../../utils/contentTypes', () => ({
 }));
 
 describe('download function', () => {
-  // Mocks
   const mockCreateObjectURL = jest.fn();
   const mockRevokeObjectURL = jest.fn();
 
   beforeAll(() => {
-    // Mock Blob
     globalThis.Blob = jest.fn(() => ({})) as any;
 
     // Mock URL.createObjectURL and URL.revokeObjectURL
     globalThis.URL.createObjectURL = mockCreateObjectURL;
     globalThis.URL.revokeObjectURL = mockRevokeObjectURL;
 
-    // Mock fileExtensionFromResourceEncoding
     (fileExtensionFromResourceEncoding as jest.Mock).mockImplementation(
       (mediaType: string) => {
         if (mediaType === 'application/json') {
@@ -31,7 +28,6 @@ describe('download function', () => {
   });
 
   beforeEach(() => {
-    // Reset mocks before each test
     mockCreateObjectURL.mockReset();
     mockRevokeObjectURL.mockReset();
   });
