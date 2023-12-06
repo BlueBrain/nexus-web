@@ -188,7 +188,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
           and `defaultSparqlIndex` resources because it would break the listing
           operations, ergo the application.
         */}
-
         {resource['@id']!.includes('defaultElasticSearchIndex') ||
         resource['@id']!.includes('defaultSparqlIndex') ? null : (
           <ResourceActions
