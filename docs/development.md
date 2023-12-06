@@ -239,18 +239,18 @@ All of the tests will run in headless mode.
 
 ## Debugging End-to-End test failures in CI
 
-There are a few differences between how our e2e tests run in the ci compared to how we run it locally. We use different instances of delta, Postgres, Keycloak etc in these two environments. Also, the version of chrome you may have locally might differ from the version of chrome being used in the ci. Finally, the machine cpu, memory are also most likely different. This can make debugging test failures in ci difficult.
+There are several differences in how our end-to-end tests are executed in the CI compared to local runs. We employ distinct instances of delta, Postgres, Keycloak, and other components in each environment. Moreover, the version of Chrome you have locally may not match the one used in the CI. Additionally, the machine's CPU and memory are likely to vary. These differences can pose challenges when debugging test failures in the CI.
 
 The videos and screenshots of tests are uploaded to [cypress cloud](https://cloud.cypress.io). If these are not sufficient to debug the issue, follow along.
 
-1. Remove your `node_modules`` folder locally and reinstall the dependencies to be sure that they are exactly the same as in ci:
+1. Remove your `node_modules` folder locally and reinstall the dependencies to be sure that they are exactly the same as in our CI:
 
 ```sh
 rm -rf node_modules
 yarn install --frozen-lockfile
 ```
 
-2. Create the image for fusion:
+2. Create the Docker image for Fusion:
 
 ```sh
 sudo docker build . --tag=nexus-web:fresh

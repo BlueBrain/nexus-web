@@ -39,7 +39,7 @@ services:
       DELTA_PLUGINS: '/opt/docker/plugins/'
       DELTA_EXTERNAL_CONF: '/config/delta-postgres.conf'
       KAMON_ENABLED: 'false'
-    image: bluebrain/nexus-delta:1.9.0-M14
+    image: bluebrain/nexus-delta:1.8.0-M8
     entrypoint:
       [
         'bin/wait-for-it.sh',
