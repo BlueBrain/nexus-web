@@ -1,25 +1,25 @@
-import * as React from 'react';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
-import { connect } from 'react-redux';
-import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceDownloadButton from './ResourceDownloadContainer';
+import { push } from 'connected-react-router';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
 import ResourceActions from '../components/ResourceActions';
-import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
+import useNotification from '../hooks/useNotification';
+import { getOrgAndProjectFromResource, getResourceLabel } from '../utils';
 import { download } from '../utils/download';
 import {
-  isView,
-  isFile,
   chainPredicates,
-  not,
   isDefaultElasticView,
   isDeprecated,
+  isFile,
+  isView,
+  not,
   toPromise,
 } from '../utils/nexusMaybe';
-import useNotification from '../hooks/useNotification';
 import RemoveTagButton from './RemoveTagButtonContainer';
-import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
+import ResourceDownloadButton from './ResourceDownloadContainer';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
@@ -61,7 +61,10 @@ const ResourceActionsContainer: React.FunctionComponent<{
       name: 'deprecateResource',
       predicate: async (resource: Resource) => {
         const isLatest = await isLatestResource(resource);
-        return isLatest;
+        return (
+          isLatest &&
+          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
+        );
       },
       title: 'Deprecate this resource',
       shortTitle: 'Dangerously Deprecate',
@@ -82,7 +85,12 @@ const ResourceActionsContainer: React.FunctionComponent<{
       name: 'deprecateResource',
       predicate: async (resource: Resource) => {
         const isLatest = await isLatestResource(resource);
-        return isLatest;
+        return (
+          isLatest &&
+          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
+            resource
+          )
+        );
       },
       title: 'Deprecate this resource',
       message: "Are you sure you'd like to deprecate this resource?",
@@ -175,11 +183,19 @@ const ResourceActionsContainer: React.FunctionComponent<{
           projectLabel={projectLabel}
           resourceId={encodeURIComponent(resourceId)}
         />
-        <ResourceActions
-          resource={resource}
-          actions={actions}
-          actionTypes={actionTypes}
-        />
+        {/*
+          Don't show the deprecation button for the `defaultElasticSearchIndex`
+          and `defaultSparqlIndex` resources because it would break the listing
+          operations, ergo the application.
+        */}
+        {resource['@id']!.includes('defaultElasticSearchIndex') ||
+        resource['@id']!.includes('defaultSparqlIndex') ? null : (
+          <ResourceActions
+            resource={resource}
+            actions={actions}
+            actionTypes={actionTypes}
+          />
+        )}
         {editable && (
           <RemoveTagButton
             orgLabel={orgLabel}
