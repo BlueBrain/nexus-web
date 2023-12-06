@@ -9,15 +9,7 @@ import ResourceActions from '../components/ResourceActions';
 import useNotification from '../hooks/useNotification';
 import { getOrgAndProjectFromResource, getResourceLabel } from '../utils';
 import { download } from '../utils/download';
-import {
-  chainPredicates,
-  isDefaultElasticView,
-  isDeprecated,
-  isFile,
-  isView,
-  not,
-  toPromise,
-} from '../utils/nexusMaybe';
+import { isFile, isView, toPromise } from '../utils/nexusMaybe';
 import RemoveTagButton from './RemoveTagButtonContainer';
 import ResourceDownloadButton from './ResourceDownloadContainer';
 
@@ -59,39 +51,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actionTypes = [
     {
       name: 'deprecateResource',
-      predicate: async (resource: Resource) => {
-        const isLatest = await isLatestResource(resource);
-        return (
-          isLatest &&
-          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
-        );
-      },
-      title: 'Deprecate this resource',
-      shortTitle: 'Dangerously Deprecate',
-      message: (
-        <div>
-          <h3>Warning!</h3>
-          <p>
-            This is your default ElasticSearch View. Deprecating this resource
-            will break this application for this project. Are you sure you want
-            to deprecate it?
-          </p>
-        </div>
-      ),
-      icon: <DeleteOutlined />,
-      danger: true,
-    },
-    {
-      name: 'deprecateResource',
-      predicate: async (resource: Resource) => {
-        const isLatest = await isLatestResource(resource);
-        return (
-          isLatest &&
-          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
-            resource
-          )
-        );
-      },
       title: 'Deprecate this resource',
       message: "Are you sure you'd like to deprecate this resource?",
       shortTitle: 'Deprecate',
