@@ -28,7 +28,7 @@ describe('Studios', () => {
           projectLabelBase,
         }).then(({ projectLabel }: { projectLabel: string }) => {
           cy.wrap(projectLabel).as('projectLabel');
-          cy.fixture('GenericResource.json').then(resourcePayload => {
+          cy.fixture('AnalysisResource.json').then(resourcePayload => {
             cy.task('resource:create', {
               nexusApiUrl: Cypress.env('NEXUS_API_URL'),
               authToken,
