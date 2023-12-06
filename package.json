@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rm -rf ./dist",
     "dev:client": "yarn clean && concurrently 'vite build -c ./vite.config.refresh.js' 'vite'",
-    "dev:server": "NODE_ENV=development ts-node-esm --project tsconfig.node.json -- ./server/index.ts",
+    "dev:server": "NODE_ENV=development ts-node-dev --project tsconfig.node.json -- ./server/index.ts",
     "dev": "concurrently 'yarn dev:client' 'yarn dev:server'",
     "build:server": "etsc --config=etsc.config.js",
     "build:client": "vite build -c ./vite.config.refresh.js && vite build",
