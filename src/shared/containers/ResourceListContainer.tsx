@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-  Resource,
-} from '@bbp/nexus-sdk';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, Resource } from '@bbp/nexus-sdk';
+import { isEmpty } from 'lodash';
 
 import ResourceListComponent, {
   ResourceBoardList,
@@ -152,7 +149,7 @@ const ResourceListContainer: React.FunctionComponent<{
                             '@id': list.query.q,
                           },
                         },
-                      ],
+                      ].filter(query => !isEmpty(query)),
                     },
                   },
                   {
@@ -168,7 +165,7 @@ const ResourceListContainer: React.FunctionComponent<{
                             _self: list.query.q,
                           },
                         },
-                      ],
+                      ].filter(query => !isEmpty(query)),
                     },
                   },
                 ],
