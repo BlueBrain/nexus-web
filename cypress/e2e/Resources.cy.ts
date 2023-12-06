@@ -78,7 +78,7 @@ describe('Studios', () => {
     // Click the "Deprecate" button
     cy.get('button')
       .contains('Deprecate', {
-        timeout: 5000, // Just in case for the popover to appear
+        timeout: 2000, // Just in case for the popover to appear
       })
       .click();
 
