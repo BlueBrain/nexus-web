@@ -9,7 +9,10 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
 
 // Custom Linter Function
-const customLinter = (text: string) => {
+const customLinter = (
+  text: string,
+  onLintError: (hasError: boolean) => void
+) => {
   const found: {
     message: string;
     severity: string;
@@ -28,7 +31,8 @@ const customLinter = (text: string) => {
     }
   });
 
-  console.log('ISSUES FOUND: ' + found.length);
+  const hasError = found.length > 0;
+  onLintError(hasError);
   return found;
 };
 
@@ -39,13 +43,26 @@ type TCodeEditor = {
   fullscreen: boolean;
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
+  onLintError?: (hasError: boolean) => void;
 };
 type TEditorConfiguration = codemirror.EditorConfiguration & {
   foldCode: boolean;
+  lint?: boolean | any;
 };
 
 const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
-  ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
+  (
+    {
+      busy,
+      value,
+      editable,
+      fullscreen,
+      keyFoldCode,
+      handleChange,
+      onLintError,
+    },
+    ref
+  ) => {
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -73,7 +90,12 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
               extraKeys: {
                 'Ctrl-Q': keyFoldCode,
               },
-              lint: customLinter, // Enable custom linter
+              lint: {
+                getAnnotations: (text: string) => {
+                  return customLinter(text, onLintError || (() => {}));
+                },
+                async: true,
+              },
             } as TEditorConfiguration
           }
           className={clsx(

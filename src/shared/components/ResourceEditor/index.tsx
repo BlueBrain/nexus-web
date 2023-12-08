@@ -65,6 +65,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const location = useLocation();
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
+  const [lintError, setLintError] = React.useState(false);
   const [parsedValue, setParsedValue] = React.useState(rawData);
   const [stringValue, setStringValue] = React.useState(
     JSON.stringify(rawData, null, 2)
@@ -93,6 +94,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
       }
     }
+  };
+
+  const handleLintError = (hasError: boolean) => {
+    setLintError(hasError);
   };
 
   const onFormatChangeFold = (expanded: boolean) => {
@@ -178,7 +183,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
       {showControlPanel && (
         <div className="control-panel">
           <div>
-            {editable && isEditing && valid && (
+            {editable && isEditing && valid && !lintError && (
               <div className="feedback _positive">
                 <CheckCircleOutlined /> Valid
               </div>
@@ -186,6 +191,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             {editable && isEditing && !valid && (
               <div className="feedback _negative">
                 <ExclamationCircleOutlined /> Invalid JSON-LD
+              </div>
+            )}
+            {editable && isEditing && lintError && (
+              <div className="feedback _negative">
+                <ExclamationCircleOutlined /> Cannot have fields starting with
+                an underscore
               </div>
             )}
           </div>
@@ -264,6 +275,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         fullscreen={fullscreen}
+        onLintError={handleLintError}
       />
     </div>
   );
