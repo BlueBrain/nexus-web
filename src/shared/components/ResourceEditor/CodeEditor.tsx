@@ -1,9 +1,36 @@
+import { Spin } from 'antd';
+import { clsx } from 'clsx';
+import codemirror from 'codemirror';
+import 'codemirror/addon/lint/lint.css';
+import 'codemirror/addon/lint/lint.js';
+import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
 import React, { forwardRef } from 'react';
-import codemiror, { EditorConfiguration } from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-import { clsx } from 'clsx';
-import { Spin } from 'antd';
+
+// Custom Linter Function
+const customLinter = (text: string) => {
+  const found: {
+    message: string;
+    severity: string;
+  }[] = [];
+  const lines = text.split('\n');
+
+  lines.forEach((line, index) => {
+    // Regex to find a field name with an underscore
+    const regex = /"([^"]*_[^"]*)"\s*:/g;
+
+    if (line ? line.match(regex) : false) {
+      found.push({
+        message: 'Field name contains an underscore',
+        severity: 'warning',
+      });
+    }
+  });
+
+  console.log('ISSUES FOUND: ' + found.length);
+  return found;
+};
 
 type TCodeEditor = {
   busy: boolean;
@@ -13,11 +40,11 @@ type TCodeEditor = {
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
 };
-type TEditorConfiguration = EditorConfiguration & {
+type TEditorConfiguration = codemirror.EditorConfiguration & {
   foldCode: boolean;
 };
 
-const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
+const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
   ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
     return (
       <Spin spinning={busy}>
@@ -37,11 +64,16 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
               foldGutter: true,
               foldCode: true,
               indentUnit: INDENT_UNIT,
-              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+              gutters: [
+                'CodeMirror-linenumbers',
+                'CodeMirror-foldgutter',
+                'CodeMirror-lint-markers',
+              ],
               lineWiseCopyCut: true,
               extraKeys: {
                 'Ctrl-Q': keyFoldCode,
               },
+              lint: customLinter, // Enable custom linter
             } as TEditorConfiguration
           }
           className={clsx(
@@ -51,7 +83,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemiror.Editor>).current = editor;
+            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
           }}
         />
       </Spin>
