@@ -21,6 +21,7 @@ export interface ConfigState {
   layoutSettings: {
     docsLink: string;
     logoImg: string;
+    logoImgLink: string;
     forgeLink: string;
     organizationImg: string;
     projectsImg: string;
@@ -60,6 +61,7 @@ const initialState: ConfigState = {
   layoutSettings: {
     docsLink: '',
     logoImg: '',
+    logoImgLink: '',
     forgeLink: '',
     projectImg: '',
     projectsImg: '',

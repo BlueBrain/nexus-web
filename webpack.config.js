@@ -78,7 +78,13 @@ const config = [
         },
         {
           test: /\.mp4$/,
-          use: 'file-loader?name=videos/[name].[ext]'
+          use: {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'assets/',
+              publicPath: 'public/assets/',
+            },
+          },
         },
         {
           test: /\.(ttf)$/,

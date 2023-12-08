@@ -1,11 +1,11 @@
 @import '../../shared/lib.less';
 
 .home-authentication {
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   &-fusion {
     position: absolute;
@@ -14,82 +14,85 @@
     width: 100%;
     height: 100%;
     max-height: 100vh;
-    object-fit: fill;
+    object-fit: cover;
   }
   &-epfl {
     position: absolute;
     top: 10px;
-    left: 10px;
-    height: 26px;
+    left: 12px; // Slightly off to the left for optical alignment
     z-index: 10;
+    max-width: 250px;
+    height: 26px;
   }
   &-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 10;
     .title {
-      font-family: 'Titillium Web';
+      margin-bottom: 0px;
+      color: #ffffff;
       font-style: normal;
       font-weight: 700;
       font-size: 120px;
       line-height: 90%;
+      font-family: @font-family;
       letter-spacing: 0.01em;
-      color: #ffffff;
       user-select: none;
     }
     .actions {
       display: grid;
       grid-template-columns: repeat(4, minmax(120px, 1fr));
-      align-items: center;
       justify-content: center;
+      align-items: center;
       margin-top: 35px;
 
       button,
       a {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: none;
         border: 1px solid white;
         border-right: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: row;
+        border-radius: 0;
+        background: none;
         padding: 8px 20px !important;
+        width: 100%;
         color: white;
         font-weight: 700;
         font-size: 16px;
         line-height: 27px;
         letter-spacing: 0.01em;
-        background: none;
-        box-shadow: none;
-        cursor: pointer;
-        width: 100%;
         user-select: none;
-        border-radius: 0;
         svg {
           width: 11px !important;
           height: 11px !important;
         }
       }
       button:first-child {
-        color: @fusion-daybreak-10;
         background-color: #fff;
+        color: @fusion-daybreak-10;
         &.no-realms-btn {
+          cursor: not-allowed;
+          border: 1px solid black;
           background-color: black;
           color: white;
-          border: 1px solid black;
         }
       }
       a {
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
       }
       .nav-btn:hover {
-        color: @fusion-daybreak-10 !important;
         background-color: #fff !important;
+        color: @fusion-daybreak-10 !important;
       }
       button:last-child {
         border-right: 1px solid white;
@@ -102,10 +105,10 @@
         }
       }
       button.connect-btn {
+        border: 1px solid #fff;
+        color: @fusion-daybreak-10;
         font-weight: 400;
         font-size: 13px;
-        color: @fusion-daybreak-10;
-        border: 1px solid #fff;
         &:hover {
           font-weight: 700;
         }
@@ -115,18 +118,18 @@
       position: relative;
       &-popover {
         position: absolute;
-        list-style-type: none;
-        width: calc(100% + 1px);
-        padding-top: 0 !important;
-        padding-left: 0;
         top: 40px;
         left: 0;
-        background-color: #fff;
         border: 1px solid #fff;
+        background-color: #fff;
+        padding-top: 0 !important;
+        padding-left: 0;
+        width: calc(100% + 1px);
+        list-style-type: none;
         .ant-divider-horizontal {
           margin: 2px auto;
-          min-width: 50%;
           width: 50%;
+          min-width: 50%;
         }
       }
     }

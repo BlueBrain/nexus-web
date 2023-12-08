@@ -24,7 +24,7 @@ import App from '../shared/App';
 import configureStore from '../shared/store';
 import { RootState } from '../shared/store/reducers';
 import { fetchIdentities, fetchRealms } from '../shared/store/actions/auth';
-import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from '../shared/store/actions/search';
+import { SEARCH_PREFERENCE_LOCAL_STORAGE_KEY } from '../shared/store/actions/search';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 // The app base URL
@@ -62,7 +62,7 @@ const initialState: RootState = {
   },
   search: {
     ...preloadedState.search,
-    searchPreference: localStorage.getItem(SEARCH_PREFENCE_LOCAL_STORAGE_KEY),
+    searchPreference: localStorage.getItem(SEARCH_PREFERENCE_LOCAL_STORAGE_KEY),
   },
 };
 
