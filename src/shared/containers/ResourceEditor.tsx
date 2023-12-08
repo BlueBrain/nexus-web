@@ -1,9 +1,4 @@
-import {
-  ExpandedResource,
-  NexusClient,
-  Resource,
-  ResourceSource,
-} from '@bbp/nexus-sdk/es';
+import { ExpandedResource, NexusClient, Resource, ResourceSource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { pick } from 'lodash';
 import React from 'react';
@@ -17,11 +12,7 @@ import {
   InitDataExplorerGraphFlowFullscreenVersion,
   InitNewVisitDataExplorerGraphView,
 } from '../store/reducers/data-explorer';
-import {
-  getNormalizedTypes,
-  getOrgAndProjectFromResourceObject,
-  getResourceLabel,
-} from '../utils';
+import { getNormalizedTypes, getOrgAndProjectFromResourceObject, getResourceLabel } from '../utils';
 
 const ResourceEditorContainer: React.FunctionComponent<{
   resourceId: string;
@@ -82,14 +73,14 @@ const ResourceEditorContainer: React.FunctionComponent<{
     }
 
     getNewResource()
-      .then(response =>
+      .then((response) =>
         setResource({
           resource: response as Resource,
           error: null,
           busy: false,
         })
       )
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Failed to load JSON payload',
           description: parseNexusError(error),
@@ -100,16 +91,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
           busy: false,
         });
       });
-  }, [
-    resourceId,
-    projectLabel,
-    orgLabel,
-    rev,
-    expanded,
-    showMetadata,
-    tabChange,
-    defaultEditable,
-  ]);
+  }, [resourceId, projectLabel, orgLabel, rev, expanded, showMetadata, tabChange, defaultEditable]);
 
   const handleFormatChange = () => {
     onExpanded && onExpanded(!expanded);
@@ -120,19 +102,12 @@ const ResourceEditorContainer: React.FunctionComponent<{
     setShowMetadata(!showMetadata);
   };
   const handleFullScreen = async () => {
-    const data = (await nexus.Resource.get(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(resourceId),
-      {
-        rev,
-      }
-    )) as Resource;
+    const data = (await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId), {
+      rev,
+    })) as Resource;
     const orgProject = getOrgAndProjectFromResourceObject(data);
     if (location.pathname === '/data-explorer/graph-flow') {
-      dispatch(
-        InitDataExplorerGraphFlowFullscreenVersion({ fullscreen: true })
-      );
+      dispatch(InitDataExplorerGraphFlowFullscreenVersion({ fullscreen: true }));
     } else {
       dispatch(
         InitNewVisitDataExplorerGraphView({
@@ -186,23 +161,12 @@ const ResourceEditorContainer: React.FunctionComponent<{
       return expandedResource[0];
     }
     if (showMetadata) {
-      return await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(resourceId),
-        {
-          rev,
-        }
-      );
+      return await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId), {
+        rev,
+      });
     }
 
-    return await getResourceSource(
-      nexus,
-      orgLabel,
-      projectLabel,
-      resourceId,
-      rev
-    );
+    return await getResourceSource(nexus, orgLabel, projectLabel, resourceId, rev);
   };
 
   return (

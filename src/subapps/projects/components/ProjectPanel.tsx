@@ -24,10 +24,7 @@ const ProjectPanel: React.FC<{
             onClose={() => setShowInfo(false)}
           />
         )}
-        <ActivitiesLinkingContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-        />
+        <ActivitiesLinkingContainer orgLabel={orgLabel} projectLabel={projectLabel} />
       </div>
     </div>
   );

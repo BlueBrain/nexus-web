@@ -1,6 +1,6 @@
 import './CategoryTypeEdits.scss';
 
-import { Form,Select } from 'antd';
+import { Form, Select } from 'antd';
 import * as React from 'react';
 
 import { changeAnalysisCategories } from '../../slices/plugins/report';
@@ -32,7 +32,7 @@ const CategoryEditWidget = ({
                 onChange={selectedCategories}
                 style={{ maxWidth: '900px' }}
               >
-                {allCategories.map(cat => (
+                {allCategories.map((cat) => (
                   <Select.Option key={cat.label} value={cat.label}>
                     {cat.label}
                   </Select.Option>

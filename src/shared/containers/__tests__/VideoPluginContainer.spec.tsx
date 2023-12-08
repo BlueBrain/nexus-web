@@ -51,18 +51,15 @@ describe('VideoPluginContainer', () => {
     ],
   } as unknown) as Resource;
   server.use(
-    rest.get(
-      'https://localhost:3000/resources/org/project/_/videoresourceId',
-      (req, res, ctx) => {
-        const mockResponse = resource;
+    rest.get('https://localhost:3000/resources/org/project/_/videoresourceId', (req, res, ctx) => {
+      const mockResponse = resource;
 
-        return res(
-          // Respond with a 200 status code
-          ctx.status(200),
-          ctx.json(mockResponse)
-        );
-      }
-    )
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
   );
 
   server.use(

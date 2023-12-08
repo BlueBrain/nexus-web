@@ -52,7 +52,7 @@ const DraggableTablesContainer: React.FC<{
     <>
       {tables &&
         tables.length > 0 &&
-        tables.map(table => (
+        tables.map((table) => (
           <DraggableTable
             table={table}
             onPostionChange={onPostionChange}
@@ -111,9 +111,7 @@ const DraggableTable: React.FC<{
       bounds=".steps-board"
       onStop={handleStop}
       defaultPosition={
-        table.positionX && table.positionY
-          ? { x: table.positionX, y: table.positionY }
-          : undefined
+        table.positionX && table.positionY ? { x: table.positionX, y: table.positionY } : undefined
       }
     >
       {children}

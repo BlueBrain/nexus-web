@@ -1,13 +1,9 @@
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  View,
-  ViewList,
-} from '@bbp/nexus-sdk/es';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, View, ViewList } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Row, Select } from 'antd';
 import queryString from 'query-string';
 import * as React from 'react';
-import { useHistory,useLocation, useRouteMatch } from 'react-router';
+import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import useNotification from '../../../shared/hooks/useNotification';
@@ -48,29 +44,22 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
 
   React.useEffect(() => {
     history.replace(
-      `/${
-        subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
+      `/${subapp.namespace}/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
     );
   }, [selectedView]);
   const menu = (
-    <Row
-      gutter={3}
-      justify="space-between"
-      align="middle"
-      style={{ marginBottom: 10 }}
-    >
+    <Row gutter={3} justify="space-between" align="middle" style={{ marginBottom: 10 }}>
       <Col flex="auto">
         <Select
           value={selectedView as string}
-          onChange={v => setSelectedView(v)}
+          onChange={(v) => setSelectedView(v)}
           style={{ width: '100%' }}
           defaultActiveFirstOption={false}
         >
           {[views]
             .flat()
             .filter(
-              v =>
+              (v) =>
                 v['@type']?.includes('ElasticSearchView') ||
                 v['@type']?.includes('AggregateElasticSearchView')
             )
@@ -84,11 +73,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
         </Select>
       </Col>
       <Col flex="100px">
-        <Link
-          to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-            viewId
-          )}`}
-        >
+        <Link to={`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(viewId)}`}>
           <Button>Open View Resource</Button>
         </Link>
       </Col>
@@ -97,10 +82,10 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
 
   React.useEffect(() => {
     nexus.View.list(orgLabel, projectLabel, { deprecated: false })
-      .then(result => {
+      .then((result) => {
         setViews(result);
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Problem loading Views',
           description: error.message,

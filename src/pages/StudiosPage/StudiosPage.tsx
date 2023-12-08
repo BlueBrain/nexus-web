@@ -1,12 +1,7 @@
 import '../../shared/styles/route-layout.scss';
 
 import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
-import {
-  NexusClient,
-  PaginatedList,
-  Resource,
-  ResourceList,
-} from '@bbp/nexus-sdk/es';
+import { NexusClient, PaginatedList, Resource, ResourceList } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Input, List, Spin, Tag } from 'antd';
 import pluralize from 'pluralize';
@@ -23,18 +18,11 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
-import {
-  getOrgAndProjectFromProjectId,
-  makeStudioUri,
-} from '../../shared/utils';
+import { getOrgAndProjectFromProjectId, makeStudioUri } from '../../shared/utils';
 import timeago from '../../utils/timeago';
-import {
-  LoadMoreFooter,
-  TSort,
-} from '../OrganizationsListPage/OrganizationListPage';
+import { LoadMoreFooter, TSort } from '../OrganizationsListPage/OrganizationListPage';
 
-const DEFAULT_STUDIO_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/Studio';
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
 
 interface TPageOptions {
@@ -176,11 +164,9 @@ export const useInfiniteStudiosQuery = ({
         after: pageParam,
         size: 10,
       }),
-    getNextPageParam: lastPage =>
+    getNextPageParam: (lastPage) =>
       (lastPage as TNewPaginationList)._next
-        ? new URL((lastPage as TNewPaginationList)._next).searchParams.get(
-            'after'
-          )
+        ? new URL((lastPage as TNewPaginationList)._next).searchParams.get('after')
         : undefined,
   });
 };
@@ -199,7 +185,7 @@ const FusionStudiosPage: React.FC = () => {
   const token = oidc && oidc.user ? oidc.user.access_token : undefined;
   const dataContainerRef = React.useRef<HTMLDivElement>(null);
   const [query, setQueryString] = React.useState<string>('');
-  const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = e =>
+  const handleQueryStringChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setQueryString(e.target.value.toLowerCase());
   const [{ sort }, setOptions] = React.useReducer(
     (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
@@ -238,18 +224,13 @@ const FusionStudiosPage: React.FC = () => {
       ref={loadMoreRef}
     />
   );
-  const total =
-    data && data.pages
-      ? ((data?.pages?.[0] as ResourceList<{}>)?._total as number)
-      : 0;
+  const total = data && data.pages ? ((data?.pages?.[0] as ResourceList<{}>)?._total as number) : 0;
   const dataSource =
     data && data.pages
       ? data?.pages
-          .map(page =>
+          .map((page) =>
             (page as ResourceList<{}>)?._results.map((item: Resource) => {
-              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-                item._project
-              )!;
+              const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(item._project)!;
               return {
                 orgLabel,
                 projectLabel,
@@ -282,10 +263,7 @@ const FusionStudiosPage: React.FC = () => {
             total && !query ? (
               `Total of ${total} ${pluralize('Studio', total)}`
             ) : total && query ? (
-              `Filtering ${total} of ${totalStudiosRef.current}  ${pluralize(
-                'Studio',
-                total
-              )}`
+              `Filtering ${total} of ${totalStudiosRef.current}  ${pluralize('Studio', total)}`
             ) : isLoading ? (
               <LoadingOutlined />
             ) : (
@@ -294,15 +272,12 @@ const FusionStudiosPage: React.FC = () => {
           }
           alt="hippocampus"
           bg={layoutSettings.studiosImg || defaultStudiosImg}
-          path={
-            orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']
-          }
+          path={orgLabel && projectLabel ? [`${orgLabel}/${projectLabel}`] : ['/']}
           permissions={['resources/write']}
           {...(token
             ? {
                 createLabel: 'Create Studio',
-                onCreateClick: () =>
-                  dispatch(updateStudioModalVisibility(true)),
+                onCreateClick: () => dispatch(updateStudioModalVisibility(true)),
               }
             : {})}
         />

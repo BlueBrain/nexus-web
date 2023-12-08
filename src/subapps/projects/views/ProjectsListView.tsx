@@ -15,23 +15,15 @@ const MAX_PROJECTS = 300;
 const ProjectsListView: React.FC<{}> = () => {
   const nexus = useNexusContext();
 
-  const [personalProjects, setPersonalProjects] = React.useState<
-    ProjectResponseCommon[]
-  >();
-  const [sharedProjects, setSharedProjects] = React.useState<
-    ProjectResponseCommon[]
-  >();
-  const [archivedProjects, setArchivedProjects] = React.useState<
-    ProjectResponseCommon[]
-  >();
+  const [personalProjects, setPersonalProjects] = React.useState<ProjectResponseCommon[]>();
+  const [sharedProjects, setSharedProjects] = React.useState<ProjectResponseCommon[]>();
+  const [archivedProjects, setArchivedProjects] = React.useState<ProjectResponseCommon[]>();
 
-  const userName = useSelector(
-    (state: RootState) => state.oidc.user?.profile.preferred_username
-  );
+  const userName = useSelector((state: RootState) => state.oidc.user?.profile.preferred_username);
 
   const identities = useSelector((state: RootState) => state.auth.identities);
 
-  const authenticatedIdentity = identities?.data?.identities.find(i => {
+  const authenticatedIdentity = identities?.data?.identities.find((i) => {
     return i['@type'] === 'Authenticated';
   });
 
@@ -45,7 +37,7 @@ const ProjectsListView: React.FC<{}> = () => {
     nexus.Project.list(personalOrg, {
       size: MAX_PROJECTS,
       deprecated: false,
-    }).then(value => {
+    }).then((value) => {
       setPersonalProjects(value._results);
     });
 
@@ -53,7 +45,7 @@ const ProjectsListView: React.FC<{}> = () => {
     nexus.Project.list(undefined, {
       size: MAX_PROJECTS,
       deprecated: false,
-    }).then(value => {
+    }).then((value) => {
       const shared = value._results.filter((v: ProjectResponseCommon) => {
         return v._organizationLabel !== personalOrg;
       });
@@ -64,7 +56,7 @@ const ProjectsListView: React.FC<{}> = () => {
     nexus.Project.list(undefined, {
       size: MAX_PROJECTS,
       deprecated: true,
-    }).then(value => {
+    }).then((value) => {
       setArchivedProjects(value._results);
     });
   };
@@ -78,22 +70,13 @@ const ProjectsListView: React.FC<{}> = () => {
       <div>
         <NewProjectContainer onSuccess={refreshLists} />
         {personalProjects ? (
-          <ProjectsListContainer
-            projectType="Personal Projects"
-            projects={personalProjects}
-          />
+          <ProjectsListContainer projectType="Personal Projects" projects={personalProjects} />
         ) : null}
         {sharedProjects ? (
-          <ProjectsListContainer
-            projectType="Shared Projects"
-            projects={sharedProjects}
-          />
+          <ProjectsListContainer projectType="Shared Projects" projects={sharedProjects} />
         ) : null}
         {archivedProjects ? (
-          <ProjectsListContainer
-            projectType="Archived Projects"
-            projects={archivedProjects}
-          />
+          <ProjectsListContainer projectType="Archived Projects" projects={archivedProjects} />
         ) : null}
       </div>
     </div>

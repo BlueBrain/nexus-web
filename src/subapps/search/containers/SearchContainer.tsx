@@ -2,7 +2,7 @@ import './SearchContainer.scss';
 
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Button, Checkbox, Pagination, Result,Table } from 'antd';
+import { Button, Checkbox, Pagination, Result, Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import { clsx } from 'clsx';
 import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
@@ -26,10 +26,7 @@ import {
 } from '../../../shared/organisms/DataPanel/DataPanel';
 import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
 import { RootState } from '../../../shared/store/reducers';
-import {
-  removeLocalStorageRows,
-  toLocalStorageResources,
-} from '../../../shared/utils/datapanel';
+import { removeLocalStorageRows, toLocalStorageResources } from '../../../shared/utils/datapanel';
 import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
 import FiltersConfig from '../components/FiltersConfig';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
@@ -63,25 +60,13 @@ const SearchContainer: React.FC = () => {
   const filterMenuRef = React.useRef<HTMLDivElement>(null);
   const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
-  const { currentResourceView } = useSelector(
-    (state: RootState) => state.uiSettings
-  );
+  const { currentResourceView } = useSelector((state: RootState) => state.uiSettings);
   const [queryParams] = useQueryString();
   const { query, layout } = queryParams;
-  const makeResourceUri = (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
-  ) => {
-    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-      resourceId
-    )}`;
+  const makeResourceUri = (orgLabel: string, projectLabel: string, resourceId: string) => {
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}`;
   };
-  const goToResource = (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
-  ) => {
+  const goToResource = (orgLabel: string, projectLabel: string, resourceId: string) => {
     history.push(makeResourceUri(orgLabel, projectLabel, resourceId), {
       background: location,
     });
@@ -116,10 +101,7 @@ const SearchContainer: React.FC = () => {
       };
     });
   };
-  const paginationWithRowSelection = (
-    page: number,
-    pageSize?: number | undefined
-  ) => {
+  const paginationWithRowSelection = (page: number, pageSize?: number | undefined) => {
     handlePaginationChange(page, pageSize);
   };
   const onTableHeightChanged = (numRows: number, lastPageOfResults: number) => {
@@ -128,8 +110,7 @@ const SearchContainer: React.FC = () => {
         ...prevPagination,
         numRowsFitOnPage: numRows,
         currentPage:
-          prevPagination.currentPage > lastPageOfResults &&
-          lastPageOfResults !== 0
+          prevPagination.currentPage > lastPageOfResults && lastPageOfResults !== 0
             ? lastPageOfResults
             : prevPagination.currentPage,
       };
@@ -151,22 +132,17 @@ const SearchContainer: React.FC = () => {
   const handleSelect = (record: Resource, selected: any) => {
     const newRecords = toLocalStorageResources(record, layout);
     const recordKey = record._self;
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
       selectedRowKeys = uniq([...selectedRowKeys, recordKey]);
       selectedRows = [...selectedRows, ...newRecords];
     } else {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+      selectedRowKeys = selectedRowKeys.filter((t) => t !== recordKey);
       selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
     }
-    const size = selectedRows.reduce(
-      (acc, item) => acc + (item.distribution?.contentSize || 0),
-      0
-    );
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -194,31 +170,24 @@ const SearchContainer: React.FC = () => {
     changeRows: Resource[]
   ) => {
     const changedRowsLS: TDataSource[] = [];
-    changeRows.forEach(row => {
+    changeRows.forEach((row) => {
       const localStorageRows = toLocalStorageResources(row, layout);
       changedRowsLS.push(...localStorageRows);
     });
 
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     if (selected) {
       selectedRows = [...selectedRows, ...changedRowsLS];
-      selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+      selectedRowKeys = [...selectedRowKeys, ...changeRows.map((t) => t._self)];
     } else {
-      const rowKeysToRemove = changeRows.map(r => r._self);
+      const rowKeysToRemove = changeRows.map((r) => r._self);
 
-      selectedRowKeys = selectedRowKeys.filter(
-        key => !rowKeysToRemove.includes(key.toString())
-      );
+      selectedRowKeys = selectedRowKeys.filter((key) => !rowKeysToRemove.includes(key.toString()));
       selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
     }
-    const size = selectedRows.reduce(
-      (acc, item) => acc + (item.distribution?.contentSize || 0),
-      0
-    );
+    const size = selectedRows.reduce((acc, item) => acc + (item.distribution?.contentSize || 0), 0);
     if (
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
@@ -245,12 +214,11 @@ const SearchContainer: React.FC = () => {
     onSelectAll: onSelectAllChange,
     columnWidth: 70,
     renderCell: (checked: any, record: any, index: number) => {
-      const rowIndex =
-        (pagination.currentPage - 1) * pagination.pageSize + index + 1;
+      const rowIndex = (pagination.currentPage - 1) * pagination.pageSize + index + 1;
       return (
         <div
           className="row-selection-checkbox"
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             handleSelect(record, !checked);
@@ -263,11 +231,7 @@ const SearchContainer: React.FC = () => {
     },
   };
 
-  useAdjustTableHeight(
-    pagination,
-    onTableHeightChanged,
-    onPageSizeOptionsChanged
-  );
+  useAdjustTableHeight(pagination, onTableHeightChanged, onPageSizeOptionsChanged);
 
   const onQuerySuccess = (queryResponse: any) => {
     setPagination((prevPagination: SearchPagination) => {
@@ -312,28 +276,18 @@ const SearchContainer: React.FC = () => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
     const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
     if (dataLs && dataLs.length) {
-      const selectedRows = dataLsObject.selectedRows.map(o => o.key);
+      const selectedRows = dataLsObject.selectedRows.map((o) => o.key);
       setSelectedRowKeys(selectedRows);
     }
   }, [layout, pagination]);
 
   React.useEffect(() => {
-    const dataPanelEventListner = (
-      event: DataPanelEvent<{ datapanel: TResourceTableData }>
-    ) => {
-      setSelectedRowKeys(
-        event.detail?.datapanel.selectedRows.map(item => item.key)
-      );
+    const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
+      setSelectedRowKeys(event.detail?.datapanel.selectedRows.map((item) => item.key));
     };
-    window.addEventListener(
-      DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner as EventListener
-    );
+    window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     return () => {
-      window.removeEventListener(
-        DATA_PANEL_STORAGE_EVENT,
-        dataPanelEventListner as EventListener
-      );
+      window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     };
   }, [layout]);
 
@@ -354,9 +308,9 @@ const SearchContainer: React.FC = () => {
             <SearchByPresetsCompact
               layouts={config?.layouts}
               selectedLayout={selectedSearchLayout}
-              onChangeLayout={layoutName => {
+              onChangeLayout={(layoutName) => {
                 handleChangeSearchLayout(layoutName);
-                setPagination(state => ({
+                setPagination((state) => ({
                   ...state,
                   currentPage: 1,
                 }));
@@ -372,16 +326,12 @@ const SearchContainer: React.FC = () => {
               <FiltersConfig
                 filters={filterState}
                 columns={columns}
-                onRemoveFilter={filter =>
-                  dispatchFilter({ type: 'remove', payload: filter })
-                }
+                onRemoveFilter={(filter) => dispatchFilter({ type: 'remove', payload: filter })}
               />
               <SortConfigContainer
                 sortedFields={sortState}
-                onRemoveSort={sortToRemove => removeSortOption(sortToRemove)}
-                onChangeSortDirection={sortToChange =>
-                  changeSortOption(sortToChange)
-                }
+                onRemoveSort={(sortToRemove) => removeSortOption(sortToRemove)}
+                onChangeSortDirection={(sortToChange) => changeSortOption(sortToChange)}
               />
               <Button type="link" onClick={() => clearAllCustomisation()}>
                 <CloseCircleOutlined />
@@ -413,11 +363,10 @@ const SearchContainer: React.FC = () => {
             className="result-table"
             loading={isLoading}
             rowSelection={rowSelection}
-            rowClassName={record =>
+            rowClassName={(record) =>
               clsx(
                 'search-table-row',
-                record._self === currentResourceView?._self &&
-                  'ant-table-row-selected'
+                record._self === currentResourceView?._self && 'ant-table-row-selected'
               )
             }
             rowKey="key"

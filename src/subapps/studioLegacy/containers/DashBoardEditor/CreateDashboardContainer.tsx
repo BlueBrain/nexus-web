@@ -1,6 +1,6 @@
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { message,Modal } from 'antd';
+import { message, Modal } from 'antd';
 import * as React from 'react';
 
 import useNotification from '../../../../shared/hooks/useNotification';
@@ -37,11 +37,7 @@ const CreateDashboardContainer: React.FunctionComponent<{
 
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
-  const { linkQueryEditor, view } = useLinkToDashboardQueryEditor(
-    viewId,
-    orgLabel,
-    projectLabel
-  );
+  const { linkQueryEditor, view } = useLinkToDashboardQueryEditor(viewId, orgLabel, projectLabel);
 
   const onSubmit = () => {
     setBusy(false);

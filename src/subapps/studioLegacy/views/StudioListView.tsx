@@ -1,18 +1,14 @@
 import '../studio.scss';
 
 import { useNexusContext } from '@bbp/react-nexus';
-import { Input,List, Spin } from 'antd';
+import { Input, List, Spin } from 'antd';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 
-import {
-  getOrgAndProjectFromProjectId,
-  makeStudioUri,
-} from '../../../shared/utils';
+import { getOrgAndProjectFromProjectId, makeStudioUri } from '../../../shared/utils';
 
-const DEFAULT_STUDIO_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/Studio';
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
 
 export type StudioItem = {
@@ -47,10 +43,8 @@ const StudioListView: React.FC = () => {
   React.useEffect(() => {
     if (data) {
       const list: StudioItem[] = data._results
-        .map(r => {
-          const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(
-            r._project
-          )!;
+        .map((r) => {
+          const { projectLabel, orgLabel } = getOrgAndProjectFromProjectId(r._project)!;
           return {
             projectLabel,
             orgLabel,
@@ -60,7 +54,7 @@ const StudioListView: React.FC = () => {
           };
         })
         .filter(
-          s =>
+          (s) =>
             s.label?.toLowerCase().includes(searchFilter) ||
             s.orgLabel?.includes(searchFilter) ||
             s.projectLabel?.includes(searchFilter)
@@ -83,15 +77,15 @@ const StudioListView: React.FC = () => {
           <Input.Search
             className={'studio-search'}
             placeholder={'Type to filter'}
-            onChange={e => {
+            onChange={(e) => {
               setSearchFilter(e.target.value.toLowerCase());
             }}
           ></Input.Search>
         </div>
         <div className={'studio-description'}>
           <p>
-            You can see all the studios in Nexus projects where you have read
-            access. The list is alphabetically sorted.
+            You can see all the studios in Nexus projects where you have read access. The list is
+            alphabetically sorted.
           </p>
         </div>
 
@@ -107,22 +101,18 @@ const StudioListView: React.FC = () => {
             <List
               pagination={{
                 total: studioList.length,
-                showTotal: total => ` ${total} results`,
+                showTotal: (total) => ` ${total} results`,
                 pageSize: 10,
               }}
               className={'studio-list'}
               dataSource={studioList}
-              renderItem={item => {
+              renderItem={(item) => {
                 return (
                   <List.Item
                     role="listitem"
                     onClick={() => {
                       const { orgLabel, projectLabel, id } = item;
-                      const studioUri = makeStudioUri(
-                        orgLabel,
-                        projectLabel,
-                        id
-                      );
+                      const studioUri = makeStudioUri(orgLabel, projectLabel, id);
                       goToStudio(studioUri);
                     }}
                     className={'studio-list-item'}

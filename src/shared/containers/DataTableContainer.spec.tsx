@@ -54,7 +54,7 @@ describe(
       server.listen();
 
       const { getComputedStyle } = window;
-      window.getComputedStyle = elt => getComputedStyle(elt);
+      window.getComputedStyle = (elt) => getComputedStyle(elt);
     });
 
     beforeEach(async () => {
@@ -139,10 +139,7 @@ describe(
       });
     };
 
-    const assertDataOrderInColumn = (
-      colName: string,
-      expectedData: string[]
-    ) => {
+    const assertDataOrderInColumn = (colName: string, expectedData: string[]) => {
       const actualDataInCol = columns(colName);
       expect(actualDataInCol.length).toEqual(expectedData.length);
 
@@ -235,10 +232,7 @@ describe(
       const submitFilter = screen.getByRole('button', { name: 'OK' });
       await user.click(submitFilter);
 
-      assertDataOrderInColumn('givenName', [
-        ORIGINAL_4_SORTED_4,
-        ORIGINAL_6_SORTED_5,
-      ]);
+      assertDataOrderInColumn('givenName', [ORIGINAL_4_SORTED_4, ORIGINAL_6_SORTED_5]);
     });
 
     it('shows error when dashboard fails to load', async () => {
@@ -269,9 +263,7 @@ describe(
       // The table should still be visible.
       await waitForTableRows(6);
 
-      const errorMsg = await screen.findByText(
-        invalidSparqlQueryResponse.reason
-      );
+      const errorMsg = await screen.findByText(invalidSparqlQueryResponse.reason);
       expect(errorMsg).toBeInTheDocument();
 
       server.resetHandlers();
@@ -395,16 +387,11 @@ describe(
       await user.click(secondRowCheckbox!);
 
       let checkedBoxesCount = 0;
-      for await (const [
-        index,
-        studioRow,
-      ] of resourcesWithRepeatedSelf.entries()) {
+      for await (const [index, studioRow] of resourcesWithRepeatedSelf.entries()) {
         const rowCheckbox = await getSelectCheckboxForRow(index);
 
         if (studioRow.self.value === repeatedSelf) {
-          await waitFor(() =>
-            expect(rowCheckbox as HTMLInputElement).toBeChecked()
-          );
+          await waitFor(() => expect(rowCheckbox as HTMLInputElement).toBeChecked());
           checkedBoxesCount = checkedBoxesCount + 1;
         } else {
           expect(rowCheckbox as HTMLInputElement).not.toBeChecked();

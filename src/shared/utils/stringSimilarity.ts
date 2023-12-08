@@ -5,10 +5,7 @@ import * as stringSimilarity from 'string-similarity';
  * @params string, string[]
  * @return string[]
  */
-export const sortStringsBySimilarity = (
-  value: string,
-  targetValues: string[]
-): string[] => {
+export const sortStringsBySimilarity = (value: string, targetValues: string[]): string[] => {
   const matchedValues = stringSimilarity.findBestMatch(value, targetValues);
 
   return matchedValues.ratings
@@ -37,7 +34,7 @@ export const sortObjectsBySimilarity = <T>(
 ): T[] => {
   const ratings = stringSimilarity.findBestMatch(
     searchValue,
-    objectsToSearch.map(v => (v as any)[propertyToCompare])
+    objectsToSearch.map((v) => (v as any)[propertyToCompare])
   );
 
   const ratedObjects = objectsToSearch.map((o, i) => ({
@@ -45,7 +42,5 @@ export const sortObjectsBySimilarity = <T>(
     rating: ratings.ratings[i].rating,
   }));
 
-  return ratedObjects
-    .sort((a: any, b: any) => b.rating - a.rating)
-    .map(o => ({ ...o.object }));
+  return ratedObjects.sort((a: any, b: any) => b.rating - a.rating).map((o) => ({ ...o.object }));
 };

@@ -1,10 +1,5 @@
 import { FileImageOutlined } from '@ant-design/icons';
-import {
-  NexusClient,
-  NexusFile,
-  Resource,
-  SparqlView,
-} from '@bbp/nexus-sdk/es';
+import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Image } from 'antd';
 import * as React from 'react';
@@ -65,17 +60,13 @@ const AnalysisPluginContainer = ({
 }: AnalysisPluginContainerProps) => {
   const notification = useNotification();
   const identities = useSelector((state: RootState) => state.auth.identities);
-  const currentUser = identities?.data?.identities.find(
-    id => id['@type'] === 'User'
-  );
+  const currentUser = identities?.data?.identities.find((id) => id['@type'] === 'User');
   const nexus = useNexusContext();
   const queryClient = useQueryClient();
 
   const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([]);
 
-  const apiEndpoint = useSelector(
-    (state: RootState) => state.config.apiEndpoint
-  );
+  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint);
   const history = useHistory();
   const location = useLocation();
 
@@ -86,25 +77,14 @@ const AnalysisPluginContainer = ({
     projectLabel: string,
     resourceId: string
   ) => {
-    history.push(
-      makeResourceUri(orgLabel, projectLabel, resourceId),
-      location.state
-    );
+    history.push(makeResourceUri(orgLabel, projectLabel, resourceId), location.state);
   };
 
-  const { analysisPluginSparqlDataQuery } = useSelector(
-    (state: RootState) => state.config
-  );
+  const { analysisPluginSparqlDataQuery } = useSelector((state: RootState) => state.config);
 
-  const analysisSparqlQuery = analysisPluginSparqlDataQuery.replaceAll(
-    '{resourceId}',
-    resourceId
-  );
+  const analysisSparqlQuery = analysisPluginSparqlDataQuery.replaceAll('{resourceId}', resourceId);
 
-  const fetchAnalysisData = async (
-    viewSelfId: string,
-    analysisQuery: string
-  ) => {
+  const fetchAnalysisData = async (viewSelfId: string, analysisQuery: string) => {
     const analysisReports: AnalysisReport[] = [];
     const result = await sparqlQueryExecutor(
       nexus,
@@ -117,27 +97,19 @@ const AnalysisPluginContainer = ({
 
     const uniqueReportIds = [
       ...new Set(
-        result.items.map(
-          r => (r as AnalysisAssetSparqlQueryRowResult).analysis_report_id
-        )
+        result.items.map((r) => (r as AnalysisAssetSparqlQueryRowResult).analysis_report_id)
       ),
     ];
     const reportResources = (await Promise.all(
-      uniqueReportIds.map(reportResourceId =>
-        nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(reportResourceId)
-        )
+      uniqueReportIds.map((reportResourceId) =>
+        nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(reportResourceId))
       )
     )) as Resource[];
 
     const analysisData = result.items.reduce((analysisReports, current) => {
       const currentRow = current as AnalysisAssetSparqlQueryRowResult;
       /* add new entry if report not in array yet */
-      if (
-        !analysisReports.some(r => r.id === currentRow['analysis_report_id'])
-      ) {
+      if (!analysisReports.some((r) => r.id === currentRow['analysis_report_id'])) {
         const types =
           currentRow['analysis_report_types'] !== undefined
             ? [currentRow['analysis_report_types']]
@@ -165,10 +137,10 @@ const AnalysisPluginContainer = ({
         analysisReports.push(report);
 
         const reportIx = analysisReports.findIndex(
-          r => r.id === currentRow['analysis_report_id']
+          (r) => r.id === currentRow['analysis_report_id']
         );
         const reportResource = reportResources.find(
-          r => r['@id'] === currentRow['analysis_report_id']
+          (r) => r['@id'] === currentRow['analysis_report_id']
         );
 
         if (reportResource === undefined) return analysisReports;
@@ -176,46 +148,38 @@ const AnalysisPluginContainer = ({
         analysisReports[reportIx].revision = reportResource._rev;
 
         if ('contribution' in reportResource) {
-          analysisReports[reportIx].contribution = [
-            reportResource.contribution,
-          ].flat();
+          analysisReports[reportIx].contribution = [reportResource.contribution].flat();
         }
 
         if ('hasPart' in reportResource) {
-          analysisReports[reportIx].assets = [reportResource.hasPart]
-            .flat()
-            .map((asset: any) => {
-              return {
-                analysisReportId: currentRow['analysis_report_id'],
-                saved: true,
-                id: asset.distribution.contentUrl['@id'],
-                name: asset.name,
-                description: asset.description,
-                filePath: asset.distribution.contentUrl['@id'],
-                encodingFormat: asset.distribution.encodingFormat,
-                preview: ({ mode }: { mode: 'view' | 'edit' }) => {
-                  return <Image preview={mode === 'view'} />;
-                },
-              };
-            });
+          analysisReports[reportIx].assets = [reportResource.hasPart].flat().map((asset: any) => {
+            return {
+              analysisReportId: currentRow['analysis_report_id'],
+              saved: true,
+              id: asset.distribution.contentUrl['@id'],
+              name: asset.name,
+              description: asset.description,
+              filePath: asset.distribution.contentUrl['@id'],
+              encodingFormat: asset.distribution.encodingFormat,
+              preview: ({ mode }: { mode: 'view' | 'edit' }) => {
+                return <Image preview={mode === 'view'} />;
+              },
+            };
+          });
         }
       } else {
         // @TODO: get this from the report resource
         const reportIx = analysisReports.findIndex(
-          r => r.id === currentRow['analysis_report_id']
+          (r) => r.id === currentRow['analysis_report_id']
         );
         const r = analysisReports[reportIx];
         if (currentRow['analysis_report_categories'] !== undefined) {
           if (r.categories !== undefined) {
-            if (
-              !r.categories.includes(currentRow['analysis_report_categories'])
-            ) {
+            if (!r.categories.includes(currentRow['analysis_report_categories'])) {
               r.categories.push(currentRow['analysis_report_categories']);
             }
           } else {
-            analysisReports[reportIx].categories = [
-              currentRow['analysis_report_categories'],
-            ];
+            analysisReports[reportIx].categories = [currentRow['analysis_report_categories']];
           }
         }
         if (currentRow['analysis_report_types'] !== undefined) {
@@ -224,9 +188,7 @@ const AnalysisPluginContainer = ({
               r.types.push(currentRow['analysis_report_types']);
             }
           } else {
-            analysisReports[reportIx].types = [
-              currentRow['analysis_report_types'],
-            ];
+            analysisReports[reportIx].types = [currentRow['analysis_report_types']];
           }
         }
       }
@@ -241,12 +203,11 @@ const AnalysisPluginContainer = ({
     ['analysis', resourceId],
     async () => fetchAnalysisData(viewSelfId, analysisSparqlQuery),
     {
-      onSuccess: data => {
+      onSuccess: (data) => {
         if (!hasInitializedSelectedReports) {
           dispatch(
             setSelectedReportFirstLoad({
-              analysisReportId:
-                data.length > 0 && data[0].id !== undefined ? data[0].id : '',
+              analysisReportId: data.length > 0 && data[0].id !== undefined ? data[0].id : '',
             })
           );
         }
@@ -257,13 +218,9 @@ const AnalysisPluginContainer = ({
                 ? 'individual_report'
                 : 'report_container',
             containerId:
-              data.length > 0 && data[0].containerId !== ''
-                ? data[0].containerId
-                : undefined,
+              data.length > 0 && data[0].containerId !== '' ? data[0].containerId : undefined,
             containerName:
-              data.length > 0 && data[0].containerName !== ''
-                ? data[0].containerName
-                : undefined,
+              data.length > 0 && data[0].containerName !== '' ? data[0].containerName : undefined,
           })
         );
       },
@@ -286,10 +243,8 @@ const AnalysisPluginContainer = ({
 
     const imageSources = Promise.all(
       analysisData.reduce((prev, current) => {
-        const assets = current.assets.concat(unsavedAssets).map(async asset => {
-          const imageId = asset.filePath.substring(
-            asset.filePath.lastIndexOf('/') + 1
-          );
+        const assets = current.assets.concat(unsavedAssets).map(async (asset) => {
+          const imageId = asset.filePath.substring(asset.filePath.lastIndexOf('/') + 1);
 
           const fileResource = (await nexus.File.get(
             orgLabel,
@@ -328,7 +283,7 @@ const AnalysisPluginContainer = ({
       {
         unsavedAssetsLength: unsavedAssets.length,
         analysisDataLength: analysisData?.length,
-        analysisAssets: analysisData?.map(a => a.assets.map(m => m.id)).flat(),
+        analysisAssets: analysisData?.map((a) => a.assets.map((m) => m.id)).flat(),
       },
     ],
     fetchImages,
@@ -350,7 +305,7 @@ const AnalysisPluginContainer = ({
         projectLabel,
         encodeURIComponent(data.resourceId)
       )) as Resource;
-      resource.hasPart = [resource.hasPart].flat().map(a => {
+      resource.hasPart = [resource.hasPart].flat().map((a) => {
         if (a.distribution.contentUrl['@id'] !== data.assetContentUrl) {
           return a;
         }
@@ -363,11 +318,9 @@ const AnalysisPluginContainer = ({
       });
 
       // Add user as contributor if not already
-      const contributions = resource['contribution']
-        ? [resource['contribution']].flat()
-        : [];
+      const contributions = resource['contribution'] ? [resource['contribution']].flat() : [];
 
-      if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+      if (!contributions.some((c) => c.agent['@id'] === currentUser?.['@id'])) {
         contributions.push({
           '@type': 'Contribution',
           agent: {
@@ -412,7 +365,7 @@ const AnalysisPluginContainer = ({
       types?: string[];
       scripts?: ReportGeneration[];
     }) => {
-      const unsavedAssetsToAddToDistribution = unsavedAssets.map(a => {
+      const unsavedAssetsToAddToDistribution = unsavedAssets.map((a) => {
         return {
           '@type': 'Entity',
           name: a.name,
@@ -440,12 +393,10 @@ const AnalysisPluginContainer = ({
 
         // Add user as contributor if not already
         const contributions = resource['contribution']
-          ? [resource['contribution']]
-              .flat()
-              .filter(c => c.agent['@type'].includes('Person'))
+          ? [resource['contribution']].flat().filter((c) => c.agent['@type'].includes('Person'))
           : [];
 
-        if (!contributions.some(c => c.agent['@id'] === currentUser?.['@id'])) {
+        if (!contributions.some((c) => c.agent['@id'] === currentUser?.['@id'])) {
           contributions.push({
             '@type': 'Contribution',
             agent: {
@@ -457,7 +408,7 @@ const AnalysisPluginContainer = ({
         // add software contributions
         if (data.scripts) {
           contributions.push(
-            ...data.scripts.map(s => ({
+            ...data.scripts.map((s) => ({
               '@type': 'Contribution',
               agent: {
                 '@type': ['Software', 'Agent'],
@@ -470,14 +421,9 @@ const AnalysisPluginContainer = ({
 
         resource['contribution'] = contributions;
 
-        const existingReport = analysisData?.find(r => r.id === data.id);
-        if (
-          existingReport === undefined ||
-          existingReport.revision === undefined
-        ) {
-          throw new Error(
-            'Existing report not found, unable to save. Try reloading'
-          );
+        const existingReport = analysisData?.find((r) => r.id === data.id);
+        if (existingReport === undefined || existingReport.revision === undefined) {
+          throw new Error('Existing report not found, unable to save. Try reloading');
         }
 
         return nexus.Resource.update(
@@ -512,7 +458,7 @@ const AnalysisPluginContainer = ({
         hasPart: unsavedAssetsToAddToDistribution,
         derivation: { entity: { '@id': resourceId } },
         contribution: data.scripts
-          ? data.scripts.map(s => ({
+          ? data.scripts.map((s) => ({
               '@type': 'Contribution',
               agent: { '@type': ['Software', 'Agent'] },
               repository: s.scriptPath,
@@ -522,15 +468,13 @@ const AnalysisPluginContainer = ({
       });
     },
     {
-      onSuccess: resource => {
+      onSuccess: (resource) => {
         setUnsavedAssets([]);
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
         ]).then(() => {
-          dispatch(
-            changeSelectedReports({ analysisReportIds: [resource['@id']] })
-          );
+          dispatch(changeSelectedReports({ analysisReportIds: [resource['@id']] }));
         });
       },
     }
@@ -540,7 +484,7 @@ const AnalysisPluginContainer = ({
     async () => {
       if (selectedAssets) {
         await Promise.all(
-          selectedAssets.map(async d => {
+          selectedAssets.map(async (d) => {
             const resource = (await nexus.Resource.get(
               orgLabel,
               projectLabel,
@@ -567,9 +511,7 @@ const AnalysisPluginContainer = ({
             ? [reportResource['contribution']].flat()
             : [];
 
-          if (
-            !contributions.some(c => c.agent['@id'] === currentUser?.['@id'])
-          ) {
+          if (!contributions.some((c) => c.agent['@id'] === currentUser?.['@id'])) {
             contributions.push({
               '@type': 'Contribution',
               agent: {
@@ -580,15 +522,10 @@ const AnalysisPluginContainer = ({
           }
           reportResource['contribution'] = contributions;
           const existingReport = analysisData?.find(
-            r => r.id === currentlyBeingEditedAnalysisReportId
+            (r) => r.id === currentlyBeingEditedAnalysisReportId
           );
-          if (
-            existingReport === undefined ||
-            existingReport.revision === undefined
-          ) {
-            throw new Error(
-              'Existing report not found, unable to save. Try reloading'
-            );
+          if (existingReport === undefined || existingReport.revision === undefined) {
+            throw new Error('Existing report not found, unable to save. Try reloading');
           }
 
           await nexus.Resource.update(
@@ -606,7 +543,7 @@ const AnalysisPluginContainer = ({
       return selectedAnalysisReports;
     },
     {
-      onSuccess: resourceIds => {
+      onSuccess: (resourceIds) => {
         Promise.all([
           queryClient.invalidateQueries(['analysis']),
           queryClient.invalidateQueries(['analysesImages']),
@@ -645,26 +582,18 @@ const AnalysisPluginContainer = ({
                   <Image placeholder={<FileImageOutlined />} preview={false} />
                 )}
                 {file._mediaType === 'application/pdf' && (
-                  <PDFThumbnail
-                    url={file['@id']}
-                    onPreview={() => {}}
-                    previewDisabled={true}
-                  />
+                  <PDFThumbnail url={file['@id']} onPreview={() => {}} previewDisabled={true} />
                 )}
               </>
             )}
             {file._mediaType === 'application/pdf' && (
-              <PDFThumbnail
-                url={file['@id']}
-                onPreview={() => {}}
-                previewDisabled={true}
-              />
+              <PDFThumbnail url={file['@id']} onPreview={() => {}} previewDisabled={true} />
             )}
           </>
         );
       },
     };
-    setUnsavedAssets(assets => [...assets, newlyUploadedAsset]);
+    setUnsavedAssets((assets) => [...assets, newlyUploadedAsset]);
   };
 
   const DEFAULT_SCALE = 50;
@@ -723,11 +652,7 @@ const AnalysisPluginContainer = ({
       report. If there is no container Id there must be no reports and
       therefore we must be on the container, so it's resource Id */
       const parentId = containerId ? containerId : resourceId;
-      return nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(parentId)
-      );
+      return nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(parentId));
     },
     {
       enabled: !!containerId || !!resourceId,
@@ -735,9 +660,7 @@ const AnalysisPluginContainer = ({
   );
 
   const containerResourceTypes = containerResource
-    ? ([
-        ((containerResource as unknown) as Resource)['@type'],
-      ].flat() as string[])
+    ? ([((containerResource as unknown) as Resource)['@type']].flat() as string[])
     : [];
 
   const analysisDataWithImages = React.useMemo(() => {
@@ -758,13 +681,13 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
-    return savedAndUnsavedAnalysisReports.map(a => {
+    return savedAndUnsavedAnalysisReports.map((a) => {
       return {
         ...a,
         assets: a.assets
           .concat(unsavedAssets)
-          .map(m => {
-            const img = imageData?.find(img => img.contentUrl === m.filePath);
+          .map((m) => {
+            const img = imageData?.find((img) => img.contentUrl === m.filePath);
             return {
               ...m,
               filename: img?.filename,
@@ -774,8 +697,7 @@ const AnalysisPluginContainer = ({
               preview: ({ mode }: { mode: string }) => {
                 return (
                   <>
-                    {m.encodingFormat.substring(0, 'image'.length) ===
-                      'image' && (
+                    {m.encodingFormat.substring(0, 'image'.length) === 'image' && (
                       <ImageFileInfo
                         previewDisabled={mode === 'edit'}
                         src={img?.src}
@@ -795,8 +717,7 @@ const AnalysisPluginContainer = ({
                               });
                           } catch (e) {
                             notification.error({
-                              message:
-                                'An error occurred whilst trying to save. Please try again.',
+                              message: 'An error occurred whilst trying to save. Please try again.',
                             });
                           }
                         }}
@@ -822,8 +743,7 @@ const AnalysisPluginContainer = ({
                               });
                           } catch (e) {
                             notification.error({
-                              message:
-                                'An error occurred whilst trying to save. Please try again.',
+                              message: 'An error occurred whilst trying to save. Please try again.',
                             });
                           }
                         }}
@@ -834,7 +754,7 @@ const AnalysisPluginContainer = ({
               },
             };
           })
-          .filter(a => a.deprecated === undefined || !a.deprecated),
+          .filter((a) => a.deprecated === undefined || !a.deprecated),
       };
     });
   }, [analysisData, imageData, unsavedAssets, mode]);
@@ -844,7 +764,7 @@ const AnalysisPluginContainer = ({
       orgLabel={orgLabel}
       showStorageMenu={false}
       projectLabel={projectLabel}
-      onFileUploaded={file => onFileUploaded(file, analysisReportId)}
+      onFileUploaded={(file) => onFileUploaded(file, analysisReportId)}
     />
   );
 
@@ -886,8 +806,7 @@ const AnalysisPluginContainer = ({
               deleteImages.mutate();
             } catch (e) {
               notification.error({
-                message:
-                  'An error occurred whilst trying to delete the assets. Please try again.',
+                message: 'An error occurred whilst trying to delete the assets. Please try again.',
               });
             }
           }}
@@ -897,21 +816,13 @@ const AnalysisPluginContainer = ({
           currentlyBeingEditedAnalysisReportDescription={
             currentlyBeingEditedAnalysisReportDescription
           }
-          currentlyBeingEditedAnalysisReportId={
-            currentlyBeingEditedAnalysisReportId
-          }
-          currentlyBeingEditedAnalysisReportName={
-            currentlyBeingEditedAnalysisReportName
-          }
+          currentlyBeingEditedAnalysisReportId={currentlyBeingEditedAnalysisReportId}
+          currentlyBeingEditedAnalysisReportName={currentlyBeingEditedAnalysisReportName}
           currentlyBeingEditedAnalysisReportCategories={
             currentlyBeingEditedAnalysisReportCategories
           }
-          currentlyBeingEditedAnalysisReportTypes={
-            currentlyBeingEditedAnalysisReportTypes
-          }
-          currentlyBeingEditedAnalysisReportTools={
-            currentlyBeingEditedAnalysisReportTools
-          }
+          currentlyBeingEditedAnalysisReportTypes={currentlyBeingEditedAnalysisReportTypes}
+          currentlyBeingEditedAnalysisReportTools={currentlyBeingEditedAnalysisReportTools}
           selectedAssets={selectedAssets}
           dispatch={dispatch}
           selectedAnalysisReports={selectedAnalysisReports}

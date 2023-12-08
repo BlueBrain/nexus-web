@@ -1,6 +1,6 @@
 import './ResourceLinkItem.scss';
 
-import { Resource,ResourceLink } from '@bbp/nexus-sdk/es';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk/es';
 import { Tooltip } from 'antd';
 import * as React from 'react';
 
@@ -18,11 +18,7 @@ const ResourceLinkItem: React.FunctionComponent<{
   onInternalClick?: (internalLink: ResourceLinkAugmented) => void;
 }> = ({ link, onInternalClick }) => {
   const isInternal = !!(link as Resource)._self;
-  const paths = link.paths
-    ? Array.isArray(link.paths)
-      ? link.paths
-      : [link.paths]
-    : [];
+  const paths = link.paths ? (Array.isArray(link.paths) ? link.paths : [link.paths]) : [];
 
   return (
     <div

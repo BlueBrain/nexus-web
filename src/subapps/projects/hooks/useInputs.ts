@@ -1,15 +1,9 @@
-import {
-  SelectQueryResponse,
-  SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk/es';
+import { SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import * as React from 'react';
 
-import {
-  distanceFromTopToDisplay,
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import { distanceFromTopToDisplay, parseNexusError } from '../../../shared/hooks/useNotification';
 
 const VIEW_ID = 'graph';
 
@@ -29,11 +23,7 @@ export type Input = {
   description?: string;
 };
 
-export const useInputs = (
-  orgLabel: string,
-  projectLabel: string,
-  workflowStepId: string
-) => {
+export const useInputs = (orgLabel: string, projectLabel: string, workflowStepId: string) => {
   const nexus = useNexusContext();
   const [inputs, setInputs] = React.useState<Input[]>([]);
 
@@ -56,43 +46,35 @@ export const useInputs = (
 			LIMIT 100
     `;
 
-    nexus.View.sparqlQuery(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(VIEW_ID),
-      inputsQuery
-    )
+    nexus.View.sparqlQuery(orgLabel, projectLabel, encodeURIComponent(VIEW_ID), inputsQuery)
       .then((result: SparqlViewQueryResponse) => {
         const data: SelectQueryResponse = result as SelectQueryResponse;
 
         // we have to do this because sparql duplicates bindings when inputs have multiple types -
         // creates an entry for each type in the list
         const uniqueInputs = [
-          ...new Set(
-            data.results.bindings.map((input: Item) => input.resource.value)
-          ),
+          ...new Set(data.results.bindings.map((input: Item) => input.resource.value)),
         ];
 
         const parsedList = Array.from(uniqueInputs).map((inputId: string) => {
           const allInputEntries = data.results.bindings.filter(
-            input => input.resource.value === inputId
+            (input) => input.resource.value === inputId
           );
 
-          const types = allInputEntries.map(entry => entry.resourceType.value);
+          const types = allInputEntries.map((entry) => entry.resourceType.value);
 
           return {
             types,
             createdAt: allInputEntries[0].createdAt.value,
             name: allInputEntries[0]?.name?.value || 'No name',
             resourceId: allInputEntries[0].resource.value,
-            description:
-              allInputEntries[0]?.description?.value || 'No description',
+            description: allInputEntries[0]?.description?.value || 'No description',
           };
         });
 
         setInputs(parsedList);
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Failed to fetch Workflow Step inputs',
           description: parseNexusError(error),

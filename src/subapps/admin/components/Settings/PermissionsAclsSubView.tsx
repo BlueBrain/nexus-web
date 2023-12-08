@@ -33,19 +33,17 @@ type GroupedPermission = {
   permissions: string[];
 };
 function groupPermissions(permissions: string[]): GroupedPermission[] {
-  const permissionsSplited = permissions.map(item => {
+  const permissionsSplited = permissions.map((item) => {
     const [name, permission] = item.split('/');
     return { name, permission };
   });
-  return Object.entries(groupBy(permissionsSplited, 'name')).map(
-    ([key, value]) => {
-      return {
-        name: key,
-        // @ts-ignore
-        permissions: value.map(item => item.permission),
-      };
-    }
-  );
+  return Object.entries(groupBy(permissionsSplited, 'name')).map(([key, value]) => {
+    return {
+      name: key,
+      // @ts-ignore
+      permissions: value.map((item) => item.permission),
+    };
+  });
 }
 
 type ACLViewProp =
@@ -57,13 +55,7 @@ type ACLViewProp =
 
 const { Panel } = Collapse;
 
-const fetchPermissions = async ({
-  nexus,
-  path,
-}: {
-  nexus: NexusClient;
-  path: string;
-}) => {
+const fetchPermissions = async ({ nexus, path }: { nexus: NexusClient; path: string }) => {
   try {
     const acls = await nexus.ACL.list(path, { ancestors: true, self: false });
     return acls._results;
@@ -160,7 +152,7 @@ const PermissionsAclsSubView = (props: Props) => {
         };
       }),
       // @ts-ignore
-      o => o.identity.subject
+      (o) => o.identity.subject
     );
     const data = identitiesPermissions?.map(({ identity, permissions }) => {
       const iden = identity.subject ?? (identity.group || '');
@@ -212,10 +204,7 @@ const PermissionsAclsSubView = (props: Props) => {
           .with('success', () => {
             if (!acls?.length) {
               return (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_DEFAULT}
-                  description="No ACLs was found"
-                />
+                <Empty image={Empty.PRESENTED_IMAGE_DEFAULT} description="No ACLs was found" />
               );
             }
             return (

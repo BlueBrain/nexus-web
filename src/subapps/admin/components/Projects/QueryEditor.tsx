@@ -1,9 +1,6 @@
 import './QueryEditor.scss';
 
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  DEFAULT_SPARQL_VIEW_ID,
-} from '@bbp/nexus-sdk/es';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Tabs } from 'antd';
 import * as React from 'react';
@@ -34,7 +31,7 @@ const QueryEditor: React.FC<{
   React.useEffect(() => {
     if (match.params.viewId) {
       nexus.View.get(orgLabel, projectLabel, match.params.viewId)
-        .then(result => {
+        .then((result) => {
           // show appropriate search tab
           if ([result['@type']].flat().includes('SparqlView')) {
             setActiveKey('sparql');
@@ -43,7 +40,7 @@ const QueryEditor: React.FC<{
           }
           setLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
           notification.error({
             message: 'Problem loading View',
             description: error.message,
@@ -53,9 +50,7 @@ const QueryEditor: React.FC<{
     } else {
       setLoading(false);
       history.replace(
-        `/${
-          subapp.namespace
-        }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
+        `/${subapp.namespace}/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
           DEFAULT_SPARQL_VIEW_ID
         )}`
       );
@@ -68,20 +63,14 @@ const QueryEditor: React.FC<{
   return (
     <div className="query-editor">
       <h3>Query Browser</h3>
-      <p>
-        View resources in your project using pre-defined query-helper lists.
-      </p>
+      <p>View resources in your project using pre-defined query-helper lists.</p>
       <div className="project-menu__controls">
         <Tabs
-          onChange={tab => {
+          onChange={(tab) => {
             setActiveKey(tab);
             history.replace(
-              `/${
-                subapp.namespace
-              }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
-                tab === 'sparql'
-                  ? DEFAULT_SPARQL_VIEW_ID
-                  : DEFAULT_ELASTIC_SEARCH_VIEW_ID
+              `/${subapp.namespace}/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
+                tab === 'sparql' ? DEFAULT_SPARQL_VIEW_ID : DEFAULT_ELASTIC_SEARCH_VIEW_ID
               )}`
             );
           }}

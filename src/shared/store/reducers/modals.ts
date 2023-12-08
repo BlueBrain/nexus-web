@@ -27,22 +27,19 @@ export default function modalsReducer(
     case ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL: {
       return {
         ...state,
-        isCreateProjectModelVisible:
-          action.payload ?? !state.isCreateProjectModelVisible,
+        isCreateProjectModelVisible: action.payload ?? !state.isCreateProjectModelVisible,
       };
     }
     case ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL: {
       return {
         ...state,
-        isCreateOrganizationModelVisible:
-          action.payload ?? !state.isCreateOrganizationModelVisible,
+        isCreateOrganizationModelVisible: action.payload ?? !state.isCreateOrganizationModelVisible,
       };
     }
     case ModalsActionsEnum.OPEN_STUDIO_CREATION_MODEL: {
       return {
         ...state,
-        isCreateStudioModelVisible:
-          action.payload ?? !state.isCreateStudioModelVisible,
+        isCreateStudioModelVisible: action.payload ?? !state.isCreateStudioModelVisible,
       };
     }
     case ModalsActionsEnum.OPEN_ABOUT_MODAL: {

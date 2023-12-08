@@ -9,13 +9,7 @@ import invariant from 'ts-invariant';
 import Loading from '../components/Loading';
 
 const PluginError: React.FC<{ error: Error }> = ({ error }) => {
-  return (
-    <Result
-      status="warning"
-      title="Plugin failed to render"
-      subTitle={error.message}
-    />
-  );
+  return <Result status="warning" title="Plugin failed to render" subTitle={error.message} />;
 };
 
 const warningMessage =
@@ -92,10 +86,7 @@ export class NexusPlugin extends React.Component<
     // Reload the plugin(and pass in new props to it) when props change
     // NOTE: will not reload the plugin if nexusClient or goToResource changes
     // otherwise it will cause too many reloads
-    if (
-      prevProps.resource !== this.props.resource ||
-      prevProps.url !== this.props.url
-    ) {
+    if (prevProps.resource !== this.props.resource || prevProps.url !== this.props.url) {
       this.loadExternalPlugin();
     }
   }
@@ -105,9 +96,7 @@ export class NexusPlugin extends React.Component<
   }
 
   componentWillUnmount() {
-    this.pluginCallback &&
-      typeof this.pluginCallback === 'function' &&
-      this.pluginCallback();
+    this.pluginCallback && typeof this.pluginCallback === 'function' && this.pluginCallback();
   }
 
   render() {

@@ -3,12 +3,9 @@ import 'codemirror/mode/javascript/javascript';
 // import 'react-json-view';
 import './view-form.scss';
 
-import {
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk/es';
-import { Button, Card, Empty,Form, List } from 'antd';
+import { Button, Card, Empty, Form, List } from 'antd';
 import * as React from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 // import { UnControlled as CodeMirror } from 'react-codemirror2';
@@ -61,10 +58,8 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     setInitialQuery(formattedInitialQuery);
   }, []);
 
-  const data =
-    response && response.hits.hits.map(result => result._source || []);
-  const total =
-    (response && response.hits.total && response.hits.total.value) || 0;
+  const data = response && response.hits.hits.map((result) => result._source || []);
+  const total = (response && response.hits.total && response.hits.total.value) || 0;
   const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
 
@@ -95,11 +90,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
           <div className="control-panel">
             <div>
               <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                {valid ? (
-                  <CheckCircleOutlined />
-                ) : (
-                  <ExclamationCircleOutlined />
-                )}{' '}
+                {valid ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}{' '}
                 {valid ? 'Valid JSON' : 'Invalid JSON'}
               </div>
             </div>
@@ -135,11 +126,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             className="elasticsearch-results"
             itemLayout="vertical"
             loading={busy}
-            header={
-              <p className="result">{`Found ${total} result${
-                total > 1 ? 's' : ''
-              }`}</p>
-            }
+            header={<p className="result">{`Found ${total} result${total > 1 ? 's' : ''}`}</p>}
             dataSource={data || []}
             pagination={{
               total,

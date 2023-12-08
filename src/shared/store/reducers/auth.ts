@@ -1,10 +1,6 @@
 import { ACL, IdentityList, PaginatedList, Realm } from '@bbp/nexus-sdk/es';
 
-import {
-  AuthActions,
-  AuthActionTypes,
-  AuthFailedAction,
-} from '../actions/auth';
+import { AuthActions, AuthActionTypes, AuthFailedAction } from '../actions/auth';
 import { createFetchReducer, FetchableState } from './utils';
 
 export interface AuthState {

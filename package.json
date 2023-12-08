@@ -40,10 +40,6 @@
       "git add"
     ]
   },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
   "resolutions": {
     "d3-interpolate": "2.0.1",
     "headers-polyfill": "3.0.10"

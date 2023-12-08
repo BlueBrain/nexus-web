@@ -8,13 +8,7 @@ import { act } from 'react-dom/test-utils';
 import { ConfigField } from 'subapps/search/hooks/useGlobalSearch';
 import { vi } from 'vitest';
 
-import {
-  fireEvent,
-  render,
-  screen,
-  server,
-  within,
-} from '../../../../utils/testUtil';
+import { fireEvent, render, screen, server, within } from '../../../../utils/testUtil';
 import FilterOptions from '../FilterOptions';
 
 const mockFiltersResponse = {
@@ -51,8 +45,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00575811',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.673Z',
@@ -79,8 +72,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'oh140807',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.674Z',
@@ -107,8 +99,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00578803',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.679Z',
@@ -135,8 +126,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'oh140521',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.683Z',
@@ -163,8 +153,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00575815',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.820Z',
@@ -191,8 +180,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'mpg141017',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.820Z',
@@ -219,8 +207,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00578795',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.820Z',
@@ -247,8 +234,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00578799',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.823Z',
@@ -275,8 +261,7 @@ const mockFiltersResponse = {
           deprecated: false,
           name: 'ID 00607359,',
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           updatedAt: '2022-04-01T09:14:15.825Z',
@@ -336,8 +321,7 @@ const mockFiltersResponse = {
             },
           ],
           project: {
-            identifier:
-              'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
+            identifier: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/hippocampus-hub',
             label: 'copies/hippocampus-hub',
           },
           subjectAge: {
@@ -417,7 +401,7 @@ describe('Filter Options Container', () => {
 
     // Test that each of the aggregations is in the list of filters
     const aggregations = mockFiltersResponse.aggregations.suggestions.buckets;
-    aggregations.forEach(async b => {
+    aggregations.forEach(async (b) => {
       const element = await screen.findByText(b.key);
       expect(element).toBeInTheDocument();
     });
@@ -431,9 +415,7 @@ describe('Filter Options Container', () => {
     expect(missingCheckbox).toBeInTheDocument();
 
     // Length of list should be one more than number of aggregations
-    expect((await screen.findAllByRole('listitem')).length).toBe(
-      aggregations.length + 1
-    );
+    expect((await screen.findAllByRole('listitem')).length).toBe(aggregations.length + 1);
   });
 
   it('filter is checked when in list of applied filters', async () => {

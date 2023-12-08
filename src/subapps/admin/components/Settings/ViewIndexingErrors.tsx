@@ -9,9 +9,7 @@ interface Props {
   indexingErrors: IndexingErrorResults;
 }
 
-export const ViewIndexingErrors: React.FC<Props> = ({
-  indexingErrors,
-}: Props) => {
+export const ViewIndexingErrors: React.FC<Props> = ({ indexingErrors }: Props) => {
   return (
     <div>
       {<h3>{indexingErrors._total} Total errors</h3>}
@@ -56,9 +54,7 @@ export const fetchIndexingErrors = async ({
   viewId: string;
 }): Promise<IndexingErrorResults> => {
   const indexingErrors = await nexus.httpGet({
-    path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(
-      viewId
-    )}/failures`,
+    path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(viewId)}/failures`,
     headers: { Accept: 'application/json' },
   });
   return indexingErrors;

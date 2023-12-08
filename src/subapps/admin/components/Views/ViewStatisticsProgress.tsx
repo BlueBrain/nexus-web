@@ -1,7 +1,7 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import { Statistics } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button,Progress, Tooltip } from 'antd';
+import { Button, Progress, Tooltip } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 
@@ -15,7 +15,9 @@ type ViewStatisticsProgressProps = {
   onClickRefresh?: VoidFunction;
 };
 
-export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = props => {
+export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgressProps> = (
+  props
+) => {
   const percent = Math.floor((props.processedEvents / props.totalEvents) * 100);
   const label =
     percent === 100 ? (
@@ -54,7 +56,9 @@ export type ViewStatisticsContainerProps = {
   paused?: boolean;
 };
 
-export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = props => {
+export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsContainerProps> = (
+  props
+) => {
   const nexus = useNexusContext();
   const [eventsAtMount, setEventsAtMount] = React.useState<number>();
   const [{ loading, error, data }, setState] = React.useState<{
@@ -84,10 +88,7 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     props.onClickRefresh && props.onClickRefresh();
   };
 
-  const [
-    hasNewlyIndexedResources,
-    setHasNewlyIndexedResources,
-  ] = React.useState(false);
+  const [hasNewlyIndexedResources, setHasNewlyIndexedResources] = React.useState(false);
 
   const indexCompleteNotification = () => {
     setHasNewlyIndexedResources(true);
@@ -107,12 +108,9 @@ export const ViewStatisticsContainer: React.FunctionComponent<ViewStatisticsCont
     });
     if (props.paused) return;
 
-    const poll = nexus.View.pollStatistics(
-      props.orgLabel,
-      props.projectLabel,
-      props.resourceId,
-      { pollIntervalMs: 3000 }
-    ).subscribe(
+    const poll = nexus.View.pollStatistics(props.orgLabel, props.projectLabel, props.resourceId, {
+      pollIntervalMs: 3000,
+    }).subscribe(
       (statistics: Statistics) => {
         if (!eventsAtMount) {
           setEventsAtMount(statistics.totalEvents);

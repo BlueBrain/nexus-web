@@ -11,9 +11,7 @@ export default function useQueryString() {
   const queryParams: QueryParams =
     queryString.parse(location.search, { ignoreQueryPrefix: true }) || {};
   const setQueryString = (newQueryParams: QueryParams, path?: string) => {
-    const newPath = `${path || location.pathname}?${queryString.stringify(
-      newQueryParams
-    )}`;
+    const newPath = `${path || location.pathname}?${queryString.stringify(newQueryParams)}`;
     history.push(newPath);
   };
 

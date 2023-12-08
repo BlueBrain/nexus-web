@@ -23,8 +23,7 @@ const AppsList = new Map<string, AppDetails>([
       id: 'applist/organisations',
       key: 'applist/organisations',
       title: 'Organizations',
-      subtitle:
-        'All organizations you have access to and their respective Projects.',
+      subtitle: 'All organizations you have access to and their respective Projects.',
       tileColor: 'linear-gradient(90deg, #F4CCA7 1.19%, #CA6666 100%)',
       link: '/orgs',
       createLabel: 'Create Organisation',
@@ -66,7 +65,7 @@ const HomeSearchByApps: React.FC<{}> = () => {
     <div className="home-searchby-appslist">
       <h2 className="home-searchby-appslist-title">Search by Lists</h2>
       <div className="home-searchby-appslist-container">
-        {apps.map(app => (
+        {apps.map((app) => (
           <SubAppCardItem
             {...app}
             to={app.link}

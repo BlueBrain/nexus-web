@@ -9,9 +9,7 @@ import { DEFGContentFullscreenHeader } from '../../molecules/DataExplorerGraphFl
 import { RootState } from '../../store/reducers';
 
 const DataExplorerContentPage = ({}) => {
-  const { current, fullscreen } = useSelector(
-    (state: RootState) => state.dataExplorer
-  );
+  const { current, fullscreen } = useSelector((state: RootState) => state.dataExplorer);
   return (
     <div className="degf-content__wrapper">
       {fullscreen ? (

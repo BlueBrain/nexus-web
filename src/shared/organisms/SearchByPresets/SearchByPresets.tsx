@@ -12,15 +12,8 @@ import { useQuery } from 'react-query';
 import { match as pmatch } from 'ts-pattern';
 
 import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
-import {
-  SearchConfig,
-  SearchLayout,
-} from '../../../subapps/search/hooks/useGlobalSearch';
-import {
-  PresetCardItem,
-  PresetCardItemCompact,
-  PresetCardItemSkeleton,
-} from '../../molecules';
+import { SearchConfig, SearchLayout } from '../../../subapps/search/hooks/useGlobalSearch';
+import { PresetCardItem, PresetCardItemCompact, PresetCardItemSkeleton } from '../../molecules';
 
 type TProps = {};
 type TLayout = {
@@ -71,13 +64,13 @@ export const fetchNexusSearchConfig = async (nexus: NexusClient) => {
   try {
     const config: SearchConfig = await nexus.Search.config();
     const layouts: TLayout[] =
-      config?.layouts.map(layout => ({
+      config?.layouts.map((layout) => ({
         id: layout.filters?.[0].values?.[0],
         name: layout.name,
       })) || [];
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(layouts)
-      .process(async layout => {
+      .process(async (layout) => {
         const result = await nexus.Search.query(ConfigQueryBuilder(layout.id));
         return {
           ...layout,
@@ -86,7 +79,7 @@ export const fetchNexusSearchConfig = async (nexus: NexusClient) => {
       });
     return {
       errors,
-      results: orderBy(results, i => Number(i.stats), ['desc']),
+      results: orderBy(results, (i) => Number(i.stats), ['desc']),
     };
   } catch (error) {
     // @ts-ignore
@@ -132,7 +125,7 @@ const SearchByPresets: React.FC<TProps> = ({}) => {
         ))
         .with('success', () => (
           <div className="searchby-presets-container">
-            {(data?.results as TLayout[]).map(layout => (
+            {(data?.results as TLayout[]).map((layout) => (
               <PresetCardItem
                 key={`preset-card-${layout.id}`}
                 title={layout.name}
@@ -183,24 +176,16 @@ export const SearchByPresetsCompact: React.FC<SearchLayoutProps> = ({
   };
   useEffect(() => {
     if (floatPresetRef.current) {
-      animate(
-        floatPresetRef.current,
-        { opacity: intersection ? 0 : 1 },
-        { easing: 'ease-out' }
-      );
+      animate(floatPresetRef.current, { opacity: intersection ? 0 : 1 }, { easing: 'ease-out' });
     }
   }, [floatPresetRef.current, intersection]);
   return (
     <div className="searchby-presets compact" ref={presetsRef}>
-      <div
-        ref={floatPresetRef}
-        className={clsx('floated-preset-card')}
-        onClick={handleGoUp}
-      >
+      <div ref={floatPresetRef} className={clsx('floated-preset-card')} onClick={handleGoUp}>
         {selectedLayout}
       </div>
       <div className="searchby-presets-container">
-        {layouts?.map(item => (
+        {layouts?.map((item) => (
           <PresetCardItemCompact
             key={`preset-card-compact-${item.name}`}
             title={item.name}

@@ -9,7 +9,7 @@ import * as React from 'react';
 import { act } from 'react-dom/test-utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { MemoryRouter,Route } from 'react-router-dom';
+import { MemoryRouter, Route } from 'react-router-dom';
 
 import {
   getNotificationContextValue,
@@ -35,340 +35,289 @@ describe('ProjectPage', () => {
 
   it('does not include Jira tab when not connected to the VPN due to Jira being inaccessible', async () => {
     server.use(
-      rest.get(
-        'https://localhost:3000/projects/orgLabel/projectLabel',
-        (req, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json({
-              '@context': [
-                'https://bluebrain.github.io/nexus/contexts/projects.json',
-                'https://bluebrain.github.io/nexus/contexts/metadata.json',
-              ],
-              '@id':
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-              '@type': 'Project',
-              apiMappings: [],
-              base:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/orgLabel/projectLabel/_/',
-              description: '',
-              vocab:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/orgLabel/projectLabel/',
-              _constrainedBy:
-                'https://bluebrain.github.io/nexus/schemas/projects.json',
-              _createdAt: '2022-07-12T08:17:21.647Z',
-              _createdBy:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-              _deprecated: false,
-              _effectiveApiMappings: [
-                {
-                  _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
-                  _prefix: 'nxv',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                  _prefix: 'documents',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                  _prefix: 'defaultResolver',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-                  _prefix: 'schema',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                  _prefix: 'resource',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                  _prefix: '_',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _prefix: 'view',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/storages.json',
-                  _prefix: 'storage',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/files.json',
-                  _prefix: 'file',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                  _prefix: 'resolver',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                  _prefix: 'graph',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/archives.json',
-                  _prefix: 'archive',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                  _prefix: 'defaultStorage',
-                },
-              ],
-              _label: 'projectLabel',
-              _markedForDeletion: false,
-              _organizationLabel: 'orgLabel',
-              _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
-              _rev: 1,
-              _self:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-              _updatedAt: '2022-07-12T08:17:21.647Z',
-              _updatedBy:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-              _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
-            })
-          );
-        }
-      ),
-      rest.get(
-        'https://localhost:3000/resources/orgLabel/projectLabel',
-        (req, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json({
-              '@context': [
-                'https://bluebrain.github.io/nexus/contexts/metadata.json',
-                'https://bluebrain.github.io/nexus/contexts/search.json',
-                'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-              ],
-              _total: 6,
-              _results: [
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                  '@type': ['Resolver', 'InProject'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                  _createdAt: '2022-07-12T08:17:22.234Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver',
-                  _updatedAt: '2022-07-12T08:17:22.234Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/searchView',
-                  '@type': ['View', 'CompositeView'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:22.183Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView',
-                  _updatedAt: '2022-07-12T08:17:22.183Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '9dcda138-7554-441e-99d5-8de200ed6789',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                  '@type': ['Storage', 'DiskStorage'],
-                  _algorithm: 'SHA-256',
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/storages.json',
-                  _createdAt: '2022-07-12T08:17:22.160Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage',
-                  _updatedAt: '2022-07-12T08:17:22.160Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                  '@type': ['ElasticSearchView', 'View'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:22.125Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents',
-                  _updatedAt: '2022-07-12T08:17:22.125Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '49e1b742-19e3-4e1f-a608-380cb1ba97ed',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                  '@type': ['View', 'SparqlView'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:21.811Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph',
-                  _updatedAt: '2022-07-12T08:17:21.811Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '65e279a3-9c71-4f5e-91b8-95ebbaf992af',
-                },
-                {
-                  '@id':
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  '@type': 'Project',
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/projects.json',
-                  _createdAt: '2022-07-12T08:17:21.647Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-                  _deprecated: false,
-                  _effectiveApiMappings: [
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                      _prefix: 'resource',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                      _prefix: 'documents',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-                      _prefix: 'schema',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                      _prefix: 'defaultResolver',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                      _prefix: 'defaultStorage',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/',
-                      _prefix: 'nxv',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/archives.json',
-                      _prefix: 'archive',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/views.json',
-                      _prefix: 'view',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                      _prefix: 'resolver',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/files.json',
-                      _prefix: 'file',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                      _prefix: 'graph',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/storages.json',
-                      _prefix: 'storage',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                      _prefix: '_',
-                    },
-                  ],
-                  _label: 'projectLabel',
-                  _markedForDeletion: false,
-                  _organizationLabel: 'orgLabel',
-                  _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _updatedAt: '2022-07-12T08:17:21.647Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-                  _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
-                },
-              ],
-            })
-          );
-        }
-      ),
+      rest.get('https://localhost:3000/projects/orgLabel/projectLabel', (req, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json({
+            '@context': [
+              'https://bluebrain.github.io/nexus/contexts/projects.json',
+              'https://bluebrain.github.io/nexus/contexts/metadata.json',
+            ],
+            '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+            '@type': 'Project',
+            apiMappings: [],
+            base: 'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/orgLabel/projectLabel/_/',
+            description: '',
+            vocab: 'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/orgLabel/projectLabel/',
+            _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/projects.json',
+            _createdAt: '2022-07-12T08:17:21.647Z',
+            _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+            _deprecated: false,
+            _effectiveApiMappings: [
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+                _prefix: 'nxv',
+              },
+              {
+                _namespace:
+                  'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                _prefix: 'documents',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                _prefix: 'defaultResolver',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+                _prefix: 'schema',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                _prefix: 'resource',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                _prefix: '_',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _prefix: 'view',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                _prefix: 'storage',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+                _prefix: 'file',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                _prefix: 'resolver',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                _prefix: 'graph',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/archives.json',
+                _prefix: 'archive',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                _prefix: 'defaultStorage',
+              },
+            ],
+            _label: 'projectLabel',
+            _markedForDeletion: false,
+            _organizationLabel: 'orgLabel',
+            _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
+            _rev: 1,
+            _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+            _updatedAt: '2022-07-12T08:17:21.647Z',
+            _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+            _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
+          })
+        );
+      }),
+      rest.get('https://localhost:3000/resources/orgLabel/projectLabel', (req, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json({
+            '@context': [
+              'https://bluebrain.github.io/nexus/contexts/metadata.json',
+              'https://bluebrain.github.io/nexus/contexts/search.json',
+              'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+            ],
+            _total: 6,
+            _results: [
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                '@type': ['Resolver', 'InProject'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                _createdAt: '2022-07-12T08:17:22.234Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver',
+                _updatedAt: '2022-07-12T08:17:22.234Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/searchView',
+                '@type': ['View', 'CompositeView'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:22.183Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView',
+                _updatedAt: '2022-07-12T08:17:22.183Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '9dcda138-7554-441e-99d5-8de200ed6789',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                '@type': ['Storage', 'DiskStorage'],
+                _algorithm: 'SHA-256',
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                _createdAt: '2022-07-12T08:17:22.160Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage',
+                _updatedAt: '2022-07-12T08:17:22.160Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                '@type': ['ElasticSearchView', 'View'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:22.125Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents',
+                _updatedAt: '2022-07-12T08:17:22.125Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '49e1b742-19e3-4e1f-a608-380cb1ba97ed',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                '@type': ['View', 'SparqlView'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:21.811Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph',
+                _updatedAt: '2022-07-12T08:17:21.811Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '65e279a3-9c71-4f5e-91b8-95ebbaf992af',
+              },
+              {
+                '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                '@type': 'Project',
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/projects.json',
+                _createdAt: '2022-07-12T08:17:21.647Z',
+                _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+                _deprecated: false,
+                _effectiveApiMappings: [
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                    _prefix: 'resource',
+                  },
+                  {
+                    _namespace:
+                      'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                    _prefix: 'documents',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+                    _prefix: 'schema',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                    _prefix: 'defaultResolver',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                    _prefix: 'defaultStorage',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+                    _prefix: 'nxv',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/archives.json',
+                    _prefix: 'archive',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                    _prefix: 'view',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                    _prefix: 'resolver',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+                    _prefix: 'file',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                    _prefix: 'graph',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                    _prefix: 'storage',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                    _prefix: '_',
+                  },
+                ],
+                _label: 'projectLabel',
+                _markedForDeletion: false,
+                _organizationLabel: 'orgLabel',
+                _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
+                _rev: 1,
+                _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _updatedAt: '2022-07-12T08:17:21.647Z',
+                _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+                _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
+              },
+            ],
+          })
+        );
+      }),
       rest.get(
         'https://localhost:3000/views/orgLabel/projectLabel/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultElasticSearchIndex/statistics',
         (req, res, ctx) => {
@@ -376,8 +325,7 @@ describe('ProjectPage', () => {
             // Respond with a 200 status code
             ctx.status(200),
             ctx.json({
-              '@context':
-                'https://bluebrain.github.io/nexus/contexts/statistics.json',
+              '@context': 'https://bluebrain.github.io/nexus/contexts/statistics.json',
               '@type': 'ViewStatistics',
               delayInSeconds: 0,
               discardedEvents: 0,
@@ -397,8 +345,7 @@ describe('ProjectPage', () => {
           // Respond with a 200 status code
           ctx.status(200),
           ctx.json({
-            '@context':
-              'https://bluebrain.github.io/nexus/contexts/version.json',
+            '@context': 'https://bluebrain.github.io/nexus/contexts/version.json',
             delta: '1.8.0-M2',
             dependencies: {
               blazegraph: '2.1.6-SNAPSHOT',
@@ -476,340 +423,289 @@ describe('ProjectPage', () => {
 
   it('includes the Jira tab when connected to the VPN and Jira is accessible', async () => {
     server.use(
-      rest.get(
-        'https://localhost:3000/projects/orgLabel/projectLabel',
-        (req, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json({
-              '@context': [
-                'https://bluebrain.github.io/nexus/contexts/projects.json',
-                'https://bluebrain.github.io/nexus/contexts/metadata.json',
-              ],
-              '@id':
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-              '@type': 'Project',
-              apiMappings: [],
-              base:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/orgLabel/projectLabel/_/',
-              description: '',
-              vocab:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/orgLabel/projectLabel/',
-              _constrainedBy:
-                'https://bluebrain.github.io/nexus/schemas/projects.json',
-              _createdAt: '2022-07-12T08:17:21.647Z',
-              _createdBy:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-              _deprecated: false,
-              _effectiveApiMappings: [
-                {
-                  _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
-                  _prefix: 'nxv',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                  _prefix: 'documents',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                  _prefix: 'defaultResolver',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-                  _prefix: 'schema',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                  _prefix: 'resource',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                  _prefix: '_',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _prefix: 'view',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/storages.json',
-                  _prefix: 'storage',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/files.json',
-                  _prefix: 'file',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                  _prefix: 'resolver',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                  _prefix: 'graph',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/schemas/archives.json',
-                  _prefix: 'archive',
-                },
-                {
-                  _namespace:
-                    'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                  _prefix: 'defaultStorage',
-                },
-              ],
-              _label: 'projectLabel',
-              _markedForDeletion: false,
-              _organizationLabel: 'orgLabel',
-              _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
-              _rev: 1,
-              _self:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-              _updatedAt: '2022-07-12T08:17:21.647Z',
-              _updatedBy:
-                'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-              _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
-            })
-          );
-        }
-      ),
-      rest.get(
-        'https://localhost:3000/resources/orgLabel/projectLabel',
-        (req, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json({
-              '@context': [
-                'https://bluebrain.github.io/nexus/contexts/metadata.json',
-                'https://bluebrain.github.io/nexus/contexts/search.json',
-                'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-              ],
-              _total: 6,
-              _results: [
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                  '@type': ['Resolver', 'InProject'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                  _createdAt: '2022-07-12T08:17:22.234Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver',
-                  _updatedAt: '2022-07-12T08:17:22.234Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/searchView',
-                  '@type': ['View', 'CompositeView'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:22.183Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView',
-                  _updatedAt: '2022-07-12T08:17:22.183Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '9dcda138-7554-441e-99d5-8de200ed6789',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                  '@type': ['Storage', 'DiskStorage'],
-                  _algorithm: 'SHA-256',
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/storages.json',
-                  _createdAt: '2022-07-12T08:17:22.160Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage',
-                  _updatedAt: '2022-07-12T08:17:22.160Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                  '@type': ['ElasticSearchView', 'View'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:22.125Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents',
-                  _updatedAt: '2022-07-12T08:17:22.125Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '49e1b742-19e3-4e1f-a608-380cb1ba97ed',
-                },
-                {
-                  '@id':
-                    'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                  '@type': ['View', 'SparqlView'],
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/views.json',
-                  _createdAt: '2022-07-12T08:17:21.811Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _deprecated: false,
-                  _incoming:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/incoming',
-                  _outgoing:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/outgoing',
-                  _project:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph',
-                  _updatedAt: '2022-07-12T08:17:21.811Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
-                  _uuid: '65e279a3-9c71-4f5e-91b8-95ebbaf992af',
-                },
-                {
-                  '@id':
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  '@type': 'Project',
-                  _constrainedBy:
-                    'https://bluebrain.github.io/nexus/schemas/projects.json',
-                  _createdAt: '2022-07-12T08:17:21.647Z',
-                  _createdBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-                  _deprecated: false,
-                  _effectiveApiMappings: [
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                      _prefix: 'resource',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-                      _prefix: 'documents',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-                      _prefix: 'schema',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-                      _prefix: 'defaultResolver',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-                      _prefix: 'defaultStorage',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/',
-                      _prefix: 'nxv',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/archives.json',
-                      _prefix: 'archive',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/views.json',
-                      _prefix: 'view',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-                      _prefix: 'resolver',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/files.json',
-                      _prefix: 'file',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-                      _prefix: 'graph',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/storages.json',
-                      _prefix: 'storage',
-                    },
-                    {
-                      _namespace:
-                        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-                      _prefix: '_',
-                    },
-                  ],
-                  _label: 'projectLabel',
-                  _markedForDeletion: false,
-                  _organizationLabel: 'orgLabel',
-                  _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
-                  _rev: 1,
-                  _self:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
-                  _updatedAt: '2022-07-12T08:17:21.647Z',
-                  _updatedBy:
-                    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
-                  _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
-                },
-              ],
-            })
-          );
-        }
-      ),
+      rest.get('https://localhost:3000/projects/orgLabel/projectLabel', (req, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json({
+            '@context': [
+              'https://bluebrain.github.io/nexus/contexts/projects.json',
+              'https://bluebrain.github.io/nexus/contexts/metadata.json',
+            ],
+            '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+            '@type': 'Project',
+            apiMappings: [],
+            base: 'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/orgLabel/projectLabel/_/',
+            description: '',
+            vocab: 'https://staging.nise.bbp.epfl.ch/nexus/v1/vocabs/orgLabel/projectLabel/',
+            _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/projects.json',
+            _createdAt: '2022-07-12T08:17:21.647Z',
+            _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+            _deprecated: false,
+            _effectiveApiMappings: [
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+                _prefix: 'nxv',
+              },
+              {
+                _namespace:
+                  'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                _prefix: 'documents',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                _prefix: 'defaultResolver',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+                _prefix: 'schema',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                _prefix: 'resource',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                _prefix: '_',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _prefix: 'view',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                _prefix: 'storage',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+                _prefix: 'file',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                _prefix: 'resolver',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                _prefix: 'graph',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/schemas/archives.json',
+                _prefix: 'archive',
+              },
+              {
+                _namespace: 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                _prefix: 'defaultStorage',
+              },
+            ],
+            _label: 'projectLabel',
+            _markedForDeletion: false,
+            _organizationLabel: 'orgLabel',
+            _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
+            _rev: 1,
+            _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+            _updatedAt: '2022-07-12T08:17:21.647Z',
+            _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+            _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
+          })
+        );
+      }),
+      rest.get('https://localhost:3000/resources/orgLabel/projectLabel', (req, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json({
+            '@context': [
+              'https://bluebrain.github.io/nexus/contexts/metadata.json',
+              'https://bluebrain.github.io/nexus/contexts/search.json',
+              'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+            ],
+            _total: 6,
+            _results: [
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                '@type': ['Resolver', 'InProject'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                _createdAt: '2022-07-12T08:17:22.234Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/resolvers/orgLabel/projectLabel/defaultResolver',
+                _updatedAt: '2022-07-12T08:17:22.234Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/searchView',
+                '@type': ['View', 'CompositeView'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:22.183Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/nxv:searchView',
+                _updatedAt: '2022-07-12T08:17:22.183Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '9dcda138-7554-441e-99d5-8de200ed6789',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                '@type': ['Storage', 'DiskStorage'],
+                _algorithm: 'SHA-256',
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                _createdAt: '2022-07-12T08:17:22.160Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/storages/orgLabel/projectLabel/defaultStorage',
+                _updatedAt: '2022-07-12T08:17:22.160Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                '@type': ['ElasticSearchView', 'View'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:22.125Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/documents',
+                _updatedAt: '2022-07-12T08:17:22.125Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '49e1b742-19e3-4e1f-a608-380cb1ba97ed',
+              },
+              {
+                '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                '@type': ['View', 'SparqlView'],
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                _createdAt: '2022-07-12T08:17:21.811Z',
+                _createdBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _deprecated: false,
+                _incoming:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/incoming',
+                _outgoing:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph/outgoing',
+                _project:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _rev: 1,
+                _self:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/views/orgLabel/projectLabel/graph',
+                _updatedAt: '2022-07-12T08:17:21.811Z',
+                _updatedBy:
+                  'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+                _uuid: '65e279a3-9c71-4f5e-91b8-95ebbaf992af',
+              },
+              {
+                '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                '@type': 'Project',
+                _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/projects.json',
+                _createdAt: '2022-07-12T08:17:21.647Z',
+                _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+                _deprecated: false,
+                _effectiveApiMappings: [
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                    _prefix: 'resource',
+                  },
+                  {
+                    _namespace:
+                      'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+                    _prefix: 'documents',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+                    _prefix: 'schema',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+                    _prefix: 'defaultResolver',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+                    _prefix: 'defaultStorage',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
+                    _prefix: 'nxv',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/archives.json',
+                    _prefix: 'archive',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
+                    _prefix: 'view',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/resolvers.json',
+                    _prefix: 'resolver',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
+                    _prefix: 'file',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+                    _prefix: 'graph',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/storages.json',
+                    _prefix: 'storage',
+                  },
+                  {
+                    _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+                    _prefix: '_',
+                  },
+                ],
+                _label: 'projectLabel',
+                _markedForDeletion: false,
+                _organizationLabel: 'orgLabel',
+                _organizationUuid: '469d168c-6d17-4020-bbad-0ccef5e1b336',
+                _rev: 1,
+                _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/orgLabel/projectLabel',
+                _updatedAt: '2022-07-12T08:17:21.647Z',
+                _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/wells',
+                _uuid: '26b3441e-6e88-44d7-9c33-e9db7f3a4629',
+              },
+            ],
+          })
+        );
+      }),
       rest.get(
         'https://localhost:3000/views/orgLabel/projectLabel/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultElasticSearchIndex/statistics',
         (req, res, ctx) => {
@@ -817,8 +713,7 @@ describe('ProjectPage', () => {
             // Respond with a 200 status code
             ctx.status(200),
             ctx.json({
-              '@context':
-                'https://bluebrain.github.io/nexus/contexts/statistics.json',
+              '@context': 'https://bluebrain.github.io/nexus/contexts/statistics.json',
               '@type': 'ViewStatistics',
               delayInSeconds: 0,
               discardedEvents: 0,
@@ -838,8 +733,7 @@ describe('ProjectPage', () => {
           // Respond with a 200 status code
           ctx.status(200),
           ctx.json({
-            '@context':
-              'https://bluebrain.github.io/nexus/contexts/version.json',
+            '@context': 'https://bluebrain.github.io/nexus/contexts/version.json',
             delta: '1.8.0-M2',
             dependencies: {
               blazegraph: '2.1.6-SNAPSHOT',

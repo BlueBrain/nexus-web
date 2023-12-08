@@ -78,16 +78,7 @@ export const parseURL = (nexusUrl: string): ParsedNexusUrl => {
     };
   }
 
-  const [
-    url,
-    deployment,
-    apiVersion,
-    entityType,
-    org,
-    project,
-    schema,
-    id,
-  ] = matches;
+  const [url, deployment, apiVersion, entityType, org, project, schema, id] = matches;
 
   return {
     url,

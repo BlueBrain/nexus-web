@@ -44,9 +44,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const dispatch = useDispatch();
   const location = useLocation();
   const notification = useNotification();
-  const { openCreationPanel } = useSelector(
-    (state: RootState) => state.uiSettings
-  );
+  const { openCreationPanel } = useSelector((state: RootState) => state.uiSettings);
   const notShowDefaultHeader =
     (!token && location.pathname === '/') || location.pathname === '/login';
   const copyTokenCmd = () => {
@@ -167,7 +165,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         {
           key: 'logout',
           className: 'menu-item-logout',
-          onClick: event => {
+          onClick: (event) => {
             if (handleLogout) {
               handleLogout(event);
             }

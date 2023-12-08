@@ -1,9 +1,6 @@
 import pluralize from 'pluralize';
 
-import {
-  THeaderFilterProps,
-  THeaderTitleProps,
-} from '../../../canvas/MyData/types';
+import { THeaderFilterProps, THeaderTitleProps } from '../../../canvas/MyData/types';
 import TypeSelector from '../../TypeSelector/TypeSelector';
 import DateFieldSelector from './DateFieldSelector';
 import DateSelector from './DateSelector';
@@ -21,11 +18,7 @@ const MyDataHeaderTitle = ({
   return (
     <div className="my-data-header-title">
       <div className="left">
-        <PageTitle
-          text="My data"
-          label={pluralize('Dataset', Number(total))}
-          total={total}
-        />
+        <PageTitle text="My data" label={pluralize('Dataset', Number(total))} total={total} />
         <IssuerSelector {...{ issuer, setFilterOptions }} />
       </div>
       <div className="right">
@@ -58,9 +51,7 @@ const MyDataHeaderFilters = ({
             container: { width: '300px' },
           },
         }}
-        popupContainer={() =>
-          document.getElementById('my-data-header-actions')!
-        }
+        popupContainer={() => document.getElementById('my-data-header-actions')!}
       />
     </div>
   );

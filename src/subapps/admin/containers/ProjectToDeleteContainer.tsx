@@ -1,4 +1,4 @@
-import { ProjectDeletionConfig,ProjectStatistics } from '@bbp/nexus-sdk/es';
+import { ProjectDeletionConfig, ProjectStatistics } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 
@@ -8,9 +8,7 @@ const ProjectToDeleteContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ orgLabel, projectLabel }) => {
-  const [deletionConfig, setDeletionConfig] = React.useState<
-    ProjectDeletionConfig
-  >();
+  const [deletionConfig, setDeletionConfig] = React.useState<ProjectDeletionConfig>();
   const [lastUpdated, setLastUpdated] = React.useState<string>();
   const nexus = useNexusContext();
 
@@ -24,7 +22,7 @@ const ProjectToDeleteContainer: React.FC<{
       .then((response: ProjectStatistics) => {
         setLastUpdated(response.lastProcessedEventDateTime);
       })
-      .catch(error => {
+      .catch((error) => {
         // fail silently
       });
   };
@@ -34,7 +32,7 @@ const ProjectToDeleteContainer: React.FC<{
       .then((response: ProjectDeletionConfig) => {
         setDeletionConfig(response);
       })
-      .catch(error => {
+      .catch((error) => {
         // fail silently
       });
   };
@@ -44,7 +42,7 @@ const ProjectToDeleteContainer: React.FC<{
   const isIncluded = () => {
     let included = false;
 
-    deletionConfig?._includedProjects.forEach(includedProject => {
+    deletionConfig?._includedProjects.forEach((includedProject) => {
       if (new RegExp(includedProject).test(projectName)) included = true;
     });
 
@@ -54,7 +52,7 @@ const ProjectToDeleteContainer: React.FC<{
   const isExcluded = () => {
     let excluded = false;
 
-    deletionConfig?._excludedProjects.forEach(excludedProject => {
+    deletionConfig?._excludedProjects.forEach((excludedProject) => {
       if (new RegExp(excludedProject).test(projectName)) excluded = true;
     });
 

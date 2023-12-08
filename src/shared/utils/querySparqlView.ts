@@ -29,9 +29,7 @@ export const sparqlQueryExecutor = async (
   hasProjection: boolean,
   projectionId?: string
 ) => {
-  const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(
-    view._self
-  );
+  const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(view._self);
   const result: SparqlViewQueryResponse = hasProjection
     ? await nexus.View.compositeSparqlQuery(
         orgLabel,
@@ -70,9 +68,7 @@ export const sparqlQueryExecutor = async (
       const properties = tempHeaderProperties.reduce(
         (prev, curr) => ({
           ...prev,
-          [curr.dataIndex]:
-            (binding[curr.dataIndex] && binding[curr.dataIndex].value) ||
-            undefined,
+          [curr.dataIndex]: (binding[curr.dataIndex] && binding[curr.dataIndex].value) || undefined,
         }),
         {}
       );
@@ -91,10 +87,6 @@ export const sparqlQueryExecutor = async (
   };
 };
 
-export const querySparqlView = ({
-  nexus,
-  dataQuery,
-  view,
-}: QuerySparqlViewProps) => async () => {
+export const querySparqlView = ({ nexus, dataQuery, view }: QuerySparqlViewProps) => async () => {
   return await sparqlQueryExecutor(nexus, dataQuery, view, false);
 };

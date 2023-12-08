@@ -1,6 +1,6 @@
 import { InboxOutlined } from '@ant-design/icons';
 import { NexusFile, Storage } from '@bbp/nexus-sdk/es';
-import { message, Select, Typography,Upload } from 'antd';
+import { message, Select, Typography, Upload } from 'antd';
 import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import * as React from 'react';
 
@@ -55,9 +55,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
   showStorageMenu,
 }) => {
   const [directoryMode, setDirectoryMode] = React.useState(false);
-  const [storageId, setStorageId] = React.useState<string | undefined>(
-    undefined
-  );
+  const [storageId, setStorageId] = React.useState<string | undefined>(undefined);
   const [fileIndex, setFileIndex] = React.useState<{
     [uid: string]: NexusFile;
   }>({});
@@ -112,11 +110,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
 
   return (
     <div>
-      <Dragger
-        {...draggerProps}
-        directory={directoryMode}
-        data-label="report-upload-file"
-      >
+      <Dragger {...draggerProps} directory={directoryMode} data-label="report-upload-file">
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
@@ -128,9 +122,7 @@ const FileUploader: React.FunctionComponent<FileUploaderProps> = ({
         <br />
         <Text underline>browse your files</Text>
       </Dragger>
-      <div
-        style={{ display: 'flex', flexDirection: 'column', margin: '0.5em 0' }}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', margin: '0.5em 0' }}>
         {/* <Switch
           checkedChildren={
             <div>

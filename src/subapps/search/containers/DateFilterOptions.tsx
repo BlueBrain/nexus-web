@@ -1,7 +1,7 @@
 import './FilterOptions.scss';
 
 import { NexusClient } from '@bbp/nexus-sdk/es';
-import { Checkbox, DatePicker,Form } from 'antd';
+import { Checkbox, DatePicker, Form } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 
@@ -33,7 +33,7 @@ const DateFilterOptions: React.FC<{
   query: string;
 }> = ({ filter, field, onFinish }) => {
   const firstRender = React.useRef<boolean>(true);
-  const fieldFilter = filter.find(f => {
+  const fieldFilter = filter.find((f) => {
     return f.filterTerm === field.name;
   });
   const [dateStart, setDateStart] = React.useState<string>(
@@ -71,7 +71,7 @@ const DateFilterOptions: React.FC<{
     <Form form={form} className="field-filter-menu">
       <Form.Item>
         <Checkbox
-          onChange={e => {
+          onChange={(e) => {
             setIsToday(e.target.checked);
           }}
         >
@@ -80,10 +80,7 @@ const DateFilterOptions: React.FC<{
       </Form.Item>
       {isToday ? null : (
         <DatePicker.RangePicker
-          defaultValue={[
-            dateStart ? moment(dateStart) : null,
-            dateEnd ? moment(dateEnd) : null,
-          ]}
+          defaultValue={[dateStart ? moment(dateStart) : null, dateEnd ? moment(dateEnd) : null]}
           allowEmpty={[true, true]}
           onChange={(date, dateString) => {
             setDateStart(dateString[0]);

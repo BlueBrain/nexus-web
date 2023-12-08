@@ -1,12 +1,12 @@
 import './ResourceCard.scss';
 
-import { CheckOutlined, CopyOutlined,DownOutlined } from '@ant-design/icons';
+import { CheckOutlined, CopyOutlined, DownOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Button, Card, Divider,Tooltip } from 'antd';
+import { Button, Card, Divider, Tooltip } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 
-import { getResourceLabel,getUsername } from '../../utils';
+import { getResourceLabel, getUsername } from '../../utils';
 import Copy from '../Copy';
 import FriendlyTimeAgo from '../FriendlyDate';
 import SchemaLink from '../SchemaLink';

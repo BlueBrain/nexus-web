@@ -1,13 +1,7 @@
 import { NexusClient } from '@bbp/nexus-sdk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
-import {
-  applyMiddleware,
-  combineReducers,
-  compose,
-  createStore,
-  Store,
-} from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore, Store } from 'redux';
 import { createLogger } from 'redux-logger';
 import { reducer as oidcReducer } from 'redux-oidc';
 import thunk, { ThunkAction as ReduxThunkAction } from 'redux-thunk';

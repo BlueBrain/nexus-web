@@ -9,11 +9,7 @@ type JIRAPluginContainerProps = {
   orgLabel: string;
 };
 
-const JIRAPluginContainer = ({
-  resource,
-  projectLabel,
-  orgLabel,
-}: JIRAPluginContainerProps) => {
+const JIRAPluginContainer = ({ resource, projectLabel, orgLabel }: JIRAPluginContainerProps) => {
   const {
     projects,
     linkedIssues,
@@ -30,7 +26,7 @@ const JIRAPluginContainer = ({
     orgLabel,
     resource,
   });
-  const tableIssues = linkedIssues?.map(issue => ({
+  const tableIssues = linkedIssues?.map((issue) => ({
     key: issue.key,
     summary: issue.summary,
     description: issue.description,
@@ -43,7 +39,7 @@ const JIRAPluginContainer = ({
   return !isJiraConnected ? (
     <AuthorizeJiraUI
       jiraAuthUrl={jiraAuthUrl}
-      onSubmitVerificationCode={verificationCode => {
+      onSubmitVerificationCode={(verificationCode) => {
         connectJira(verificationCode);
       }}
     />
@@ -52,11 +48,9 @@ const JIRAPluginContainer = ({
       displayType="resource"
       projects={projects}
       issues={tableIssues}
-      onCreateIssue={(project, summary, description) =>
-        createIssue(project, summary, description)
-      }
-      onLinkIssue={issueUrl => linkIssue(issueUrl)}
-      onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
+      onCreateIssue={(project, summary, description) => createIssue(project, summary, description)}
+      onLinkIssue={(issueUrl) => linkIssue(issueUrl)}
+      onUnlinkIssue={(issueKey) => unlinkIssue(issueKey)}
       searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
       isLoading={isLoading}
     />

@@ -1,9 +1,9 @@
 import './styles.scss';
 
 import { clsx } from 'clsx';
-import React, { CSSProperties,useEffect, useRef } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
-import { useHistory,useLocation } from 'react-router';
+import React, { CSSProperties, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
 
 import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
 import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
@@ -29,16 +29,9 @@ const DataExplorerGraphFlow = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const digestFirstRender = useRef<boolean>(false);
-  const { current, rightNodes, leftNodes } = useSelector(
-    (state: RootState) => state.dataExplorer
-  );
+  const { current, rightNodes, leftNodes } = useSelector((state: RootState) => state.dataExplorer);
 
-  const {
-    leftShrinked,
-    rightShrinked,
-    leftLinks,
-    rightLinks,
-  } = useNavigationStackManager();
+  const { leftShrinked, rightShrinked, leftLinks, rightLinks } = useNavigationStackManager();
 
   useEffect(() => {
     if (!digestFirstRender.current) {
@@ -51,7 +44,7 @@ const DataExplorerGraphFlow = () => {
   }, [location.search, digestFirstRender.current]);
 
   useEffect(() => {
-    const unlisten = history.listen(location => {
+    const unlisten = history.listen((location) => {
       if (!location.pathname.startsWith(DATA_EXPLORER_GRAPH_FLOW_PATH)) {
         dispatch(ResetDataExplorerGraphFlow({ initialState: null }));
         sessionStorage.removeItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
@@ -86,9 +79,7 @@ const DataExplorerGraphFlow = () => {
         'data-explorer-resolver',
         leftLinks.length && 'left-existed',
         rightLinks.length && 'right-existed',
-        !leftNodes.links.length && !rightNodes.links.length
-          ? 'no-links'
-          : 'with-links'
+        !leftNodes.links.length && !rightNodes.links.length ? 'no-links' : 'with-links'
       )}
       style={
         {

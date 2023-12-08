@@ -13,10 +13,7 @@ import { AnyAction, Store } from 'redux';
 
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import { configureStore } from '../../../store';
-import {
-  ResetDataExplorerGraphFlow,
-  TDataExplorerState,
-} from '../../store/reducers/data-explorer';
+import { ResetDataExplorerGraphFlow, TDataExplorerState } from '../../store/reducers/data-explorer';
 import NavigationArrows from './NavigationArrows';
 import NavigationStack from './NavigationStack';
 
@@ -27,12 +24,7 @@ const initialDataExplorerState: TDataExplorerState = {
       'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.417881.3',
     title: 'Allen Institute for Brain Science',
     types: ['Agent', 'Organization'],
-    resource: [
-      'bbp',
-      'atlas',
-      'https://www.grid.ac/institutes/grid.417881.3',
-      1,
-    ],
+    resource: ['bbp', 'atlas', 'https://www.grid.ac/institutes/grid.417881.3', 1],
   },
   leftNodes: {
     links: [
@@ -54,12 +46,7 @@ const initialDataExplorerState: TDataExplorerState = {
           'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
         title: 'Ecole Polytechnique Federale de Lausanne',
         types: ['Organization', 'prov#Agent'],
-        resource: [
-          'bbp',
-          'atlas',
-          'https://www.grid.ac/institutes/grid.5333.6',
-          1,
-        ],
+        resource: ['bbp', 'atlas', 'https://www.grid.ac/institutes/grid.5333.6', 1],
       },
     ],
     shrinked: false,
@@ -72,12 +59,7 @@ const initialDataExplorerState: TDataExplorerState = {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       },
       {
         isDownloadable: false,
@@ -98,12 +80,7 @@ const initialDataExplorerState: TDataExplorerState = {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       },
     ],
     shrinked: false,
@@ -117,9 +94,7 @@ const initialDataExplorerState: TDataExplorerState = {
 };
 
 const getButtonElement = (container: HTMLElement, side: 'back' | 'forward') => {
-  return container.querySelector(
-    `.navigation-arrow-btn[aria-label="${side}-arrow"]`
-  );
+  return container.querySelector(`.navigation-arrow-btn[aria-label="${side}-arrow"]`);
 };
 
 describe('NavigationStack', () => {
@@ -158,9 +133,7 @@ describe('NavigationStack', () => {
     rerender = component.rerender;
     user = userEvent.setup();
 
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     rerender(app);
   });
 
@@ -195,10 +168,7 @@ describe('NavigationStack', () => {
     }
     expect(store.getState().dataExplorer.leftNodes.links.length).toEqual(5);
     expect(store.getState().dataExplorer.rightNodes.links.length).toEqual(0);
-    const forwardArrowAfterFullNavigation = getButtonElement(
-      container,
-      'forward'
-    );
+    const forwardArrowAfterFullNavigation = getButtonElement(container, 'forward');
     expect(forwardArrowAfterFullNavigation).toBeNull();
   });
   it('should return to /my-data when there is no more back navigation', async () => {

@@ -57,7 +57,7 @@ export default ({
         preview={
           !previewDisabled && {
             visible: isVisible,
-            onVisibleChange: visible => {
+            onVisibleChange: (visible) => {
               setIsVisible(visible);
             },
           }

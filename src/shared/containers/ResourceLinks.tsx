@@ -37,9 +37,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
   const apiBase = splits.slice(0, splits.length - 1).join('/');
 
   const isLinkRevisionSpecific = (link: Resource) =>
-    !(link as Resource)._self &&
-    link['@id'].startsWith(apiBase) &&
-    link['@id'].includes('rev=');
+    !(link as Resource)._self && link['@id'].startsWith(apiBase) && link['@id'].includes('rev=');
 
   /**
    * Delta doesn't fully support links to specific revisions of resources.
@@ -61,13 +59,13 @@ const ResourceLinksContainer: React.FunctionComponent<{
   const augmentLinks = async (resourceLinks: ResourceLink[]) => {
     return (
       await Promise.all(
-        resourceLinks.map(link => {
+        resourceLinks.map((link) => {
           if (isLinkRevisionSpecific(link as Resource)) {
             return nexus.httpGet({
               path: link['@id'],
             });
           }
-          return new Promise(resolve => resolve(link));
+          return new Promise((resolve) => resolve(link));
         })
       )
     ).map((link, ix) => ({
@@ -115,7 +113,7 @@ const ResourceLinksContainer: React.FunctionComponent<{
 
   // Reset everything when self prop changes
   useAsyncEffect(
-    async isMounted => {
+    async (isMounted) => {
       if (!isMounted()) {
         return;
       }

@@ -1,12 +1,5 @@
-import {
-  getUniquePathsForProperties,
-  GraphAnalyticsProperty,
-} from './DataExplorerUtils';
-import {
-  checkPathExistence,
-  doesResourceContain,
-  getAllPaths,
-} from './PredicateSelector';
+import { getUniquePathsForProperties, GraphAnalyticsProperty } from './DataExplorerUtils';
+import { checkPathExistence, doesResourceContain, getAllPaths } from './PredicateSelector';
 
 describe('DataExplorerSpec-Utils', () => {
   it('shows all paths for resources', () => {
@@ -140,37 +133,17 @@ describe('DataExplorerSpec-Utils', () => {
 
     expect(checkPathExistence(resource, 'distribution')).toEqual(true);
     expect(checkPathExistence(resource, 'distribution.name')).toEqual(true);
-    expect(checkPathExistence(resource, 'distribution.name.sillyname')).toEqual(
-      false
-    );
-    expect(
-      checkPathExistence(resource, 'distribution.name.sillyname.pancake')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(resource, 'distribution.name.label.pancake')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(resource, 'distribution.label.unofficial')
-    ).toEqual(true); // TODO: Add opposite
-    expect(
-      checkPathExistence(resource, 'distribution.label.extended.prefix')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'distribution.label.extended.suffix')
-    ).toEqual(true); // Add opposite
-    expect(
-      checkPathExistence(resource, 'distribution.label.extended.notexisting')
-    ).toEqual(false); // Add opposite
+    expect(checkPathExistence(resource, 'distribution.name.sillyname')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.name.sillyname.pancake')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.name.label.pancake')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.label.unofficial')).toEqual(true); // TODO: Add opposite
+    expect(checkPathExistence(resource, 'distribution.label.extended.prefix')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.label.extended.suffix')).toEqual(true); // Add opposite
+    expect(checkPathExistence(resource, 'distribution.label.extended.notexisting')).toEqual(false); // Add opposite
     expect(checkPathExistence(resource, 'distribution.foo')).toEqual(false);
-    expect(checkPathExistence(resource, 'distribution.emptyArray')).toEqual(
-      false
-    );
-    expect(
-      checkPathExistence(resource, 'distribution.label.emptyArray')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'distribution.label.emptyString')
-    ).toEqual(true); // Add opposite
+    expect(checkPathExistence(resource, 'distribution.emptyArray')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.label.emptyArray')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.label.emptyString')).toEqual(true); // Add opposite
   });
 
   it('check if path exists in resource with nested array', () => {
@@ -188,18 +161,10 @@ describe('DataExplorerSpec-Utils', () => {
         filename: ['filename1'],
       },
     };
-    expect(
-      checkPathExistence(resource, 'distribution.filename', 'exists')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'distribution.filename', 'does-not-exist')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'objPath.filename', 'does-not-exist')
-    ).toEqual(false);
-    expect(checkPathExistence(resource, 'objPath.filename', 'exists')).toEqual(
-      true
-    );
+    expect(checkPathExistence(resource, 'distribution.filename', 'exists')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.filename', 'does-not-exist')).toEqual(true);
+    expect(checkPathExistence(resource, 'objPath.filename', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'objPath.filename', 'exists')).toEqual(true);
   });
 
   it('checks if path is missing in resource', () => {
@@ -242,126 +207,59 @@ describe('DataExplorerSpec-Utils', () => {
       ],
     };
     expect(checkPathExistence(resource, 'bar', 'does-not-exist')).toEqual(true);
-    expect(checkPathExistence(resource, 'nullValue', 'does-not-exist')).toEqual(
-      false
-    );
-    expect(
-      checkPathExistence(resource, 'undefinedValue', 'does-not-exist')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(resource, 'emptyString', 'does-not-exist')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(resource, 'emptyArray', 'does-not-exist')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(resource, 'emptyObject', 'does-not-exist')
-    ).toEqual(false);
+    expect(checkPathExistence(resource, 'nullValue', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'undefinedValue', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'emptyString', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'emptyArray', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'emptyObject', 'does-not-exist')).toEqual(false);
 
-    expect(checkPathExistence(resource, 'foo', 'does-not-exist')).toEqual(
-      false
-    );
-    expect(checkPathExistence(resource, 'foo.xyz', 'does-not-exist')).toEqual(
+    expect(checkPathExistence(resource, 'foo', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'foo.xyz', 'does-not-exist')).toEqual(true);
+    expect(checkPathExistence(resource, 'foo.distribution', 'does-not-exist')).toEqual(true);
+
+    expect(checkPathExistence(resource, 'distribution', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.name', 'does-not-exist')).toEqual(false);
+    expect(checkPathExistence(resource, 'distribution.name.sillyname', 'does-not-exist')).toEqual(
       true
     );
     expect(
-      checkPathExistence(resource, 'foo.distribution', 'does-not-exist')
+      checkPathExistence(resource, 'distribution.name.sillyname.pancake', 'does-not-exist')
     ).toEqual(true);
-
     expect(
-      checkPathExistence(resource, 'distribution', 'does-not-exist')
+      checkPathExistence(resource, 'distribution.name.label.pancake', 'does-not-exist')
+    ).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.label.unofficial', 'does-not-exist')).toEqual(
+      true
+    );
+    expect(checkPathExistence(resource, 'distribution.label.official', 'does-not-exist')).toEqual(
+      false
+    );
+    expect(
+      checkPathExistence(resource, 'distribution.label.extended.prefix', 'does-not-exist')
     ).toEqual(false);
     expect(
-      checkPathExistence(resource, 'distribution.name', 'does-not-exist')
-    ).toEqual(false);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.name.sillyname',
-        'does-not-exist'
-      )
+      checkPathExistence(resource, 'distribution.label.extended.suffix', 'does-not-exist')
     ).toEqual(true);
     expect(
-      checkPathExistence(
-        resource,
-        'distribution.name.sillyname.pancake',
-        'does-not-exist'
-      )
+      checkPathExistence(resource, 'distribution.label.extended.notexisting', 'does-not-exist')
     ).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.foo', 'does-not-exist')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.emptyArray', 'does-not-exist')).toEqual(true);
+    expect(checkPathExistence(resource, 'distribution.label.emptyArray', 'does-not-exist')).toEqual(
+      false
+    );
     expect(
-      checkPathExistence(
-        resource,
-        'distribution.name.label.pancake',
-        'does-not-exist'
-      )
-    ).toEqual(true);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.unofficial',
-        'does-not-exist'
-      )
-    ).toEqual(true);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.official',
-        'does-not-exist'
-      )
-    ).toEqual(false);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.extended.prefix',
-        'does-not-exist'
-      )
-    ).toEqual(false);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.extended.suffix',
-        'does-not-exist'
-      )
-    ).toEqual(true);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.extended.notexisting',
-        'does-not-exist'
-      )
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'distribution.foo', 'does-not-exist')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(resource, 'distribution.emptyArray', 'does-not-exist')
-    ).toEqual(true);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.emptyArray',
-        'does-not-exist'
-      )
-    ).toEqual(false);
-    expect(
-      checkPathExistence(
-        resource,
-        'distribution.label.emptyString',
-        'does-not-exist'
-      )
+      checkPathExistence(resource, 'distribution.label.emptyString', 'does-not-exist')
     ).toEqual(true);
   });
 
   it('checks if array strings can be checked for contains', () => {
     const resource = {
-      '@id':
-        'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+      '@id': 'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
       '@type': ['ElasticSearchView', 'View'],
     };
     expect(doesResourceContain(resource, '@type', '')).toEqual(true);
-    expect(doesResourceContain(resource, '@type', 'ElasticSearchView')).toEqual(
-      true
-    );
+    expect(doesResourceContain(resource, '@type', 'ElasticSearchView')).toEqual(true);
     expect(doesResourceContain(resource, '@type', 'File')).toEqual(false);
   });
 
@@ -401,49 +299,25 @@ describe('DataExplorerSpec-Utils', () => {
     expect(doesResourceContain(resource, 'foo', 'some value')).toEqual(true);
     expect(doesResourceContain(resource, 'foo', '2')).toEqual(false);
     expect(doesResourceContain(resource, 'bar', '42')).toEqual(true);
-    expect(doesResourceContain(resource, 'distribution.name', 'sally')).toEqual(
-      true
+    expect(doesResourceContain(resource, 'distribution.name', 'sally')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.sillyname', 'sally')).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.filename', 'billy')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.label', 'madeUpLabel')).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.official', 'official')).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.label.official', 'official')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.label.unofficial', 'official')).toEqual(
+      false
     );
-    expect(
-      doesResourceContain(resource, 'distribution.sillyname', 'sally')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.filename', 'billy')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(resource, 'distribution.label', 'madeUpLabel')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.official', 'official')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.label.official', 'official')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(resource, 'distribution.label.unofficial', 'official')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.label.unofficial', 'rebel')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(resource, 'distribution.label.extended.prefix', '1')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(resource, 'distribution.label.extended.prefix', '10')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.label.extended.suffix', '1')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.label.extended.suffix', '2')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(
-        resource,
-        'distribution.label.extended.nonexisting',
-        '2'
-      )
-    ).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.label.unofficial', 'rebel')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.label.extended.prefix', '1')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.label.extended.prefix', '10')).toEqual(
+      false
+    );
+    expect(doesResourceContain(resource, 'distribution.label.extended.suffix', '1')).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.label.extended.suffix', '2')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.label.extended.nonexisting', '2')).toEqual(
+      false
+    );
   });
 
   it('ignores case when checking for contains value', () => {
@@ -461,15 +335,9 @@ describe('DataExplorerSpec-Utils', () => {
         },
       ],
     };
-    expect(
-      doesResourceContain(resource, 'distribution.filename', 'BiLLy')
-    ).toEqual(true);
-    expect(
-      doesResourceContain(resource, 'distribution.filename', 'Lilly')
-    ).toEqual(false);
-    expect(
-      doesResourceContain(resource, 'distribution.label', 'chipmunk')
-    ).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.filename', 'BiLLy')).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.filename', 'Lilly')).toEqual(false);
+    expect(doesResourceContain(resource, 'distribution.label', 'chipmunk')).toEqual(true);
   });
 
   it('checks if value is a substring in existing path when checking for contains', () => {
@@ -487,9 +355,7 @@ describe('DataExplorerSpec-Utils', () => {
         },
       ],
     };
-    expect(
-      doesResourceContain(resource, 'distribution.filename', 'lly')
-    ).toEqual(true);
+    expect(doesResourceContain(resource, 'distribution.filename', 'lly')).toEqual(true);
   });
 
   it('checks if path exists in resource', () => {
@@ -528,35 +394,20 @@ describe('DataExplorerSpec-Utils', () => {
       ],
     };
 
+    expect(doesResourceContain(resource, 'distribution', 'sally', 'does-not-contain')).toEqual(
+      true
+    );
+
+    expect(doesResourceContain(resource, 'distribution.name', 'sally', 'does-not-contain')).toEqual(
+      false
+    );
+
     expect(
-      doesResourceContain(resource, 'distribution', 'sally', 'does-not-contain')
+      doesResourceContain(resource, 'distribution.filename', 'billy', 'does-not-contain')
     ).toEqual(true);
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.name',
-        'sally',
-        'does-not-contain'
-      )
-    ).toEqual(false);
-
-    expect(
-      doesResourceContain(
-        resource,
-        'distribution.filename',
-        'billy',
-        'does-not-contain'
-      )
-    ).toEqual(true);
-
-    expect(
-      doesResourceContain(
-        resource,
-        'distribution.filename',
-        'popeye',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.filename', 'popeye', 'does-not-contain')
     ).toEqual(true);
   });
 
@@ -580,57 +431,27 @@ describe('DataExplorerSpec-Utils', () => {
     };
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.label',
-        'chipmunk',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.label', 'chipmunk', 'does-not-contain')
     ).toEqual(true);
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.label',
-        'crazy',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.label', 'crazy', 'does-not-contain')
     ).toEqual(true);
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.nested',
-        'crazy',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.nested', 'crazy', 'does-not-contain')
     ).toEqual(true);
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.nested.prop2',
-        'value2',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.nested.prop2', 'value2', 'does-not-contain')
     ).toEqual(true); // This is expected since the in the arrays ([`value2`, `value3`] & [`value2`, `value5`]) there is atleast 1 element (`value3` in the 1st array and value5 in the 2nd) that does not contain "value2"
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.nested.prop2',
-        'value',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.nested.prop2', 'value', 'does-not-contain')
     ).toEqual(false);
 
     expect(
-      doesResourceContain(
-        resource,
-        'distribution.nested.prop2',
-        'value5',
-        'does-not-contain'
-      )
+      doesResourceContain(resource, 'distribution.nested.prop2', 'value5', 'does-not-contain')
     ).toEqual(true);
   });
 
@@ -651,8 +472,7 @@ describe('DataExplorerSpec-Utils', () => {
           '3Point': {
             '@id': 'nsg:3Point',
           },
-          '@vocab':
-            'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/',
+          '@vocab': 'https://bbp-nexus.epfl.ch/vocabs/bbp/neurosciencegraph/core/v0.1.0/',
           Derivation: {
             '@id': 'prov:Derivation',
           },
@@ -660,8 +480,7 @@ describe('DataExplorerSpec-Utils', () => {
         },
       ],
       '@id': 'https://bbp.epfl.ch/nexus/search/neuroshapes',
-      _constrainedBy:
-        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
       _createdAt: '2019-02-11T14:15:14.020Z',
       _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/pirman',
       _deprecated: false,
@@ -669,20 +488,15 @@ describe('DataExplorerSpec-Utils', () => {
         'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes/incoming',
       _outgoing:
         'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes/outgoing',
-      _project:
-        'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
+      _project: 'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
-      _self:
-        'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/webapps/search-app-prod-public',
+      _self: 'https://bbp.epfl.ch/nexus/v1/resources/webapps/search-app-prod-public/_/neuroshapes',
       _updatedAt: '2019-02-11T14:15:14.020Z',
       _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/pirman',
     };
 
-    expect(
-      checkPathExistence(resource, '@context.@vocab', 'does-not-exist')
-    ).toEqual(true);
+    expect(checkPathExistence(resource, '@context.@vocab', 'does-not-exist')).toEqual(true);
   });
 
   it('can get paths for propeties with no nesting', () => {
@@ -722,13 +536,7 @@ describe('DataExplorerSpec-Utils', () => {
     ];
 
     const actualPaths = getUniquePathsForProperties(mockProperties);
-    expect(actualPaths).toEqual([
-      'prop1',
-      'prop1.sub1',
-      'prop2',
-      'prop3',
-      'prop3.sub1',
-    ]);
+    expect(actualPaths).toEqual(['prop1', 'prop1.sub1', 'prop2', 'prop3', 'prop3.sub1']);
   });
 
   it('gets paths for multi level nested properties', () => {
@@ -754,15 +562,11 @@ describe('DataExplorerSpec-Utils', () => {
       },
       {
         _name: 'who',
-        _properties: [
-          { _name: 'who', _properties: [{ _name: 'who?', _properties: [] }] },
-        ],
+        _properties: [{ _name: 'who', _properties: [{ _name: 'who?', _properties: [] }] }],
       },
       {
         _name: 'by',
-        _properties: [
-          { _name: 'baha', _properties: [{ _name: 'men', _properties: [] }] },
-        ],
+        _properties: [{ _name: 'baha', _properties: [{ _name: 'men', _properties: [] }] }],
       },
     ];
 

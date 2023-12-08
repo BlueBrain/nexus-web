@@ -14,10 +14,9 @@ export type UserPageData = {
   groups?: string[];
 };
 
-const UserPage: React.FunctionComponent<{}> = props => {
+const UserPage: React.FunctionComponent<{}> = (props) => {
   const name = useSelector(
-    ({ oidc }: RootState) =>
-      oidc.user && oidc.user.profile && oidc.user.profile.name
+    ({ oidc }: RootState) => oidc.user && oidc.user.profile && oidc.user.profile.name
   );
 
   const [userPageData, setUserPageData] = React.useState<UserPageData>({});
@@ -45,7 +44,7 @@ const UserPage: React.FunctionComponent<{}> = props => {
           }, {})
         )
       )
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Problem loading Identities',
           description: error.message,
@@ -57,8 +56,7 @@ const UserPage: React.FunctionComponent<{}> = props => {
     <div style={{ flexGrow: 1 }}>
       <h1>You're Anonymous</h1>
       <p>
-        You can <Button onClick={() => history.push('login')}>log in</Button> to
-        change that
+        You can <Button onClick={() => history.push('login')}>log in</Button> to change that
       </p>
     </div>
   );
@@ -70,12 +68,8 @@ const UserPage: React.FunctionComponent<{}> = props => {
           <h1>User Details</h1>
           <Descriptions bordered>
             <Descriptions.Item label="User Name">{name}</Descriptions.Item>
-            <Descriptions.Item label="Login Name">
-              {userPageData.user}
-            </Descriptions.Item>
-            <Descriptions.Item label="Realm">
-              {userPageData.realm}
-            </Descriptions.Item>
+            <Descriptions.Item label="Login Name">{userPageData.user}</Descriptions.Item>
+            <Descriptions.Item label="Realm">{userPageData.realm}</Descriptions.Item>
             {!!userPageData.groups && !!userPageData.groups.length && (
               <Descriptions.Item label="Groups">
                 <List
@@ -83,7 +77,7 @@ const UserPage: React.FunctionComponent<{}> = props => {
                   pagination={{
                     total: userPageData.groups.length,
                   }}
-                  renderItem={group => (
+                  renderItem={(group) => (
                     <List.Item>
                       <Typography.Text mark>{group}</Typography.Text>
                     </List.Item>

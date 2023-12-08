@@ -16,15 +16,8 @@ interface Props {
   onSelect: (type: string | undefined) => void;
 }
 
-export const TypeSelector: React.FC<Props> = ({
-  defaultValue,
-  onSelect,
-  orgAndProject,
-}: Props) => {
-  const { data: aggregatedTypes, isSuccess } = useAggregations(
-    'types',
-    orgAndProject
-  );
+export const TypeSelector: React.FC<Props> = ({ defaultValue, onSelect, orgAndProject }: Props) => {
+  const { data: aggregatedTypes, isSuccess } = useAggregations('types', orgAndProject);
   const [showClearIcon, setShowClearIcon] = useState(false);
   const allOptions = [...(aggregatedTypes?.map(typeToOption) ?? [])];
   const [displayedOptions, setDisplayedOptions] = useState(allOptions);
@@ -43,8 +36,8 @@ export const TypeSelector: React.FC<Props> = ({
       <Select
         labelInValue
         options={displayedOptions}
-        onSearch={text => {
-          const filteredOptions = optionsRef.current?.filter(option =>
+        onSearch={(text) => {
+          const filteredOptions = optionsRef.current?.filter((option) =>
             normalizeString(option.key).includes(text)
           );
           setDisplayedOptions(filteredOptions);
@@ -79,10 +72,7 @@ export const TypeSelector: React.FC<Props> = ({
 const typeToOption = (typeBucket: AggregatedBucket): TypeOption => {
   const typeKey = typeBucket.key;
 
-  const typeLabel =
-    isString(typeKey) && isValidUrl(typeKey)
-      ? typeKey.split('/').pop()
-      : typeKey;
+  const typeLabel = isString(typeKey) && isValidUrl(typeKey) ? typeKey.split('/').pop() : typeKey;
 
   if (!typeLabel) {
     Sentry.captureException('Invalid type received from delta', {

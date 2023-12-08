@@ -14,10 +14,7 @@ const SchemaValidationFallbackContainer = ({
   dependencies?: any[];
   children?: React.ReactNode;
 }) => {
-  const { validate, validationError } = useJsonSchemaValidation(
-    schema,
-    dependencies
-  );
+  const { validate, validationError } = useJsonSchemaValidation(schema, dependencies);
   React.useEffect(() => {
     validate(resource);
   }, dependencies);

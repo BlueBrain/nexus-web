@@ -1,6 +1,6 @@
 import './Types.scss';
 
-import { Tag,Tooltip } from 'antd';
+import { Tag, Tooltip } from 'antd';
 import * as React from 'react';
 
 import { labelOf } from '../../utils';
@@ -29,10 +29,7 @@ export interface TypesIconListProps {
 }
 
 // type represents the field @type
-const TypesIconList: React.SFC<TypesIconListProps> = ({
-  type,
-  full = false,
-}) => {
+const TypesIconList: React.SFC<TypesIconListProps> = ({ type, full = false }) => {
   // sort types alphabetically for consistency
   // because the graph database isn't aware of order
   // and otherwise they would just be all over the place!
@@ -57,11 +54,7 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({
       {typesToDisplay.map((type: string) => (
         <TypesIcon type={type} key={type} />
       ))}
-      {tooManyTypes && (
-        <li className="ellipsis">
-          {`...${type.length - typesToDisplay.length}+`}
-        </li>
-      )}
+      {tooManyTypes && <li className="ellipsis">{`...${type.length - typesToDisplay.length}+`}</li>}
     </ul>
   );
 };

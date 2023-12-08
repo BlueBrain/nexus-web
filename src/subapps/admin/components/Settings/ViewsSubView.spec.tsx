@@ -116,17 +116,13 @@ describe('ViewsSubView', () => {
   };
 
   const getErrorRows = () => {
-    const rowContainer = container.querySelector(
-      'div[data-testid="indexing-error-list"]'
-    )!;
+    const rowContainer = container.querySelector('div[data-testid="indexing-error-list"]')!;
     return Array.from(rowContainer.querySelector('ul')!.children);
   };
 
   const expandRow = async (rowId: string) => {
     const row = getViewRowById(rowId);
-    const expandButton = row.querySelector(
-      'span[data-testid="Expand indexing errors"]'
-    )!;
+    const expandButton = row.querySelector('span[data-testid="Expand indexing errors"]')!;
     await user.click(expandButton);
   };
 

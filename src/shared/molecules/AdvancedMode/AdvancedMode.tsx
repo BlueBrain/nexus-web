@@ -2,7 +2,7 @@ import './styles.scss';
 
 import { Switch } from 'antd';
 import * as React from 'react';
-import { useHistory,useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { match as pmatch } from 'ts-pattern';
 
 export const advancedModeBlackList = ['/studios', '/studio'];
@@ -24,9 +24,7 @@ const AdvancedModeToggle = () => {
       });
     } else {
       history.push(
-        location.state.source
-          ? `${location.state.source}${location.state.search}`
-          : '/'
+        location.state.source ? `${location.state.source}${location.state.search}` : '/'
       );
     }
   };

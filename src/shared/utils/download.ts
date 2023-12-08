@@ -19,10 +19,7 @@ export const download = (filename: string, mediaType: string, data: any) => {
   }
 };
 
-export const downloadCanvasAsImage = (
-  filename: string,
-  canvas: HTMLCanvasElement
-) => {
+export const downloadCanvasAsImage = (filename: string, canvas: HTMLCanvasElement) => {
   const link = document.createElement('a');
   link.download = filename;
   const img = canvas.toDataURL('image/png');

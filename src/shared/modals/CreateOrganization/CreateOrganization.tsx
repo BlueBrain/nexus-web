@@ -51,9 +51,7 @@ const CreateOrganization: React.FC<{}> = () => {
   const nexus = useNexusContext();
   const subapp = useOrganisationsSubappContext();
   const dispatch = useDispatch();
-  const { isCreateOrganizationModelVisible } = useSelector(
-    (state: RootState) => state.modals
-  );
+  const { isCreateOrganizationModelVisible } = useSelector((state: RootState) => state.modals);
   const [form] = Form.useForm<{ label: string; description: string }>();
   const { mutateAsync, status } = useMutation(createOrganizationMutation);
   const handleSubmit = (values: { label: string; description: string }) =>
@@ -64,7 +62,7 @@ const CreateOrganization: React.FC<{}> = () => {
         description: values.description,
       },
       {
-        onSuccess: data => {
+        onSuccess: (data) => {
           form.resetFields();
           dispatch(updateOrganizationModalVisibility(false));
           notification.success({
@@ -76,7 +74,7 @@ const CreateOrganization: React.FC<{}> = () => {
             },
           });
         },
-        onError: error => {
+        onError: (error) => {
           notification.error({
             duration: 3,
             // @ts-ignore
@@ -89,8 +87,7 @@ const CreateOrganization: React.FC<{}> = () => {
         },
       }
     );
-  const updateVisibility = () =>
-    dispatch(updateOrganizationModalVisibility(false));
+  const updateVisibility = () => dispatch(updateOrganizationModalVisibility(false));
   return (
     <Modal
       centered
@@ -119,8 +116,7 @@ const CreateOrganization: React.FC<{}> = () => {
             },
             {
               pattern: /^[a-zA-Z0-9_-]+$/,
-              message:
-                'Label should include only letters, numbers, underscores, and dashes.',
+              message: 'Label should include only letters, numbers, underscores, and dashes.',
             },
           ]}
         >
@@ -136,11 +132,7 @@ const CreateOrganization: React.FC<{}> = () => {
           <Input placeholder="Description" />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={status === 'loading'}
-          >
+          <Button type="primary" htmlType="submit" loading={status === 'loading'}>
             Create
           </Button>
         </Form.Item>

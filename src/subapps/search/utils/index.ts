@@ -23,36 +23,20 @@ export const constructFilterSet = (
     filterTerm: string;
   }[]
 ) => {
-  filterSet.forEach(filter => {
+  filterSet.forEach((filter) => {
     if (filter.filterType === 'date') {
-      constructDateFilter(
-        body,
-        filter.filters,
-        filter.filterType,
-        filter.filterTerm
-      );
+      constructDateFilter(body, filter.filters, filter.filterType, filter.filterTerm);
     } else if (filter.filterType === 'number') {
-      constructNumberFilter(
-        body,
-        filter.filters,
-        filter.filterType,
-        filter.filterTerm
-      );
+      constructNumberFilter(body, filter.filters, filter.filterType, filter.filterTerm);
     } else if (filter.filters.length > 0 || filter.filterType === 'missing') {
-      constructFilter(
-        body,
-        filter.filters,
-        filter.filterType,
-        filter.filterTerm
-      );
+      constructFilter(body, filter.filters, filter.filterType, filter.filterTerm);
     }
   });
   return body;
 };
 
 const missingFilterValueAdder = (filterTerm: string) => {
-  return (missing: bodybuilder.FilterSubFilterBuilder) =>
-    missing.notFilter('exists', filterTerm);
+  return (missing: bodybuilder.FilterSubFilterBuilder) => missing.notFilter('exists', filterTerm);
 };
 
 export const constructNumberFilter = (
@@ -99,7 +83,7 @@ export const constructFilter = (
   filterType: string,
   filterTerm: string
 ) => {
-  body.andFilter('bool', b => {
+  body.andFilter('bool', (b) => {
     if (filterType === 'missing') {
       b.notFilter('exists', filterTerm);
       return b;
@@ -131,11 +115,8 @@ export const constructFilter = (
   return body;
 };
 
-export const addSorting = (
-  body: bodybuilder.Bodybuilder,
-  sort: ESSortField[]
-) => {
-  sort.forEach(s => {
+export const addSorting = (body: bodybuilder.Bodybuilder, sort: ESSortField[]) => {
+  sort.forEach((s) => {
     if (s.format?.includes('date')) {
       return body.sort(s.fieldName, s.direction);
     }
@@ -144,17 +125,11 @@ export const addSorting = (
   return body;
 };
 
-export const addPagination = (
-  body: bodybuilder.Bodybuilder,
-  page: number,
-  pageSize: number
-) => {
+export const addPagination = (body: bodybuilder.Bodybuilder, page: number, pageSize: number) => {
   /* Make sure we don't exceed the ElasticSearch paging limit */
   const from = (page - 1) * pageSize;
   const pageSizeRespectingLimit =
-    from + pageSize > ESMaxResultWindowSize
-      ? ESMaxResultWindowSize - from
-      : pageSize;
+    from + pageSize > ESMaxResultWindowSize ? ESMaxResultWindowSize - from : pageSize;
 
   body
     .rawOption('track_total_hits', true) // accurate total, could cache for performance

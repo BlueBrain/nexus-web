@@ -12,10 +12,7 @@ import ResourceForm from './ResourceForm';
 const ResourceCreateUpload: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
-  createResource: (
-    schemaId: string,
-    payload: ResourcePayload
-  ) => Promise<Resource>;
+  createResource: (schemaId: string, payload: ResourcePayload) => Promise<Resource>;
 }> = ({ orgLabel, projectLabel, createResource }) => {
   const [formBusy, setFormBusy] = React.useState(false);
 
@@ -23,10 +20,7 @@ const ResourceCreateUpload: React.FunctionComponent<{
     const { schemaId, payload } = resourceToCreate;
     setFormBusy(true);
     try {
-      const resource = await createResource(
-        encodeURIComponent(schemaId),
-        payload
-      );
+      const resource = await createResource(encodeURIComponent(schemaId), payload);
       notification.success({
         message: 'Resource saved',
         description: resource.name,

@@ -6,8 +6,8 @@ import {
   ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk/es';
-import { AccessControl,useNexusContext } from '@bbp/react-nexus';
-import { Empty,Popover, Tabs } from 'antd';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Empty, Popover, Tabs } from 'antd';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
@@ -107,13 +107,9 @@ const ProjectView: React.FunctionComponent = () => {
   });
 
   const [refreshLists, setRefreshLists] = React.useState(false);
-  const [activeKey, setActiveKey] = React.useState<string>(
-    tabFromPath(match.path)
-  );
+  const [activeKey, setActiveKey] = React.useState<string>(tabFromPath(match.path));
 
-  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
-    false
-  );
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(false);
   const [deltaPlugins, setDeltaPlugins] = React.useState<{
     [key: string]: string;
   }>();
@@ -130,14 +126,14 @@ const ProjectView: React.FunctionComponent = () => {
       busy: true,
     });
     nexus.Project.get(orgLabel, projectLabel)
-      .then(response => {
+      .then((response) => {
         setState({
           project: response,
           busy: false,
           error: null,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: `Could not load project ${projectLabel}`,
           description: error.message,
@@ -163,8 +159,7 @@ const ProjectView: React.FunctionComponent = () => {
   React.useEffect(() => {
     /* if location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
-    const refresh =
-      location.state && (location.state as { refresh?: boolean }).refresh;
+    const refresh = location.state && (location.state as { refresh?: boolean }).refresh;
     if (refresh) {
       // remove refresh from state
       history.replace(location.pathname, {});
@@ -196,8 +191,8 @@ const ProjectView: React.FunctionComponent = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
+      .then((versions) => setDeltaPlugins({ ...versions.plugins }))
+      .catch((error) => {
         // do nothing
       });
   };
@@ -209,10 +204,7 @@ const ProjectView: React.FunctionComponent = () => {
     history.push(pathFromTab(activeKey));
   };
 
-  const {
-    isUserInSupportedJiraRealm,
-    jiraInaccessibleBecauseOfVPN,
-  } = useJiraPlugin();
+  const { isUserInSupportedJiraRealm, jiraInaccessibleBecauseOfVPN } = useJiraPlugin();
 
   return (
     <div className="project-view">
@@ -233,9 +225,7 @@ const ProjectView: React.FunctionComponent = () => {
                   <ViewStatisticsContainer
                     orgLabel={orgLabel}
                     projectLabel={project._label}
-                    resourceId={encodeURIComponent(
-                      DEFAULT_ELASTIC_SEARCH_VIEW_ID
-                    )}
+                    resourceId={encodeURIComponent(DEFAULT_ELASTIC_SEARCH_VIEW_ID)}
                     onClickRefresh={() => {
                       fetchAndSetStatistics();
                       setRefreshLists(!refreshLists);
@@ -248,9 +238,7 @@ const ProjectView: React.FunctionComponent = () => {
               {!!project.description && (
                 <Popover
                   title={project._label}
-                  content={
-                    <div style={{ width: 300 }}>{project.description}</div>
-                  }
+                  content={<div style={{ width: 300 }}>{project.description}</div>}
                 >
                   <div className="description">{project.description}</div>
                 </Popover>
@@ -258,10 +246,7 @@ const ProjectView: React.FunctionComponent = () => {
             </div>
           </div>
           {showDeletionBanner && (
-            <ProjectToDeleteContainer
-              orgLabel={orgLabel}
-              projectLabel={project._label}
-            />
+            <ProjectToDeleteContainer orgLabel={orgLabel} projectLabel={project._label} />
           )}
           <div className="tabs-container">
             <Tabs
@@ -309,8 +294,8 @@ const ProjectView: React.FunctionComponent = () => {
                       permissions={['files/write']}
                       noAccessComponent={() => (
                         <Empty>
-                          You don't have the access to create/upload. Please
-                          contact the Administrator for access.
+                          You don't have the access to create/upload. Please contact the
+                          Administrator for access.
                         </Empty>
                       )}
                     >
@@ -331,19 +316,13 @@ const ProjectView: React.FunctionComponent = () => {
                       permissions={['test']}
                       noAccessComponent={() => (
                         <Empty>
-                          You don't have read access to quotas. Please contact
-                          the Administrator for access.
+                          You don't have read access to quotas. Please contact the Administrator for
+                          access.
                         </Empty>
                       )}
                     >
-                      <QuotasContainer
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                      />
-                      <StoragesContainer
-                        orgLabel={orgLabel}
-                        projectLabel={projectLabel}
-                      />
+                      <QuotasContainer orgLabel={orgLabel} projectLabel={projectLabel} />
+                      <StoragesContainer orgLabel={orgLabel} projectLabel={projectLabel} />
                     </AccessControl>
                   ),
                 },
@@ -388,10 +367,7 @@ const ProjectView: React.FunctionComponent = () => {
                         key: 'graph-analytics',
                         label: 'Graph Analytics',
                         children: (
-                          <ProjectStatsContainer
-                            orgLabel={orgLabel}
-                            projectLabel={projectLabel}
-                          />
+                          <ProjectStatsContainer orgLabel={orgLabel} projectLabel={projectLabel} />
                         ),
                       },
                     ]

@@ -5,7 +5,7 @@ import { AccessControl } from '@bbp/react-nexus';
 import { camelCase } from 'lodash';
 import { animate } from 'motion';
 import * as React from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 import { RootState } from '../../store/reducers';
@@ -49,9 +49,7 @@ const creationButtons: TCreationButton[] = [
 
 const CreationPanel: React.FC<{}> = () => {
   const creationPanelRef = React.useRef<HTMLDivElement>(null);
-  const { openCreationPanel } = useSelector(
-    (state: RootState) => state.uiSettings
-  );
+  const { openCreationPanel } = useSelector((state: RootState) => state.uiSettings);
   React.useEffect(() => {
     if (openCreationPanel) {
       creationPanelRef.current &&
@@ -78,7 +76,7 @@ const CreationPanel: React.FC<{}> = () => {
   return (
     <div ref={creationPanelRef} className="creation-panel">
       <div className="creation-panel_container">
-        {creationButtons.map(t => (
+        {creationButtons.map((t) => (
           <AccessControl
             path={['/']}
             permissions={t.permissions}

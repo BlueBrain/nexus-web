@@ -8,10 +8,7 @@ interface SetPreferredRealmAction extends Action {
 }
 
 function setPreferredRealm(name: string) {
-  return async (
-    dispatch: Dispatch<any>,
-    getState: () => RootState
-  ): Promise<any> => {
+  return async (dispatch: Dispatch<any>, getState: () => RootState): Promise<any> => {
     const {
       auth: { realms },
       config: { clientId },
@@ -22,7 +19,7 @@ function setPreferredRealm(name: string) {
     };
     if (realms && realms.data && realms.data._results) {
       // find matching realm
-      const realm = realms.data._results.find(realm => realm.name === name);
+      const realm = realms.data._results.find((realm) => realm.name === name);
       if (realm) {
         preferredRealmData = {
           label: realm._label,

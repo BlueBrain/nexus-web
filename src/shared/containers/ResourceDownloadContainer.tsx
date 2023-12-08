@@ -11,7 +11,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
   orgLabel: string;
   projectLabel: string;
   resourceId: string;
-}> = props => {
+}> = (props) => {
   const nexus = useNexusContext();
   const notification = useNotification();
   const download = (
@@ -21,21 +21,19 @@ const ResourceDownloadButton: React.FunctionComponent<{
     format: formatType
   ) => {
     nexus.Resource.get(orgLabel, projectLabel, resourceId, { as: format })
-      .then(result => {
+      .then((result) => {
         const extension = {
           json: 'json',
           'n-triples': 'txt',
           'vnd.graph-viz': 'dot',
         }[format];
-        const blob = new Blob([
-          format === 'json' ? JSON.stringify(result) : result.toString(),
-        ]);
+        const blob = new Blob([format === 'json' ? JSON.stringify(result) : result.toString()]);
         const url = window.URL.createObjectURL(blob);
         setDownloadUrl(url);
         setFilename(`${resourceId}.${extension}`);
         refContainer.current.click();
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: error.reason,
         });
@@ -49,7 +47,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
   const [downloadUrl, setDownloadUrl] = React.useState<any>(null);
   const menu = (
     <Menu
-      onClick={clickparam => {
+      onClick={(clickparam) => {
         const format: formatType = clickparam.key.toString() as formatType;
         download(props.orgLabel, props.projectLabel, props.resourceId, format);
       }}
@@ -72,12 +70,7 @@ const ResourceDownloadButton: React.FunctionComponent<{
 
   return (
     <div className="action">
-      <a
-        href={downloadUrl}
-        ref={refContainer}
-        download={filename}
-        style={linkStyle}
-      >
+      <a href={downloadUrl} ref={refContainer} download={filename} style={linkStyle}>
         download
       </a>
       <Dropdown dropdownRender={() => menu}>

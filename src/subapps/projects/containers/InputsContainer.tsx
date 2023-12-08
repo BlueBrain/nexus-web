@@ -1,8 +1,8 @@
 import './InputsContainer.scss';
 
-import { NexusFile, Resource,Storage } from '@bbp/nexus-sdk/es';
+import { NexusFile, Resource, Storage } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Input,notification } from 'antd';
+import { Button, Input, notification } from 'antd';
 import * as React from 'react';
 
 import FileUploader from '../../../shared/components/FileUpload';
@@ -24,40 +24,29 @@ const InputsContainer: React.FC<{
   const nexus = useNexusContext();
   const [storages, setStorages] = React.useState<Storage[]>([]);
   const [dataSetName, setDataSetName] = React.useState<string>('');
-  const [dataSetDescription, setDataSetDescription] = React.useState<string>(
-    ''
-  );
+  const [dataSetDescription, setDataSetDescription] = React.useState<string>('');
   const [nexusFiles, setNexusFiles] = React.useState<NexusFile[]>([]);
 
   const makeResourceUri = (resourceId: string) => {
-    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-      resourceId
-    )}`;
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}`;
   };
   const createDataSetResource = async (
     description: string,
     datasetName: string,
     distribution: any[]
   ) => {
-    const datasetResource = await nexus.Resource.create(
-      orgLabel,
-      projectLabel,
-      {
-        '@type': [
-          'http://schema.org/Dataset',
-          'http://www.w3.org/ns/prov#Entity',
-        ],
-        'http://schema.org/description': `${description}`,
-        'http://schema.org/distribution': distribution,
-        'http://schema.org/name': `${datasetName}`,
-      }
-    );
+    const datasetResource = await nexus.Resource.create(orgLabel, projectLabel, {
+      '@type': ['http://schema.org/Dataset', 'http://www.w3.org/ns/prov#Entity'],
+      'http://schema.org/description': `${description}`,
+      'http://schema.org/distribution': distribution,
+      'http://schema.org/name': `${datasetName}`,
+    });
     return datasetResource;
   };
 
   const saveDataSet = async () => {
     if (nexusFiles) {
-      const distribution = nexusFiles.map(file => {
+      const distribution = nexusFiles.map((file) => {
         return {
           '@type': 'http://schema.org/DataDownload',
           'http://schema.org/contentUrl': {
@@ -130,16 +119,12 @@ const InputsContainer: React.FC<{
 
     const createInputInWorkflowStep = async () => {
       try {
-        const datasetResource = await nexus.Resource.create(
-          orgLabel,
-          projectLabel,
-          {
-            '@type': ['nxv:Dataset', 'nxv:Collection'],
-            collection: collection.ids.map((id: string) => ({ '@id': id })),
-            'http://schema.org/name': 'Imported Collection',
-            'nxv:description': 'Imported collection from Search',
-          }
-        );
+        const datasetResource = await nexus.Resource.create(orgLabel, projectLabel, {
+          '@type': ['nxv:Dataset', 'nxv:Collection'],
+          collection: collection.ids.map((id: string) => ({ '@id': id })),
+          'http://schema.org/name': 'Imported Collection',
+          'nxv:description': 'Imported collection from Search',
+        });
 
         updateStepResource(datasetResource);
 
@@ -189,8 +174,8 @@ const InputsContainer: React.FC<{
 
   React.useEffect(() => {
     nexus.Storage.list(orgLabel, projectLabel)
-      .then(data => setStorages(data._results))
-      .catch(e => setStorages([]));
+      .then((data) => setStorages(data._results))
+      .catch((e) => setStorages([]));
   }, [orgLabel, projectLabel]);
 
   return (
@@ -200,7 +185,7 @@ const InputsContainer: React.FC<{
           <label>Name</label>
           <Input
             placeholder="<dataset_name>"
-            onChange={e => {
+            onChange={(e) => {
               setDataSetName(e.target.value);
             }}
           ></Input>
@@ -210,7 +195,7 @@ const InputsContainer: React.FC<{
           <Input
             style={{ margin: '0px 10px 0xp 10px' }}
             placeholder="<dataset_description>"
-            onChange={e => {
+            onChange={(e) => {
               setDataSetDescription(e.target.value);
             }}
           />
@@ -221,8 +206,7 @@ const InputsContainer: React.FC<{
             projectLabel,
             storages,
             orgLabel,
-            makeFileLink: (nexusFile: NexusFile) =>
-              makeResourceUri(nexusFile['@id']),
+            makeFileLink: (nexusFile: NexusFile) => makeResourceUri(nexusFile['@id']),
             goToFile: (nexusFile: NexusFile) => {},
           }}
         />

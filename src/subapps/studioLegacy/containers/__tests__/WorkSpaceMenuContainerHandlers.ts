@@ -81,8 +81,7 @@ export const tableHandler = rest.get(
           name: 'p',
         },
       ],
-      dataQuery:
-        'SELECT DISTINCT ?self ?p ?o \nWHERE {\n     ?self ?p ?o .\n}\nLIMIT 10',
+      dataQuery: 'SELECT DISTINCT ?self ?p ?o \nWHERE {\n     ?self ?p ?o .\n}\nLIMIT 10',
       enableDownload: true,
       enableInteractiveRows: true,
       enableSave: true,
@@ -99,65 +98,62 @@ export const tableHandler = rest.get(
   }
 );
 
-export const aclHandler = rest.get(
-  deltaPath('/acls/org/project'),
-  (_, res, ctx) => {
-    const mockResponse = {
-      '@context': [
-        'https://bluebrain.github.io/nexus/contexts/metadata.json',
-        'https://bluebrain.github.io/nexus/contexts/search.json',
-        'https://bluebrain.github.io/nexus/contexts/acls.json',
-      ],
-      _total: 1,
-      _results: [
-        {
-          '@id': deltaPath('/v1/acls/org1'),
-          '@type': 'AccessControlList',
-          acl: [
-            {
-              identity: {
-                '@id': deltaPath('/v1/realms/myrealm/groups/a-group'),
-                '@type': 'Group',
-                group: 'a-group',
-                realm: 'myrealm',
-              },
-              permissions: ['projects/read'],
+export const aclHandler = rest.get(deltaPath('/acls/org/project'), (_, res, ctx) => {
+  const mockResponse = {
+    '@context': [
+      'https://bluebrain.github.io/nexus/contexts/metadata.json',
+      'https://bluebrain.github.io/nexus/contexts/search.json',
+      'https://bluebrain.github.io/nexus/contexts/acls.json',
+    ],
+    _total: 1,
+    _results: [
+      {
+        '@id': deltaPath('/v1/acls/org1'),
+        '@type': 'AccessControlList',
+        acl: [
+          {
+            identity: {
+              '@id': deltaPath('/v1/realms/myrealm/groups/a-group'),
+              '@type': 'Group',
+              group: 'a-group',
+              realm: 'myrealm',
             },
-            {
-              identity: {
-                '@id': deltaPath('/v1/realms/realm/groups/some-group'),
-                '@type': 'Group',
-                group: 'some-group',
-                realm: 'realm',
-              },
-              permissions: ['projects/read', 'projects/write'],
+            permissions: ['projects/read'],
+          },
+          {
+            identity: {
+              '@id': deltaPath('/v1/realms/realm/groups/some-group'),
+              '@type': 'Group',
+              group: 'some-group',
+              realm: 'realm',
             },
-            {
-              identity: {
-                '@id': deltaPath('/v1/realms/local/users/localuser'),
-                '@type': 'User',
-                realm: 'local',
-                subject: 'localuser',
-              },
-              permissions: ['resources/read'], // No write permission.
+            permissions: ['projects/read', 'projects/write'],
+          },
+          {
+            identity: {
+              '@id': deltaPath('/v1/realms/local/users/localuser'),
+              '@type': 'User',
+              realm: 'local',
+              subject: 'localuser',
             },
-          ],
-          _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/acls.json',
-          _createdAt: '2021-05-11T11:03:06.071Z',
-          _createdBy: deltaPath('/v1/anonymous'),
-          _deprecated: false,
-          _path: '/org/project',
-          _rev: 1,
-          _self: deltaPath('/v1/acls/org1'),
-          _updatedAt: '2021-05-11T11:03:06.071Z',
-          _updatedBy: deltaPath('/v1/anonymous'),
-        },
-      ],
-    };
-    return res.once(
-      // Respond with a 200 status code
-      ctx.status(200),
-      ctx.json(mockResponse)
-    );
-  }
-);
+            permissions: ['resources/read'], // No write permission.
+          },
+        ],
+        _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/acls.json',
+        _createdAt: '2021-05-11T11:03:06.071Z',
+        _createdBy: deltaPath('/v1/anonymous'),
+        _deprecated: false,
+        _path: '/org/project',
+        _rev: 1,
+        _self: deltaPath('/v1/acls/org1'),
+        _updatedAt: '2021-05-11T11:03:06.071Z',
+        _updatedBy: deltaPath('/v1/anonymous'),
+      },
+    ],
+  };
+  return res.once(
+    // Respond with a 200 status code
+    ctx.status(200),
+    ctx.json(mockResponse)
+  );
+});

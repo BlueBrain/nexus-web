@@ -9,7 +9,7 @@ import {
   NotificationContext,
   NotificationContextType,
 } from './shared/hooks/useNotification';
-import { history,nexus } from './store';
+import { history, nexus } from './store';
 
 function EntryPoint() {
   const queryClient = useRef(new QueryClient());

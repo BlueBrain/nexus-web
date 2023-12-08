@@ -10,13 +10,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 
 import { configureStore } from '../../store';
-import {
-  fireEvent,
-  render,
-  screen,
-  server,
-  waitFor,
-} from '../../utils/testUtil';
+import { fireEvent, render, screen, server, waitFor } from '../../utils/testUtil';
 import StudiosPage from './StudiosPage';
 
 describe('StudiosPage', () => {

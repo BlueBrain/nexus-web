@@ -1,4 +1,4 @@
-import { AccessControl,useNexusContext } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Modal } from 'antd';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -17,16 +17,14 @@ const NewProjectContainer: React.FC<{
   onSuccess: () => void;
 }> = ({ onSuccess }) => {
   const nexus = useNexusContext();
-  const userName = useSelector(
-    (state: RootState) => state.oidc.user?.profile.preferred_username
-  );
+  const userName = useSelector((state: RootState) => state.oidc.user?.profile.preferred_username);
 
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
   const identities = useSelector((state: RootState) => state.auth.identities);
 
-  const authenticatedIdentity = identities?.data?.identities.find(i => {
+  const authenticatedIdentity = identities?.data?.identities.find((i) => {
     return i['@type'] === 'Authenticated';
   });
 
@@ -68,11 +66,7 @@ const NewProjectContainer: React.FC<{
   return (
     <div>
       <AccessControl permissions={['organizations/create']} path="/">
-        <ActionButton
-          title="Create new project"
-          onClick={onClickAddProject}
-          icon="add"
-        />
+        <ActionButton title="Create new project" onClick={onClickAddProject} icon="add" />
       </AccessControl>
       <Modal
         open={showForm}
@@ -81,11 +75,7 @@ const NewProjectContainer: React.FC<{
         width={600}
         destroyOnClose={true}
       >
-        <ProjectForm
-          onClickCancel={handleCancel}
-          onSubmit={submitProject}
-          busy={busy}
-        />
+        <ProjectForm onClickCancel={handleCancel} onSubmit={submitProject} busy={busy} />
       </Modal>
     </div>
   );

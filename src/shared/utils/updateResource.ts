@@ -42,7 +42,7 @@ export const getUpdateResourceFunction = (
 
   let resourceMatchedNexusTypes = [resource['@type']]
     .flat()
-    .filter(value => nexusReservedTypes.includes(value));
+    .filter((value) => nexusReservedTypes.includes(value));
 
   if (resourceMatchedNexusTypes.length > 1) {
     throw new Error(
@@ -52,16 +52,13 @@ export const getUpdateResourceFunction = (
 
   const originalResourceMatchedNexusTypes = [originalResource['@type']]
     .flat()
-    .filter(value => nexusReservedTypes.includes(value));
+    .filter((value) => nexusReservedTypes.includes(value));
 
   if (
     '@type' in resource &&
-    originalResourceMatchedNexusTypes.length !==
-      resourceMatchedNexusTypes.length
+    originalResourceMatchedNexusTypes.length !== resourceMatchedNexusTypes.length
   ) {
-    throw new Error(
-      'Cannot add/remove a Nexus reserved type from @type on an existing resource'
-    );
+    throw new Error('Cannot add/remove a Nexus reserved type from @type on an existing resource');
   }
 
   if (
@@ -69,9 +66,7 @@ export const getUpdateResourceFunction = (
     resourceMatchedNexusTypes.length === 1 &&
     originalResourceMatchedNexusTypes[0] !== resourceMatchedNexusTypes[0]
   ) {
-    throw new Error(
-      'Cannot change a Nexus reserved type from @type on an existing resource'
-    );
+    throw new Error('Cannot change a Nexus reserved type from @type on an existing resource');
   }
 
   if ('@type' in originalResource && !('@type' in resource)) {
@@ -81,8 +76,7 @@ export const getUpdateResourceFunction = (
   if (resourceMatchedNexusTypes.length === 1) {
     // Matches one of our resource types - lets use the specific endpoint
     if (resourceMatchedNexusTypes.includes('Organization')) {
-      matchedUpdateFunction = () =>
-        nexus.Organization.update(orgLabel, revision, resource);
+      matchedUpdateFunction = () => nexus.Organization.update(orgLabel, revision, resource);
     } else if (resourceMatchedNexusTypes.includes('Project')) {
       matchedUpdateFunction = () =>
         nexus.Project.update(orgLabel, projectLabel, revision, resource);
@@ -91,33 +85,15 @@ export const getUpdateResourceFunction = (
         nexus.Realm.update(originalResource['_label'], revision, resource);
     } else if (resourceMatchedNexusTypes.includes('Resolver')) {
       matchedUpdateFunction = () =>
-        nexus.Resolver.update(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          revision,
-          resource
-        );
+        nexus.Resolver.update(orgLabel, projectLabel, resourceId, revision, resource);
     } else if (resourceMatchedNexusTypes.includes('Schema')) {
       matchedUpdateFunction = () =>
-        nexus.Schema.update(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          revision,
-          resource
-        );
+        nexus.Schema.update(orgLabel, projectLabel, resourceId, revision, resource);
     } else if (resourceMatchedNexusTypes.includes('Storage')) {
       matchedUpdateFunction = () =>
-        nexus.Storage.update(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          revision,
-          resource
-        );
+        nexus.Storage.update(orgLabel, projectLabel, resourceId, revision, resource);
     } else if (
-      resourceMatchedNexusTypes.some(el =>
+      resourceMatchedNexusTypes.some((el) =>
         [
           'ElasticSearchView',
           'AggregateElasticSearchView',
@@ -128,13 +104,7 @@ export const getUpdateResourceFunction = (
       )
     ) {
       matchedUpdateFunction = () =>
-        nexus.View.update(
-          orgLabel,
-          projectLabel,
-          resourceId,
-          revision,
-          resource
-        );
+        nexus.View.update(orgLabel, projectLabel, resourceId, revision, resource);
     } else if (resourceMatchedNexusTypes.includes('File')) {
       throw new Error('Updates to File are not supported via this method.');
     } else {
@@ -145,13 +115,7 @@ export const getUpdateResourceFunction = (
   } else {
     // did not match one of our Nexus specific types - use generic resource endpoint
     matchedUpdateFunction = () =>
-      nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        revision,
-        resource
-      );
+      nexus.Resource.update(orgLabel, projectLabel, resourceId, revision, resource);
   }
   return matchedUpdateFunction;
 };

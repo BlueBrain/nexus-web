@@ -6,16 +6,7 @@ import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
-import {
-  isArray,
-  isNil,
-  isString,
-  pick,
-  sumBy,
-  toNumber,
-  uniq,
-  uniqBy,
-} from 'lodash';
+import { isArray, isNil, isString, pick, sumBy, toNumber, uniq, uniqBy } from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
 
@@ -31,10 +22,7 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../shared/organisms/DataPanel/DataPanel';
-import {
-  removeLocalStorageRows,
-  toLocalStorageResources,
-} from '../../shared/utils/datapanel';
+import { removeLocalStorageRows, toLocalStorageResources } from '../../shared/utils/datapanel';
 import { normalizeString } from '../../utils/stringUtils';
 import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
 import { Projection } from '../components/EditTableForm';
@@ -79,10 +67,7 @@ export type TableColumn = {
   enableFilter: boolean;
 };
 
-const exportAsCSV = (
-  object: object,
-  fields: json2csv.Options<any>['fields']
-) => {
+const exportAsCSV = (object: object, fields: json2csv.Options<any>['fields']) => {
   const json2csvParser = new Parser({ fields });
   const csv = json2csvParser.parse(object);
 
@@ -123,10 +108,7 @@ export const DEFAULT_FIELDS = (basePath: string) => [
   },
 ];
 
-type ColumnSorter = (
-  a: Record<string, any>,
-  b: Record<string, any>
-) => -1 | 1 | 0;
+type ColumnSorter = (a: Record<string, any>, b: Record<string, any>) => -1 | 1 | 0;
 
 const sorter = (dataIndex: string): ColumnSorter => {
   return (
@@ -163,10 +145,7 @@ const sortFn = (datumA: any, datumB: any) => {
 
 type Row = Record<string, any>;
 
-type TableFilterConfig<T> = Pick<
-  ColumnType<T>,
-  'filters' | 'onFilter' | 'filterIcon'
->;
+type TableFilterConfig<T> = Pick<ColumnType<T>, 'filters' | 'onFilter' | 'filterIcon'>;
 
 export type FusionColumnType<T> = ColumnType<T> & {
   dataIndex: string;
@@ -185,14 +164,12 @@ type FilterConfigFn = (tableItems: Row[]) => FilterConfigByColumnFn;
  * @param rows - All the rows of the table
  * @returns - A function that accepts a column header and returns the filter configuration for that column.
  */
-export const antTableFilterConfig: FilterConfigFn = rows => columnHeader => {
+export const antTableFilterConfig: FilterConfigFn = (rows) => (columnHeader) => {
   const filters = uniqueFilters(rows, columnHeader.dataIndex);
 
   const onFilter = (value: string | number | boolean, row: Row) => {
     const cellValue = row[columnHeader.dataIndex]?.toString() ?? '';
-    return normalizeString(cellValue).includes(
-      normalizeString(value as string)
-    );
+    return normalizeString(cellValue).includes(normalizeString(value as string));
   };
 
   const filterIcon = <FilterFilled data-testid="filter-icon" />;
@@ -202,13 +179,13 @@ export const antTableFilterConfig: FilterConfigFn = rows => columnHeader => {
 
 const uniqueFilters = (items: Record<string, any>[], dataIndex: string) => {
   const uniqueItems = new Set(
-    items.map(i => {
+    items.map((i) => {
       return i[dataIndex];
     })
   );
   return Array.from(uniqueItems)
     .sort((a, b) => sortFn(a, b))
-    .map(i => ({ text: i, value: i }));
+    .map((i) => ({ text: i, value: i }));
 };
 
 export async function querySparql(
@@ -281,7 +258,7 @@ export const queryES = async (
 
   // Sorting
   if (Array.isArray(sort)) {
-    sort.forEach(sort => {
+    sort.forEach((sort) => {
       body.sort(sort.key, sort.direction);
     });
   } else {
@@ -302,15 +279,10 @@ export const queryES = async (
       }
     );
   }
-  return await nexus.View.elasticSearchQuery(
-    orgLabel,
-    projectLabel,
-    encodeURIComponent(viewId),
-    {
-      ...bodyQuery,
-      ...esQuery,
-    }
-  );
+  return await nexus.View.elasticSearchQuery(orgLabel, projectLabel, encodeURIComponent(viewId), {
+    ...bodyQuery,
+    ...esQuery,
+  });
 };
 
 const accessData = async (
@@ -374,10 +346,8 @@ const accessData = async (
       : tableResource.projection?.['@id']
   );
 
-  const headerProperties = result.headerProperties.map(headerProp => {
-    const currentConfig = columnConfig.find(
-      c => c.name === headerProp.dataIndex
-    );
+  const headerProperties = result.headerProperties.map((headerProp) => {
+    const currentConfig = columnConfig.find((c) => c.name === headerProp.dataIndex);
 
     if (isNil(currentConfig)) {
       return headerProp;
@@ -389,8 +359,7 @@ const accessData = async (
       ...(currentConfig.enableSort && {
         sorter: sorter(headerProp.dataIndex),
       }),
-      ...(currentConfig.enableFilter &&
-        antTableFilterConfig(result.items)(headerProp)),
+      ...(currentConfig.enableFilter && antTableFilterConfig(result.items)(headerProp)),
     };
   });
 
@@ -400,12 +369,9 @@ const accessData = async (
 const getTotalContentSize = (rows: TDataSource[]) => {
   let size = 0;
 
-  rows.forEach(row => {
+  rows.forEach((row) => {
     if (isArray(row.distribution)) {
-      size += sumBy(
-        row.distribution,
-        distItem => distItem.contentSize?.value ?? 0
-      );
+      size += sumBy(row.distribution, (distItem) => distItem.contentSize?.value ?? 0);
     } else {
       size += row.distribution?.contentSize || 0;
     }
@@ -428,8 +394,7 @@ export const fetchResourceForDownload = async (
     });
 
     const receivedExpandedId =
-      isValidUrl(compactResource['@id']) &&
-      compactResource['@id']?.startsWith('http');
+      isValidUrl(compactResource['@id']) && compactResource['@id']?.startsWith('http');
 
     if (receivedExpandedId) {
       return compactResource;
@@ -441,10 +406,7 @@ export const fetchResourceForDownload = async (
 
     return {
       ...compactResource,
-      ['@id']:
-        expandedResource?.[0]?.['@id'] ??
-        expandedResource['@id'] ??
-        compactResource['@id'],
+      ['@id']: expandedResource?.[0]?.['@id'] ?? expandedResource['@id'] ?? compactResource['@id'],
     };
   } catch (err) {
     notification.warning({
@@ -469,9 +431,7 @@ export const useAccessDataForTable = (
 ) => {
   const revision = tableResource ? tableResource._rev : 0;
   const nexus = useNexusContext();
-  const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
-    []
-  );
+  const [selectedResources, setSelectedResources] = React.useState<Resource[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = React.useState<React.Key[]>([]);
 
   const [searchValue, setSearchValue] = React.useState<string>('');
@@ -482,9 +442,7 @@ export const useAccessDataForTable = (
     selectedRows: StudioTableRow[],
     changedRows: StudioTableRow[]
   ) => {
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
 
     let rowKeysForLS = dataPanelLS?.selectedRowKeys || [];
     let rowsForLS = dataPanelLS?.selectedRows || [];
@@ -492,22 +450,13 @@ export const useAccessDataForTable = (
     if (selected) {
       const { results, errors } = await PromisePool.withConcurrency(4)
         .for(changedRows)
-        .handleError(async err => {
-          console.log(
-            '@@error in selecting multiple resources for download in studios',
-            err
-          );
+        .handleError(async (err) => {
+          console.log('@@error in selecting multiple resources for download in studios', err);
           return;
         })
-        .process(async row => {
-          const fetchedRow = await fetchResourceForDownload(
-            getStudioLocalStorageKey(row),
-            nexus
-          );
-          const localStorageResources = toLocalStorageResources(
-            fetchedRow,
-            'studios'
-          );
+        .process(async (row) => {
+          const fetchedRow = await fetchResourceForDownload(getStudioLocalStorageKey(row), nexus);
+          const localStorageResources = toLocalStorageResources(fetchedRow, 'studios');
           rowKeysForLS.push(getStudioLocalStorageKey(row));
 
           return localStorageResources;
@@ -516,12 +465,10 @@ export const useAccessDataForTable = (
       rowsForLS = [...rowsForLS, ...results.flat()];
       saveSelectedRowsToLocalStorage(rowKeysForLS, rowsForLS);
     } else {
-      const rowKeysToRemove = changedRows.map(row =>
-        getStudioLocalStorageKey(row)
-      );
+      const rowKeysToRemove = changedRows.map((row) => getStudioLocalStorageKey(row));
 
       rowKeysForLS = rowKeysForLS.filter(
-        lsRowKey => !rowKeysToRemove.includes(lsRowKey.toString())
+        (lsRowKey) => !rowKeysToRemove.includes(lsRowKey.toString())
       );
       rowsForLS = removeLocalStorageRows(rowsForLS, rowKeysToRemove);
 
@@ -529,38 +476,27 @@ export const useAccessDataForTable = (
     }
   };
 
-  const onSelectSingleRow = async (
-    record: StudioTableRow,
-    selected: boolean
-  ) => {
+  const onSelectSingleRow = async (record: StudioTableRow, selected: boolean) => {
     const recordKey = getStudioLocalStorageKey(record);
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
 
     let localStorageRowKeys = dataPanelLS?.selectedRowKeys || [];
     let localStorageRows = dataPanelLS?.selectedRows || [];
 
     if (selected) {
       const deltaResource = await fetchResourceForDownload(recordKey, nexus);
-      const localStorageResource = toLocalStorageResources(
-        deltaResource,
-        'studios'
-      );
+      const localStorageResource = toLocalStorageResources(deltaResource, 'studios');
       localStorageRowKeys = [...localStorageRowKeys, recordKey];
       localStorageRows = [...localStorageRows, ...localStorageResource];
     } else {
-      localStorageRowKeys = localStorageRowKeys.filter(t => t !== recordKey);
+      localStorageRowKeys = localStorageRowKeys.filter((t) => t !== recordKey);
       localStorageRows = removeLocalStorageRows(localStorageRows, [recordKey]);
     }
 
     saveSelectedRowsToLocalStorage(localStorageRowKeys, localStorageRows);
   };
 
-  const saveSelectedRowsToLocalStorage = (
-    rowKeys: React.Key[],
-    rows: TDataSource[]
-  ) => {
+  const saveSelectedRowsToLocalStorage = (rowKeys: React.Key[], rows: TDataSource[]) => {
     const uniqueRows = uniqBy(rows, 'key');
     const uniqueKeys = uniq(rowKeys);
     const currentLocalStorageSize = getLocalStorageSize();
@@ -627,8 +563,7 @@ export const useAccessDataForTable = (
         );
 
         result.items.forEach(
-          (i: StudioTableRow, index: number) =>
-            (i.tableKey = getStudioTableKey(i, index))
+          (i: StudioTableRow, index: number) => (i.tableKey = getStudioTableKey(i, index))
         );
         return result;
       }
@@ -639,21 +574,18 @@ export const useAccessDataForTable = (
       retry: false,
       refetchOnWindowFocus: false,
       onError: (err: any) => {
-        const message =
-          err.reason ?? err.message ?? err.name ?? 'Failed to fetch for table';
+        const message = err.reason ?? err.message ?? err.name ?? 'Failed to fetch for table';
         // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
         onError(new Error(message, { cause: err.cause ?? err.details }));
       },
-      select: data => {
+      select: (data) => {
         const table = data.tableResource as TableResource;
         if (table) {
           const columnConfig = table.configuration
             ? ([table.configuration].flat() as TableColumn[])
             : [];
 
-          const searchable = columnConfig
-            .filter(t => t.enableSearch)
-            .map(t => t.name);
+          const searchable = columnConfig.filter((t) => t.enableSearch).map((t) => t.name);
           const items = data.items.filter((item: any) => {
             const searchableProp = pick(item, ...searchable);
             return (
@@ -698,7 +630,7 @@ export const useAccessDataForTable = (
   }, [dataResult]);
   const addToDataCart = React.useCallback(() => {
     if (selectedResources && addResourceCollectionToCart) {
-      addResourceCollectionToCart(selectedResources).then(response => {
+      addResourceCollectionToCart(selectedResources).then((response) => {
         // succeed silently.
       });
     }

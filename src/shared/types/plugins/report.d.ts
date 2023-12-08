@@ -82,9 +82,7 @@ export interface PersonContribution {
 
 export interface SoftwareContribution {
   '@type': 'Contribution';
-  agent:
-    | { '@type': ['Software', 'Agent'] }
-    | { '@type': ['Software', 'Agent'] }[];
+  agent: { '@type': ['Software', 'Agent'] } | { '@type': ['Software', 'Agent'] }[];
   repository: string;
   description: string;
 }

@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { View } from '@bbp/nexus-sdk/es';
-import { Alert,Button, Form, Input, Tooltip } from 'antd';
+import { Alert, Button, Form, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
 
@@ -33,19 +33,12 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
 }) => {
   const { description, label, dataQuery, plugins = [] } = dashboard || {};
 
-  const viewType =
-    view && view['@type']?.includes('ElasticSearchView') ? 'ES' : 'SPARQL';
+  const viewType = view && view['@type']?.includes('ElasticSearchView') ? 'ES' : 'SPARQL';
 
   const defaultQuery =
-    viewType === 'ES'
-      ? DEFAULT_DASHBOARD_ES_VIEW_QUERY
-      : DEFAULT_DASHBOARD_VIEW_QUERY;
+    viewType === 'ES' ? DEFAULT_DASHBOARD_ES_VIEW_QUERY : DEFAULT_DASHBOARD_VIEW_QUERY;
 
-  const handleOnFinish = (values: {
-    description?: string;
-    label: string;
-    dataQuery: string;
-  }) => {
+  const handleOnFinish = (values: { description?: string; label: string; dataQuery: string }) => {
     const { description, label, dataQuery } = values;
     onSubmit &&
       onSubmit({
@@ -105,10 +98,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
       <Form.Item
         noStyle={true}
         name="dataQuery"
-        label={
-          linkToSparqlQueryEditor &&
-          linkToSparqlQueryEditor(dataQuery || defaultQuery)
-        }
+        label={linkToSparqlQueryEditor && linkToSparqlQueryEditor(dataQuery || defaultQuery)}
         initialValue={dataQuery || defaultQuery}
         rules={[
           {
@@ -116,11 +106,7 @@ const DashboardConfigEditorComponent: React.FunctionComponent<DashboardConfigEdi
           },
         ]}
       >
-        {viewType === 'ES' ? (
-          <ElasticSearchQueryInput />
-        ) : (
-          <SparqlQueryFormInput />
-        )}
+        {viewType === 'ES' ? <ElasticSearchQueryInput /> : <SparqlQueryFormInput />}
       </Form.Item>
       <Form.Item>
         <Button htmlType="submit" type="primary">

@@ -4,12 +4,9 @@ import { useSelector } from 'react-redux';
 import SubApps, { SubApp, SubAppObject } from '../../subapps/index';
 import { RootState } from '../store/reducers';
 
-async function addExternalSubApps(
-  subApps: Map<string, SubAppObject>,
-  eSubbApps: ExternalSubApp[]
-) {
+async function addExternalSubApps(subApps: Map<string, SubAppObject>, eSubbApps: ExternalSubApp[]) {
   const defaultIcon = (await import('../images/noteIcon.svg')).default;
-  eSubbApps.forEach(e => {
+  eSubbApps.forEach((e) => {
     subApps.set(e.title, {
       icon: e.icon ? e.icon : defaultIcon,
       description: e.description,
@@ -42,9 +39,7 @@ const useSubApps = () => {
     new Map()
   );
 
-  const [subAppsState, setSubAppsState] = useState<Map<string, SubAppObject>>(
-    apps
-  );
+  const [subAppsState, setSubAppsState] = useState<Map<string, SubAppObject>>(apps);
 
   const abortController = new AbortController();
 
@@ -53,15 +48,16 @@ const useSubApps = () => {
       fetch(`${subAppsManifestPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
-        .then(resp => resp.json())
-        .then(manifest => {
-          let apps: Map<string, SubAppObject> = Array.from(
-            SubApps.values()
-          ).reduce((memo: Map<string, SubAppObject>, subApp: SubApp) => {
-            const app = subApp();
-            memo.set(app.namespace, app);
-            return memo;
-          }, new Map());
+        .then((resp) => resp.json())
+        .then((manifest) => {
+          let apps: Map<string, SubAppObject> = Array.from(SubApps.values()).reduce(
+            (memo: Map<string, SubAppObject>, subApp: SubApp) => {
+              const app = subApp();
+              memo.set(app.namespace, app);
+              return memo;
+            },
+            new Map()
+          );
           const externalSubApps = manifest.subapps as ExternalSubApp[];
 
           if (manifest.disabled && manifest.disabled.length > 0) {
@@ -69,9 +65,7 @@ const useSubApps = () => {
               (subApp: { title: string }) => subApp.title
             );
 
-            const enabledApps = new Map(
-              [...apps].filter(([k, v]) => !disabledSubApps.includes(k))
-            );
+            const enabledApps = new Map([...apps].filter(([k, v]) => !disabledSubApps.includes(k)));
 
             apps = enabledApps;
           }
@@ -80,7 +74,7 @@ const useSubApps = () => {
 
           setSubAppsState(subApps);
         })
-        .catch(error => {
+        .catch((error) => {
           setSubAppError(error);
         });
     }
@@ -91,9 +85,7 @@ const useSubApps = () => {
       .map((subApp: SubAppObject) => {
         return subApp.routes.map((route: any) => {
           if (Array.isArray(route.path)) {
-            route.path = route.path.map(
-              (p: string) => `/${subApp.namespace}${p}`
-            );
+            route.path = route.path.map((p: string) => `/${subApp.namespace}${p}`);
           } else {
             route.path = `/${subApp.namespace}${route.path}`;
           }
@@ -108,7 +100,7 @@ const useSubApps = () => {
   }, [subAppsState]);
 
   const subAppProps = useMemo(() => {
-    return Array.from(subAppsState.values()).map(subApp => ({
+    return Array.from(subAppsState.values()).map((subApp) => ({
       label: subApp.title,
       key: subApp.title,
       subAppType: subApp.subAppType,

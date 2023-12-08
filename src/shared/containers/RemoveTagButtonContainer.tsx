@@ -32,13 +32,7 @@ const RemoveTagButton: React.FunctionComponent<{
     try {
       setConfirm({ tagName: '', visible: false, busy: true });
 
-      await nexus.Resource.removeTag(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        tagName,
-        revision
-      );
+      await nexus.Resource.removeTag(orgLabel, projectLabel, resourceId, tagName, revision);
       refreshResource();
       notification.success({
         message: `Tag successfully removed`,
@@ -57,11 +51,7 @@ const RemoveTagButton: React.FunctionComponent<{
 
   React.useEffect(() => {
     const getTags = async () => {
-      const result = await nexus.Resource.tags(
-        orgLabel,
-        projectLabel,
-        resourceId
-      );
+      const result = await nexus.Resource.tags(orgLabel, projectLabel, resourceId);
       setTags(result.tags);
     };
     getTags();
@@ -73,10 +63,10 @@ const RemoveTagButton: React.FunctionComponent<{
 
   const menu = (
     <Menu
-      onClick={e => {
+      onClick={(e) => {
         setConfirm({ visible: true, tagName: e.key.toString(), busy: false });
       }}
-      items={tags?.map(t => ({
+      items={tags?.map((t) => ({
         key: t.tag,
         label: (
           <>
@@ -95,9 +85,7 @@ const RemoveTagButton: React.FunctionComponent<{
           onConfirm={() => removeTag(confirm.tagName)}
           okText="Yes"
           cancelText="No"
-          onCancel={() =>
-            setConfirm({ visible: false, tagName: '', busy: false })
-          }
+          onCancel={() => setConfirm({ visible: false, tagName: '', busy: false })}
           open={confirm.visible}
         >
           <Dropdown disabled={!hasTags} dropdownRender={() => menu}>

@@ -1,12 +1,10 @@
 import { BellOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Badge, Button, Modal,Popover } from 'antd';
+import { Badge, Button, Modal, Popover } from 'antd';
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import { labelOf } from '../../../shared/utils';
 import LinkActivityForm from '../components/LinkActivityForm';
 import NotififcationsPopover from '../components/NotificationsPopover';
@@ -32,9 +30,7 @@ const ActivitiesLinkingContainer: React.FC<{
   }>();
   const currentStepId = match.params.stepId;
   const [showLinkForm, setShowLinkForm] = React.useState<boolean>(false);
-  const [showCreateStepForm, setshowCreateStepForm] = React.useState<boolean>(
-    false
-  );
+  const [showCreateStepForm, setshowCreateStepForm] = React.useState<boolean>(false);
   const [selectedActivity, setSelectedActivity] = React.useState<any>();
   const [steps, setSteps] = React.useState<any[]>([]);
 
@@ -47,10 +43,10 @@ const ActivitiesLinkingContainer: React.FC<{
       size: 99,
       deprecated: false,
     })
-      .then(response => {
+      .then((response) => {
         fetchWorkflowSteps(response._results);
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Failed to load the list of Workflow Steps',
           description: parseNexusError(error),
@@ -61,15 +57,11 @@ const ActivitiesLinkingContainer: React.FC<{
   const fetchWorkflowSteps = (workFlowSteps: any) => {
     Promise.all(
       workFlowSteps.map((activity: any) => {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(activity['@id'])
-        );
+        return nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(activity['@id']));
       })
     )
-      .then(response => setSteps(response))
-      .catch(error => {
+      .then((response) => setSteps(response))
+      .catch((error) => {
         notification.error({
           message: 'Failed to fetch Activities',
           description: parseNexusError(error),
@@ -78,9 +70,7 @@ const ActivitiesLinkingContainer: React.FC<{
   };
 
   const onClickLinkActivity = (id: string) => {
-    setSelectedActivity(
-      unlinkedActivities.find(activity => activity.resourceId === id)
-    );
+    setSelectedActivity(unlinkedActivities.find((activity) => activity.resourceId === id));
     fetchSiblings();
     setShowLinkForm(true);
   };
@@ -114,7 +104,7 @@ const ActivitiesLinkingContainer: React.FC<{
       orgLabel,
       projectLabel,
       encodeURIComponent(stepId),
-      steps.find(step => step['@id'] === stepId)._rev,
+      steps.find((step) => step['@id'] === stepId)._rev,
       {
         ...updatedPayload,
       }
@@ -125,7 +115,7 @@ const ActivitiesLinkingContainer: React.FC<{
     setShowLinkForm(false);
 
     nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
-      .then(response => updateWorkflowStep(stepId, response))
+      .then((response) => updateWorkflowStep(stepId, response))
       .then(() => {
         notification.success({
           message: 'The activity is linked successfully',
@@ -136,7 +126,7 @@ const ActivitiesLinkingContainer: React.FC<{
           clearTimeout(reloadTimer);
         }, 4000);
       })
-      .catch(error =>
+      .catch((error) =>
         notification.error({
           message: 'Oops! Something went wrong - the Activity was not linked',
           description: parseNexusError(error),
@@ -146,7 +136,7 @@ const ActivitiesLinkingContainer: React.FC<{
 
   const addNew = (id: string) => {
     const selectedUnlinkedActivities = unlinkedActivities.find(
-      activity => activity.resourceId === id
+      (activity) => activity.resourceId === id
     );
 
     fetchSiblings();
@@ -183,7 +173,7 @@ const ActivitiesLinkingContainer: React.FC<{
           message: `New step ${name} created successfully`,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setshowCreateStepForm(false);
         setBusy(false);
         notification.error({
@@ -193,13 +183,11 @@ const ActivitiesLinkingContainer: React.FC<{
       });
   };
 
-  const stepsList = steps.map(step => {
+  const stepsList = steps.map((step) => {
     const parentSteps: { id: string; name: string }[] = [];
     let stepTraversal = step;
     while (stepTraversal.hasParent) {
-      stepTraversal = steps.find(
-        step => step['@id'] === stepTraversal.hasParent['@id']
-      );
+      stepTraversal = steps.find((step) => step['@id'] === stepTraversal.hasParent['@id']);
       parentSteps.push({ id: stepTraversal['@id'], name: stepTraversal.name });
     }
     return {
@@ -215,22 +203,22 @@ const ActivitiesLinkingContainer: React.FC<{
 
   const defaultActivityType = () => {
     if (selectedActivity) {
-      const types = Array.from(
-        selectedActivity.resourceType as string[]
-      ).map(type => labelOf(type));
+      const types = Array.from(selectedActivity.resourceType as string[]).map((type) =>
+        labelOf(type)
+      );
 
-      return types.find(type => type !== 'Activity');
+      return types.find((type) => type !== 'Activity');
     }
 
     return undefined;
   };
 
   const sibilings = React.useMemo(() => {
-    return steps.map(s => ({ '@id': s._self, name: s.name }));
+    return steps.map((s) => ({ '@id': s._self, name: s.name }));
   }, [steps]);
 
   const currentStep = React.useMemo(() => {
-    return steps.find(s => {
+    return steps.find((s) => {
       return s['@id'].includes(currentStepId);
     });
   }, [steps, currentStepId]);
@@ -240,9 +228,7 @@ const ActivitiesLinkingContainer: React.FC<{
       <Popover
         placement="bottomRight"
         title={
-          <h3
-            style={{ marginTop: '7px' }}
-          >{`${unlinkedActivities.length} detached activities`}</h3>
+          <h3 style={{ marginTop: '7px' }}>{`${unlinkedActivities.length} detached activities`}</h3>
         }
         content={
           <NotififcationsPopover

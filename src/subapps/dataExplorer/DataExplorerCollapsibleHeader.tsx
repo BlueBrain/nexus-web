@@ -23,9 +23,7 @@ export const DataExplorerCollapsibleHeader: React.FC<Props> = ({
   const headerRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
-    const headerY =
-      headerRef.current?.getBoundingClientRect().bottom ??
-      FUSION_TITLEBAR_HEIGHT;
+    const headerY = headerRef.current?.getBoundingClientRect().bottom ?? FUSION_TITLEBAR_HEIGHT;
     setHeaderBottom(headerY);
     onVisibilityChange(headerY);
   }, []);

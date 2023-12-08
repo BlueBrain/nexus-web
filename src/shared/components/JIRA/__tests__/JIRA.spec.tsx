@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
 
-import { fireEvent, render, screen,waitFor } from '../../../../utils/testUtil';
+import { fireEvent, render, screen, waitFor } from '../../../../utils/testUtil';
 import JIRA, { AuthorizeJiraUI, CreateIssueUI, LinkIssueUI } from '../JIRA';
 
 window.computedStyle = vi.fn();
@@ -157,11 +157,7 @@ describe('JIRA', () => {
     const linkIssueCallBack = vi.fn();
     const cancelBack = vi.fn();
     render(
-      <LinkIssueUI
-        searchJiraLink={'jiralink'}
-        onOk={linkIssueCallBack}
-        onCancel={cancelBack}
-      />
+      <LinkIssueUI searchJiraLink={'jiralink'} onOk={linkIssueCallBack} onCancel={cancelBack} />
     );
 
     const buttons = await screen.findAllByRole('button');
@@ -195,10 +191,7 @@ describe('JIRA', () => {
   });
   it('renders authraizeJIRAUI', async () => {
     const { container } = render(
-      <AuthorizeJiraUI
-        jiraAuthUrl={'jirurri'}
-        onSubmitVerificationCode={vi.fn()}
-      />
+      <AuthorizeJiraUI jiraAuthUrl={'jirurri'} onSubmitVerificationCode={vi.fn()} />
     );
     expect(container).toMatchSnapshot();
   });

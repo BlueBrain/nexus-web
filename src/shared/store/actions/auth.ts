@@ -36,9 +36,7 @@ export const fetchIdentitiesFulfilledAction: ActionCreator<FetchIdentitiesFulfil
   payload: identities,
 });
 
-type FetchIdentitiesFailedAction = FetchFailedAction<
-  AuthActionTypes.IDENTITY_FAILED
->;
+type FetchIdentitiesFailedAction = FetchFailedAction<AuthActionTypes.IDENTITY_FAILED>;
 const fetchIdentitiesFailedAction: ActionCreator<FetchFailedAction<
   AuthActionTypes.IDENTITY_FAILED
 >> = (error: Error) => ({
@@ -74,17 +72,17 @@ const fetchRealmsFulfilledAction: ActionCreator<FetchRealmsFulfilledAction> = (
 });
 
 type FetchRealmsFailedAction = FetchFailedAction<AuthActionTypes.REALM_FAILED>;
-const fetchRealmsFailedAction: ActionCreator<FetchFailedAction<
-  AuthActionTypes.REALM_FAILED
->> = (error: Error) => ({
+const fetchRealmsFailedAction: ActionCreator<FetchFailedAction<AuthActionTypes.REALM_FAILED>> = (
+  error: Error
+) => ({
   error,
   type: AuthActionTypes.REALM_FAILED,
 });
 
 export type AuthFailedAction = FetchFailedAction<AuthActionTypes.LOGIN_FAILED>;
-const authFailedAction: ActionCreator<FetchFailedAction<
-  AuthActionTypes.LOGIN_FAILED
->> = (error: Error) => ({
+const authFailedAction: ActionCreator<FetchFailedAction<AuthActionTypes.LOGIN_FAILED>> = (
+  error: Error
+) => ({
   error,
   type: AuthActionTypes.LOGIN_FAILED,
 });
@@ -138,23 +136,16 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
 };
 
 function performLogin(state: TLocationState) {
-  return async (
-    dispatch: Dispatch<any>,
-    getState: () => RootState
-  ): Promise<any> => {
+  return async (dispatch: Dispatch<any>, getState: () => RootState): Promise<any> => {
     const userManager = getUserManager(getState());
     const baseURl = getState().config.basePath;
     console.log('@@baseURl', baseURl);
     try {
       // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
       // use baseURl instead of window location to get the real location
-      const destination = new URL(window.location.href).searchParams.get(
-        'destination'
-      );
+      const destination = new URL(window.location.href).searchParams.get('destination');
 
-      const redirectUri = destination
-        ? `${window.location.origin}/${destination}`
-        : null;
+      const redirectUri = destination ? `${window.location.origin}/${destination}` : null;
 
       userManager &&
         (await userManager.signinRedirect({

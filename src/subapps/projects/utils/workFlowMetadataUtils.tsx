@@ -87,11 +87,7 @@ export const createWorkflowStepContext = async (
  * @param name
  * @param nexus
  */
-export const createTableContext = async (
-  userOrg: string,
-  name: string,
-  nexus: NexusClient
-) => {
+export const createTableContext = async (userOrg: string, name: string, nexus: NexusClient) => {
   try {
     await nexus.Resource.create(userOrg, name, {
       ...FUSION_TABLE_CONTEXT,

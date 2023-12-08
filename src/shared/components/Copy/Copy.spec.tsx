@@ -9,12 +9,12 @@ import Copy from '.';
 
 Object.defineProperty(document, 'queryCommandSupported', {
   writable: true,
-  value: vi.fn().mockImplementation(query => true),
+  value: vi.fn().mockImplementation((query) => true),
 });
 
 Object.defineProperty(document, 'execCommand', {
   writable: true,
-  value: vi.fn().mockImplementation(query => true),
+  value: vi.fn().mockImplementation((query) => true),
 });
 
 describe('CopyComponent', () => {

@@ -15,7 +15,7 @@ export type InfiniteSearchProps = {
   dataLength: number;
   scrollParent?: HTMLElement | string | null;
 };
-const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
+const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = (props) => {
   const {
     onLoadMore,
     hasMore,
@@ -23,9 +23,7 @@ const InfiniteSearch: React.FunctionComponent<InfiniteSearchProps> = props => {
     hasSearch = true,
     dataLength = 0, // what number are we at right now?
   } = props;
-  const [searchValue, setSearchValue] = React.useState<string | undefined>(
-    defaultSearchValue
-  );
+  const [searchValue, setSearchValue] = React.useState<string | undefined>(defaultSearchValue);
 
   React.useEffect(() => {
     setSearchValue(defaultSearchValue);

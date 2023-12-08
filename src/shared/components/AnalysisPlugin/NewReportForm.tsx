@@ -24,9 +24,7 @@ const NewReportForm = ({
   types,
 }: NewReportFormProps) => {
   const [form] = Form.useForm();
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-    []
-  );
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
 
   const selectCategory = (value: string) => {
@@ -49,24 +47,13 @@ const NewReportForm = ({
     data.types = selectedTypes;
 
     dispatch(saveReport(data));
-    onSave(
-      data.name,
-      data.description,
-      data.id,
-      data.categories,
-      data.types,
-      reportGeneration
-    );
+    onSave(data.name, data.description, data.id, data.categories, data.types, reportGeneration);
   };
 
   return (
     <Form layout={'vertical'} onFinish={onFinish} className="new-report-form">
       <Form.Item label="1. Report Name" name="name">
-        <Input
-          placeholder="type name here"
-          type="text"
-          aria-label="Report Name"
-        />
+        <Input placeholder="type name here" type="text" aria-label="Report Name" />
       </Form.Item>
       <Form.Item label="2. Report Description" name="description">
         <TextArea rows={10} aria-label="Report Description" />
@@ -89,8 +76,7 @@ const NewReportForm = ({
       </Form.Item>
       <Form.Item label="5. Add Assets">
         <p className="smallInfo">
-          the title and the asset description can be edited later while browing
-          throuhg the analysis
+          the title and the asset description can be edited later while browing throuhg the analysis
         </p>
         <div style={{ margin: '10px 0' }}>
           <Text strong>Target Storage</Text>
@@ -106,10 +92,7 @@ const NewReportForm = ({
         {FileUpload()}
       </Form.Item>
       <Form.Item label="6. Tools">
-        <ToolsEdit
-          tools={reportGeneration}
-          onUpdateTools={tools => setReportGeneration(tools)}
-        />
+        <ToolsEdit tools={reportGeneration} onUpdateTools={(tools) => setReportGeneration(tools)} />
       </Form.Item>
       <Form.Item className="action-buttons">
         <span className="action-buttons">

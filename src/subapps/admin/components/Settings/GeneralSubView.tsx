@@ -3,7 +3,7 @@ import './styles.scss';
 import { DeleteOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Button, Form, Input, Space,Spin, Tooltip } from 'antd';
+import { Button, Form, Input, Space, Spin, Tooltip } from 'antd';
 import * as React from 'react';
 import { useMutation } from 'react-query';
 import { useRouteMatch } from 'react-router';
@@ -36,13 +36,7 @@ export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;
 }
-const PrefixMappingGroupInput = ({
-  groupId,
-  value,
-}: {
-  groupId: number;
-  value?: any;
-}) => {
+const PrefixMappingGroupInput = ({ groupId, value }: { groupId: number; value?: any }) => {
   return (
     <Space.Compact className="api-mapping-row-inputs">
       <Form.Item
@@ -119,10 +113,7 @@ const GeneralSubView = ({
   const {
     params: { orgLabel, projectLabel },
   } = match;
-  const {
-    status: updateSettingStatus,
-    mutateAsync: handleSubmitSettingsAsync,
-  } = useMutation(
+  const { status: updateSettingStatus, mutateAsync: handleSubmitSettingsAsync } = useMutation(
     (newProject: ProjectResponseCommon) =>
       submitSettings({
         nexus,
@@ -132,9 +123,8 @@ const GeneralSubView = ({
         rev: _rev,
       }),
     {
-      onSuccess: () =>
-        notification.success({ message: 'Project general data saved' }),
-      onError: error =>
+      onSuccess: () => notification.success({ message: 'Project general data saved' }),
+      onError: (error) =>
         notification.error({
           message: 'An unknown error occurred',
           // @ts-ignore
@@ -166,35 +156,23 @@ const GeneralSubView = ({
       activeKeys: activeKeys.filter((key: any) => key !== k),
     });
   };
-  const apiMappingsItems = prefixMappingKeys.activeKeys.map(
-    (key: number, index: number) => (
-      <Form.Item key={key}>
-        <div className="api-mapping-row">
-          <PrefixMappingGroupInput
-            groupId={key}
-            value={{
-              prefix:
-                (apiMappings &&
-                  apiMappings[key - 1] &&
-                  apiMappings[key - 1].prefix) ||
-                '',
-              namespace:
-                (apiMappings &&
-                  apiMappings[key - 1] &&
-                  apiMappings[key - 1].namespace) ||
-                '',
-            }}
-          />
-          {prefixMappingKeys.activeKeys.length > 0 ? (
-            <DeleteOutlined
-              className="delete-api-mapping-item-btn"
-              onClick={() => remove(key)}
-            />
-          ) : null}
-        </div>
-      </Form.Item>
-    )
-  );
+  const apiMappingsItems = prefixMappingKeys.activeKeys.map((key: number, index: number) => (
+    <Form.Item key={key}>
+      <div className="api-mapping-row">
+        <PrefixMappingGroupInput
+          groupId={key}
+          value={{
+            prefix: (apiMappings && apiMappings[key - 1] && apiMappings[key - 1].prefix) || '',
+            namespace:
+              (apiMappings && apiMappings[key - 1] && apiMappings[key - 1].namespace) || '',
+          }}
+        />
+        {prefixMappingKeys.activeKeys.length > 0 ? (
+          <DeleteOutlined className="delete-api-mapping-item-btn" onClick={() => remove(key)} />
+        ) : null}
+      </div>
+    </Form.Item>
+  ));
   return (
     <div className="settings-view settings-general-view">
       <Form onFinish={handleSubmitSettingsAsync} labelAlign="left">
@@ -224,11 +202,7 @@ const GeneralSubView = ({
               initialValue={description ?? ''}
               rules={[{ required: false }]}
             >
-              <Input.TextArea
-                rows={4}
-                placeholder="Description"
-                disabled={mode === 'edit'}
-              />
+              <Input.TextArea rows={4} placeholder="Description" disabled={mode === 'edit'} />
             </Form.Item>
             <Form.Item
               {...formItemLayout}

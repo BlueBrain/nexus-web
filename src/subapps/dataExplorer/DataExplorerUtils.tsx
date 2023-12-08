@@ -1,4 +1,4 @@
-import { PaginatedList,Resource } from '@bbp/nexus-sdk/es';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { isString } from 'lodash';
@@ -75,7 +75,7 @@ export const usePaginatedExpandedResources = ({
         _results: expandedResources,
       };
     },
-    onError: error => {
+    onError: (error) => {
       notification.error({
         message: 'Error loading data from the server',
         description: isString(error) ? (
@@ -94,12 +94,7 @@ export const usePaginatedExpandedResources = ({
   });
 };
 
-export type NexusResourceFormats =
-  | 'source'
-  | 'compacted'
-  | 'expanded'
-  | 'n-triples'
-  | 'dot';
+export type NexusResourceFormats = 'source' | 'compacted' | 'expanded' | 'n-triples' | 'dot';
 export type NexusMultiFetchResponse = {
   format: NexusResourceFormats;
   resources: { value: Resource }[];
@@ -114,8 +109,8 @@ export const fetchMultipleResources = async (
   orgAndProject?: string
 ): Promise<Resource[]> => {
   const resourceData = partialResources
-    .filter(resource => resource._project)
-    .map(resource => {
+    .filter((resource) => resource._project)
+    .map((resource) => {
       if (orgAndProject) {
         return {
           id: resource['@id'],
@@ -150,10 +145,7 @@ export const fetchMultipleResources = async (
   return multipleResources.resources.map(({ value }) => ({ ...value }));
 };
 
-export const useAggregations = (
-  bucketName: 'projects' | 'types',
-  orgAndProject?: string[]
-) => {
+export const useAggregations = (bucketName: 'projects' | 'types', orgAndProject?: string[]) => {
   const nexus = useNexusContext();
   return useQuery({
     queryKey: ['data-explorer-aggregations', orgAndProject],
@@ -163,13 +155,13 @@ export const useAggregations = (
         aggregations: true,
       });
     },
-    select: data => {
+    select: (data) => {
       return (
-        ((data as unknown) as AggregationsResult).aggregations[bucketName]
-          ?.buckets ?? ([] as AggregatedBucket[])
+        ((data as unknown) as AggregationsResult).aggregations[bucketName]?.buckets ??
+        ([] as AggregatedBucket[])
       );
     },
-    onError: error => {
+    onError: (error) => {
       notification.error({ message: 'Aggregations could not be fetched' });
     },
     staleTime: Infinity,
@@ -187,11 +179,7 @@ type GraphAnalyticsResponse = {
   _properties: GraphAnalyticsProperty[];
 };
 
-export const useGraphAnalyticsPath = (
-  org: string,
-  project: string,
-  types: string[]
-) => {
+export const useGraphAnalyticsPath = (org: string, project: string, types: string[]) => {
   const nexus = useNexusContext();
   return useQuery({
     queryKey: ['graph-analytics-paths', org, project, types],
@@ -204,7 +192,7 @@ export const useGraphAnalyticsPath = (
         types[0]
       )) as GraphAnalyticsResponse;
     },
-    select: data => {
+    select: (data) => {
       return getPathsForProperties(data._properties);
     },
   });
@@ -235,16 +223,12 @@ const getResultsForPredicateQuery = async (
     }),
   });
 
-  const resourcesToFetch = searchResults.hits.hits.map(matching => ({
+  const resourcesToFetch = searchResults.hits.hits.map((matching) => ({
     '@id': matching._source['@id'],
     _project: matching._source['_project'],
   }));
 
-  const matchingResources = await fetchMultipleResources(
-    nexus,
-    apiEndpoint,
-    resourcesToFetch
-  );
+  const matchingResources = await fetchMultipleResources(nexus, apiEndpoint, resourcesToFetch);
 
   return {
     _results: matchingResources,
@@ -257,7 +241,7 @@ export const getUniquePathsForProperties = (
   paths: string[] = [],
   pathSoFar?: string
 ): string[] => {
-  properties?.forEach(property => {
+  properties?.forEach((property) => {
     const name = pathSoFar ? `${pathSoFar}.${property._name}` : property._name;
     paths.push(name);
     getUniquePathsForProperties(property._properties ?? [], paths, name);
@@ -277,17 +261,15 @@ export const getPathsForProperties = (
   pathSoFar?: string,
   valueSoFar?: string
 ): PropertyPath[] => {
-  properties?.forEach(property => {
+  properties?.forEach((property) => {
     const label = pathSoFar ? `${pathSoFar}.${property._name}` : property._name;
-    const value = valueSoFar
-      ? `${valueSoFar} / ${property['@id']!}`
-      : property['@id']!;
+    const value = valueSoFar ? `${valueSoFar} / ${property['@id']!}` : property['@id']!;
     paths.push({ label, value });
     getPathsForProperties(property._properties ?? [], paths, label, value);
   });
 
-  const uniquePaths = new Set(paths.map(path => path.value));
-  return paths.filter(path => uniquePaths.has(path.value));
+  const uniquePaths = new Set(paths.map((path) => path.value));
+  return paths.filter((path) => uniquePaths.has(path.value));
 };
 
 export const sortColumns = (a: string, b: string) => {
@@ -317,18 +299,13 @@ export const sortColumns = (a: string, b: string) => {
   return a.localeCompare(b);
 };
 
-export const columnFromPath = (path: string | null) =>
-  path?.split('.')[0] ?? '';
+export const columnFromPath = (path: string | null) => path?.split('.')[0] ?? '';
 
 export const isUserColumn = (colName: string) => {
   return ALWAYS_DISPLAYED_COLUMNS.has(colName) || !isNexusMetadata(colName);
 };
 
-export const ALWAYS_DISPLAYED_COLUMNS = new Set([
-  '_project',
-  '_createdAt',
-  '_updatedAt',
-]);
+export const ALWAYS_DISPLAYED_COLUMNS = new Set(['_project', '_createdAt', '_updatedAt']);
 
 const UNDERSCORE = '_';
 

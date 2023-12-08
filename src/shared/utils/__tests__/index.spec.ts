@@ -133,9 +133,7 @@ describe('utils functions', () => {
 
     const realms = [{ label: 'bbp', endSessionEndpoint: 'http://logout' }];
     it('should return the endsession url', () => {
-      expect(getLogoutUrl(identities, realms)).toEqual(
-        realms[0].endSessionEndpoint
-      );
+      expect(getLogoutUrl(identities, realms)).toEqual(realms[0].endSessionEndpoint);
     });
     it('should return an empty string', () => {
       expect(getLogoutUrl(identities, [])).toEqual('');
@@ -167,9 +165,9 @@ describe('utils functions', () => {
       );
     });
     it('should only include date when optional noTime param is set to true', () => {
-      expect(
-        getDateString(new Date('2022-01-20T09:10:22.149Z'), { noTime: true })
-      ).toEqual('2022-01-20');
+      expect(getDateString(new Date('2022-01-20T09:10:22.149Z'), { noTime: true })).toEqual(
+        '2022-01-20'
+      );
     });
   });
   describe('userFriendlyHistoricalDateString()', () => {
@@ -177,9 +175,7 @@ describe('utils functions', () => {
 
     it('should return "Sometime in the future..." when now is before historicalDate as this isn\'t a valid param', () => {
       const x = new Date('2022-01-19T16:43:34Z');
-      expect(getFriendlyTimeAgoString(x, now)).toEqual(
-        'Sometime in the future...'
-      );
+      expect(getFriendlyTimeAgoString(x, now)).toEqual('Sometime in the future...');
     });
     it('should return "moments ago" when less than 1 minute has elapsed', () => {
       const x = new Date('2022-01-19T16:42:34Z');
@@ -235,9 +231,7 @@ describe('utils functions', () => {
     const notCamelCase = 'What is going on';
     const almostCamelCase = 'FineAnyway';
     it('should format a camelCaseString to Camel Case String', () => {
-      expect(camelCaseToLabelString(camelCaseString)).toEqual(
-        'Something Wonderful'
-      );
+      expect(camelCaseToLabelString(camelCaseString)).toEqual('Something Wonderful');
     });
     it('just return the original string', () => {
       expect(camelCaseToLabelString(notCamelCase)).toEqual(notCamelCase);
@@ -252,13 +246,11 @@ describe('utils functions', () => {
     const resourceUrl =
       'https://bbpnexus.com/v1/resources/public/graphql-ld/_/https:%2F%2Fbluebrainnexus.io%2Fstudio%2Fcontext';
 
-    const fileUrl =
-      'https://bbpnexus.com/v1/files/bbp/nmc/2083e07e-7202-4ceb-9b4e-8eddadb2f646';
+    const fileUrl = 'https://bbpnexus.com/v1/files/bbp/nmc/2083e07e-7202-4ceb-9b4e-8eddadb2f646';
 
     const specialSchemaUrl =
       'https://dev.nexus.ocp.bbp.epfl.ch/v1/resources/bbp/nmc/datashapes:dataset/reconstructedcell%2F6d43684a-f33d-4a99-9c25-eecd108c1237';
-    const noMatchUrl =
-      'https://bluebrain.github.io/nexus/schemas/unconstrained.json';
+    const noMatchUrl = 'https://bluebrain.github.io/nexus/schemas/unconstrained.json';
     it('should match a project url', () => {
       expect(matchResultUrls(projectUrl)).toEqual('public/graphql-ld');
     });
@@ -394,9 +386,7 @@ describe('utils functions', () => {
           '@type': ['type1'],
         },
       };
-      expect(matchPlugins(pluginsExcludedMap, plugins, resource)).toEqual([
-        'plugin1',
-      ]);
+      expect(matchPlugins(pluginsExcludedMap, plugins, resource)).toEqual(['plugin1']);
     });
 
     it('matches a resource with multiple plugins', () => {
@@ -408,10 +398,7 @@ describe('utils functions', () => {
           '@type': ['type2'],
         },
       };
-      expect(matchPlugins(pluginsMap, plugins, resource)).toEqual([
-        'plugin1',
-        'plugin2',
-      ]);
+      expect(matchPlugins(pluginsMap, plugins, resource)).toEqual(['plugin1', 'plugin2']);
     });
 
     it('matches a resource when resorce @type is not an array', () => {
@@ -423,9 +410,7 @@ describe('utils functions', () => {
           '@type': ['type2'],
         },
       };
-      expect(
-        matchPlugins(pluginsMap, plugins, resourceWithNonArrayType)
-      ).toEqual(['plugin2']);
+      expect(matchPlugins(pluginsMap, plugins, resourceWithNonArrayType)).toEqual(['plugin2']);
     });
 
     it('does not match a resource when pluginsMap has no matching type', () => {
@@ -477,8 +462,7 @@ describe('utils functions', () => {
               'https://bbp.epfl.ch/neurosciencegraph/data/a91043da-0527-4414-b7e8-3484d426c11f',
             digest: {
               algorithm: 'SHA-256',
-              value:
-                '02c666b5ba8ba806470f77f52b5b6b105662bc63f8b3f2da9a560af0bbc6fc07',
+              value: '02c666b5ba8ba806470f77f52b5b6b105662bc63f8b3f2da9a560af0bbc6fc07',
             },
             encodingFormat: 'application/swc',
             name: 'file',
@@ -492,9 +476,7 @@ describe('utils functions', () => {
           },
         ],
       };
-      expect(
-        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
-      ).toEqual(['morphology']);
+      expect(matchPlugins(pluginsMap, plugins, resource as Resource<any>)).toEqual(['morphology']);
     });
 
     it('returns plugin mappings array from manifest', () => {
@@ -540,13 +522,11 @@ describe('utils functions', () => {
       };
       const resource = {
         '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         '@type': 'File',
         _bytes: 203534,
         _digest: {
-          _value:
-            '236ba60cda6dfa3cf7a33fdd82b814ebf68f46650c3c9689e8ad4eb7eca2e810',
+          _value: '236ba60cda6dfa3cf7a33fdd82b814ebf68f46650c3c9689e8ad4eb7eca2e810',
           _algorithm: 'SHA-256',
         },
         _filename: 'P14-12n30.jpg',
@@ -558,8 +538,7 @@ describe('utils functions', () => {
         _self:
           'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/file.json',
-        _project:
-          'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
+        _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
         _rev: 1,
         _deprecated: false,
         _createdAt: '2019-09-26T09:49:56.981669Z',
@@ -571,9 +550,7 @@ describe('utils functions', () => {
         _outgoing:
           'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c/outgoing',
       };
-      expect(
-        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
-      ).toEqual(['imagePlugin']);
+      expect(matchPlugins(pluginsMap, plugins, resource as Resource<any>)).toEqual(['imagePlugin']);
     });
     it('matches a resource with using regex matching', () => {
       const plugins: string[] = ['regexPlugin'];
@@ -585,13 +562,11 @@ describe('utils functions', () => {
       };
       const resource = {
         '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         '@type': 'File',
         _bytes: 203534,
         _digest: {
-          _value:
-            '236ba60cda6dfa3cf7a33fdd82b814ebf68f46650c3c9689e8ad4eb7eca2e810',
+          _value: '236ba60cda6dfa3cf7a33fdd82b814ebf68f46650c3c9689e8ad4eb7eca2e810',
           _algorithm: 'SHA-256',
         },
         _filename: 'P14-12n30.jpg',
@@ -603,8 +578,7 @@ describe('utils functions', () => {
         _self:
           'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/file.json',
-        _project:
-          'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
+        _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
         _rev: 1,
         _deprecated: false,
         _createdAt: '2019-09-26T09:49:56.981669Z',
@@ -616,9 +590,7 @@ describe('utils functions', () => {
         _outgoing:
           'https://bbp.epfl.ch/nexus/v1/files/bbp/somatosensorycortex/f53c7f5e-ce6d-4211-ad75-cf524de4e57c/outgoing',
       };
-      expect(
-        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
-      ).toEqual(['regexPlugin']);
+      expect(matchPlugins(pluginsMap, plugins, resource as Resource<any>)).toEqual(['regexPlugin']);
     });
 
     it('matches a resource with nested objects in arrays', () => {
@@ -640,8 +612,7 @@ describe('utils functions', () => {
       };
       const resource = {
         '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         '@type': 'File',
         exoticProperty: [
           {
@@ -651,9 +622,9 @@ describe('utils functions', () => {
         ],
       };
 
-      expect(
-        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
-      ).toEqual(['complexPlugin']);
+      expect(matchPlugins(pluginsMap, plugins, resource as Resource<any>)).toEqual([
+        'complexPlugin',
+      ]);
     });
 
     it('does not matches a resource with unmatching nested objects in arrays', () => {
@@ -671,8 +642,7 @@ describe('utils functions', () => {
       };
       const resource = {
         '@context': 'https://bluebrain.github.io/nexus/contexts/resource.json',
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
+        '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/f53c7f5e-ce6d-4211-ad75-cf524de4e57c',
         '@type': 'File',
         exoticProperty: [
           {
@@ -681,9 +651,7 @@ describe('utils functions', () => {
           },
         ],
       };
-      expect(
-        matchPlugins(pluginsMap, plugins, resource as Resource<any>)
-      ).toEqual([]);
+      expect(matchPlugins(pluginsMap, plugins, resource as Resource<any>)).toEqual([]);
     });
 
     it('matches multiple resources with different shapes', () => {
@@ -699,12 +667,8 @@ describe('utils functions', () => {
           },
         ],
       };
-      expect(matchPlugins(pluginsMap, plugins, imageResource)).toEqual([
-        'plugin1',
-      ]);
-      expect(matchPlugins(pluginsMap, plugins, distributionResource)).toEqual([
-        'plugin1',
-      ]);
+      expect(matchPlugins(pluginsMap, plugins, imageResource)).toEqual(['plugin1']);
+      expect(matchPlugins(pluginsMap, plugins, distributionResource)).toEqual(['plugin1']);
     });
   });
 
@@ -753,9 +717,7 @@ describe('utils functions', () => {
       const studioId = 'https://someId';
       const studioUri = '/org/project/studios/https%3A%2F%2FsomeId';
 
-      expect(makeStudioUri(orgLabel, projectLabel, studioId)).toEqual(
-        studioUri
-      );
+      expect(makeStudioUri(orgLabel, projectLabel, studioId)).toEqual(studioUri);
     });
   });
 

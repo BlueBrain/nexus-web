@@ -2,16 +2,14 @@ import './styles.scss';
 
 import { Switch } from 'antd';
 import * as React from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 
 import { InitDataExplorerGraphFlowFullscreenVersion } from '../../store/reducers/data-explorer';
 
 const DataExplorerGraphFlowContentLimitedHeader = () => {
   const dispatch = useDispatch();
-  const { current, fullscreen } = useSelector(
-    (state: RootState) => state.dataExplorer
-  );
+  const { current, fullscreen } = useSelector((state: RootState) => state.dataExplorer);
   const onStandardScreen = () =>
     dispatch(InitDataExplorerGraphFlowFullscreenVersion({ fullscreen: false }));
 

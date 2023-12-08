@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
 import ResourceActions from '../components/ResourceActions';
 import useNotification from '../hooks/useNotification';
-import { getOrgAndProjectFromResource,getResourceLabel } from '../utils';
+import { getOrgAndProjectFromResource, getResourceLabel } from '../utils';
 import { download } from '../utils/download';
 import {
   chainPredicates,
@@ -62,10 +62,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       name: 'deprecateResource',
       predicate: async (resource: Resource) => {
         const isLatest = await isLatestResource(resource);
-        return (
-          isLatest &&
-          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
-        );
+        return isLatest && chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource);
       },
       title: 'Deprecate this resource',
       shortTitle: 'Dangerously Deprecate',
@@ -73,9 +70,8 @@ const ResourceActionsContainer: React.FunctionComponent<{
         <div>
           <h3>Warning!</h3>
           <p>
-            This is your default ElasticSearch View. Deprecating this resource
-            will break this application for this project. Are you sure you want
-            to deprecate it?
+            This is your default ElasticSearch View. Deprecating this resource will break this
+            application for this project. Are you sure you want to deprecate it?
           </p>
         </div>
       ),
@@ -87,10 +83,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       predicate: async (resource: Resource) => {
         const isLatest = await isLatestResource(resource);
         return (
-          isLatest &&
-          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
-            resource
-          )
+          isLatest && chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(resource)
         );
       },
       title: 'Deprecate this resource',
@@ -132,12 +125,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
         });
 
         const { _rev } = deprectatedResource;
-        goToResource(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(resourceId),
-          _rev
-        );
+        goToResource(orgLabel, projectLabel, encodeURIComponent(resourceId), _rev);
       } catch (error) {
         notification.error({
           message: `Could not deprecate ${getResourceLabel(resource)}`,
@@ -155,14 +143,9 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
     downloadFile: async () => {
       try {
-        const data = await nexus.File.get(
-          orgLabel,
-          projectLabel,
-          nexusUrlHardEncode(resourceId),
-          {
-            as: 'blob',
-          }
-        );
+        const data = await nexus.File.get(orgLabel, projectLabel, nexusUrlHardEncode(resourceId), {
+          as: 'blob',
+        });
         return download(
           resource._filename || getResourceLabel(resource),
           resource._mediaType,
@@ -184,11 +167,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
           projectLabel={projectLabel}
           resourceId={encodeURIComponent(resourceId)}
         />
-        <ResourceActions
-          resource={resource}
-          actions={actions}
-          actionTypes={actionTypes}
-        />
+        <ResourceActions resource={resource} actions={actions} actionTypes={actionTypes} />
         {editable && (
           <RemoveTagButton
             orgLabel={orgLabel}
@@ -210,30 +189,19 @@ const mapDispatchToProps = (dispatch: any) => ({
     viewId: string,
     viewType: string[] | string
   ) => {
-    const stringifiedViewType = Array.isArray(viewType)
-      ? viewType.join('')
-      : viewType;
+    const stringifiedViewType = Array.isArray(viewType) ? viewType.join('') : viewType;
     return dispatch(
       push(
         `/${orgLabel}/${projectLabel}/${encodeURIComponent(viewId)}/${
-          stringifiedViewType.toLowerCase().includes('elastic')
-            ? '_search'
-            : 'sparql'
+          stringifiedViewType.toLowerCase().includes('elastic') ? '_search' : 'sparql'
         }`
       )
     );
   },
-  goToResource: (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string,
-    revision: number
-  ) => {
+  goToResource: (orgLabel: string, projectLabel: string, resourceId: string, revision: number) => {
     dispatch(
       push(
-        `/${orgLabel}/${projectLabel}/resources/${resourceId}${
-          revision ? `?rev=${revision}` : ''
-        }`
+        `/${orgLabel}/${projectLabel}/resources/${resourceId}${revision ? `?rev=${revision}` : ''}`
       )
     );
   },

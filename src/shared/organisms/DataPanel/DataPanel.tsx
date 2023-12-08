@@ -13,15 +13,7 @@ import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import * as Sentry from '@sentry/browser';
 import { PromisePool } from '@supercharge/promise-pool';
-import {
-  Button,
-  Checkbox,
-  Dropdown,
-  notification,
-  Table,
-  Tag,
-  Tooltip,
-} from 'antd';
+import { Button, Checkbox, Dropdown, notification, Table, Tag, Tooltip } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
 import { clsx } from 'clsx';
@@ -43,14 +35,7 @@ import {
 } from 'lodash';
 import { animate, spring } from 'motion';
 import pluralize from 'pluralize';
-import React, {
-  Fragment,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -151,18 +136,18 @@ export async function downloadArchive({
   const existingPaths = new Map<string, number>();
   const topLevelResources: ResourceObscured[] = [];
   const resourcesForDownload = resourcesPayload.filter(
-    item => item.localStorageType === 'resource'
+    (item) => item.localStorageType === 'resource'
   );
 
   const resourcesNotFetched: Error[] = [];
   const { results } = await PromisePool.withConcurrency(4)
     .for(resourcesForDownload)
-    .handleError(async resourceFetchError => {
+    .handleError(async (resourceFetchError) => {
       resourcesNotFetched.push(resourceFetchError);
 
       return;
     })
-    .process(async item => {
+    .process(async (item) => {
       const [orgLabel, projectLabel] = item?.project.split('/')!;
       const result = (await nexus.Resource.get<TResourceDistribution>(
         orgLabel,
@@ -170,10 +155,7 @@ export async function downloadArchive({
         encodeURIComponent(item?.resourceId!)
       )) as TResourceDistribution;
 
-      const { path, filename, extension } = pathForTopLevelResources(
-        item,
-        existingPaths
-      );
+      const { path, filename, extension } = pathForTopLevelResources(item, existingPaths);
       const parentPath = `${path}/${filename}.${extension}`;
       // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
       // To do that, first prepare the metadata for download.
@@ -189,7 +171,7 @@ export async function downloadArchive({
         : [result.distribution];
 
       const distMatchingSelectedTypes = allDistributions.filter(
-        dist => dist && distributionMatchesTypes(dist, selectedTypes)
+        (dist) => dist && distributionMatchesTypes(dist, selectedTypes)
       );
 
       for (const res of distMatchingSelectedTypes) {
@@ -198,11 +180,7 @@ export async function downloadArchive({
             path: res.contentUrl!,
             headers: { accept: 'application/ld+json' },
           });
-          const childPath = pathForChildDistributions(
-            childResource,
-            path,
-            existingPaths
-          );
+          const childPath = pathForChildDistributions(childResource, path, existingPaths);
           files.push({
             ...item,
             // @ts-ignore
@@ -219,7 +197,7 @@ export async function downloadArchive({
       return files;
     });
   const resources = uniqBy(
-    [...topLevelResources, ...results.flat()].map(item =>
+    [...topLevelResources, ...results.flat()].map((item) =>
       omit(item, ['distribution', 'size', 'contentType'])
     ),
     '_self'
@@ -284,13 +262,12 @@ const DataPanel: React.FC<Props> = ({}) => {
       openDataPanel: false,
     }
   );
-  const apiEndpoint =
-    useSelector((state: RootState) => state.config.apiEndpoint) || '';
+  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint) || '';
 
   const totalSelectedResources = resources?.selectedRowKeys?.length;
   const dataSource: TDataSource[] = resources?.selectedRows || [];
   const resourcesToDownload: TDataSource[] = dataSource.filter(
-    row => row.localStorageType === 'resource'
+    (row) => row.localStorageType === 'resource'
   );
   const columns: ColumnsType<TDataSource> = [
     {
@@ -298,13 +275,13 @@ const DataPanel: React.FC<Props> = ({}) => {
       title: 'Name',
       dataIndex: 'name',
       fixed: true,
-      render: text => (isValidUrl(text) ? `${text.split('/').pop()}` : text),
+      render: (text) => (isValidUrl(text) ? `${text.split('/').pop()}` : text),
     },
     {
       key: 'project',
       title: 'project',
       dataIndex: 'project',
-      render: text => {
+      render: (text) => {
         if (text) {
           const { org, project } = makeOrgProjectTuple(text);
           return (
@@ -328,12 +305,10 @@ const DataPanel: React.FC<Props> = ({}) => {
       key: 'type',
       title: 'type',
       dataIndex: 'type',
-      render: text => {
+      render: (text) => {
         let types = '';
         if (isArray(text)) {
-          types = text
-            .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
-            .join('\n');
+          types = text.map((item) => (isValidUrl(item) ? item.split('/').pop() : item)).join('\n');
         } else if (isString(text) && isValidUrl(text)) {
           types = text.split('/').pop() ?? '';
         } else {
@@ -379,16 +354,9 @@ const DataPanel: React.FC<Props> = ({}) => {
     );
   };
   const handleRemoveItemFromDataPanel = (record: TDataSource) => {
-    const selectedRowKeys = resources.selectedRowKeys.filter(
-      t => t !== record._self
-    );
-    const selectedRows = resources.selectedRows.filter(
-      t => t._self !== record._self
-    );
-    localStorage.setItem(
-      DATA_PANEL_STORAGE,
-      JSON.stringify({ selectedRowKeys, selectedRows })
-    );
+    const selectedRowKeys = resources.selectedRowKeys.filter((t) => t !== record._self);
+    const selectedRows = resources.selectedRows.filter((t) => t._self !== record._self);
+    localStorage.setItem(DATA_PANEL_STORAGE, JSON.stringify({ selectedRowKeys, selectedRows }));
     window.dispatchEvent(
       new CustomEvent(DATA_PANEL_STORAGE_EVENT, {
         detail: {
@@ -398,7 +366,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     );
     updateDataPanel({ resources: { selectedRowKeys, selectedRows } });
   };
-  const handleOpenDataPanel: React.MouseEventHandler<HTMLDivElement> = e => {
+  const handleOpenDataPanel: React.MouseEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
     updateDataPanel({ openDataPanel: true });
@@ -423,8 +391,8 @@ const DataPanel: React.FC<Props> = ({}) => {
     () => [
       ...new Set(
         dataSource
-          .filter(r => !isNil(r.project))
-          ?.map(r => {
+          .filter((r) => !isNil(r.project))
+          ?.map((r) => {
             const [orgLabel, projectLabel] = parseProjectUrl(r.project);
             return `/${orgLabel}/${projectLabel}`;
           })
@@ -434,19 +402,13 @@ const DataPanel: React.FC<Props> = ({}) => {
   );
   const resourcesGrouped = useMemo(() => {
     const newDataSource = dataSource
-      .filter(resource => !isNil(resource._self))
-      .map(resource => {
-        const url = isArray(resource._self)
-          ? resource._self[0]
-          : resource._self;
+      .filter((resource) => !isNil(resource._self))
+      .map((resource) => {
+        const url = isArray(resource._self) ? resource._self[0] : resource._self;
         try {
           const parsedSelf = parseURL(url);
-          const resourceName = isValidUrl(resource.id)
-            ? resource.id.split('/').pop()
-            : resource.id;
-          const pathId = resourceName?.length
-            ? resourceName
-            : uuidv4().substring(0, 6);
+          const resourceName = isValidUrl(resource.id) ? resource.id.split('/').pop() : resource.id;
+          const pathId = resourceName?.length ? resourceName : uuidv4().substring(0, 6);
           const size = resource.distribution
             ? isArray(resource.distribution?.contentSize)
               ? sum(...resource.distribution.contentSize)
@@ -487,15 +449,13 @@ const DataPanel: React.FC<Props> = ({}) => {
 
     return groupBy(newDataSource, 'contentType');
   }, [dataSource]);
-  const existedTypes = compact(Object.keys(resourcesGrouped)).filter(
-    i => i !== 'undefined'
-  );
+  const existedTypes = compact(Object.keys(resourcesGrouped)).filter((i) => i !== 'undefined');
 
   const handleFileTypeChange = (e: CheckboxChangeEvent) => {
     if (e.target.checked) {
-      setTypes(state => [...state, e.target.value]);
+      setTypes((state) => [...state, e.target.value]);
     } else {
-      setTypes(types.filter(t => t !== e.target.value));
+      setTypes(types.filter((t) => t !== e.target.value));
     }
   };
 
@@ -506,12 +466,9 @@ const DataPanel: React.FC<Props> = ({}) => {
       }
 
       if (key === 'json') {
-        const metadataFiles = value.filter(v => v?.['@type'] === 'Resource')
-          .length;
+        const metadataFiles = value.filter((v) => v?.['@type'] === 'Resource').length;
         // We don't want to display `json` for metadata files since they are always downloaded.
-        return metadataFiles === value.length
-          ? null
-          : { [key]: value.length - metadataFiles };
+        return metadataFiles === value.length ? null : { [key]: value.length - metadataFiles };
       }
 
       return { [key]: value.length };
@@ -519,17 +476,13 @@ const DataPanel: React.FC<Props> = ({}) => {
   );
   const displayedTypes = slice(typesCounter, 0, 3);
   const dropdownTypes = slice(typesCounter, 3);
-  const typesMenu = dropdownTypes.map(item => {
+  const typesMenu = dropdownTypes.map((item) => {
     const key = Object.keys(item)[0];
     const value = item[key];
     return {
       key: `type-${key}`,
       label: (
-        <Checkbox
-          value={key}
-          checked={types.includes(key)}
-          onChange={handleFileTypeChange}
-        >
+        <Checkbox value={key} checked={types.includes(key)} onChange={handleFileTypeChange}>
           {`${toUpper(key)} (${value})`}
         </Checkbox>
       ),
@@ -538,19 +491,14 @@ const DataPanel: React.FC<Props> = ({}) => {
   const resultsObject = useMemo(() => {
     return flatMap(resourcesGrouped);
   }, [resourcesGrouped]);
-  const resourcesObscured = filter(
-    flatMap(resultsObject),
-    i => !isEmpty(i) && !isNil(i)
-  );
+  const resourcesObscured = filter(flatMap(resultsObject), (i) => !isEmpty(i) && !isNil(i));
 
   const totalSize = getSizeOfResourcesToDownload(resultsObject, types);
 
   const parsedData: ParsedNexusUrl | undefined = resourcesObscured.length
-    ? parseURL(resourcesObscured.find(item => !!item!._self)?._self as string)
+    ? parseURL(resourcesObscured.find((item) => !!item!._self)?._self as string)
     : undefined;
-  const { mutateAsync: downloadSelectedResource, status } = useMutation(
-    downloadArchive
-  );
+  const { mutateAsync: downloadSelectedResource, status } = useMutation(downloadArchive);
   const handleDownloadResourcesArchive = () => {
     if (parsedData) {
       downloadSelectedResource(
@@ -563,7 +511,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           selectedTypes: types,
         },
         {
-          onSuccess: data => {
+          onSuccess: (data) => {
             const url = window.URL.createObjectURL(new Blob([data.blob]));
             const link = document.createElement('a');
             link.href = url;
@@ -582,8 +530,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                 ),
                 description: (
                   <strong>
-                    {data.errors?.length}{' '}
-                    {pluralize('resource', data.errors?.length)} could not be
+                    {data.errors?.length} {pluralize('resource', data.errors?.length)} could not be
                     fetched for download
                   </strong>
                 ),
@@ -615,8 +562,8 @@ const DataPanel: React.FC<Props> = ({}) => {
                     <li>
                       <em>
                         {error.cause.warnings?.length}{' '}
-                        {pluralize('resource', error.cause?.warnings?.length)}{' '}
-                        could not be fetched for download
+                        {pluralize('resource', error.cause?.warnings?.length)} could not be fetched
+                        for download
                       </em>
                     </li>
                   )}
@@ -634,23 +581,15 @@ const DataPanel: React.FC<Props> = ({}) => {
     }
   };
   useEffect(() => {
-    const dataPanelEventListner = (
-      event: DataPanelEvent<{ datapanel: TResourceTableData }>
-    ) => {
+    const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
       updateDataPanel({
         resources: event.detail?.datapanel,
         openDataPanel: false,
       });
     };
-    window.addEventListener(
-      DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner as EventListener
-    );
+    window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     return () => {
-      window.removeEventListener(
-        DATA_PANEL_STORAGE_EVENT,
-        dataPanelEventListner as EventListener
-      );
+      window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     };
   }, []);
   useEffect(() => {
@@ -669,10 +608,7 @@ const DataPanel: React.FC<Props> = ({}) => {
       );
     }
   }, [datapanelRef.current, openDataPanel]);
-  useOnClickOutside(
-    datapanelRef,
-    () => openDataPanel && handleCloseDataPanel()
-  );
+  useOnClickOutside(datapanelRef, () => openDataPanel && handleCloseDataPanel());
   return dataSource.length ? (
     <div className="datapanel">
       <div ref={datapanelRef} className="datapanel-content">
@@ -680,11 +616,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           <div className="header">
             <div className="title">
               <span>Your saved items</span>
-              <Button
-                type="link"
-                className="clear-data"
-                onClick={handleClearSelectedItems}
-              >
+              <Button type="link" className="clear-data" onClick={handleClearSelectedItems}>
                 Clear all data
               </Button>
             </div>
@@ -697,7 +629,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           </div>
           <div className="items">
             <Table<TDataSource>
-              rowKey={record => `dp-${record.key}`}
+              rowKey={(record) => `dp-${record.key}`}
               columns={columns}
               dataSource={resourcesToDownload}
               bordered={false}
@@ -732,7 +664,7 @@ const DataPanel: React.FC<Props> = ({}) => {
           {Boolean(existedTypes.length) && (
             <div className="download-filetypes">
               <div className="download-filetypes-first">
-                {displayedTypes.map(item => {
+                {displayedTypes.map((item) => {
                   const key = Object.keys(item)[0];
                   const value = item[key];
                   return (
@@ -755,10 +687,7 @@ const DataPanel: React.FC<Props> = ({}) => {
                     overlayClassName="types-dropdown"
                     destroyPopupOnHide={true}
                   >
-                    <Button
-                      type="link"
-                      icon={<PlusOutlined style={{ color: 'white' }} />}
-                    />
+                    <Button type="link" icon={<PlusOutlined style={{ color: 'white' }} />} />
                   </Dropdown>
                 )}
               </div>
@@ -794,11 +723,7 @@ const DataPanel: React.FC<Props> = ({}) => {
 
 export default DataPanel;
 
-const withDataPanel = ({
-  allowDataPanel,
-}: {
-  allowDataPanel: boolean;
-}) => () => {
+const withDataPanel = ({ allowDataPanel }: { allowDataPanel: boolean }) => () => {
   return allowDataPanel ? <DataPanel /> : null;
 };
 

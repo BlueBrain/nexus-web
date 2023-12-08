@@ -1,12 +1,8 @@
 import { clsx } from 'clsx';
 import React, { useEffect, useReducer, useRef } from 'react';
 
-import LeftSpeedArrow, {
-  LeftArrow,
-} from '../../shared/components/Icons/LeftSpeedArrow';
-import RightSpeedArrow, {
-  RightArrow,
-} from '../../shared/components/Icons/RightSpeedArrow';
+import LeftSpeedArrow, { LeftArrow } from '../../shared/components/Icons/LeftSpeedArrow';
+import RightSpeedArrow, { RightArrow } from '../../shared/components/Icons/RightSpeedArrow';
 import { TType } from '../../shared/molecules/TypeSelector/types';
 
 type TArrowsDisplay = {
@@ -70,9 +66,7 @@ const DateExplorerScrollArrows = ({
     window.scrollTo({ left: tableWidth, behavior: 'smooth' });
   };
   const onLeftNormalArrowClick = () => {
-    const previousElement = lastColumnScrollToIndex
-      ? lastColumnScrollToIndex - 1
-      : 0;
+    const previousElement = lastColumnScrollToIndex ? lastColumnScrollToIndex - 1 : 0;
     const previousElementOffsetLeft = columnsOffsetLeft[previousElement];
     window.scrollTo({
       left: previousElementOffsetLeft.offsetLeft + 52,
@@ -115,7 +109,7 @@ const DateExplorerScrollArrows = ({
       const timeoutId = setTimeout(() => {
         const columns = document.querySelectorAll('th.data-explorer-column');
         updateArrowsState({
-          columnsOffsetLeft: Array.from(columns).map(column => {
+          columnsOffsetLeft: Array.from(columns).map((column) => {
             return {
               name: (column as HTMLElement).getAttribute('aria-label'),
               offsetLeft: (column as HTMLElement).offsetLeft,
@@ -168,8 +162,7 @@ const DateExplorerScrollArrows = ({
           onClick={onRightNormalArrowClick}
           className={clsx('right-arrow', {
             'right-arrow--hidden':
-              lastColumnScrollToIndex === columnsOffsetLeft.length - 1 ||
-              hideRightArrows,
+              lastColumnScrollToIndex === columnsOffsetLeft.length - 1 || hideRightArrows,
           })}
         >
           <RightArrow />

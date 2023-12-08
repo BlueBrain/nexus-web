@@ -15,11 +15,11 @@ function groupPermissions(permissions: string[]): GroupedPermission[] {
     // permission format is xxx/yyy
     const s = curr.split('/');
     // do we have s[0] already?
-    if (!prev.some(group => group.name === s[0])) {
+    if (!prev.some((group) => group.name === s[0])) {
       // no, add it
       return [...prev, { name: s[0], permissions: [s[1]] }];
     }
-    return prev.map(group => {
+    return prev.map((group) => {
       if (group.name === s[0]) {
         return { name: group.name, permissions: [...group.permissions, s[1]] };
       }
@@ -32,7 +32,7 @@ interface ACLViewProp {
   identity: Identity;
   permissions: string[];
 }
-const ACLCard: React.FunctionComponent<ACLViewProp> = props => {
+const ACLCard: React.FunctionComponent<ACLViewProp> = (props) => {
   return (
     <Card className="ACL-card">
       <IdentityBadge {...props.identity} />
@@ -50,11 +50,7 @@ const ACLCard: React.FunctionComponent<ACLViewProp> = props => {
         renderItem={(group: GroupedPermission) => (
           <List.Item className="permissions">
             <p className="name">{group.name}</p>
-            <Checkbox.Group
-              options={group.permissions}
-              defaultValue={group.permissions}
-              disabled
-            />
+            <Checkbox.Group options={group.permissions} defaultValue={group.permissions} disabled />
             <Divider />
           </List.Item>
         )}

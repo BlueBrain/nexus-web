@@ -11,9 +11,7 @@ let preferredRealm, searchPrefenceLocalStorag;
 try {
   const realmData = JSON.parse(localStorage.getItem('nexus__realm') || '');
   realmData && (preferredRealm = realmData.label);
-  searchPrefenceLocalStorag = localStorage.getItem(
-    SEARCH_PREFENCE_LOCAL_STORAGE_KEY
-  );
+  searchPrefenceLocalStorag = localStorage.getItem(SEARCH_PREFENCE_LOCAL_STORAGE_KEY);
 } catch (e) {
   preferredRealm = undefined;
 }

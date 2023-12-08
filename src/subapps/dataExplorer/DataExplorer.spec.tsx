@@ -10,7 +10,7 @@ import {
   sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { createNexusClient,Resource } from '@bbp/nexus-sdk';
+import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import { act, fireEvent, RenderResult, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -20,7 +20,7 @@ import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-import { describe,vi } from 'vitest';
+import { describe, vi } from 'vitest';
 
 import { configureStore } from '../../store';
 import { render, screen, waitFor } from '../../utils/testUtil';
@@ -45,12 +45,7 @@ describe(
     const ALWAYS_PRESENT_RESOURCE_PROPERTY = 'propertyAlwaysThere';
     const mockResourcesOnPage1: Resource[] = getCompleteResources();
     const mockResourcesForPage2: Resource[] = [
-      getMockResource(
-        'self1',
-        { author: 'piggy', edition: 1 },
-        'unhcr',
-        'file'
-      ),
+      getMockResource('self1', { author: 'piggy', edition: 1 }, 'unhcr', 'file'),
       getMockResource('self2', { author: ['iggy', 'twinky'] }, 'unhcr', 'file'),
       getMockResource('self3', { year: 2013 }, 'unhcr', 'file'),
     ];
@@ -176,9 +171,7 @@ describe(
       const row = await screen.getByTestId(resource._self);
 
       const allCellsForRow = Array.from(row.childNodes);
-      const colIndex = Array.from(
-        container.querySelectorAll('th')
-      ).findIndex(header =>
+      const colIndex = Array.from(container.querySelectorAll('th')).findIndex((header) =>
         header.innerHTML.match(new RegExp(getColumnTitle(colName), 'i'))
       );
       return allCellsForRow[colIndex].textContent;
@@ -206,15 +199,13 @@ describe(
     const expectProjectOptionsToMatch = async (searchTerm: string) => {
       const projectOptions = await screen.getAllByRole('option');
       expect(projectOptions.length).toBeGreaterThan(0);
-      projectOptions.forEach(option => {
+      projectOptions.forEach((option) => {
         expect(option.innerHTML).toMatch(new RegExp(searchTerm, 'i'));
       });
     };
 
     const projectFromRow = (row: Element) => {
-      const projectColumn = row.querySelector(
-        'td.data-explorer-column-_project'
-      );
+      const projectColumn = row.querySelector('td.data-explorer-column-_project');
       return projectColumn?.textContent;
     };
 
@@ -246,14 +237,8 @@ describe(
         selector,
       });
 
-    const getRowsForNextPage = async (
-      resources: Resource[],
-      total: number = 300
-    ) => {
-      server.use(
-        sourceResourceHandler(resources),
-        ...dataExplorerPageHandler(resources, total)
-      );
+    const getRowsForNextPage = async (resources: Resource[], total: number = 300) => {
+      server.use(sourceResourceHandler(resources), ...dataExplorerPageHandler(resources, total));
 
       const pageInput = await screen.getByRole('listitem', { name: '2' });
       expect(pageInput).toBeInTheDocument();
@@ -271,9 +256,8 @@ describe(
 
     const getSelectedValueInMenu = async (menuLabel: string) => {
       const input = await getInputForLabel(menuLabel);
-      return input
-        .closest('.ant-select-selector')
-        ?.querySelector('.ant-select-selection-item')?.innerHTML;
+      return input.closest('.ant-select-selector')?.querySelector('.ant-select-selection-item')
+        ?.innerHTML;
     };
 
     const openMenuFor = async (ariaLabel: string) => {
@@ -287,11 +271,7 @@ describe(
       return menuDropdown;
     };
 
-    const selectPath = async (
-      path: string,
-      project: string = 'unhcr',
-      type: string = 'file'
-    ) => {
+    const selectPath = async (path: string, project: string = 'unhcr', type: string = 'file') => {
       // Select `project` project if it is not already selected
       const projectInput = await getInputForLabel(ProjectMenuLabel);
       if (!projectInput.value.match(new RegExp(project, 'i'))) {
@@ -326,9 +306,7 @@ describe(
      * NOTE: Since antd menus use virtual scroll, not all options inside the menu are visible.
      * This function only returns those options that are visible.
      */
-    const getVisibleOptionsFromMenu = (
-      selector: string = DropdownOptionSelector
-    ) => {
+    const getVisibleOptionsFromMenu = (selector: string = DropdownOptionSelector) => {
       const menuDropdown = document.querySelector(DropdownSelector);
       return Array.from(menuDropdown?.querySelectorAll(selector) ?? []);
     };
@@ -342,12 +320,8 @@ describe(
     };
 
     const getSizeOfCurrentlyLoadedData = async (expectedCount: number) => {
-      const totalFromBackend = await screen.getByText(
-        'Sample loaded for review:'
-      );
-      const totalCount = within(totalFromBackend).getByText(
-        new RegExp(`${expectedCount}`, 'i')
-      );
+      const totalFromBackend = await screen.getByText('Sample loaded for review:');
+      const totalCount = within(totalFromBackend).getByText(new RegExp(`${expectedCount}`, 'i'));
       return totalCount;
     };
 
@@ -362,9 +336,7 @@ describe(
       return filteredCount;
     };
 
-    const updateResourcesShownInTable = async (
-      resources: Resource[] = mockResourcesForPage2
-    ) => {
+    const updateResourcesShownInTable = async (resources: Resource[] = mockResourcesForPage2) => {
       await expectRowCountToBe(10);
       await getRowsForNextPage(resources);
       await expectRowCountToBe(resources.length);
@@ -376,7 +348,7 @@ describe(
       predicate: typeof EXISTS | typeof DOES_NOT_EXIST,
       resources: Resource[]
     ) => {
-      const matchingResources = resources.filter(res =>
+      const matchingResources = resources.filter((res) =>
         predicate === EXISTS ? res[path] : !res[path]
       );
       server.use(elasticSearchQueryHandler(matchingResources));
@@ -386,8 +358,7 @@ describe(
       return await screen.getByTestId('reset-project-button');
     };
 
-    const showMetadataSwitch = async () =>
-      await screen.getByLabelText('Show metadata');
+    const showMetadataSwitch = async () => await screen.getByLabelText('Show metadata');
 
     const showEmptyDataCellsSwitch = async () =>
       await screen.getByLabelText('Show empty data cells');
@@ -434,11 +405,9 @@ describe(
       return buttonElement;
     };
 
-    const expandHeaderButton = async () =>
-      await getButtonByLabel('expand-header');
+    const expandHeaderButton = async () => await getButtonByLabel('expand-header');
 
-    const collapseHeaderButton = async () =>
-      await getButtonByLabel('collapse-header');
+    const collapseHeaderButton = async () => await getButtonByLabel('collapse-header');
 
     const clickExpandHeaderButton = async () => {
       const expandHeaderButtonElement = await expandHeaderButton();
@@ -473,9 +442,7 @@ describe(
             if (ALWAYS_DISPLAYED_COLUMNS.has(topLevelProperty)) {
               await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
             } else if (isNexusMetadata(topLevelProperty)) {
-              expect(
-                expectColumHeaderToExist(getColumnTitle(topLevelProperty))
-              ).rejects.toThrow();
+              expect(expectColumHeaderToExist(getColumnTitle(topLevelProperty))).rejects.toThrow();
             } else {
               await expectColumHeaderToExist(getColumnTitle(topLevelProperty));
             }
@@ -513,9 +480,7 @@ describe(
 
     it('shows type as the second column', async () => {
       await expectRowCountToBe(10);
-      const secondColumn = container.querySelectorAll(
-        'th.data-explorer-column'
-      )[1];
+      const secondColumn = container.querySelectorAll('th.data-explorer-column')[1];
       expect(secondColumn?.textContent).toMatch(/type/i);
     });
 
@@ -554,7 +519,7 @@ describe(
     it('shows No data text when values are missing for a column', async () => {
       await expectRowCountToBe(10);
       const resourceWithMissingProperty = mockResourcesOnPage1.find(
-        res => !('specialProperty' in res)
+        (res) => !('specialProperty' in res)
       )!;
       const textForSpecialProperty = await getTextForColumn(
         resourceWithMissingProperty,
@@ -566,7 +531,7 @@ describe(
     it('shows No data text when values is undefined', async () => {
       await expectRowCountToBe(10);
       const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
-        res => res.specialProperty === undefined
+        (res) => res.specialProperty === undefined
       )!;
       const textForSpecialProperty = await getTextForColumn(
         resourceWithUndefinedProperty,
@@ -578,7 +543,7 @@ describe(
     it('does not show No data text when values is null', async () => {
       await expectRowCountToBe(10);
       const resourceWithUndefinedProperty = mockResourcesOnPage1.find(
-        res => res.specialProperty === null
+        (res) => res.specialProperty === null
       )!;
       const textForSpecialProperty = await getTextForColumn(
         resourceWithUndefinedProperty,
@@ -591,7 +556,7 @@ describe(
     it('does not show No data when value is empty string', async () => {
       await expectRowCountToBe(10);
       const resourceWithEmptyString = mockResourcesOnPage1.find(
-        res => res.specialProperty === ''
+        (res) => res.specialProperty === ''
       )!;
 
       const textForSpecialProperty = await getTextForColumn(
@@ -605,8 +570,7 @@ describe(
     it('does not show No data when value is empty array', async () => {
       await expectRowCountToBe(10);
       const resourceWithEmptyArray = mockResourcesOnPage1.find(
-        res =>
-          Array.isArray(res.specialProperty) && res.specialProperty.length === 0
+        (res) => Array.isArray(res.specialProperty) && res.specialProperty.length === 0
       )!;
 
       const textForSpecialProperty = await getTextForColumn(
@@ -620,7 +584,7 @@ describe(
     it('does not show No data when value is empty object', async () => {
       await expectRowCountToBe(10);
       const resourceWithEmptyObject = mockResourcesOnPage1.find(
-        res =>
+        (res) =>
           typeof res.specialProperty === 'object' &&
           res.specialProperty !== null &&
           !Array.isArray(res.specialProperty) &&
@@ -637,9 +601,7 @@ describe(
 
     it('shows resources filtered by the selected project', async () => {
       await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
-      visibleTableRows().forEach(row =>
-        expect(projectFromRow(row)).toMatch(/unhcr/i)
-      );
+      visibleTableRows().forEach((row) => expect(projectFromRow(row)).toMatch(/unhcr/i));
     });
 
     it('resets selected project when user clicks reset button', async () => {
@@ -676,28 +638,21 @@ describe(
       await expectRowCountToBe(10);
       await selectOptionFromMenu(TypeMenuLabel, 'file', TypeOptionSelector);
 
-      visibleTableRows().forEach(row =>
-        expect(typeFromRow(row)).toMatch(/file/i)
-      );
+      visibleTableRows().forEach((row) => expect(typeFromRow(row)).toMatch(/file/i));
     });
 
     it('only shows types that exist in selected project in type autocomplete', async () => {
       await expectRowCountToBe(10);
 
       await openMenuFor(TypeMenuLabel);
-      const optionBefore = await getDropdownOption(
-        'Dataset',
-        TypeOptionSelector
-      );
+      const optionBefore = await getDropdownOption('Dataset', TypeOptionSelector);
       expect(optionBefore).toBeInTheDocument();
 
       await selectOptionFromMenu(ProjectMenuLabel, 'unhcr');
       await expectRowCountToBe(2);
 
       await openMenuFor(TypeMenuLabel);
-      expect(
-        getDropdownOption('Dataset', TypeOptionSelector)
-      ).rejects.toThrowError();
+      expect(getDropdownOption('Dataset', TypeOptionSelector)).rejects.toThrowError();
     });
 
     it('shows resources that have path missing', async () => {
@@ -947,7 +902,7 @@ describe(
     it('does not show "No data" cell if "Show empty data cells" toggle is turned off', async () => {
       await expectRowCountToBe(10);
       const resourceWithMissingProperty = mockResourcesOnPage1.find(
-        res => !('specialProperty' in res)
+        (res) => !('specialProperty' in res)
       )!;
       const textForSpecialProperty = await getTextForColumn(
         resourceWithMissingProperty,
@@ -1037,9 +992,7 @@ describe(
       expect(typeInput).toMatch(new RegExp('file', 'i'));
 
       const pathInput = await getSelectedValueInMenu(PathMenuLabel);
-      expect(pathInput).toMatch(
-        new RegExp(ALWAYS_PRESENT_RESOURCE_PROPERTY, 'i')
-      );
+      expect(pathInput).toMatch(new RegExp(ALWAYS_PRESENT_RESOURCE_PROPERTY, 'i'));
     });
 
     it('resets predicate search term when different predicate verb is selected', async () => {
@@ -1057,9 +1010,7 @@ describe(
 
       await selectPredicate(DOES_NOT_CONTAIN);
 
-      const valueInputAfter = await screen.getByPlaceholderText(
-        'Search for...'
-      );
+      const valueInputAfter = await screen.getByPlaceholderText('Search for...');
       expect((valueInputAfter as HTMLInputElement).value).not.toEqual('iggy');
     });
 
@@ -1069,11 +1020,7 @@ describe(
 
       expect(await getInputForLabel(PathMenuLabel)).toBeEnabled();
 
-      await selectOptionFromMenu(
-        TypeMenuLabel,
-        'StudioDashboard',
-        TypeOptionSelector
-      );
+      await selectOptionFromMenu(TypeMenuLabel, 'StudioDashboard', TypeOptionSelector);
       expect(await getInputForLabel(PathMenuLabel)).toBeDisabled();
     });
   },

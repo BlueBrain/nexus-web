@@ -26,11 +26,7 @@ const SortConfigContainer = ({
 
   return (
     <>
-      <Button
-        ref={buttonRef}
-        onClick={() => setIsSortModalVisible(true)}
-        type="link"
-      >
+      <Button ref={buttonRef} onClick={() => setIsSortModalVisible(true)} type="link">
         <SortAscendingOutlined />
         {countOfSortedFields() > 0 ? (
           <>

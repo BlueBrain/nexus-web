@@ -4,8 +4,7 @@ import Helmet from 'react-helmet';
 import favicon from '../favicon.png';
 
 const TITLE = 'A knowledge graph for data-driven science';
-const DESCRIPTION =
-  'Nexus - Transform your data into a fully searchable linked-data graph';
+const DESCRIPTION = 'Nexus - Transform your data into a fully searchable linked-data graph';
 
 const SeoHeaders: React.FC = () => {
   return (
@@ -16,10 +15,7 @@ const SeoHeaders: React.FC = () => {
       <meta id="app-description" name="description" content={DESCRIPTION} />
       <meta name="twitter:card" content={DESCRIPTION} />
       <meta name="twitter:site" content="@bluebrainnexus" />
-      <meta
-        property="og:image"
-        content="https://bluebrain.github.io/nexus/assets/img/logo.png"
-      />
+      <meta property="og:image" content="https://bluebrain.github.io/nexus/assets/img/logo.png" />
       <meta property="og:image:width" content="745" />
       <meta property="og:image:height" content="745" />
       <meta property="og:site_name" content="Nexus" />

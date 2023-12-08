@@ -4,7 +4,7 @@ import { GithubOutlined } from '@ant-design/icons';
 import { Button, Divider, Modal, Tooltip } from 'antd';
 import * as React from 'react';
 import { parseUserAgent } from 'react-device-detect';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { url as githubIssueURL } from '../../../../package.json';
 import Copy from '../../../shared/components/Copy';
@@ -53,10 +53,8 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
   const environmentName = infraEnv ?? '';
 
   const userPlatform = parseUserAgent(navigator.userAgent);
-  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser
-    ?.version ?? ''}`;
-  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os
-    ?.version ?? ''}`;
+  const browser = `${userPlatform.browser?.name ?? ''} ${userPlatform.browser?.version ?? ''}`;
+  const operatingSystem = `${userPlatform.os?.name ?? ''} ${userPlatform.os?.version ?? ''}`;
   const environment = {
     deltaVersion,
     operatingSystem,
@@ -90,14 +88,10 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       <div className="versions">
         <div className="nexus-service-header">
           <Subtitle className="nexus-services">Nexus Services</Subtitle>
-          <span style={{ color: '#A1A1A1' }}>
-            Deployment: {environmentName}
-          </span>
+          <span style={{ color: '#A1A1A1' }}>Deployment: {environmentName}</span>
           <Copy
             render={(copySuccess, triggerCopy) => (
-              <Tooltip
-                title={copySuccess ? 'Copied!' : 'Copy Environment Information'}
-              >
+              <Tooltip title={copySuccess ? 'Copied!' : 'Copy Environment Information'}>
                 <Button
                   aria-label="copy-environment-information"
                   onClick={() => triggerCopy(envInfoForClipboard(environment))}

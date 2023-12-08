@@ -34,11 +34,9 @@ const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
     return (bytes / 1073741824).toFixed(2);
   };
 
-  const data = storages.map(storage => ({
+  const data = storages.map((storage) => ({
     capacity: storage.capacity ? bytesToGb(storage.capacity) : 'Undefined',
-    maxFileSize: storage.maxFileSize
-      ? bytesToGb(storage.maxFileSize)
-      : 'Undefined',
+    maxFileSize: storage.maxFileSize ? bytesToGb(storage.maxFileSize) : 'Undefined',
     files: storage.files,
     spaceUsed: bytesToGb(storage.spaceUsed),
     key: storage['@id'],
@@ -50,12 +48,7 @@ const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
   return (
     <div className="storages">
       <h3 className="storages__title">Storages</h3>
-      <Table
-        columns={columns}
-        dataSource={data}
-        size="small"
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={data} size="small" pagination={false} />
     </div>
   );
 };

@@ -38,15 +38,8 @@ const NavigationStackItem = ({
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
-  const { leftNodes, rightNodes } = useSelector(
-    (state: RootState) => state.dataExplorer
-  );
-  const {
-    onRightShrink,
-    onLeftShrink,
-    leftShrinked,
-    rightShrinked,
-  } = useNavigationStackManager();
+  const { leftNodes, rightNodes } = useSelector((state: RootState) => state.dataExplorer);
+  const { onRightShrink, onLeftShrink, leftShrinked, rightShrinked } = useNavigationStackManager();
 
   const onClick = () => {
     dispatch(JumpToNodeDataExplorerGraphFlow({ index, side }));
@@ -54,8 +47,7 @@ const NavigationStackItem = ({
   };
 
   const parentNode = side === 'left' ? leftNodes : rightNodes;
-  const orgProject =
-    resource?.[0] && resource?.[1] && `${resource?.[0]}/${resource?.[1]}`;
+  const orgProject = resource?.[0] && resource?.[1] && `${resource?.[0]}/${resource?.[1]}`;
   const showLeftCollapseBtn =
     side === 'left' &&
     !leftShrinked &&
@@ -69,18 +61,12 @@ const NavigationStackItem = ({
 
   const collapseRightBtn = React.useCallback(() => {
     return (
-      showRightCollapseBtn && (
-        <NavigationCollapseButton side={side} onExpand={onRightShrink} />
-      )
+      showRightCollapseBtn && <NavigationCollapseButton side={side} onExpand={onRightShrink} />
     );
   }, [showRightCollapseBtn, side, onRightShrink]);
 
   const collapseLeftBtn = React.useCallback(() => {
-    return (
-      showLeftCollapseBtn && (
-        <NavigationCollapseButton side={side} onExpand={onLeftShrink} />
-      )
-    );
+    return showLeftCollapseBtn && <NavigationCollapseButton side={side} onExpand={onLeftShrink} />;
   }, [showLeftCollapseBtn, side, onLeftShrink]);
 
   return (
@@ -89,16 +75,9 @@ const NavigationStackItem = ({
         'navigation-stack-item',
         `item-${index}`,
         side,
-        parentNode.shrinked &&
-          index !== 0 &&
-          index !== parentNode.links.length - 1 &&
-          'shrinkable'
+        parentNode.shrinked && index !== 0 && index !== parentNode.links.length - 1 && 'shrinkable'
       )}
-      hidden={
-        parentNode.shrinked &&
-        index !== 0 &&
-        index !== parentNode.links.length - 1
-      }
+      hidden={parentNode.shrinked && index !== 0 && index !== parentNode.links.length - 1}
     >
       {collapseRightBtn()}
       <div className="navigation-stack-item__wrapper" onClick={onClick}>
@@ -108,7 +87,7 @@ const NavigationStackItem = ({
           <div className="types">
             {isArray(types) ? (
               <Space size="middle">
-                {types.map(t => (
+                {types.map((t) => (
                   <span>{t}</span>
                 ))}
               </Space>

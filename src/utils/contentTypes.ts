@@ -13,11 +13,9 @@ export const MIME_TYPE_TO_EXTENSION: { [key: string]: string } = {
   'application/octet-stream': 'bin',
   'application/pdf': 'pdf',
   'application/vnd.ms-powerpoint': 'ppt',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-    'pptx',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-    'docx',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
   'application/x-7z-compressed': '7z',
   'application/x-tar': 'tar',
   'application/xml': 'xml',
@@ -51,23 +49,16 @@ export const MIME_TYPE_TO_EXTENSION: { [key: string]: string } = {
  */
 export const fileExtensionFromResourceEncoding = (encodingType?: string) => {
   const mimeType = encodingType?.split(';')[0] ?? encodingType ?? '';
-  const extension = MIME_TYPE_TO_EXTENSION[mimeType]
-    ? `${MIME_TYPE_TO_EXTENSION[mimeType]}`
-    : '';
+  const extension = MIME_TYPE_TO_EXTENSION[mimeType] ? `${MIME_TYPE_TO_EXTENSION[mimeType]}` : '';
 
   if (extension === '') {
-    Sentry.captureMessage(
-      `Could not find extension for encoding format: ${encodingType}`
-    );
+    Sentry.captureMessage(`Could not find extension for encoding format: ${encodingType}`);
   }
 
   return extension;
 };
 
-export const getNormalizedFileExtension = (
-  filename: string,
-  encodingFormat?: string
-) => {
+export const getNormalizedFileExtension = (filename: string, encodingFormat?: string) => {
   const lastDotIndex = filename.lastIndexOf('.');
   if (lastDotIndex !== -1 && lastDotIndex !== 0) {
     const extension = filename.slice(lastDotIndex + 1);

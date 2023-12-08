@@ -27,18 +27,15 @@ export const resourceWithoutDistrition = {
   label: 'Dataset Type Ontology',
   _constrainedBy: 'https://neuroshapes.org/dash/ontology',
   _createdAt: '2021-03-12T16:47:13.811Z',
-  _createdBy:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/akkaufma',
+  _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/akkaufma',
   _deprecated: false,
   _incoming:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/http:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fontologies%2Fdatasettypes%2F/incoming',
   _outgoing:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/http:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fontologies%2Fdatasettypes%2F/outgoing',
-  _project:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _rev: 3,
-  _schemaProject:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _schemaProject: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _self:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/http:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fontologies%2Fdatasettypes%2F',
   _updatedAt: '2022-06-17T22:28:51.314Z',
@@ -51,8 +48,7 @@ export const fileResourceWithNoDistribution = {
     'https://bluebrain.github.io/nexus/contexts/files.json',
     'https://bluebrain.github.io/nexus/contexts/metadata.json',
   ],
-  '@id':
-    'https://bbp.epfl.ch/neurosciencegraph/data/938fb28f-6e5c-434f-8d12-572e5c005f73',
+  '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/938fb28f-6e5c-434f-8d12-572e5c005f73',
   '@type': 'File',
   _bytes: 318076,
   _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/files.json',
@@ -110,8 +106,7 @@ export const resourceWithDistributionArray = {
         'https://staging.nise.bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/ea291513-bf28-4774-b4ad-eb545975939b',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'a437b287d355f8ef7164ee9a4be74d7aaaf337567118cfca0c18c160162de54c',
+        value: 'a437b287d355f8ef7164ee9a4be74d7aaaf337567118cfca0c18c160162de54c',
       },
       encodingFormat: 'text/turtle',
       name: 'molecular-systems.ttl',
@@ -132,8 +127,7 @@ export const resourceWithDistributionArray = {
         'https://staging.nise.bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/bb53e5e4-d9c6-4b78-aa05-d79955add281',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'd42b18a85c62630c9de0503667622d318db9618b93d36a09dfe20a1650be9260',
+        value: 'd42b18a85c62630c9de0503667622d318db9618b93d36a09dfe20a1650be9260',
       },
       encodingFormat: 'application/ld+json',
       name: 'molecular-systems.json',
@@ -151,8 +145,7 @@ export const resourceWithDistributionArray = {
         'https://staging.nise.bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/951aebdd-2771-4bfe-a4e2-6163d61b7bfa',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'a8b498c2901b732d04ace13d394a0139b85b8f752bb39fb43c94149e47fa8887',
+        value: 'a8b498c2901b732d04ace13d394a0139b85b8f752bb39fb43c94149e47fa8887',
       },
       encodingFormat: 'text/csv',
       name: 'molecular-systems.csv',
@@ -173,8 +166,7 @@ export const resourceWithDistributionArray = {
         'https://staging.nise.bbp.epfl.ch/nexus/v1/files/neurosciencegraph/datamodels/8b08fd98-2eba-4a1c-847b-77b6e445f177',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'f0f81f86e47221ade1b37a8f39377f15690b20c4816c7b2912c03236cd8d45a9',
+        value: 'f0f81f86e47221ade1b37a8f39377f15690b20c4816c7b2912c03236cd8d45a9',
       },
       encodingFormat: 'text/json',
       name: 'synthetic_texts_Molecular_systems.json',
@@ -191,11 +183,9 @@ export const resourceWithDistributionArray = {
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems/incoming',
   _outgoing:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems/outgoing',
-  _project:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _rev: 90,
-  _schemaProject:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _schemaProject: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _self:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems',
   _updatedAt: '2023-05-31T11:39:11.272Z',
@@ -242,11 +232,9 @@ export const resourceWithDistributionObject = {
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems/incoming',
   _outgoing:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems/outgoing',
-  _project:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _rev: 90,
-  _schemaProject:
-    'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _schemaProject: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _self:
     'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/ontologies/https:%2F%2Fbbp.epfl.ch%2Fontologies%2Fcore%2Fmolecular-systems',
   _updatedAt: '2023-05-31T11:39:11.272Z',
@@ -295,26 +283,22 @@ export const getMockDistribution = (fileName: string) => {
     _bytes: 1012929,
     _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/files.json',
     _createdAt: '2021-09-29T13:04:09.987Z',
-    _createdBy:
-      'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/akkaufma',
+    _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/akkaufma',
     _deprecated: false,
     _digest: {
       _algorithm: 'SHA-256',
-      _value:
-        '0bd0553109bec4c2cb920b87d46bbcbef0073feec1a00f3f18c9dd83118c38d3',
+      _value: '0bd0553109bec4c2cb920b87d46bbcbef0073feec1a00f3f18c9dd83118c38d3',
     },
     _incoming: `https://staging.nise.bbp.epfl.ch/nexus/v1/files/tests/integration/${fakeUUID}/incoming`,
     _location:
       'file:///gpfs/bbp.cscs.ch/data/project/nexustest/nexus-staging/tests/integration/d/1/e/5/2/f/2/b/mtC161001A_idA.swc',
     _mediaType: 'application/swc',
     _outgoing: `https://staging.nise.bbp.epfl.ch/nexus/v1/files/tests/integration/${fakeUUID}/outgoing`,
-    _project:
-      'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/tests/integration',
+    _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/tests/integration',
     _rev: 1,
     _self: `https://staging.nise.bbp.epfl.ch/nexus/v1/files/tests/integration/${fakeUUID}`,
     _storage: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/33dac360-7175-4d51-954d-1285b03d2c11',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/33dac360-7175-4d51-954d-1285b03d2c11',
       '@type': 'RemoteDiskStorage',
       _rev: 1,
     },

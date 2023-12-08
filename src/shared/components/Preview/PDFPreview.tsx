@@ -22,11 +22,7 @@ type PDFThumbnailProps = {
   previewDisabled: boolean;
 };
 
-const PDFThumbnail = ({
-  url,
-  onPreview,
-  previewDisabled,
-}: PDFThumbnailProps) => {
+const PDFThumbnail = ({ url, onPreview, previewDisabled }: PDFThumbnailProps) => {
   const [{ ref: wrapperHeightRef }, bounds] = useMeasure();
   const [pdfDimensions, setPdfDimensions] = React.useState<{
     height: number;
@@ -42,10 +38,7 @@ const PDFThumbnail = ({
     if (!pdfDimensions) {
       return {};
     }
-    if (
-      bounds.height / pdfDimensions.height <
-      bounds.width / pdfDimensions.width
-    ) {
+    if (bounds.height / pdfDimensions.height < bounds.width / pdfDimensions.width) {
       return { height: Math.floor(bounds.height * 0.8) };
     }
     return { width: Math.floor(bounds.width * 0.8) };
@@ -53,17 +46,12 @@ const PDFThumbnail = ({
 
   return (
     <div className="pdf-thumbnail-wrapper" ref={wrapperHeightRef}>
-      <Document
-        loading={<>loading...</>}
-        file={url}
-        onLoadError={console.error}
-        renderMode="svg"
-      >
+      <Document loading={<>loading...</>} file={url} onLoadError={console.error} renderMode="svg">
         <Page
           className="pdf-thumbnail-page"
           pageNumber={1}
           renderMode="svg"
-          onLoadSuccess={page => {
+          onLoadSuccess={(page) => {
             setPdfDimensions({
               height: page.originalHeight,
               width: page.originalWidth,
@@ -92,11 +80,10 @@ const PDFViewer: React.FC<{
   const [numPages, setNumPages] = React.useState<number>(0);
   const [pageNumber, setPageNumber] = React.useState<number>(1);
 
-  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) =>
-    setNumPages(numPages);
+  const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => setNumPages(numPages);
 
-  const previousPage = () => setPageNumber(page => page - 1);
-  const nextPage = () => setPageNumber(page => page + 1);
+  const previousPage = () => setPageNumber((page) => page - 1);
+  const nextPage = () => setPageNumber((page) => page + 1);
 
   const pdfFile = React.useMemo(
     () => ({
@@ -124,10 +111,7 @@ const PDFViewer: React.FC<{
     if (!pdfDimensions) {
       return {};
     }
-    if (
-      bounds.height / pdfDimensions.height <
-      bounds.width / pdfDimensions.width
-    ) {
+    if (bounds.height / pdfDimensions.height < bounds.width / pdfDimensions.width) {
       return { height: Math.floor(bounds.height * 0.8) };
     }
     return { width: Math.floor(bounds.width * 0.8) };
@@ -139,10 +123,7 @@ const PDFViewer: React.FC<{
         <div className="asset-preview-wrap">
           <div className="asset-preview" ref={wrapperHeightRef}>
             <div className="asset-preview-close">
-              <button
-                className="asset-preview-close__button"
-                onClick={() => closePreview()}
-              >
+              <button className="asset-preview-close__button" onClick={() => closePreview()}>
                 <CloseOutlined />
               </button>
             </div>
@@ -174,7 +155,7 @@ const PDFViewer: React.FC<{
                     renderMode="svg"
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
-                    onLoadSuccess={page => {
+                    onLoadSuccess={(page) => {
                       setPdfDimensions({
                         height: page.originalHeight,
                         width: page.originalWidth,

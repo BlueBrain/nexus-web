@@ -11,18 +11,14 @@ type SearchLayoutProps = {
   onChangeLayout: (layout: string) => void;
 };
 
-const SearchLayouts = ({
-  layouts,
-  onChangeLayout,
-  selectedLayout,
-}: SearchLayoutProps) => (
+const SearchLayouts = ({ layouts, onChangeLayout, selectedLayout }: SearchLayoutProps) => (
   <Select
     suffixIcon={<TableOutlined />}
-    onChange={layout => onChangeLayout(layout as string)}
+    onChange={(layout) => onChangeLayout(layout as string)}
     value={selectedLayout}
     popupMatchSelectWidth={false}
     className="search-layout"
-    options={layouts?.map(o => ({ key: o.name, value: o.name }))}
+    options={layouts?.map((o) => ({ key: o.name, value: o.name }))}
   />
 );
 

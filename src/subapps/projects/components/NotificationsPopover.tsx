@@ -27,26 +27,19 @@ const NotififcationsPopover: React.FC<{
           ? 'There are activities in your project that are not grouped in any step.'
           : 'No detached activities'}
       </p>
-      {activities.map(activity => (
-        <div
-          className="notifications-popover__item"
-          key={`activity-${activity.resourceId}`}
-        >
+      {activities.map((activity) => (
+        <div className="notifications-popover__item" key={`activity-${activity.resourceId}`}>
           <div className="notifications-popover__main">
             <h4>{activity.name || labelOf(activity.resourceId)}</h4>
             <p className="notifications-popover__types">
-              {activity.resourceType &&
-                Array.from(activity.resourceType).length > 0 && (
-                  <TypesIconList
-                    type={Array.from(activity.resourceType).map(type =>
-                      labelOf(type)
-                    )}
-                  />
-                )}
+              {activity.resourceType && Array.from(activity.resourceType).length > 0 && (
+                <TypesIconList
+                  type={Array.from(activity.resourceType).map((type) => labelOf(type))}
+                />
+              )}
             </p>
             <p>
-              Created on{' '}
-              {getDateString(moment(activity.createdAt), { noTime: true })} by{' '}
+              Created on {getDateString(moment(activity.createdAt), { noTime: true })} by{' '}
               {getUsername(activity.createdBy)}
             </p>
             {/* TODO: fetch an agent */}
@@ -62,11 +55,7 @@ const NotififcationsPopover: React.FC<{
               </Button>
             </Tooltip>
             <Tooltip title="Create new Workflow Step with this Activity">
-              <Button
-                type="primary"
-                size="small"
-                onClick={() => onClickNew(activity.resourceId)}
-              >
+              <Button type="primary" size="small" onClick={() => onClickNew(activity.resourceId)}>
                 New
               </Button>
             </Tooltip>

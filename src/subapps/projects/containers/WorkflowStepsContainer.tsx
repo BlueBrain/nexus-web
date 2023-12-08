@@ -18,10 +18,7 @@ import fusionConfig from '../config';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { fetchTopLevelSteps } from '../utils';
-import {
-  createTableContext,
-  createWorkflowStepContext,
-} from '../utils/workFlowMetadataUtils';
+import { createTableContext, createWorkflowStepContext } from '../utils/workFlowMetadataUtils';
 import SingleStepContainer from './SingleStepContainer';
 
 const WorkflowStepContainer: React.FC<{
@@ -40,23 +37,14 @@ const WorkflowStepContainer: React.FC<{
 
   React.useEffect(() => {
     setBusy(true);
-    Promise.all([
-      checkForContext(),
-      fetchAllSteps(nexus, orgLabel, projectLabel),
-    ]).then(() => setBusy(false));
+    Promise.all([checkForContext(), fetchAllSteps(nexus, orgLabel, projectLabel)]).then(() =>
+      setBusy(false)
+    );
   }, [refreshSteps]);
 
-  const fetchAllSteps = async (
-    nexus: NexusClient,
-    orgLabel: string,
-    projectLabel: string
-  ) => {
+  const fetchAllSteps = async (nexus: NexusClient, orgLabel: string, projectLabel: string) => {
     try {
-      const allSteps = (await fetchTopLevelSteps(
-        nexus,
-        orgLabel,
-        projectLabel
-      )) as StepResource[];
+      const allSteps = (await fetchTopLevelSteps(nexus, orgLabel, projectLabel)) as StepResource[];
 
       setSteps(allSteps);
     } catch (e) {
@@ -82,13 +70,13 @@ const WorkflowStepContainer: React.FC<{
     }
   };
 
-  const topLevelSteps: StepResource[] = steps.filter(step => !step.hasParent);
+  const topLevelSteps: StepResource[] = steps.filter((step) => !step.hasParent);
 
-  const children: StepResource[] = steps.filter(step => !!step.hasParent);
+  const children: StepResource[] = steps.filter((step) => !!step.hasParent);
 
-  const stepsWithChildren = topLevelSteps.map(step => {
+  const stepsWithChildren = topLevelSteps.map((step) => {
     const substeps = children.filter(
-      substep => substep.hasParent && substep.hasParent['@id'] === step['@id']
+      (substep) => substep.hasParent && substep.hasParent['@id'] === step['@id']
     );
 
     return {
@@ -97,7 +85,7 @@ const WorkflowStepContainer: React.FC<{
     };
   });
 
-  const siblings = topLevelSteps.map(sibling => ({
+  const siblings = topLevelSteps.map((sibling) => ({
     name: sibling.name,
     '@id': sibling._self,
   }));
@@ -117,7 +105,7 @@ const WorkflowStepContainer: React.FC<{
         });
         reloadSteps();
       })
-      .catch(error => {
+      .catch((error) => {
         setShowAddForm(false);
         notification.error({
           message: 'An error occurred',
@@ -128,16 +116,12 @@ const WorkflowStepContainer: React.FC<{
 
   return (
     <>
-      <Spin
-        spinning={busy}
-        tip="Please wait..."
-        wrapperClassName="workflow_board_spin_wrapper"
-      >
+      <Spin spinning={busy} tip="Please wait..." wrapperClassName="workflow_board_spin_wrapper">
         <ProjectPanel orgLabel={orgLabel} projectLabel={projectLabel} />
         <AddComponentButton addNewStep={() => setShowAddForm(true)} />
         <StepsBoard>
           {steps &&
-            stepsWithChildren.map(step => (
+            stepsWithChildren.map((step) => (
               <SingleStepContainer
                 step={step}
                 key={step['@id']}

@@ -1,16 +1,7 @@
 import '../studio.scss';
 
-import {
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import {
-  DEFAULT_SPARQL_VIEW_ID,
-  NexusClient,
-  Resource,
-} from '@bbp/nexus-sdk/es';
+import { DeleteOutlined, DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { DEFAULT_SPARQL_VIEW_ID, NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import PromisePool from '@supercharge/promise-pool';
 import { Button, Empty, Menu, Modal, Popover, Spin } from 'antd';
@@ -52,7 +43,7 @@ function reSelectDashboard(
 ) {
   if (selectedWorkspace['dashboards'].length > 0) {
     const newSelectedDashboard = dashboards.find(
-      d => d['@id'] === selectedWorkspace['dashboards'][0]['dashboard']
+      (d) => d['@id'] === selectedWorkspace['dashboards'][0]['dashboard']
     );
     if (newSelectedDashboard) {
       setSelectedDashboard(newSelectedDashboard);
@@ -188,40 +179,25 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   const { orgLabel, projectLabel, workspaceId, dashboardId } = studioContext;
   const permissionsPath = `/${orgLabel}/${projectLabel}`;
   const [workspaces, setWorkspaces] = React.useState<Resource<any>[]>([]);
-  const [selectedWorkspace, setSelectedWorkspace] = React.useState<
-    Resource<any>
-  >();
-  const [selectedDashboard, setSelectedDashboard] = React.useState<
-    Resource<any>
-  >();
+  const [selectedWorkspace, setSelectedWorkspace] = React.useState<Resource<any>>();
+  const [selectedDashboard, setSelectedDashboard] = React.useState<Resource<any>>();
   const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
-  const [dashboardSpinner, setDashboardSpinner] = React.useState<boolean>(
-    false
-  );
+  const [dashboardSpinner, setDashboardSpinner] = React.useState<boolean>(false);
   const [selectedKeys, setSelectedKeys] = React.useState<Resource<any>[]>([]);
   const [queryParams, setQueryString] = useQueryString();
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
   const [showDashEditor, setShowDashEditor] = React.useState(false);
   const [showModal, setShowModal] = React.useState<boolean>(false);
-  const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(
+  const [deleteConfirmation, setDeleteConfirmation] = React.useState<boolean>(false);
+  const [deleteDashBoardConfirmation, setDeleteDashBoardConfirmation] = React.useState<boolean>(
     false
   );
-  const [
-    deleteDashBoardConfirmation,
-    setDeleteDashBoardConfirmation,
-  ] = React.useState<boolean>(false);
   const [showEdit, setShowEdit] = React.useState<boolean>(false);
 
-  const [showEditTableForm, setShowEditTableForm] = React.useState<boolean>(
-    false
-  );
+  const [showEditTableForm, setShowEditTableForm] = React.useState<boolean>(false);
   const [isBusy, setIsBusy] = React.useState(false);
-  const [tableDataError, setTableDataError] = React.useState<Error | null>(
-    null
-  );
-  const saveDashboardAndDataTable = async (
-    table: TableResource | UnsavedTableResource
-  ) => {
+  const [tableDataError, setTableDataError] = React.useState<Error | null>(null);
+  const saveDashboardAndDataTable = async (table: TableResource | UnsavedTableResource) => {
     setIsBusy(true);
     try {
       if (!selectedWorkspace) throw new Error();
@@ -318,7 +294,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           block
           type="default"
           icon={<PlusOutlined />}
-          onClick={e => {
+          onClick={(e) => {
             setShowEditTableForm(true);
           }}
         >
@@ -330,7 +306,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<DeleteOutlined />}
-              onClick={e => {
+              onClick={(e) => {
                 setDeleteDashBoardConfirmation(true);
               }}
             >
@@ -342,7 +318,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               type="default"
               icon={<EditOutlined />}
               data-testid="edit-dashboard"
-              onClick={e => {
+              onClick={(e) => {
                 if (selectedDashboard && 'dataTable' in selectedDashboard) {
                   setShowDataTableEdit(true);
                 } else {
@@ -366,7 +342,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           block
           type="default"
           icon={<PlusOutlined />}
-          onClick={e => {
+          onClick={(e) => {
             setShowModal(true);
           }}
         >
@@ -378,7 +354,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<DeleteOutlined />}
-              onClick={e => {
+              onClick={(e) => {
                 setDeleteConfirmation(true);
               }}
             >
@@ -389,7 +365,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<EditOutlined />}
-              onClick={e => {
+              onClick={(e) => {
                 setShowEdit(true);
               }}
             >
@@ -454,7 +430,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         >;
       })
     )
-      .then(values => {
+      .then((values) => {
         setDashboards(values);
         const currentDashboards = values as Resource<{
           label: string;
@@ -464,9 +440,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         }>[];
         if (currentDashboards.length > 0) {
           if (dashboardId) {
-            const currentSelection = currentDashboards.find(
-              v => v['@id'] === dashboardId
-            );
+            const currentSelection = currentDashboards.find((v) => v['@id'] === dashboardId);
             if (currentSelection) {
               setSelectedDashboard(currentSelection);
             }
@@ -477,7 +451,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }
         }
       })
-      .catch(e => {
+      .catch((e) => {
         notification.error({
           message: 'Failed to fetch dashboards',
         });
@@ -486,9 +460,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     setDashboardSpinner(false);
   };
 
-  const updateDashboard = async (
-    data: TableResource | UnsavedTableResource
-  ) => {
+  const updateDashboard = async (data: TableResource | UnsavedTableResource) => {
     if (selectedDashboard) {
       const resource = await nexus.Resource.get(
         orgLabel,
@@ -505,7 +477,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           description: data.description,
           label: data['name'],
         }
-      ).catch(err => {
+      ).catch((err) => {
         throw err;
       });
       onListUpdate();
@@ -517,7 +489,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
       const currentDashboards: any[] = selectedWorkspace['dashboards'];
       if (dashboards) {
         const indexToRemove = currentDashboards.findIndex(
-          d => d['dashboard'] === selectedDashboard['@id']
+          (d) => d['dashboard'] === selectedDashboard['@id']
         );
         if (indexToRemove >= 0) {
           await removeDashBoard(
@@ -546,8 +518,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     if (workspaceIds.length > 0) {
       Promise.all(
         workspaceIds
-          .filter(w => w !== undefined && w !== null)
-          .map(workspaceId => {
+          .filter((w) => w !== undefined && w !== null)
+          .map((workspaceId) => {
             return nexus.Resource.get(
               orgLabel,
               projectLabel,
@@ -555,7 +527,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             ) as Promise<Resource>;
           })
       )
-        .then(values => {
+        .then((values) => {
           setWorkspaces(
             values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
               const a = new Date(dateA);
@@ -570,17 +542,13 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             })
           );
           if (workspaceId) {
-            const workspaceFilteredById = values.find(
-              w => w['@id'] === workspaceId
-            );
-            setSelectedWorkspace(
-              workspaceFilteredById ? workspaceFilteredById : values[0]
-            );
+            const workspaceFilteredById = values.find((w) => w['@id'] === workspaceId);
+            setSelectedWorkspace(workspaceFilteredById ? workspaceFilteredById : values[0]);
           } else {
             setSelectedWorkspace(values[0]);
           }
         })
-        .catch(e => {
+        .catch((e) => {
           notification.error({
             message: 'Failed to fetch workpaces',
           });
@@ -622,9 +590,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             ]);
           }
         } else {
-          setSelectedKeys([
-            `${selectedWorkspace['@id']}*${selectedDashboard['@id']}`,
-          ]);
+          setSelectedKeys([`${selectedWorkspace['@id']}*${selectedDashboard['@id']}`]);
         }
       }
     }
@@ -646,7 +612,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             disableEdit: true,
           }}
           showEdit={showDataTableEdit}
-          toggledEdit={show => setShowDataTableEdit(show)}
+          toggledEdit={(show) => setShowDataTableEdit(show)}
         />
       ) : (
         // Old format Studio
@@ -655,9 +621,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           projectLabel={projectLabel}
           dashboardLabel={selectedDashboard.label}
           key={selectedDashboard['@id']}
-          viewId={
-            selectedWorkspace?.dashboards[0]?.view || DEFAULT_SPARQL_VIEW_ID
-          }
+          viewId={selectedWorkspace?.dashboards[0]?.view || DEFAULT_SPARQL_VIEW_ID}
           fields={selectedDashboard.fields}
           dataQuery={selectedDashboard.dataQuery}
         />
@@ -669,14 +633,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
 
   function selectKeysHighlight(w: Resource) {
     if (selectedDashboard) {
-      const found = find(w.dashboards, d => {
+      const found = find(w.dashboards, (d) => {
         return selectedDashboard['@id'] === d.dashboard;
       });
-      if (
-        selectedKeys.length > 0 &&
-        found &&
-        selectedKeys[0].split('*')[0] === w['@id']
-      ) {
+      if (selectedKeys.length > 0 && found && selectedKeys[0].split('*')[0] === w['@id']) {
         return 'menu-highlight-override';
       }
     }
@@ -690,10 +650,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     queryFn: async () => {
       const { results } = await PromisePool.for(workspaces)
         .withConcurrency(5)
-        .process(async item => {
+        .process(async (item) => {
           const { results } = await PromisePool.for(item.dashboards)
             .withConcurrency(5)
-            .process(async subitem => {
+            .process(async (subitem) => {
               return nexus.Resource.get(
                 orgLabel,
                 projectLabel,
@@ -715,7 +675,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   const items: ItemType[] =
     isSuccess && workspaceDashboards && Boolean(workspaceDashboards.length)
       ? orderBy(
-          workspaceDashboards.map(item => {
+          workspaceDashboards.map((item) => {
             return {
               key: item.workspace['@id'],
               label: item.workspace.label,
@@ -728,7 +688,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               popupOffset: [0, 0],
               createdAt: item.workspace._createdAt,
               children: orderBy(
-                item.dashboards.map(dash => {
+                item.dashboards.map((dash) => {
                   return {
                     label: dash.label,
                     updatedAt: dash._updatedAt,
@@ -736,9 +696,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
                     dataTestId: `dashboard-item-${dash.label}`,
                     onClick: () => {
                       setSelectedDashboard(dash);
-                      setSelectedKeys([
-                        `${item.workspace['@id']}*${dash['@id']}`,
-                      ]);
+                      setSelectedKeys([`${item.workspace['@id']}*${dash['@id']}`]);
                     },
                   };
                 }),
@@ -820,9 +778,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }}
           onOk={removeDashBoardCallback}
         >
-          <p>
-            Are you sure you want to remove {`${selectedDashboard?.label}`} ?
-          </p>
+          <p>Are you sure you want to remove {`${selectedDashboard?.label}`} ?</p>
         </Modal>
         <Modal
           open={showEditTableForm}
@@ -832,10 +788,10 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           destroyOnClose={true}
         >
           <EditTableForm
-            onSave={data => {
+            onSave={(data) => {
               saveDashboardAndDataTable(data);
             }}
-            onError={err => setTableDataError(err)}
+            onError={(err) => setTableDataError(err)}
             onClose={() => setShowEditTableForm(false)}
             busy={isBusy}
             orgLabel={orgLabel}

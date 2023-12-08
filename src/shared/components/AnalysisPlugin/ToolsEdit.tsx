@@ -1,10 +1,6 @@
 import './ToolsEdit.scss';
 
-import {
-  CloseCircleOutlined,
-  InfoCircleOutlined,
-  PlusCircleOutlined,
-} from '@ant-design/icons';
+import { CloseCircleOutlined, InfoCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
@@ -18,8 +14,7 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
   return (
     <div className="tools-edit">
       <p className="smallInfo">
-        Include links to scripts that were used to generate the contents of the
-        report
+        Include links to scripts that were used to generate the contents of the report
       </p>
       <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
         {tools.map((g, ix) => (
@@ -35,7 +30,7 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
                   type="text"
                   aria-label="Script location"
                   value={g.scriptPath}
-                  onChange={v =>
+                  onChange={(v) =>
                     onUpdateTools(
                       tools.map((r, ix2) => {
                         if (ix === ix2) {
@@ -58,7 +53,7 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
                 <TextArea
                   rows={4}
                   value={g.description}
-                  onChange={v =>
+                  onChange={(v) =>
                     onUpdateTools(
                       tools.map((r, ix2) => {
                         if (ix === ix2) {
@@ -78,7 +73,7 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
               <Button
                 type="link"
                 style={{ marginRight: 0, marginLeft: 'auto', paddingRight: 0 }}
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   onUpdateTools(tools.filter((r, ix2) => ix !== ix2));
                 }}
@@ -95,7 +90,7 @@ const ToolsEdit = ({ tools, onUpdateTools }: ToolsEditProps) => {
         size="small"
         className="add-button"
         icon={<PlusCircleOutlined />}
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           onUpdateTools([...tools, { scriptPath: '', description: '' }]);
         }}

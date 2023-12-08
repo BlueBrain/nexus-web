@@ -7,8 +7,7 @@ import { SubApp } from '..';
 const title = 'Search';
 const namespace = 'search';
 const requireLogin = true;
-const description =
-  'Search through data added to Nexus Delta by you and others';
+const description = 'Search through data added to Nexus Delta by you and others';
 const subAppType = 'internal';
 const version = 'β';
 
@@ -38,9 +37,7 @@ export function useSubappContext() {
 
 export const SearchSubappProviderHOC = (component: React.FunctionComponent) => {
   return () => (
-    <SearchSubappContext.Provider value={subappProps}>
-      {component({})}
-    </SearchSubappContext.Provider>
+    <SearchSubappContext.Provider value={subappProps}>{component({})}</SearchSubappContext.Provider>
   );
 };
 

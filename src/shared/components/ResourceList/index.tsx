@@ -10,19 +10,8 @@ import {
   SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { Resource,ResourceList } from '@bbp/nexus-sdk/es';
-import {
-  Button,
-  Dropdown,
-  Empty,
-  Input,
-  List,
-  Menu,
-  Popover,
-  Spin,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Resource, ResourceList } from '@bbp/nexus-sdk/es';
+import { Button, Dropdown, Empty, Input, List, Menu, Popover, Spin, Switch, Tooltip } from 'antd';
 import { debounce } from 'lodash';
 import * as React from 'react';
 
@@ -67,11 +56,7 @@ const ResourceListComponent: React.FunctionComponent<{
   currentPage: number;
   pageSize?: number;
   hasSearch?: boolean;
-  onPaginationChange(
-    searchValue: string | undefined,
-    page: number,
-    pageSize?: number
-  ): void;
+  onPaginationChange(searchValue: string | undefined, page: number, pageSize?: number): void;
   onPageSizeChange(pageSize: number): void;
   error: Error | null;
   onDelete(): void;
@@ -150,9 +135,7 @@ const ResourceListComponent: React.FunctionComponent<{
     onSortBy(key);
   };
 
-  const [searchValue, setSearchValue] = React.useState<string | undefined>(
-    defaultSearchValue
-  );
+  const [searchValue, setSearchValue] = React.useState<string | undefined>(defaultSearchValue);
 
   React.useEffect(() => {
     setSearchValue(defaultSearchValue);
@@ -187,15 +170,8 @@ const ResourceListComponent: React.FunctionComponent<{
       className="dummy-height-test-list-item"
       style={{ display: 'none' }}
     >
-      <List
-        pagination={{ position: 'bottom', showSizeChanger: false }}
-        className="list-item"
-      >
-        <a
-          id="testListItem"
-          key="testListItemLink"
-          className="test-list-item-link"
-        >
+      <List pagination={{ position: 'bottom', showSizeChanger: false }} className="list-item">
+        <a id="testListItem" key="testListItemLink" className="test-list-item-link">
           <ListItem key="testListItem">
             Test Dimension
             <div className="resource-type-list">
@@ -217,8 +193,7 @@ const ResourceListComponent: React.FunctionComponent<{
       .getElementsByClassName('ant-list-pagination')[0]
       .getBoundingClientRect().top;
 
-    const availableHeightForListItems =
-      paginationTopPosition - listItemTopPosition;
+    const availableHeightForListItems = paginationTopPosition - listItemTopPosition;
 
     const listItemHeight = listItemDiv
       .getElementsByClassName('test-list-item-link')[0]
@@ -265,8 +240,7 @@ const ResourceListComponent: React.FunctionComponent<{
             size="small"
           />
           <div className="count">
-            {!!total &&
-              `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
+            {!!total && `${total.toLocaleString()} result${total > 1 ? 's' : ''}`}
           </div>
           <CloseOutlined className="close-button" onClick={handleDelete} />
         </h3>
@@ -275,7 +249,7 @@ const ResourceListComponent: React.FunctionComponent<{
             render={(copySuccess, triggerCopy) => (
               <a
                 href={shareableLink}
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   triggerCopy(shareableLink);
                 }}
@@ -287,10 +261,7 @@ const ResourceListComponent: React.FunctionComponent<{
             )}
           />
           {!list.query.q && (
-            <Dropdown
-              dropdownRender={() => sortOptions}
-              trigger={['hover', 'click']}
-            >
+            <Dropdown dropdownRender={() => sortOptions} trigger={['hover', 'click']}>
               <Tooltip title="Sort resources">
                 <Button
                   ghost
@@ -361,20 +332,17 @@ const ResourceListComponent: React.FunctionComponent<{
                 responsive: true,
                 showLessItems: true,
               }}
-              renderItem={resource => {
+              renderItem={(resource) => {
                 return (
                   <a
                     href={makeResourceUri(resource['@id'])}
                     key={resource['@id']}
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       goToResource(resource['@id']);
                     }}
                   >
-                    <ListItem
-                      key={resource['@id']}
-                      onClick={() => goToResource(resource['@id'])}
-                    >
+                    <ListItem key={resource['@id']} onClick={() => goToResource(resource['@id'])}>
                       <Popover
                         content={
                           <div style={{ width: 600 }}>

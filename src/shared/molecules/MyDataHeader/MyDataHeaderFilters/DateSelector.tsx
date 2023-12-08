@@ -15,17 +15,11 @@ import DateSeparated from '../../../components/DateSeparatedInputs/DateSeparated
 import useClickOutside from '../../../hooks/useClickOutside';
 import useMeasure from '../../../hooks/useMeasure';
 
-type TDateSelectorProps = Pick<
-  THeaderFilterProps,
-  'dateField' | 'setFilterOptions'
->;
+type TDateSelectorProps = Pick<THeaderFilterProps, 'dateField' | 'setFilterOptions'>;
 const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
   const popoverRef = useRef(null);
   const nexus = useNexusContext();
-  const [
-    { dateEnd, dateFilterType, singleDate, dateStart },
-    updateCurrentDates,
-  ] = useReducer(
+  const [{ dateEnd, dateFilterType, singleDate, dateStart }, updateCurrentDates] = useReducer(
     (previous: TCurrentDate, next: Partial<TCurrentDate>) => ({
       ...previous,
       ...next,
@@ -39,23 +33,14 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
   );
   const selectedDate =
     dateFilterType === 'range' && dateStart !== '' && dateEnd !== ''
-      ? `${moment(dateStart).format(DATE_PATTERN)}  →  ${moment(dateEnd).format(
-          DATE_PATTERN
-        )}`
+      ? `${moment(dateStart).format(DATE_PATTERN)}  →  ${moment(dateEnd).format(DATE_PATTERN)}`
       : singleDate
-      ? `${capitalize(dateFilterType)} ${moment(singleDate).format(
-          DATE_PATTERN
-        )}`
+      ? `${capitalize(dateFilterType)} ${moment(singleDate).format(DATE_PATTERN)}`
       : undefined;
-  const [dateInputRef, { width: datePopWidth }] = useMeasure<
-    HTMLInputElement
-  >();
+  const [dateInputRef, { width: datePopWidth }] = useMeasure<HTMLInputElement>();
 
-  const onDatePopoverVisibleChange = () =>
-    setOpenDateFilterContainer(state => !state);
-  const [dateFilterContainer, setOpenDateFilterContainer] = useState<boolean>(
-    false
-  );
+  const onDatePopoverVisibleChange = () => setOpenDateFilterContainer((state) => !state);
+  const [dateFilterContainer, setOpenDateFilterContainer] = useState<boolean>(false);
   const updateDate = (type: TDateOptions, date: string) =>
     updateCurrentDates({
       [type]: date,
@@ -78,7 +63,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
       dateEnd &&
       moment(dateEnd).isBefore(dateStart, 'days')) ||
     (dateFilterType !== 'range' && !singleDate);
-  const handleSubmitDates: React.FormEventHandler<HTMLFormElement> = e => {
+  const handleSubmitDates: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     setFilterOptions({
       dateFilterType,
@@ -113,7 +98,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
             <DateSeparated
               name="dateStart"
               value={dateStart}
-              updateUpperDate={value => {
+              updateUpperDate={(value) => {
                 if (
                   dateEnd &&
                   moment(dateEnd).isValid() &&
@@ -131,7 +116,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
             <DateSeparated
               name="dateStart"
               value={dateEnd}
-              updateUpperDate={value => {
+              updateUpperDate={(value) => {
                 if (
                   dateStart &&
                   moment(dateStart).isValid() &&
@@ -150,7 +135,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
           <DateSeparated
             name="singleDate"
             value={singleDate}
-            updateUpperDate={value => updateDate('singleDate', value)}
+            updateUpperDate={(value) => updateDate('singleDate', value)}
           />
         )}
         <Button
@@ -187,7 +172,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
         className="my-data-date-picker"
         value={selectedDate}
         prefix={<CalendarOutlined />}
-        onClick={() => setOpenDateFilterContainer(state => !state)}
+        onClick={() => setOpenDateFilterContainer((state) => !state)}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           if (e.type === 'click') {
             updateCurrentDates({

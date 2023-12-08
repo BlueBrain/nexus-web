@@ -10,8 +10,7 @@ const subAppType = 'internal';
 const title = 'Studios';
 const namespace = 'studios';
 const requireLogin = false;
-const description =
-  'Visualize query results from Nexus Delta in customizable views';
+const description = 'Visualize query results from Nexus Delta in customizable views';
 
 const studioLegacySubappProps = {
   subAppType,
@@ -35,9 +34,7 @@ export function useStudioLegacySubappContext() {
   return studioLegacySubappProps;
 }
 
-export const StudioLegacySubappProviderHOC = (
-  component: React.FunctionComponent
-) => {
+export const StudioLegacySubappProviderHOC = (component: React.FunctionComponent) => {
   return () => (
     <StudioLegacySubappContext.Provider value={studioLegacySubappProps}>
       {component({})}

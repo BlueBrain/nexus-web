@@ -97,8 +97,7 @@ export const RESOURCES_TYPES_URLS: { [key: string]: string } = {
     'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#local-disk-storage',
   RemoteDiskStorage:
     'https://bluebrainnexus.io/docs/api/current/kg/kg-storages-api.html#remote-disk-storage',
-  SparqlView:
-    'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#sparqlview',
+  SparqlView: 'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#sparqlview',
   ElasticSearchView:
     'https://bluebrainnexus.io/docs/api/current/kg/kg-views-api.html#elasticsearchview',
   AggregateSparqlView:

@@ -6,22 +6,12 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import {
-  NexusClient,
-  ProjectList,
-  ProjectResponseCommon,
-} from '@bbp/nexus-sdk/es';
+import { NexusClient, ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Alert, Input, InputRef, List,Spin } from 'antd';
+import { Alert, Input, InputRef, List, Spin } from 'antd';
 import { capitalize } from 'lodash';
 import pluralize from 'pluralize';
-import React, {
-  Fragment,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { Fragment, useEffect, useReducer, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
@@ -37,10 +27,7 @@ import { RootState } from '../../shared/store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import timeago from '../../utils//timeago';
 import formatNumber from '../../utils/formatNumber';
-import {
-  LoadMoreFooter,
-  TSort,
-} from '../OrganizationsListPage/OrganizationListPage';
+import { LoadMoreFooter, TSort } from '../OrganizationsListPage/OrganizationListPage';
 import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 
@@ -82,10 +69,7 @@ type TProjectItem = {
   nexus: NexusClient;
   toDelete: boolean;
 };
-const fetchOrganizationDetails = async ({
-  nexus,
-  orgLabel,
-}: TFetchOrganizationListProps) => {
+const fetchOrganizationDetails = async ({ nexus, orgLabel }: TFetchOrganizationListProps) => {
   try {
     return await nexus.Organization.get(orgLabel);
   } catch (error) {
@@ -141,7 +125,7 @@ export const useInfiniteOrganizationProjectsQuery = ({
         size: DEFAULT_PAGE_SIZE,
         from: pageParam,
       }),
-    getNextPageParam: lastPage =>
+    getNextPageParam: (lastPage) =>
       (lastPage as TNewProjectList)._next
         ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
         : undefined,
@@ -170,10 +154,7 @@ const ProjectItem = ({
   const datasets = data?._total;
   return (
     <List.Item className="route-result-list_item">
-      <div
-        className="route-result-list_item_wrapper"
-        role="routeitem-org-project"
-      >
+      <div className="route-result-list_item_wrapper" role="routeitem-org-project">
         <div className="org">
           <Link to={to}>
             <h3>
@@ -189,9 +170,7 @@ const ProjectItem = ({
                 </span>
               )}
               {title}
-              {toDelete && (
-                <span className="deletion-tag">Project being deleted</span>
-              )}
+              {toDelete && <span className="deletion-tag">Project being deleted</span>}
               {deprected && (
                 <span className="depreacted-tag">
                   <DeprecatedIcon /> deprecated
@@ -237,9 +216,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const [query, setQueryString] = useState<string>('');
   const { layoutSettings } = useSelector((state: RootState) => state.config);
   const subapp = useOrganisationsSubappContext();
-  const match = useRouteMatch<{ orgLabel: string }>(
-    `/${subapp.namespace}/:orgLabel`
-  );
+  const match = useRouteMatch<{ orgLabel: string }>(`/${subapp.namespace}/:orgLabel`);
   const orgLabel = match?.params.orgLabel;
   const [{ sort }, setOptions] = useReducer(
     (previous: TPageOptions, newPartialState: Partial<TPageOptions>) => ({
@@ -262,7 +239,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     });
   };
 
-  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
+  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
     // @ts-ignore
@@ -294,10 +271,9 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     sort,
     enabled: !!orgLabel && !!organization?.['@id'],
   });
-  const total =
-    data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
+  const total = data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
   const dataSource: TProjectResponseCommonExtended[] = (data && data.pages
-    ? data.pages.map(page => (page as ProjectList)._results).flat()
+    ? data.pages.map((page) => (page as ProjectList)._results).flat()
     : []) as TProjectResponseCommonExtended[];
   if (!query.trim().length) {
     totalProjectsRef.current = total;
@@ -332,10 +308,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
             total && !query ? (
               `Total of ${total} ${pluralize('Project', total)}`
             ) : total && query ? (
-              `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
-                'Project',
-                total
-              )}`
+              `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize('Project', total)}`
             ) : isLoading ? (
               <LoadingOutlined />
             ) : (

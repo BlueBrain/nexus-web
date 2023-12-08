@@ -10,8 +10,7 @@ export const identitiesHandler = () => {
       ],
       identities: [
         {
-          '@id':
-            'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/authenticated',
+          '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/authenticated',
           '@type': 'Authenticated',
           realm: 'test',
         },
@@ -22,53 +21,45 @@ export const identitiesHandler = () => {
 };
 
 export const aclsHandler = (orgLabel: string, projectLabel: string) => {
-  return rest.get(
-    deltaPath(`/acls/${orgLabel}/${projectLabel}`),
-    (req, res, ctx) => {
-      const mockResponse = {
-        '@context': ['https://bluebrain.github.io/nexus/contexts/acls.json'],
-        _total: 1,
-        _results: [
-          {
-            '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/acls',
-            '@type': 'AccessControlList',
-            acl: [
-              {
-                identity: {
-                  '@id':
-                    'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/authenticated',
-                  '@type': 'Authenticated',
-                  realm: 'test',
-                },
-                permissions: [
-                  'realms/write',
-                  'files/write',
-                  'events/read',
-                  'organizations/write',
-                  'projects/delete',
-                  'projects/write',
-                  'views/write',
-                ],
+  return rest.get(deltaPath(`/acls/${orgLabel}/${projectLabel}`), (req, res, ctx) => {
+    const mockResponse = {
+      '@context': ['https://bluebrain.github.io/nexus/contexts/acls.json'],
+      _total: 1,
+      _results: [
+        {
+          '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/acls',
+          '@type': 'AccessControlList',
+          acl: [
+            {
+              identity: {
+                '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/authenticated',
+                '@type': 'Authenticated',
+                realm: 'test',
               },
-              {
-                identity: {
-                  '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/anonymous',
-                  '@type': 'Anonymous',
-                },
-                permissions: [
-                  'realms/read',
-                  'permissions/read',
-                  'version/read',
-                ],
+              permissions: [
+                'realms/write',
+                'files/write',
+                'events/read',
+                'organizations/write',
+                'projects/delete',
+                'projects/write',
+                'views/write',
+              ],
+            },
+            {
+              identity: {
+                '@id': 'https://dev.nise.bbp.epfl.ch/nexus/v1/anonymous',
+                '@type': 'Anonymous',
               },
-            ],
-            _self: 'https://dev.nise.bbp.epfl.ch/nexus/v1/acls',
-          },
-        ],
-      };
-      return res(ctx.status(200), ctx.json(mockResponse));
-    }
-  );
+              permissions: ['realms/read', 'permissions/read', 'version/read'],
+            },
+          ],
+          _self: 'https://dev.nise.bbp.epfl.ch/nexus/v1/acls',
+        },
+      ],
+    };
+    return res(ctx.status(200), ctx.json(mockResponse));
+  });
 };
 
 export const viewWithIndexingErrors =
@@ -80,38 +71,35 @@ export const viewWithNoIndexingErrors =
 export const viewsHandler = (orgLabel: string, projectLabel: string) => {
   const baseViewObject = baseView(orgLabel, projectLabel);
 
-  return rest.get(
-    deltaPath(`/views/${orgLabel}/${projectLabel}`),
-    (req, res, ctx) => {
-      const mockResponse = {
-        '@context': [
-          'https://bluebrain.github.io/nexus/contexts/search.json',
-          'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
-        ],
-        _total: 3,
-        _results: [
-          {
-            '@id': viewWithNoIndexingErrors,
-            '@type': ['ElasticSearchView', 'View'],
-            name: 'Default Elasticsearch view',
-            ...baseViewObject,
-          },
-          {
-            '@id': 'https://bluebrain.github.io/nexus/vocabulary/searchView',
-            '@type': ['View', 'CompositeView'],
-            ...baseViewObject,
-          },
-          {
-            '@id': viewWithIndexingErrors,
-            '@type': ['View', 'SparqlView'],
-            name: 'Default Sparql view',
-            ...baseViewObject,
-          },
-        ],
-      };
-      return res(ctx.status(200), ctx.json(mockResponse));
-    }
-  );
+  return rest.get(deltaPath(`/views/${orgLabel}/${projectLabel}`), (req, res, ctx) => {
+    const mockResponse = {
+      '@context': [
+        'https://bluebrain.github.io/nexus/contexts/search.json',
+        'https://bluebrain.github.io/nexus/contexts/search-metadata.json',
+      ],
+      _total: 3,
+      _results: [
+        {
+          '@id': viewWithNoIndexingErrors,
+          '@type': ['ElasticSearchView', 'View'],
+          name: 'Default Elasticsearch view',
+          ...baseViewObject,
+        },
+        {
+          '@id': 'https://bluebrain.github.io/nexus/vocabulary/searchView',
+          '@type': ['View', 'CompositeView'],
+          ...baseViewObject,
+        },
+        {
+          '@id': viewWithIndexingErrors,
+          '@type': ['View', 'SparqlView'],
+          name: 'Default Sparql view',
+          ...baseViewObject,
+        },
+      ],
+    };
+    return res(ctx.status(200), ctx.json(mockResponse));
+  });
 };
 
 export const viewErrorsHandler = (orgLabel: string, projectLabel: string) => {
@@ -128,19 +116,11 @@ export const viewErrorsHandler = (orgLabel: string, projectLabel: string) => {
           decodedId === viewWithIndexingErrors
             ? [
                 {
-                  ...baseIndexingError(
-                    orgLabel,
-                    projectLabel,
-                    `${decodedId}-1`
-                  ),
+                  ...baseIndexingError(orgLabel, projectLabel, `${decodedId}-1`),
                   message: 'Mock Error 1',
                 },
                 {
-                  ...baseIndexingError(
-                    orgLabel,
-                    projectLabel,
-                    `${decodedId}-2`
-                  ),
+                  ...baseIndexingError(orgLabel, projectLabel, `${decodedId}-2`),
                   message: 'Mock Error 2',
                 },
               ]
@@ -156,8 +136,7 @@ export const viewStatsHandler = (orgLabel: string, projectLabel: string) => {
     deltaPath(`/views/${orgLabel}/${projectLabel}/:viewId/statistics`),
     (req, res, ctx) => {
       const mockResponse = {
-        '@context':
-          'https://bluebrain.github.io/nexus/contexts/statistics.json',
+        '@context': 'https://bluebrain.github.io/nexus/contexts/statistics.json',
         '@type': 'ViewStatistics',
         delayInSeconds: 0,
         discardedEvents: 0,
@@ -174,11 +153,7 @@ export const viewStatsHandler = (orgLabel: string, projectLabel: string) => {
   );
 };
 
-const baseIndexingError = (
-  orgLabel: string,
-  projectLabel: string,
-  id: string
-) => ({
+const baseIndexingError = (orgLabel: string, projectLabel: string, id: string) => ({
   id,
   errorType: 'epfl.indexing.ElasticSearchSink.BulkUpdateException',
   message: 'Super dramatic error',

@@ -28,14 +28,7 @@ export default function useMeasure<T extends TElement>() {
   React.useEffect(() => {
     if (ref && ref.current) {
       ro.observe(ref.current);
-      const {
-        height,
-        width,
-        top,
-        left,
-        bottom,
-        right,
-      } = ref.current.getBoundingClientRect();
+      const { height, width, top, left, bottom, right } = ref.current.getBoundingClientRect();
       set({ height, width, top, left, bottom, right });
     }
     return () => {

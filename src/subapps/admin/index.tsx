@@ -28,8 +28,7 @@ const organisationSubappProps = {
   title: 'Organizations',
   namespace: 'orgs',
   requireLogin: true,
-  description:
-    'Browse through different  group of datasets gather by those providing datas',
+  description: 'Browse through different  group of datasets gather by those providing datas',
 };
 export const AdminSubappContext = React.createContext<{
   title: string;
@@ -47,7 +46,7 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-export const RedirectAdmin: React.FunctionComponent = props => {
+export const RedirectAdmin: React.FunctionComponent = (props) => {
   const location = useLocation();
   const route = useRouteMatch();
   return (
@@ -67,12 +66,9 @@ export const OrganisationsSubappContext = React.createContext<{
   requireLogin: boolean;
   description: string;
 }>(organisationSubappProps);
-export const useOrganisationsSubappContext = () =>
-  React.useContext(OrganisationsSubappContext);
+export const useOrganisationsSubappContext = () => React.useContext(OrganisationsSubappContext);
 
-export const OrganizationsSubappProviderHOC = (
-  component: React.FunctionComponent
-) => {
+export const OrganizationsSubappProviderHOC = (component: React.FunctionComponent) => {
   return () => (
     <OrganisationsSubappContext.Provider value={organisationSubappProps}>
       {component({})}
@@ -86,8 +82,7 @@ export const Organizations: SubApp = () => {
     title: 'Organizations',
     namespace: 'orgs',
     requireLogin: true,
-    description:
-      'Browse through different  group of datasets gather by those providing datas',
+    description: 'Browse through different  group of datasets gather by those providing datas',
     routes: [
       {
         path: '/',

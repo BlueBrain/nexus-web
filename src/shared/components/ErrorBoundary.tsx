@@ -8,10 +8,7 @@ interface ErrorBoundaryProps {
   fallback?: React.FunctionComponent<{ resetErrorState?: () => void }>;
 }
 
-class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  { hasError: boolean }
-> {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: boolean }> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -29,11 +26,7 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
-        return (
-          <this.props.fallback
-            resetErrorState={() => this.setState({ hasError: false })}
-          />
-        );
+        return <this.props.fallback resetErrorState={() => this.setState({ hasError: false })} />;
       }
       return <h1>Something went wrong.</h1>;
     }

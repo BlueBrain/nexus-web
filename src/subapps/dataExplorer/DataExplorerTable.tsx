@@ -6,7 +6,7 @@ import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import { clsx } from 'clsx';
 import { isArray, isNil, isString, startCase } from 'lodash';
-import React, { forwardRef,useEffect, useReducer } from 'react';
+import React, { forwardRef, useEffect, useReducer } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 import {
@@ -24,15 +24,9 @@ import {
   DataPanelEvent,
 } from '../../shared/organisms/DataPanel/DataPanel';
 import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
-import {
-  removeLocalStorageRows,
-  toLocalStorageResources,
-} from '../../shared/utils/datapanel';
+import { removeLocalStorageRows, toLocalStorageResources } from '../../shared/utils/datapanel';
 import isValidUrl from '../../utils/validUrl';
-import {
-  DataExplorerConfiguration,
-  updateSelectedFiltersCached,
-} from './DataExplorer';
+import { DataExplorerConfiguration, updateSelectedFiltersCached } from './DataExplorer';
 import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
 import { NoDataCell } from './NoDataCell';
 
@@ -75,10 +69,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
     const history = useHistory();
     const location = useLocation();
     const [{ selectedRowKeys }, updateTableData] = useReducer(
-      (
-        previous: TResourceTableData,
-        partialData: Partial<TResourceTableData>
-      ) => ({
+      (previous: TResourceTableData, partialData: Partial<TResourceTableData>) => ({
         ...previous,
         ...partialData,
       }),
@@ -116,19 +107,13 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         background: location,
       });
     };
-    const onSelectRowChange: SelectionSelectFn<Resource> = async (
-      record,
-      selected
-    ) => {
+    const onSelectRowChange: SelectionSelectFn<Resource> = async (record, selected) => {
       const recordKey = record._self;
       const dataPanelLS: TDateExplorerTableData = JSON.parse(
         localStorage.getItem(DATA_PANEL_STORAGE)!
       );
 
-      const localStorageRows = toLocalStorageResources(
-        record,
-        DATA_EXPLORER_NAMESPACE
-      );
+      const localStorageRows = toLocalStorageResources(record, DATA_EXPLORER_NAMESPACE);
       let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
       let selectedRows = dataPanelLS?.selectedRows || [];
 
@@ -136,7 +121,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         selectedRowKeys = [...selectedRowKeys, recordKey];
         selectedRows = [...selectedRows, ...localStorageRows];
       } else {
-        selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+        selectedRowKeys = selectedRowKeys.filter((t) => t !== recordKey);
         selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
       }
 
@@ -177,16 +162,16 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       let selectedRows = dataPanelLS?.selectedRows || [];
 
       if (selected) {
-        const results = changeRows.map(row =>
+        const results = changeRows.map((row) =>
           toLocalStorageResources(row, DATA_EXPLORER_NAMESPACE)
         );
         selectedRows = [...selectedRows, ...results.flat()];
-        selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];
+        selectedRowKeys = [...selectedRowKeys, ...changeRows.map((t) => t._self)];
       } else {
-        const rowKeysToRemove = changeRows.map(r => r._self);
+        const rowKeysToRemove = changeRows.map((r) => r._self);
 
         selectedRowKeys = selectedRowKeys.filter(
-          key => !rowKeysToRemove.includes(key.toString())
+          (key) => !rowKeysToRemove.includes(key.toString())
         );
         selectedRows = removeLocalStorageRows(selectedRows, rowKeysToRemove);
       }
@@ -227,18 +212,13 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
       }
     }, []);
     useEffect(() => {
-      const dataPanelEventListner = (
-        event: DataPanelEvent<{ datapanel: TResourceTableData }>
-      ) => {
+      const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
         updateTableData({
           selectedRows: event.detail?.datapanel.selectedRows,
           selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
         });
       };
-      window.addEventListener(
-        DATA_PANEL_STORAGE_EVENT,
-        dataPanelEventListner as EventListener
-      );
+      window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
       return () => {
         window.removeEventListener(
           DATA_PANEL_STORAGE_EVENT,
@@ -264,17 +244,16 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
           ref={ref}
           columns={tableColumns}
           dataSource={dataSource}
-          rowKey={record => record._self}
-          onRow={resource => ({
-            onClick: _ => goToResource(resource),
+          rowKey={(record) => record._self}
+          onRow={(resource) => ({
+            onClick: (_) => goToResource(resource),
             'data-testid': resource._self,
           })}
           loading={{ spinning: isLoading, indicator: <></> }}
           bordered={false}
           className={clsx(
             'data-explorer-table',
-            tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT &&
-              'data-explorer-header-collapsed',
+            tableOffsetFromTop === FUSION_TITLEBAR_HEIGHT && 'data-explorer-header-collapsed',
             typeFilterFocused && 'data-explorer-not-sticky'
           )}
           rowClassName="data-explorer-row"
@@ -332,11 +311,9 @@ const defaultColumnConfig = (
     dataIndex: colName,
     className: `data-explorer-column data-explorer-column-${colName}`,
     sorter: (a, b) => {
-      return JSON.stringify(a[colName] ?? '').localeCompare(
-        JSON.stringify(b[colName] ?? '')
-      );
+      return JSON.stringify(a[colName] ?? '').localeCompare(JSON.stringify(b[colName] ?? ''));
     },
-    render: text => {
+    render: (text) => {
       if (text === undefined && showEmptyDataCells) {
         // Text will also be undefined if a certain resource does not have `colName` as its property
         return <NoDataCell />;
@@ -354,7 +331,7 @@ const initialTableConfig = (showEmptyDataCells: boolean) => {
   const projectConfig: ColumnType<Resource> = {
     ...defaultColumnConfig(projectKey, showEmptyDataCells),
     title: '_project',
-    render: text => {
+    render: (text) => {
       if (text) {
         const { org, project } = makeOrgProjectTuple(text);
         return `${org}/${project}`;
@@ -371,21 +348,17 @@ const initialTableConfig = (showEmptyDataCells: boolean) => {
   const typeConfig: ColumnType<Resource> = {
     ...defaultColumnConfig(typeKey, showEmptyDataCells),
     title: '@type',
-    render: text => {
+    render: (text) => {
       let types = '';
       if (isArray(text)) {
-        types = text
-          .map(item => (isValidUrl(item) ? item.split('/').pop() : item))
-          .join('\n');
+        types = text.map((item) => (isValidUrl(item) ? item.split('/').pop() : item)).join('\n');
       } else if (isString(text) && isValidUrl(text)) {
         types = text.split('/').pop() ?? '';
       } else {
         types = text;
       }
       return types ? (
-        <Tooltip
-          title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}
-        >
+        <Tooltip title={() => <div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>}>
           <div style={{ whiteSpace: 'pre-wrap' }}>{types}</div>
         </Tooltip>
       ) : (

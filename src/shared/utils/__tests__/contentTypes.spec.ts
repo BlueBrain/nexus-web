@@ -28,10 +28,7 @@ describe('getCorrectFileExtension', () => {
       filename: 'first-image.png',
       encodingFormat: 'image/jpeg',
     };
-    const extension = getNormalizedFileExtension(
-      item.filename,
-      item.encodingFormat
-    );
+    const extension = getNormalizedFileExtension(item.filename, item.encodingFormat);
     expect(extension).toBe('png');
   });
 
@@ -40,10 +37,7 @@ describe('getCorrectFileExtension', () => {
       filename: 'first-image',
       encodingFormat: 'image/jpeg',
     };
-    const extension = getNormalizedFileExtension(
-      item.filename,
-      item.encodingFormat
-    );
+    const extension = getNormalizedFileExtension(item.filename, item.encodingFormat);
     expect(extension).toBe('jpeg');
   });
 });

@@ -30,22 +30,20 @@ type TTooltipCreator = Pick<
 };
 
 function removePopoversFromDOM() {
-  const popovers = document.querySelectorAll(
-    `.${CODEMIRROR_HOVER_CLASS}-popover`
-  );
-  popovers.forEach(popover => popover.remove());
+  const popovers = document.querySelectorAll(`.${CODEMIRROR_HOVER_CLASS}-popover`);
+  popovers.forEach((popover) => popover.remove());
 }
 function removeTooltipsFromDOM() {
   const tooltips = document.getElementsByClassName(CODEMIRROR_HOVER_CLASS);
   tooltips &&
-    Array.from(tooltips).forEach(tooltip => {
+    Array.from(tooltips).forEach((tooltip) => {
       tooltip.remove();
     });
 }
 function removeAllCopyFromDOM() {
   const copiesBtn = document.getElementsByClassName(CODEMIRROR_COPY_URL_CLASS);
   copiesBtn &&
-    Array.from(copiesBtn).forEach(btn => {
+    Array.from(copiesBtn).forEach((btn) => {
       btn.remove();
     });
 }
@@ -154,10 +152,7 @@ function createTooltipContent({
   resolver,
 }: TTooltipCreator) {
   const tooltipContent = document.createElement('div');
-  tooltipContent.className = clsx(
-    `${CODEMIRROR_HOVER_CLASS}-content`,
-    resolvedAs && resolvedAs
-  );
+  tooltipContent.className = clsx(`${CODEMIRROR_HOVER_CLASS}-content`, resolvedAs && resolvedAs);
   if (resolvedAs === 'error' && error) {
     tooltipContent.appendChild(
       createTooltipNode({
@@ -176,9 +171,7 @@ function createTooltipContent({
     tooltipContent.appendChild(
       createTooltipNode({
         onDownload,
-        tag: result.resource
-          ? `${result.resource?.[0]}/${result.resource?.[1]}`
-          : null,
+        tag: result.resource ? `${result.resource?.[0]}/${result.resource?.[1]}` : null,
         title: result.title ?? result._self,
         isDownloadable: result.isDownloadable,
       })
@@ -191,9 +184,7 @@ function createTooltipContent({
     tooltipContent.appendChild(
       createTooltipNode({
         tag: 'Multiple',
-        title: `${
-          (results as TDELink[]).length
-        } resources was found, click to list them`,
+        title: `${(results as TDELink[]).length} resources was found, click to list them`,
       })
     );
     return tooltipContent;
@@ -218,9 +209,7 @@ function createPopoverContent({
   onClick: (result: TDELink) => void;
 }) {
   const tooltipContent = document.createElement('div');
-  tooltipContent.className = clsx(
-    `${CODEMIRROR_HOVER_CLASS}-resources-content`
-  );
+  tooltipContent.className = clsx(`${CODEMIRROR_HOVER_CLASS}-resources-content`);
   // create node for each link in results and then append it to the tooltipContent
   (results as TDELink[]).forEach((link: TDELink) => {
     const linkNode = createTooltipNode({
@@ -258,8 +247,7 @@ function useEditorTooltip({
   const allowTooltip = !isEditing;
 
   React.useEffect(() => {
-    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
-      ?.current;
+    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)?.current;
     const editorWrapper = currentEditor && currentEditor.getWrapperElement();
 
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
@@ -352,14 +340,12 @@ function useEditorTooltip({
               node.classList.add(
                 resolvedAs === 'error'
                   ? 'error'
-                  : resolvedAs === 'resource' &&
-                    (results as TDELink).isDownloadable
+                  : resolvedAs === 'resource' && (results as TDELink).isDownloadable
                   ? 'downloadable'
                   : 'has-tooltip'
               );
               const tooltip = showTooltip(tooltipContent, node);
-              const calculatePosition = (ev: MouseEvent) =>
-                positionner(ev, tooltip);
+              const calculatePosition = (ev: MouseEvent) => positionner(ev, tooltip);
               editorWrapper.addEventListener('mousemove', calculatePosition);
             }
           });
@@ -368,25 +354,16 @@ function useEditorTooltip({
     }
     // allow the tooltip only when the editor is not in edition mode
     // and the popover is not open
-    allowTooltip &&
-      editorWrapper &&
-      editorWrapper.addEventListener('mouseover', onMouseOver);
+    allowTooltip && editorWrapper && editorWrapper.addEventListener('mouseover', onMouseOver);
     // remove the event listener when not allwoed
-    !allowTooltip &&
-      editorWrapper &&
-      editorWrapper.removeEventListener('mouseover', onMouseOver);
+    !allowTooltip && editorWrapper && editorWrapper.removeEventListener('mouseover', onMouseOver);
 
     // cleanup
     // remove the event listener when the component is unmounted
     return () => {
-      allowTooltip &&
-        editorWrapper &&
-        editorWrapper.removeEventListener('mouseover', onMouseOver);
+      allowTooltip && editorWrapper && editorWrapper.removeEventListener('mouseover', onMouseOver);
     };
-  }, [
-    (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
-    allowTooltip,
-  ]);
+  }, [(ref as React.MutableRefObject<CodeMirror.Editor>)?.current, allowTooltip]);
 }
 
 function useEditorPopover({
@@ -399,10 +376,7 @@ function useEditorPopover({
   projectLabel: string;
 }) {
   const nexus = useNexusContext();
-  const {
-    navigateResourceHandler,
-    downloadBinaryAsyncHandler,
-  } = useResolutionActions();
+  const { navigateResourceHandler, downloadBinaryAsyncHandler } = useResolutionActions();
   const {
     config: { apiEndpoint },
   } = useSelector((state: RootState) => ({
@@ -410,8 +384,7 @@ function useEditorPopover({
   }));
 
   React.useEffect(() => {
-    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
-      ?.current;
+    const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)?.current;
     const editorWrapper = currentEditor && currentEditor.getWrapperElement();
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
@@ -465,9 +438,8 @@ function useEditorPopover({
                 if (tooltipContent) {
                   const tooltip = showTooltip(tooltipContent, node);
                   positionner(ev, tooltip);
-                  editorWrapper.addEventListener(
-                    'mousedown',
-                    (ev: MouseEvent) => onEditorMouseDown(ev, node)
+                  editorWrapper.addEventListener('mousedown', (ev: MouseEvent) =>
+                    onEditorMouseDown(ev, node)
                   );
                 }
                 break;
@@ -488,11 +460,7 @@ function useEditorPopover({
                 return navigateResourceHandler(result);
               }
               case 'external': {
-                window.open(
-                  (results as TDELink)._self,
-                  '_blank',
-                  'noopener noreferrer'
-                );
+                window.open((results as TDELink)._self, '_blank', 'noopener noreferrer');
                 break;
               }
               case 'error':
@@ -508,10 +476,7 @@ function useEditorPopover({
     return () => {
       currentEditor && currentEditor.off('mousedown', onMouseDown);
     };
-  }, [
-    (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,
-    navigateResourceHandler,
-  ]);
+  }, [(ref as React.MutableRefObject<CodeMirror.Editor>)?.current, navigateResourceHandler]);
 }
 
 export { useEditorPopover, useEditorTooltip };

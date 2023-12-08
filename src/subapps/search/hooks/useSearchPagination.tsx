@@ -31,15 +31,10 @@ function useSearchPagination() {
     pageSizeFixed: false,
     isInitialized: false,
   };
-  const [pagination, setPagination] = React.useState<SearchPagination>(
-    defaultpagination
-  );
+  const [pagination, setPagination] = React.useState<SearchPagination>(defaultpagination);
 
-  const handlePaginationChange = (
-    page: number,
-    pageSize?: number | undefined
-  ) => {
-    setPagination(prevPagination => {
+  const handlePaginationChange = (page: number, pageSize?: number | undefined) => {
+    setPagination((prevPagination) => {
       return {
         ...prevPagination,
         currentPage: page,
@@ -53,7 +48,7 @@ function useSearchPagination() {
     (current, size) => {
       if (defaultPageSizeOptions.includes(size)) {
         localStorage.setItem('searchPageSize', size.toString());
-        setPagination(prevPagination => {
+        setPagination((prevPagination) => {
           return {
             ...prevPagination,
             pageSizeFixed: true,
@@ -61,7 +56,7 @@ function useSearchPagination() {
         });
       } else {
         localStorage.removeItem('searchPageSize');
-        setPagination(prevPagination => {
+        setPagination((prevPagination) => {
           return {
             ...prevPagination,
             pageSizeFixed: false,
@@ -110,8 +105,7 @@ export function useAdjustTableHeight(
     if (resultTableHeightTestRef.current) {
       // make our height tester table visible in the DOM to perform our calculations
       resultTableHeightTestRef.current.style.display = '';
-      const heightTesterDivBottomPosition = wrapperHeightRef.current.getClientRects()[0]
-        .bottom;
+      const heightTesterDivBottomPosition = wrapperHeightRef.current.getClientRects()[0].bottom;
       const searchResultsTableBodyTopPosition = wrapperHeightRef.current
         .getElementsByTagName('tbody')[0]
         .getClientRects()[0].top;
@@ -137,18 +131,15 @@ export function useAdjustTableHeight(
     const numRows = calculateNumberOfTableRowsFitOnPage();
 
     if (numRows > 0) {
-      const lastPageOfResults = Math.ceil(
-        pagination.totalNumberOfResults / numRows
-      );
+      const lastPageOfResults = Math.ceil(pagination.totalNumberOfResults / numRows);
 
       onTableHeightChanged(numRows, lastPageOfResults);
     }
   };
 
   /* height changes a few times when resizing a window so debounce */
-  const debounceHeightChange = React.useRef(
-    debounce(() => updateNumberOfRowsFitOnPage(), 300)
-  ).current;
+  const debounceHeightChange = React.useRef(debounce(() => updateNumberOfRowsFitOnPage(), 300))
+    .current;
 
   React.useLayoutEffect(() => {
     debounceHeightChange();
@@ -165,13 +156,8 @@ export function useAdjustTableHeight(
         .sort((a, b) => a - b)
         .map(String);
 
-      const sortedPageSizeOptionsWithoutPotentialDupes = [
-        ...new Set(sortedPageSizeOptions),
-      ];
-      onPageSizeOptionsChanged(
-        sortedPageSizeOptionsWithoutPotentialDupes,
-        pagination
-      );
+      const sortedPageSizeOptionsWithoutPotentialDupes = [...new Set(sortedPageSizeOptions)];
+      onPageSizeOptionsChanged(sortedPageSizeOptionsWithoutPotentialDupes, pagination);
     }
   }, [pagination.numRowsFitOnPage]);
 

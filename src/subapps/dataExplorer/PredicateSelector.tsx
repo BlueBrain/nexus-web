@@ -53,7 +53,7 @@ export const PredicateSelector: React.FC<Props> = ({
   const { data: paths, isLoading: arePathsLoading } = useGraphAnalyticsPath(
     org,
     project,
-    types?.map(t => t.value) ?? []
+    types?.map((t) => t.value) ?? []
   );
 
   // NOTE: Right now, the `EXISTS` and `DOES_NOT_EXIST` predicates run on the backend and update the `backendPredicateQuery` parameter.
@@ -116,12 +116,7 @@ export const PredicateSelector: React.FC<Props> = ({
         if (searchTerm) {
           onPredicateChange({
             frontendPredicate: (resource: Resource) =>
-              doesResourceContain(
-                resource,
-                path.key,
-                searchTerm,
-                'does-not-contain'
-              ),
+              doesResourceContain(resource, path.key, searchTerm, 'does-not-contain'),
             selectedPath: path.key,
           });
         } else {
@@ -147,10 +142,7 @@ export const PredicateSelector: React.FC<Props> = ({
     return formRef.current?.getFieldValue(fieldName) ?? '';
   };
 
-  const setFormField = (
-    fieldName: string,
-    fieldValue: string | DefaultOptionType
-  ) => {
+  const setFormField = (fieldName: string, fieldValue: string | DefaultOptionType) => {
     if (formRef.current) {
       formRef.current.setFieldValue(fieldName, fieldValue);
     }
@@ -240,8 +232,7 @@ export const PredicateSelector: React.FC<Props> = ({
                   pathRef.current = {
                     path: selectedPath.key,
                     selected:
-                      columns.find(column => column.value === selectedPath)
-                        ?.selected ?? false,
+                      columns.find((column) => column.value === selectedPath)?.selected ?? false,
                   };
 
                   predicateSelected(selectedPath, predicateLabel, '');
@@ -257,9 +248,7 @@ export const PredicateSelector: React.FC<Props> = ({
               />
             </Form.Item>
             {isFrontendPredicateSelected && (
-              <span className="predicate-warning">
-                {FRONTEND_PREDICATE_WARNING}
-              </span>
+              <span className="predicate-warning">{FRONTEND_PREDICATE_WARNING}</span>
             )}
           </div>
         </>
@@ -273,7 +262,7 @@ export const PredicateSelector: React.FC<Props> = ({
             className="predicate-value-input"
             allowClear={false}
             autoFocus={true}
-            onChange={event => {
+            onChange={(event) => {
               const term = event.target.value;
               setFormField(SEARCH_TERM_FIELD, term);
               predicateSelected(
@@ -395,7 +384,7 @@ const pathOptions = (paths: PropertyPath[]) => {
   let firstMetadataFound = false;
   const pathOptions: DefaultOptionType[] = [];
 
-  paths.forEach(path => {
+  paths.forEach((path) => {
     const column = columnFromPath(path.label);
     const isFirstMetadataPath = !isUserColumn(column) && !firstMetadataFound;
 
@@ -403,10 +392,7 @@ const pathOptions = (paths: PropertyPath[]) => {
       key: path.label,
       value: path.value,
       label: (
-        <span
-          className={isFirstMetadataPath ? 'first-metadata-path' : ''}
-          title={path.label}
-        >
+        <span className={isFirstMetadataPath ? 'first-metadata-path' : ''} title={path.label}>
           {path.label}
         </span>
       ),
@@ -429,7 +415,7 @@ const getPathsForResource = (
   paths: Set<string> = new Set()
 ) => {
   if (Array.isArray(resource)) {
-    resource.forEach(res => getPathsForResource(res, currentPath, paths));
+    resource.forEach((res) => getPathsForResource(res, currentPath, paths));
   } else if (typeof resource === 'object' && resource !== null) {
     const keys = Object.keys(resource);
     for (const key of keys) {
@@ -460,16 +446,12 @@ export const checkPathExistence = (
     }
 
     if (Array.isArray(valueAtSubpath)) {
-      return valueAtSubpath.some(value =>
+      return valueAtSubpath.some((value) =>
         checkPathExistence(value, remainingPath.join('.'), criteria)
       );
     }
     if (isObject(valueAtSubpath)) {
-      return checkPathExistence(
-        valueAtSubpath,
-        remainingPath.join('.'),
-        criteria
-      );
+      return checkPathExistence(valueAtSubpath, remainingPath.join('.'), criteria);
     }
     break;
   }
@@ -498,37 +480,19 @@ export const doesResourceContain = (
     const valueAtSubpath = resource[subpath];
     const remainingPath = subpaths.slice(1);
     if (Array.isArray(valueAtSubpath)) {
-      return valueAtSubpath.some(arrayElement => {
-        return doesResourceContain(
-          arrayElement,
-          remainingPath.join('.'),
-          value,
-          criteria
-        );
+      return valueAtSubpath.some((arrayElement) => {
+        return doesResourceContain(arrayElement, remainingPath.join('.'), value, criteria);
       });
     }
     if (isObject(valueAtSubpath)) {
-      return doesResourceContain(
-        valueAtSubpath,
-        remainingPath.join('.'),
-        value,
-        criteria
-      );
+      return doesResourceContain(valueAtSubpath, remainingPath.join('.'), value, criteria);
     }
-    return isSubstringOf(
-      String(valueAtSubpath),
-      value,
-      criteria === 'contains'
-    );
+    return isSubstringOf(String(valueAtSubpath), value, criteria === 'contains');
   }
   return isSubstringOf(String(resource), value, criteria === 'contains');
 };
 
-const isSubstringOf = (
-  text: string,
-  maybeSubstring: string,
-  shouldContain: boolean
-) => {
+const isSubstringOf = (text: string, maybeSubstring: string, shouldContain: boolean) => {
   if (shouldContain) {
     return normalizeString(text).includes(normalizeString(maybeSubstring));
   }

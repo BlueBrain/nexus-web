@@ -29,8 +29,7 @@ export default function usePlugins() {
     error: null,
     data: null,
   });
-  const pluginsPath =
-    useSelector((state: RootState) => state.config.pluginsManifestPath) || [];
+  const pluginsPath = useSelector((state: RootState) => state.config.pluginsManifestPath) || [];
 
   // This is to fix "Can't perform a React state update on an unmounted component" error.
   // This error is an indication of memory leak.
@@ -46,8 +45,8 @@ export default function usePlugins() {
       fetch(`${pluginsPath as string}/manifest.json`, {
         signal: abortController.signal,
       })
-        .then(resp => resp.json())
-        .then(manifest =>
+        .then((resp) => resp.json())
+        .then((manifest) =>
           setManifest({
             loading: false,
             error: null,
@@ -59,7 +58,7 @@ export default function usePlugins() {
             }, manifest),
           })
         )
-        .catch(error => {
+        .catch((error) => {
           setManifest({
             error,
             loading: false,

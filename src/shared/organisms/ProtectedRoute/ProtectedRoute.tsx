@@ -13,7 +13,7 @@ const PrivateRoute = ({ children, ...rest }: Props) => {
   return (
     <Route
       {...rest}
-      render={props => {
+      render={(props) => {
         return userAuthenticated ? (
           children
         ) : (

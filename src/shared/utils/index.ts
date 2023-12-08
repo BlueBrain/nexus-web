@@ -1,12 +1,5 @@
 import { Identity, Resource } from '@bbp/nexus-sdk/es';
-import {
-  isArray,
-  isMatch,
-  isMatchWith,
-  isMatchWithCustomizer,
-  last,
-  pick,
-} from 'lodash';
+import { isArray, isMatch, isMatchWith, isMatchWithCustomizer, last, pick } from 'lodash';
 import moment from 'moment';
 
 import isValidUrl from '../../utils/validUrl';
@@ -26,9 +19,7 @@ export const getProp = function getPropertyWithPath(
   if (!object) {
     return defaultVal;
   }
-  const pathArray = Array.isArray(path)
-    ? path
-    : path.split('.').filter(i => i.length);
+  const pathArray = Array.isArray(path) ? path : path.split('.').filter((i) => i.length);
 
   if (!pathArray.length) {
     return object === undefined ? defaultVal : object;
@@ -47,11 +38,7 @@ export const getProp = function getPropertyWithPath(
  * @param {number} from
  * @param {number} to
  */
-export const moveTo = function moveArrayElement(
-  array: any[],
-  from: number,
-  to: number
-): any[] {
+export const moveTo = function moveArrayElement(array: any[], from: number, to: number): any[] {
   return array.splice(to, 0, array.splice(from, 1)[0]);
 };
 
@@ -62,7 +49,7 @@ export const moveTo = function moveArrayElement(
  * @returns {string}
  */
 export function uuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -76,9 +63,7 @@ export function uuidv4(): string {
  * @returns {string[]} A list of usernames, or an empty array
  */
 export const getUserList = (identities: Identity[]) =>
-  identities
-    .filter(identity => identity['@type'] === 'User')
-    .map(identity => identity.subject);
+  identities.filter((identity) => identity['@type'] === 'User').map((identity) => identity.subject);
 
 /**
  *  Given an array of identities, returns a unique list of permissions, in importance order.
@@ -93,9 +78,7 @@ export const getUserList = (identities: Identity[]) =>
  * @param {Indentity[]} identities
  * @returns {string[]} list of ordered permissions
  */
-export const getOrderedPermissions = (
-  identities: Identity[]
-): Identity['@type'][] => {
+export const getOrderedPermissions = (identities: Identity[]): Identity['@type'][] => {
   const permissionWeight: { [key: string]: number } = {
     Anonymous: 1,
     Authenticated: 2,
@@ -104,17 +87,14 @@ export const getOrderedPermissions = (
   };
 
   const sorted = identities
-    .sort(
-      (idA, idB) =>
-        permissionWeight[idA['@type']] - permissionWeight[idB['@type']]
-    )
-    .map(identity => identity['@type']);
+    .sort((idA, idB) => permissionWeight[idA['@type']] - permissionWeight[idB['@type']])
+    .map((identity) => identity['@type']);
 
   return [...new Set(sorted)];
 };
 
 export const asyncTimeout = (timeInMilliseconds: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, timeInMilliseconds));
+  return new Promise((resolve) => setTimeout(resolve, timeInMilliseconds));
 };
 
 /**
@@ -150,13 +130,8 @@ export const labelOf = (inputString: string) => {
 
 export const isBrowser = typeof window !== 'undefined';
 
-export function isUserInAtLeastOneRealm(
-  userIdentities: Identity[],
-  realm: string[]
-) {
-  return (
-    userIdentities.filter(i => i.realm && realm.includes(i.realm)).length > 0
-  );
+export function isUserInAtLeastOneRealm(userIdentities: Identity[], realm: string[]) {
+  return userIdentities.filter((i) => i.realm && realm.includes(i.realm)).length > 0;
 }
 
 /**
@@ -170,15 +145,13 @@ export function getLogoutUrl(
   realms: { label: string; endSessionEndpoint: string }[]
 ): string {
   // find authenticated Identity and get realm name
-  const identity = identities.find(
-    identity => identity['@type'] === 'Authenticated'
-  );
+  const identity = identities.find((identity) => identity['@type'] === 'Authenticated');
   if (identity === undefined) {
     return '';
   }
 
   // find realm with the matching label
-  const realm = realms.find(realm => realm.label === identity.realm);
+  const realm = realms.find((realm) => realm.label === identity.realm);
   if (realm === undefined) {
     return '';
   }
@@ -197,10 +170,7 @@ export function hasExpired(timestamp: number): boolean {
  * @param date
  * @returns date string
  */
-export function getDateString(
-  date: Date | moment.Moment,
-  options?: { noTime?: boolean }
-) {
+export function getDateString(date: Date | moment.Moment, options?: { noTime?: boolean }) {
   if (options?.noTime) {
     return moment(date).format('YYYY-MM-DD');
   }
@@ -278,7 +248,7 @@ export function getUsername(user: string): string {
 
 export function blacklistKeys(raw: { [key: string]: any }, keys: string[]) {
   return Object.keys(raw)
-    .filter(key => !keys.includes(key))
+    .filter((key) => !keys.includes(key))
     .reduce((obj: any, key) => {
       obj[key] = raw[key];
       return obj;
@@ -296,9 +266,7 @@ export function getResourceLabel(
     [key: string]: any;
   }
 ) {
-  const resourceName = isArray(resource.name)
-    ? resource.name.join('-')
-    : resource.name;
+  const resourceName = isArray(resource.name) ? resource.name.join('-') : resource.name;
   return (
     resource.prefLabel ??
     resource.label ??
@@ -318,9 +286,7 @@ export function getResourceLabel(
  * projectLabel: string,
  * }}
  */
-export function getOrgAndProjectFromResource(
-  resource: Resource
-): TOrgAndProject {
+export function getOrgAndProjectFromResource(resource: Resource): TOrgAndProject {
   return getOrgAndProjectFromProjectId(resource._project);
 }
 
@@ -338,9 +304,7 @@ type TOrgAndProject = {
   projectLabel: string;
 } | null;
 
-export function getOrgAndProjectFromProjectId(
-  projectId: string
-): TOrgAndProject {
+export function getOrgAndProjectFromProjectId(projectId: string): TOrgAndProject {
   if (projectId) {
     const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
     return {
@@ -391,7 +355,7 @@ export const camelCaseToLabelString = (labelString: string): string => {
       // insert a space before all caps
       .replace(/([A-Z])/g, ' $1')
       // upper case the first character
-      .replace(/^./, str => str.toUpperCase())
+      .replace(/^./, (str) => str.toUpperCase())
       // remove potential white spaces from both sides of the string
       .trim()
   );
@@ -460,15 +424,11 @@ export const isISODate = (date: string) => {
  * @param {string}
  * @returns {string[]}
  */
-export const matchPlugins = (
-  pluginMap: Object,
-  plugins: string[],
-  resource: Resource
-) => {
+export const matchPlugins = (pluginMap: Object, plugins: string[], resource: Resource) => {
   const matchValueWithArray = (value: any, other: any[]) => {
     const regexChars = new RegExp(/[!@#$%^&*(),.?":{}|<>]/, 'g');
     return typeof value === 'string'
-      ? other.some(o => {
+      ? other.some((o) => {
           if (typeof o === 'string') {
             if (regexChars.test(o)) {
               const regex = new RegExp(o);
@@ -478,13 +438,13 @@ export const matchPlugins = (
           }
           return false;
         })
-      : other.some(o => {
+      : other.some((o) => {
           return customizer(value, o, '', o, value); // Apply the match logic recursively.
         });
   };
 
   const matchArrays = (value: any[], other: any[]) => {
-    return value.some(v => {
+    return value.some((v) => {
       return matchValueWithArray(v, other);
     });
   };
@@ -548,11 +508,7 @@ export const pluginsExcludeMap = (pluginManifest: any) =>
  * @param {string} studioId
  * @returns {string} studio uri
  */
-export const makeStudioUri = (
-  orgLabel: string,
-  projectLabel: string,
-  studioId: string
-) => {
+export const makeStudioUri = (orgLabel: string, projectLabel: string, studioId: string) => {
   return `/${orgLabel}/${projectLabel}/studios/${encodeURIComponent(studioId)}`;
 };
 
@@ -607,11 +563,9 @@ export const makeResourceUri = (
   } = {}
 ) => {
   const { revision, tab, expanded } = options;
-  const route = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-    resourceId
-  )}${revision ? `?rev=${revision}` : ''}${expanded ? '&expanded=true' : ''}${
-    tab ? tab : ''
-  }`;
+  const route = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}${
+    revision ? `?rev=${revision}` : ''
+  }${expanded ? '&expanded=true' : ''}${tab ? tab : ''}`;
   return route;
 };
 
@@ -632,18 +586,12 @@ function filterPlugins(
   customizer: isMatchWithCustomizer
 ) {
   const map = new Map(Object.entries(pluginMap));
-  const newPlugins = plugins.filter(p => {
+  const newPlugins = plugins.filter((p) => {
     const shape = map.get(p);
     if (resource && shape) {
       if (Array.isArray(shape)) {
         for (let i = 0; i < shape.length; i += 1) {
-          if (
-            isMatchWith(
-              pick(resource, Object.keys(shape[i])),
-              shape[i],
-              customizer
-            )
-          ) {
+          if (isMatchWith(pick(resource, Object.keys(shape[i])), shape[i], customizer)) {
             return true;
           }
         }
@@ -669,11 +617,7 @@ export const parseJsonMaybe = <T = object>(
 };
 
 export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
-  return objectOrArray
-    ? Array.isArray(objectOrArray)
-      ? objectOrArray
-      : [objectOrArray]
-    : [];
+  return objectOrArray ? (Array.isArray(objectOrArray) ? objectOrArray : [objectOrArray]) : [];
 };
 
 /**
@@ -696,15 +640,11 @@ export const isURL = (url: string) => {
  */
 
 export const deltaUrlToFusionUrl = (url: string, nexusWebBase: string) => {
-  const projectUrlPattern = new RegExp(
-    /projects\/(?<org>[\w-]+)\/(?<project>[\w-]+)\/?$/
-  );
+  const projectUrlPattern = new RegExp(/projects\/(?<org>[\w-]+)\/(?<project>[\w-]+)\/?$/);
   const resourceUrlPattern = new RegExp(
     /resources\/(?<org>.[^/]*)\/(?<project>.[^/]*)\/(.[^/]*)\/(.*)/
   );
-  const fileUrlPattern = new RegExp(
-    /files(\/(?<org>[\w-]+)\/(?<project>[\w-]+))/
-  );
+  const fileUrlPattern = new RegExp(/files(\/(?<org>[\w-]+)\/(?<project>[\w-]+))/);
 
   const projectUrl = projectUrlPattern.exec(url);
   const resourceUrl = resourceUrlPattern.exec(url);
@@ -736,7 +676,7 @@ export function isNumeric(str: string | number) {
 export const getNormalizedTypes = (types?: string | string[]) => {
   if (types) {
     if (isArray(types)) {
-      return types.map(item => {
+      return types.map((item) => {
         if (isValidUrl(item)) {
           return item.split('/').pop()!;
         }

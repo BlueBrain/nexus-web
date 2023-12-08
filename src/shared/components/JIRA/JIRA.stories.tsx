@@ -18,11 +18,7 @@ storiesOf('Components/JIRA', module)
         <JIRAPluginUI
           issues={[]}
           projects={[]}
-          onCreateIssue={(
-            project: string,
-            summary: string,
-            description: string
-          ) => {}}
+          onCreateIssue={(project: string, summary: string, description: string) => {}}
           onLinkIssue={(issueKey: string) => {}}
           onUnlinkIssue={(issueKey: string) => {}}
           isLoading={true}

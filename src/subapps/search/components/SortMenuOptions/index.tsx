@@ -26,11 +26,7 @@ const SortMenuOptions: React.FC<{
       <Button
         disabled={disabled}
         className="sort-menu-options__sort-button"
-        type={
-          sortField?.direction === SortDirection.ASCENDING
-            ? 'primary'
-            : 'default'
-        }
+        type={sortField?.direction === SortDirection.ASCENDING ? 'primary' : 'default'}
         shape="round"
         icon={<SortAscendingOutlined />}
         size="small"
@@ -41,11 +37,7 @@ const SortMenuOptions: React.FC<{
       <Button
         disabled={disabled}
         className="sort-menu-options__sort-button"
-        type={
-          sortField?.direction === SortDirection.DESCENDING
-            ? 'primary'
-            : 'default'
-        }
+        type={sortField?.direction === SortDirection.DESCENDING ? 'primary' : 'default'}
         shape="round"
         icon={<SortDescendingOutlined />}
         size="small"

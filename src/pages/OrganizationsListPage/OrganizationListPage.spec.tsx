@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { createNexusClient,OrganizationList } from '@bbp/nexus-sdk';
+import { createNexusClient, OrganizationList } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import { renderHook } from '@testing-library/react-hooks/dom';
 import { ConnectedRouter } from 'connected-react-router';
@@ -19,9 +19,7 @@ import {
   orgsHandler,
 } from '../OrganizationProjectsPage/OrganizationProjectsPage.spec';
 import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
-import OrganizationListPage, {
-  useInfiniteOrganizationQuery,
-} from './OrganizationListPage';
+import OrganizationListPage, { useInfiniteOrganizationQuery } from './OrganizationListPage';
 
 vi.mock('react-router', async () => {
   const actual: Object = await vi.importActual('react-router');
@@ -92,8 +90,6 @@ describe('OrganizationListPage', () => {
     );
     await waitFor(() => result.current.status === 'success');
     expect(result.current.data).toBeTruthy();
-    expect(
-      (result.current.data?.pages?.[0] as OrganizationList)._total
-    ).toEqual(3);
+    expect((result.current.data?.pages?.[0] as OrganizationList)._total).toEqual(3);
   });
 });

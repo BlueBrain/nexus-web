@@ -18,16 +18,9 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
   projectLabel: string;
   initialQuery?: object;
   viewId?: string;
-}> = ({
-  orgLabel,
-  projectLabel,
-  initialQuery,
-  viewId = DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-}) => {
+}> = ({ orgLabel, projectLabel, initialQuery, viewId = DEFAULT_ELASTIC_SEARCH_VIEW_ID }) => {
   const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<object>(
-    initialQuery || DEFAULT_QUERY
-  );
+  const [query, setQuery] = React.useState<object>(initialQuery || DEFAULT_QUERY);
   const [{ from, size }, setPagination] = React.useState({
     from: 0,
     size: DEFAULT_PAGE_SIZE,
@@ -48,14 +41,14 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
       from,
       size,
     })
-      .then(response => {
+      .then((response) => {
         setResponse({
           response,
           busy: false,
           error: null,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setResponse({
           error,
           response: null,
@@ -67,7 +60,7 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
   const onPaginationChange = (pageNumber: number) => {
     // NOTE: AntD Page numbers start from 1!
     const from = size * (pageNumber - 1);
-    setPagination(p => ({
+    setPagination((p) => ({
       from,
       size: p.size,
     }));

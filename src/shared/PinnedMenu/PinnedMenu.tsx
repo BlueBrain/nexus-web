@@ -1,11 +1,6 @@
 import './styles.scss';
 
-import {
-  FolderOutlined,
-  HomeOutlined,
-  SearchOutlined,
-  WalletOutlined,
-} from '@ant-design/icons';
+import { FolderOutlined, HomeOutlined, SearchOutlined, WalletOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -65,12 +60,7 @@ const Menu = new Map<string, TMenuItem>([
 ]);
 const PinnedItem: React.FC<TMenuItem> = ({ title, url, icon, bg }) => {
   return (
-    <Link
-      to={url}
-      title={title}
-      className="pinned-item"
-      style={{ backgroundColor: bg }}
-    >
+    <Link to={url} title={title} className="pinned-item" style={{ backgroundColor: bg }}>
       {icon}
     </Link>
   );

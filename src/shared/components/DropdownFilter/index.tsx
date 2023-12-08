@@ -4,7 +4,7 @@ import { AutoComplete } from 'antd';
 import { SelectValue } from 'antd/lib/select';
 import * as React from 'react';
 
-import { getProp,labelOf } from '../../utils';
+import { getProp, labelOf } from '../../utils';
 import DropdownItem from './DropdownItem';
 
 const DropdownFilter: React.FunctionComponent<{
@@ -18,14 +18,8 @@ const DropdownFilter: React.FunctionComponent<{
   nothingSelected?: React.FunctionComponent;
   buckets: { count: number; key: string }[];
   onChange(value: string): void;
-}> = props => {
-  const {
-    dropdownItem = DropdownItem,
-    defaultSelected,
-    buckets,
-    placeholder,
-    onChange,
-  } = props;
+}> = (props) => {
+  const { dropdownItem = DropdownItem, defaultSelected, buckets, placeholder, onChange } = props;
   const [inputValue, setInputValue] = React.useState(defaultSelected);
 
   React.useEffect(() => {

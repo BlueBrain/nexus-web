@@ -1,4 +1,4 @@
-import { NexusClient,Resource, ResourceLink } from '@bbp/nexus-sdk/es';
+import { NexusClient, Resource, ResourceLink } from '@bbp/nexus-sdk/es';
 
 import { labelOf } from '../../../shared/utils';
 import fusionConfig from '../config';
@@ -11,10 +11,7 @@ import { StepResource } from '../types';
  */
 export const isParentLink = (link: ResourceLink) => {
   if (Array.isArray(link.paths)) {
-    return (
-      link.paths.filter((path: string) => labelOf(path) === 'hasParent')
-        .length > 0
-    );
+    return link.paths.filter((path: string) => labelOf(path) === 'hasParent').length > 0;
   }
 
   return labelOf(link.paths) === 'hasParent';
@@ -27,10 +24,7 @@ export const isParentLink = (link: ResourceLink) => {
  */
 export const isTable = (link: ResourceLink) => {
   if (Array.isArray(link.paths)) {
-    return (
-      link.paths.filter((path: string) => labelOf(path).indexOf('tableOf') >= 0)
-        .length > 0
-    );
+    return link.paths.filter((path: string) => labelOf(path).indexOf('tableOf') >= 0).length > 0;
   }
 
   return labelOf(link.paths) === 'tableOf';
@@ -43,10 +37,7 @@ export const isTable = (link: ResourceLink) => {
  */
 export const isSubClass = (link: ResourceLink) => {
   if (Array.isArray(link.paths)) {
-    return (
-      link.paths.filter((path: string) => labelOf(path) === 'subClassOf')
-        .length > 0
-    );
+    return link.paths.filter((path: string) => labelOf(path) === 'subClassOf').length > 0;
   }
 
   return labelOf(link.paths) === 'subClassOf';
@@ -61,16 +52,13 @@ export const isActivityResourceLink = (link: ResourceLink) => {
   if (Array.isArray(link['@type'])) {
     return (
       link['@type'].filter(
-        (path: string) =>
-          labelOf(path) === 'Entity' || labelOf(path) === 'Agent'
+        (path: string) => labelOf(path) === 'Entity' || labelOf(path) === 'Agent'
       ).length > 0
     );
   }
 
   if (link && link['@type']) {
-    return (
-      labelOf(link['@type']) === 'Entity' || labelOf(link['@type']) === 'Agent'
-    );
+    return labelOf(link['@type']) === 'Entity' || labelOf(link['@type']) === 'Agent';
   }
 
   return null;
@@ -130,16 +118,10 @@ export async function fetchChildrenForStep(
 
   const children = ((await Promise.all(
     links._results
-      .filter(link => isParentLink(link))
-      .map(step =>
-        nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(step['@id'])
-        )
-      )
+      .filter((link) => isParentLink(link))
+      .map((step) => nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(step['@id'])))
     // additional filter as ResouceListOptions deprecated option not working
-  )) as Resource[]).filter(resource => !resource._deprecated);
+  )) as Resource[]).filter((resource) => !resource._deprecated);
 
   return children;
 }
@@ -168,21 +150,15 @@ export async function fetchTablesForStep(
     }
   );
   const uniq = [
-    ...new Set(
-      links._results.filter(link => isTable(link)).map(link => link['@id'])
-    ),
+    ...new Set(links._results.filter((link) => isTable(link)).map((link) => link['@id'])),
   ];
   const children = ((await Promise.all(
-    uniq.map(async step => {
-      const resource = await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(step)
-      );
+    uniq.map(async (step) => {
+      const resource = await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(step));
       return resource;
     })
     // additional filter as ResouceListOptions deprecated option not working
-  )) as Resource[]).filter(resource => !resource._deprecated);
+  )) as Resource[]).filter((resource) => !resource._deprecated);
   return children;
 }
 
@@ -206,11 +182,7 @@ export async function fetchTopLevelSteps(
 
   const children = (await Promise.all(
     allSteps._results.map((step: any) => {
-      return nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(step['@id'])
-      );
+      return nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(step['@id']));
     })
   )) as StepResource[];
 

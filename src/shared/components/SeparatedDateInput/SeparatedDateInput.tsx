@@ -1,7 +1,7 @@
 import './styles.scss';
 
 import moment from 'moment';
-import React, { forwardRef, useEffect, useReducer,useRef } from 'react';
+import React, { forwardRef, useEffect, useReducer, useRef } from 'react';
 
 type TDInput = {
   id: string;
@@ -25,18 +25,7 @@ type TDateObject = {
 type Ref = HTMLInputElement;
 const DInput = forwardRef<Ref, TDInput>(
   (
-    {
-      id,
-      min,
-      max,
-      placeholder,
-      pattern,
-      value,
-      minLength,
-      maxLength,
-      onChange,
-      onKeyDown,
-    },
+    { id, min, max, placeholder, pattern, value, minLength, maxLength, onChange, onKeyDown },
     ref
   ) => {
     return (
@@ -53,7 +42,7 @@ const DInput = forwardRef<Ref, TDInput>(
           value,
           onKeyDown,
         }}
-        onChange={e => {
+        onChange={(e) => {
           onChange({ [id]: e.target.value });
         }}
         type="number"
@@ -76,15 +65,9 @@ const Input = ({ defaultValue, setDefaultValue }: TSeparatedInput) => {
       ...next,
     }),
     {
-      day: moment(defaultValue, 'DD/MM/YYYY').isValid()
-        ? defaultValue!.split('/')?.[0]
-        : '',
-      month: moment(defaultValue, 'DD/MM/YYYY').isValid()
-        ? defaultValue!.split('/')?.[1]
-        : '',
-      year: moment(defaultValue, 'DD/MM/YYYY').isValid()
-        ? defaultValue!.split('/')?.[2]
-        : '',
+      day: moment(defaultValue, 'DD/MM/YYYY').isValid() ? defaultValue!.split('/')?.[0] : '',
+      month: moment(defaultValue, 'DD/MM/YYYY').isValid() ? defaultValue!.split('/')?.[1] : '',
+      year: moment(defaultValue, 'DD/MM/YYYY').isValid() ? defaultValue!.split('/')?.[2] : '',
       isValid: moment(defaultValue, 'DD/MM/YYYY').isValid() ? true : undefined,
       date: moment(defaultValue, 'DD/MM/YYYY').isValid()
         ? moment(defaultValue).format('DD/MM/YYYY')
@@ -105,12 +88,12 @@ const Input = ({ defaultValue, setDefaultValue }: TSeparatedInput) => {
       }
     }
   }, [month, monthRef.current, yearRef.current]);
-  const handleYearBackslash: React.KeyboardEventHandler<HTMLInputElement> = e => {
+  const handleYearBackslash: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Backspace' && (e.target as HTMLInputElement).value === '') {
       monthRef.current?.focus();
     }
   };
-  const handleMonthBackslash: React.KeyboardEventHandler<HTMLInputElement> = e => {
+  const handleMonthBackslash: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
     if (e.key === 'Backspace' && (e.target as HTMLInputElement).value === '') {
       dayRef.current?.focus();
     }
@@ -169,11 +152,7 @@ const Input = ({ defaultValue, setDefaultValue }: TSeparatedInput) => {
         />
       </form>
       <div className="date-seperated_validation">
-        {day && month && year
-          ? isValid
-            ? 'valid date'
-            : 'not valid date'
-          : ''}
+        {day && month && year ? (isValid ? 'valid date' : 'not valid date') : ''}
         <div>{date}</div>
       </div>
     </div>

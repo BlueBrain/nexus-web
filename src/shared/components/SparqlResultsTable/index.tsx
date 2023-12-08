@@ -2,13 +2,13 @@ import './../../styles/result-table.scss';
 
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Input, Table, Tooltip, Typography } from 'antd';
-import { difference,omit } from 'lodash';
+import { difference, omit } from 'lodash';
 import moment from 'moment';
 import * as React from 'react';
 
 import useNotification from '../../hooks/useNotification';
 import { download } from '../../utils/download';
-import { getDateString,isISODate, parseProjectUrl } from '../../utils/index';
+import { getDateString, isISODate, parseProjectUrl } from '../../utils/index';
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const { Search } = Input;
@@ -40,14 +40,14 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   handleClick,
   tableLabel,
 }) => {
-  const [selectedColumns, setSelectedColumns] = React.useState<
-    HeaderProperties | undefined
-  >(headerProperties);
+  const [selectedColumns, setSelectedColumns] = React.useState<HeaderProperties | undefined>(
+    headerProperties
+  );
   const [searchValue, setSearchValue] = React.useState<string>('');
   const [filteredValues, setFilteredValues] = React.useState<any>(null);
   const notification = useNotification();
 
-  const filteredItems = items.filter(item => {
+  const filteredItems = items.filter((item) => {
     return (
       Object.values(item)
         .join(' ')
@@ -60,9 +60,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const total = tableItems.length;
   const showPagination = total > pageSize;
   const columnsToSelect =
-    selectedColumns && selectedColumns.length > 0
-      ? selectedColumns
-      : headerProperties;
+    selectedColumns && selectedColumns.length > 0 ? selectedColumns : headerProperties;
   const columnList = [
     ...(columnsToSelect
       ? columnsToSelect.map(({ title, dataIndex }) => {
@@ -91,16 +89,10 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
               break;
             default:
               render = (value: string) => {
-                const item = items.find(item => item[dataIndex] === value);
-                const studioResourceViewLink = item
-                  ? `/?_self=${item.self.value}`
-                  : '';
+                const item = items.find((item) => item[dataIndex] === value);
+                const studioResourceViewLink = item ? `/?_self=${item.self.value}` : '';
                 if (isISODate(value)) {
-                  return (
-                    <a href={studioResourceViewLink}>
-                      {getDateString(moment(value))}
-                    </a>
-                  );
+                  return <a href={studioResourceViewLink}>{getDateString(moment(value))}</a>;
                 }
 
                 return <a href={studioResourceViewLink}>{value}</a>;
@@ -118,19 +110,14 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
           }, [] as any[]);
 
           const filterOptions =
-            distinctValues.length > MIN_FILTER_LIMIT &&
-            distinctValues.length < MAX_FILTER_LIMIT
+            distinctValues.length > MIN_FILTER_LIMIT && distinctValues.length < MAX_FILTER_LIMIT
               ? {
-                  filters: distinctValues.map(value => ({
+                  filters: distinctValues.map((value) => ({
                     value,
-                    text: isISODate(value)
-                      ? getDateString(moment(value))
-                      : value,
+                    text: isISODate(value) ? getDateString(moment(value)) : value,
                   })),
                   filterMultiple: false,
-                  filteredValue: filteredValues
-                    ? filteredValues[dataIndex]
-                    : null,
+                  filteredValue: filteredValues ? filteredValues[dataIndex] : null,
                   onFilter: (filterValue: any, item: any) => {
                     return item[dataIndex] === filterValue;
                   },
@@ -167,24 +154,19 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
 
   const onClickDownload = () => {
     const allColumnsTitles: string[] = headerProperties
-      ? headerProperties.map(x => x.dataIndex)
+      ? headerProperties.map((x) => x.dataIndex)
       : [];
-    const selectedColumnTitles = selectedColumns
-      ? selectedColumns.map(x => x.dataIndex)
-      : [];
+    const selectedColumnTitles = selectedColumns ? selectedColumns.map((x) => x.dataIndex) : [];
     const columnsToOmit = difference(allColumnsTitles, selectedColumnTitles);
     if (tableItems) {
-      const itemsToSave = tableItems.map(item =>
+      const itemsToSave = tableItems.map((item) =>
         omit(item, 'id', 'key', 'self', ...columnsToOmit)
       );
-      const fieldValue = (key: string, value: string) =>
-        value === null ? '' : value;
+      const fieldValue = (key: string, value: string) => (value === null ? '' : value);
       const header = Object.keys(itemsToSave[0]);
 
-      const csv = itemsToSave.map(row =>
-        header
-          .map((fieldName: any) => JSON.stringify(row[fieldName], fieldValue))
-          .join(',')
+      const csv = itemsToSave.map((row) =>
+        header.map((fieldName: any) => JSON.stringify(row[fieldName], fieldValue)).join(',')
       );
 
       csv.unshift(header.join(','));
@@ -205,8 +187,8 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
         onChange={(pagination, filters, sorters) => {
           setFilteredValues(filters);
         }}
-        onRow={data => ({
-          onClick: event => {
+        onRow={(data) => ({
+          onClick: (event) => {
             event.preventDefault();
             handleClick(data.self.value);
           },
@@ -241,11 +223,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
                 {total} {`Result${total > 1 ? 's' : ''}`}
               </div>
               <Tooltip title="Download as .csv">
-                <Button
-                  type="default"
-                  icon={<DownloadOutlined />}
-                  onClick={onClickDownload}
-                />
+                <Button type="default" icon={<DownloadOutlined />} onClick={onClickDownload} />
               </Tooltip>
             </div>
           </div>

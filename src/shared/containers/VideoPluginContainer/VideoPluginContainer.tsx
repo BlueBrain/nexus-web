@@ -120,9 +120,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                         }
                       >
                         <List.Item.Meta
-                          avatar={
-                            <ReactPlayer url={item.embedUrl} light={true} />
-                          }
+                          avatar={<ReactPlayer url={item.embedUrl} light={true} />}
                           title={
                             <Button
                               type="link"
@@ -153,9 +151,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                     width={640}
                     footer={null}
                   >
-                    {selectedVideo.embedUrl ? (
-                      <ReactPlayer url={selectedVideo.embedUrl} />
-                    ) : null}
+                    {selectedVideo.embedUrl ? <ReactPlayer url={selectedVideo.embedUrl} /> : null}
                   </Modal>
                 ) : null}
               </>

@@ -89,12 +89,10 @@ interface NotificationDict {
 }
 
 export const getNotificationContextValue = () => {
-  const [notifications, setNotifications] = React.useState<NotificationDict>(
-    {}
-  );
+  const [notifications, setNotifications] = React.useState<NotificationDict>({});
 
   React.useEffect(() => {
-    Object.keys(notifications).forEach(message => {
+    Object.keys(notifications).forEach((message) => {
       const notificationMessage = notifications[message];
       if (notificationMessage.number > 0) {
         /* Close any existing notifications. If already closed
@@ -111,7 +109,7 @@ export const getNotificationContextValue = () => {
         duration: messageDuration(notificationMessage.type),
         placement: notificationMessage.position ?? 'topRight',
         onClose: () => {
-          setNotifications(notification => {
+          setNotifications((notification) => {
             const { [message]: _, ...withoutMessageState } = notifications;
             return withoutMessageState;
           });
@@ -126,7 +124,7 @@ export const getNotificationContextValue = () => {
     description?: React.ReactNode,
     position?: NotificationPlacement
   ) => {
-    setNotifications(notifications => {
+    setNotifications((notifications) => {
       const { ...notificationsToUpdate } = notifications;
       if (message in notifications) {
         notificationsToUpdate[message].number += 1;

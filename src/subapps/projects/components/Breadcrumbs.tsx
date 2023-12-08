@@ -13,14 +13,12 @@ const Breadcrumbs: React.FC<{ crumbs: BreadcrumbItem[] }> = ({ crumbs }) => {
   return (
     <div className="breadcrumbs">
       <Breadcrumb separator=">">
-        {crumbs.map(item => (
+        {crumbs.map((item) => (
           <Breadcrumb.Item key={item.label || ''}>
             <Link to={item.url}>
               {item.label?.length > 35 ? (
                 <Tooltip placement="top" title={item.label}>
-                  <span className="breadcrumbs__label">
-                    {`${item.label.slice(0, 35)}...`}
-                  </span>
+                  <span className="breadcrumbs__label">{`${item.label.slice(0, 35)}...`}</span>
                 </Tooltip>
               ) : (
                 <span className="breadcrumbs__label">{item.label}</span>

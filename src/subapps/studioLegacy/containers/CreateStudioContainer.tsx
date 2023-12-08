@@ -1,19 +1,16 @@
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, message,Modal } from 'antd';
+import { Button, message, Modal } from 'antd';
 import * as React from 'react';
 
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import { TErrorWithType } from '../../../utils/types';
 import STUDIO_CONTEXT from '../components/StudioContext';
 import StudioEditorForm from '../components/StudioEditorForm';
 
-export const DEFAULT_STUDIO_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/Studio';
+export const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 
 const CreateStudioContainer: React.FC<{
   orgLabel: string;
@@ -41,11 +38,7 @@ const CreateStudioContainer: React.FC<{
 
   const makeStudioContext = async () => {
     try {
-      await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(STUDIO_CONTEXT['@id'])
-      );
+      await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(STUDIO_CONTEXT['@id']));
     } catch (error) {
       if ((error as TErrorWithType['@type']) === 'ResourceNotFound') {
         // @ts-ignore TODO: update resource type in SDK to allow nested objects
@@ -86,7 +79,7 @@ const CreateStudioContainer: React.FC<{
     setShowModal(false);
 
     createStudioResource(label, description, plugins)
-      .then(response => {
+      .then((response) => {
         goToStudio && goToStudio(response['@id']);
 
         message.success(
@@ -95,7 +88,7 @@ const CreateStudioContainer: React.FC<{
           </span>
         );
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'An error occurred',
           description: parseNexusError(error),

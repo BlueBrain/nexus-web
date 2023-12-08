@@ -1,9 +1,4 @@
-import {
-  ElasticSearchView,
-  Resource,
-  SparqlView,
-  View,
-} from '@bbp/nexus-sdk/es';
+import { ElasticSearchView, Resource, SparqlView, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Empty, message, Skeleton } from 'antd';
 import * as React from 'react';
@@ -23,14 +18,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
   viewId: string;
   fields?: ResultTableFields[];
   dashboardLabel: string;
-}> = ({
-  orgLabel,
-  projectLabel,
-  dataQuery,
-  viewId,
-  dashboardLabel,
-  fields,
-}) => {
+}> = ({ orgLabel, projectLabel, dataQuery, viewId, dashboardLabel, fields }) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -44,15 +32,13 @@ const DashboardResultsContainer: React.FunctionComponent<{
       })
       .then((resource: Resource) => {
         const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-        let path = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-          resource['@id']
-        )}`;
+        let path = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resource['@id'])}`;
         if (queryParams) {
           path = `${path}?${queryParams}`;
         }
         history.push(path, { background: location });
       })
-      .catch(error => {
+      .catch((error) => {
         message.error(`Resource ${self} could not be found`);
       });
   };
@@ -88,9 +74,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
     .with(
       {
         error: null,
-        data: when(
-          data => !!(data && data['@type']?.includes('ElasticSearchView'))
-        ),
+        data: when((data) => !!(data && data['@type']?.includes('ElasticSearchView'))),
       },
       () => (
         <DashboardElasticSearchQueryContainer

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { Context,Resource } from '@bbp/nexus-sdk';
+import { Context, Resource } from '@bbp/nexus-sdk';
 import { vi } from 'vitest';
 
 import { render, screen } from '../../../../utils/testUtil';
@@ -15,9 +15,7 @@ describe('StudioHeader', () => {
     label: 'a label',
   } as unknown) as Resource;
   it('Renders StudioHeader with a title', () => {
-    render(
-      <StudioHeader resource={mockStudioResource} markdownViewer={vi.fn()} />
-    );
+    render(<StudioHeader resource={mockStudioResource} markdownViewer={vi.fn()} />);
     const title = screen.getByRole('heading');
     expect(title).toHaveTextContent('a label');
   });
@@ -31,12 +29,7 @@ describe('StudioHeader', () => {
       label: 'a label',
       description: 'a description',
     } as unknown) as Resource;
-    render(
-      <StudioHeader
-        resource={mockStudioResource}
-        markdownViewer={markdownviewer}
-      />
-    );
+    render(<StudioHeader resource={mockStudioResource} markdownViewer={markdownviewer} />);
     const viewer = screen.getByTestId('test-id');
     expect(viewer).toBeVisible();
   });

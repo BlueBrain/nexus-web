@@ -1,4 +1,4 @@
-import { NexusFile,Storage } from '@bbp/nexus-sdk/es';
+import { NexusFile, Storage } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
@@ -15,9 +15,7 @@ const FileUploadContainer: React.FunctionComponent<{
   const history = useHistory();
   const [storages, setStorages] = React.useState<Storage[]>([]);
   const makeResourceUri = (resourceId: string) => {
-    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-      resourceId
-    )}`;
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}`;
   };
 
   const goToResource = (resourceId: string) => {
@@ -37,8 +35,8 @@ const FileUploadContainer: React.FunctionComponent<{
 
   React.useEffect(() => {
     nexus.Storage.list(orgLabel, projectLabel)
-      .then(data => setStorages(data._results))
-      .catch(e => setStorages([]));
+      .then((data) => setStorages(data._results))
+      .catch((e) => setStorages([]));
   }, [orgLabel, projectLabel]);
 
   return (
@@ -49,8 +47,7 @@ const FileUploadContainer: React.FunctionComponent<{
           projectLabel,
           storages,
           orgLabel,
-          makeFileLink: (nexusFile: NexusFile) =>
-            makeResourceUri(nexusFile['@id']),
+          makeFileLink: (nexusFile: NexusFile) => makeResourceUri(nexusFile['@id']),
           goToFile: (nexusFile: NexusFile) => goToResource(nexusFile['@id']),
         }}
       />

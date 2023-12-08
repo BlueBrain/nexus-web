@@ -41,8 +41,8 @@ const DashboardSparqlQueryContainer: React.FC<{
       {queryResult.error && (
         <Alert
           message="Error loading dashboard"
-          description={`Something went wrong. ${(queryResult.error as NexusSparqlError)
-            .reason || (queryResult.error as Error).message}`}
+          description={`Something went wrong. ${(queryResult.error as NexusSparqlError).reason ||
+            (queryResult.error as Error).message}`}
           type="error"
         />
       )}

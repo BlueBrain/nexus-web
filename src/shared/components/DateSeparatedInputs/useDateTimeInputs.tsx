@@ -1,17 +1,14 @@
 import * as React from 'react';
 
-const isSelectionStart = (el: HTMLInputElement) =>
-  el.selectionStart === 0 && el.selectionEnd === 0;
+const isSelectionStart = (el: HTMLInputElement) => el.selectionStart === 0 && el.selectionEnd === 0;
 
 const isSelectionEnd = (el: HTMLInputElement) =>
   el.selectionStart === el.value.length && el.selectionEnd === el.value.length;
 
-export const isSelectionEmpty = (el: HTMLInputElement) =>
-  el.selectionStart === el.selectionEnd;
+export const isSelectionEmpty = (el: HTMLInputElement) => el.selectionStart === el.selectionEnd;
 const isKeySeparator = (key: string): key is '/' => key === '/';
 const isKeyArrowLeft = (key: string): key is 'ArrowLeft' => key === 'ArrowLeft';
-const isKeyArrowRight = (key: string): key is 'ArrowRight' =>
-  key === 'ArrowRight';
+const isKeyArrowRight = (key: string): key is 'ArrowRight' => key === 'ArrowRight';
 const isKeyBackspace = (key: string): key is 'Backspace' => key === 'Backspace';
 const isKeyDelete = (key: string): key is 'Delete' => key === 'Delete';
 const focus = (el: HTMLElement) => {
@@ -31,8 +28,7 @@ const focusEnd = (el: HTMLInputElement) => {
 };
 const isInputEmpty = (input: HTMLInputElement) => input.value.length === 0;
 
-const isInputFull = (input: HTMLInputElement) =>
-  input.value.length >= input.maxLength;
+const isInputFull = (input: HTMLInputElement) => input.value.length >= input.maxLength;
 const isKeyNumeric = (
   key: string
 ): key is '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
@@ -83,11 +79,7 @@ const trackInputPart = ({
     const currentTarget = e.currentTarget as HTMLInputElement;
     if (isKeySeparator(key)) {
       e.preventDefault();
-      if (
-        !isInputEmpty(currentTarget) &&
-        isSelectionEmpty(currentTarget) &&
-        inputNext
-      ) {
+      if (!isInputEmpty(currentTarget) && isSelectionEmpty(currentTarget) && inputNext) {
         focus(inputNext);
       }
       return;

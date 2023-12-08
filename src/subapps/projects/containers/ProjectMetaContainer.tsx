@@ -3,9 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Drawer } from 'antd';
 import * as React from 'react';
 
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
 import fusionConfig from '../config';
 import { PROJECT_METADATA_CONTEXT } from '../fusionContext';
@@ -17,9 +15,7 @@ const ProjectMetaContaier: React.FC<{
   onClose?: () => void;
 }> = ({ orgLabel, projectLabel, onClose }) => {
   const [busy, setBusy] = React.useState<boolean>(false);
-  const [projectMetaData, setProjectMetaData] = React.useState<
-    ProjectMetadata
-  >();
+  const [projectMetaData, setProjectMetaData] = React.useState<ProjectMetadata>();
   const [metaDataResource, setMetaDataResource] = React.useState<Resource>();
   const [showForm, setShowForm] = React.useState<boolean>(false);
   const nexus = useNexusContext();
@@ -33,14 +29,14 @@ const ProjectMetaContaier: React.FC<{
     return nexus.Resource.list(orgLabel, projectLabel, {
       type: fusionConfig.projectMetadataType,
     })
-      .then(resourceList => {
+      .then((resourceList) => {
         if (resourceList._results.length > 0) {
           nexus.Resource.get(
             orgLabel,
             projectLabel,
             encodeURIComponent(resourceList._results[0]['@id'] as string)
           )
-            .then(result => {
+            .then((result) => {
               const resource = result as Resource;
               setMetaDataResource(resource);
               const metaData: ProjectMetadata = {
@@ -56,7 +52,7 @@ const ProjectMetaContaier: React.FC<{
               setProjectMetaData(metaData);
               setShowForm(true);
             })
-            .catch(error => {
+            .catch((error) => {
               notification.error({
                 message: 'An error occured',
                 description: parseNexusError(error),
@@ -76,12 +72,11 @@ const ProjectMetaContaier: React.FC<{
           };
           createResource(orgLabel, projectLabel, emptyMetadata, nexus);
           notification.warning({
-            message:
-              'Metadata file is being created, please try after few seconds..',
+            message: 'Metadata file is being created, please try after few seconds..',
           });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'An error occured',
           description: parseNexusError(error),
@@ -96,15 +91,10 @@ const ProjectMetaContaier: React.FC<{
       nexus.Project.get(orgLabel, projectLabel)
         .then((project: Project) => {
           if (metaDataResource) {
-            nexus.Project.update(
-              project?._organizationLabel,
-              project?._label,
-              project?._rev,
-              {
-                description: data.description,
-              }
-            )
-              .then(resultProject => {
+            nexus.Project.update(project?._organizationLabel, project?._label, project?._rev, {
+              description: data.description,
+            })
+              .then((resultProject) => {
                 return nexus.Resource.update(
                   project._organizationLabel,
                   project._label,
@@ -116,14 +106,14 @@ const ProjectMetaContaier: React.FC<{
                     '@context': PROJECT_METADATA_CONTEXT['@id'],
                   }
                 )
-                  .then(result => {
+                  .then((result) => {
                     setProjectMetaData(data);
                     notification.success({
                       message: 'Project information is updated succesfully',
                     });
                     setBusy(false);
                   })
-                  .catch(error => {
+                  .catch((error) => {
                     notification.error({
                       message: 'Could not update Project information',
                       description: parseNexusError(error),
@@ -131,7 +121,7 @@ const ProjectMetaContaier: React.FC<{
                     setBusy(false);
                   });
               })
-              .catch(error => {
+              .catch((error) => {
                 notification.error({
                   message: 'Could not update Project information',
                   description: parseNexusError(error),
@@ -140,7 +130,7 @@ const ProjectMetaContaier: React.FC<{
               });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           notification.error({
             message: 'An error occured',
             description: parseNexusError(error),

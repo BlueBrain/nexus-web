@@ -14,7 +14,7 @@ const OrgListContainer: React.FunctionComponent<{
     includeDeprecated?: boolean;
   };
   loadMore: ({ searchValue }: { searchValue: string }) => void;
-}> = props => {
+}> = (props) => {
   return (
     <InfiniteSearch
       dataLength={props.orgs.items.length}

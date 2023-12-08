@@ -9,8 +9,7 @@ import {
 } from '../actions/search';
 import { createFetchReducer, FetchableState } from './utils';
 
-export const SearchConfigType =
-  'https://bluebrain.github.io/nexus/vocabulary/SearchConfig';
+export const SearchConfigType = 'https://bluebrain.github.io/nexus/vocabulary/SearchConfig';
 
 export enum FacetType {
   TERMS = 'terms',

@@ -20,12 +20,7 @@ import ResourceResolutionCache, {
   TResolutionType,
 } from './ResourcesLRUCache';
 
-export type TEditorPopoverResolvedAs =
-  | 'resource'
-  | 'resources'
-  | 'external'
-  | 'error'
-  | undefined;
+export type TEditorPopoverResolvedAs = 'resource' | 'resources' | 'external' | 'error' | undefined;
 export type TEditorPopoverResolvedData = {
   open: boolean;
   top: number;
@@ -42,10 +37,7 @@ type TDeltaError = Error & {
 type TErrorMessage = Error & {
   message: string;
 };
-type TReturnedResolvedData = Omit<
-  TEditorPopoverResolvedData,
-  'top' | 'left' | 'open'
->;
+type TReturnedResolvedData = Omit<TEditorPopoverResolvedData, 'top' | 'left' | 'open'>;
 
 export const LINE_HEIGHT = 15;
 export const INDENT_UNIT = 4;
@@ -54,9 +46,7 @@ export const CODEMIRROR_COPY_URL_CLASS = 'CodeMirror-url-copy';
 export const CODEMIRROR_LINK_CLASS = 'fusion-resource-link';
 const NEAR_BY = [0, 0, 0, 5, 0, -5, 5, 0, -5, 0];
 const isDownloadableLink = (resource: Resource) => {
-  return Boolean(
-    resource['@type'] === 'File' || resource['@type']?.includes('File')
-  );
+  return Boolean(resource['@type'] === 'File' || resource['@type']?.includes('File'));
 };
 export const mayBeResolvableLink = (url: string): boolean => {
   return isValidUrl(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
@@ -66,33 +56,16 @@ export const getDataExplorerResourceItemArray = (
   data: Resource
 ) => {
   return (isDownloadableLink(data) && data._mediaType
-    ? [
-        entity?.orgLabel,
-        entity?.projectLabel,
-        data['@id'],
-        data._rev,
-        data._mediaType,
-      ]
-    : [
-        entity?.orgLabel,
-        entity?.projectLabel,
-        data['@id'],
-        data._rev,
-      ]) as TDEResource;
+    ? [entity?.orgLabel, entity?.projectLabel, data['@id'], data._rev, data._mediaType]
+    : [entity?.orgLabel, entity?.projectLabel, data['@id'], data._rev]) as TDEResource;
 };
 export const isClickableLine = (url: string) => {
-  return (
-    isValidUrl(url) &&
-    isAllowedProtocol(url) &&
-    !isUrlCurieFormat(url) &&
-    !isStorageLink(url)
-  );
+  return isValidUrl(url) && isAllowedProtocol(url) && !isUrlCurieFormat(url) && !isStorageLink(url);
 };
 
 export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
   const node = e.target || e.srcElement;
-  const text =
-    (node as HTMLElement).innerText || (node as HTMLElement).textContent;
+  const text = (node as HTMLElement).innerText || (node as HTMLElement).textContent;
   const editorRect = (e.target as HTMLElement).getBoundingClientRect();
   for (let i = 0; i < NEAR_BY.length; i += 2) {
     const coords = {
@@ -101,9 +74,7 @@ export function getTokenAndPosAt(e: MouseEvent, current: CodeMirror.Editor) {
     };
     const pos = current.coordsChar(coords);
     const token = current.getTokenAt(pos);
-    const url = token
-      ? token.string.replace(/\\/g, '').replace(/\"/g, '')
-      : null;
+    const url = token ? token.string.replace(/\\/g, '').replace(/\"/g, '') : null;
     if (token && url === text) {
       return {
         url,

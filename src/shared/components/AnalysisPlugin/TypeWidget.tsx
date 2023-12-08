@@ -13,9 +13,7 @@ const TypeWidget = ({
   toggleSelectType,
 }: TypeWidgetProps) => {
   const typesToDisplay =
-    mode === 'create' || availableTypes === undefined
-      ? allTypes
-      : availableTypes;
+    mode === 'create' || availableTypes === undefined ? allTypes : availableTypes;
   return (
     <>
       {typesToDisplay && typesToDisplay.length > 1 && (

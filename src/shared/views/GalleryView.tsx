@@ -1,9 +1,9 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Drawer,message } from 'antd';
+import { Drawer, message } from 'antd';
 import { Location } from 'history';
 import * as React from 'react';
-import { Route, useHistory,useLocation } from 'react-router-dom';
+import { Route, useHistory, useLocation } from 'react-router-dom';
 
 import ResourceViewContainer from '../containers/ResourceViewContainer';
 import { parseProjectUrl } from '../utils';
@@ -41,9 +41,7 @@ const GalleryView: React.FC = () => {
         // we would never be able to go back to
         // whatever url was before the /?_self query
         history.replace(
-          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-            resource['@id']
-          )}`,
+          `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resource['@id'])}`,
           location.state || {}
         );
       })
@@ -59,8 +57,7 @@ const GalleryView: React.FC = () => {
   // use it as the location for the <Switch> so
   // we show the gallery in the background, behind
   // the modal.
-  const background =
-    location.state && (location.state as { background?: Location }).background;
+  const background = location.state && (location.state as { background?: Location }).background;
 
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const closeGalleryView = () => {

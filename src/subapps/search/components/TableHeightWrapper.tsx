@@ -7,12 +7,7 @@ const TableHeightWrapper: React.FC<{
   wrapperHeightRef: React.MutableRefObject<HTMLDivElement>;
   resultTableHeightTestRef: React.MutableRefObject<HTMLDivElement>;
   wrapperDOMProps: Bounds;
-}> = ({
-  wrapperHeightRef,
-  resultTableHeightTestRef,
-  wrapperDOMProps,
-  children,
-}) => {
+}> = ({ wrapperHeightRef, resultTableHeightTestRef, wrapperDOMProps, children }) => {
   return (
     <div className="height-test-wrapper">
       <div
@@ -46,7 +41,7 @@ const TableHeightWrapper: React.FC<{
                     title: 'Name',
                     dataIndex: 'name',
                     key: 'name',
-                    render: value => (
+                    render: (value) => (
                       <div className="row-selection-checkbox">
                         <span className="row-index">1</span>
                       </div>

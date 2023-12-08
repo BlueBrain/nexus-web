@@ -1,7 +1,4 @@
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk/es';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk/es';
 import { useNexus } from '@bbp/react-nexus';
 import * as React from 'react';
 
@@ -17,9 +14,7 @@ const SchemaDropdownFilterContainer: React.FunctionComponent<{
   onChange(value: string): void;
   value?: string;
 }> = ({ orgLabel, projectLabel, onChange, deprecated, value }) => {
-  const { loading: busy, data, error } = useNexus<
-    ElasticSearchViewQueryResponse<any>
-  >(nexus =>
+  const { loading: busy, data, error } = useNexus<ElasticSearchViewQueryResponse<any>>((nexus) =>
     nexus.View.elasticSearchQuery(
       orgLabel,
       projectLabel,

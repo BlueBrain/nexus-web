@@ -27,8 +27,7 @@ export const DatasetCount: React.FC<Props> = ({
       <span className="total">
         Total:{' '}
         <b>
-          {nexusTotal.toLocaleString(`en-US`)}{' '}
-          {pluralize('dataset', nexusTotal ?? 0)}
+          {nexusTotal.toLocaleString(`en-US`)} {pluralize('dataset', nexusTotal ?? 0)}
         </b>{' '}
         {orgAndProject && orgAndProject.length === 2 && (
           <span>
@@ -42,7 +41,7 @@ export const DatasetCount: React.FC<Props> = ({
           <span>
             of types{' '}
             <b>
-              {getTypesTrancated(types.map(o => o.value))
+              {getTypesTrancated(types.map((o) => o.value))
                 .types.split('\n')
                 .join(', ')}
             </b>

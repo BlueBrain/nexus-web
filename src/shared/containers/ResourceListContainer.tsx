@@ -7,9 +7,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import ResourceListComponent, {
-  ResourceBoardList,
-} from '../components/ResourceList';
+import ResourceListComponent, { ResourceBoardList } from '../components/ResourceList';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 import SchemaLinkContainer from './SchemaLink';
 import TypeDropdownFilterContainer from './TypeDropdownFilter';
@@ -30,23 +28,12 @@ const ResourceListContainer: React.FunctionComponent<{
   onCloneList: (list: ResourceBoardList) => void;
   list: ResourceBoardList;
   setList: (list: ResourceBoardList) => void;
-}> = ({
-  orgLabel,
-  projectLabel,
-  onDeleteList,
-  onCloneList,
-  list,
-  setList,
-  refreshList,
-}) => {
+}> = ({ orgLabel, projectLabel, onDeleteList, onCloneList, list, setList, refreshList }) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
   const [toggleForceReload, setToggleForceReload] = React.useState(false);
-  const [
-    { busy, error, resources, total, next },
-    setResources,
-  ] = React.useState<{
+  const [{ busy, error, resources, total, next }, setResources] = React.useState<{
     busy: boolean;
     error: Error | null;
     resources: Resource[];
@@ -67,11 +54,7 @@ const ResourceListContainer: React.FunctionComponent<{
     currentPage: 1,
   });
 
-  const handlePaginationChange = (
-    searchValue: string,
-    page: number,
-    pageSize: number
-  ) => {
+  const handlePaginationChange = (searchValue: string, page: number, pageSize: number) => {
     setPaginationState({
       pageSize,
       currentPage: page,
@@ -106,9 +89,7 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   const makeResourceUri = (resourceId: string) => {
-    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-      resourceId
-    )}`;
+    return `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}`;
   };
 
   const goToResource = (resourceId: string) => {
@@ -128,7 +109,6 @@ const ResourceListContainer: React.FunctionComponent<{
       busy: true,
       error: null,
     });
-
     (async () => {
       const [resourcesByIdOrSelf, resourcesResults] = await Promise.allSettled([
         nexus.View.elasticSearchQuery(
@@ -186,7 +166,7 @@ const ResourceListContainer: React.FunctionComponent<{
           setResources({
             next: null,
             // @ts-ignore
-            resources: hits.map(hit => {
+            resources: hits.map((hit) => {
               return {
                 ...JSON.parse(hit._source['_original_source']),
                 '@id': hit._source['@id'],
@@ -218,13 +198,7 @@ const ResourceListContainer: React.FunctionComponent<{
         });
       }
     })();
-  }, [
-    orgLabel,
-    projectLabel,
-    JSON.stringify(list.query),
-    toggleForceReload,
-    refreshList,
-  ]);
+  }, [orgLabel, projectLabel, JSON.stringify(list.query), toggleForceReload, refreshList]);
   const handleDelete = () => {
     onDeleteList(list.id);
   };
@@ -283,9 +257,7 @@ const ResourceListContainer: React.FunctionComponent<{
     });
   };
 
-  const shareableLink = `${
-    window.location.href
-  }?shareList=${encodeShareableList(list)}`;
+  const shareableLink = `${window.location.href}?shareList=${encodeShareableList(list)}`;
 
   const handlePageSizeChange = (pageSize: number) => {
     const query = {

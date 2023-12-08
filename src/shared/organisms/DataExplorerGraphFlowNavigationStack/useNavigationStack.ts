@@ -15,18 +15,14 @@ const useNavigationStackManager = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const location = useLocation();
-  const { rightNodes, leftNodes, referer } = useSelector(
-    (state: RootState) => state.dataExplorer
-  );
+  const { rightNodes, leftNodes, referer } = useSelector((state: RootState) => state.dataExplorer);
   const leftShrinked = leftNodes.shrinked;
   const rightShrinked = rightNodes.shrinked;
   const leftLinks = leftNodes.links;
   const rightLinks = rightNodes.links;
 
-  const onLeftShrink = () =>
-    dispatch(ShrinkNavigationStackDataExplorerGraphFlow({ side: 'left' }));
-  const onLeftExpand = () =>
-    dispatch(ExpandNavigationStackDataExplorerGraphFlow({ side: 'left' }));
+  const onLeftShrink = () => dispatch(ShrinkNavigationStackDataExplorerGraphFlow({ side: 'left' }));
+  const onLeftExpand = () => dispatch(ExpandNavigationStackDataExplorerGraphFlow({ side: 'left' }));
   const onRightShrink = () =>
     dispatch(ShrinkNavigationStackDataExplorerGraphFlow({ side: 'right' }));
   const onRightExpand = () =>

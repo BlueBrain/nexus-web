@@ -24,7 +24,7 @@ import * as React from 'react';
 import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
 
 import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
-import { ParsedNexusUrl,parseURL } from '../../shared/utils/nexusParse';
+import { ParsedNexusUrl, parseURL } from '../../shared/utils/nexusParse';
 import { CartContext } from '../hooks/useDataCart';
 import useNotification, { NexusError } from '../hooks/useNotification';
 import ResultPreviewItemContainer from './ResultPreviewItemContainer';
@@ -59,18 +59,10 @@ async function downloadArchive(
   } catch {
     // Fail silently. This needs to be fixed in API.
   }
-  const archive = await nexus.Archive.get(
-    parsedData.org,
-    parsedData.project,
-    archiveId,
-    {
-      as: format || 'x-tar',
-    }
-  );
-  const blob =
-    !format || format === 'x-tar'
-      ? (archive as Blob)
-      : new Blob([archive.toString()]);
+  const archive = await nexus.Archive.get(parsedData.org, parsedData.project, archiveId, {
+    as: format || 'x-tar',
+  });
+  const blob = !format || format === 'x-tar' ? (archive as Blob) : new Blob([archive.toString()]);
   const url = window.URL.createObjectURL(blob);
   setDownloadUrl(url);
   refContainer.current.click();
@@ -81,15 +73,13 @@ const DataCartContainer = () => {
   const [downloadUrl, setDownloadUrl] = React.useState<any>(null);
   const [extension, setExtension] = React.useState<string>('tar');
   const refContainer = React.useRef<any>(null);
-  const { emptyCart, removeCartItem, length, resources } = React.useContext(
-    CartContext
-  );
+  const { emptyCart, removeCartItem, length, resources } = React.useContext(CartContext);
   const notification = useNotification();
 
   const resourceProjectPaths = React.useMemo(
     () => [
       ...new Set(
-        resources?.map(r => {
+        resources?.map((r) => {
           const [orgLabel, projectLabel] = parseProjectUrl(r._project);
           return `/${orgLabel}/${projectLabel}`;
         })
@@ -101,7 +91,7 @@ const DataCartContainer = () => {
   const [search, setSearch] = React.useState<string>('');
   const filteredResources = React.useMemo(() => {
     return resources
-      ? resources.filter(resource => {
+      ? resources.filter((resource) => {
           const label: string = getResourceLabel(resource);
           return label.toLowerCase().includes(search.toLowerCase());
         })
@@ -128,7 +118,7 @@ const DataCartContainer = () => {
 
   const ids = filteredResources
     ? filteredResources
-        .map(r => {
+        .map((r) => {
           return r['@id'];
         })
         .join(',')
@@ -138,10 +128,10 @@ const DataCartContainer = () => {
     if (filteredResources && filteredResources.length > 0) {
       const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
       const resourcesPayload = filteredResources
-        .filter(r => {
+        .filter((r) => {
           return r['@type'] === 'File';
         })
-        .map(r => {
+        .map((r) => {
           const parsedSelf = parseURL(r._self);
           return {
             '@type': 'File',
@@ -157,22 +147,12 @@ const DataCartContainer = () => {
         return;
       }
       setExtension('tar');
-      const {
-        payload,
-        archiveId,
-      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+      const { payload, archiveId }: { payload: ArchivePayload; archiveId: string } = makePayload(
         resourcesPayload
       );
 
       try {
-        await downloadArchive(
-          nexus,
-          parsedData,
-          payload,
-          archiveId,
-          setDownloadUrl,
-          refContainer
-        );
+        await downloadArchive(nexus, parsedData, payload, archiveId, setDownloadUrl, refContainer);
       } catch (ex) {
         notification.error({
           message: `Download failed`,
@@ -185,7 +165,7 @@ const DataCartContainer = () => {
   const downLoadAll = async () => {
     if (filteredResources && filteredResources.length > 0) {
       const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
-      const resourcesPayload = filteredResources.map(r => {
+      const resourcesPayload = filteredResources.map((r) => {
         const parsedSelf = parseURL(r._self);
         return {
           '@type': r['@type'] === 'File' ? 'File' : 'Resource',
@@ -194,22 +174,12 @@ const DataCartContainer = () => {
           path: `/${parsedSelf.project}/${parsedSelf.id}`,
         };
       });
-      const {
-        payload,
-        archiveId,
-      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+      const { payload, archiveId }: { payload: ArchivePayload; archiveId: string } = makePayload(
         resourcesPayload
       );
       setExtension('tar');
       try {
-        await downloadArchive(
-          nexus,
-          parsedData,
-          payload,
-          archiveId,
-          setDownloadUrl,
-          refContainer
-        );
+        await downloadArchive(nexus, parsedData, payload, archiveId, setDownloadUrl, refContainer);
       } catch (ex) {
         notification.error({
           message: `Download failed`,
@@ -223,10 +193,10 @@ const DataCartContainer = () => {
     if (filteredResources && filteredResources.length > 0) {
       const parsedData: ParsedNexusUrl = parseURL(filteredResources[0]._self);
       const resourcesPayload = filteredResources
-        .filter(r => {
+        .filter((r) => {
           return r['@type'] !== 'File';
         })
-        .map(r => {
+        .map((r) => {
           const parsedSelf = parseURL(r._self);
           return {
             '@type': 'Resource',
@@ -235,21 +205,11 @@ const DataCartContainer = () => {
             path: `/${parsedSelf.project}/${parsedSelf.id}`,
           };
         });
-      const {
-        payload,
-        archiveId,
-      }: { payload: ArchivePayload; archiveId: string } = makePayload(
+      const { payload, archiveId }: { payload: ArchivePayload; archiveId: string } = makePayload(
         resourcesPayload
       );
       try {
-        await downloadArchive(
-          nexus,
-          parsedData,
-          payload,
-          archiveId,
-          setDownloadUrl,
-          refContainer
-        );
+        await downloadArchive(nexus, parsedData, payload, archiveId, setDownloadUrl, refContainer);
       } catch (ex) {
         notification.error({
           message: `Download failed`,
@@ -261,7 +221,7 @@ const DataCartContainer = () => {
 
   const menu = (
     <Menu
-      onClick={clicked => {
+      onClick={(clicked) => {
         clicked.key === 'both'
           ? downLoadAll()
           : clicked.key === 'files'
@@ -357,9 +317,7 @@ const DataCartContainer = () => {
                 noAccessComponent={() => downloadButton(true)}
                 loadingComponent={downloadButton(false)}
               >
-                <Dropdown dropdownRender={() => menu}>
-                  {downloadButton(false)}
-                </Dropdown>
+                <Dropdown dropdownRender={() => menu}>{downloadButton(false)}</Dropdown>
               </AccessControl>
               <Button onClick={onEmptyCart}>Empty Cart</Button>
             </div>
@@ -371,7 +329,7 @@ const DataCartContainer = () => {
             >
               <Input.Search
                 type="search"
-                onChange={e => {
+                onChange={(e) => {
                   setSearch(e.target.value);
                 }}
                 placeholder="Search cart locally"
@@ -381,7 +339,7 @@ const DataCartContainer = () => {
             <List
               itemLayout="vertical"
               dataSource={filteredResources}
-              renderItem={resource => {
+              renderItem={(resource) => {
                 return (
                   <List.Item>
                     <div className="result-preview-card">
@@ -421,9 +379,7 @@ const DataCartContainer = () => {
   );
 };
 
-const FallbackCart: React.FC<{ resetErrorState?: () => void }> = ({
-  resetErrorState,
-}) => {
+const FallbackCart: React.FC<{ resetErrorState?: () => void }> = ({ resetErrorState }) => {
   const { emptyCart } = React.useContext(CartContext);
   return (
     <Popconfirm
@@ -436,10 +392,7 @@ const FallbackCart: React.FC<{ resetErrorState?: () => void }> = ({
       okText="Yes"
       cancelText="No"
     >
-      <Badge
-        size="small"
-        count={<WarningFilled style={{ color: '#f5222d' }} />}
-      >
+      <Badge size="small" count={<WarningFilled style={{ color: '#f5222d' }} />}>
         <Button className="cart" icon={<ShoppingCartOutlined />}></Button>
       </Badge>
     </Popconfirm>

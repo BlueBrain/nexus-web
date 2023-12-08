@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { deltaPath, handlers } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
-import { act,RenderResult } from '@testing-library/react';
+import { act, RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { ConnectedRouter } from 'connected-react-router';
@@ -16,9 +16,7 @@ import { vi } from 'vitest';
 
 import { configureStore } from '../../../../store';
 import { fireEvent, render, screen } from '../../../../utils/testUtil';
-import StudioReactContext, {
-  StudioContextType,
-} from '../../contexts/StudioContext';
+import StudioReactContext, { StudioContextType } from '../../contexts/StudioContext';
 import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
 import {
   aclHandler,
@@ -65,8 +63,7 @@ describe('workSpaceMenu', () => {
     ],
     workspaces: ['w1'],
     _project: 'org/project',
-    _constrainedBy:
-      'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+    _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
     _createdAt: '2022-03-31T17:08:53.747Z',
     _createdBy:
       'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
@@ -76,13 +73,11 @@ describe('workSpaceMenu', () => {
     _outgoing:
       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F98b08a64-f116-46cd-8568-be2aa2849cc4/outgoing',
     _rev: 149,
-    _schemaProject:
-      'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/sscx',
+    _schemaProject: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/sscx',
     _self:
       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F98b08a64-f116-46cd-8568-be2aa2849cc4',
     _updatedAt: '2022-05-25T07:58:25.751Z',
-    _updatedBy:
-      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+    _updatedBy: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
   } as unknown) as StudioResource;
 
   const queryClient = new QueryClient();
@@ -198,9 +193,7 @@ describe('workSpaceMenu', () => {
 
   it('it displays workspace add form on clicking add workspace button', async () => {
     await screen.findAllByText('Workspace');
-    const workSpaceAction = (await screen.getAllByText(
-      'Workspace'
-    )[0]) as HTMLButtonElement;
+    const workSpaceAction = (await screen.getAllByText('Workspace')[0]) as HTMLButtonElement;
 
     fireEvent.click(workSpaceAction);
 
@@ -214,9 +207,7 @@ describe('workSpaceMenu', () => {
   });
 
   it('it displays workspace remove confirmation  on clicking remove workspace button', async () => {
-    const workSpaceAction = (
-      await screen.findAllByText('Workspace')
-    )[0] as HTMLButtonElement;
+    const workSpaceAction = (await screen.findAllByText('Workspace'))[0] as HTMLButtonElement;
     fireEvent.click(workSpaceAction);
     const editButton = await screen.findByText('Remove');
     expect(editButton).toBeInTheDocument();
@@ -226,9 +217,7 @@ describe('workSpaceMenu', () => {
   });
 
   it('it displays workspace edit form on clicking edit workspace button', async () => {
-    const workSpaceAction = (
-      await screen.findAllByText('Workspace')
-    )[0] as HTMLButtonElement;
+    const workSpaceAction = (await screen.findAllByText('Workspace'))[0] as HTMLButtonElement;
     act(() => {
       fireEvent.click(workSpaceAction);
     });

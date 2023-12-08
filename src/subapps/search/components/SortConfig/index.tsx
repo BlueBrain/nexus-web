@@ -16,11 +16,7 @@ type SortConfigProps = {
   onChangeSortDirection: (sort: ESSortField) => void;
 };
 
-const SortConfig = ({
-  sortedFields,
-  onRemoveSort,
-  onChangeSortDirection,
-}: SortConfigProps) => {
+const SortConfig = ({ sortedFields, onRemoveSort, onChangeSortDirection }: SortConfigProps) => {
   const countOfSortedFields = sortedFields.length;
 
   return (
@@ -33,17 +29,11 @@ const SortConfig = ({
             className="sort"
             role="listitem"
             aria-label={`Sorted By ${s.label} in ${
-              s.direction === SortDirection.ASCENDING
-                ? 'ascending'
-                : 'descending'
+              s.direction === SortDirection.ASCENDING ? 'ascending' : 'descending'
             } order`}
           >
             <div className="sort__remove">
-              <Button
-                type="text"
-                onClick={() => onRemoveSort(s)}
-                aria-label="Remove Sort Criteria"
-              >
+              <Button type="text" onClick={() => onRemoveSort(s)} aria-label="Remove Sort Criteria">
                 <CloseCircleOutlined aria-hidden="true" />
               </Button>
               <span aria-hidden="true">{ix === 0 ? 'Sort By' : 'then by'}</span>
@@ -53,11 +43,7 @@ const SortConfig = ({
             </div>
             <div className="sort__direction">
               <Button
-                type={
-                  s.direction === SortDirection.ASCENDING
-                    ? 'primary'
-                    : 'default'
-                }
+                type={s.direction === SortDirection.ASCENDING ? 'primary' : 'default'}
                 shape="round"
                 icon={<SortAscendingOutlined aria-hidden="true" />}
                 aria-label="Sort in Ascending Order"
@@ -72,15 +58,9 @@ const SortConfig = ({
                 Sort Asc
               </Button>
               <Button
-                type={
-                  s.direction === SortDirection.DESCENDING
-                    ? 'primary'
-                    : 'default'
-                }
+                type={s.direction === SortDirection.DESCENDING ? 'primary' : 'default'}
                 shape="round"
-                icon={
-                  <SortDescendingOutlined aria-label="Sort in Descending Order" />
-                }
+                icon={<SortDescendingOutlined aria-label="Sort in Descending Order" />}
                 aria-label="Sort in Descending Order"
                 size="small"
                 onClick={() =>

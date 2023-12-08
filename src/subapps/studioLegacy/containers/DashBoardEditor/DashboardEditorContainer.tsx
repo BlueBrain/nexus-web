@@ -43,11 +43,7 @@ const DashboardEditorContainer: React.FunctionComponent<{
   const pluginManifest = usePlugins();
   const availablePlugins = Object.keys(pluginManifest || {});
 
-  const { linkQueryEditor } = useLinkToDashboardQueryEditor(
-    viewId,
-    orgLabel,
-    projectLabel
-  );
+  const { linkQueryEditor } = useLinkToDashboardQueryEditor(viewId, orgLabel, projectLabel);
   // Launch modal when id is changed (someone selected a new dashboard to edit)
   React.useEffect(() => {
     if (!showEditModal) {
@@ -89,10 +85,11 @@ const DashboardEditorContainer: React.FunctionComponent<{
     }
   };
 
-  const viewData = useAsyncCall<View, Error>(
-    nexus.View.get(orgLabel, projectLabel, viewId),
-    [orgLabel, projectLabel, encodeURIComponent(viewId)]
-  );
+  const viewData = useAsyncCall<View, Error>(nexus.View.get(orgLabel, projectLabel, viewId), [
+    orgLabel,
+    projectLabel,
+    encodeURIComponent(viewId),
+  ]);
 
   return (
     <Modal

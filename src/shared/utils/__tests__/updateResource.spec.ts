@@ -31,9 +31,7 @@ describe('getUpdateResourceFunction() with generic resource', () => {
         .trim()
         .replaceAll('\n', ' ')
         .replaceAll(' ', '')
-    ).toMatch(
-      `()=>nexus.Resource.update(orgLabel,projectLabel,resourceId,revision,resource)`
-    );
+    ).toMatch(`()=>nexus.Resource.update(orgLabel,projectLabel,resourceId,revision,resource)`);
   });
 });
 
@@ -52,9 +50,7 @@ describe('getUpdateResourceFunction() with Organization type resource', () => {
     resourceId
   );
   it('resource with @type including Organization should target Organization endpoint', () => {
-    expect(fn.toString()).toMatch(
-      'nexus.Organization.update(orgLabel, revision, resource)'
-    );
+    expect(fn.toString()).toMatch('nexus.Organization.update(orgLabel, revision, resource)');
   });
 });
 
@@ -173,9 +169,7 @@ describe('getUpdateResourceFunction() with Storage type resource', () => {
         .trim()
         .replaceAll('\n', ' ')
         .replaceAll(' ', '')
-    ).toMatch(
-      `()=>nexus.Storage.update(orgLabel,projectLabel,resourceId,revision,resource)`
-    );
+    ).toMatch(`()=>nexus.Storage.update(orgLabel,projectLabel,resourceId,revision,resource)`);
   });
 });
 

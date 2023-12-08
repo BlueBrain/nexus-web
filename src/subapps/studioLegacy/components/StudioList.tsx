@@ -27,7 +27,7 @@ const StudioList: React.FC<{
 }> = ({ studios, busy, makeResourceUri }) => {
   return (
     <Spin spinning={busy}>
-      {studios.map(studio => {
+      {studios.map((studio) => {
         return (
           <a href={makeResourceUri(studio.id)} key={studio.id} role="link">
             <ListItem key={studio.id}>

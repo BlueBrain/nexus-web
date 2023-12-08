@@ -6,22 +6,11 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import {
-  NexusClient,
-  OrganizationList,
-  OrgResponseCommon,
-} from '@bbp/nexus-sdk/es';
+import { NexusClient, OrganizationList, OrgResponseCommon } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Alert, Input, InputRef,List, Spin } from 'antd';
+import { Alert, Input, InputRef, List, Spin } from 'antd';
 import pluralize from 'pluralize';
-import React, {
-  forwardRef,
-  Fragment,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, Fragment, useEffect, useReducer, useRef, useState } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -92,11 +81,9 @@ export const useInfiniteOrganizationQuery = ({
         from: pageParam,
         size: DEFAULT_PAGE_SIZE,
       }),
-    getNextPageParam: lastPage =>
+    getNextPageParam: (lastPage) =>
       (lastPage as TNewOrganizationList)._next
-        ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get(
-            'from'
-          )
+        ? new URL((lastPage as TNewOrganizationList)._next).searchParams.get('from')
         : undefined,
   });
 };
@@ -146,11 +133,7 @@ export const LoadMoreFooter = forwardRef<
   { hasNextPage?: boolean; loading: boolean; fetchNextPage(): void }
 >(({ hasNextPage, loading, fetchNextPage }, ref) =>
   hasNextPage ? (
-    <div
-      className="infinitfetch-loader"
-      ref={ref}
-      onClick={() => fetchNextPage()}
-    >
+    <div className="infinitfetch-loader" ref={ref} onClick={() => fetchNextPage()}>
       <Spin spinning={loading} />
       <span>Loading more</span>
     </div>
@@ -187,24 +170,19 @@ const OrganizationListView: React.FC<{}> = () => {
     query,
     sort,
   });
-  const total =
-    data && data.pages
-      ? ((data.pages[0] as OrganizationList)?._total as number)
-      : 0;
+  const total = data && data.pages ? ((data.pages[0] as OrganizationList)?._total as number) : 0;
   if (!query.trim().length) {
     totalOrganizationRef.current = total;
   }
   const dataSource: OrgResponseCommon[] =
-    data && data.pages
-      ? data.pages.map(page => (page as OrganizationList)._results).flat()
-      : [];
+    data && data.pages ? data.pages.map((page) => (page as OrganizationList)._results).flat() : [];
   const updateCreateModelVisibility = (payload?: boolean) => {
     dispatch({
       payload,
       type: ModalsActionsEnum.OPEN_ORGANIZATION_CREATION_MODAL,
     });
   };
-  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
+  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
     setOptions({ sort: value as TSort });
@@ -247,9 +225,10 @@ const OrganizationListView: React.FC<{}> = () => {
             total && !query ? (
               `Total of ${total} ${pluralize('Organization', total)}`
             ) : total && query ? (
-              `Filtering ${total} of ${
-                totalOrganizationRef.current
-              }  ${pluralize('Organization', total)}`
+              `Filtering ${total} of ${totalOrganizationRef.current}  ${pluralize(
+                'Organization',
+                total
+              )}`
             ) : isLoading ? (
               <LoadingOutlined />
             ) : (

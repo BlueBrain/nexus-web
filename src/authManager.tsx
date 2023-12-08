@@ -1,6 +1,6 @@
 import { Realm } from '@bbp/nexus-sdk/es';
 import * as Sentry from '@sentry/browser';
-import { UserManager,WebStorageStateStore } from 'oidc-client';
+import { UserManager, WebStorageStateStore } from 'oidc-client';
 import {
   loadUser,
   sessionTerminated,
@@ -21,17 +21,14 @@ export const getUserManager = (state: RootState): UserManager | undefined => {
     auth: { realms },
     config: { clientId, redirectHostName, preferredRealm },
   } = state;
-  const availableRealms: Realm[] =
-    (realms && realms.data && realms.data._results) || [];
+  const availableRealms: Realm[] = (realms && realms.data && realms.data._results) || [];
 
   // if we have a preferred realm, try to find it in the list of available realms
   // otherwise, select first one of the list
-  const validRealms = availableRealms.filter(
-    r => r._label !== 'serviceaccounts'
-  );
+  const validRealms = availableRealms.filter((r) => r._label !== 'serviceaccounts');
 
   const realm: Realm = preferredRealm
-    ? validRealms.find(r => r._label === preferredRealm) || validRealms[0]
+    ? validRealms.find((r) => r._label === preferredRealm) || validRealms[0]
     : validRealms[0];
 
   if (!realm || !clientId || !redirectHostName) {
@@ -53,14 +50,13 @@ export const getUserManager = (state: RootState): UserManager | undefined => {
     userStore: new WebStorageStateStore({ store: window.localStorage }),
     ...realm,
   });
-  userManagerCache.has(cacheKey) ||
-    userManagerCache.set(cacheKey, new UserManager(oidcConfig));
+  userManagerCache.has(cacheKey) || userManagerCache.set(cacheKey, new UserManager(oidcConfig));
   return userManagerCache.get(cacheKey);
 };
 
 export const setupUserSession = async (userManager: UserManager) => {
   // Raised when a user session has been established (or re-established).
-  userManager.events.addUserLoaded(async user => {
+  userManager.events.addUserLoaded(async (user) => {
     loadUser(store, userManager);
     localStorage.setItem('nexus__token', user.access_token);
     const identities = await (
@@ -74,11 +70,11 @@ export const setupUserSession = async (userManager: UserManager) => {
     store.dispatch(userExpiring());
     userManager
       .signinSilent()
-      .then(user => {
+      .then((user) => {
         loadUser(store, userManager);
         localStorage.setItem('nexus__token', user.access_token);
       })
-      .catch(err => {
+      .catch((err) => {
         Sentry.captureException(err);
       });
   });
@@ -88,11 +84,11 @@ export const setupUserSession = async (userManager: UserManager) => {
     store.dispatch(userExpired());
     userManager
       .signinSilent()
-      .then(user => {
+      .then((user) => {
         loadUser(store, userManager);
         localStorage.setItem('nexus__token', user.access_token);
       })
-      .catch(err => {
+      .catch((err) => {
         Sentry.captureException(err);
       });
   });

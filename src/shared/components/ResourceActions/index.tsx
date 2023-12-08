@@ -1,7 +1,7 @@
 import './ResourceActions.scss';
 
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Button, Popconfirm,Tooltip } from 'antd';
+import { Button, Popconfirm, Tooltip } from 'antd';
 import * as React from 'react';
 
 import useNotification from '../../hooks/useNotification';
@@ -35,9 +35,7 @@ const makeButton = ({
   <div className="action" key={`${resource['@id']}-${title}`}>
     {danger ? (
       <Popconfirm
-        title={
-          message ? message : 'Are you sure you want to perform this action?'
-        }
+        title={message ? message : 'Are you sure you want to perform this action?'}
         onConfirm={() => actionToDispatch && actionToDispatch()}
         okText="Yes"
         cancelText="No"
@@ -48,10 +46,7 @@ const makeButton = ({
       </Popconfirm>
     ) : (
       <Tooltip title={title}>
-        <Button
-          icon={icon}
-          onClick={() => actionToDispatch && actionToDispatch()}
-        >
+        <Button icon={icon} onClick={() => actionToDispatch && actionToDispatch()}>
           {shortTitle}
         </Button>
       </Tooltip>
@@ -67,15 +62,13 @@ const makeActionButtons = async (
   actionTypes: ActionType[]
 ) => {
   const appliedActions = await Promise.all(
-    actionTypes.map(async action => {
+    actionTypes.map(async (action) => {
       return await action.predicate(resource);
     })
   );
   return actionTypes
     .filter((action, index) => appliedActions[index])
-    .map(action =>
-      makeButton(action)(resource, actionDispatchers[action.name])
-    );
+    .map((action) => makeButton(action)(resource, actionDispatchers[action.name]));
 };
 
 const ResourceActions: React.FunctionComponent<{
@@ -84,19 +77,16 @@ const ResourceActions: React.FunctionComponent<{
     [key: string]: () => void;
   };
   actionTypes: ActionType[];
-}> = props => {
+}> = (props) => {
   const { resource, actions, actionTypes } = props;
-  const [actionButtons, setActionButtons] = React.useState<
-    React.ReactElement[]
-  >([]);
+  const [actionButtons, setActionButtons] = React.useState<React.ReactElement[]>([]);
   const notification = useNotification();
   React.useEffect(() => {
     makeActionButtons(resource, actions, actionTypes)
       .then(setActionButtons)
       .catch((error: Error) => {
         notification.error({
-          message:
-            'There was an error while fetching information about this resource',
+          message: 'There was an error while fetching information about this resource',
           description: error.message,
         });
       });

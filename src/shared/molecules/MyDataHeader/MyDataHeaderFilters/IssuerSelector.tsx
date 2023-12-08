@@ -4,8 +4,7 @@ import { THeaderProps } from 'shared/canvas/MyData/types';
 type TIssuerSelectorProps = Pick<THeaderProps, 'issuer' | 'setFilterOptions'>;
 
 const IssuerSelector = ({ issuer, setFilterOptions }: TIssuerSelectorProps) => {
-  const onIssuerChange = (e: RadioChangeEvent) =>
-    setFilterOptions({ issuer: e.target.value });
+  const onIssuerChange = (e: RadioChangeEvent) => setFilterOptions({ issuer: e.target.value });
 
   return (
     <Radio.Group

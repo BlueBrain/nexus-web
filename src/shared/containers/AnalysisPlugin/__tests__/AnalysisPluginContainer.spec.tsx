@@ -17,18 +17,9 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { vi } from 'vitest';
 
-import {
-  DEFAULT_REPORT_CATEGORIES,
-  DEFAULT_REPORT_TYPES,
-} from '../../../../constants';
+import { DEFAULT_REPORT_CATEGORIES, DEFAULT_REPORT_TYPES } from '../../../../constants';
 import { configureStore } from '../../../../store';
-import {
-  cleanup,
-  render,
-  screen,
-  server,
-  waitFor,
-} from '../../../../utils/testUtil';
+import { cleanup, render, screen, server, waitFor } from '../../../../utils/testUtil';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 
 describe('Analysis Plugin', () => {
@@ -140,39 +131,25 @@ describe('Analysis Plugin', () => {
     });
     user.click(addButton);
 
-    expect(
-      await waitFor(() => screen.getByRole('button', { name: 'Save' }))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByRole('button', { name: 'Save' }))).toBeInTheDocument();
 
-    expect(
-      await waitFor(() => screen.getByRole('button', { name: 'Cancel' }))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByRole('button', { name: 'Cancel' }))).toBeInTheDocument();
 
     expect(
       await waitFor(() => screen.getByRole('textbox', { name: 'Report Name' }))
     ).toBeInTheDocument();
 
     expect(
-      await waitFor(() =>
-        screen.getByRole('textbox', { name: 'Report Description' })
-      )
+      await waitFor(() => screen.getByRole('textbox', { name: 'Report Description' }))
     ).toBeInTheDocument();
 
-    expect(
-      await waitFor(() => screen.getByText('3. Categories'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('3. Categories'))).toBeInTheDocument();
 
-    expect(
-      await waitFor(() => screen.getByText('4. Types'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('4. Types'))).toBeInTheDocument();
 
-    expect(
-      await waitFor(() => screen.getByText('5. Add Assets'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('5. Add Assets'))).toBeInTheDocument();
 
-    expect(
-      await waitFor(() => screen.getByText('6. Tools'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('6. Tools'))).toBeInTheDocument();
 
     expect(
       await waitFor(() => screen.getByRole('button', { name: 'Add tool' }))
@@ -210,9 +187,7 @@ describe('Analysis Plugin', () => {
     });
     user.click(addButton);
 
-    const cancelBtn = await waitFor(() =>
-      screen.getByRole('button', { name: 'Cancel' })
-    );
+    const cancelBtn = await waitFor(() => screen.getByRole('button', { name: 'Cancel' }));
     user.click(cancelBtn);
 
     expect(
@@ -225,10 +200,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('On Create New Analysis screen, clicking save will trigger analysis report to be saved', async () => {
-    server.use(
-      sparqlAnalysisReportNoResultsHandler,
-      resourcesAnalysisReportType
-    );
+    server.use(sparqlAnalysisReportNoResultsHandler, resourcesAnalysisReportType);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
     //     const store = mockStore(mockState);
@@ -271,9 +243,7 @@ describe('Analysis Plugin', () => {
 
     user.type(analysisDescriptionTextBox, 'New Report Description');
 
-    const saveBtn = await waitFor(() =>
-      screen.getByRole('button', { name: 'Save' })
-    );
+    const saveBtn = await waitFor(() => screen.getByRole('button', { name: 'Save' }));
 
     user.click(saveBtn);
   });
@@ -310,9 +280,7 @@ describe('Analysis Plugin', () => {
     });
     user.click(addButton);
 
-    const cancelBtn = await waitFor(() =>
-      screen.getByRole('button', { name: 'Cancel' })
-    );
+    const cancelBtn = await waitFor(() => screen.getByRole('button', { name: 'Cancel' }));
     user.click(cancelBtn);
 
     await waitFor(() => {
@@ -323,11 +291,7 @@ describe('Analysis Plugin', () => {
   });
 
   it('On an individual analysis report, the option to navigate to the parent container resource is presented', async () => {
-    server.use(
-      sparqlAnalysisReportSingleResult,
-      reportResource,
-      imageResourceFile
-    );
+    server.use(sparqlAnalysisReportSingleResult, reportResource, imageResourceFile);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
     //     const store = mockStore(mockState);
@@ -437,9 +401,7 @@ describe('Analysis Plugin', () => {
       </Router>
     );
 
-    expect(
-      screen.queryByLabelText(/Increase\/Decrease/)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Increase\/Decrease/)).not.toBeInTheDocument();
   });
 
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
@@ -467,9 +429,7 @@ describe('Analysis Plugin', () => {
       user.click(title);
     });
     // expect asset name to be present
-    expect(
-      await waitFor(() => screen.getByText('insta_logo_large.png'))
-    ).toBeVisible();
+    expect(await waitFor(() => screen.getByText('insta_logo_large.png'))).toBeVisible();
   });
 
   it('clicking analysis report asset opens preview of asset', async () => {
@@ -498,13 +458,9 @@ describe('Analysis Plugin', () => {
       const title = screen.getByText('Our Very First Analysis Report!');
       user.click(title);
     });
-    const asset = await waitFor(() =>
-      screen.getByLabelText(/insta_logo_large/)
-    );
+    const asset = await waitFor(() => screen.getByLabelText(/insta_logo_large/));
     user.click(asset);
-    expect(
-      await waitFor(() => screen.getByText('insta_logo_large.png'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('insta_logo_large.png'))).toBeInTheDocument();
   });
   it('In edit mode, image delete button is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
@@ -537,14 +493,10 @@ describe('Analysis Plugin', () => {
       user.click(edit);
     });
 
-    const analysisFile = await waitFor(
-      () => screen.getAllByLabelText('Report File')[0]
-    );
+    const analysisFile = await waitFor(() => screen.getAllByLabelText('Report File')[0]);
     user.click(analysisFile);
 
-    expect(
-      await waitFor(() => screen.getByRole('button', { name: 'Delete' }))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByRole('button', { name: 'Delete' }))).toBeInTheDocument();
   });
 
   it('In edit mode, user can add a new tool to the report', async () => {
@@ -583,9 +535,7 @@ describe('Analysis Plugin', () => {
       user.click(addTool);
     });
 
-    expect(
-      await waitFor(() => screen.getByText('Script Location'))
-    ).toBeInTheDocument();
+    expect(await waitFor(() => screen.getByText('Script Location'))).toBeInTheDocument();
     expect(
       await waitFor(() => screen.getByText('How did you run the script?'))
     ).toBeInTheDocument();

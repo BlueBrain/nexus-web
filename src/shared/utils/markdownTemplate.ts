@@ -9,7 +9,5 @@ const converter = new Showdown.Converter({
 });
 
 // Handlerbar helpers
-export const convertMarkdownHandlebarStringWithData = (
-  markdown: string,
-  data: object
-) => converter.makeHtml(Handlebars.compile(markdown)(data));
+export const convertMarkdownHandlebarStringWithData = (markdown: string, data: object) =>
+  converter.makeHtml(Handlebars.compile(markdown)(data));

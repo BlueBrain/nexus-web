@@ -1,9 +1,7 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import NewTableForm from '../components/NewTableForm';
 import { FUSION_TABLE_CONTEXT } from '../fusionContext';
 
@@ -68,11 +66,11 @@ const NewTableContainer: React.FC<{
     };
 
     await nexus.Resource.create(orgLabel, projectLabel, table)
-      .then(success => {
+      .then((success) => {
         onSuccess();
         setBusy(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setBusy(false);
         notification.error({
           message: 'Failed to add a new table',

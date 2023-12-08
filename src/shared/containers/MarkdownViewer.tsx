@@ -9,10 +9,7 @@ import { getResourceLabel } from '../utils';
 import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
 import { parseURL } from '../utils/nexusParse';
 
-export const requestNexusImage = async (
-  nexus: NexusClient,
-  image: HTMLImageElement
-) => {
+export const requestNexusImage = async (nexus: NexusClient, image: HTMLImageElement) => {
   let imageSrcData;
   try {
     imageSrcData = parseURL(image.src);
@@ -47,7 +44,7 @@ const MarkdownViewerContainer: React.FC<{
     const div = wrapperRef.current;
     if (div) {
       const images = Array.from(div.querySelectorAll('img'));
-      await Promise.all(images.map(image => requestNexusImage(nexus, image)));
+      await Promise.all(images.map((image) => requestNexusImage(nexus, image)));
     }
   };
   useAsyncCall<void, Error>(processImages(), [wrapperRef, template, data]);
@@ -60,19 +57,16 @@ const MarkdownViewerContainer: React.FC<{
     ))
     .with(
       {
-        error: when(error => !error),
-        data: when(data => !!data),
+        error: when((error) => !error),
+        data: when((data) => !!data),
       },
       () => (
-        <div
-          ref={wrapperRef}
-          dangerouslySetInnerHTML={{ __html: markdownData.data || '' }}
-        ></div>
+        <div ref={wrapperRef} dangerouslySetInnerHTML={{ __html: markdownData.data || '' }}></div>
       )
     )
     .with(
       {
-        error: when(error => !error),
+        error: when((error) => !error),
         data: '',
       },
       () => (

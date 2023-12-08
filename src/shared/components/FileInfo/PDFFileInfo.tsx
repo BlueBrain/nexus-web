@@ -58,9 +58,7 @@ export default ({
           onPreview={() => !previewDisabled && setIsVisible(true)}
         />
       )}
-      {isVisible && src && (
-        <PDFViewer url={src} closePreview={() => setIsVisible(false)} />
-      )}
+      {isVisible && src && <PDFViewer url={src} closePreview={() => setIsVisible(false)} />}
     </>
   );
 };

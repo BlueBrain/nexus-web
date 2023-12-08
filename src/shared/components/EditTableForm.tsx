@@ -10,33 +10,15 @@ import 'codemirror/addon/display/placeholder';
 
 import { View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Form,
-  Input,
-  Row,
-  Select,
-  Spin,
-  Tooltip,
-} from 'antd';
+import { Button, Checkbox, Col, Form, Input, Row, Select, Spin, Tooltip } from 'antd';
 import { isNil } from 'lodash';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useQuery } from 'react-query';
 
 import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
-import {
-  TableColumn,
-  TableResource,
-  UnsavedTableResource,
-} from '../containers/DataTableContainer';
-import {
-  parseESResults,
-  queryES,
-  querySparql,
-} from '../hooks/useAccessDataForTable';
+import { TableColumn, TableResource, UnsavedTableResource } from '../containers/DataTableContainer';
+import { parseESResults, queryES, querySparql } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
 import { ErrorComponent } from './ErrorComponent';
 
@@ -85,69 +67,46 @@ const EditTableForm: React.FC<{
   projectLabel: string;
   formName?: string;
   options?: { disableDelete: boolean };
-}> = ({
-  onSave,
-  onClose,
-  onError,
-  table,
-  orgLabel,
-  projectLabel,
-  busy,
-  formName = 'Edit',
-}) => {
+}> = ({ onSave, onClose, onError, table, orgLabel, projectLabel, busy, formName = 'Edit' }) => {
   // state
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
   const [viewError, setViewError] = React.useState<boolean>(false);
-  const [tableDataError, setTableDataError] = React.useState<null | Error>(
-    null
-  );
+  const [tableDataError, setTableDataError] = React.useState<null | Error>(null);
   const [projectionError, setProjectionError] = React.useState<boolean>(false);
-  const [description, setDescription] = React.useState<string>(
-    table?.description || ''
-  );
-  const [viewName, setViewName] = React.useState<string | undefined>(
-    table?.view
-  );
+  const [description, setDescription] = React.useState<string>(table?.description || '');
+  const [viewName, setViewName] = React.useState<string | undefined>(table?.view);
   const [view, setView] = React.useState<View>();
   const [mode, setMode] = React.useState<any>({
     name: 'javascript',
     json: true,
   });
-  const [placeHolder, setPlaceHolder] = React.useState<string>(
-    'Enter a valid ElasticSearch query'
-  );
+  const [placeHolder, setPlaceHolder] = React.useState<string>('Enter a valid ElasticSearch query');
 
   const [preview, setPreview] = React.useState<boolean>(true);
   const [enableSearch, setEnableSearch] = React.useState<boolean>(
     table ? table.enableSearch : true
   );
 
-  const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<
-    boolean
-  >(table ? table.enableInteractiveRows : true);
+  const [enableInteractiveRows, setEnableInteractiveRows] = React.useState<boolean>(
+    table ? table.enableInteractiveRows : true
+  );
 
   const [enableDownload, setEnableDownload] = React.useState<boolean>(
     table ? table.enableDownload : true
   );
-  const [enableSave, setEnableSave] = React.useState<boolean>(
-    table ? table.enableSave : true
-  );
+  const [enableSave, setEnableSave] = React.useState<boolean>(table ? table.enableSave : true);
   const [resultsPerPage, setResultsPerPage] = React.useState<number>(
     table ? table.resultsPerPage : PAGES_OPTIONS[0]
   );
-  const [dataQuery, setDataQuery] = React.useState<string>(
-    table ? table.dataQuery : ''
-  );
+  const [dataQuery, setDataQuery] = React.useState<string>(table ? table.dataQuery : '');
 
   // Copy for codemirror text editor.
-  const [queryCopy, setQueryCopy] = React.useState<string>(
-    table ? table.dataQuery : ''
-  );
+  const [queryCopy, setQueryCopy] = React.useState<string>(table ? table.dataQuery : '');
 
-  const [configuration, setConfiguration] = React.useState<
-    TableColumn | TableColumn[]
-  >(table?.configuration || []);
+  const [configuration, setConfiguration] = React.useState<TableColumn | TableColumn[]>(
+    table?.configuration || []
+  );
 
   const [projectionId, setProjectionId] = React.useState<string>();
 
@@ -191,8 +150,8 @@ const EditTableForm: React.FC<{
           '@id': string;
           '@type': string;
         }[])
-          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
-          .find(o => o['@id'] === projectionId);
+          .map((o) => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find((o) => o['@id'] === projectionId);
 
       if (
         viewTypes.includes('SparqlView') ||
@@ -205,8 +164,7 @@ const EditTableForm: React.FC<{
       } else if (
         viewTypes.includes('ElasticSearchView') ||
         viewTypes.includes('AggregateElasticSearchView') ||
-        (projection &&
-          projection['@type'].includes('ElasticSearchProjection')) ||
+        (projection && projection['@type'].includes('ElasticSearchProjection')) ||
         projectionId === 'All_ElasticSearchProjection'
       ) {
         setDataQuery(DEFAULT_ES_QUERY);
@@ -234,8 +192,8 @@ const EditTableForm: React.FC<{
           '@id': string;
           '@type': string;
         }[])
-          .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
-          .find(o => o['@id'] === projectionId);
+          .map((o) => ({ '@id': o['@id'], '@type': o['@type'] }))
+          .find((o) => o['@id'] === projectionId);
       if (
         view &&
         (view['@type']?.includes('ElasticSearchView') ||
@@ -253,9 +211,7 @@ const EditTableForm: React.FC<{
             projectLabel,
             viewResource['@id'],
             !!projectionId,
-            projectionId === 'All_ElasticSearchProjection'
-              ? undefined
-              : projectionId
+            projectionId === 'All_ElasticSearchProjection' ? undefined : projectionId
           );
         } catch (error) {
           const anyerror = error as any;
@@ -274,7 +230,7 @@ const EditTableForm: React.FC<{
           return Object.assign(result, current);
         }, {});
 
-        return Object.keys(mergedItem).map(title => ({
+        return Object.keys(mergedItem).map((title) => ({
           '@type': '',
           name: title,
           format: '',
@@ -291,12 +247,12 @@ const EditTableForm: React.FC<{
         !!projectionId,
         projectionId === 'All_SparqlProjection' ? undefined : projectionId
       )
-        .then(result => {
+        .then((result) => {
           return result.headerProperties
             .sort((a, b) => {
               return a.title > b.title ? 1 : -1;
             })
-            .map(x => ({
+            .map((x) => ({
               '@type': 'text',
               name: x.dataIndex,
               format: '',
@@ -305,13 +261,10 @@ const EditTableForm: React.FC<{
               enableFilter: false,
             }));
         })
-        .catch(error => {
+        .catch((error) => {
           // Sometimes delta's error message can be in `name` or `reason` field.
           const message =
-            error.message ??
-            error.reason ??
-            error.name ??
-            'Failed to fetch sparql table';
+            error.message ?? error.reason ?? error.name ?? 'Failed to fetch sparql table';
           // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
           throw new Error(message, {
             cause: error.cause ?? error.details ?? error.stack,
@@ -321,12 +274,9 @@ const EditTableForm: React.FC<{
       return result;
     },
     {
-      onSuccess: data => {
+      onSuccess: (data) => {
         updateTableDataError(null);
-        if (
-          isNil(configuration) ||
-          (configuration as TableColumn[]).length === 0
-        ) {
+        if (isNil(configuration) || (configuration as TableColumn[]).length === 0) {
           setConfiguration(data);
         }
       },
@@ -355,12 +305,7 @@ const EditTableForm: React.FC<{
   };
 
   const onClickSave = async () => {
-    if (
-      !name ||
-      isEmptyInput(name) ||
-      !viewName ||
-      (view && view.projections && !projectionId)
-    ) {
+    if (!name || isEmptyInput(name) || !viewName || (view && view.projections && !projectionId)) {
       if (!name || isEmptyInput(name)) {
         setNameError(true);
       }
@@ -381,8 +326,8 @@ const EditTableForm: React.FC<{
         '@id'?: string;
         '@type': string;
       }[])
-        .map(o => ({ '@id': o['@id'], '@type': o['@type'] }))
-        .find(o => o['@id'] === projectionId);
+        .map((o) => ({ '@id': o['@id'], '@type': o['@type'] }))
+        .find((o) => o['@id'] === projectionId);
 
     // No @id when we search all projections of a particular type
     if (projectionId === 'All_ElasticSearchProjection') {
@@ -447,16 +392,14 @@ const EditTableForm: React.FC<{
     (name: string, data: any) => {
       const currentConfig = [...(configuration as TableColumn[])];
 
-      const column = currentConfig.find(column => column.name === name);
+      const column = currentConfig.find((column) => column.name === name);
 
       const updatedColumn = {
         ...column,
         ...data,
       };
 
-      const columnIndex = currentConfig.findIndex(
-        column => column.name === name
-      );
+      const columnIndex = currentConfig.findIndex((column) => column.name === name);
 
       currentConfig[columnIndex] = updatedColumn;
       setConfiguration(currentConfig);
@@ -480,11 +423,7 @@ const EditTableForm: React.FC<{
     return Array.isArray(configuration) ? (
       configuration.map((column: TableColumn) => {
         return (
-          <ColumnConfig
-            column={column}
-            onChange={updateColumnConfigArray}
-            key={column.name}
-          />
+          <ColumnConfig column={column} onChange={updateColumnConfigArray} key={column.name} />
         );
       })
     ) : (
@@ -528,12 +467,7 @@ const EditTableForm: React.FC<{
               validateStatus={nameError ? 'error' : ''}
               help={nameError && 'Please enter a name'}
             >
-              <Input
-                aria-label="Label"
-                value={name}
-                onChange={onChangeName}
-                placeholder="Name"
-              />
+              <Input aria-label="Label" value={name} onChange={onChangeName} placeholder="Name" />
             </Item>
           </Col>
         </Row>
@@ -562,12 +496,12 @@ const EditTableForm: React.FC<{
                 value={viewName}
                 aria-label="View"
                 style={{ width: 650 }}
-                onChange={value => {
+                onChange={(value) => {
                   onChangeViewDropDown(value);
                 }}
               >
                 {availableViews &&
-                  availableViews.map(view => (
+                  availableViews.map((view) => (
                     <Option key={view['@id']} value={view['@id']}>
                       {view['@id']}
                     </Option>
@@ -589,7 +523,7 @@ const EditTableForm: React.FC<{
                 <Select
                   style={{ width: 650 }}
                   value={projectionId}
-                  onChange={value => {
+                  onChange={(value) => {
                     setProjectionId(value);
                     setProjectionError(false);
                   }}
@@ -597,29 +531,23 @@ const EditTableForm: React.FC<{
                   {(view.projections as {
                     '@id': string;
                     '@type': string;
-                  }[]).some(o => o['@type'] === 'ElasticSearchProjection') && (
-                    <Option
-                      key="All_ElasticSearchProjection"
-                      value="All_ElasticSearchProjection"
-                    >
+                  }[]).some((o) => o['@type'] === 'ElasticSearchProjection') && (
+                    <Option key="All_ElasticSearchProjection" value="All_ElasticSearchProjection">
                       All ElasticSearch
                     </Option>
                   )}
                   {(view.projections as {
                     '@id': string;
                     '@type': string;
-                  }[]).some(o => o['@type'] === 'SparqlProjection') && (
-                    <Option
-                      key="All_SparqlProjection"
-                      value="All_SparqlProjection"
-                    >
+                  }[]).some((o) => o['@type'] === 'SparqlProjection') && (
+                    <Option key="All_SparqlProjection" value="All_SparqlProjection">
                       All Sparql
                     </Option>
                   )}
                   {(view.projections as {
                     '@id': string;
                     '@type': string;
-                  }[]).map(o => (
+                  }[]).map((o) => (
                     <Option key={o['@id']} value={o['@id']}>
                       {o['@id']}
                     </Option>
@@ -632,10 +560,7 @@ const EditTableForm: React.FC<{
         <div className="edit-table-form__actions">
           <h3 className="edit-table-form__actions-title">Actions</h3>
           <div className="edit-table-form__action-items">
-            <Checkbox
-              onChange={() => setEnableSearch(!enableSearch)}
-              checked={enableSearch}
-            >
+            <Checkbox onChange={() => setEnableSearch(!enableSearch)} checked={enableSearch}>
               Enable Local Search
             </Checkbox>
             <br />
@@ -646,17 +571,11 @@ const EditTableForm: React.FC<{
               Interactive Row
             </Checkbox>
             <br />
-            <Checkbox
-              onChange={() => setEnableDownload(!enableDownload)}
-              checked={enableDownload}
-            >
+            <Checkbox onChange={() => setEnableDownload(!enableDownload)} checked={enableDownload}>
               Enable 'Download as CSV'
             </Checkbox>
             <br />
-            <Checkbox
-              onChange={() => setEnableSave(!enableSave)}
-              checked={enableSave}
-            >
+            <Checkbox onChange={() => setEnableSave(!enableSave)} checked={enableSave}>
               Enable 'Save to Data Cart'
             </Checkbox>
             <br />
@@ -713,9 +632,7 @@ const EditTableForm: React.FC<{
           <Tooltip
             placement="topLeft"
             title={
-              preview
-                ? 'Save Changes'
-                : 'You have to click on configure columns to enable save'
+              preview ? 'Save Changes' : 'You have to click on configure columns to enable save'
             }
           >
             <Button onClick={onClickSave} type="primary" disabled={!preview}>

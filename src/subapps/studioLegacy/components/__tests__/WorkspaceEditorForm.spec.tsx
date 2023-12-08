@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import { Context } from '@bbp/nexus-sdk';
 import { vi } from 'vitest';
 
-import { fireEvent, render, screen,waitFor } from '../../../../utils/testUtil';
+import { fireEvent, render, screen, waitFor } from '../../../../utils/testUtil';
 import WorkspaceEditorForm, { WorkspaceResource } from '../WorkspaceEditorForm';
 
 describe('WorkspaceEditorForm', () => {

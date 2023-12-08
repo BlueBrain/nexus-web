@@ -34,10 +34,7 @@ const RouteHeader = ({
 }: TProps) => {
   const { layoutSettings } = useSelector((state: RootState) => state.config);
   return (
-    <div
-      className="route-header"
-      style={{ background: layoutSettings.mainColor }}
-    >
+    <div className="route-header" style={{ background: layoutSettings.mainColor }}>
       <img src={bg} alt={alt} style={{ ...imgCss }} />
       <div className="title">
         {supTitle && <h4>{supTitle}</h4>}
@@ -45,10 +42,7 @@ const RouteHeader = ({
         <p>{extra}</p>
       </div>
       {createLabel && (
-        <AccessControl
-          {...{ permissions, path }}
-          noAccessComponent={() => <></>}
-        >
+        <AccessControl {...{ permissions, path }} noAccessComponent={() => <></>}>
           <div className="action">
             <button className="create-btn" onClick={onCreateClick}>
               {createLabel}

@@ -8,11 +8,7 @@ import {
   InitNewVisitDataExplorerGraphView,
   TDELink,
 } from '../../store/reducers/data-explorer';
-import {
-  getNormalizedTypes,
-  getOrgAndProjectFromProjectId,
-  getResourceLabel,
-} from '../../utils';
+import { getNormalizedTypes, getOrgAndProjectFromProjectId, getResourceLabel } from '../../utils';
 import { download } from '../../utils/download';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
 import { parseResourceId } from '../Preview/Preview';

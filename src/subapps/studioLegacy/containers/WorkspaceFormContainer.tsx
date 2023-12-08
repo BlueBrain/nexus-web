@@ -5,16 +5,7 @@ import {
   Resource,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Alert,
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Select,
-  Transfer,
-} from 'antd';
+import { Alert, Button, Form, Input, message, Modal, Select, Transfer } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
 
@@ -27,17 +18,13 @@ type NexusSparqlError = {
 
 type dashboard = { dashboard: string; view: string };
 
-const DASHBOARD_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/StudioDashboard';
+const DASHBOARD_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/StudioDashboard';
 
-const SPARQL_VIEW_TYPE =
-  'https://bluebrain.github.io/nexus/vocabulary/SparqlView';
+const SPARQL_VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/SparqlView';
 
-const ES_VIEW_TYPE =
-  'https://bluebrain.github.io/nexus/vocabulary/ElasticSearchView';
+const ES_VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/ElasticSearchView';
 const VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/View';
-const AGGREGATE_VIEW_TYPE =
-  'https://bluebrain.github.io/nexus/vocabulary/AggregateSparqlView';
+const AGGREGATE_VIEW_TYPE = 'https://bluebrain.github.io/nexus/vocabulary/AggregateSparqlView';
 const RESULTS_SIZE = 10000;
 
 type WorkspaceFormProps = {
@@ -54,7 +41,7 @@ const SelectViews: React.FunctionComponent<{
   setView: (view: string) => void;
 }> = ({ selectedView, views, setView }) => {
   const { Option } = Select;
-  const viewOptions: any[] = views.map(d => d['@id']);
+  const viewOptions: any[] = views.map((d) => d['@id']);
 
   return (
     <>
@@ -87,9 +74,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const [dashboards, setDashBoards] = React.useState<Resource[]>([]);
   const [targetKeys, setTargetKeys] = React.useState<string[]>([]);
   const [views, setViews] = React.useState<Resource[]>([]);
-  const [viewToAdd, setViewToAdd] = React.useState<string>(
-    DEFAULT_SPARQL_VIEW_ID
-  );
+  const [viewToAdd, setViewToAdd] = React.useState<string>(DEFAULT_SPARQL_VIEW_ID);
   const [label, setLabel] = React.useState<string>();
   const [description, setDescription] = React.useState<string>();
   const [error, setError] = React.useState<NexusSparqlError | Error>();
@@ -104,7 +89,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
   const notification = useNotification();
 
   const saveDashBoards = (workspace: Resource) => {
-    const newList: dashboard[] = targetKeys.map(k => {
+    const newList: dashboard[] = targetKeys.map((k) => {
       const dashboard = dashboards.find((d, ix) => k === ix.toString());
       if (dashboard === undefined) {
         throw Error('Dashboard not found');
@@ -126,7 +111,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       workspace['_rev'],
       newWorkspace
     )
-      .then(result => {
+      .then((result) => {
         if (onSuccess) {
           message.success(
             <span>
@@ -137,7 +122,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         }
         onCancel();
       })
-      .catch(error => {
+      .catch((error) => {
         message.error(
           <span>
             Workspace <em>{workspace.label}</em> could not be updated
@@ -149,7 +134,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
 
   React.useEffect(() => {
     nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(workspaceId))
-      .then(workspace => {
+      .then((workspace) => {
         const workspaceResource = workspace as Resource<{
           dashboards: { dashboard: string; view: string }[];
           label: string;
@@ -159,15 +144,12 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         setLabel(workspaceResource['label']);
         // Set the first view as the default value
         // inside the SelectView input
-        if (
-          workspaceResource.dashboards &&
-          workspaceResource['dashboards'].length
-        ) {
+        if (workspaceResource.dashboards && workspaceResource['dashboards'].length) {
           setViewToAdd(workspaceResource['dashboards'][0].view);
         }
         setDescription(workspaceResource['description']);
       })
-      .catch(error => setError(error));
+      .catch((error) => setError(error));
   }, []);
 
   React.useEffect(() => {
@@ -194,7 +176,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       .then((results: ElasticSearchViewQueryResponse<any>) => {
         if (results.hits.hits) {
           try {
-            const tempDashbaord = results.hits.hits.map(hit => {
+            const tempDashbaord = results.hits.hits.map((hit) => {
               return {
                 ...JSON.parse(hit._source['_original_source']),
                 '@id': hit._source['@id'],
@@ -206,7 +188,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           }
         }
       })
-      .catch(e => {
+      .catch((e) => {
         setDashBoards([]);
         setError(e);
       });
@@ -250,7 +232,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     )
       .then((results: ElasticSearchViewQueryResponse<any>) => {
         setViews(
-          results.hits.hits.map(hit => {
+          results.hits.hits.map((hit) => {
             return {
               ...JSON.parse(hit._source['_original_source']),
               '@id': hit._source['@id'],
@@ -258,7 +240,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
           })
         );
       })
-      .catch(e => {
+      .catch((e) => {
         setViews([]);
         setError(e);
       });
@@ -269,8 +251,8 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       const currentDashboards = workspace['dashboards']
         ? (workspace['dashboards'] as dashboard[])
         : [];
-      const indices: string[] = currentDashboards.map(c => {
-        const index = dashboards.findIndex(w => w['@id'] === c.dashboard);
+      const indices: string[] = currentDashboards.map((c) => {
+        const index = dashboards.findIndex((w) => w['@id'] === c.dashboard);
         return index.toString();
       });
       setTargetKeys(indices);
@@ -296,26 +278,18 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     return items;
   };
 
-  const handleChange = (
-    targetKeys: string[],
-    direction: string,
-    moveKeys: string[]
-  ) => {
+  const handleChange = (targetKeys: string[], direction: string, moveKeys: string[]) => {
     setTargetKeys(targetKeys);
   };
 
   const [hasOldDashboard, setHasOldDashboard] = React.useState<boolean>(false);
   React.useEffect(() => {
     Promise.all(
-      currentDashboards.map(d =>
-        nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(d.dashboard)
-        )
+      currentDashboards.map((d) =>
+        nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(d.dashboard))
       )
-    ).then(results => {
-      const hasOldDashboard = !!results.find(d => !('dataTable' in d));
+    ).then((results) => {
+      const hasOldDashboard = !!results.find((d) => !('dataTable' in d));
       setHasOldDashboard(hasOldDashboard);
     });
   }, [currentDashboards]);
@@ -324,8 +298,8 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     return (
       <Alert
         message="Error loading dashboard"
-        description={`Something went wrong. ${(error as NexusSparqlError)
-          .reason || (error as Error).message}`}
+        description={`Something went wrong. ${(error as NexusSparqlError).reason ||
+          (error as Error).message}`}
         type="error"
       />
     );
@@ -356,18 +330,14 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
               <Transfer
                 targetKeys={targetKeys}
                 dataSource={getTransferData()}
-                render={item => <span>{item.title}</span>}
+                render={(item) => <span>{item.title}</span>}
                 onChange={handleChange}
               />
             </Form.Item>
-            <Form.Item
-              label={'Label'}
-              required
-              extra={namePrompt ? 'Name cannot be empty' : ''}
-            >
+            <Form.Item label={'Label'} required extra={namePrompt ? 'Name cannot be empty' : ''}>
               <Input
                 value={label}
-                onChange={e => {
+                onChange={(e) => {
                   if (e.target.value.trim().length > 0) {
                     setLabel(e.target.value);
                     setNamePrompt(false);
@@ -380,7 +350,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             <Form.Item label={'Description'}>
               <TextArea
                 value={description}
-                onChange={e => {
+                onChange={(e) => {
                   e.preventDefault();
                   setDescription(e.target.value);
                 }}
@@ -389,7 +359,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             <Form.Item>
               <Button
                 disabled={namePrompt}
-                onClick={e => {
+                onClick={(e) => {
                   try {
                     saveDashBoards(workspace);
                   } catch (e) {

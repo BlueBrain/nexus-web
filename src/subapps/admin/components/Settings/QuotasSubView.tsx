@@ -87,34 +87,34 @@ const QuotasSubView = (props: Props) => {
         key: 'storage',
         dataIndex: 'storage',
         title: 'Storage',
-        render: text => <span>{text}</span>,
+        render: (text) => <span>{text}</span>,
       },
       {
         key: 'max_file_size',
         dataIndex: 'max_file_size',
         title: 'Max File Size (GB)',
-        render: text => <span>{text}</span>,
+        render: (text) => <span>{text}</span>,
       },
       {
         key: 'total_files',
         dataIndex: 'total_files',
         title: 'Total Files',
         align: 'center',
-        render: text => <span>{text}</span>,
+        render: (text) => <span>{text}</span>,
       },
       {
         key: 'space_used',
         dataIndex: 'space_used',
         title: 'Space Used',
         align: 'center',
-        render: text => <span>{text}</span>,
+        render: (text) => <span>{text}</span>,
       },
       {
         key: 'capacity',
         dataIndex: 'capacity',
         title: 'Capacity',
         align: 'center',
-        render: text => <span>{text}</span>,
+        render: (text) => <span>{text}</span>,
       },
     ],
     []
@@ -135,7 +135,7 @@ const QuotasSubView = (props: Props) => {
         .then((response: any) => {
           setQuota(response);
         })
-        .catch(error => {
+        .catch((error) => {
           // fail silently
         });
     };

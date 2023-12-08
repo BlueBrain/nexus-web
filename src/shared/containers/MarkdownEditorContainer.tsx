@@ -15,14 +15,9 @@ const fetchResource = (nexus: NexusClient) => async (
   resourceId: string,
   rev: number
 ) =>
-  await nexus.Resource.get(
-    orgLabel,
-    projectLabel,
-    encodeURIComponent(resourceId),
-    {
-      rev,
-    }
-  );
+  await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId), {
+    rev,
+  });
 
 const saveDescription = (
   nexus: NexusClient,
@@ -57,11 +52,7 @@ const saveDescription = (
   });
 };
 
-export const saveImage = (
-  nexus: NexusClient,
-  orgLabel: string,
-  projectLabel: string
-) => {
+export const saveImage = (nexus: NexusClient, orgLabel: string, projectLabel: string) => {
   return async function*(data: ArrayBuffer) {
     const blob = new Blob([data]);
     const formData = new FormData();
@@ -99,9 +90,7 @@ const MarkdownEditorContainer: React.FC<{
   const nexus = useNexusContext();
 
   const asyncData = useAsyncCall<Resource, Error & { reason: string }>(
-    fetchResource(nexus)(orgLabel, projectLabel, resourceId, rev) as Promise<
-      Resource
-    >,
+    fetchResource(nexus)(orgLabel, projectLabel, resourceId, rev) as Promise<Resource>,
     [resourceId, orgLabel, projectLabel, rev]
   );
 
@@ -109,17 +98,9 @@ const MarkdownEditorContainer: React.FC<{
     (resource: Resource, value: string) => void,
     void,
     Error & { reason: string }
-  >(
-    saveDescription(
-      nexus,
-      orgLabel,
-      projectLabel,
-      resourceId,
-      rev,
-      goToResource
-    ),
-    [asyncData.data]
-  );
+  >(saveDescription(nexus, orgLabel, projectLabel, resourceId, rev, goToResource), [
+    asyncData.data,
+  ]);
 
   const handleSaveImage = saveImage(nexus, orgLabel, projectLabel);
 
@@ -129,7 +110,7 @@ const MarkdownEditorContainer: React.FC<{
     error: asyncData.error || savingData.error,
   })
     .with({ loading: true }, () => <Skeleton active />)
-    .with({ error: when(error => !!error) }, ({ error }) =>
+    .with({ error: when((error) => !!error) }, ({ error }) =>
       error ? (
         <Empty
           description={`There was an error loading the resource: \n ${error?.message ||
@@ -140,13 +121,13 @@ const MarkdownEditorContainer: React.FC<{
         <></>
       )
     )
-    .with({ data: when(data => !!data) }, ({ data: resource }) =>
+    .with({ data: when((data) => !!data) }, ({ data: resource }) =>
       resource ? (
         <MarkdownEditorComponent
           resource={resource}
           readOnly={readOnly}
           loading={savingData.loading || asyncData.loading}
-          onSave={value => {
+          onSave={(value) => {
             asyncData.data && setSavingData(asyncData.data, value);
           }}
           markdownViewer={MarkdownViewerContainer}

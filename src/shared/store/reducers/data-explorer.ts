@@ -1,18 +1,5 @@
-import {
-  createListenerMiddleware,
-  createSlice,
-  isAnyOf,
-} from '@reduxjs/toolkit';
-import {
-  clone,
-  concat,
-  drop,
-  dropRight,
-  first,
-  last,
-  nth,
-  slice,
-} from 'lodash';
+import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { clone, concat, drop, dropRight, first, last, nth, slice } from 'lodash';
 
 type TProject = string;
 type TOrganization = string;
@@ -20,19 +7,8 @@ type TResourceID = string;
 type TVersionTag = number;
 type TMediaType = string;
 
-export type TDEResourceWithoutMedia = [
-  TOrganization,
-  TProject,
-  TResourceID,
-  TVersionTag
-];
-export type TDEResourceWithMedia = [
-  TOrganization,
-  TProject,
-  TResourceID,
-  TVersionTag,
-  TMediaType
-];
+export type TDEResourceWithoutMedia = [TOrganization, TProject, TResourceID, TVersionTag];
+export type TDEResourceWithMedia = [TOrganization, TProject, TResourceID, TVersionTag, TMediaType];
 export type TDEResource = TDEResourceWithoutMedia | TDEResourceWithMedia;
 
 export type TDELink = {
@@ -123,12 +99,7 @@ export const dataExplorerSlice = createSlice({
         fullscreen,
         origin: referer?.state?.background?.pathname || '',
         leftNodes: {
-          links:
-            source && current
-              ? source._self === current._self
-                ? []
-                : [source]
-              : [],
+          links: source && current ? (source._self === current._self ? [] : [source]) : [],
           shrinked: false,
         },
       };
@@ -140,11 +111,9 @@ export const dataExplorerSlice = createSlice({
         return state;
       }
       const newLink = action.payload as TDELink;
-      const whichSide = state.leftNodes.links.find(
-        link => link._self === newLink._self
-      )
+      const whichSide = state.leftNodes.links.find((link) => link._self === newLink._self)
         ? 'left'
-        : state.rightNodes.links.find(link => link._self === newLink._self)
+        : state.rightNodes.links.find((link) => link._self === newLink._self)
         ? 'right'
         : null;
       let leftNodesLinks: TDELink[] = [];
@@ -152,9 +121,7 @@ export const dataExplorerSlice = createSlice({
       let current: TDELink;
       switch (whichSide) {
         case 'left': {
-          const index = state.leftNodes.links.findIndex(
-            link => link._self === newLink._self
-          );
+          const index = state.leftNodes.links.findIndex((link) => link._self === newLink._self);
           rightNodesLinks = concat(
             slice(state.leftNodes.links, index + 1),
             state.current ? [state.current] : [],
@@ -165,9 +132,7 @@ export const dataExplorerSlice = createSlice({
           break;
         }
         case 'right': {
-          const index = state.rightNodes.links.findIndex(
-            link => link._self === newLink._self
-          );
+          const index = state.rightNodes.links.findIndex((link) => link._self === newLink._self);
           // make the new link the current one
           // add the links before that and the current one the left part
           leftNodesLinks = concat(
@@ -181,10 +146,7 @@ export const dataExplorerSlice = createSlice({
         }
         case null:
         default: {
-          leftNodesLinks = concat(
-            state.leftNodes.links,
-            state.current ? [state.current] : []
-          );
+          leftNodesLinks = concat(state.leftNodes.links, state.current ? [state.current] : []);
           rightNodesLinks = [];
           current = action.payload;
           break;
@@ -207,8 +169,7 @@ export const dataExplorerSlice = createSlice({
     JumpToNodeDataExplorerGraphFlow: (state, action) => {
       const index = action.payload.index as number;
       const side = action.payload.side as TNavigationStackSide;
-      const realIndex =
-        side === 'left' ? index : state.leftNodes.links.length + index + 1;
+      const realIndex = side === 'left' ? index : state.leftNodes.links.length + index + 1;
       const allLinks = concat(
         state.leftNodes.links,
         state.current ? [state.current] : [],
@@ -235,13 +196,10 @@ export const dataExplorerSlice = createSlice({
       };
       return newState;
     },
-    ReturnBackDataExplorerGraphFlow: state => {
+    ReturnBackDataExplorerGraphFlow: (state) => {
       const newCurrent = last(state.leftNodes.links) as TDELink;
       const current = state.current;
-      const newRightNodesLinks = concat(
-        current ? [current] : [],
-        state.rightNodes.links
-      );
+      const newRightNodesLinks = concat(current ? [current] : [], state.rightNodes.links);
       const newLeftNodesLinks = dropRight(state.leftNodes.links) as TDELink[];
       const rightNodes = {
         links: newRightNodesLinks,
@@ -259,13 +217,10 @@ export const dataExplorerSlice = createSlice({
       };
       return newState;
     },
-    MoveForwardDataExplorerGraphFlow: state => {
+    MoveForwardDataExplorerGraphFlow: (state) => {
       const newCurrent = first(state.rightNodes.links) as TDELink;
       const current = state.current;
-      const newLeftNodesLinks = concat(
-        state.leftNodes.links,
-        current ? [current] : []
-      );
+      const newLeftNodesLinks = concat(state.leftNodes.links, current ? [current] : []);
       const newRightNodesLinks = drop(state.rightNodes.links) as TDELink[];
       const rightNodes = {
         links: newRightNodesLinks,

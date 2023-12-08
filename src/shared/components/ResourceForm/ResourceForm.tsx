@@ -1,7 +1,7 @@
 import './ResourceForm.scss';
 
 import { ResourcePayload } from '@bbp/nexus-sdk/es';
-import { Button, Cascader, Form, Modal,Spin } from 'antd';
+import { Button, Cascader, Form, Modal, Spin } from 'antd';
 import { DefaultOptionType } from 'antd/lib/cascader';
 import * as React from 'react';
 
@@ -77,10 +77,7 @@ export interface ResourceFormProps {
     payload: ResourcePayload;
   };
   busy?: boolean;
-  onSubmit(resource: {
-    schemaId: string;
-    payload: ResourcePayload;
-  }): Promise<boolean>;
+  onSubmit(resource: { schemaId: string; payload: ResourcePayload }): Promise<boolean>;
   onDeprecate?(): any;
   mode?: 'create' | 'edit';
 }
@@ -95,9 +92,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
   onDeprecate = () => {},
   mode = 'create',
 }) => {
-  const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(
-    DEFAULT_RESOURCE
-  );
+  const [jsonValue, setJsonValue] = React.useState<{ [key: string]: any }>(DEFAULT_RESOURCE);
   const [form] = Form.useForm();
 
   const reset = () => {
@@ -127,15 +122,10 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
     }
   };
 
-  const handleTypeChange = (
-    value: any,
-    selectedOptions?: DefaultOptionType[] | undefined
-  ) => {
+  const handleTypeChange = (value: any, selectedOptions?: DefaultOptionType[] | undefined) => {
     const selectedType =
       value
-        ?.find((entry: any) =>
-          Object.keys(DEFAULT_RESOURCES).includes(`${entry}`)
-        )
+        ?.find((entry: any) => Object.keys(DEFAULT_RESOURCES).includes(`${entry}`))
         ?.toString() || '_';
     setJsonValue(DEFAULT_RESOURCES[selectedType]);
   };
@@ -183,11 +173,7 @@ const ResourceForm: React.FunctionComponent<ResourceFormProps> = ({
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
           {mode === 'edit' && (
-            <Button
-              danger
-              onClick={confirmDeprecate}
-              style={{ float: 'right' }}
-            >
+            <Button danger onClick={confirmDeprecate} style={{ float: 'right' }}>
               Deprecate
             </Button>
           )}

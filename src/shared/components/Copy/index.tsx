@@ -8,10 +8,7 @@ type triggerCopy = (textToCopy: string) => void;
 
 interface CopyProps {
   revertDelay?: number;
-  render(
-    copySuccess: boolean,
-    triggerCopy: triggerCopy
-  ): React.ReactElement<any>;
+  render(copySuccess: boolean, triggerCopy: triggerCopy): React.ReactElement<any>;
 }
 
 // https://stackoverflow.com/questions/39501289/in-reactjs-how-to-copy-text-to-clipboard/39504692

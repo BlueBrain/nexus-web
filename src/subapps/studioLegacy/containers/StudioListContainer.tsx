@@ -3,7 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Empty } from 'antd';
 import { parseInt } from 'lodash';
 import * as React from 'react';
-import { useQueries,useQuery } from 'react-query';
+import { useQueries, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
@@ -12,8 +12,7 @@ import { RootState } from '../../../shared/store/reducers';
 import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
 
-const DEFAULT_STUDIO_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/Studio';
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const STUDIO_RESULTS_DEFAULT_SIZE = 10;
 
 const StudioListContainer: React.FunctionComponent<{
@@ -46,14 +45,10 @@ const StudioListContainer: React.FunctionComponent<{
   const studios = data?._results || [];
 
   const fetchStudio = async (studioId: string) =>
-    nexus.Resource.get<Resource>(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(studioId)
-    );
+    nexus.Resource.get<Resource>(orgLabel, projectLabel, encodeURIComponent(studioId));
 
   const results = useQueries(
-    studios.map(r => {
+    studios.map((r) => {
       return {
         queryKey: ['studio', r],
         queryFn: async () => await fetchStudio(r['@id']),
@@ -99,8 +94,8 @@ const StudioListContainer: React.FunctionComponent<{
         ) : (
           <StudioList
             studios={results
-              .filter(r => r.status === 'success')
-              .map(r => {
+              .filter((r) => r.status === 'success')
+              .map((r) => {
                 const resource = r.data as Resource;
                 return {
                   id: resource['@id'],

@@ -112,8 +112,7 @@ const SearchBarContainer: React.FC = () => {
     return;
   };
 
-  const isCurrentPageSearchPage = () =>
-    location.pathname.substring(0, 7) === '/search';
+  const isCurrentPageSearchPage = () => location.pathname.substring(0, 7) === '/search';
   const isQueryParamMatchingQuery = () => query === searchQueryParam;
 
   const handleBlur = () => {
@@ -133,7 +132,7 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const matchedProjects = () => {
-    const labeledProjects = projects?._results.map(project => ({
+    const labeledProjects = projects?._results.map((project) => ({
       organisation: project._organizationLabel,
       project: project._label,
       label: project._label as string,
@@ -154,14 +153,12 @@ const SearchBarContainer: React.FC = () => {
   };
 
   const orgAndProjectFromPath = (path: string) => {
-    const [org, project] = path
-      .substring(path.indexOf('/projects/') + 10)
-      .split('/');
+    const [org, project] = path.substring(path.indexOf('/projects/') + 10).split('/');
     return { project, organisation: org };
   };
 
   const matchedStudios: () => StudioSearchHit[] = () => {
-    const labeledStudios = studios?._results.map(studio => ({
+    const labeledStudios = studios?._results.map((studio) => ({
       ...orgAndProjectFromPath(studio._project),
       label: studio.label as string,
       searchString: `${studio.label}`,
@@ -170,10 +167,7 @@ const SearchBarContainer: React.FC = () => {
     }));
 
     if (query && labeledStudios && labeledStudios.length > 0) {
-      return take(
-        sortObjectsBySimilarity(query, 'label', labeledStudios),
-        SHOW_STUDIOS_NUMBER
-      );
+      return take(sortObjectsBySimilarity(query, 'label', labeledStudios), SHOW_STUDIOS_NUMBER);
     }
 
     return [];

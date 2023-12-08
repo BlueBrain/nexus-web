@@ -27,9 +27,9 @@ const ProjectStatsContainer: React.FC<{
 
   React.useEffect(() => {
     loadRelationships()
-      .then(data => {
+      .then((data) => {
         // @ts-ignore
-        const nodesCount = data._nodes.map(node => node._count);
+        const nodesCount = data._nodes.map((node) => node._count);
         const maxValueNode = Math.max(...nodesCount);
         const minValueNode = Math.min(...nodesCount);
 
@@ -38,7 +38,7 @@ const ProjectStatsContainer: React.FC<{
         setElements(elements);
         setGraphData(data);
       })
-      .catch(error => console.log('error'));
+      .catch((error) => console.log('error'));
     return () => {
       setSelectedType(undefined);
     };
@@ -47,12 +47,11 @@ const ProjectStatsContainer: React.FC<{
   const showType = (type?: string) => {
     setPanelVisible(true);
     if (type) {
-      loadTypeStats(type).then(response => {
+      loadTypeStats(type).then((response) => {
         setSelectedType(response);
 
         const links = graphData._edges.filter(
-          (relation: any) =>
-            relation._source === type || relation._target === type
+          (relation: any) => relation._source === type || relation._target === type
         );
 
         setRelations(links);
@@ -62,29 +61,19 @@ const ProjectStatsContainer: React.FC<{
     }
   };
 
-  const getDiameter = (
-    count: number,
-    minValueNode: number,
-    maxValueNode: number
-  ) => {
+  const getDiameter = (count: number, minValueNode: number, maxValueNode: number) => {
     const min = 20;
     const max = 60;
-    const diameter =
-      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
+    const diameter = ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return diameter < min ? min : diameter;
   };
   const constructPathName = (path: any[]) => {
     return path.map((singlePath: any) => singlePath._name).join('/');
   };
-  const getLineWidth = (
-    count: number,
-    minValueNode: number,
-    maxValueNode: number
-  ) => {
+  const getLineWidth = (count: number, minValueNode: number, maxValueNode: number) => {
     const min = 1;
     const max = 8;
-    const width =
-      ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
+    const width = ((count - minValueNode) / (maxValueNode - minValueNode)) * max;
     return width < min ? min : width;
   };
 

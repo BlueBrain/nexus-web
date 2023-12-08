@@ -1,10 +1,6 @@
 import './view-form.scss';
 
-import {
-  AskQueryResponse,
-  SelectQueryResponse,
-  SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk/es';
+import { AskQueryResponse, SelectQueryResponse, SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
 import { Card, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import hash from 'object-hash';
@@ -74,7 +70,7 @@ const SparqlQueryResults: React.FunctionComponent<{
         <Table
           dataSource={data}
           pagination={{ position: ['topLeft', 'bottomRight'] }}
-          rowKey={record => hash(record)}
+          rowKey={(record) => hash(record)}
           loading={busy}
         >
           {columnHeaders.map((columnHeader: string) => (

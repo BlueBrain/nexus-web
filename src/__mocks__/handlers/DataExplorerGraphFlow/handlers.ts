@@ -54,8 +54,7 @@ const resource = {
   derivation: {
     '@type': 'Derivation',
     entity: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
       '@type': ['PatchedCell', 'Entity'],
     },
   },
@@ -69,8 +68,7 @@ const resource = {
         location:
           'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/a/a/e/d/8/2/b/5/tkb060126a2_ch3_bc_n_jh_100x_1.asc',
         store: {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
           '@type': 'RemoteDiskStorage',
           _rev: 1,
         },
@@ -83,8 +81,7 @@ const resource = {
         'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fbf146eaf-48cf-4b83-b375-bbb92ce7f7c0',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
+        value: 'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
       },
       encodingFormat: 'application/asc',
       name: 'tkb060126a2_ch3_bc_n_jh_100x_1.asc',
@@ -96,8 +93,7 @@ const resource = {
         location:
           'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/6/4/3/8/3/d/0/3/tkb060126a2_ch3_bc_n_jh_100x_1.swc',
         store: {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
           '@type': 'RemoteDiskStorage',
           _rev: 1,
         },
@@ -110,8 +106,7 @@ const resource = {
         'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F60025362-1ca8-425e-908c-a01e4661c3e7',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
+        value: '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
       },
       encodingFormat: 'application/swc',
       name: 'tkb060126a2_ch3_bc_n_jh_100x_1.swc',
@@ -120,8 +115,7 @@ const resource = {
   generation: {
     '@type': 'Generation',
     activity: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
       '@type': ['Activity', 'Reconstruction'],
     },
   },
@@ -136,8 +130,7 @@ const resource = {
   },
   name: 'tkb060126a2_ch3_bc_n_jh_100x_1',
   objectOfStudy: {
-    '@id':
-      'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
+    '@id': 'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
     '@type': 'ObjectOfStudy',
     label: 'Single Cell',
   },
@@ -160,163 +153,152 @@ const resource = {
     'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:neuronmorphology/neuronmorphologies%2Fbfdd4d1a-8b06-46fe-b663-7d9f8020dcaf/outgoing',
   _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/sscx',
   _rev: 2,
-  _schemaProject:
-    'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _self:
     'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:neuronmorphology/neuronmorphologies%2Fbfdd4d1a-8b06-46fe-b663-7d9f8020dcaf',
   _updatedAt: '2023-06-23T07:34:56.011Z',
   _updatedBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/cgonzale',
 };
 
-const initialResource = getMockResource(
-  'neuronmorphologies/bfdd4d1a-8b06-46fe-b663-7d9f8020dcaf',
-  {
-    '@context': [
-      'https://bluebrain.github.io/nexus/contexts/metadata.json',
-      'https://bbp.neuroshapes.org',
-    ],
-    '@type': ['Entity', 'Dataset', 'NeuronMorphology', 'ReconstructedCell'],
-    annotation: {
-      '@type': ['MTypeAnnotation', 'Annotation'],
-      hasBody: {
-        '@id': 'ilx:0383236',
-        '@type': ['MType', 'AnnotationBody'],
-        label: 'L6_SBC',
-      },
-      name: 'M-type Annotation',
+const initialResource = getMockResource('neuronmorphologies/bfdd4d1a-8b06-46fe-b663-7d9f8020dcaf', {
+  '@context': [
+    'https://bluebrain.github.io/nexus/contexts/metadata.json',
+    'https://bbp.neuroshapes.org',
+  ],
+  '@type': ['Entity', 'Dataset', 'NeuronMorphology', 'ReconstructedCell'],
+  annotation: {
+    '@type': ['MTypeAnnotation', 'Annotation'],
+    hasBody: {
+      '@id': 'ilx:0383236',
+      '@type': ['MType', 'AnnotationBody'],
+      label: 'L6_SBC',
     },
-    brainLocation: {
-      '@type': 'BrainLocation',
-      brainRegion: {
-        '@id': 'uberon:0008933',
-        label: 'primary somatosensory cortex',
-      },
-      layer: {
-        '@id': 'uberon:0005395',
-        label: 'layer 6',
-      },
+    name: 'M-type Annotation',
+  },
+  brainLocation: {
+    '@type': 'BrainLocation',
+    brainRegion: {
+      '@id': 'uberon:0008933',
+      label: 'primary somatosensory cortex',
     },
-    contribution: [
-      {
-        '@type': 'Contribution',
-        agent: {
-          '@id': 'https://orcid.org/0000-0001-9358-1315',
-          '@type': 'Agent',
-        },
-        hadRole: {
-          '@id': 'Neuron:ElectrophysiologyRecordingRole',
-          label: 'neuron electrophysiology recording role',
-        },
+    layer: {
+      '@id': 'uberon:0005395',
+      label: 'layer 6',
+    },
+  },
+  contribution: [
+    {
+      '@type': 'Contribution',
+      agent: {
+        '@id': 'https://orcid.org/0000-0001-9358-1315',
+        '@type': 'Agent',
       },
-      {
-        '@type': 'Contribution',
-        agent: {
-          '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-          '@type': 'Agent',
-        },
-      },
-    ],
-    derivation: {
-      '@type': 'Derivation',
-      entity: {
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
-        '@type': ['PatchedCell', 'Entity'],
+      hadRole: {
+        '@id': 'Neuron:ElectrophysiologyRecordingRole',
+        label: 'neuron electrophysiology recording role',
       },
     },
-    description:
-      'This dataset is about an in vitro-filled neuron morphology from layer 6 with m-type L6_SBC. The distribution contains the neuron morphology in ASC and in SWC file format.',
-    distribution: [
-      {
-        '@type': 'DataDownload',
-        atLocation: {
-          '@type': 'Location',
-          location:
-            'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/a/a/e/d/8/2/b/5/tkb060126a2_ch3_bc_n_jh_100x_1.asc',
-          store: {
-            '@id':
-              'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
-            '@type': 'RemoteDiskStorage',
-            _rev: 1,
-          },
-        },
-        contentSize: {
-          unitCode: 'bytes',
-          value: 1097726,
-        },
-        contentUrl:
-          'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fbf146eaf-48cf-4b83-b375-bbb92ce7f7c0',
-        digest: {
-          algorithm: 'SHA-256',
-          value:
-            'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
-        },
-        encodingFormat: 'application/asc',
-        name: 'tkb060126a2_ch3_bc_n_jh_100x_1.asc',
-      },
-      {
-        '@type': 'DataDownload',
-        atLocation: {
-          '@type': 'Location',
-          location:
-            'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/6/4/3/8/3/d/0/3/tkb060126a2_ch3_bc_n_jh_100x_1.swc',
-          store: {
-            '@id':
-              'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
-            '@type': 'RemoteDiskStorage',
-            _rev: 1,
-          },
-        },
-        contentSize: {
-          unitCode: 'bytes',
-          value: 891821,
-        },
-        contentUrl:
-          'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F60025362-1ca8-425e-908c-a01e4661c3e7',
-        digest: {
-          algorithm: 'SHA-256',
-          value:
-            '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
-        },
-        encodingFormat: 'application/swc',
-        name: 'tkb060126a2_ch3_bc_n_jh_100x_1.swc',
-      },
-    ],
-    generation: {
-      '@type': 'Generation',
-      activity: {
-        '@id':
-          'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
-        '@type': ['Activity', 'Reconstruction'],
+    {
+      '@type': 'Contribution',
+      agent: {
+        '@id': 'https://www.grid.ac/institutes/grid.5333.6',
+        '@type': 'Agent',
       },
     },
-    isPartOf: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/23d3d87e-94fe-4639-b5c8-a26a712587e6',
-      '@type': 'Entity',
+  ],
+  derivation: {
+    '@type': 'Derivation',
+    entity: {
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
+      '@type': ['PatchedCell', 'Entity'],
     },
-    license: {
-      '@id': 'https://creativecommons.org/licenses/by/4.0/',
-      '@type': 'License',
-    },
-    objectOfStudy: {
-      '@id':
-        'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
-      '@type': 'ObjectOfStudy',
-      label: 'Single Cell',
-    },
-    sameAs:
-      'https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/431a1196-47b5-41a2-931a-3577be9a2dc4',
-    subject: {
-      '@type': 'Subject',
-      species: {
-        '@id': 'NCBITaxon:10116',
-        label: 'Rattus norvegicus',
+  },
+  description:
+    'This dataset is about an in vitro-filled neuron morphology from layer 6 with m-type L6_SBC. The distribution contains the neuron morphology in ASC and in SWC file format.',
+  distribution: [
+    {
+      '@type': 'DataDownload',
+      atLocation: {
+        '@type': 'Location',
+        location:
+          'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/a/a/e/d/8/2/b/5/tkb060126a2_ch3_bc_n_jh_100x_1.asc',
+        store: {
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@type': 'RemoteDiskStorage',
+          _rev: 1,
+        },
       },
+      contentSize: {
+        unitCode: 'bytes',
+        value: 1097726,
+      },
+      contentUrl:
+        'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fbf146eaf-48cf-4b83-b375-bbb92ce7f7c0',
+      digest: {
+        algorithm: 'SHA-256',
+        value: 'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
+      },
+      encodingFormat: 'application/asc',
+      name: 'tkb060126a2_ch3_bc_n_jh_100x_1.asc',
     },
-    name: 'initial-resource',
-  }
-);
+    {
+      '@type': 'DataDownload',
+      atLocation: {
+        '@type': 'Location',
+        location:
+          'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/6/4/3/8/3/d/0/3/tkb060126a2_ch3_bc_n_jh_100x_1.swc',
+        store: {
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@type': 'RemoteDiskStorage',
+          _rev: 1,
+        },
+      },
+      contentSize: {
+        unitCode: 'bytes',
+        value: 891821,
+      },
+      contentUrl:
+        'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F60025362-1ca8-425e-908c-a01e4661c3e7',
+      digest: {
+        algorithm: 'SHA-256',
+        value: '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
+      },
+      encodingFormat: 'application/swc',
+      name: 'tkb060126a2_ch3_bc_n_jh_100x_1.swc',
+    },
+  ],
+  generation: {
+    '@type': 'Generation',
+    activity: {
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
+      '@type': ['Activity', 'Reconstruction'],
+    },
+  },
+  isPartOf: {
+    '@id':
+      'https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/23d3d87e-94fe-4639-b5c8-a26a712587e6',
+    '@type': 'Entity',
+  },
+  license: {
+    '@id': 'https://creativecommons.org/licenses/by/4.0/',
+    '@type': 'License',
+  },
+  objectOfStudy: {
+    '@id': 'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
+    '@type': 'ObjectOfStudy',
+    label: 'Single Cell',
+  },
+  sameAs:
+    'https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/431a1196-47b5-41a2-931a-3577be9a2dc4',
+  subject: {
+    '@type': 'Subject',
+    species: {
+      '@id': 'NCBITaxon:10116',
+      label: 'Rattus norvegicus',
+    },
+  },
+  name: 'initial-resource',
+});
 
 const initialResourceExpanded = {
   '@id':
@@ -379,9 +361,7 @@ const initialResourceExpanded = {
             {
               '@id':
                 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
-              '@type': [
-                'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/_/RemoteDiskStorage',
-              ],
+              '@type': ['https://bbp.epfl.ch/nexus/v1/resources/public/sscx/_/RemoteDiskStorage'],
               'https://bluebrain.github.io/nexus/vocabulary/rev': [
                 {
                   '@value': 1,
@@ -400,8 +380,7 @@ const initialResourceExpanded = {
           ],
           'http://schema.org/value': [
             {
-              '@value':
-                'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
+              '@value': 'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
             },
           ],
         },
@@ -452,9 +431,7 @@ const initialResourceExpanded = {
             {
               '@id':
                 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
-              '@type': [
-                'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/_/RemoteDiskStorage',
-              ],
+              '@type': ['https://bbp.epfl.ch/nexus/v1/resources/public/sscx/_/RemoteDiskStorage'],
               'https://bluebrain.github.io/nexus/vocabulary/rev': [
                 {
                   '@value': 1,
@@ -473,8 +450,7 @@ const initialResourceExpanded = {
           ],
           'http://schema.org/value': [
             {
-              '@value':
-                '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
+              '@value': '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
             },
           ],
         },
@@ -550,8 +526,7 @@ const initialResourceExpanded = {
   ],
   'https://bluebrain.github.io/nexus/vocabulary/schemaProject': [
     {
-      '@id':
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      '@id': 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
     },
   ],
   'https://bluebrain.github.io/nexus/vocabulary/self': [
@@ -573,10 +548,7 @@ const initialResourceExpanded = {
   ],
   'https://neuroshapes.org/annotation': [
     {
-      '@type': [
-        'https://neuroshapes.org/MTypeAnnotation',
-        'https://neuroshapes.org/Annotation',
-      ],
+      '@type': ['https://neuroshapes.org/MTypeAnnotation', 'https://neuroshapes.org/Annotation'],
       'http://schema.org/name': [
         {
           '@value': 'M-type Annotation',
@@ -585,10 +557,7 @@ const initialResourceExpanded = {
       'https://neuroshapes.org/hasBody': [
         {
           '@id': 'http://uri.interlex.org/base/ilx_0383236',
-          '@type': [
-            'https://neuroshapes.org/MType',
-            'https://neuroshapes.org/AnnotationBody',
-          ],
+          '@type': ['https://neuroshapes.org/MType', 'https://neuroshapes.org/AnnotationBody'],
           'http://www.w3.org/2000/01/rdf-schema#label': [
             {
               '@value': 'L6_SBC',
@@ -658,12 +627,8 @@ const initialResourceExpanded = {
       '@type': ['http://www.w3.org/ns/prov#Derivation'],
       'http://www.w3.org/ns/prov#entity': [
         {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
-          '@type': [
-            'https://neuroshapes.org/PatchedCell',
-            'http://www.w3.org/ns/prov#Entity',
-          ],
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
+          '@type': ['https://neuroshapes.org/PatchedCell', 'http://www.w3.org/ns/prov#Entity'],
         },
       ],
     },
@@ -673,20 +638,15 @@ const initialResourceExpanded = {
       '@type': ['http://www.w3.org/ns/prov#Generation'],
       'http://www.w3.org/ns/prov#activity': [
         {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
-          '@type': [
-            'http://www.w3.org/ns/prov#Activity',
-            'https://neuroshapes.org/Reconstruction',
-          ],
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
+          '@type': ['http://www.w3.org/ns/prov#Activity', 'https://neuroshapes.org/Reconstruction'],
         },
       ],
     },
   ],
   'https://neuroshapes.org/objectOfStudy': [
     {
-      '@id':
-        'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
+      '@id': 'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
       '@type': ['https://neuroshapes.org/ObjectOfStudy'],
       'http://www.w3.org/2000/01/rdf-schema#label': [
         {
@@ -713,9 +673,7 @@ const initialResourceExpanded = {
 };
 
 const getDataExplorerGraphFlowResourceObject = rest.get(
-  deltaPath(
-    `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}`
-  ),
+  deltaPath(`resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}`),
   (req, res, ctx) => {
     const format = req.url.searchParams.get('format');
     if (format === 'expanded') {
@@ -726,20 +684,14 @@ const getDataExplorerGraphFlowResourceObject = rest.get(
 );
 
 const getDataExplorerGraphFlowResourceSource = rest.get(
-  deltaPath(
-    `resources/public/sscx/_/${encodeURIComponent(
-      initialResource['@id']
-    )}/source`
-  ),
+  deltaPath(`resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}/source`),
   (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(initialResource));
   }
 );
 
 const getDataExplorerGraphFlowResourceObjectTags = rest.get(
-  deltaPath(
-    `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}/tags`
-  ),
+  deltaPath(`resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}/tags`),
   (req, res, ctx) => {
     return res(
       ctx.status(200),

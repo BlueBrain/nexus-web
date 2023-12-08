@@ -7,10 +7,7 @@ import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
 
-import {
-  TType,
-  TTypeOperator,
-} from '../../shared/molecules/TypeSelector/types';
+import { TType, TTypeOperator } from '../../shared/molecules/TypeSelector/types';
 import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
 import ColumnsSelector, { TColumn } from './ColumnsSelector';
 import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
@@ -27,11 +24,7 @@ import DateExplorerScrollArrows from './DateExplorerScrollArrows';
 import { PredicateSelector } from './PredicateSelector';
 import { ProjectSelector } from './ProjectSelector';
 
-const $update = <T,>(
-  array: T[],
-  keyfn: (item: T) => void,
-  newVal: Partial<T>
-) => {
+const $update = <T,>(array: T[], keyfn: (item: T) => void, newVal: Partial<T>) => {
   const match = find(array, keyfn);
   if (match) merge(match, newVal);
   return array;
@@ -56,10 +49,8 @@ export const updateSelectedColumnsCached = (columns: TColumn[]) => {
 };
 
 export const updateSelectedFiltersCached = (options: Record<string, any>) => {
-  const data = JSON.parse(
-    sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY) ?? '{}'
-  );
-  Object.keys(options).forEach(key => {
+  const data = JSON.parse(sessionStorage.getItem(SELECTED_FILTERS_CACHED_KEY) ?? '{}');
+  Object.keys(options).forEach((key) => {
     (data as any)[key] = options[key];
   });
   sessionStorage.setItem(SELECTED_FILTERS_CACHED_KEY, JSON.stringify(data));
@@ -109,8 +100,8 @@ export const columnsFromDataSource = (
 ): string[] => {
   const columnNames = new Set<string>();
 
-  resources.forEach(resource => {
-    Object.keys(resource).forEach(key => columnNames.add(key));
+  resources.forEach((resource) => {
+    Object.keys(resource).forEach((key) => columnNames.add(key));
   });
 
   if (showMetadataColumns) {
@@ -119,9 +110,7 @@ export const columnsFromDataSource = (
 
   const selectedMetadataColumn = columnFromPath(selectedPath);
   return Array.from(columnNames)
-    .filter(
-      colName => isUserColumn(colName) || colName === selectedMetadataColumn
-    )
+    .filter((colName) => isUserColumn(colName) || colName === selectedMetadataColumn)
     .sort(sortColumns);
 };
 
@@ -153,10 +142,7 @@ const DataExplorer: React.FC<{}> = () => {
     },
     updateTableConfiguration,
   ] = useReducer(
-    (
-      previous: DataExplorerConfiguration,
-      next: Partial<DataExplorerConfiguration>
-    ) => ({
+    (previous: DataExplorerConfiguration, next: Partial<DataExplorerConfiguration>) => ({
       ...previous,
       ...next,
     }),
@@ -180,7 +166,7 @@ const DataExplorer: React.FC<{}> = () => {
     orgAndProject,
     deprecated,
     typeOperator,
-    types: types?.map(t => t.value),
+    types: types?.map((t) => t.value),
     predicateQuery: backendPredicateQuery,
   });
 
@@ -197,25 +183,17 @@ const DataExplorer: React.FC<{}> = () => {
       selectedPath
     )
       .filter((t: string) => !['@type', '_project'].includes(t))
-      .map(value => ({
+      .map((value) => ({
         value,
         selected: true,
         key: `de-column-${value}`,
       }));
     const selectedColumns = getSelectedColumnsCached();
     if (selectedColumns.length > 0) {
-      return unionWith(
-        selectedColumns,
-        newColumns,
-        (a, b) => a.value === b.value
-      );
+      return unionWith(selectedColumns, newColumns, (a, b) => a.value === b.value);
     }
     return newColumns;
-  }, [
-    JSON.stringify(currentPageDataSource),
-    selectedPath,
-    showMetadataColumns,
-  ]);
+  }, [JSON.stringify(currentPageDataSource), selectedPath, showMetadataColumns]);
 
   useEffect(() => {
     updateTableConfiguration({ columns: buildColumns });
@@ -225,11 +203,10 @@ const DataExplorer: React.FC<{}> = () => {
     _: React.MouseEvent<HTMLElement, MouseEvent>,
     { value, selected }: TColumn
   ) => {
-    const newColumns = $update<TColumn>(
-      columns,
-      column => column.value === value,
-      { value, selected: !selected }
-    );
+    const newColumns = $update<TColumn>(columns, (column) => column.value === value, {
+      value,
+      selected: !selected,
+    });
     updateTableConfiguration({ columns: newColumns });
     updateSelectedColumnsCached(newColumns);
   };
@@ -246,12 +223,8 @@ const DataExplorer: React.FC<{}> = () => {
         deprecated: selectedFilters.deprecated ?? deprecated,
         typeOperator: selectedFilters.typeOperator ?? typeOperator,
       });
-      setShowMetadataColumns(
-        selectedFilters.showMetadata ?? showMetadataColumns
-      );
-      setShowEmptyDataCells(
-        selectedFilters.showEmptyCells ?? showEmptyDataCells
-      );
+      setShowMetadataColumns(selectedFilters.showMetadata ?? showMetadataColumns);
+      setShowEmptyDataCells(selectedFilters.showEmptyCells ?? showEmptyDataCells);
     }
   }, []);
 
@@ -262,11 +235,10 @@ const DataExplorer: React.FC<{}> = () => {
     updateSelectedFiltersCached({ deprecated: checked });
   };
 
-  const onShowMetadataColumnsChange = (checked: boolean) =>
-    setShowMetadataColumns(checked);
+  const onShowMetadataColumnsChange = (checked: boolean) => setShowMetadataColumns(checked);
 
   const onResetPredicateCallback = (column: string, checked: boolean) => {
-    const newColumns = $update<TColumn>(columns, c => c.value === column, {
+    const newColumns = $update<TColumn>(columns, (c) => c.value === column, {
       value: column,
       selected: checked,
     });
@@ -274,11 +246,11 @@ const DataExplorer: React.FC<{}> = () => {
   };
 
   const displayedColumns = columns
-    .filter(column => column.selected)
-    .map(column => column.value);
+    .filter((column) => column.selected)
+    .map((column) => column.value);
 
   useEffect(() => {
-    const unlisten = history.listen(location => {
+    const unlisten = history.listen((location) => {
       // if we will not be in a resource page,
       // if we will not be in the graph flow page
       // then we clear the selected columns and filters
@@ -286,8 +258,7 @@ const DataExplorer: React.FC<{}> = () => {
       const matchedResourcePath = matchPath(location.pathname, {
         path: '/:orgLabel/:projectLabel/resources/:resourceId',
       });
-      const matchedGraphGlow =
-        location.pathname === '/data-explorer/graph-flow';
+      const matchedGraphGlow = location.pathname === '/data-explorer/graph-flow';
       if (!matchedResourcePath && !matchedGraphGlow) {
         clearSelectedColumnsCached();
         clearSelectedFiltersCached();
@@ -303,7 +274,7 @@ const DataExplorer: React.FC<{}> = () => {
       {isLoading && <Spin className="loading" />}
 
       <DataExplorerCollapsibleHeader
-        onVisibilityChange={offsetHeight => {
+        onVisibilityChange={(offsetHeight) => {
           setHeaderHeight(offsetHeight);
         }}
       >
@@ -357,9 +328,7 @@ const DataExplorer: React.FC<{}> = () => {
                 });
               }}
               onVisibilityChange={handleTypeFilterFocused}
-              popupContainer={() =>
-                document.getElementById('data-explorer-filters')!
-              }
+              popupContainer={() => document.getElementById('data-explorer-filters')!}
             />
             {shouldShowPredicateSelector ? (
               <PredicateSelector
@@ -389,9 +358,7 @@ const DataExplorer: React.FC<{}> = () => {
             types={types}
             nexusTotal={resources?._total ?? 0}
             totalOnPage={resources?._results?.length ?? 0}
-            totalFiltered={
-              frontendPredicate ? displayedDataSource.length : undefined
-            }
+            totalFiltered={frontendPredicate ? displayedDataSource.length : undefined}
           />
           <div className="data-explorer-toggles">
             <Switch
@@ -414,7 +381,7 @@ const DataExplorer: React.FC<{}> = () => {
             <Switch
               defaultChecked={true}
               checked={showEmptyDataCells}
-              onClick={isChecked => setShowEmptyDataCells(isChecked)}
+              onClick={(isChecked) => setShowEmptyDataCells(isChecked)}
               id="show-empty-data-cells"
               className="data-explorer-toggle"
             />

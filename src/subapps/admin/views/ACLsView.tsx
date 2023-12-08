@@ -42,14 +42,14 @@ const ACLs: React.FunctionComponent = () => {
         busy: true,
       });
       nexus.ACL.list(path, { ancestors: true, self: false })
-        .then(acls => {
+        .then((acls) => {
           setACLs({
             acls: acls._results,
             busy: false,
             error: null,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           setACLs({
             error,
             acls: null,
@@ -65,17 +65,12 @@ const ACLs: React.FunctionComponent = () => {
       {error && (
         <Empty
           style={{ marginTop: '22vh' }}
-          description={
-            <span>Error while retrieving ALCs: {error.message}</span>
-          }
+          description={<span>Error while retrieving ALCs: {error.message}</span>}
         />
       )}
       {!acls ||
         (acls.length === 0 && (
-          <Empty
-            style={{ marginTop: '22vh' }}
-            description={'No ACLs to display...'}
-          />
+          <Empty style={{ marginTop: '22vh' }} description={'No ACLs to display...'} />
         ))}
       {acls && <ACLsForm acls={acls} path={path} />}
     </div>

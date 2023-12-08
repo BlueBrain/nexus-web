@@ -45,7 +45,7 @@ const GraphControlPanel: React.FunctionComponent<{
     <div className="graph-control-panel">
       <div className="controls">
         <div>
-          {Object.keys(LAYOUTS).map(layoutKey => {
+          {Object.keys(LAYOUTS).map((layoutKey) => {
             return (
               <Button
                 key={layoutKey}
@@ -62,11 +62,7 @@ const GraphControlPanel: React.FunctionComponent<{
           <Button icon={<DownOutlined />} size="small" onClick={handleDownload}>
             Save Image
           </Button>
-          <Button
-            type={collapsed ? 'primary' : 'default'}
-            size="small"
-            onClick={onCollapse}
-          >
+          <Button type={collapsed ? 'primary' : 'default'} size="small" onClick={onCollapse}>
             {collapsed ? 'Expand Paths' : 'Collapse Paths'}
           </Button>
           <Button size="small" onClick={onRecenter}>
@@ -86,13 +82,7 @@ const GraphControlPanel: React.FunctionComponent<{
           afterClose={() => setShowAlert(false)}
         />
       ) : null}
-      {loading && (
-        <Alert
-          style={{ margin: '7px 5px 0 0' }}
-          message="Loading..."
-          type="info"
-        />
-      )}
+      {loading && <Alert style={{ margin: '7px 5px 0 0' }} message="Loading..." type="info" />}
     </div>
   );
 };

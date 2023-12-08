@@ -18,9 +18,7 @@ export type SerializedFacetMap = {
   [propertyKey: string]: string[];
 };
 
-export const serializeSearchFacets = (
-  facetMap: UseSearchProps['facetMap']
-): SerializedFacetMap => {
+export const serializeSearchFacets = (facetMap: UseSearchProps['facetMap']): SerializedFacetMap => {
   return Array.from(facetMap || []).reduce((memo, [key, value]) => {
     memo[value.propertyKey] = [...value.value.values()];
     return memo;
@@ -31,11 +29,11 @@ export const parseSerializedSearchFacets = (
   facetMap: UseSearchProps['facetMap'],
   serializedSearchFacets: SerializedFacetMap
 ) => {
-  facetMap?.forEach(value => {
+  facetMap?.forEach((value) => {
     const serializedValue = serializedSearchFacets[value.propertyKey];
     if (serializedValue) {
       value.value.clear();
-      serializedValue.forEach(key => {
+      serializedValue.forEach((key) => {
         value.value.add(key);
       });
     }
@@ -83,12 +81,7 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
   const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
   });
-  const {
-    query,
-    sort,
-    pagination = DEFAULT_SEARCH_PROPS.pagination,
-    facetMap,
-  } = searchProps;
+  const { query, sort, pagination = DEFAULT_SEARCH_PROPS.pagination, facetMap } = searchProps;
 
   const nexus = useNexusContext();
 
@@ -97,9 +90,7 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
     // might need backend support
     // TODO allow configurable query target
     // not all ES View mappings will have this property.
-    const matchQuery = query
-      ? ['wildcard', '_original_source', `${query}*`]
-      : ['match_all', {}];
+    const matchQuery = query ? ['wildcard', '_original_source', `${query}*`] : ['match_all', {}];
 
     const body = bodybuilder();
 
@@ -111,7 +102,7 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
 
     // Sorting
     if (Array.isArray(sort)) {
-      sort.forEach(sort => {
+      sort.forEach((sort) => {
         body.sort(sort.key, sort.direction);
       });
     } else {
@@ -121,15 +112,10 @@ export default function useSearchQuery(props: UseSearchQueryProps) {
     if (facetMap) {
       facetMap.forEach(({ propertyKey, key, type, value }) => {
         if (type === FacetType.TERMS) {
-          value.forEach(item => {
+          value.forEach((item) => {
             body.filter('term', propertyKey, item);
           });
-          body.aggregation(
-            type,
-            propertyKey,
-            { size: TOTAL_HITS_TRACKING },
-            key
-          );
+          body.aggregation(type, propertyKey, { size: TOTAL_HITS_TRACKING }, key);
         }
       });
     }

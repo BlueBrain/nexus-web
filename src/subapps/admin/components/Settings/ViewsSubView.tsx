@@ -5,7 +5,7 @@ import { NexusClient } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import * as Sentry from '@sentry/browser';
 import { PromisePool } from '@supercharge/promise-pool';
-import { Badge,Button, Col, notification, Row, Table, Tooltip } from 'antd';
+import { Badge, Button, Col, notification, Row, Table, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { isArray, isString, orderBy } from 'lodash';
 import * as React from 'react';
@@ -38,7 +38,7 @@ const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
 const aggregateFilterPredicate = (type?: string | string[]) => {
   if (type) {
     if (isArray(type)) {
-      return type.some(i => AggregateViews.includes(i));
+      return type.some((i) => AggregateViews.includes(i));
     }
     return AggregateViews.includes(type);
   }
@@ -58,26 +58,22 @@ const fetchViewsList = async ({
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: Omit<TViewType, 'indexingErrors'>[] = views._results.map(
-      item => {
-        const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
-          item._project
-        )!;
-        return {
-          orgLabel,
-          projectLabel,
-          id: item['@id'],
-          key: item['@id'] as string,
-          name: (item['@id'] as string).split('/').pop() as string,
-          type: item['@type'],
-          isAggregateView: aggregateFilterPredicate(item['@type']),
-          status: '100%',
-        };
-      }
-    );
+    const result: Omit<TViewType, 'indexingErrors'>[] = views._results.map((item) => {
+      const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(item._project)!;
+      return {
+        orgLabel,
+        projectLabel,
+        id: item['@id'],
+        key: item['@id'] as string,
+        name: (item['@id'] as string).split('/').pop() as string,
+        type: item['@type'],
+        isAggregateView: aggregateFilterPredicate(item['@type']),
+        status: '100%',
+      };
+    });
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
-      .process(async view => {
+      .process(async (view) => {
         const indexingErrors = await fetchIndexingErrors({
           nexus,
           apiEndpoint,
@@ -144,9 +140,7 @@ const restartIndexOneView = async ({
 }) => {
   try {
     return await nexus.httpDelete({
-      path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(
-        viewId
-      )}/offset`,
+      path: `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${encodeURIComponent(viewId)}/offset`,
     });
   } catch (error) {
     console.log('@@error', error);
@@ -214,18 +208,15 @@ const ViewsSubView = () => {
   };
   const { data: views, status } = useQuery({
     queryKey: [`views-${orgLabel}-${projectLabel}`],
-    queryFn: () =>
-      fetchViewsList({ nexus, orgLabel, projectLabel, apiEndpoint }),
+    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel, apiEndpoint }),
     refetchInterval: 30 * 1000, // 30s
   });
 
-  const { mutateAsync: handleReindexingOneView } = useMutation(
-    restartIndexOneView
-  );
+  const { mutateAsync: handleReindexingOneView } = useMutation(restartIndexOneView);
   const { mutateAsync: handleReindexingAllViews, isLoading } = useMutation(
     restartIndexingAllViews,
     {
-      onError: error => {
+      onError: (error) => {
         notification.error({
           message: `Error when restarting indexing the views`,
           description: '',
@@ -239,7 +230,7 @@ const ViewsSubView = () => {
       key: 'name',
       dataIndex: 'name',
       title: 'Name',
-      render: text => <span>{text}</span>,
+      render: (text) => <span>{text}</span>,
     },
     {
       key: 'type',
@@ -251,9 +242,7 @@ const ViewsSubView = () => {
           return <span>{text}</span>;
         }
         if (isArray(text)) {
-          return text.map((type, ind) => (
-            <div key={`${record.id}-type-${ind}`}>{type}</div>
-          ));
+          return text.map((type, ind) => <div key={`${record.id}-type-${ind}`}>{type}</div>);
         }
         return null;
       },
@@ -263,7 +252,7 @@ const ViewsSubView = () => {
       dataIndex: 'status',
       title: 'Indexation status',
       align: 'center',
-      render: text => <span>{text}</span>,
+      render: (text) => <span>{text}</span>,
     },
     {
       key: 'actions',
@@ -271,26 +260,14 @@ const ViewsSubView = () => {
       title: 'Actions',
       align: 'center',
       render: (_, { id, key, orgLabel, projectLabel, isAggregateView }) => {
-        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-          `${key}`
-        )}`;
-        const queryURI = `/orgs/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
-          `${key}`
-        )}`;
+        const editURI = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(`${key}`)}`;
+        const queryURI = `/orgs/${orgLabel}/${projectLabel}/query/${encodeURIComponent(`${key}`)}`;
         return (
           <div className="view-item-actions">
-            <Button
-              type="link"
-              htmlType="button"
-              onClick={() => history.push(editURI)}
-            >
+            <Button type="link" htmlType="button" onClick={() => history.push(editURI)}>
               Edit
             </Button>
-            <Button
-              type="link"
-              htmlType="button"
-              onClick={() => history.push(queryURI)}
-            >
+            <Button type="link" htmlType="button" onClick={() => history.push(queryURI)}>
               Query
             </Button>
             {!isAggregateView && (
@@ -353,11 +330,7 @@ const ViewsSubView = () => {
                   className="row-center"
                   title="You have no permissions to re-index the views"
                 >
-                  <Button
-                    type="ghost"
-                    disabled
-                    style={{ margin: 0, marginTop: 20 }}
-                  >
+                  <Button type="ghost" disabled style={{ margin: 0, marginTop: 20 }}>
                     <span style={{ marginRight: 10 }}>Re-index All Views</span>
                     <HasNoPermission />
                   </Button>
@@ -366,9 +339,7 @@ const ViewsSubView = () => {
             >
               <Button
                 disabled={
-                  isLoading ||
-                  status === 'loading' ||
-                  (status === 'success' && !views?.results)
+                  isLoading || status === 'loading' || (status === 'success' && !views?.results)
                 }
                 loading={isLoading}
                 type="ghost"
@@ -378,9 +349,7 @@ const ViewsSubView = () => {
                   handleReindexingAllViews({
                     nexus,
                     apiEndpoint,
-                    views:
-                      views?.results.filter(item => !item.isAggregateView) ||
-                      [],
+                    views: views?.results.filter((item) => !item.isAggregateView) || [],
                   });
                 }}
               >
@@ -399,35 +368,26 @@ const ViewsSubView = () => {
           sticky={true}
           size="middle"
           pagination={false}
-          rowKey={r => r.key}
+          rowKey={(r) => r.key}
           expandIcon={({ expanded, onExpand, record }) =>
             expanded ? (
               <MinusCircleTwoTone
                 title="Collapse indexing errors"
-                onClick={e => onExpand(record, e)}
+                onClick={(e) => onExpand(record, e)}
               />
             ) : (
-              <Badge
-                count={record.indexingErrors._total}
-                showZero={false}
-                size="small"
-              >
+              <Badge count={record.indexingErrors._total} showZero={false} size="small">
                 <PlusCircleTwoTone
                   title="Expand indexing errors"
                   data-testid="Expand indexing errors"
-                  onClick={e => onExpand(record, e)}
+                  onClick={(e) => onExpand(record, e)}
                   style={{ fontSize: '16px' }}
                 />
               </Badge>
             )
           }
           expandedRowRender={(r: TViewType) => {
-            return (
-              <ViewIndexingErrors
-                key={r.id}
-                indexingErrors={r.indexingErrors}
-              />
-            );
+            return <ViewIndexingErrors key={r.id} indexingErrors={r.indexingErrors} />;
           }}
         />
       </div>

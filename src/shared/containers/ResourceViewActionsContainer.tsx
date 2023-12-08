@@ -1,17 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import { Context, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Button,
-  Col,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  notification,
-  Popover,
-  Row,
-} from 'antd';
+import { Button, Col, Dropdown, Form, Input, Menu, notification, Popover, Row } from 'antd';
 import { isArray, isString, uniq } from 'lodash';
 import * as React from 'react';
 import { useMutation } from 'react-query';
@@ -30,10 +20,7 @@ import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
 } from '../../shared/organisms/DataPanel/DataPanel';
-import {
-  removeLocalStorageRows,
-  toLocalStorageResources,
-} from '../../shared/utils/datapanel';
+import { removeLocalStorageRows, toLocalStorageResources } from '../../shared/utils/datapanel';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import Copy from '../components/Copy';
 import { RootState } from '../store/reducers';
@@ -50,36 +37,28 @@ const ResourceViewActionsContainer: React.FC<{
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
-  const apiEndpoint = useSelector(
-    (state: RootState) => state.config.apiEndpoint
-  );
+  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint);
   const [isInCart, setIsInCart] = React.useState(() => false);
 
   const handleAddToCart = async () => {
     const recordKey = resource._self;
 
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
     let isRemoved = false;
-    if (selectedRows.find(item => item._self === resource._self)) {
-      selectedRowKeys = selectedRowKeys.filter(t => t !== recordKey);
+    if (selectedRows.find((item) => item._self === resource._self)) {
+      selectedRowKeys = selectedRowKeys.filter((t) => t !== recordKey);
       selectedRows = removeLocalStorageRows(selectedRows, [recordKey]);
       isRemoved = true;
     } else {
-      const localStorageObjects = toLocalStorageResources(
-        resource,
-        'resource-view'
-      );
+      const localStorageObjects = toLocalStorageResources(resource, 'resource-view');
 
       selectedRowKeys = uniq([...selectedRowKeys, recordKey]);
       selectedRows = [...selectedRows, ...localStorageObjects];
     }
     const size = selectedRows.reduce(
-      (acc, item) =>
-        acc + ((item.distribution as Distribution)?.contentSize || 0),
+      (acc, item) => acc + ((item.distribution as Distribution)?.contentSize || 0),
       0
     );
     if (
@@ -125,32 +104,28 @@ const ResourceViewActionsContainer: React.FC<{
 
   const revisionTags = (revision: number) => {
     if (tags?.tags) {
-      return tags?.tags.filter(t => t.rev === revision).map(t => t.tag);
+      return tags?.tags.filter((t) => t.rev === revision).map((t) => t.tag);
     }
     return [];
   };
   const [view, setView] = React.useState<Resource | null>(null);
   const subapp = useOrganisationsSubappContext();
   React.useEffect(() => {
-    nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
-      data => {
-        setTags(data);
+    nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then((data) => {
+      setTags(data);
+    });
+    nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then((resource) => {
+      const resourceType = resource ? (resource as Resource)['@type'] : null;
+      const isView =
+        resourceType && isArray(resourceType)
+          ? resourceType.includes('View')
+          : isString(resourceType)
+          ? resourceType === 'View'
+          : false;
+      if (isView) {
+        setView(resource as Resource);
       }
-    );
-    nexus.Resource.get(orgLabel, projectLabel, encodedResourceId).then(
-      resource => {
-        const resourceType = resource ? (resource as Resource)['@type'] : null;
-        const isView =
-          resourceType && isArray(resourceType)
-            ? resourceType.includes('View')
-            : isString(resourceType)
-            ? resourceType === 'View'
-            : false;
-        if (isView) {
-          setView(resource as Resource);
-        }
-      }
-    );
+    });
   }, [resource, latestResource]);
   const redirectToQueryTab = React.useCallback(() => {
     if (view) {
@@ -169,10 +144,7 @@ const ResourceViewActionsContainer: React.FC<{
     resourceId: string,
     revision?: number
   ) => {
-    history.push(
-      makeResourceUri(orgLabel, projectLabel, resourceId, { revision }),
-      location.state
-    );
+    history.push(makeResourceUri(orgLabel, projectLabel, resourceId, { revision }), location.state);
   };
 
   const revisionLabels = (revision: number) => {
@@ -189,17 +161,15 @@ const ResourceViewActionsContainer: React.FC<{
     () => (
       <Menu
         items={[...Array(latestResource?._rev).keys()]
-          .map(k => k + 1)
+          .map((k) => k + 1)
           .sort((a, b) => b - a)
-          .map(rev => ({
+          .map((rev) => ({
             key: rev,
-            onClick: () =>
-              goToResource(orgLabel, projectLabel, encodedResourceId, rev),
+            onClick: () => goToResource(orgLabel, projectLabel, encodedResourceId, rev),
             label: (
               <>
                 Revision {rev}
-                {revisionLabels(rev).length > 0 &&
-                  ` (${revisionLabels(rev).join(', ')})`}
+                {revisionLabels(rev).length > 0 && ` (${revisionLabels(rev).join(', ')})`}
               </>
             ),
           }))}
@@ -208,11 +178,9 @@ const ResourceViewActionsContainer: React.FC<{
     [resource, latestResource, tags]
   );
   React.useEffect(() => {
-    const dataPanelLS: TResourceTableData = JSON.parse(
-      localStorage.getItem(DATA_PANEL_STORAGE)!
-    );
+    const dataPanelLS: TResourceTableData = JSON.parse(localStorage.getItem(DATA_PANEL_STORAGE)!);
     const selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
-    if (selectedRowKeys.find(item => item === resource._self)) {
+    if (selectedRowKeys.find((item) => item === resource._self)) {
       return setIsInCart(true);
     }
     setIsInCart(false);
@@ -252,24 +220,23 @@ const ResourceViewActionsContainer: React.FC<{
             description: (
               <div>
                 <p>
-                  Resource identified by <strong>@id: {resource['@id']}</strong>{' '}
-                  has been successfully tagged with <strong>{tag}</strong> for
-                  the revision <strong>{resource._rev}</strong>.
+                  Resource identified by <strong>@id: {resource['@id']}</strong> has been
+                  successfully tagged with <strong>{tag}</strong> for the revision{' '}
+                  <strong>{resource._rev}</strong>.
                 </p>
               </div>
             ),
           });
         },
-        onError: error => {
+        onError: (error) => {
           console.log('@@errror tagging the resource', error);
           notification.error({
             message: `Resource Tagging`,
             description: (
               <div>
                 <p>
-                  Tagging the resource of{' '}
-                  <strong>@id: {resource['@id']}</strong> with the tag {tag} has
-                  been failed.
+                  Tagging the resource of <strong>@id: {resource['@id']}</strong> with the tag {tag}{' '}
+                  has been failed.
                 </p>
               </div>
             ),
@@ -308,14 +275,10 @@ const ResourceViewActionsContainer: React.FC<{
 
                   if (!isLatest) {
                     triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}?rev=${
-                        resource._rev
-                      }`
+                      `${window.location.origin.toString()}${pathToResource}?rev=${resource._rev}`
                     );
                   } else {
-                    triggerCopy(
-                      `${window.location.origin.toString()}${pathToResource}`
-                    );
+                    triggerCopy(`${window.location.origin.toString()}${pathToResource}`);
                   }
                 }}
                 dropdownRender={() => (
@@ -334,9 +297,7 @@ const ResourceViewActionsContainer: React.FC<{
                             }
                           )}`;
 
-                          triggerCopy(
-                            `${window.location.origin.toString()}${pathToResource}`
-                          );
+                          triggerCopy(`${window.location.origin.toString()}${pathToResource}`);
                         },
                       },
                       {
@@ -367,10 +328,7 @@ const ResourceViewActionsContainer: React.FC<{
                       {
                         key: 'id_with_revision',
                         label: 'ID (with revision)',
-                        onClick: () =>
-                          triggerCopy(
-                            `${resource['@id']}?rev=${resource._rev}`
-                          ),
+                        onClick: () => triggerCopy(`${resource['@id']}?rev=${resource._rev}`),
                       },
                       {
                         key: 'nexus_address',
@@ -381,11 +339,7 @@ const ResourceViewActionsContainer: React.FC<{
                         key: 'nexus_address_with_revision',
                         label: 'Nexus address (with revision)',
                         onClick: () =>
-                          triggerCopy(
-                            self
-                              ? `${self}?rev=${resource ? resource._rev : ''}`
-                              : ''
-                          ),
+                          triggerCopy(self ? `${self}?rev=${resource ? resource._rev : ''}` : ''),
                       },
                     ]}
                   />
@@ -398,9 +352,7 @@ const ResourceViewActionsContainer: React.FC<{
         ></Copy>
       </Col>
       <Col>
-        <Button onClick={handleAddToCart}>
-          {isInCart ? 'Remove from' : 'Add to'} Cart
-        </Button>
+        <Button onClick={handleAddToCart}>{isInCart ? 'Remove from' : 'Add to'} Cart</Button>
       </Col>
       <Col>
         <Popover
@@ -412,8 +364,7 @@ const ResourceViewActionsContainer: React.FC<{
             <div>
               <div style={{ fontSize: 16 }}>Tag Resource</div>
               <i style={{ fontSize: 12 }}>
-                The tag will be applied to revision{' '}
-                <strong>{resource._rev}</strong>
+                The tag will be applied to revision <strong>{resource._rev}</strong>
               </i>
             </div>
           }
@@ -436,18 +387,14 @@ const ResourceViewActionsContainer: React.FC<{
                   },
                   {
                     pattern: /^[a-zA-Z0-9_-]+$/,
-                    message:
-                      'Tag should include only letters, numbers, underscores, and dashes.',
+                    message: 'Tag should include only letters, numbers, underscores, and dashes.',
                   },
                 ]}
                 style={{ marginBottom: 8 }}
               >
                 <Input placeholder="Resource tag" style={{ width: '100%' }} />
               </Form.Item>
-              <Form.Item
-                wrapperCol={{ offset: 8, span: 8 }}
-                style={{ marginBottom: 0 }}
-              >
+              <Form.Item wrapperCol={{ offset: 8, span: 8 }} style={{ marginBottom: 0 }}>
                 <Button type="primary" htmlType="submit">
                   Confirm
                 </Button>

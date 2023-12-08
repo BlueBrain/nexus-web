@@ -18,11 +18,7 @@ const HomeLinkCard: React.FunctionComponent<{
         <Card
           key={`subapp-card-${label}`}
           hoverable
-          cover={
-            <div
-              className={`home-link-card__cover home-link-card__cover--${label}`}
-            ></div>
-          }
+          cover={<div className={`home-link-card__cover home-link-card__cover--${label}`}></div>}
         >
           <Meta
             title={

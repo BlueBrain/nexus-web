@@ -1,24 +1,19 @@
 import { Resource } from '@bbp/nexus-sdk/es';
-import { AccessControl,useNexusContext } from '@bbp/react-nexus';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
 import * as React from 'react';
 import { useHistory } from 'react-router';
 
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import { getDestinationParam } from '../../../shared/utils';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
 import StudioReactContext from '../contexts/StudioContext';
 
-const resourcesWritePermissionsWrapper = (
-  child: React.ReactNode,
-  permissionPath: string
-) => {
+const resourcesWritePermissionsWrapper = (child: React.ReactNode, permissionPath: string) => {
   const permissions = ['resources/write'];
   return React.createElement(AccessControl, {
     permissions,
@@ -38,10 +33,7 @@ export type StudioResource = Resource<{
 }>;
 
 const StudioContainer: React.FunctionComponent = () => {
-  const [
-    studioResource,
-    setStudioResource,
-  ] = React.useState<StudioResource | null>(null);
+  const [studioResource, setStudioResource] = React.useState<StudioResource | null>(null);
   const [workspaceIds, setWorkspaceIds] = React.useState<string[]>([]);
   const nexus = useNexusContext();
   const history = useHistory();
@@ -55,28 +47,23 @@ const StudioContainer: React.FunctionComponent = () => {
 
   const fetchAndSetupStudio = React.useCallback(() => {
     nexus.Resource.get(orgLabel, projectLabel, studioId)
-      .then(value => {
+      .then((value) => {
         const studioResource: StudioResource = value as StudioResource;
         /* TODO: find a better solution to dealing with json-ld's arrays
          for singular objects when we actually expect type to be singular */
-        if (
-          Array.isArray(studioResource.plugins) &&
-          studioResource.plugins.length > 0
-        ) {
+        if (Array.isArray(studioResource.plugins) && studioResource.plugins.length > 0) {
           studioResource.plugins = studioResource.plugins[0];
         } else {
           studioResource.plugins = undefined;
         }
         setStudioResource(studioResource);
         const workspaceIds: string[] = studioResource['workspaces'];
-        setWorkspaceIds(
-          Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]
-        );
+        setWorkspaceIds(Array.isArray(workspaceIds) ? workspaceIds : [workspaceIds]);
       })
-      .catch(e => {
+      .catch((e) => {
         if (e['@type'] === 'AuthorizationFailed') {
           nexus.Identity.list().then(({ identities }) => {
-            const user = identities.find(i => i['@type'] === 'User');
+            const user = identities.find((i) => i['@type'] === 'User');
 
             if (!user) {
               history.push(`/login${getDestinationParam()}`);
@@ -109,19 +96,13 @@ const StudioContainer: React.FunctionComponent = () => {
     }
   ) => {
     if (studioResource) {
-      await nexus.Resource.update(
-        orgLabel,
-        projectLabel,
-        studioId,
-        studioResource._rev,
-        {
-          ...studioResource,
-          label,
-          description,
-          plugins,
-        }
-      )
-        .then(response => {
+      await nexus.Resource.update(orgLabel, projectLabel, studioId, studioResource._rev, {
+        ...studioResource,
+        label,
+        description,
+        plugins,
+      })
+        .then((response) => {
           fetchAndSetupStudio();
 
           message.success(
@@ -130,7 +111,7 @@ const StudioContainer: React.FunctionComponent = () => {
             </span>
           );
         })
-        .catch(error => {
+        .catch((error) => {
           notification.error({
             message: 'An error occurred',
             description: parseNexusError(error),
@@ -156,14 +137,8 @@ const StudioContainer: React.FunctionComponent = () => {
             minHeight: '800px',
           }}
         >
-          <StudioHeader
-            resource={studioResource}
-            markdownViewer={MarkdownViewerContainer}
-          >
-            {resourcesWritePermissionsWrapper(
-              editButton,
-              `/${orgLabel}/${projectLabel}`
-            )}
+          <StudioHeader resource={studioResource} markdownViewer={MarkdownViewerContainer}>
+            {resourcesWritePermissionsWrapper(editButton, `/${orgLabel}/${projectLabel}`)}
           </StudioHeader>
           <WorkspaceMenuContainer
             workspaceIds={workspaceIds}

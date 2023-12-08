@@ -59,7 +59,7 @@ const exampleDataStructure: AnalysisReport[] = [
   {
     ...baseReportData,
     id: 'report1',
-    assets: baseReportData.assets.map(a => ({
+    assets: baseReportData.assets.map((a) => ({
       ...a,
       analysisReportId: 'report1',
     })),

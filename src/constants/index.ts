@@ -4,8 +4,7 @@ export const DEFAULT_SCALE = 50;
 export const DEFAULT_REPORT_TYPES = [
   {
     label: 'Analysis',
-    description:
-      'Any other report that is neither "Validation" not "Prediction".',
+    description: 'Any other report that is neither "Validation" not "Prediction".',
   },
   {
     label: 'Validation',
@@ -45,8 +44,7 @@ export const DEFAULT_REPORT_CATEGORIES = {
   SimulationCampaignConfiguration: [
     {
       label: 'Spiking',
-      description:
-        'An analysis report based on the spiking activity of the simulated neurons.',
+      description: 'An analysis report based on the spiking activity of the simulated neurons.',
     },
     {
       label: 'Soma voltage',

@@ -31,10 +31,7 @@ const StudioAdminView: React.FunctionComponent<{}> = () => {
           </div>
         </div>
         {orgLabel && projectLabel && (
-          <StudioListContainer
-            orgLabel={orgLabel}
-            projectLabel={projectLabel}
-          />
+          <StudioListContainer orgLabel={orgLabel} projectLabel={projectLabel} />
         )}
       </div>
     </div>

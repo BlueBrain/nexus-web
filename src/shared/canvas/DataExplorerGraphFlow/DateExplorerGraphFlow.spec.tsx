@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { createNexusClient,NexusClient } from '@bbp/nexus-sdk/es';
+import { createNexusClient, NexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import { act, RenderResult, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -127,9 +127,7 @@ describe('DataExplorerGraphFlow', () => {
       })
     );
     rerender(app);
-    const resourceTitle = await waitFor(() =>
-      screen.getByText(initialResource.name)
-    );
+    const resourceTitle = await waitFor(() => screen.getByText(initialResource.name));
     expect(resourceTitle.innerHTML).toEqual(initialResource.name);
     expect(resourceTitle).toBeInTheDocument();
   });
@@ -143,9 +141,7 @@ describe('DataExplorerGraphFlow', () => {
     rerender(app);
     history.push('/another-page');
     const dataExplorerState = store.getState().dataExplorer;
-    const sessionStorageItem = sessionStorage.getItem(
-      DATA_EXPLORER_GRAPH_FLOW_DIGEST
-    );
+    const sessionStorageItem = sessionStorage.getItem(DATA_EXPLORER_GRAPH_FLOW_DIGEST);
     expect(sessionStorageItem).toBeNull();
     expect(dataExplorerState.leftNodes.links.length).toBe(0);
     expect(dataExplorerState.rightNodes.links.length).toBe(0);
@@ -163,13 +159,9 @@ describe('DataExplorerGraphFlow', () => {
 
     rerender(app);
 
-    const fullscreenSwitch = container.querySelector(
-      'button[aria-label="fullscreen switch"]'
-    );
+    const fullscreenSwitch = container.querySelector('button[aria-label="fullscreen switch"]');
 
-    const fullscreenTitle = container.querySelector(
-      'h1[aria-label="fullscreen title"]'
-    );
+    const fullscreenTitle = container.querySelector('h1[aria-label="fullscreen title"]');
 
     expect(fullscreenSwitch).toBeInTheDocument();
 

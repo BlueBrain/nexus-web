@@ -1,7 +1,7 @@
 import './ResourceInfoPanel.scss';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Button,Collapse, Drawer, Popover } from 'antd';
+import { Button, Collapse, Drawer, Popover } from 'antd';
 import * as React from 'react';
 
 import { labelOf } from '../../../../shared/utils';
@@ -12,17 +12,9 @@ const ResourceInfoPanel: React.FC<{
   panelVisibility: boolean;
   drawerContainer?: HTMLDivElement | null;
   onClickClose: () => void;
-}> = ({
-  typeStats,
-  relations,
-  panelVisibility,
-  drawerContainer,
-  onClickClose,
-}) => {
+}> = ({ typeStats, relations, panelVisibility, drawerContainer, onClickClose }) => {
   const { Panel } = Collapse;
-  const title = (
-    <h2 className="resource-info-panel__title">{typeStats._name}</h2>
-  );
+  const title = <h2 className="resource-info-panel__title">{typeStats._name}</h2>;
   const leftArrow = '⟵';
   const rightArrow = '⟶';
 
@@ -39,9 +31,7 @@ const ResourceInfoPanel: React.FC<{
         maximumSignificantDigits: 3,
       }).format(relation._count);
       const destination =
-        relation._source === typeStats['@id']
-          ? relation._target
-          : relation._source;
+        relation._source === typeStats['@id'] ? relation._target : relation._source;
       const source = relation._path[0];
 
       return (
@@ -61,9 +51,8 @@ const ResourceInfoPanel: React.FC<{
     const renderSource = sourcesRelations.map((relation: any, index: number) =>
       displayRelations(relation, index, rightArrow)
     );
-    const renderDestination = destinationRelations.map(
-      (relation: any, index: number) =>
-        displayRelations(relation, index, leftArrow)
+    const renderDestination = destinationRelations.map((relation: any, index: number) =>
+      displayRelations(relation, index, leftArrow)
     );
 
     return (
@@ -115,10 +104,7 @@ const ResourceInfoPanel: React.FC<{
                               {property._name}
                             </a>
                             : {formattedProCount}{' '}
-                            {`(${(
-                              (property._count / typeStats._count) *
-                              100
-                            ).toPrecision(4)}%)`}
+                            {`(${((property._count / typeStats._count) * 100).toPrecision(4)}%)`}
                           </span>
                           {property._properties && (
                             <ul>
@@ -143,10 +129,9 @@ const ResourceInfoPanel: React.FC<{
                     return (
                       <div>
                         <p>
-                          These are the properties that are used to describe a
-                          resource of this type. <br />
-                          It also include how many resources use them and
-                          overall coverage.
+                          These are the properties that are used to describe a resource of this
+                          type. <br />
+                          It also include how many resources use them and overall coverage.
                         </p>
                       </div>
                     );
@@ -155,7 +140,7 @@ const ResourceInfoPanel: React.FC<{
                   placement="bottomRight"
                 >
                   <Button
-                    onClick={event => event.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
                     size="small"
                     icon={<InfoCircleOutlined />}
                   />
@@ -165,19 +150,16 @@ const ResourceInfoPanel: React.FC<{
             {
               key: '2',
               label: 'Relationships',
-              children: (
-                <>{relations && renderRelation(relations, typeStats)}</>
-              ),
+              children: <>{relations && renderRelation(relations, typeStats)}</>,
               extra: (
                 <Popover
                   content={() => {
                     return (
                       <div>
                         <p>
-                          These are the known relations between resources of
-                          this type and other resources in this project.
-                          <br /> It also shows how many times these relations
-                          are observed.
+                          These are the known relations between resources of this type and other
+                          resources in this project.
+                          <br /> It also shows how many times these relations are observed.
                         </p>
                       </div>
                     );
@@ -186,7 +168,7 @@ const ResourceInfoPanel: React.FC<{
                   placement="bottomRight"
                 >
                   <Button
-                    onClick={event => event.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
                     size="small"
                     icon={<InfoCircleOutlined />}
                   />

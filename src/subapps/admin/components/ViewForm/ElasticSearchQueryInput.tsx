@@ -7,10 +7,7 @@ import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/lib/codemirror.css';
 
 // import { UnControlled as CodeMirror } from 'react-codemirror2';
-import {
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import * as React from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 

@@ -32,27 +32,17 @@ const ProjectForm: React.FC<{
 }> = ({ onClickCancel, onSubmit, busy, project, isFullForm }) => {
   const [name, setName] = React.useState<string>(project ? project.name : '');
   const [nameError, setNameError] = React.useState<boolean>(false);
-  const [description, setDescription] = React.useState<string>(
-    project ? project.description : ''
-  );
-  const [descriptionError, setDescriptionError] = React.useState<boolean>(
-    false
-  );
-  const [topic, setTopic] = React.useState<string>(
-    project && project.topic ? project.topic : ''
-  );
+  const [description, setDescription] = React.useState<string>(project ? project.description : '');
+  const [descriptionError, setDescriptionError] = React.useState<boolean>(false);
+  const [topic, setTopic] = React.useState<string>(project && project.topic ? project.topic : '');
   const [hypotheses, setHypotheses] = React.useState<string>(
     project && project.hypotheses ? project.hypotheses : ''
   );
-  const [goals, setGoals] = React.useState<string>(
-    project && project.goals ? project.goals : ''
-  );
+  const [goals, setGoals] = React.useState<string>(project && project.goals ? project.goals : '');
   const [questions, setQuestions] = React.useState<string>(
     project && project.questions ? project.questions : ''
   );
-  const [dueDate, setDueDate] = React.useState<any>(
-    project ? project.dueDate : null
-  );
+  const [dueDate, setDueDate] = React.useState<any>(project ? project.dueDate : null);
   const [dateError, setDateError] = React.useState<boolean>(false);
   const [visibility, setVisibility] = React.useState(
     project && project.visibility ? project.visibility : 'public'
@@ -156,7 +146,7 @@ const ProjectForm: React.FC<{
             <Item label="Project Visibility">
               <Radio.Group
                 value={visibility}
-                onChange={event => setVisibility(event.target.value)}
+                onChange={(event) => setVisibility(event.target.value)}
               >
                 <Radio.Button value="public">Public</Radio.Button>
                 <Radio.Button value="private">Private</Radio.Button>
@@ -166,21 +156,15 @@ const ProjectForm: React.FC<{
           {isFullForm ? (
             <Col {...formColumnLayOut}>
               <Item label="Project Description">
-                <Input.TextArea
-                  value={description}
-                  onChange={onChangeDescription}
-                />
+                <Input.TextArea value={description} onChange={onChangeDescription} />
               </Item>
               <Item label="Research Topic">
-                <Input
-                  value={topic}
-                  onChange={event => setTopic(event.target.value)}
-                />
+                <Input value={topic} onChange={(event) => setTopic(event.target.value)} />
               </Item>
               <Item label="Research Question(s)">
                 <Input.TextArea
                   value={questions}
-                  onChange={event => setQuestions(event.target.value)}
+                  onChange={(event) => setQuestions(event.target.value)}
                 />
               </Item>
               <Item label="Provisional End Date">
@@ -193,14 +177,11 @@ const ProjectForm: React.FC<{
               <Item label="Hypotheses">
                 <Input.TextArea
                   value={hypotheses}
-                  onChange={event => setHypotheses(event.target.value)}
+                  onChange={(event) => setHypotheses(event.target.value)}
                 />
               </Item>
               <Item label="Goals and deliverables">
-                <Input.TextArea
-                  value={goals}
-                  onChange={event => setGoals(event.target.value)}
-                />
+                <Input.TextArea value={goals} onChange={(event) => setGoals(event.target.value)} />
               </Item>
             </Col>
           ) : null}

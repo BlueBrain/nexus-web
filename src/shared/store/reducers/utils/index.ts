@@ -29,16 +29,9 @@ export interface AnyFetchableState {
 export const createReducer = (intialState: any, handlers: ActionHandler) => (
   state = intialState,
   action: AnyAction
-) =>
-  handlers.hasOwnProperty(action.type)
-    ? handlers[action.type](state, action)
-    : state;
+) => (handlers.hasOwnProperty(action.type) ? handlers[action.type](state, action) : state);
 
-export const createFetching = ({
-  FAILED,
-  FETCHING,
-  FULFILLED,
-}: ActionTypes) => {
+export const createFetching = ({ FAILED, FETCHING, FULFILLED }: ActionTypes) => {
   return createReducer(false, {
     [FAILED]: () => false,
     [FETCHING]: () => true,
@@ -63,10 +56,7 @@ export const createError = ({ FAILED, FETCHING, FULFILLED }: ActionTypes) =>
     [FULFILLED]: (state, action) => null,
   });
 
-export const createFetchReducer = function(
-  actionTypes: ActionTypes,
-  initialData?: any
-): Reducer {
+export const createFetchReducer = function(actionTypes: ActionTypes, initialData?: any): Reducer {
   return combineReducers({
     isFetching: createFetching(actionTypes),
     data: createResultData(actionTypes, initialData || null),

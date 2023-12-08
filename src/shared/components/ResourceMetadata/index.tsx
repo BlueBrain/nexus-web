@@ -18,11 +18,7 @@ const ResourceMetadata: React.FC<{
         <Row>
           <Col>
             <b>Organization:</b>{' '}
-            <Link
-              to={`/orgs/${orgLabel}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link to={`/orgs/${orgLabel}`} target="_blank" rel="noopener noreferrer">
               {orgLabel}
             </Link>
           </Col>
@@ -51,8 +47,7 @@ const ResourceMetadata: React.FC<{
       <Col span={12}>
         <Row>
           <Col>
-            <b>Created:</b>{' '}
-            <FriendlyTimeAgo date={moment(resource._createdAt)} />
+            <b>Created:</b> <FriendlyTimeAgo date={moment(resource._createdAt)} />
           </Col>
         </Row>
         <Row>
@@ -63,8 +58,7 @@ const ResourceMetadata: React.FC<{
 
         <Row>
           <Col>
-            <b>Updated:</b>{' '}
-            <FriendlyTimeAgo date={moment(resource._updatedAt)} />
+            <b>Updated:</b> <FriendlyTimeAgo date={moment(resource._updatedAt)} />
           </Col>
         </Row>
         <Row>

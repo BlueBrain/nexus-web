@@ -29,11 +29,11 @@ const LinkActivityForm: React.FC<{
   const { name, createdBy, createdAt, resourceType, resourceId } = activity;
 
   const renderOptions = () => {
-    return stepsList.map(step => (
+    return stepsList.map((step) => (
       <Option key={step.id} value={step.id}>
         {step.parentSteps
           .reverse()
-          .map(parentStep => parentStep.name)
+          .map((parentStep) => parentStep.name)
           .join(' > ')}
         {step.parentSteps.length > 0 ? ' > ' : ''}
         {step.name}
@@ -47,9 +47,7 @@ const LinkActivityForm: React.FC<{
 
   return (
     <div className="link-activity-form">
-      <h2 className="link-activity-form__title">
-        Link Activity to Workflow Step
-      </h2>
+      <h2 className="link-activity-form__title">Link Activity to Workflow Step</h2>
       <Row>
         <Col xs={9} sm={9} md={9}>
           <p>
@@ -70,9 +68,7 @@ const LinkActivityForm: React.FC<{
         <Col xs={15} sm={15} md={15}>
           <p className="link-activity-form__types">
             {resourceType && Array.from(resourceType).length > 0 ? (
-              <TypesIconList
-                type={Array.from(resourceType).map(type => labelOf(type))}
-              />
+              <TypesIconList type={Array.from(resourceType).map((type) => labelOf(type))} />
             ) : (
               'No data'
             )}
@@ -104,10 +100,7 @@ const LinkActivityForm: React.FC<{
       <div className="link-activity-form__selection">
         <div>
           <span className="link-activity-form__label">Link to Step</span>
-          <Select
-            onChange={(value: string) => setSelectedStep(value)}
-            style={{ width: '250px' }}
-          >
+          <Select onChange={(value: string) => setSelectedStep(value)} style={{ width: '250px' }}>
             {renderOptions()}
           </Select>
         </div>

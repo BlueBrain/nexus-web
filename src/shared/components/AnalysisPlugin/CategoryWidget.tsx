@@ -14,9 +14,7 @@ const CategoryWidget = ({
   toggleSelectCategory: selectCategory,
 }: CategoryWidgetProps) => {
   const categoriesToDisplay =
-    mode === 'create' || availableCategories === undefined
-      ? allCategories
-      : availableCategories;
+    mode === 'create' || availableCategories === undefined ? allCategories : availableCategories;
 
   return (
     <>

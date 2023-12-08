@@ -1,10 +1,6 @@
 import './FileInfo.scss';
 
-import {
-  CalendarOutlined,
-  EditOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CalendarOutlined, EditOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
@@ -22,16 +18,8 @@ type FileInfoProps = {
   onSave: (title: string, text: string) => void;
 };
 
-const FileInfo = ({
-  text,
-  title,
-  lastUpdated,
-  lastUpdatedBy,
-  onSave,
-}: FileInfoProps) => {
-  const [mode, setMode] = React.useState<'minified' | 'expanded' | 'edit'>(
-    'minified'
-  );
+const FileInfo = ({ text, title, lastUpdated, lastUpdatedBy, onSave }: FileInfoProps) => {
+  const [mode, setMode] = React.useState<'minified' | 'expanded' | 'edit'>('minified');
   const [editedText, setEditedText] = React.useState(text);
   const [editedTitle, setEditedTitle] = React.useState(title);
 
@@ -45,7 +33,7 @@ const FileInfo = ({
                 aria-label="Asset Name"
                 type="text"
                 value={editedTitle}
-                onChange={e => setEditedTitle(e.currentTarget.value)}
+                onChange={(e) => setEditedTitle(e.currentTarget.value)}
               />
             )}
             {mode !== 'edit' && (
@@ -70,9 +58,7 @@ const FileInfo = ({
               <FriendlyTimeAgo
                 date={moment(lastUpdated)}
                 getPopupContainer={() =>
-                  document.getElementsByClassName(
-                    'file-info-wrapper'
-                  )[0] as HTMLElement
+                  document.getElementsByClassName('file-info-wrapper')[0] as HTMLElement
                 }
               />
             </label>
@@ -105,10 +91,7 @@ const FileInfo = ({
                 </Paragraph>
               </div>
               {mode === 'expanded' && (
-                <Button
-                  className="button-blend"
-                  onClick={() => setMode('minified')}
-                >
+                <Button className="button-blend" onClick={() => setMode('minified')}>
                   <span>Read less</span>
                 </Button>
               )}
@@ -119,7 +102,7 @@ const FileInfo = ({
               <TextArea
                 aria-label="Asset Description"
                 value={editedText}
-                onChange={e => setEditedText(e.currentTarget.value)}
+                onChange={(e) => setEditedText(e.currentTarget.value)}
                 rows={8}
               ></TextArea>
               <div style={{ marginTop: '8px', display: 'flex' }}>

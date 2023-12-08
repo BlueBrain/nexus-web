@@ -9,7 +9,7 @@ import { Router } from 'react-router-dom';
 import { Store } from 'redux';
 
 import { configureStore } from '../../../store';
-import { fireEvent, render, screen,waitFor } from '../../../utils/testUtil';
+import { fireEvent, render, screen, waitFor } from '../../../utils/testUtil';
 import AdvancedModeToggle from './AdvancedMode';
 
 describe('AdvancedModeToggle', () => {

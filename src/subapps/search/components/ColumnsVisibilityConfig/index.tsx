@@ -5,10 +5,7 @@ import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
-import {
-  FieldsVisibilityState,
-  fieldVisibilityActionType,
-} from '../../hooks/useGlobalSearch';
+import { FieldsVisibilityState, fieldVisibilityActionType } from '../../hooks/useGlobalSearch';
 
 export type ColumnVisibility = {
   key: string;
@@ -21,15 +18,13 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
   dispatchFieldVisibility: React.Dispatch<fieldVisibilityActionType>;
 }> = ({ columnsVisibility, dispatchFieldVisibility }) => {
   const isAllColumnsVisible = () =>
-    columnsVisibility.fields.filter(el => !el.visible).length === 0;
+    columnsVisibility.fields.filter((el) => !el.visible).length === 0;
 
-  const [
-    isColumnsVisiblilityConfigVisible,
-    setIsColumnsVisiblilityConfigVisible,
-  ] = React.useState(false);
+  const [isColumnsVisiblilityConfigVisible, setIsColumnsVisiblilityConfigVisible] = React.useState(
+    false
+  );
 
-  const countHiddenFields = () =>
-    columnsVisibility.fields.filter(el => !el.visible).length;
+  const countHiddenFields = () => columnsVisibility.fields.filter((el) => !el.visible).length;
 
   const buttonRef = React.useRef<HTMLButtonElement>(null);
 
@@ -47,11 +42,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
         type="link"
       >
         <EyeInvisibleOutlined />
-        {countHiddenFields() > 0 ? (
-          <> {countHiddenFields()} hidden columns</>
-        ) : (
-          <> hide columns</>
-        )}
+        {countHiddenFields() > 0 ? <> {countHiddenFields()} hidden columns</> : <> hide columns</>}
       </Button>
       {isColumnsVisiblilityConfigVisible && (
         <Modal
@@ -64,7 +55,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
           className="column-visibility-config-modal"
         >
           <DragDropContext
-            onDragEnd={result => {
+            onDragEnd={(result) => {
               const { destination, source } = result;
               if (!destination) {
                 return;
@@ -117,7 +108,7 @@ const ColumnsVisibilityConfig: React.FunctionComponent<{
                                 <Switch
                                   size="small"
                                   checked={el.visible}
-                                  onChange={checked =>
+                                  onChange={(checked) =>
                                     dispatchFieldVisibility({
                                       type: 'update',
                                       payload: {

@@ -85,11 +85,7 @@ const SearchBar: React.FC<{
       type: 'search' | 'project' | 'studio';
       label: JSX.Element;
     }[] = [];
-    if (
-      (!query || query === '') &&
-      lastVisited &&
-      lastVisited.type === 'search'
-    ) {
+    if ((!query || query === '') && lastVisited && lastVisited.type === 'search') {
       options.push({
         value: lastVisited.value,
         key: 'search',
@@ -138,11 +134,7 @@ const SearchBar: React.FC<{
       const studioOptions = studioList.map((studioHit, ix) => {
         return {
           key: `studio-${studioHit.label}${ix}`,
-          path: makeStudioUri(
-            studioHit.organisation,
-            studioHit.project,
-            studioHit.studioId
-          ),
+          path: makeStudioUri(studioHit.organisation, studioHit.project, studioHit.studioId),
           type: 'studio' as const,
           label: (
             <Hit
@@ -189,15 +181,13 @@ const SearchBar: React.FC<{
        *
        * See Antd autocomplete bug here https://github.com/ant-design/ant-design/issues/11909
        */
-      value={value
-        .replace(projectOptionValueSuffix, '')
-        .replace(studioOptionValueSuffix, '')}
+      value={value.replace(projectOptionValueSuffix, '').replace(studioOptionValueSuffix, '')}
       listHeight={310}
     >
       <Input
         allowClear
         onKeyDown={handleKeyDown}
-        onChange={e => {
+        onChange={(e) => {
           // clicked clear button or removed the search text.
           if (e.type === 'click' || e.target.value === '') {
             onClear();

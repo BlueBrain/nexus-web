@@ -25,13 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return (
-        <Result
-          status="error"
-          title="Error"
-          subTitle="Sorry, something went wrong."
-        />
-      );
+      return <Result status="error" title="Error" subTitle="Sorry, something went wrong." />;
     }
     return this.props.children;
   }

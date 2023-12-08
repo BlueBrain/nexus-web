@@ -11,12 +11,13 @@ const SchemaLink: React.FunctionComponent<{
     <a
       href={constrainedBy}
       target="_blank"
-      onClick={e => {
+      onClick={(e) => {
         if (goToSchema) {
           e.preventDefault();
           goToSchema();
         }
-      }} rel="noreferrer"
+      }}
+      rel="noreferrer"
     >
       {constrainedBy}
     </a>

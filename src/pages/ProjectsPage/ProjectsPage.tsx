@@ -6,11 +6,7 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import {
-  NexusClient,
-  ProjectList,
-  ProjectResponseCommon,
-} from '@bbp/nexus-sdk/es';
+import { NexusClient, ProjectList, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Input, InputRef, List, Spin } from 'antd';
 import pluralize from 'pluralize';
@@ -29,10 +25,7 @@ import { ModalsActionsEnum } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
 import formatNumber from '../../utils/formatNumber';
 import timeago from '../../utils/timeago';
-import {
-  LoadMoreFooter,
-  TSort,
-} from '../OrganizationsListPage/OrganizationListPage';
+import { LoadMoreFooter, TSort } from '../OrganizationsListPage/OrganizationListPage';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 
 type TProjectOptions = {
@@ -156,7 +149,7 @@ export const useInfiniteProjectsQuery = ({
     queryKey: ['fusion-projects', { query, sort }],
     queryFn: ({ pageParam = 0 }) =>
       fetchProjectsList({ nexus, query, sort, from: pageParam, size: 10 }),
-    getNextPageParam: lastPage =>
+    getNextPageParam: (lastPage) =>
       (lastPage as TNewProjectList)._next
         ? new URL((lastPage as TNewProjectList)._next).searchParams.get('from')
         : undefined,
@@ -200,12 +193,9 @@ const ProjectsPage: React.FC<{}> = ({}) => {
     sort,
   });
 
-  const total =
-    data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
+  const total = data && data.pages ? ((data.pages[0] as ProjectList)?._total as number) : 0;
   const dataSource: ProjectResponseCommon[] =
-    data && data.pages
-      ? data.pages.map(page => (page as ProjectList)._results).flat()
-      : [];
+    data && data.pages ? data.pages.map((page) => (page as ProjectList)._results).flat() : [];
   if (!query.trim().length) {
     totalProjectsRef.current = total;
   }
@@ -220,7 +210,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
       });
     }
   };
-  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
+  const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = (e) =>
     setQueryString(e.target.value);
 
   useIntersectionObserver({
@@ -244,10 +234,7 @@ const ProjectsPage: React.FC<{}> = ({}) => {
           total && !query ? (
             `Total of ${total} ${pluralize('Project', total)}`
           ) : total && query ? (
-            `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize(
-              'Project',
-              total
-            )}`
+            `Filtering ${total} of ${totalProjectsRef.current}  ${pluralize('Project', total)}`
           ) : isLoading ? (
             <LoadingOutlined />
           ) : (

@@ -1,4 +1,4 @@
-import { Resource,ResourceLink } from '@bbp/nexus-sdk/es';
+import { Resource, ResourceLink } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
@@ -9,7 +9,7 @@ import GraphControlPanel from '../../components/Graph/GraphControlPanel';
 import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../containers/ResourceViewContainer';
 import useNotification from '../../hooks/useNotification';
-import { getOrgAndProjectFromResource,getResourceLabel } from '../../utils';
+import { getOrgAndProjectFromResource, getResourceLabel } from '../../utils';
 import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import {
   createNodesAndEdgesFromResourceLinks,
@@ -33,9 +33,7 @@ const GraphContainer: React.FunctionComponent<{
     resourceData?: ElementNodeData['resourceData'];
     absoluteAddress: string;
   } | null>(null);
-  const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>(
-    []
-  );
+  const [elements, setElements] = React.useState<cytoscape.ElementDefinition[]>([]);
   const [{ error, links, total, next }, setLinks] = React.useState<{
     error: Error | null;
     links: ResourceLink[];
@@ -49,11 +47,7 @@ const GraphContainer: React.FunctionComponent<{
   });
   const [loading, setLoading] = React.useState(false);
 
-  const getResourceLinks = async (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
-  ) => {
+  const getResourceLinks = async (orgLabel: string, projectLabel: string, resourceId: string) => {
     return await nexus.Resource.links(
       orgLabel,
       projectLabel,
@@ -77,7 +71,7 @@ const GraphContainer: React.FunctionComponent<{
     const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
 
     getResourceLinks(orgLabel, projectLabel, resource['@id'])
-      .then(response => {
+      .then((response) => {
         fetchedLinks = response._results;
 
         setLinks({
@@ -88,13 +82,10 @@ const GraphContainer: React.FunctionComponent<{
         });
 
         return Promise.all(
-          fetchedLinks.map(
-            async link =>
-              await makeNode(link, resource['@id'], getResourceLinks)
-          )
+          fetchedLinks.map(async (link) => await makeNode(link, resource['@id'], getResourceLinks))
         );
       })
-      .then(linkNodes => {
+      .then((linkNodes) => {
         const newElements: cytoscape.ElementDefinition[] = [
           {
             data: {
@@ -106,17 +97,13 @@ const GraphContainer: React.FunctionComponent<{
           // Link Nodes
           ...linkNodes,
           // Link Path Nodes and Edges
-          ...createNodesAndEdgesFromResourceLinks(
-            fetchedLinks,
-            resource['@id'],
-            collapsed
-          ),
+          ...createNodesAndEdgesFromResourceLinks(fetchedLinks, resource['@id'], collapsed),
         ];
 
         setElements(newElements);
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: `Could not fetch resource info for node ${resource['@id']}`,
           description: error.message,
@@ -127,13 +114,7 @@ const GraphContainer: React.FunctionComponent<{
   }, [resource._self, reset, collapsed]);
 
   const handleNodeClick = async (id: string, data: ElementNodeData) => {
-    const {
-      isBlankNode,
-      isExternal,
-      isExpandable,
-      resourceData,
-      isExpanded,
-    } = data;
+    const { isBlankNode, isExternal, isExpandable, resourceData, isExpanded } = data;
     if (isBlankNode || isExternal || !resourceData) {
       return;
     }
@@ -143,7 +124,7 @@ const GraphContainer: React.FunctionComponent<{
         const elementsToRemove = getListOfChildrenRecursive(id, elements);
 
         const newElements = elements.filter(
-          element => !elementsToRemove.includes(element.data.id || '')
+          (element) => !elementsToRemove.includes(element.data.id || '')
         );
 
         setElements([...newElements]);
@@ -158,7 +139,7 @@ const GraphContainer: React.FunctionComponent<{
         resourceData.resourceId
       );
 
-      const targetNode = elements.find(element => element.data.id === id);
+      const targetNode = elements.find((element) => element.data.id === id);
       if (!targetNode) {
         return;
       }
@@ -166,7 +147,7 @@ const GraphContainer: React.FunctionComponent<{
       targetNode.data.isExpanded = true;
 
       const newNodes = await Promise.all(
-        response._results.map(link => makeNode(link, id, getResourceLinks))
+        response._results.map((link) => makeNode(link, id, getResourceLinks))
       );
 
       setElements([
@@ -178,17 +159,11 @@ const GraphContainer: React.FunctionComponent<{
           // point to nodes already on the graph
           // we want to make sure to remove these
           // to avoid duplication
-          return !elements
-            .map(element => element.data.id || '')
-            .includes(node.data.id);
+          return !elements.map((element) => element.data.id || '').includes(node.data.id);
         }),
 
         // Link Path Nodes (Blank Nodes) and Edges
-        ...createNodesAndEdgesFromResourceLinks(
-          response._results,
-          id,
-          collapsed
-        ),
+        ...createNodesAndEdgesFromResourceLinks(response._results, id, collapsed),
       ]);
     } catch (error) {
       notification.error({
@@ -212,9 +187,7 @@ const GraphContainer: React.FunctionComponent<{
     const { orgLabel, projectLabel, resourceId } = resourceData;
 
     history.push(
-      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-        resourceId
-      )}${activeTabKey}`
+      `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(resourceId)}${activeTabKey}`
     );
   };
 

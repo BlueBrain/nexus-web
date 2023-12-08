@@ -1,18 +1,7 @@
 import './WorkflowStepWithActivityForm.scss';
 
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Row,
-  Select,
-  Spin,
-} from 'antd';
+import { Button, Col, DatePicker, Form, Input, Modal, Radio, Row, Select, Spin } from 'antd';
 import moment from 'moment';
 import * as React from 'react';
 
@@ -55,9 +44,7 @@ const WorkflowStepWithActivityForm: React.FC<{
   isFullForm,
   hideDescription = false,
 }) => {
-  const [name, setName] = React.useState<string>(
-    (workflowStep && workflowStep.name) || ''
-  );
+  const [name, setName] = React.useState<string>((workflowStep && workflowStep.name) || '');
   const [activityType, setActivityType] = React.useState<string>(
     (workflowStep && workflowStep.activityType) || ''
   );
@@ -70,15 +57,11 @@ const WorkflowStepWithActivityForm: React.FC<{
   const [status, setStatus] = React.useState<Status>(
     (workflowStep && workflowStep.status) || Status.toDo
   );
-  const [dueDate, setDueDate] = React.useState<any>(
-    (workflowStep && workflowStep.dueDate) || null
-  );
+  const [dueDate, setDueDate] = React.useState<any>((workflowStep && workflowStep.dueDate) || null);
 
   const [nameError, setNameError] = React.useState<boolean>(false);
 
-  const [informedBy, setInformedBy] = React.useState<string[]>(
-    informedByIds ? informedByIds : []
-  );
+  const [informedBy, setInformedBy] = React.useState<string[]>(informedByIds ? informedByIds : []);
 
   const formItemLayout =
     layout === 'vertical'
@@ -143,7 +126,7 @@ const WorkflowStepWithActivityForm: React.FC<{
       };
 
       if (informedBy) {
-        data.wasInformedBy = informedBy.map(i => {
+        data.wasInformedBy = informedBy.map((i) => {
           return { '@id': i };
         });
       }
@@ -169,11 +152,7 @@ const WorkflowStepWithActivityForm: React.FC<{
                 icon: <InfoCircleOutlined />,
               }}
             >
-              <Input
-                value={name}
-                onChange={onChangeName}
-                placeholder={'<step-name>'}
-              />
+              <Input value={name} onChange={onChangeName} placeholder={'<step-name>'} />
             </Item>
             <Item label="Previous Steps">
               <Select
@@ -186,7 +165,7 @@ const WorkflowStepWithActivityForm: React.FC<{
                 placeholder="<step-name>"
               >
                 {siblings && siblings.length > 0 ? (
-                  siblings.map(sibling => (
+                  siblings.map((sibling) => (
                     <Select.Option value={sibling['@id']} key={sibling['@id']}>
                       {sibling.name}
                     </Select.Option>
@@ -198,9 +177,7 @@ const WorkflowStepWithActivityForm: React.FC<{
             </Item>
             <Item label="Parent Workflow Step">
               <Select value={parentLabel} disabled>
-                <Select.Option value={parentLabel ? parentLabel : ''}>
-                  {parentLabel}
-                </Select.Option>
+                <Select.Option value={parentLabel ? parentLabel : ''}>{parentLabel}</Select.Option>
               </Select>
             </Item>
           </Col>
@@ -214,11 +191,8 @@ const WorkflowStepWithActivityForm: React.FC<{
                 />
               </Item>
               <Item label="Status">
-                <Radio.Group
-                  value={status}
-                  onChange={event => setStatus(event.target.value)}
-                >
-                  {Object.values(Status).map(status => (
+                <Radio.Group value={status} onChange={(event) => setStatus(event.target.value)}>
+                  {Object.values(Status).map((status) => (
                     <Radio.Button key={`option-${status}`} value={status}>
                       {status}
                     </Radio.Button>
@@ -227,16 +201,13 @@ const WorkflowStepWithActivityForm: React.FC<{
               </Item>
               {!hideDescription && (
                 <Item label="Description">
-                  <Input.TextArea
-                    value={description}
-                    onChange={onChangeDescription}
-                  />
+                  <Input.TextArea value={description} onChange={onChangeDescription} />
                 </Item>
               )}
               <Item label="Summary">
                 <Input.TextArea
                   value={summary}
-                  onChange={event => setSummary(event.target.value)}
+                  onChange={(event) => setSummary(event.target.value)}
                 />
               </Item>
             </Col>
@@ -260,8 +231,8 @@ const WorkflowStepWithActivityForm: React.FC<{
                         Are you sure you want to deprecate this step? <br />
                         <br />
                         <em>
-                          This will result in all substeps and associated tables
-                          also being deprecated.
+                          This will result in all substeps and associated tables also being
+                          deprecated.
                         </em>
                       </>
                     ),
@@ -285,17 +256,10 @@ const WorkflowStepWithActivityForm: React.FC<{
               style={{ textAlign: 'right', width: '100%' }}
               className="workflow-step-form__buttons"
             >
-              <Button
-                style={{ margin: '10px 10px 10px 0' }}
-                onClick={onClickCancel}
-              >
+              <Button style={{ margin: '10px 10px 10px 0' }} onClick={onClickCancel}>
                 Cancel
               </Button>
-              <Button
-                style={{ margin: '10px 10px 10px 0' }}
-                onClick={onClickSubmit}
-                type="primary"
-              >
+              <Button style={{ margin: '10px 10px 10px 0' }} onClick={onClickSubmit} type="primary">
                 Save
               </Button>
             </div>

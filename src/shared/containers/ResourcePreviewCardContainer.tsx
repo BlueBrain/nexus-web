@@ -7,7 +7,7 @@ import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
 import useNotification from '../hooks/useNotification';
-import { getResourceLabel,labelOf } from '../utils';
+import { getResourceLabel, labelOf } from '../utils';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
   resourceData?: ElementNodeData['resourceData'];
@@ -46,14 +46,14 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     if (resourceData) {
       const { orgLabel, projectLabel, resourceId } = resourceData;
       nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId))
-        .then(resource => {
+        .then((resource) => {
           setResource({
             resource,
             error: null,
             busy: false,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           notification.error({
             message: "Couldn't load a resource info",
             description: error.message,
@@ -74,12 +74,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     const label = labelOf(absoluteAddress);
     return (
       <ResourcePreviewCard>
-        <ResourceCardCollapsed
-          label={label}
-          resourceUrl={absoluteAddress}
-          busy={busy}
-          isExternal
-        />
+        <ResourceCardCollapsed label={label} resourceUrl={absoluteAddress} busy={busy} isExternal />
       </ResourcePreviewCard>
     );
   }
@@ -92,10 +87,7 @@ const ResourcePreviewCardContainer: React.FunctionComponent<{
     return (
       <ResourcePreviewCard>
         {showFullCard ? (
-          <ResourceCard
-            resource={resource}
-            onClickCollapse={() => setShowFullCard(false)}
-          />
+          <ResourceCard resource={resource} onClickCollapse={() => setShowFullCard(false)} />
         ) : (
           <ResourceCardCollapsed
             label={label}

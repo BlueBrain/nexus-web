@@ -9,7 +9,7 @@ import { EditorConfiguration } from 'codemirror';
 import React, { forwardRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 
-import { highlightUrlOverlay,INDENT_UNIT } from './editorUtils';
+import { highlightUrlOverlay, INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;
@@ -51,12 +51,9 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
               },
             } as TEditorConfiguration
           }
-          className={clsx(
-            'code-mirror-editor',
-            fullscreen && 'full-screen-mode'
-          )}
+          className={clsx('code-mirror-editor', fullscreen && 'full-screen-mode')}
           onChange={handleChange}
-          editorDidMount={editor => {
+          editorDidMount={(editor) => {
             highlightUrlOverlay(editor);
             (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
           }}

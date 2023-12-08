@@ -1,21 +1,10 @@
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Button,
-  Col,
-  Collapse,
-  Form,
-  Input,
-  Modal,
-  notification,
-  Row,
-  Select,
-  Space,
-} from 'antd';
+import { Button, Col, Collapse, Form, Input, Modal, notification, Row, Select, Space } from 'antd';
 import * as React from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 
 import {
@@ -80,10 +69,7 @@ const PrefixMappingGroupInput: React.FC<{
         ]}
         initialValue={value.namespace}
       >
-        <Input
-          style={{ width: '60%', background: 'white' }}
-          placeholder="namespace"
-        />
+        <Input style={{ width: '60%', background: 'white' }} placeholder="namespace" />
       </Form.Item>
     </Space.Compact>
   );
@@ -118,17 +104,11 @@ const CreateProject: React.FC<{}> = ({}) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const { identities } = useSelector((state: RootState) => state.auth);
-  const userUri = identities?.data?.identities.find(
-    t => t['@type'] === 'User'
-  )?.['@id'];
+  const userUri = identities?.data?.identities.find((t) => t['@type'] === 'User')?.['@id'];
   const [form] = Form.useForm<TProject>();
   const subapp = useOrganisationsSubappContext();
-  const match = useRouteMatch<{ orgLabel: string }>(
-    `/${subapp.namespace}/:orgLabel`
-  );
-  const { isCreateProjectModelVisible } = useSelector(
-    (state: RootState) => state.modals
-  );
+  const match = useRouteMatch<{ orgLabel: string }>(`/${subapp.namespace}/:orgLabel`);
+  const { isCreateProjectModelVisible } = useSelector((state: RootState) => state.modals);
   const orgLabel = match?.params.orgLabel;
   const currentId = 0;
   const activeKeys = [...Array(currentId + 1).keys()].slice(1);
@@ -187,7 +167,7 @@ const CreateProject: React.FC<{}> = ({}) => {
         orgLabel: orgLabel ?? organization,
       },
       {
-        onSuccess: data => {
+        onSuccess: (data) => {
           form.resetFields();
           dispatch({
             type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
@@ -202,7 +182,7 @@ const CreateProject: React.FC<{}> = ({}) => {
             },
           });
         },
-        onError: error => {
+        onError: (error) => {
           form.resetFields();
           notification.error({
             duration: 3,
@@ -215,34 +195,29 @@ const CreateProject: React.FC<{}> = ({}) => {
       }
     );
   };
-  const apiMappingsItems = prefixMappingKeys.activeKeys.map(
-    (key: number, index: number) => (
-      <Form.Item key={key}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 10,
+  const apiMappingsItems = prefixMappingKeys.activeKeys.map((key: number, index: number) => (
+    <Form.Item key={key}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 10,
+        }}
+      >
+        <PrefixMappingGroupInput
+          groupId={key}
+          value={{
+            prefix: '',
+            namespace: '',
           }}
-        >
-          <PrefixMappingGroupInput
-            groupId={key}
-            value={{
-              prefix: '',
-              namespace: '',
-            }}
-          />
-          {prefixMappingKeys.activeKeys.length > 0 ? (
-            <MinusCircleOutlined
-              style={{ color: 'red' }}
-              onClick={() => remove(key)}
-            />
-          ) : null}
-        </div>
-      </Form.Item>
-    )
-  );
+        />
+        {prefixMappingKeys.activeKeys.length > 0 ? (
+          <MinusCircleOutlined style={{ color: 'red' }} onClick={() => remove(key)} />
+        ) : null}
+      </div>
+    </Form.Item>
+  ));
 
   const updateVisibility = () => dispatch(updateProjectModalVisibility(false));
   return (
@@ -278,7 +253,7 @@ const CreateProject: React.FC<{}> = ({}) => {
               defaultValue={orgLabel ?? ''}
             >
               <Select.Option value={''}>{''}</Select.Option>
-              {organizations?._results.map(org => (
+              {organizations?._results.map((org) => (
                 <Select.Option value={org._label} key={org['@id']}>
                   {org._label}
                 </Select.Option>
@@ -300,8 +275,7 @@ const CreateProject: React.FC<{}> = ({}) => {
             },
             {
               pattern: /^[a-zA-Z0-9_-]+$/,
-              message:
-                'Label should include only letters, numbers, underscores, and dashes.',
+              message: 'Label should include only letters, numbers, underscores, and dashes.',
             },
           ]}
         >
@@ -346,10 +320,7 @@ const CreateProject: React.FC<{}> = ({}) => {
                 <>
                   <h4>
                     API Mappings
-                    <PlusCircleOutlined
-                      onClick={add}
-                      style={{ marginLeft: 20, color: 'blue' }}
-                    />
+                    <PlusCircleOutlined onClick={add} style={{ marginLeft: 20, color: 'blue' }} />
                   </h4>
                   {apiMappingsItems}
                 </>
@@ -359,11 +330,7 @@ const CreateProject: React.FC<{}> = ({}) => {
         />
         <Row justify="end" gutter={16}>
           <Col>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={status === 'loading'}
-            >
+            <Button type="primary" htmlType="submit" loading={status === 'loading'}>
               Create
             </Button>
           </Col>

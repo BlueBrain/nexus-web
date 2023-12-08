@@ -18,10 +18,7 @@ describe('datapanel utilities', () => {
   const projectName = 'projectA';
 
   it('serializes resources with no distribution correctly to local storage object', () => {
-    const actualLSResources = toLocalStorageResources(
-      resourceWithoutDistrition,
-      'studios'
-    );
+    const actualLSResources = toLocalStorageResources(resourceWithoutDistrition, 'studios');
     const expectedParentDistributionValue = {
       hasDistribution: false,
       contentSize: 0,
@@ -34,23 +31,14 @@ describe('datapanel utilities', () => {
     expect(actualLSResources[0].localStorageType).toEqual('resource');
     expect(actualLSResources[0]._self).toEqual(resourceWithoutDistrition._self);
     expect(actualLSResources[0].key).toEqual(resourceWithoutDistrition._self);
-    expect(actualLSResources[0].project).toEqual(
-      resourceWithoutDistrition._project
-    );
-    expect(actualLSResources[0].type).toEqual([
-      resourceWithoutDistrition['@type'],
-    ]);
+    expect(actualLSResources[0].project).toEqual(resourceWithoutDistrition._project);
+    expect(actualLSResources[0].type).toEqual([resourceWithoutDistrition['@type']]);
     expect(actualLSResources[0].source).toEqual('studios');
-    expect(actualLSResources[0].distribution).toEqual(
-      expectedParentDistributionValue
-    );
+    expect(actualLSResources[0].distribution).toEqual(expectedParentDistributionValue);
   });
 
   it('serializes resource of type file with no distribution correctly', () => {
-    const actualLSResources = toLocalStorageResources(
-      fileResourceWithNoDistribution,
-      'my-data'
-    );
+    const actualLSResources = toLocalStorageResources(fileResourceWithNoDistribution, 'my-data');
     expect(actualLSResources.length).toEqual(1);
     const expectedParentDistributionValue = {
       hasDistribution: false,
@@ -58,9 +46,7 @@ describe('datapanel utilities', () => {
       encodingFormat: fileResourceWithNoDistribution._mediaType,
       label: fileResourceWithNoDistribution._filename,
     };
-    expect(actualLSResources[0].distribution).toEqual(
-      expectedParentDistributionValue
-    );
+    expect(actualLSResources[0].distribution).toEqual(expectedParentDistributionValue);
     expect(actualLSResources[0].source).toEqual('my-data');
   });
 
@@ -77,9 +63,7 @@ describe('datapanel utilities', () => {
       label: 'metadata.json',
     };
 
-    expect(actualParentDistributionValue).toEqual(
-      expectedParentDistributionValue
-    );
+    expect(actualParentDistributionValue).toEqual(expectedParentDistributionValue);
   });
 
   it('serializes resources with arrays for name correctly', () => {
@@ -129,9 +113,7 @@ describe('datapanel utilities', () => {
       encodingFormat: 'json',
       label: 'metadata.json',
     };
-    expect(actualSerializedItems[0].distribution).toEqual(
-      expectedDistributionValueForParent
-    );
+    expect(actualSerializedItems[0].distribution).toEqual(expectedDistributionValueForParent);
     expect(actualSerializedItems[0].localStorageType).toEqual('resource');
 
     const expectedDistributionValueForChild = {
@@ -141,9 +123,7 @@ describe('datapanel utilities', () => {
       label: 'molecular-systems.ttl',
     };
     const serializedChild = actualSerializedItems[1];
-    expect(serializedChild.distribution).toEqual(
-      expectedDistributionValueForChild
-    );
+    expect(serializedChild.distribution).toEqual(expectedDistributionValueForChild);
     expect(serializedChild._self).toEqual(resource._self);
     expect(serializedChild.key).toEqual(`${resource._self}-1`);
     expect(serializedChild.project).toEqual(resource._project);
@@ -188,9 +168,7 @@ describe('datapanel utilities', () => {
       label: 'metadata.json',
     };
 
-    expect(actualSerializedItems[0].distribution).toEqual(
-      expectedDistributionValue
-    );
+    expect(actualSerializedItems[0].distribution).toEqual(expectedDistributionValue);
   });
 
   it('serializes resources when distribution is empty object', () => {
@@ -203,12 +181,7 @@ describe('datapanel utilities', () => {
 
   it('calculates path for top level resource based on its name', () => {
     const resourceName = 'brain-region-1';
-    const mockResource = getMockResource(
-      resourceName,
-      'resource',
-      orgName,
-      projectName
-    );
+    const mockResource = getMockResource(resourceName, 'resource', orgName, projectName);
     const actualPathProps = pathForTopLevelResources(mockResource, new Map());
 
     const expectPathProps: FilePath = {
@@ -222,12 +195,7 @@ describe('datapanel utilities', () => {
 
   it('encodes path for top level resource when its name has special uri characters', () => {
     const resourceName = 'brain#reg/ion';
-    const mockResource = getMockResource(
-      resourceName,
-      'resource',
-      orgName,
-      projectName
-    );
+    const mockResource = getMockResource(resourceName, 'resource', orgName, projectName);
     const actualPathProps = pathForTopLevelResources(mockResource, new Map());
 
     const expectPathProps: FilePath = {
@@ -248,12 +216,7 @@ describe('datapanel utilities', () => {
       .join('');
     const resourceName = `${namePrefix}${nameSuffix}`;
 
-    const mockResource = getMockResource(
-      resourceName,
-      'resource',
-      orgName,
-      projectName
-    );
+    const mockResource = getMockResource(resourceName, 'resource', orgName, projectName);
     const actualPathProps = pathForTopLevelResources(mockResource, new Map());
 
     const expectPathProps: FilePath = {
@@ -284,12 +247,7 @@ describe('datapanel utilities', () => {
 
   it('suffixes index at the end when there are conflicting paths', () => {
     const resourceName = 'brain-region';
-    const mockResource = getMockResource(
-      resourceName,
-      'resource',
-      orgName,
-      projectName
-    );
+    const mockResource = getMockResource(resourceName, 'resource', orgName, projectName);
 
     const conflictingPath = `/${orgName}/${projectName}/${resourceName}`;
     const pathFrequency = 2;
@@ -312,11 +270,7 @@ describe('datapanel utilities', () => {
     const parentPath = `/${orgName}/${projectName}/parentPath`;
     const filename = 'awesome-file.asc';
     const mockResource = getMockDistribution(filename);
-    const actualPathProps = pathForChildDistributions(
-      mockResource,
-      parentPath,
-      new Map()
-    );
+    const actualPathProps = pathForChildDistributions(mockResource, parentPath, new Map());
 
     const expectPathProps = {
       path: `${parentPath}/awesome-file`,
@@ -357,11 +311,7 @@ describe('datapanel utilities', () => {
       .join('');
     const filename = `${namePrefix}${nameSuffix}.asc`;
     const mockResource = getMockDistribution(filename);
-    const actualPathProps = pathForChildDistributions(
-      mockResource,
-      parentPath,
-      new Map()
-    );
+    const actualPathProps = pathForChildDistributions(mockResource, parentPath, new Map());
 
     const expectPathProps = {
       path: `${parentPath}/${namePrefix}${nameSuffix}`,

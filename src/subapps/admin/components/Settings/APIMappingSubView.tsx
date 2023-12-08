@@ -2,7 +2,7 @@ import './styles.scss';
 
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Form, Input, Row, Space,Spin } from 'antd';
+import { Button, Form, Input, Row, Space, Spin } from 'antd';
 import React, { useState } from 'react';
 import { useRouteMatch } from 'react-router';
 
@@ -97,9 +97,7 @@ const APIMappingSubView = ({ apiMappings, project }: Props) => {
   };
   const handleOnSubmitApiMapping = (data: any) => {
     const mappingObject = data.apiMappings ? data.apiMappings : {};
-    const apiMappings = Object.keys(mappingObject).map(
-      (mapping: any) => data.apiMappings[mapping]
-    );
+    const apiMappings = Object.keys(mappingObject).map((mapping: any) => data.apiMappings[mapping]);
     if (!project) {
       return;
     }
@@ -119,45 +117,29 @@ const APIMappingSubView = ({ apiMappings, project }: Props) => {
         });
       });
   };
-  const apiMappingsItems = prefixMappingKeys.activeKeys.map(
-    (key: number, index: number) => (
-      <Form.Item key={key}>
-        <div className="project-form__form-item">
-          <PrefixMappingGroupInput
-            groupId={key}
-            value={{
-              prefix:
-                (apiMappings &&
-                  apiMappings[key - 1] &&
-                  apiMappings[key - 1].prefix) ||
-                '',
-              namespace:
-                (apiMappings &&
-                  apiMappings[key - 1] &&
-                  apiMappings[key - 1].namespace) ||
-                '',
-            }}
-          />
-          {prefixMappingKeys.activeKeys.length > 0 ? (
-            <DeleteOutlined
-              className="delete-api-mapping-item-btn"
-              onClick={() => remove(key)}
-            />
-          ) : null}
-        </div>
-      </Form.Item>
-    )
-  );
+  const apiMappingsItems = prefixMappingKeys.activeKeys.map((key: number, index: number) => (
+    <Form.Item key={key}>
+      <div className="project-form__form-item">
+        <PrefixMappingGroupInput
+          groupId={key}
+          value={{
+            prefix: (apiMappings && apiMappings[key - 1] && apiMappings[key - 1].prefix) || '',
+            namespace:
+              (apiMappings && apiMappings[key - 1] && apiMappings[key - 1].namespace) || '',
+          }}
+        />
+        {prefixMappingKeys.activeKeys.length > 0 ? (
+          <DeleteOutlined className="delete-api-mapping-item-btn" onClick={() => remove(key)} />
+        ) : null}
+      </div>
+    </Form.Item>
+  ));
   return (
     <div className="settings-view settings-apimappings-view">
       <h2>API Mappings </h2>
       <div className="settings-view-container">
         <div className="api-mappings-content">
-          <Form
-            onFinish={handleOnSubmitApiMapping}
-            labelAlign="left"
-            style={{ marginLeft: 60 }}
-          >
+          <Form onFinish={handleOnSubmitApiMapping} labelAlign="left" style={{ marginLeft: 60 }}>
             <Row gutter={8} style={{ marginBottom: 10 }}>
               <Button
                 style={{ maxWidth: 150, margin: 0, marginRight: 10 }}

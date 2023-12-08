@@ -5,7 +5,7 @@ import * as React from 'react';
 
 const ResourceListBoardComponent: React.FunctionComponent<{
   createList(): void;
-}> = props => {
+}> = (props) => {
   const { createList, children } = props;
   return (
     <>

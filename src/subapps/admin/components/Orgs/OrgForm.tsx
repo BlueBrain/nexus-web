@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal,Spin } from 'antd';
+import { Button, Form, Input, Modal, Spin } from 'antd';
 import * as React from 'react';
 
 export interface OrgFormProps {
@@ -66,8 +66,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
             },
             {
               pattern: /^[a-zA-Z0-9_-]+$/,
-              message:
-                'Label should include only letters, numbers, underscores, and dashes.',
+              message: 'Label should include only letters, numbers, underscores, and dashes.',
             },
           ]}
         >
@@ -83,11 +82,7 @@ const OrgForm: React.FunctionComponent<OrgFormProps> = ({
           <Input placeholder="Description" />
         </Form.Item>
         <Form.Item {...formItemLayoutWithOutLabel}>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={org && org.isDeprecated}
-          >
+          <Button type="primary" htmlType="submit" disabled={org && org.isDeprecated}>
             {mode === 'edit' ? 'Save' : 'Create'}
           </Button>
           {mode === 'edit' && (

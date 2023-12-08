@@ -14,10 +14,8 @@ import { makeDatetimePattern } from './utils';
 
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
-  const identities = useSelector(
-    (state: RootState) => state.auth.identities?.data?.identities
-  );
-  const issuerUri = identities?.find(item => item['@type'] === 'User')?.['@id'];
+  const identities = useSelector((state: RootState) => state.auth.identities?.data?.identities);
+  const issuerUri = identities?.find((item) => item['@type'] === 'User')?.['@id'];
   const [
     {
       dateField,
@@ -79,7 +77,7 @@ const HomeMyData: React.FC<{}> = () => {
       ? `${dateField}-${dateFilterType}-${dateFilterRange}`
       : undefined;
   const order = sort.join('-');
-  const resourceTypes = types?.map(item => get(item, 'value'));
+  const resourceTypes = types?.map((item) => get(item, 'value'));
   const { data: resources, isLoading } = useQuery({
     queryKey: [
       'my-data-resources',
@@ -120,7 +118,7 @@ const HomeMyData: React.FC<{}> = () => {
         // @ts-ignore
         type: resourceTypes,
       }),
-    onError: error => {
+    onError: (error) => {
       notification.error({
         message: 'Error loading data from the server',
         description: isString(error) ? (

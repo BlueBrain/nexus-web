@@ -3,7 +3,7 @@ import { Button, Checkbox } from 'antd';
 import moment from 'moment';
 
 import { getUsername } from '../../../shared/utils';
-import { openFileUploadDialog,selectAsset } from '../../slices/plugins/report';
+import { openFileUploadDialog, selectAsset } from '../../slices/plugins/report';
 import { ReportAssetProps } from '../../types/plugins/report';
 import FriendlyTimeAgo from '../FriendlyDate';
 
@@ -48,19 +48,13 @@ const ReportAssets = ({
               <div
                 aria-label="Report File"
                 className={`asset ${
-                  selectedAssets &&
-                  selectedAssets.findIndex(v => v === asset.id) > -1
+                  selectedAssets && selectedAssets.findIndex((v) => v === asset.id) > -1
                     ? 'selected'
                     : ''
                 }`}
                 style={{
-                  height:
-                    (minThumbnailSize +
-                      imagePreviewScale * (imagePreviewScale / 30)) /
-                    1.6,
-                  width:
-                    minThumbnailSize +
-                    imagePreviewScale * (imagePreviewScale / 30),
+                  height: (minThumbnailSize + imagePreviewScale * (imagePreviewScale / 30)) / 1.6,
+                  width: minThumbnailSize + imagePreviewScale * (imagePreviewScale / 30),
                 }}
                 onClick={() => {
                   if (
@@ -77,18 +71,14 @@ const ReportAssets = ({
                 })}
                 {mode === 'edit' &&
                   'id' in analysisReport &&
-                  currentlyBeingEditedAnalysisReportId ===
-                    analysisReport.id && (
+                  currentlyBeingEditedAnalysisReportId === analysisReport.id && (
                     <Checkbox
-                      checked={
-                        selectedAssets &&
-                        selectedAssets.some(v => v === asset.id)
-                      }
+                      checked={selectedAssets && selectedAssets.some((v) => v === asset.id)}
                       className="selectedCheckbox"
-                      onClick={e => {
+                      onClick={(e) => {
                         e.stopPropagation();
                       }}
-                      onChange={e => {
+                      onChange={(e) => {
                         dispatch(selectAsset({ assetId: asset.id }));
                       }}
                     ></Checkbox>
@@ -98,9 +88,7 @@ const ReportAssets = ({
                 aria-label="Asset Details"
                 className="asset-details"
                 style={{
-                  width:
-                    minThumbnailSize +
-                    imagePreviewScale * (imagePreviewScale / 30),
+                  width: minThumbnailSize + imagePreviewScale * (imagePreviewScale / 30),
                 }}
               >
                 <label
@@ -115,10 +103,7 @@ const ReportAssets = ({
                     &nbsp;
                     {asset.lastUpdatedBy && getUsername(asset.lastUpdatedBy)}
                   </label>
-                  <label
-                    className="asset-details__last-updated"
-                    aria-label="Last Updated"
-                  >
+                  <label className="asset-details__last-updated" aria-label="Last Updated">
                     <CalendarOutlined />
                     &nbsp;
                     <FriendlyTimeAgo date={moment(asset.lastUpdated)} />

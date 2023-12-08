@@ -4,9 +4,7 @@ import authReducer, { AuthState } from '../auth';
 describe('Auth Reducer', () => {
   describe('Identities', () => {
     it('should be fetching', () => {
-      expect(
-        authReducer(undefined, { type: AuthActionTypes.IDENTITY_FETCHING })
-      ).toEqual({
+      expect(authReducer(undefined, { type: AuthActionTypes.IDENTITY_FETCHING })).toEqual({
         identities: {
           isFetching: true,
           data: [],
@@ -20,9 +18,7 @@ describe('Auth Reducer', () => {
           type: AuthActionTypes.IDENTITY_FULFILLED,
           payload: {
             '@context': 'http://context.com/',
-            identities: [
-              { '@type': 'Anonymous', '@id': 'http://anomymous.com' },
-            ],
+            identities: [{ '@type': 'Anonymous', '@id': 'http://anomymous.com' }],
           },
         })
       ).toEqual({
@@ -30,9 +26,7 @@ describe('Auth Reducer', () => {
           isFetching: false,
           data: {
             '@context': 'http://context.com/',
-            identities: [
-              { '@type': 'Anonymous', '@id': 'http://anomymous.com' },
-            ],
+            identities: [{ '@type': 'Anonymous', '@id': 'http://anomymous.com' }],
           },
           error: null,
         },

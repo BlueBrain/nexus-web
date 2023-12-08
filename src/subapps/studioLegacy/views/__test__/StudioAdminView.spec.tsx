@@ -9,7 +9,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { MemoryRouter,Route } from 'react-router';
+import { MemoryRouter, Route } from 'react-router';
 
 import { configureStore } from '../../../../store';
 import { render, screen, server } from '../../../../utils/testUtil';

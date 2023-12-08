@@ -5,7 +5,7 @@ import * as React from 'react';
 const Item: React.FunctionComponent<{
   onClick?: () => void;
   actions?: React.ReactElement | React.ReactElement[];
-}> = props => {
+}> = (props) => {
   return (
     <li className="ListItem" onClick={props.onClick}>
       <div className="body">{props.children}</div>

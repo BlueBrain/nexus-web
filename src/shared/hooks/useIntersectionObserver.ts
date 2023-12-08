@@ -24,8 +24,8 @@ export default function useIntersectionObserver<T>({
     }
 
     const observer = new IntersectionObserver(
-      entries =>
-        entries.forEach(entry => {
+      (entries) =>
+        entries.forEach((entry) => {
           !entry.isIntersecting && onNonIntersect?.();
           entry.isIntersecting && onIntersect();
         }),

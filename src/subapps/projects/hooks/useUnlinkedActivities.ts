@@ -3,10 +3,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import * as React from 'react';
 
-import {
-  distanceFromTopToDisplay,
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import { distanceFromTopToDisplay, parseNexusError } from '../../../shared/hooks/useNotification';
 
 export type UnlinkedActivity = {
   name?: string;
@@ -18,14 +15,9 @@ export type UnlinkedActivity = {
   resourceType: string | string[];
 };
 
-export const useUnlinkedActivities = (
-  orgLabel: string,
-  projectLabel: string
-) => {
+export const useUnlinkedActivities = (orgLabel: string, projectLabel: string) => {
   const nexus = useNexusContext();
-  const [unlinkedActivities, setUnlinkedActivities] = React.useState<
-    UnlinkedActivity[]
-  >([]);
+  const [unlinkedActivities, setUnlinkedActivities] = React.useState<UnlinkedActivity[]>([]);
 
   const unlinkedActivitiesQuery = `PREFIX nxv: <https://bluebrain.github.io/nexus/vocabulary/>
   PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -57,34 +49,26 @@ export const useUnlinkedActivities = (
       unlinkedActivitiesQuery
     )
       .then((response: any) => {
-        const activities: any[] = response.results.bindings.map(
-          (activity: any) => ({
-            name: activity.name ? activity.name.value : undefined,
-            resourceId: activity.resource.value,
-            createdAt: activity.createdAt.value,
-            createdBy: activity.createdBy.value,
-            used: activity.used ? activity.used.value : undefined,
-            generated: activity.generated
-              ? activity.generated.value
-              : undefined,
-            resourceType: activity.resourceType.value,
-          })
-        );
+        const activities: any[] = response.results.bindings.map((activity: any) => ({
+          name: activity.name ? activity.name.value : undefined,
+          resourceId: activity.resource.value,
+          createdAt: activity.createdAt.value,
+          createdBy: activity.createdBy.value,
+          used: activity.used ? activity.used.value : undefined,
+          generated: activity.generated ? activity.generated.value : undefined,
+          resourceType: activity.resourceType.value,
+        }));
 
         const uniqueActivities = [
-          ...new Set(
-            response.results.bindings.map(
-              (activity: any) => activity.resource.value
-            )
-          ),
+          ...new Set(response.results.bindings.map((activity: any) => activity.resource.value)),
         ];
 
         const parsedActivities: UnlinkedActivity[] = [];
 
-        uniqueActivities.forEach(activity => {
+        uniqueActivities.forEach((activity) => {
           parsedActivities.push(
             activities
-              .filter(data => data.resourceId === activity)
+              .filter((data) => data.resourceId === activity)
               .reduce(
                 (acc, current) => {
                   if (current.name) {
@@ -132,7 +116,7 @@ export const useUnlinkedActivities = (
 
         setUnlinkedActivities(parsedActivities);
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'An error occurred while fetching detached activities',
           description: parseNexusError(error),

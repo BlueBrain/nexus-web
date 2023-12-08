@@ -3,13 +3,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
 import { SearchLayout } from '../../../../../subapps/search/hooks/useGlobalSearch';
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '../../../../../utils/testUtil';
+import { act, fireEvent, render, screen, waitFor } from '../../../../../utils/testUtil';
 import SearchLayouts from '..';
 
 describe('SearchLayouts', () => {
@@ -29,14 +23,7 @@ describe('SearchLayouts', () => {
     },
     {
       name: 'Neuron Morphology',
-      visibleFields: [
-        'project',
-        'name',
-        'description',
-        'brainRegion',
-        'mType',
-        'subjectSpecies',
-      ],
+      visibleFields: ['project', 'name', 'description', 'brainRegion', 'mType', 'subjectSpecies'],
       filters: [
         {
           field: '@type',

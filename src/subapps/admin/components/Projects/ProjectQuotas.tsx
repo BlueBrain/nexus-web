@@ -8,12 +8,8 @@ const ProjectQuotas: React.FC<{
   quota: Quota;
   statistics: ProjectStatistics;
 }> = ({ quota, statistics }) => {
-  const percentOfResources = Math.ceil(
-    (statistics.resourcesCount / quota.resources) * 100
-  );
-  const percentOfEvents = Math.ceil(
-    (statistics.eventsCount / quota.events) * 100
-  );
+  const percentOfResources = Math.ceil((statistics.resourcesCount / quota.resources) * 100);
+  const percentOfEvents = Math.ceil((statistics.eventsCount / quota.events) * 100);
 
   return (
     <div className="project-quotas">

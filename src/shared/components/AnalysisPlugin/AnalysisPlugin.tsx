@@ -9,7 +9,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
-import { flatten, intersection, map,uniq, without } from 'lodash';
+import { flatten, intersection, map, uniq, without } from 'lodash';
 import moment from 'moment';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -25,10 +25,7 @@ import {
   editReport,
   initialize,
 } from '../../slices/plugins/report';
-import {
-  AnalysisPluginProps,
-  SoftwareContribution,
-} from '../../types/plugins/report';
+import { AnalysisPluginProps, SoftwareContribution } from '../../types/plugins/report';
 import FriendlyTimeAgo from '../FriendlyDate';
 import CategoryEditWidget from './CategoryEditWidget';
 import CategoryWidget from './CategoryWidget';
@@ -60,12 +57,9 @@ const AnalysisPlugin = ({
   dispatch,
   onClickRelatedResource,
 }: AnalysisPluginProps) => {
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-    []
-  );
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>([]);
-  const defaultactivekey =
-    analysisResourceType === 'individual_report' ? '0' : -1;
+  const defaultactivekey = analysisResourceType === 'individual_report' ? '0' : -1;
 
   const selectCategory = (value: string) => {
     !selectedCategories.includes(value)
@@ -96,9 +90,8 @@ const AnalysisPlugin = ({
   const availableReportTypes = (intersection(
     uniq(flatten(map(analysisReports, 'types'))),
     allReportTypes.map(({ label }) => label)
-  ) as string[]).map(l => {
-    const typeDescription = allReportTypes.find(t => t.label === l)
-      ?.description as string;
+  ) as string[]).map((l) => {
+    const typeDescription = allReportTypes.find((t) => t.label === l)?.description as string;
     return { label: l, description: typeDescription };
   });
 
@@ -115,10 +108,9 @@ const AnalysisPlugin = ({
   const availableReportCategories = (intersection(
     uniq(flatten(map(analysisReports, 'categories'))),
     allReportCategoriesMatchingContainerType.map(({ label }) => label)
-  ) as string[]).map(l => {
-    const categoryDescription = allReportCategoriesMatchingContainerType.find(
-      c => c.label === l
-    )?.description as string;
+  ) as string[]).map((l) => {
+    const categoryDescription = allReportCategoriesMatchingContainerType.find((c) => c.label === l)
+      ?.description as string;
     return { label: l, description: categoryDescription };
   });
 
@@ -132,9 +124,7 @@ const AnalysisPlugin = ({
           onSave={onSave}
           FileUpload={FileUpload}
           analysisReportId={
-            currentlyBeingEditedAnalysisReportId
-              ? currentlyBeingEditedAnalysisReportId
-              : undefined
+            currentlyBeingEditedAnalysisReportId ? currentlyBeingEditedAnalysisReportId : undefined
           }
           imagePreviewScale={imagePreviewScale}
         />
@@ -175,7 +165,7 @@ const AnalysisPlugin = ({
           <>
             {fileUploadModal}
             {analysisReports
-              .filter(a => {
+              .filter((a) => {
                 if (['edit', 'view'].includes(mode) && a.id !== undefined) {
                   if (
                     selectedCategories.length > 0 &&
@@ -188,8 +178,7 @@ const AnalysisPlugin = ({
                   if (
                     selectedTypes.length > 0 &&
                     a.types !== undefined &&
-                    intersection(selectedTypes, a.types).length !==
-                      selectedTypes.length
+                    intersection(selectedTypes, a.types).length !== selectedTypes.length
                   ) {
                     return false;
                   }
@@ -211,49 +200,43 @@ const AnalysisPlugin = ({
                       label: (
                         <>
                           {analysisReport.name}
-                          {!!analysisReport.categories &&
-                            analysisReport.categories.length > 0 && (
-                              <span
-                                className="cat"
-                                style={{
-                                  fontWeight: 500,
-                                }}
-                              >
-                                {analysisReport.categories.map((c, i) => (
-                                  <span
-                                    key={i}
-                                    style={{ backgroundColor: '#E6F7FF' }}
-                                  >
-                                    {c}
-                                  </span>
-                                ))}{' '}
-                              </span>
-                            )}
-                          {!!analysisReport.types &&
-                            analysisReport.types.length > 0 && (
-                              <span className="types">
-                                {analysisReport.types.map((t, i) => (
-                                  <span
-                                    key={i}
-                                    style={{
-                                      backgroundColor: '#F5F5F5',
-                                      borderColor: '#F5F5F5',
-                                      outline: 'none',
-                                    }}
-                                  >
-                                    {t}
-                                  </span>
-                                ))}{' '}
-                              </span>
-                            )}
+                          {!!analysisReport.categories && analysisReport.categories.length > 0 && (
+                            <span
+                              className="cat"
+                              style={{
+                                fontWeight: 500,
+                              }}
+                            >
+                              {analysisReport.categories.map((c, i) => (
+                                <span key={i} style={{ backgroundColor: '#E6F7FF' }}>
+                                  {c}
+                                </span>
+                              ))}{' '}
+                            </span>
+                          )}
+                          {!!analysisReport.types && analysisReport.types.length > 0 && (
+                            <span className="types">
+                              {analysisReport.types.map((t, i) => (
+                                <span
+                                  key={i}
+                                  style={{
+                                    backgroundColor: '#F5F5F5',
+                                    borderColor: '#F5F5F5',
+                                    outline: 'none',
+                                  }}
+                                >
+                                  {t}
+                                </span>
+                              ))}{' '}
+                            </span>
+                          )}
                         </>
                       ),
                       children: (
                         <>
                           {mode === 'edit' &&
                             'id' in analysisReport &&
-                            currentlyBeingEditedAnalysisReportId ===
-                              analysisReport.id && (
+                            currentlyBeingEditedAnalysisReportId === analysisReport.id && (
                               <div style={{ display: 'flex' }}>
                                 <div
                                   className="actions"
@@ -301,8 +284,7 @@ const AnalysisPlugin = ({
                             )}
                           {mode === 'edit' &&
                             'id' in analysisReport &&
-                            currentlyBeingEditedAnalysisReportId ===
-                              analysisReport.id && (
+                            currentlyBeingEditedAnalysisReportId === analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -318,7 +300,7 @@ const AnalysisPlugin = ({
                                   aria-label="Report Name"
                                   required={true}
                                   value={currentlyBeingEditedAnalysisReportName}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     dispatch(
                                       changeAnalysisName({
                                         name: e.target.value,
@@ -331,10 +313,7 @@ const AnalysisPlugin = ({
                             )}
                           {mode === 'view' && (
                             <>
-                              <div
-                                className="report-header"
-                                style={{ display: 'flex' }}
-                              >
+                              <div className="report-header" style={{ display: 'flex' }}>
                                 <section
                                   aria-label="Analysis Metadata"
                                   className="analysis-metadata"
@@ -348,18 +327,11 @@ const AnalysisPlugin = ({
                                     <label>
                                       {' '}
                                       {analysisReport.createdAt && (
-                                        <FriendlyTimeAgo
-                                          date={moment(
-                                            analysisReport.createdAt
-                                          )}
-                                        />
+                                        <FriendlyTimeAgo date={moment(analysisReport.createdAt)} />
                                       )}
                                     </label>
                                   </span>
-                                  <span
-                                    className="updated"
-                                    style={{ marginLeft: '8px' }}
-                                  >
+                                  <span className="updated" style={{ marginLeft: '8px' }}>
                                     <span>
                                       <SyncOutlined />{' '}
                                       <span style={{ fontWeight: 'bold' }}>
@@ -370,9 +342,7 @@ const AnalysisPlugin = ({
                                         {' '}
                                         {analysisReport.updatedAt && (
                                           <FriendlyTimeAgo
-                                            date={moment(
-                                              analysisReport.updatedAt
-                                            )}
+                                            date={moment(analysisReport.updatedAt)}
                                           />
                                         )}
                                       </label>
@@ -397,57 +367,44 @@ const AnalysisPlugin = ({
                                         editReport({
                                           analysisId: analysisReport.id,
                                           analaysisName: analysisReport.name,
-                                          analysisDescription:
-                                            analysisReport.description,
+                                          analysisDescription: analysisReport.description,
                                           categories: analysisReport.categories,
                                           types: analysisReport.types,
-                                          tools: (analysisReport.contribution?.filter(
-                                            c =>
-                                              [c.agent]
-                                                .flat()
-                                                .find(a =>
-                                                  [a['@type']]
-                                                    .flat()
-                                                    .includes('Software')
-                                                )
-                                          ) as SoftwareContribution[])?.map(
-                                            s => ({
-                                              scriptPath: s.repository,
-                                              description: s.description,
-                                            })
-                                          ),
+                                          tools: (analysisReport.contribution?.filter((c) =>
+                                            [c.agent]
+                                              .flat()
+                                              .find((a) => [a['@type']].flat().includes('Software'))
+                                          ) as SoftwareContribution[])?.map((s) => ({
+                                            scriptPath: s.repository,
+                                            description: s.description,
+                                          })),
                                         })
                                       )
                                     }
                                   ></Button>
-                                  {analysisResourceType ===
-                                    'individual_report' &&
-                                    containerId && (
-                                      <>
-                                        {' '}
-                                        <Button
-                                          type="default"
-                                          onClick={() =>
-                                            onClickRelatedResource(containerId)
-                                          }
-                                          style={{
-                                            padding: '1',
-                                            maxWidth: '230px',
-                                            overflow: 'hidden',
-                                            background: 'transparent',
-                                          }}
-                                          aria-label="Go to parent resource"
-                                        >
-                                          Navigate to{' '}
-                                          {analysisReport.containerName
-                                            ? analysisReport.containerName
-                                            : 'parent resource'}
-                                          &nbsp;&#x2197;
-                                        </Button>
-                                      </>
-                                    )}
-                                  {analysisResourceType !==
-                                    'individual_report' && (
+                                  {analysisResourceType === 'individual_report' && containerId && (
+                                    <>
+                                      {' '}
+                                      <Button
+                                        type="default"
+                                        onClick={() => onClickRelatedResource(containerId)}
+                                        style={{
+                                          padding: '1',
+                                          maxWidth: '230px',
+                                          overflow: 'hidden',
+                                          background: 'transparent',
+                                        }}
+                                        aria-label="Go to parent resource"
+                                      >
+                                        Navigate to{' '}
+                                        {analysisReport.containerName
+                                          ? analysisReport.containerName
+                                          : 'parent resource'}
+                                        &nbsp;&#x2197;
+                                      </Button>
+                                    </>
+                                  )}
+                                  {analysisResourceType !== 'individual_report' && (
                                     <Button
                                       type="default"
                                       title="Open discussion on report resource"
@@ -460,9 +417,7 @@ const AnalysisPlugin = ({
                                       }}
                                       onClick={() =>
                                         analysisReport.id &&
-                                        onClickRelatedResource(
-                                          analysisReport.id
-                                        )
+                                        onClickRelatedResource(analysisReport.id)
                                       }
                                     ></Button>
                                   )}
@@ -473,8 +428,7 @@ const AnalysisPlugin = ({
 
                           {(mode === 'view' ||
                             ('id' in analysisReport &&
-                              currentlyBeingEditedAnalysisReportId !==
-                                analysisReport.id)) &&
+                              currentlyBeingEditedAnalysisReportId !== analysisReport.id)) &&
                             analysisReport.description !== undefined &&
                             analysisReport.description !== '' && (
                               <>
@@ -505,8 +459,7 @@ const AnalysisPlugin = ({
 
                           {mode === 'edit' &&
                             'id' in analysisReport &&
-                            currentlyBeingEditedAnalysisReportId ===
-                              analysisReport.id && (
+                            currentlyBeingEditedAnalysisReportId === analysisReport.id && (
                               <>
                                 <h4
                                   style={{
@@ -519,12 +472,10 @@ const AnalysisPlugin = ({
                                 <Input.TextArea
                                   placeholder="Report Description"
                                   aria-label="Report Description"
-                                  value={
-                                    currentlyBeingEditedAnalysisReportDescription
-                                  }
+                                  value={currentlyBeingEditedAnalysisReportDescription}
                                   rows={10}
                                   style={{ maxWidth: '900px' }}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     dispatch(
                                       changeAnalysisDescription({
                                         description: e.currentTarget.value,
@@ -538,9 +489,7 @@ const AnalysisPlugin = ({
                           {mode === 'edit' && (
                             <section>
                               <CategoryEditWidget
-                                allCategories={
-                                  allReportCategoriesMatchingContainerType
-                                }
+                                allCategories={allReportCategoriesMatchingContainerType}
                                 dispatch={dispatch}
                                 currentlyBeingEditedAnalysisReportCategories={
                                   currentlyBeingEditedAnalysisReportCategories
@@ -568,26 +517,21 @@ const AnalysisPlugin = ({
                               </h4>
                               <ToolsEdit
                                 tools={
-                                  currentlyBeingEditedAnalysisReportTools !==
-                                  undefined
+                                  currentlyBeingEditedAnalysisReportTools !== undefined
                                     ? currentlyBeingEditedAnalysisReportTools
                                     : []
                                 }
-                                onUpdateTools={tools =>
-                                  dispatch(changeTools({ tools }))
-                                }
+                                onUpdateTools={(tools) => dispatch(changeTools({ tools }))}
                               />
                             </>
                           )}
                           {mode === 'view' && (
                             <Tools
-                              tools={(analysisReport.contribution?.filter(c =>
+                              tools={(analysisReport.contribution?.filter((c) =>
                                 [c.agent]
                                   .flat()
-                                  .find(a =>
-                                    [a['@type']].flat().includes('Software')
-                                  )
-                              ) as SoftwareContribution[])?.map(s => ({
+                                  .find((a) => [a['@type']].flat().includes('Software'))
+                              ) as SoftwareContribution[])?.map((s) => ({
                                 scriptPath: s.repository,
                                 description: s.description,
                               }))}
@@ -597,22 +541,16 @@ const AnalysisPlugin = ({
                                     editReport({
                                       analysisId: analysisReport.id,
                                       analaysisName: analysisReport.name,
-                                      analysisDescription:
-                                        analysisReport.description,
+                                      analysisDescription: analysisReport.description,
                                       categories: analysisReport.categories,
                                       types: analysisReport.types,
-                                      tools: [
-                                        { scriptPath: '', description: '' },
-                                      ],
+                                      tools: [{ scriptPath: '', description: '' }],
                                     })
                                   );
                               }}
                             />
                           )}
-                          <section
-                            className="actionsPanel"
-                            aria-label="actions"
-                          >
+                          <section className="actionsPanel" aria-label="actions">
                             {mode === 'view' && (
                               <>
                                 <Button
@@ -625,21 +563,19 @@ const AnalysisPlugin = ({
                                 </Button>
                               </>
                             )}
-                            {mode === 'edit' &&
-                              selectedAssets &&
-                              selectedAssets.length > 0 && (
-                                <Button
-                                  type="primary"
-                                  danger
-                                  style={{ marginLeft: '20px' }}
-                                  aria-label="Delete"
-                                  onClick={() => {
-                                    onDelete();
-                                  }}
-                                >
-                                  Delete
-                                </Button>
-                              )}
+                            {mode === 'edit' && selectedAssets && selectedAssets.length > 0 && (
+                              <Button
+                                type="primary"
+                                danger
+                                style={{ marginLeft: '20px' }}
+                                aria-label="Delete"
+                                onClick={() => {
+                                  onDelete();
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            )}
                           </section>
                           <div style={{ color: '#888888' }}>
                             Total: {analysisReport.assets.length} assets

@@ -1,23 +1,17 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button,Drawer } from 'antd';
+import { Button, Drawer } from 'antd';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import { labelOf } from '../../../shared/utils';
 import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
 import fusionConfig from '../config';
 import { StepResource } from '../types';
-import {
-  fetchChildrenForStep,
-  fetchTablesForStep,
-  fetchTopLevelSteps,
-} from '../utils';
+import { fetchChildrenForStep, fetchTablesForStep, fetchTopLevelSteps } from '../utils';
 
 const StepInfoContainer: React.FC<{
   step: StepResource;
@@ -33,19 +27,13 @@ const StepInfoContainer: React.FC<{
   const [parentLabel, setParentLabel] = React.useState<string>();
   const [informedByIds, setInformedByIds] = React.useState<string[]>([]);
   const [originalPayload, setOriginalPayload] = React.useState<StepResource>();
-  const [siblings, setSiblings] = React.useState<
-    { name: string; '@id': string }[]
-  >([]);
+  const [siblings, setSiblings] = React.useState<{ name: string; '@id': string }[]>([]);
   const [isEditingDescription, setIsEditingDescription] = React.useState(false);
 
   React.useEffect(() => {
-    nexus.Resource.getSource(
-      orgLabel,
-      projectLabel,
-      encodeURIComponent(step['@id'])
-    )
-      .then(response => setOriginalPayload(response as StepResource))
-      .catch(error =>
+    nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(step['@id']))
+      .then((response) => setOriginalPayload(response as StepResource))
+      .catch((error) =>
         notification.error({
           message: 'Failed to load original payload',
           description: parseNexusError(error),
@@ -53,16 +41,12 @@ const StepInfoContainer: React.FC<{
       );
 
     if (step.hasParent) {
-      nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(step.hasParent['@id'])
-      )
-        .then(response => {
+      nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(step.hasParent['@id']))
+        .then((response) => {
           const parent = response as StepResource;
           setParentLabel(parent.name);
         })
-        .catch(error =>
+        .catch((error) =>
           notification.error({
             message: 'Failed to load parent activity',
             description: parseNexusError(error),
@@ -85,20 +69,16 @@ const StepInfoContainer: React.FC<{
         step.hasParent['@id']
       )) as StepResource[];
     } else {
-      const allSteps = (await fetchTopLevelSteps(
-        nexus,
-        orgLabel,
-        projectLabel
-      )) as StepResource[];
-      siblingSet = allSteps.filter(step => !step.hasParent);
+      const allSteps = (await fetchTopLevelSteps(nexus, orgLabel, projectLabel)) as StepResource[];
+      siblingSet = allSteps.filter((step) => !step.hasParent);
     }
 
     setSiblings(
       siblingSet
-        .filter(child => {
+        .filter((child) => {
           return child['@id'] !== step['@id'];
         })
-        .map(child => ({
+        .map((child) => ({
           name: child.name,
           '@id': child._self,
         }))
@@ -121,14 +101,14 @@ const StepInfoContainer: React.FC<{
 
   const updateStep = (data: any) => {
     updateStepInfo(data)
-      .then(response => {
+      .then((response) => {
         onUpdate();
         setShowForm(false);
         notification.success({
           message: `Workflow Step ${data.name} updated successfully`,
         });
       })
-      .catch(error =>
+      .catch((error) =>
         notification.error({
           message: 'Failed to update Workflow Step',
           description: parseNexusError(error),
@@ -142,14 +122,14 @@ const StepInfoContainer: React.FC<{
     };
 
     updateStepInfo(data)
-      .then(response => {
+      .then((response) => {
         onUpdate();
         setIsEditingDescription(false);
         notification.success({
           message: `Workflow Step ${step.name} updated successfully`,
         });
       })
-      .catch(error =>
+      .catch((error) =>
         notification.error({
           message: 'Failed to update description',
           description: parseNexusError(error),
@@ -166,7 +146,7 @@ const StepInfoContainer: React.FC<{
     )) as StepResource[];
     const grandchildren: StepResource[] = (
       await Promise.all(
-        children.map(async child => {
+        children.map(async (child) => {
           if (child['@id'] === stepId) return [];
           return (await fetchSubsteps(child['@id'])) as StepResource[];
         })
@@ -186,18 +166,12 @@ const StepInfoContainer: React.FC<{
         step['@id']
       )) as StepResource[];
     } else {
-      siblings = (await fetchTopLevelSteps(
-        nexus,
-        orgLabel,
-        projectLabel
-      )) as StepResource[];
+      siblings = (await fetchTopLevelSteps(nexus, orgLabel, projectLabel)) as StepResource[];
     }
-    const nextSteps = siblings.filter(siblingStep => {
+    const nextSteps = siblings.filter((siblingStep) => {
       if (siblingStep.wasInformedBy) {
         if (Array.isArray(siblingStep.wasInformedBy)) {
-          return siblingStep.wasInformedBy.find(
-            informedBy => informedBy['@id'] === step['@id']
-          );
+          return siblingStep.wasInformedBy.find((informedBy) => informedBy['@id'] === step['@id']);
         }
         return siblingStep.wasInformedBy['@id'] === step['@id'];
       }
@@ -207,37 +181,26 @@ const StepInfoContainer: React.FC<{
 
   const deprecateSteps = async (steps: Resource[]) =>
     await Promise.all(
-      steps.map(step =>
-        nexus.Resource.deprecate(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(step['@id']),
-          step._rev
-        )
+      steps.map((step) =>
+        nexus.Resource.deprecate(orgLabel, projectLabel, encodeURIComponent(step['@id']), step._rev)
       )
     );
 
-  const removePreviousStepLink = async (
-    step: StepResource,
-    previousStepIdToRemove: string
-  ) => {
+  const removePreviousStepLink = async (step: StepResource, previousStepIdToRemove: string) => {
     const originalPayload = await nexus.Resource.getSource(
       orgLabel,
       projectLabel,
       encodeURIComponent(step['@id'])
     );
 
-    const originalWasInformedBy = (originalPayload as StepResource)
-      .wasInformedBy;
+    const originalWasInformedBy = (originalPayload as StepResource).wasInformedBy;
     let updatedWasInformedBy = [];
 
     if (originalWasInformedBy) {
       if (Array.isArray(originalWasInformedBy)) {
-        updatedWasInformedBy = originalWasInformedBy.filter(
-          (informedBy: { '@id': string }) => {
-            return informedBy['@id'] !== previousStepIdToRemove;
-          }
-        );
+        updatedWasInformedBy = originalWasInformedBy.filter((informedBy: { '@id': string }) => {
+          return informedBy['@id'] !== previousStepIdToRemove;
+        });
       } else {
         if (originalWasInformedBy['@id'] === previousStepIdToRemove) {
           updatedWasInformedBy = [];
@@ -261,30 +224,21 @@ const StepInfoContainer: React.FC<{
   const deprecateStepAndDependents = async (step: StepResource) => {
     setBusy(true);
     try {
-      const resultingStepsToDeprecate = [
-        step,
-        ...(await fetchSubsteps(step['@id'])),
-      ];
+      const resultingStepsToDeprecate = [step, ...(await fetchSubsteps(step['@id']))];
 
       const tablesToDeprecate = (
         await Promise.all(
           resultingStepsToDeprecate
             .map(
-              async step =>
-                await fetchTablesForStep(
-                  nexus,
-                  orgLabel,
-                  projectLabel,
-                  step['@id']
-                )
+              async (step) => await fetchTablesForStep(nexus, orgLabel, projectLabel, step['@id'])
             )
-            .filter(async tables => (await tables).length > 0)
+            .filter(async (tables) => (await tables).length > 0)
         )
       ).flat();
 
       await deprecateSteps(resultingStepsToDeprecate);
 
-      tablesToDeprecate.map(async table => {
+      tablesToDeprecate.map(async (table) => {
         await nexus.Resource.deprecate(
           orgLabel,
           projectLabel,
@@ -294,7 +248,7 @@ const StepInfoContainer: React.FC<{
       });
 
       const nextSteps = await fetchNextSteps(step);
-      nextSteps.map(async nextStep => {
+      nextSteps.map(async (nextStep) => {
         await removePreviousStepLink(nextStep, step['@id']);
       });
 
@@ -302,11 +256,7 @@ const StepInfoContainer: React.FC<{
       setShowForm(false);
 
       if (step.hasParent) {
-        history.push(
-          `/workflow/${orgLabel}/${projectLabel}/${labelOf(
-            step.hasParent['@id']
-          )}`
-        );
+        history.push(`/workflow/${orgLabel}/${projectLabel}/${labelOf(step.hasParent['@id'])}`);
       } else {
         history.push(`/workflow/${orgLabel}/${projectLabel}`);
       }
@@ -348,16 +298,10 @@ const StepInfoContainer: React.FC<{
               markdownViewer={MarkdownViewerContainer}
             />
           ) : (
-            <MarkdownViewerContainer
-              template={step.description || ''}
-              data={step as Resource}
-            />
+            <MarkdownViewerContainer template={step.description || ''} data={step as Resource} />
           )}
           {!isEditingDescription && (
-            <Button
-              type="primary"
-              onClick={() => setIsEditingDescription(!isEditingDescription)}
-            >
+            <Button type="primary" onClick={() => setIsEditingDescription(!isEditingDescription)}>
               Edit Description
             </Button>
           )}
@@ -395,7 +339,7 @@ function parseWasInformedById(step: StepResource) {
   let informedByIds: string[] = [];
   if (step.wasInformedBy) {
     if (Array.isArray(step.wasInformedBy)) {
-      informedByIds = step.wasInformedBy.map(i => {
+      informedByIds = step.wasInformedBy.map((i) => {
         const fullId = step._self.replace(step['@id'], i['@id']);
         return fullId;
       });

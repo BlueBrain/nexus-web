@@ -25,15 +25,10 @@ const TableViewerContainer: React.FC<{
 
   const loadTable = async () => {
     const resourceId = parseResourceId(resourceUrl);
-    await nexus.File.get(
-      orgLabel,
-      projectLabel,
-      nexusUrlHardEncode(resourceId),
-      {
-        as: 'text',
-      }
-    )
-      .then(response => {
+    await nexus.File.get(orgLabel, projectLabel, nexusUrlHardEncode(resourceId), {
+      as: 'text',
+    })
+      .then((response) => {
         // const tableData = csvParser.parse(response as string);
         // setTableData(tableData);
       })
@@ -47,14 +42,7 @@ const TableViewerContainer: React.FC<{
   if (!tableData) return null;
 
   return (
-    <Modal
-      destroyOnClose
-      maskClosable
-      visible
-      width={900}
-      footer={null}
-      onCancel={onClickClose}
-    >
+    <Modal destroyOnClose maskClosable visible width={900} footer={null} onCancel={onClickClose}>
       <TableViewer name={name} data={tableData} />
     </Modal>
   );

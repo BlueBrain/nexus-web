@@ -45,19 +45,15 @@ const NumberFilterOptions: React.FC<{
   filter: FilterState[];
   query: string;
 }> = ({ filter, field, onFinish, nexusClient, query }) => {
-  const fieldFilter = filter.find(f => {
+  const fieldFilter = filter.find((f) => {
     return f.filterTerm === field.name;
   });
 
   const firstRender = React.useRef<boolean>(true);
 
   // check if 'isMissing' filter is applied
-  const isMissing = filter
-    .find(f => f.filterTerm === field.name)
-    ?.filters.includes('isMissing');
-  const [missingValues, setMissingValues] = React.useState<boolean>(
-    isMissing || false
-  );
+  const isMissing = filter.find((f) => f.filterTerm === field.name)?.filters.includes('isMissing');
+  const [missingValues, setMissingValues] = React.useState<boolean>(isMissing || false);
 
   const [rangeMin, setRangeMin] = React.useState<number>(
     fieldFilter?.filters[2] ? parseFloat(fieldFilter?.filters[2]) : 0
@@ -113,13 +109,10 @@ const NumberFilterOptions: React.FC<{
       setRangeMax(all.aggregations.stats.max);
       setMissingCount(all.aggregations['(missing)'].doc_count);
 
-      const histoInterval =
-        (all.aggregations.stats.max - all.aggregations.stats.min) / 50;
+      const histoInterval = (all.aggregations.stats.max - all.aggregations.stats.min) / 50;
 
       const histoIntervalFormatted =
-        histoInterval > 1
-          ? Math.round(histoInterval)
-          : histoInterval.toFixed(4);
+        histoInterval > 1 ? Math.round(histoInterval) : histoInterval.toFixed(4);
 
       const histoQuery = constructQuery(query)
         .aggregation('histogram', `${field.name}.value`, 'histo', {
@@ -167,7 +160,7 @@ const NumberFilterOptions: React.FC<{
         <Checkbox
           disabled={missingCount === 0}
           checked={missingValues}
-          onChange={e => {
+          onChange={(e) => {
             setMissingValues(e.target.checked);
           }}
         >
@@ -187,7 +180,7 @@ const NumberFilterOptions: React.FC<{
                 min={rangeMin}
                 max={rangeMax}
                 value={rangeStart || rangeMin}
-                onChange={value => {
+                onChange={(value) => {
                   setRangeStart(value as number);
                 }}
               />
@@ -217,7 +210,7 @@ const NumberFilterOptions: React.FC<{
                   margin: '0 0 0 16px',
                 }}
                 value={rangeEnd || rangeMax}
-                onChange={value => {
+                onChange={(value) => {
                   // @ts-ignore
                   setRangeStart(value);
                 }}

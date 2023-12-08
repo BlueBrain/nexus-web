@@ -7,21 +7,18 @@ const SubAppsView: React.FC<{
   routesWithSubApps: any[];
 }> = ({ routesWithSubApps }) => {
   const location = useLocation();
-  const background =
-    location.state && (location.state as { background?: Location }).background;
+  const background = location.state && (location.state as { background?: Location }).background;
 
   return (
     // @ts-ignore
     <Switch location={background || location}>
-      {routesWithSubApps.map(
-        ({ path, component: SubAppComponent, requireLogin, ...rest }) => {
-          return (
-            <Route key={`path-${path as string}`} path={path} {...rest}>
-              <SubAppComponent />
-            </Route>
-          );
-        }
-      )}
+      {routesWithSubApps.map(({ path, component: SubAppComponent, requireLogin, ...rest }) => {
+        return (
+          <Route key={`path-${path as string}`} path={path} {...rest}>
+            <SubAppComponent />
+          </Route>
+        );
+      })}
       <Redirect
         from="/admin/:orgLabel/:projectLabel/browse"
         to="/orgs/:orgLabel/:projectLabel/browse"
@@ -50,10 +47,7 @@ const SubAppsView: React.FC<{
         from="/admin/:orgLabel/:projectLabel/jira"
         to="/orgs/:orgLabel/:projectLabel/jira"
       />
-      <Redirect
-        from="/admin/:orgLabel/:projectLabel"
-        to="/orgs/:orgLabel/:projectLabel"
-      />
+      <Redirect from="/admin/:orgLabel/:projectLabel" to="/orgs/:orgLabel/:projectLabel" />
       <Redirect from="/admin/:orgLabel" to="/orgs/:orgLabel" />
       <Redirect from="/admin" to="/orgs" />
       <Route component={NotFound} />

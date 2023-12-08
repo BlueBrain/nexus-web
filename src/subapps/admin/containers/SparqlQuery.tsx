@@ -1,7 +1,4 @@
-import {
-  DEFAULT_SPARQL_VIEW_ID,
-  SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk/es';
+import { DEFAULT_SPARQL_VIEW_ID, SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 
@@ -18,16 +15,9 @@ const SparqlQueryContainer: React.FunctionComponent<{
   projectLabel: string;
   initialQuery?: string | null;
   viewId?: string;
-}> = ({
-  orgLabel,
-  projectLabel,
-  initialQuery,
-  viewId = DEFAULT_SPARQL_VIEW_ID,
-}) => {
+}> = ({ orgLabel, projectLabel, initialQuery, viewId = DEFAULT_SPARQL_VIEW_ID }) => {
   const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<string>(
-    initialQuery || DEFAULT_QUERY
-  );
+  const [query, setQuery] = React.useState<string>(initialQuery || DEFAULT_QUERY);
   const [{ response, busy, error }, setResponse] = React.useState<{
     response: SparqlViewQueryResponse | null;
     busy: boolean;
@@ -45,14 +35,14 @@ const SparqlQueryContainer: React.FunctionComponent<{
       error: null,
     });
     nexus.View.sparqlQuery(orgLabel, projectLabel, viewId, query)
-      .then(response => {
+      .then((response) => {
         setResponse({
           response,
           busy: false,
           error: null,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setResponse({
           error,
           response: null,

@@ -21,9 +21,7 @@ const StudioHeader: React.FC<{
         <div className="studio-edit">
           <div className="description-container">
             {' '}
-            {description && (
-              <MarkdownViewer template={description} data={resource} />
-            )}
+            {description && <MarkdownViewer template={description} data={resource} />}
           </div>
         </div>
       </div>

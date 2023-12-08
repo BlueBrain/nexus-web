@@ -33,25 +33,17 @@ const ResolutionError = ({ error, resourceId, redirectUri }: Props) => {
             <p className="callout">
               Do you want to proceed for logout for new realm authentication
             </p>
-            <Button
-              type="primary"
-              style={{ alignSelf: 'flex-end' }}
-              onClick={handleReconnection}
-            >
+            <Button type="primary" style={{ alignSelf: 'flex-end' }} onClick={handleReconnection}>
               Reconnect
             </Button>
           </>
         ) : (
           <>
             <p className="callout">
-              The redirection feature is in beta version, We have taken note of
-              this error and are working on improving the feature.
+              The redirection feature is in beta version, We have taken note of this error and are
+              working on improving the feature.
             </p>
-            <Button
-              type="primary"
-              style={{ alignSelf: 'flex-end' }}
-              onClick={handleHomeRedirect}
-            >
+            <Button type="primary" style={{ alignSelf: 'flex-end' }} onClick={handleHomeRedirect}>
               Return Home
             </Button>
           </>

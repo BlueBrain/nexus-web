@@ -61,11 +61,11 @@ const DangerZoneAction = ({
               ]}
             >
               <Input
-                onPaste={e => {
+                onPaste={(e) => {
                   e.preventDefault();
                   return false;
                 }}
-                onDrop={e => {
+                onDrop={(e) => {
                   e.preventDefault();
                   return false;
                 }}
@@ -80,8 +80,7 @@ const DangerZoneAction = ({
             <Form.Item noStyle shouldUpdate>
               {({ getFieldValue }) => {
                 const projectName = getFieldValue('projectName');
-                const disabled =
-                  (projectName as string)?.toLowerCase() !== matchTerm;
+                const disabled = (projectName as string)?.toLowerCase() !== matchTerm;
                 return (
                   <Button
                     loading={status}

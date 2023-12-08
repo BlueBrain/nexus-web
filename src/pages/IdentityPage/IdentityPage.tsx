@@ -41,27 +41,19 @@ const IdentityPage: React.FC<{}> = () => {
   const dispatch = useDispatch<any>();
   const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
-  const { layoutSettings, serviceAccountsRealm } = useSelector(
-    (state: RootState) => state.config
-  );
+  const { layoutSettings, serviceAccountsRealm } = useSelector((state: RootState) => state.config);
 
-  const realms: Realm[] =
-    (auth.realms && auth.realms.data && auth.realms.data._results) || [];
+  const realms: Realm[] = (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
   const [connectBtnState, setConnectBtnState] = useState<boolean>(false);
   const onPopoverVisibleChange = (state: boolean) => setConnectBtnState(state);
-  const realmsFilter = realms.filter(
-    r => r._label !== serviceAccountsRealm && !r._deprecated
-  );
+  const realmsFilter = realms.filter((r) => r._label !== serviceAccountsRealm && !r._deprecated);
 
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
 
   return (
-    <div
-      className="home-authentication"
-      style={{ backgroundColor: layoutSettings.mainColor }}
-    >
+    <div className="home-authentication" style={{ backgroundColor: layoutSettings.mainColor }}>
       <img
         src={layoutSettings.landingPosterImg || landingPosterImg}
         className="home-authentication-epfl"
@@ -72,13 +64,7 @@ const IdentityPage: React.FC<{}> = () => {
         <div className="actions">
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
-              <Button
-                key="no-realms"
-                disabled
-                role="button"
-                size="large"
-                className="no-realms-btn"
-              >
+              <Button key="no-realms" disabled role="button" size="large" className="no-realms-btn">
                 Connect
               </Button>
             ) : (
@@ -90,32 +76,18 @@ const IdentityPage: React.FC<{}> = () => {
                 onClick={() => onPopoverVisibleChange(true)}
               >
                 Connect
-                {connectBtnState ? (
-                  <UpOutlined size={13} />
-                ) : (
-                  <DownOutlined size={13} />
-                )}
+                {connectBtnState ? <UpOutlined size={13} /> : <DownOutlined size={13} />}
               </Button>
             )}
             {connectBtnState && realmsFilter.length && (
-              <ul
-                ref={popoverRef}
-                className="home-authentication-content-connect-popover"
-              >
-                {realmsFilter.map(item => (
-                  <li
-                    key={`realm-btn-${item['@id']}`}
-                    className="realm-connect"
-                  >
+              <ul ref={popoverRef} className="home-authentication-content-connect-popover">
+                {realmsFilter.map((item) => (
+                  <li key={`realm-btn-${item['@id']}`} className="realm-connect">
                     <Button
-                      onClick={e => {
+                      onClick={(e) => {
                         e.preventDefault();
                         dispatch(configActions.setPreferredRealm(item.name));
-                        dispatch(
-                          authActions.performLogin(
-                            location.state as TLocationState
-                          )
-                        );
+                        dispatch(authActions.performLogin(location.state as TLocationState));
                       }}
                       className="connect-btn"
                       size="large"
@@ -130,11 +102,7 @@ const IdentityPage: React.FC<{}> = () => {
               </ul>
             )}
           </div>
-          <Button
-            className="nav-btn"
-            size="large"
-            onClick={() => history.push('/studios')}
-          >
+          <Button className="nav-btn" size="large" onClick={() => history.push('/studios')}>
             View Studios
           </Button>
           <Button

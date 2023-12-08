@@ -11,9 +11,7 @@ interface ACLsFormProps {
   path: string;
   permissionList?: [];
 }
-const ACLsForm: React.FunctionComponent<ACLsFormProps> = (
-  props: ACLsFormProps
-) => {
+const ACLsForm: React.FunctionComponent<ACLsFormProps> = (props: ACLsFormProps) => {
   return (
     <Tabs
       defaultActiveKey={`${props.path}-0`}
@@ -28,7 +26,7 @@ const ACLsForm: React.FunctionComponent<ACLsFormProps> = (
         ),
         children:
           acl.acl &&
-          acl.acl.map(a => (
+          acl.acl.map((a) => (
             <ACLCard
               identity={a.identity}
               permissions={a.permissions}

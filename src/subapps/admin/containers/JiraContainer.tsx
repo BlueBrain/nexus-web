@@ -2,9 +2,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 
-import JIRAPluginUI, {
-  AuthorizeJiraUI,
-} from '../../../shared/components/JIRA/JIRA';
+import JIRAPluginUI, { AuthorizeJiraUI } from '../../../shared/components/JIRA/JIRA';
 import useJIRA from '../../../shared/hooks/useJIRA';
 import { RootState } from '../../../shared/store/reducers';
 import { makeResourceUri } from '../../../shared/utils';
@@ -14,10 +12,7 @@ type JiraContainerProps = {
   projectLabel: string;
 };
 
-const JiraPluginProjectContainer = ({
-  orgLabel,
-  projectLabel,
-}: JiraContainerProps) => {
+const JiraPluginProjectContainer = ({ orgLabel, projectLabel }: JiraContainerProps) => {
   const history = useHistory();
   const location = useLocation();
   const {
@@ -37,7 +32,7 @@ const JiraPluginProjectContainer = ({
   });
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
-  const tableIssues = linkedIssues?.map(issue => ({
+  const tableIssues = linkedIssues?.map((issue) => ({
     key: issue.key,
     summary: issue.summary,
     description: issue.description,
@@ -49,24 +44,14 @@ const JiraPluginProjectContainer = ({
     resourceLabel: issue.resourceLabel,
   }));
 
-  const goToResource = (
-    orgLabel: string,
-    projectLabel: string,
-    resourceId: string
-  ) => {
-    history.push(
-      makeResourceUri(orgLabel, projectLabel, encodeURIComponent(resourceId)),
-      {
-        background: location,
-      }
-    );
+  const goToResource = (orgLabel: string, projectLabel: string, resourceId: string) => {
+    history.push(makeResourceUri(orgLabel, projectLabel, encodeURIComponent(resourceId)), {
+      background: location,
+    });
   };
 
   const resourceIDFromSelfUrl = (selfUrl: string) => {
-    return selfUrl.replace(
-      `${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/`,
-      ''
-    );
+    return selfUrl.replace(`${apiEndpoint}/resources/${orgLabel}/${projectLabel}/_/`, '');
   };
 
   return (
@@ -74,7 +59,7 @@ const JiraPluginProjectContainer = ({
       {!isJiraConnected ? (
         <AuthorizeJiraUI
           jiraAuthUrl={jiraAuthUrl}
-          onSubmitVerificationCode={verificationCode => {
+          onSubmitVerificationCode={(verificationCode) => {
             connectJira(verificationCode);
           }}
         />
@@ -86,10 +71,10 @@ const JiraPluginProjectContainer = ({
           onCreateIssue={(project, summary, description) =>
             createIssue(project, summary, description)
           }
-          onLinkIssue={issueUrl => linkIssue(issueUrl)}
-          onUnlinkIssue={issueKey => unlinkIssue(issueKey)}
+          onLinkIssue={(issueUrl) => linkIssue(issueUrl)}
+          onUnlinkIssue={(issueKey) => unlinkIssue(issueKey)}
           searchJiraLink={`${jiraWebBaseUrl}/issues/?jql=`}
-          onNavigateToResource={resourceSelfUrl => {
+          onNavigateToResource={(resourceSelfUrl) => {
             const resourceId = resourceIDFromSelfUrl(resourceSelfUrl);
             goToResource(orgLabel, projectLabel, resourceId);
           }}

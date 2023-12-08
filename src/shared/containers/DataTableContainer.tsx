@@ -138,8 +138,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   showEdit,
   toggledEdit,
 }) => {
-  const basePath =
-    useSelector((state: RootState) => state.config.basePath) || '';
+  const basePath = useSelector((state: RootState) => state.config.basePath) || '';
   const [showEditForm, setShowEditForm] = useState<boolean>(showEdit || false);
   const [tableDataError, setTableDataError] = useState<null | Error>(null);
   const [displayedRows, setDisplayedRows] = useState(0);
@@ -153,10 +152,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   }, [showEditForm]);
 
   const [{ selectedRowKeys }, updateTableData] = useReducer(
-    (
-      previous: TResourceTableData,
-      partialData: Partial<TResourceTableData>
-    ) => ({
+    (previous: TResourceTableData, partialData: Partial<TResourceTableData>) => ({
       ...previous,
       ...partialData,
     }),
@@ -179,31 +175,21 @@ const DataTableContainer: React.FC<DataTableProps> = ({
   }, []);
 
   useEffect(() => {
-    const dataPanelEventListner = (
-      event: DataPanelEvent<{ datapanel: TResourceTableData }>
-    ) => {
+    const dataPanelEventListner = (event: DataPanelEvent<{ datapanel: TResourceTableData }>) => {
       updateTableData({
         selectedRows: event.detail?.datapanel.selectedRows,
         selectedRowKeys: event.detail?.datapanel.selectedRowKeys,
       });
     };
-    window.addEventListener(
-      DATA_PANEL_STORAGE_EVENT,
-      dataPanelEventListner as EventListener
-    );
+    window.addEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     return () => {
-      window.removeEventListener(
-        DATA_PANEL_STORAGE_EVENT,
-        dataPanelEventListner as EventListener
-      );
+      window.removeEventListener(DATA_PANEL_STORAGE_EVENT, dataPanelEventListner as EventListener);
     };
   }, []);
 
   const [searchboxValue, setSearchboxValue] = useState<string>('');
   const [searchboxFocused, setSearchboxFocused] = useState<boolean>(false);
-  const [fetchingRowsForDownlaod, setFetchingRowsForDownload] = useState<
-    boolean
-  >(false);
+  const [fetchingRowsForDownlaod, setFetchingRowsForDownload] = useState<boolean>(false);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -318,7 +304,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     projectLabel,
     tableResourceId,
     basePath,
-    err => setTableDataError(err),
+    (err) => setTableDataError(err),
     changeTableResource.data
   );
 
@@ -331,8 +317,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     disableAddFromCart: boolean;
     disableEdit: boolean;
   }) => {
-    const tableResource = tableData.tableResult.data
-      ?.tableResource as TableResource;
+    const tableResource = tableData.tableResult.data?.tableResource as TableResource;
     const tableOptionsContent = (
       <div className="wrapper">
         {!disableEdit && (
@@ -377,12 +362,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         ) : null}
         {!disableDelete && (
           <div>
-            <Button
-              block
-              danger
-              icon={<DeleteOutlined />}
-              onClick={confirmDeprecate}
-            >
+            <Button block danger icon={<DeleteOutlined />} onClick={confirmDeprecate}>
               Delete
             </Button>
           </div>
@@ -404,8 +384,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         placeholder="Search"
         allowClear
         value={searchboxValue}
-        onChange={e => setSearchboxValue(e.target.value)}
-        onSearch={value => {
+        onChange={(e) => setSearchboxValue(e.target.value)}
+        onSearch={(value) => {
           tableData.setSearchValue(value);
         }}
         onFocus={() => setSearchboxFocused(true)}
@@ -424,11 +404,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             <Title
               className="table-title"
               level={3}
-              title={
-                tableResource && tableResource.name
-                  ? tableResource.name
-                  : undefined
-              }
+              title={tableResource && tableResource.name ? tableResource.name : undefined}
             >
               {tableResource && tableResource.name ? tableResource.name : null}
             </Title>
@@ -438,11 +414,9 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               {tableResource?.enableSearch && search}
               <span className="table-row-count">
                 {/* If the user filters a column (i.e. updates) or enters a serch term (i.e. update dataResult), show the total rows in format <rows shown to user>/<total rows>, otherwise only show total rows. */}
-                {displayedRows &&
-                displayedRows !== tableData.dataResult.data?.items?.length
+                {displayedRows && displayedRows !== tableData.dataResult.data?.items?.length
                   ? `${displayedRows} / `
-                  : tableData.dataResult?.data?.items.length !==
-                    tableData.dataResult.data?.total
+                  : tableData.dataResult?.data?.items.length !== tableData.dataResult.data?.total
                   ? `${tableData.dataResult.data?.items?.length} /`
                   : ''}
                 {`${tableData.dataResult?.data?.total ?? 0} `}
@@ -461,17 +435,12 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     );
   };
 
-  const getSelectedRowKeys = (
-    localStorageKeys: Key[],
-    allRows?: StudioTableRow[]
-  ) => {
+  const getSelectedRowKeys = (localStorageKeys: Key[], allRows?: StudioTableRow[]) => {
     return allRows
-      ?.filter(tRow => {
-        return localStorageKeys.includes(
-          tableKeyToLocalStorageKey(tRow.tableKey!) ?? ''
-        );
+      ?.filter((tRow) => {
+        return localStorageKeys.includes(tableKeyToLocalStorageKey(tRow.tableKey!) ?? '');
       })
-      .map(row => row.tableKey!);
+      .map((row) => row.tableKey!);
   };
 
   return (
@@ -479,9 +448,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
       {/* Error when the table resource itself failed to fetch */}
       {tableData.tableResult.isError ? (
         <ErrorComponent
-          message={
-            tableData.tableResult.error.reason ?? 'Table failed to fetch'
-          }
+          message={tableData.tableResult.error.reason ?? 'Table failed to fetch'}
           details={tableData.tableResult.error['@type']}
         />
       ) : tableData.tableResult.isSuccess ? (
@@ -498,8 +465,8 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             columns={tableData.dataResult.data?.headerProperties}
             dataSource={tableData.dataResult.data?.items}
             scroll={{ x: 1000 }}
-            onRow={data => ({
-              onClick: event => {
+            onRow={(data) => ({
+              onClick: (event) => {
                 event.preventDefault();
                 const self = data._self || data.self.value;
                 goToStudioResource(self);
@@ -523,8 +490,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 // If there are studio rows with self same as the self of `record`, then those rows are automatically "selected".
                 // Calculate the number of such rows and notify the user.
                 const additionalSelectedRows: number = tableData.dataResult?.data?.items?.filter(
-                  (item: StudioTableRow) =>
-                    getStudioLocalStorageKey(item) === selectedStorageKey
+                  (item: StudioTableRow) => getStudioLocalStorageKey(item) === selectedStorageKey
                 ).length;
 
                 if (additionalSelectedRows > 1) {
@@ -544,19 +510,15 @@ const DataTableContainer: React.FC<DataTableProps> = ({
               ) => {
                 setFetchingRowsForDownload(true);
 
-                await tableData.onSelectAll(
-                  selected,
-                  selectedRows,
-                  changedRows
-                );
+                await tableData.onSelectAll(selected, selectedRows, changedRows);
 
                 // If there are studio rows with self same as the self of `changedRows`, then those rows are automatically "selected".
                 // Calculate the number of such rows and notify the user.
                 const uniqueKeysSelected = new Set<string>();
-                const selectedTableKeys = changedRows.map(r => r.tableKey);
+                const selectedTableKeys = changedRows.map((r) => r.tableKey);
                 let additionalSelectedRows = 0;
 
-                changedRows.forEach(row => {
+                changedRows.forEach((row) => {
                   const localStorageKey = getStudioLocalStorageKey(row);
 
                   if (!uniqueKeysSelected.has(localStorageKey)) {
@@ -583,7 +545,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 setFetchingRowsForDownload(false);
               },
             }}
-            rowKey={r => r.tableKey!}
+            rowKey={(r) => r.tableKey!}
             data-testid="dashboard-table"
             onChange={(page, fileter, sorter, extra) => {
               setDisplayedRows(extra.currentDataSource?.length ?? 0);
@@ -599,7 +561,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             <EditTableForm
               onSave={changeTableResource.mutate}
               onClose={() => setShowEditForm(false)}
-              onError={err => setTableDataError(err)}
+              onError={(err) => setTableDataError(err)}
               table={tableData.tableResult.data.tableResource}
               busy={changeTableResource.isLoading}
               orgLabel={orgLabel}

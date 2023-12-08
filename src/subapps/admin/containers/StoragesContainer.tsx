@@ -24,33 +24,25 @@ const StoragesContainer: React.FC<{
 
   const loadStorages = async () => {
     await nexus.Storage.list(orgLabel, projectLabel)
-      .then(response => {
+      .then((response) => {
         Promise.all(
-          response._results.map(storage => {
+          response._results.map((storage) => {
             return Promise.all([
-              nexus.Storage.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(storage['@id'])
-              ),
-              nexus.Storage.statistics(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(storage['@id'])
-              ),
+              nexus.Storage.get(orgLabel, projectLabel, encodeURIComponent(storage['@id'])),
+              nexus.Storage.statistics(orgLabel, projectLabel, encodeURIComponent(storage['@id'])),
             ]);
           })
-        ).then(results => {
+        ).then((results) => {
           setStorages(parseResponses(results));
         });
       })
-      .catch(error => {
+      .catch((error) => {
         // fail silently
       });
   };
 
   const parseResponses = (storagesData: any[][]) => {
-    return storagesData.map(storage => {
+    return storagesData.map((storage) => {
       const { maxFileSize, capacity } = storage[0];
       const { files, spaceUsed } = storage[1];
 

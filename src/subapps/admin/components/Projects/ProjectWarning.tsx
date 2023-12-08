@@ -13,9 +13,7 @@ const ProjectWarning: React.FC<{
   let deletionTime;
 
   if (projectLastUpdatedAt && duration) {
-    deletionTime = getDateString(
-      moment(projectLastUpdatedAt).add(duration, 'seconds')
-    );
+    deletionTime = getDateString(moment(projectLastUpdatedAt).add(duration, 'seconds'));
   } else {
     deletionTime = '';
   }

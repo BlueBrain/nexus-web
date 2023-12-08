@@ -7,7 +7,7 @@ import ErrorBoundary from '../../shared/components/ErrorBoundary';
 import PluginInfo from '../components/PluginInfo';
 import { NexusPlugin } from '../containers/NexusPlugin';
 import usePlugins from '../hooks/usePlugins';
-import { matchPlugins, pluginsExcludeMap,pluginsMap } from '../utils';
+import { matchPlugins, pluginsExcludeMap, pluginsMap } from '../utils';
 
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
@@ -34,16 +34,14 @@ const ResourcePlugins: React.FunctionComponent<{
     return null;
   }
   const includedPlugins =
-    pluginManifest &&
-    matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
+    pluginManifest && matchPlugins(pluginsMap(pluginManifest), availablePlugins, resource);
 
   const excludedPlugins =
-    pluginManifest &&
-    matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
+    pluginManifest && matchPlugins(pluginsExcludeMap(pluginManifest), availablePlugins, resource);
 
   const filteredPlugins = includedPlugins
-    ?.filter(plugin => !excludedPlugins?.includes(plugin))
-    .filter(plugin => {
+    ?.filter((plugin) => !excludedPlugins?.includes(plugin))
+    .filter((plugin) => {
       if (!studioDefinedPluginsToInclude) {
         return plugin;
       }
@@ -52,7 +50,7 @@ const ResourcePlugins: React.FunctionComponent<{
 
   const pluginDataMap = filteredPlugins
     ? filteredPlugins
-        .map(pluginName => {
+        .map((pluginName) => {
           if (pluginManifest) {
             return { key: pluginName, ...pluginManifest[pluginName] };
           }
@@ -60,10 +58,7 @@ const ResourcePlugins: React.FunctionComponent<{
         })
         .sort((p1, p2) => {
           if (p1?.displayPriority && p2?.displayPriority) {
-            return (
-              parseInt(p1.displayPriority, 10) -
-              parseInt(p2.displayPriority, 10)
-            );
+            return parseInt(p1.displayPriority, 10) - parseInt(p2.displayPriority, 10);
           }
           return 0;
         })
@@ -71,15 +66,12 @@ const ResourcePlugins: React.FunctionComponent<{
 
   const pluginsToDisplay = studioDefinedPluginsToInclude
     ? studioDefinedPluginsToInclude
-    : [...pluginDataMap.map(p => p?.key), ...builtInPlugins.map(p => p.key)];
+    : [...pluginDataMap.map((p) => p?.key), ...builtInPlugins.map((p) => p.key)];
 
   const Fallback = () => (
     <>
       <h1>Something went wrong</h1>
-      <p>
-        Check that the shape of the resources matches that required by the
-        plugin.
-      </p>
+      <p>Check that the shape of the resources matches that required by the plugin.</p>
     </>
   );
 
@@ -87,15 +79,11 @@ const ResourcePlugins: React.FunctionComponent<{
     <>
       {pluginsToDisplay.map((plugin, index) => {
         if (!plugin) return null;
-        if (builtInPlugins.map(p => p.key).includes(plugin)) {
-          const builtInComponent = builtInPlugins.find(b => b.key === plugin)
-            ?.pluginComponent;
+        if (builtInPlugins.map((p) => p.key).includes(plugin)) {
+          const builtInComponent = builtInPlugins.find((b) => b.key === plugin)?.pluginComponent;
           if (builtInComponent) {
             return (
-              <div
-                id={`plugin-collapsable-${index}`}
-                style={{ marginBottom: 10 }}
-              >
+              <div id={`plugin-collapsable-${index}`} style={{ marginBottom: 10 }}>
                 <ErrorBoundary key={plugin} fallback={Fallback}>
                   {builtInComponent}
                 </ErrorBoundary>
@@ -105,7 +93,7 @@ const ResourcePlugins: React.FunctionComponent<{
           return null;
         }
         // standard plugin
-        const pluginData = pluginDataMap.find(p => p?.key === plugin);
+        const pluginData = pluginDataMap.find((p) => p?.key === plugin);
 
         return pluginData ? (
           <div id={`plugin-collapsable-${index}`} style={{ marginBottom: 10 }}>
@@ -120,10 +108,7 @@ const ResourcePlugins: React.FunctionComponent<{
                       children: (
                         <>
                           <h1>Something went wrong.</h1>
-                          <p>
-                            Check that the shape of the data matches the
-                            plugin's expectations.
-                          </p>
+                          <p>Check that the shape of the data matches the plugin's expectations.</p>
                         </>
                       ),
                     },
@@ -134,21 +119,14 @@ const ResourcePlugins: React.FunctionComponent<{
             >
               <Collapse
                 key={pluginData.name}
-                onChange={e => handleCollapseChange(pluginData.name)}
-                activeKey={
-                  openPlugins.includes(pluginData.name)
-                    ? pluginData.name
-                    : undefined
-                }
+                onChange={(e) => handleCollapseChange(pluginData.name)}
+                activeKey={openPlugins.includes(pluginData.name) ? pluginData.name : undefined}
                 items={[
                   {
                     key: `${pluginData.name}`,
                     label: `${pluginData.name}`,
                     children: (
-                      <div
-                        className="resource-plugin"
-                        key={`plugin-${pluginData.name}`}
-                      >
+                      <div className="resource-plugin" key={`plugin-${pluginData.name}`}>
                         <NexusPlugin
                           nexusClient={nexus}
                           url={pluginData.absoluteModulePath}

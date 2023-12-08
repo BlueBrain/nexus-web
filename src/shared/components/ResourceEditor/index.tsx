@@ -1,10 +1,6 @@
 import './ResourceEditor.scss';
 
-import {
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { CheckCircleOutlined, ExclamationCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { Button, Switch } from 'antd';
 import CodeMirror from 'codemirror';
@@ -39,7 +35,7 @@ export interface ResourceEditorProps {
 
 const switchMarginRight = { marginRight: 5 };
 
-const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
+const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = (props) => {
   const {
     rawData,
     onFormatChange,
@@ -62,9 +58,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const [isEditing, setEditing] = React.useState(editing);
   const [valid, setValid] = React.useState(true);
   const [parsedValue, setParsedValue] = React.useState(rawData);
-  const [stringValue, setStringValue] = React.useState(
-    JSON.stringify(rawData, null, 2)
-  );
+  const [stringValue, setStringValue] = React.useState(JSON.stringify(rawData, null, 2));
   const { fullscreen } = useSelector((state: RootState) => state.dataExplorer);
   const keyFoldCode = (cm: any) => cm.foldCode(cm.getCursor());
   const codeMirorRef = React.useRef<CodeMirror.Editor>();
@@ -73,11 +67,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     if (codeMirorRef.current) {
       if (foldCodeMiror) {
         codeMirorRef.current.execCommand('unfoldAll');
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+        setFoldCodeMiror((stateFoldCodeMiror) => !stateFoldCodeMiror);
       } else {
         codeMirorRef.current.execCommand('foldAll');
         codeMirorRef.current.foldCode(0);
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+        setFoldCodeMiror((stateFoldCodeMiror) => !stateFoldCodeMiror);
       }
     }
   };
@@ -205,7 +199,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   checkedChildren="Metadata"
                   unCheckedChildren="Show Metadata"
                   checked={showMetadata}
-                  onChange={checked => onMetadataChangeFold(checked)}
+                  onChange={(checked) => onMetadataChangeFold(checked)}
                   style={switchMarginRight}
                 />
               )}
@@ -214,7 +208,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   checkedChildren="Expanded"
                   unCheckedChildren="Expand"
                   checked={expanded}
-                  onChange={expaned => onFormatChangeFold(expanded)}
+                  onChange={(expaned) => onFormatChangeFold(expanded)}
                   style={switchMarginRight}
                 />
               )}

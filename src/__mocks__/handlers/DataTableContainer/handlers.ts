@@ -13,8 +13,7 @@ export const dashboardResource = rest.get(
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
         'https://bluebrainnexus.io/workflowStep/table-context',
       ],
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/8478b9ae-c50e-4178-8aae-16221f2c6937',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/8478b9ae-c50e-4178-8aae-16221f2c6937',
       '@type': 'FusionTable',
       configuration: [
         {
@@ -52,11 +51,9 @@ export const dashboardResource = rest.get(
       name: 'Person',
       resultsPerPage: 5,
       view: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-      _constrainedBy:
-        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
       _createdAt: '2023-04-17T11:25:29.845Z',
-      _createdBy:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/localuser',
+      _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/localuser',
       _deprecated: false,
       _incoming:
         'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937/incoming',
@@ -64,13 +61,11 @@ export const dashboardResource = rest.get(
         'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937/outgoing',
       _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp/agents',
       _rev: 5,
-      _schemaProject:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp/agents',
+      _schemaProject: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp/agents',
       _self:
         'https://staging.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937',
       _updatedAt: '2023-04-20T12:04:47.563Z',
-      _updatedBy:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/localuser',
+      _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/localuser',
     };
     return res(ctx.status(200), ctx.json(mockResponse));
   }
@@ -99,20 +94,16 @@ export const dashboardVocabulary = rest.get(
       resourceTypes: [],
       _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/views.json',
       _createdAt: '2020-09-14T16:23:43.529Z',
-      _createdBy:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/alibou',
+      _createdBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/alibou',
       _deprecated: false,
-      _incoming:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/views/bbp/agents/graph/incoming',
+      _incoming: 'https://staging.nise.bbp.epfl.ch/nexus/v1/views/bbp/agents/graph/incoming',
       _indexingRev: 1,
-      _outgoing:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/views/bbp/agents/graph/outgoing',
+      _outgoing: 'https://staging.nise.bbp.epfl.ch/nexus/v1/views/bbp/agents/graph/outgoing',
       _project: 'https://staging.nise.bbp.epfl.ch/nexus/v1/projects/bbp/agents',
       _rev: 1,
       _self: 'https://staging.nise.bbp.epfl.ch/nexus/v1/views/bbp/agents/graph',
       _updatedAt: '2020-09-14T16:23:43.529Z',
-      _updatedBy:
-        'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/alibou',
+      _updatedBy: 'https://staging.nise.bbp.epfl.ch/nexus/v1/realms/bbp/users/alibou',
       _uuid: 'c9bf849d-7287-4a21-9d6d-4ddaa7c0d920',
     };
     return res(ctx.status(200), ctx.json(mockResponse));
@@ -287,9 +278,7 @@ export const getMockStudioResource = (givenName: string, self: string) => ({
   },
 });
 
-export const sparqlViewResultHandler = (
-  studioRows: ReturnType<typeof getMockStudioResource>[]
-) => {
+export const sparqlViewResultHandler = (studioRows: ReturnType<typeof getMockStudioResource>[]) => {
   return rest.post(
     deltaPath(
       '/views/bbp/agents/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex/sparql'
@@ -310,9 +299,7 @@ export const sparqlViewResultHandler = (
 };
 
 export const fetchResourceForDownload = rest.get(
-  deltaPath(
-    `/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g`
-  ),
+  deltaPath(`/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g`),
   (req, res, ctx) => {
     const self = req.url.pathname.slice(req.url.pathname.lastIndexOf('/') + 1);
     const mockResponse = {

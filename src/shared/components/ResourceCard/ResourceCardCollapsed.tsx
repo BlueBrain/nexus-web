@@ -36,19 +36,12 @@ const ResourceCardCollapsed: React.FunctionComponent<{
       size="small"
       extra={
         isExternal ? null : (
-          <Button
-            onClick={onClickExpand}
-            shape="circle"
-            icon={<UpOutlined />}
-            size="small"
-          />
+          <Button onClick={onClickExpand} shape="circle" icon={<UpOutlined />} size="small" />
         )
       }
       style={{ maxWidth: '400px' }}
     >
-      {!!types && (
-        <div>{!!types && <TypesIcon type={types} full={true} />}</div>
-      )}
+      {!!types && <div>{!!types && <TypesIcon type={types} full={true} />}</div>}
       {!!isExternal && (
         <a href={resourceUrl} target="_blank" rel="noreferrer">
           {resourceUrl}

@@ -89,8 +89,7 @@ export const sparqlAnalysisReportSingleResult = rest.post(
             },
             created_by: {
               type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+              value: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
             },
             updated_at: {
               datatype: 'http://www.w3.org/2001/XMLSchema#dateTime',
@@ -99,8 +98,7 @@ export const sparqlAnalysisReportSingleResult = rest.post(
             },
             updated_by: {
               type: 'uri',
-              value:
-                'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+              value: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
             },
             self: {
               type: 'uri',
@@ -151,8 +149,7 @@ export const reportResource = rest.get(
             },
             digest: {
               algorithm: 'SHA-256',
-              value:
-                'caeaaba3e0b6db4ddd04d6c775521187e8309b15f60cd5c783afe4bf80fa347c',
+              value: 'caeaaba3e0b6db4ddd04d6c775521187e8309b15f60cd5c783afe4bf80fa347c',
             },
             encodingFormat: 'image/png',
           },
@@ -168,26 +165,21 @@ export const reportResource = rest.get(
         },
       },
       'schema:description': 'Analysis description sample 1',
-      _constrainedBy:
-        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
       _createdAt: '2022-08-11T12:51:43.983Z',
-      _createdBy:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+      _createdBy: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
       _deprecated: false,
       _incoming:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1/incoming',
       _outgoing:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1/outgoing',
-      _project:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _project: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
       _rev: 1,
-      _schemaProject:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _schemaProject: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
       _self:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1',
       _updatedAt: '2022-08-11T12:51:43.983Z',
-      _updatedBy:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+      _updatedBy: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
     };
     return res(ctx.status(200), ctx.json(mockResponse));
   }
@@ -219,26 +211,21 @@ export const resourcesAnalysisReportType = rest.post(
       '@id':
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/2098607b-30ae-493f-9e07-38f4822a0787',
       '@type': 'https://neuroshapes.org/AnalysisReport',
-      _constrainedBy:
-        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
       _createdAt: '2022-06-29T12:34:49.183Z',
-      _createdBy:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+      _createdBy: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
       _deprecated: false,
       _incoming:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/2098607b-30ae-493f-9e07-38f4822a0787/incoming',
       _outgoing:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/2098607b-30ae-493f-9e07-38f4822a0787/outgoing',
-      _project:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _project: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
       _rev: 1,
-      _schemaProject:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
+      _schemaProject: 'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/bbp-users/nicholas',
       _self:
         'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/2098607b-30ae-493f-9e07-38f4822a0787',
       _updatedAt: '2022-06-29T12:34:49.183Z',
-      _updatedBy:
-        'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+      _updatedBy: 'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
     };
 
     return res(

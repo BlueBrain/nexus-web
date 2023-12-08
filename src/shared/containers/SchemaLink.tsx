@@ -6,8 +6,7 @@ import { useHistory } from 'react-router';
 import SchemaLink from '../components/SchemaLink';
 import { getOrgAndProjectFromResource } from '../utils';
 
-const EXPANDED_CONSTRAINED_BY_KEY =
-  'https://bluebrain.github.io/nexus/vocabulary/constrainedBy';
+const EXPANDED_CONSTRAINED_BY_KEY = 'https://bluebrain.github.io/nexus/vocabulary/constrainedBy';
 
 const SchemaLinkContainer: React.FunctionComponent<{
   resource: Resource;
@@ -41,20 +40,14 @@ const SchemaLinkContainer: React.FunctionComponent<{
           );
         })
         .then((resource: Resource) => {
-          const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
-            resource
-          )!;
+          const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
           // it exists inside nexus, make sure to navigate there!
           const goToSchema = () => () => {
-            history.push(
-              `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
-                schemaId
-              )}`
-            );
+            history.push(`/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(schemaId)}`);
           };
           setGoToSchema(goToSchema);
         })
-        .catch(error => {
+        .catch((error) => {
           const errorType = error['@type'];
           if (errorType === 'NotFound') {
             // Doesn't exist inside nexus, it's an external link

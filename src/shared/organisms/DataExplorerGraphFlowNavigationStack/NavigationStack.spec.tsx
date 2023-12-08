@@ -34,12 +34,7 @@ const initialDataExplorerState: TDataExplorerState = {
       'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.417881.3',
     title: 'Allen Institute for Brain Science',
     types: ['Agent', 'Organization'],
-    resource: [
-      'bbp',
-      'atlas',
-      'https://www.grid.ac/institutes/grid.417881.3',
-      1,
-    ],
+    resource: ['bbp', 'atlas', 'https://www.grid.ac/institutes/grid.417881.3', 1],
   },
   leftNodes: {
     links: [
@@ -61,12 +56,7 @@ const initialDataExplorerState: TDataExplorerState = {
           'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
         title: 'Ecole Polytechnique Federale de Lausanne',
         types: ['Organization', 'prov#Agent'],
-        resource: [
-          'bbp',
-          'atlas',
-          'https://www.grid.ac/institutes/grid.5333.6',
-          1,
-        ],
+        resource: ['bbp', 'atlas', 'https://www.grid.ac/institutes/grid.5333.6', 1],
       },
     ],
     shrinked: false,
@@ -127,24 +117,17 @@ describe('NavigationStack', () => {
   });
 
   it('should render the correct number of NavigationStackItem components in the state', () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     rerender(app);
-    const navigationItems = container.querySelectorAll(
-      '.navigation-stack-item:not(.no-more)'
-    );
+    const navigationItems = container.querySelectorAll('.navigation-stack-item:not(.no-more)');
     expect(navigationItems.length).toBe(2);
   });
   it('should render the correct number of NavigationStackItem after multiple navigation', () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
-        _self:
-          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
+        _self: 'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
         title: 'bbp.neuroshapes.org',
         types: [],
         resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
@@ -157,12 +140,7 @@ describe('NavigationStack', () => {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       })
     );
     store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
@@ -175,14 +153,11 @@ describe('NavigationStack', () => {
     expect(state.dataExplorer.leftNodes.links.length).toBe(5);
   });
   it('should render the NavigationStackShrinkedItem when it passed MAX_NAVIGATION_ITEMS_IN_STACK', () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
-        _self:
-          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
+        _self: 'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
         title: 'bbp.neuroshapes.org',
         types: [],
         resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
@@ -210,12 +185,7 @@ describe('NavigationStack', () => {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       })
     );
     store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
@@ -235,9 +205,7 @@ describe('NavigationStack', () => {
       })
     );
     rerender(app);
-    const navigationStackShrinkedItem = container.querySelectorAll(
-      '.navigation-stack-item.more'
-    );
+    const navigationStackShrinkedItem = container.querySelectorAll('.navigation-stack-item.more');
     expect(navigationStackShrinkedItem.length).toBe(1);
     expect(navigationStackShrinkedItem).not.toBeNull();
     const navigationHiddenItems = container.querySelectorAll(
@@ -246,14 +214,11 @@ describe('NavigationStack', () => {
     expect(navigationHiddenItems.length).toBe(5);
   });
   it('should show the collapse button when the NavigationStackShrinkedItem is clicked', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
-        _self:
-          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
+        _self: 'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
         title: 'bbp.neuroshapes.org',
         types: [],
         resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
@@ -281,12 +246,7 @@ describe('NavigationStack', () => {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       })
     );
     store.dispatch(AddNewNodeDataExplorerGraphFlow(fourthItemInStack));
@@ -306,9 +266,7 @@ describe('NavigationStack', () => {
       })
     );
     rerender(app);
-    const openShrinkedNavList = container.querySelector(
-      '[role="open-shrinked-nav"]'
-    );
+    const openShrinkedNavList = container.querySelector('[role="open-shrinked-nav"]');
     expect(openShrinkedNavList).not.toBeNull();
     expect(openShrinkedNavList).toBeInTheDocument();
     openShrinkedNavList && (await user.click(openShrinkedNavList));
@@ -319,14 +277,11 @@ describe('NavigationStack', () => {
     expect(store.getState().dataExplorer.leftNodes.shrinked).toBe(false);
   });
   it('should the items in the stack be 4 when the user jump to the 5th item', async () => {
-    store.dispatch(
-      ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState })
-    );
+    store.dispatch(ResetDataExplorerGraphFlow({ initialState: initialDataExplorerState }));
     store.dispatch(
       AddNewNodeDataExplorerGraphFlow({
         isDownloadable: false,
-        _self:
-          'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
+        _self: 'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/_/https:%2F%2Fbbp.neuroshapes.org',
         title: 'bbp.neuroshapes.org',
         types: [],
         resource: ['bbp', 'atlas', 'https://bbp.neuroshapes.org', 1],
@@ -355,12 +310,7 @@ describe('NavigationStack', () => {
           'https://bbp.epfl.ch/nexus/v1/resources/neurosciencegraph/datamodels/_/https:%2F%2Fneuroshapes.org',
         title: 'neuroshapes.org',
         types: [],
-        resource: [
-          'neurosciencegraph',
-          'datamodels',
-          'https://neuroshapes.org',
-          161,
-        ],
+        resource: ['neurosciencegraph', 'datamodels', 'https://neuroshapes.org', 161],
       })
     );
     store.dispatch(

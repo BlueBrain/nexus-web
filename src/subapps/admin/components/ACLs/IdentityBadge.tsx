@@ -1,11 +1,6 @@
 import './ACLs.scss';
 
-import {
-  CrownOutlined,
-  GlobalOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { CrownOutlined, GlobalOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { Identity } from '@bbp/nexus-sdk/es';
 import { Tooltip } from 'antd';
 import * as React from 'react';
@@ -14,9 +9,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
   switch (identity['@type']) {
     case 'Anonymous':
       return (
-        <Tooltip
-          title={`Anyone with the internet has the following permissions`}
-        >
+        <Tooltip title={`Anyone with the internet has the following permissions`}>
           <GlobalOutlined /> Anonymous
         </Tooltip>
       );
@@ -40,11 +33,8 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
       );
     case 'User':
       return (
-        <Tooltip
-          title={`User ${identity.subject} has the following permissions`}
-        >
-          <UserOutlined /> User:{' '}
-          <span className="Identity-badge_role">{identity.subject}</span>
+        <Tooltip title={`User ${identity.subject} has the following permissions`}>
+          <UserOutlined /> User: <span className="Identity-badge_role">{identity.subject}</span>
         </Tooltip>
       );
     default:
@@ -52,7 +42,7 @@ const getTitle = (identity: Identity): React.ReactElement<any> => {
   }
 };
 
-const IdentityBadge: React.FunctionComponent<Identity> = props => {
+const IdentityBadge: React.FunctionComponent<Identity> = (props) => {
   return (
     <div className="Identity-badge">
       <h2>{getTitle(props)}</h2>

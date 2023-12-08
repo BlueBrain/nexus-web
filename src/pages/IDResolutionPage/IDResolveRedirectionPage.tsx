@@ -9,7 +9,7 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Redirect, useHistory, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import { __ as P,isMatching } from 'ts-pattern';
+import { __ as P, isMatching } from 'ts-pattern';
 
 import ResolutionError from '../../shared/components/IDResolution/ErrorResolution';
 import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
@@ -43,9 +43,7 @@ const IDResolveRedirectionPage = () => {
     apiEndpoint: state.config.apiEndpoint,
     basePath: state.config.basePath,
   }));
-  const [expandedItem, setExpandedItem] = useState<string | string[]>(
-    'resolved-resource-0'
-  );
+  const [expandedItem, setExpandedItem] = useState<string | string[]>('resolved-resource-0');
   const { resourceId } = useParams<{ resourceId: string }>();
   const decodedId = decodeURIComponent(resourceId);
 
@@ -53,9 +51,7 @@ const IDResolveRedirectionPage = () => {
     (state: RootState) => checkIsAuthenticated(state),
     []
   );
-  const isAuthenticated = useSelector((state: RootState) =>
-    checkAuthenticatedMemoized(state)
-  );
+  const isAuthenticated = useSelector((state: RootState) => checkAuthenticatedMemoized(state));
 
   // we should encode it again due oidc returning the url not encoded
   const redirectUri = `${basePath}/resolve/${encodeURIComponent(resourceId)}`;
@@ -103,12 +99,8 @@ const IDResolveRedirectionPage = () => {
       </div>
     );
   } else if (isSingleResult(data)) {
-    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
-      data as Resource
-    )!;
-    return (
-      <Redirect to={`/${orgLabel}/${projectLabel}/resources/${resourceId}`} />
-    );
+    const { orgLabel, projectLabel } = getOrgAndProjectFromResource(data as Resource)!;
+    return <Redirect to={`/${orgLabel}/${projectLabel}/resources/${resourceId}`} />;
   } else if (isMultipleResults(data)) {
     return (
       <div className="id-resolution-container">
@@ -119,43 +111,31 @@ const IDResolveRedirectionPage = () => {
             onChange={onChangeKey}
             defaultActiveKey={expandedItem}
           >
-            {((data as any)._results as Resource[]).map(
-              (resource: any, index: number) => {
-                const { orgLabel, projectLabel } = getOrgAndProjectFromResource(
-                  resource
-                )!;
-                const path = `${orgLabel}/${projectLabel}`;
-                const url = `/${path}/resources/${resourceId}`;
-                return (
-                  <Collapse.Panel
-                    key={`resolved-resource-${index}`}
-                    header={
-                      <div className="id-resolution-collapse-header">
-                        <div className="title">
-                          <Tag
-                            color="#f2f2f2"
-                            style={{ color: '#0050b3' }}
-                            title={path}
-                          >
-                            {path}
-                          </Tag>
-                          <span>{decodedId}</span>
-                        </div>
-                        <Link to={url} className="link">
-                          Open Resource
-                        </Link>
+            {((data as any)._results as Resource[]).map((resource: any, index: number) => {
+              const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
+              const path = `${orgLabel}/${projectLabel}`;
+              const url = `/${path}/resources/${resourceId}`;
+              return (
+                <Collapse.Panel
+                  key={`resolved-resource-${index}`}
+                  header={
+                    <div className="id-resolution-collapse-header">
+                      <div className="title">
+                        <Tag color="#f2f2f2" style={{ color: '#0050b3' }} title={path}>
+                          {path}
+                        </Tag>
+                        <span>{decodedId}</span>
                       </div>
-                    }
-                  >
-                    <ResponseViewer
-                      showHeader
-                      header={`${path}/${decodedId}`}
-                      data={resource}
-                    />
-                  </Collapse.Panel>
-                );
-              }
-            )}
+                      <Link to={url} className="link">
+                        Open Resource
+                      </Link>
+                    </div>
+                  }
+                >
+                  <ResponseViewer showHeader header={`${path}/${decodedId}`} data={resource} />
+                </Collapse.Panel>
+              );
+            })}
           </Collapse>
         </div>
       </div>

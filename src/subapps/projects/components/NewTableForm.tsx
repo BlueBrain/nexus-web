@@ -42,11 +42,7 @@ const NewTableForm: React.FC<{
           validateStatus={nameError ? 'error' : ''}
           help={nameError && 'Please enter a table name'}
         >
-          <Input
-            value={name}
-            onChange={onChangeName}
-            placeholder="Table name"
-          />
+          <Input value={name} onChange={onChangeName} placeholder="Table name" />
         </Item>
         <Item label="Description">
           <Input.TextArea

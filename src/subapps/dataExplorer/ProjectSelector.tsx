@@ -13,10 +13,7 @@ interface Props {
   onSelect: (orgLabel?: string, projectLabel?: string) => void;
 }
 
-export const ProjectSelector: React.FC<Props> = ({
-  defaultValue,
-  onSelect,
-}: Props) => {
+export const ProjectSelector: React.FC<Props> = ({ defaultValue, onSelect }: Props) => {
   const { data: projects } = useAggregations('projects');
   const [showClearIcon, setShowClearIcon] = useState(false);
 
@@ -30,7 +27,7 @@ export const ProjectSelector: React.FC<Props> = ({
       <span className="label">Project: </span>
       <AutoComplete
         options={allOptions}
-        onSearch={text => {
+        onSearch={(text) => {
           setShowClearIcon(text ? true : false);
         }}
         filterOption={(searchTerm, option) => {
@@ -39,7 +36,7 @@ export const ProjectSelector: React.FC<Props> = ({
           }
           return normalizeString(option.value).includes(searchTerm);
         }}
-        onSelect={text => {
+        onSelect={(text) => {
           if (text === AllProjects) {
             setShowClearIcon(false);
             onSelect(undefined, undefined);
@@ -72,9 +69,7 @@ export const ProjectSelector: React.FC<Props> = ({
 
 export const AllProjects = 'All Projects';
 
-const projectToOption = (
-  projectBucket: AggregatedBucket
-): { value: string; label: string } => {
+const projectToOption = (projectBucket: AggregatedBucket): { value: string; label: string } => {
   const { org, project } = makeOrgProjectTuple(projectBucket.key);
   return {
     value: `${org}/${project}`,

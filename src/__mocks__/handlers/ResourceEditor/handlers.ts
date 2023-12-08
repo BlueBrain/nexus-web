@@ -54,8 +54,7 @@ const resourceResolverApi = {
   derivation: {
     '@type': 'Derivation',
     entity: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/350bcafe-9cbb-4c15-bad3-1caed2cbb990',
       '@type': ['PatchedCell', 'Entity'],
     },
   },
@@ -69,8 +68,7 @@ const resourceResolverApi = {
         location:
           'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/a/a/e/d/8/2/b/5/tkb060126a2_ch3_bc_n_jh_100x_1.asc',
         store: {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
           '@type': 'RemoteDiskStorage',
           _rev: 1,
         },
@@ -83,8 +81,7 @@ const resourceResolverApi = {
         'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2Fbf146eaf-48cf-4b83-b375-bbb92ce7f7c0',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
+        value: 'efcf3d6660d9769b3f3066e874c8f13536fbc398b5605ffc5acc223884362ff6',
       },
       encodingFormat: 'application/asc',
       name: 'tkb060126a2_ch3_bc_n_jh_100x_1.asc',
@@ -96,8 +93,7 @@ const resourceResolverApi = {
         location:
           'file:///gpfs/bbp.cscs.ch/data/project/proj109/nexus/c7d70522-4305-480a-b190-75d757ed9a49/6/4/3/8/3/d/0/3/tkb060126a2_ch3_bc_n_jh_100x_1.swc',
         store: {
-          '@id':
-            'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
+          '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/4820323e-bee0-48d2-824f-9d9d404dbbee',
           '@type': 'RemoteDiskStorage',
           _rev: 1,
         },
@@ -110,8 +106,7 @@ const resourceResolverApi = {
         'https://bbp.epfl.ch/nexus/v1/files/public/sscx/https%3A%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F60025362-1ca8-425e-908c-a01e4661c3e7',
       digest: {
         algorithm: 'SHA-256',
-        value:
-          '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
+        value: '22bac983b129fe806c80a9ddb4dcf77b79c1a6a28adffd6674290fb1f014a30e',
       },
       encodingFormat: 'application/swc',
       name: 'tkb060126a2_ch3_bc_n_jh_100x_1.swc',
@@ -120,8 +115,7 @@ const resourceResolverApi = {
   generation: {
     '@type': 'Generation',
     activity: {
-      '@id':
-        'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
+      '@id': 'https://bbp.epfl.ch/neurosciencegraph/data/9ad281da-e352-4275-b1fa-6a3516a654c9',
       '@type': ['Activity', 'Reconstruction'],
     },
   },
@@ -136,8 +130,7 @@ const resourceResolverApi = {
   },
   name: 'tkb060126a2_ch3_bc_n_jh_100x_1',
   objectOfStudy: {
-    '@id':
-      'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
+    '@id': 'http://bbp.epfl.ch/neurosciencegraph/taxonomies/objectsofstudy/singlecells',
     '@type': 'ObjectOfStudy',
     label: 'Single Cell',
   },
@@ -160,8 +153,7 @@ const resourceResolverApi = {
     'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:neuronmorphology/neuronmorphologies%2Fbfdd4d1a-8b06-46fe-b663-7d9f8020dcaf/outgoing',
   _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/sscx',
   _rev: 2,
-  _schemaProject:
-    'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+  _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
   _self:
     'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:neuronmorphology/neuronmorphologies%2Fbfdd4d1a-8b06-46fe-b663-7d9f8020dcaf',
   _updatedAt: '2023-06-23T07:34:56.011Z',
@@ -178,10 +170,7 @@ const resourceFromSearchApi = {
   _results: [
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Entity',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Entity'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2019-04-30T09:52:26.839Z',
@@ -193,8 +182,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/somatosensorycortex/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/somatosensorycortex',
       _rev: 6,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/somatosensorycortex/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2022-09-27T19:51:18.724Z',
@@ -203,10 +191,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2019-09-04T13:16:26.008Z',
@@ -218,8 +203,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/atlas',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/atlas/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2019-09-04T13:16:26.008Z',
@@ -227,10 +211,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2020-04-27T13:53:36.781Z',
@@ -242,8 +223,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/sscx',
       _rev: 2,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/public/sscx/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2021-06-30T20:50:32.986Z',
@@ -263,8 +243,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/hippocampus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/hippocampus',
       _rev: 3,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/hippocampus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2022-09-27T19:47:26.049Z',
@@ -273,10 +252,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2020-11-13T11:57:22.686Z',
@@ -288,8 +264,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/agents/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/agents',
       _rev: 5,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/agents/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2022-09-27T11:07:30.295Z',
@@ -310,8 +285,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/public/hippocampus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/hippocampus',
       _rev: 2,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/public/hippocampus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2021-12-15T14:22:37.998Z',
@@ -319,10 +293,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2021-04-14T09:51:14.062Z',
@@ -334,8 +305,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/public/thalamus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/thalamus',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/public/thalamus/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2021-04-14T09:51:14.062Z',
@@ -355,8 +325,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/public/hippocampus-hub/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/hippocampus-hub',
       _rev: 2,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/public/hippocampus-hub/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2021-12-01T09:25:04.144Z',
@@ -366,8 +335,7 @@ const resourceFromSearchApi = {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
       '@type': 'http://schema.org/Organization',
       name: 'École Polytechnique Fédérale de Lausanne',
-      _constrainedBy:
-        'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+      _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
       _createdAt: '2021-06-17T11:36:24.449Z',
       _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/akkaufma',
       _deprecated: false,
@@ -385,10 +353,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2022-02-25T11:26:25.968Z',
@@ -398,11 +363,9 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/public/multi-vesicular-release/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/incoming',
       _outgoing:
         'https://bbp.epfl.ch/nexus/v1/resources/public/multi-vesicular-release/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
-      _project:
-        'https://bbp.epfl.ch/nexus/v1/projects/public/multi-vesicular-release',
+      _project: 'https://bbp.epfl.ch/nexus/v1/projects/public/multi-vesicular-release',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/public/multi-vesicular-release/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2022-02-25T11:26:25.968Z',
@@ -410,10 +373,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2022-12-15T13:00:11.386Z',
@@ -425,8 +385,7 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/nse/test/https:%2F%2Fneuroshapes.org%2Fdash%2Forganization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
       _project: 'https://bbp.epfl.ch/nexus/v1/projects/nse/test',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/nse/test/https:%2F%2Fneuroshapes.org%2Fdash%2Forganization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2022-12-15T13:00:11.386Z',
@@ -434,10 +393,7 @@ const resourceFromSearchApi = {
     },
     {
       '@id': 'https://www.grid.ac/institutes/grid.5333.6',
-      '@type': [
-        'http://schema.org/Organization',
-        'http://www.w3.org/ns/prov#Agent',
-      ],
+      '@type': ['http://schema.org/Organization', 'http://www.w3.org/ns/prov#Agent'],
       name: 'École Polytechnique Fédérale de Lausanne',
       _constrainedBy: 'https://neuroshapes.org/dash/organization',
       _createdAt: '2023-01-03T08:26:33.743Z',
@@ -447,11 +403,9 @@ const resourceFromSearchApi = {
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/incoming',
       _outgoing:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6/outgoing',
-      _project:
-        'https://bbp.epfl.ch/nexus/v1/projects/bbp/mmb-point-neuron-framework-model',
+      _project: 'https://bbp.epfl.ch/nexus/v1/projects/bbp/mmb-point-neuron-framework-model',
       _rev: 1,
-      _schemaProject:
-        'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
+      _schemaProject: 'https://bbp.epfl.ch/nexus/v1/projects/neurosciencegraph/datamodels',
       _self:
         'https://bbp.epfl.ch/nexus/v1/resources/bbp/mmb-point-neuron-framework-model/datashapes:organization/https:%2F%2Fwww.grid.ac%2Finstitutes%2Fgrid.5333.6',
       _updatedAt: '2023-01-03T08:26:33.743Z',
@@ -470,16 +424,13 @@ const getResolverResponseObject = rest.get(
     return res(ctx.status(400));
   }
 );
-const getSearchApiResponseObject = rest.get(
-  deltaPath(`resources`),
-  (req, res, ctx) => {
-    const locate = req.url.searchParams.get('locate');
-    if (locate && locate === resourceFromSearchApiId) {
-      return res(ctx.status(200), ctx.json(resourceFromSearchApi));
-    }
-    return res(ctx.status(400));
+const getSearchApiResponseObject = rest.get(deltaPath(`resources`), (req, res, ctx) => {
+  const locate = req.url.searchParams.get('locate');
+  if (locate && locate === resourceFromSearchApiId) {
+    return res(ctx.status(200), ctx.json(resourceFromSearchApi));
   }
-);
+  return res(ctx.status(400));
+});
 
 export {
   getResolverResponseObject,

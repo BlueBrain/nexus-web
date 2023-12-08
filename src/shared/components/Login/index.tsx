@@ -1,7 +1,7 @@
 import './Login.scss';
 
-import { DownOutlined,LoginOutlined } from '@ant-design/icons';
-import { Button,Card, Dropdown, Menu } from 'antd';
+import { DownOutlined, LoginOutlined } from '@ant-design/icons';
+import { Button, Card, Dropdown, Menu } from 'antd';
 import * as React from 'react';
 
 import logo from '../../images/logo.svg';
@@ -26,13 +26,13 @@ const Login: React.FunctionComponent<LoginProps> = ({
       onClick={({ key, domEvent }) => {
         domEvent.preventDefault();
         domEvent.stopPropagation();
-        const realm = realms.find(r => r === key);
+        const realm = realms.find((r) => r === key);
         if (realm) {
           setRealm(realm);
           onRealmSelected(realm);
         }
       }}
-      items={realms.map(realm => ({
+      items={realms.map((realm) => ({
         key: realm,
         label: realm,
       }))}
@@ -47,12 +47,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
         bodyStyle={{ borderTop: '1px solid rgba(0, 0, 0, 0.10)' }}
       >
         {realms.length === 1 ? (
-          <Button
-            className="login-button"
-            block
-            onClick={onLogin}
-            type="primary"
-          >
+          <Button className="login-button" block onClick={onLogin} type="primary">
             Log in
             <LoginOutlined />
           </Button>
@@ -64,10 +59,7 @@ const Login: React.FunctionComponent<LoginProps> = ({
             </Button>
             <div className="realm-holder">
               <span> with </span>
-              <Dropdown
-                dropdownRender={() => menu}
-                trigger={['click', 'hover']}
-              >
+              <Dropdown dropdownRender={() => menu} trigger={['click', 'hover']}>
                 <span className="realm">
                   {realm} <DownOutlined />
                 </span>

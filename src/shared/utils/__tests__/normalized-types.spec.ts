@@ -22,12 +22,6 @@ describe('getNormalizedTypes', () => {
   ];
   it('should return the normalized types', () => {
     const result = getNormalizedTypes(typesWithUrls);
-    expect(result).toEqual([
-      'Schema',
-      'Resource',
-      'Project',
-      'Realm',
-      'NeuronMorphology',
-    ]);
+    expect(result).toEqual(['Schema', 'Resource', 'Project', 'Realm', 'NeuronMorphology']);
   });
 });

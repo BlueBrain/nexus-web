@@ -9,12 +9,7 @@ import TypesIconList from '../components/Types/TypesIcon';
 import { UseSearchResponse } from '../hooks/useSearchQuery';
 import { RootState } from '../store/reducers';
 import { ResultTableFields } from '../types/search';
-import {
-  deltaUrlToFusionUrl,
-  getResourceLabel,
-  isURL,
-  parseJsonMaybe,
-} from '.';
+import { deltaUrlToFusionUrl, getResourceLabel, isURL, parseJsonMaybe } from '.';
 import { convertMarkdownHandlebarStringWithData } from './markdownTemplate';
 import { parseURL } from './nexusParse';
 
@@ -56,9 +51,7 @@ export function addColumnsForES(
   filterConfig: FilterConfigByColumnFn,
   basePath: string
 ): {
-  sorter:
-    | false
-    | ((a: { [key: string]: any }, b: { [key: string]: any }) => 1 | -1 | 0);
+  sorter: false | ((a: { [key: string]: any }, b: { [key: string]: any }) => 1 | -1 | 0);
   render: (text: string, resource: Resource) => any;
   title: string;
   dataIndex: string;
@@ -80,10 +73,7 @@ export function addColumnsForES(
       sorter: !!field.sortable && sorter('description'),
       ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) =>
-        convertMarkdownHandlebarStringWithData(
-          resource.description || '',
-          resource
-        ),
+        convertMarkdownHandlebarStringWithData(resource.description || '', resource),
     }))
     .with('project', () => ({
       ...field,
@@ -99,11 +89,7 @@ export function addColumnsForES(
       sorter: !!field.sortable && sorter('schema'),
       ...(field.filterable && filterConfig(field)),
       render: (text: string, resource: Resource) => {
-        return (
-          <Tooltip title={resource._constrainedBy}>
-            {text.split('/').reverse()[0]}
-          </Tooltip>
-        );
+        return <Tooltip title={resource._constrainedBy}>{text.split('/').reverse()[0]}</Tooltip>;
       },
     }))
     .with('@type', () => ({

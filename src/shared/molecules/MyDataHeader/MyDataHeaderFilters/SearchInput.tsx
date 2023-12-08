@@ -2,18 +2,11 @@ import { Checkbox, Input } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { THeaderProps } from 'shared/canvas/MyData/types';
 
-type TSearchInputProps = Pick<
-  THeaderProps,
-  'locate' | 'query' | 'setFilterOptions'
->;
-const SearchInput = ({
-  query,
-  locate,
-  setFilterOptions,
-}: TSearchInputProps) => {
+type TSearchInputProps = Pick<THeaderProps, 'locate' | 'query' | 'setFilterOptions'>;
+const SearchInput = ({ query, locate, setFilterOptions }: TSearchInputProps) => {
   const onSearchLocateChange = (e: CheckboxChangeEvent) =>
     setFilterOptions({ locate: e.target.checked });
-  const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = event =>
+  const handleQueryChange: React.ChangeEventHandler<HTMLInputElement> = (event) =>
     setFilterOptions({ query: event.target.value });
   return (
     <div className="my-data-header-title_search">

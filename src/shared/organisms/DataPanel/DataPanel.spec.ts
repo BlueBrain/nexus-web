@@ -26,9 +26,7 @@ const mockParsedDataFromUrl: ParsedNexusUrl = {
 
 describe('DataPanel', () => {
   it('throws errors when create archive endpoint throws', async () => {
-    mockNexus.Resource.get = vi
-      .fn()
-      .mockResolvedValue(resourceWithoutDistrition);
+    mockNexus.Resource.get = vi.fn().mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
     mockNexus.Archive.create = vi.fn().mockRejectedValue(mockEndpointError);
 
@@ -49,9 +47,7 @@ describe('DataPanel', () => {
   });
 
   it('does not contain warnings if all resources were found but archive create failed', async () => {
-    mockNexus.Resource.get = vi
-      .fn()
-      .mockResolvedValue(resourceWithoutDistrition);
+    mockNexus.Resource.get = vi.fn().mockResolvedValue(resourceWithoutDistrition);
     const mockEndpointError = new Error('Test Mock Error');
     mockNexus.Archive.create = vi.fn().mockRejectedValue(mockEndpointError);
 
@@ -98,13 +94,9 @@ describe('DataPanel', () => {
   });
 
   it('throws errors when archive get endpoint failed', async () => {
-    mockNexus.Resource.get = vi
-      .fn()
-      .mockResolvedValue(resourceWithoutDistrition);
+    mockNexus.Resource.get = vi.fn().mockResolvedValue(resourceWithoutDistrition);
 
-    mockNexus.Archive.create = vi
-      .fn()
-      .mockResolvedValue('Archive create passed');
+    mockNexus.Archive.create = vi.fn().mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
     mockNexus.httpGet = vi.fn().mockRejectedValue(mockEndpointError);
 
@@ -136,9 +128,7 @@ describe('DataPanel', () => {
       .mockRejectedValueOnce(new Error('Mock resource 2 not found'))
       .mockRejectedValueOnce(new Error('Mock resource 3 not found'));
 
-    mockNexus.Archive.create = vi
-      .fn()
-      .mockResolvedValue('Archive create passed');
+    mockNexus.Archive.create = vi.fn().mockResolvedValue('Archive create passed');
     const mockEndpointError = new Error('However, Archive get failed');
     mockNexus.httpGet = vi.fn().mockRejectedValue(mockEndpointError);
 
@@ -164,13 +154,9 @@ describe('DataPanel', () => {
   });
 
   it('does not throw if neither archive create nor archive fetch failed', async () => {
-    mockNexus.Resource.get = vi
-      .fn()
-      .mockResolvedValue(resourceWithoutDistrition);
+    mockNexus.Resource.get = vi.fn().mockResolvedValue(resourceWithoutDistrition);
 
-    mockNexus.Archive.create = vi
-      .fn()
-      .mockResolvedValue('Archive create passed');
+    mockNexus.Archive.create = vi.fn().mockResolvedValue('Archive create passed');
     mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
@@ -197,9 +183,7 @@ describe('DataPanel', () => {
       .mockRejectedValueOnce(new Error('Mock resource 2 not found'))
       .mockRejectedValueOnce(new Error('Mock resource 3 not found'));
 
-    mockNexus.Archive.create = vi
-      .fn()
-      .mockResolvedValue('Archive create passed');
+    mockNexus.Archive.create = vi.fn().mockResolvedValue('Archive create passed');
     mockNexus.httpGet = vi.fn().mockResolvedValue(new Blob());
 
     const result = await downloadArchive({
@@ -220,9 +204,7 @@ describe('DataPanel', () => {
   });
 
   it('contains warnings for every distributions within resources that could not be fetched', async () => {
-    mockNexus.Resource.get = vi
-      .fn()
-      .mockResolvedValue(resourceWithDistributionArray); // resource with 4 distributions
+    mockNexus.Resource.get = vi.fn().mockResolvedValue(resourceWithDistributionArray); // resource with 4 distributions
     mockNexus.httpGet = vi
       .fn()
       // Out of 4 distributions, 2 were not fetched
@@ -232,9 +214,7 @@ describe('DataPanel', () => {
       .mockReturnValueOnce(getMockDistribution('mockfilename')) // Successful response for 4th distribution
       .mockResolvedValueOnce(new Blob()); // Successful response for get archive
 
-    mockNexus.Archive.create = vi
-      .fn()
-      .mockResolvedValue('Archive create passed');
+    mockNexus.Archive.create = vi.fn().mockResolvedValue('Archive create passed');
 
     const result = await downloadArchive({
       nexus: mockNexus,

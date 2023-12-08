@@ -9,15 +9,10 @@ import useLocalStorage from './useLocalStorage';
 import useNotification from './useNotification';
 
 export function useJiraPlugin() {
-  const [
-    jiraInaccessibleBecauseOfVPN,
-    setJiraInaccessibleBecauseOfVPN,
-  ] = React.useState(false);
-  const {
-    jiraSupportedRealms,
-    apiEndpoint,
-    httpHeaderForInaccessibleDueToVPN,
-  } = useSelector((state: RootState) => state.config);
+  const [jiraInaccessibleBecauseOfVPN, setJiraInaccessibleBecauseOfVPN] = React.useState(false);
+  const { jiraSupportedRealms, apiEndpoint, httpHeaderForInaccessibleDueToVPN } = useSelector(
+    (state: RootState) => state.config
+  );
   const jiraAPIBaseUrl = `${apiEndpoint}/jira`;
 
   const { identities } = useSelector((state: RootState) => state.auth);
@@ -41,12 +36,10 @@ export function useJiraPlugin() {
         },
       });
 
-      const hasNoVPNHeader = !![...response.headers].some(
-        (headerKeyValuePair: any) => {
-          const [header, _] = headerKeyValuePair;
-          return header === httpHeaderForInaccessibleDueToVPN;
-        }
-      );
+      const hasNoVPNHeader = !![...response.headers].some((headerKeyValuePair: any) => {
+        const [header, _] = headerKeyValuePair;
+        return header === httpHeaderForInaccessibleDueToVPN;
+      });
       return hasNoVPNHeader;
     } catch (e) {
       return false;
@@ -54,7 +47,7 @@ export function useJiraPlugin() {
   };
 
   React.useEffect(() => {
-    isInaccessibleBecauseNotOnVPN().then(value => {
+    isInaccessibleBecauseNotOnVPN().then((value) => {
       setJiraInaccessibleBecauseOfVPN(value);
     });
   }, []);
@@ -87,8 +80,8 @@ function useJIRA({
   const [projectSelf, setProjectSelf] = React.useState<string>();
   React.useEffect(() => {
     nexus.Project.get(orgLabel, projectLabel)
-      .then(d => setProjectSelf(d._self))
-      .catch(e => {
+      .then((d) => setProjectSelf(d._self))
+      .catch((e) => {
         notification.error({
           message: 'An error occurred whilst trying to retrieve project',
         });
@@ -97,16 +90,11 @@ function useJIRA({
 
   const notification = useNotification();
 
-  const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>(
-    'isJiraConnected',
-    true
-  );
+  const [isJiraConnected, setIsJiraConnected] = useLocalStorage<boolean>('isJiraConnected', true);
 
   const [jiraAuthUrl, setJiraAuthUrl] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
-  const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector(
-    (state: RootState) => state.config
-  );
+  const { apiEndpoint, jiraUrl: jiraWebBaseUrl } = useSelector((state: RootState) => state.config);
   const jiraAPIBaseUrl = `${apiEndpoint}/jira`;
   const [linkedIssues, setLinkedIssues] = React.useState<any[]>([]);
   const [projects, setProjects] = React.useState<any[]>([]);
@@ -123,10 +111,10 @@ function useJIRA({
       .httpPost({
         path: `${jiraAPIBaseUrl}/request-token`,
       })
-      .then(response => {
+      .then((response) => {
         setJiraAuthUrl(response.value);
       })
-      .catch(e => {
+      .catch((e) => {
         notification.error({
           message: 'Error connecting to Jira',
           description: e.reason ? e.reason : null,
@@ -146,10 +134,10 @@ function useJIRA({
           value: verificationCode,
         }),
       })
-      .then(_ => {
+      .then((_) => {
         setIsJiraConnected(true);
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
@@ -160,7 +148,7 @@ function useJIRA({
         path: `${jiraAPIBaseUrl}/project`,
         headers: { 'Content-Type': 'application/json' },
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
@@ -182,14 +170,14 @@ function useJIRA({
    * @returns
    */
   const getFullIssues = async (issues: any[]) =>
-    await Promise.all(issues.map(issue => getIssue(issue.key)));
+    await Promise.all(issues.map((issue) => getIssue(issue.key)));
   const getIssue = (issueKey: string) => {
     return nexus
       .httpGet({
         path: `${jiraAPIBaseUrl}/issue/${issueKey}`,
         headers: { 'Content-Type': 'application/json' },
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
@@ -203,7 +191,7 @@ function useJIRA({
           jql: `"${jiraResourceCustomFieldLabel}" = "${resourceSelf}"`,
         }),
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
@@ -228,8 +216,7 @@ function useJIRA({
         if (errorContent.indexOf('oauth_problem=token_rejected') > -1) {
           notification.error({
             message: e.reason,
-            description:
-              'Jira access token is invalid. Re-authorize access to reconnect to Jira.',
+            description: 'Jira access token is invalid. Re-authorize access to reconnect to Jira.',
           });
           setIsJiraConnected(false);
           return;
@@ -277,16 +264,12 @@ function useJIRA({
           jql: `"${jiraProjectCustomFieldLabel}" = "${projectSelf}"`,
         }),
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
 
-  const createIssue = (
-    project: string,
-    summary: string,
-    description: string
-  ) => {
+  const createIssue = (project: string, summary: string, description: string) => {
     return nexus
       .httpPost({
         path: `${jiraAPIBaseUrl}/issue`,
@@ -305,10 +288,10 @@ function useJIRA({
           },
         }),
       })
-      .then(v => {
+      .then((v) => {
         fetchLinkedIssues();
       })
-      .catch(e => {
+      .catch((e) => {
         handleJiraError(e);
       });
   };
@@ -351,7 +334,7 @@ function useJIRA({
             handleJiraError(e);
           });
       })
-      .catch(e => handleJiraError(e));
+      .catch((e) => handleJiraError(e));
   };
 
   const unlinkIssue = (issueKey: string) => {
@@ -384,10 +367,7 @@ function useJIRA({
 
   const getIssueResources = (issues: any) => {
     const resources = issues.map((issue: any) => {
-      if (
-        issue.fields[nexusResourceFieldName] &&
-        issue.fields[nexusResourceFieldName] !== null
-      ) {
+      if (issue.fields[nexusResourceFieldName] && issue.fields[nexusResourceFieldName] !== null) {
         return nexus.httpGet({ path: issue.fields[nexusResourceFieldName] });
       }
       return Promise.resolve();
@@ -406,33 +386,26 @@ function useJIRA({
         if (issuesResponse.issues) {
           const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
             (a: any, b: any) =>
-              new Date(b.fields.updated).getTime() -
-              new Date(a.fields.updated).getTime()
+              new Date(b.fields.updated).getTime() - new Date(a.fields.updated).getTime()
           );
 
-          const fullIssuesWithComments = await getFullIssues(
-            issuesOrderedByLastUpdate
-          );
+          const fullIssuesWithComments = await getFullIssues(issuesOrderedByLastUpdate);
 
-          const resources = (
-            await getIssueResources(issuesOrderedByLastUpdate)
-          ).filter(r => r !== undefined);
+          const resources = (await getIssueResources(issuesOrderedByLastUpdate)).filter(
+            (r) => r !== undefined
+          );
 
           setLinkedIssues(
             fullIssuesWithComments.map((issue: any) => {
               let resourceLabel = '';
               if (issue.fields[nexusResourceFieldName] !== null) {
                 const resource = resources.find(
-                  r =>
-                    (r as Resource)['_self'] ===
-                    issue.fields[nexusResourceFieldName]
+                  (r) => (r as Resource)['_self'] === issue.fields[nexusResourceFieldName]
                 );
 
                 resourceLabel = resource
                   ? getResourceLabel(resource as Resource)
-                  : labelOf(
-                      decodeURIComponent(issue.fields[nexusResourceFieldName])
-                    );
+                  : labelOf(decodeURIComponent(issue.fields[nexusResourceFieldName]));
               }
 
               return {

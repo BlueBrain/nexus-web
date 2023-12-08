@@ -31,10 +31,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
     size: 20,
   });
 
-  const [
-    searchResponse,
-    { searchProps, setSearchProps },
-  ] = useSearchQueryFromStudio(
+  const [searchResponse, { searchProps, setSearchProps }] = useSearchQueryFromStudio(
     view._self,
     queryJSON,
     paginationState.from,
@@ -100,8 +97,7 @@ const DashboardElasticSearchQueryContainer: React.FC<{
         renderResults()
       ) : (
         <Empty>
-          Your query is either too broad or Your workspace is not configured for
-          Elastic Search
+          Your query is either too broad or Your workspace is not configured for Elastic Search
         </Empty>
       )}
     </>

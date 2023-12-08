@@ -12,7 +12,7 @@ const ResourceLinks: React.FunctionComponent<{
   total: number;
   onLoadMore: () => void;
   onClick?: (link: ResourceLinkAugmented) => void;
-}> = props => {
+}> = (props) => {
   const { busy, error, links, total, onLoadMore, onClick } = props;
   const scrollParent = React.useRef<HTMLDivElement>(null);
   const hasMore = links.length < total;
@@ -33,7 +33,7 @@ const ResourceLinks: React.FunctionComponent<{
               hasSearch={false}
               scrollParent={scrollParent.current}
             >
-              {links.map(link => (
+              {links.map((link) => (
                 <ListItem key={link['@id']}>
                   <ResourceLinkItem link={link} onInternalClick={onClick} />
                 </ListItem>

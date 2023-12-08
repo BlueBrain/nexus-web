@@ -1,25 +1,15 @@
 import { RightOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Menu } from 'antd';
-import {
-  TDateField,
-  THandleMenuSelect,
-  THeaderFilterProps,
-} from 'shared/canvas/MyData/types';
+import { TDateField, THandleMenuSelect, THeaderFilterProps } from 'shared/canvas/MyData/types';
 
-type TDateFieldSelectorProps = Pick<
-  THeaderFilterProps,
-  'dateField' | 'setFilterOptions'
->;
+type TDateFieldSelectorProps = Pick<THeaderFilterProps, 'dateField' | 'setFilterOptions'>;
 
 const dateFieldName = {
   createdAt: 'Creation Date',
   updatedAt: 'Update Date',
 };
 
-const DateFieldSelector = ({
-  dateField,
-  setFilterOptions,
-}: TDateFieldSelectorProps) => {
+const DateFieldSelector = ({ dateField, setFilterOptions }: TDateFieldSelectorProps) => {
   const handleDateFieldChange: THandleMenuSelect = ({ key }) =>
     setFilterOptions({ dateField: key as TDateField });
 
@@ -48,10 +38,7 @@ const DateFieldSelector = ({
       trigger={['click']}
       dropdownRender={() => DateFieldMenu}
     >
-      <Button
-        type="link"
-        style={{ textAlign: 'left', padding: '4px 0px', color: '#333' }}
-      >
+      <Button type="link" style={{ textAlign: 'left', padding: '4px 0px', color: '#333' }}>
         {dateFieldName[dateField]}
         <RightOutlined style={{ fontSize: 8, verticalAlign: 'middle' }} />
       </Button>

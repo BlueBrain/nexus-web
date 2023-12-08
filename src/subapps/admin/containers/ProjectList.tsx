@@ -12,7 +12,7 @@ const ProjectListContainer: React.FunctionComponent<{
   children: any;
   defaultSearchValue?: string;
   height?: number;
-}> = props => {
+}> = (props) => {
   const nexus: NexusClient = useNexusContext();
   const [projects, setProjects] = React.useState<any>({
     total: 0,
@@ -26,9 +26,7 @@ const ProjectListContainer: React.FunctionComponent<{
       size: DEFAULT_PAGE_SIZE,
       label: projects.searchValue,
       deprecated: SHOULD_INCLUDE_DEPRECATED,
-    }).then(res =>
-      setProjects({ ...projects, total: res._total, items: res._results })
-    );
+    }).then((res) => setProjects({ ...projects, total: res._total, items: res._results }));
   }, []);
 
   const loadMore = ({ searchValue }: { searchValue: string }) => {
@@ -42,7 +40,7 @@ const ProjectListContainer: React.FunctionComponent<{
       from: newFilter ? 0 : projects.items.length,
       label: searchValue,
       deprecated: SHOULD_INCLUDE_DEPRECATED,
-    }).then(res => {
+    }).then((res) => {
       setProjects({
         searchValue,
         total: res._total,

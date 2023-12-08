@@ -4,11 +4,7 @@ import { ActionCreator, AnyAction, Dispatch } from 'redux';
 import { ResultTableFields } from '../../types/search';
 import { ThunkAction } from '..';
 import { RootState } from '../reducers';
-import {
-  FacetConfig,
-  SearchConfig,
-  SearchConfigType,
-} from '../reducers/search';
+import { FacetConfig, SearchConfig, SearchConfigType } from '../reducers/search';
 import { FetchAction, FetchFailedAction, FetchFulfilledAction } from './utils';
 
 export const enum SearchActionTypes {
@@ -25,9 +21,7 @@ export const enum SearchPreferenceTypes {
  */
 
 // Fetching
-export type FetchSearchConfigsAction = FetchAction<
-  SearchActionTypes.SEARCH_CONFIG_FETCHING
->;
+export type FetchSearchConfigsAction = FetchAction<SearchActionTypes.SEARCH_CONFIG_FETCHING>;
 const fetchSearchConfigsAction: ActionCreator<FetchSearchConfigsAction> = () => ({
   type: SearchActionTypes.SEARCH_CONFIG_FETCHING,
 });
@@ -83,9 +77,7 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
     dispatch: Dispatch<any>,
     getState,
     { nexus }
-  ): Promise<
-    FetchSearchConfigsFulfilledAction | FetchSearchConfigsFailedAction
-  > => {
+  ): Promise<FetchSearchConfigsFulfilledAction | FetchSearchConfigsFailedAction> => {
     dispatch(fetchSearchConfigsAction());
     try {
       const {
@@ -103,11 +95,7 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
         const searchConfigs = await Promise.all(
           _results.map(
             async ({ '@id': id }) =>
-              (await nexus.Resource.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(id)
-              )) as Resource
+              (await nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(id))) as Resource
           ) as Promise<
             Resource<{
               label: string;
@@ -119,7 +107,7 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
           >[]
         );
 
-        return searchConfigs.map(resource => ({
+        return searchConfigs.map((resource) => ({
           id: resource['@id'],
           label: resource.label,
           view: resource.view,

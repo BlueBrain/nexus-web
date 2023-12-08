@@ -27,11 +27,7 @@ const SingleStepContainer: React.FC<{
   const [children, setChildren] = React.useState<any[]>([]);
   const [showAddForm, setShowAddForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
-  const { updateStep, success, error } = useUpdateStep(
-    orgLabel,
-    projectLabel,
-    step._rev
-  );
+  const { updateStep, success, error } = useUpdateStep(orgLabel, projectLabel, step._rev);
 
   React.useEffect(() => {
     fetchChildren();
@@ -50,16 +46,12 @@ const SingleStepContainer: React.FC<{
       );
       const resources = ((await Promise.all(
         links._results
-          .filter(link => isParentLink(link))
-          .map(link =>
-            nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(link['@id'])
-            )
+          .filter((link) => isParentLink(link))
+          .map((link) =>
+            nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(link['@id']))
           )
         // additional filter as links deprecated parameter not working
-      )) as Resource[]).filter(resource => !resource._deprecated);
+      )) as Resource[]).filter((resource) => !resource._deprecated);
       setChildren(resources);
     } catch (error) {
       notification.error({
@@ -97,7 +89,7 @@ const SingleStepContainer: React.FC<{
           message: `New step ${data.name} created successfully`,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setShowAddForm(false);
         setBusy(false);
         notification.error({

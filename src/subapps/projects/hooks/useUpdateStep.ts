@@ -3,11 +3,7 @@ import * as React from 'react';
 
 import fusionConfig from '../config';
 
-export const useUpdateStep = (
-  orgLabel: string,
-  projectLabel: string,
-  rev: number
-) => {
+export const useUpdateStep = (orgLabel: string, projectLabel: string, rev: number) => {
   const nexus = useNexusContext();
   const [error, setError] = React.useState<Error>();
   const [success, setSuccess] = React.useState<boolean>();

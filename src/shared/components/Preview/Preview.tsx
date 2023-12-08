@@ -49,21 +49,13 @@ const Preview: React.FC<{
   nexus: NexusClient;
   collapsed: boolean;
   handleCollapseChanged: () => void;
-}> = ({
-  resource,
-  nexus,
-  collapsed,
-  handleCollapseChanged: handleCollapsedChanged,
-}) => {
+}> = ({ resource, nexus, collapsed, handleCollapseChanged: handleCollapsedChanged }) => {
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
   const notification = useNotification();
   const [selectedRows, setSelectedRows] = React.useState<any[]>([]);
   const [previewAsset, setPreviewAsset] = React.useState<any | undefined>();
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-  const renderFileSize = (contentSize: {
-    value: string;
-    unitCode?: string;
-  }) => {
+  const renderFileSize = (contentSize: { value: string; unitCode?: string }) => {
     if (!contentSize) {
       return '-';
     }
@@ -111,18 +103,12 @@ const Preview: React.FC<{
       title: 'Actions',
       dataIndex: 'asset',
       key: 'actions',
-      render: (asset: {
-        url: string;
-        name: string;
-        encodingFormat: string;
-      }) => {
+      render: (asset: { url: string; name: string; encodingFormat: string }) => {
         return (
           <Row gutter={5}>
             <Col>
               <Button
-                onClick={() =>
-                  downloadSingleFile(nexus, orgLabel, projectLabel, asset)
-                }
+                onClick={() => downloadSingleFile(nexus, orgLabel, projectLabel, asset)}
                 disabled={!isNexusFile(asset.url)}
               >
                 Download
@@ -132,10 +118,7 @@ const Preview: React.FC<{
               <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
             </Col>
             <Col>
-              <Button
-                onClick={() => setPreviewAsset(asset)}
-                disabled={!isSupportedFile(asset)}
-              >
+              <Button onClick={() => setPreviewAsset(asset)} disabled={!isSupportedFile(asset)}>
                 Preview
               </Button>
             </Col>
@@ -147,10 +130,10 @@ const Preview: React.FC<{
 
   const downloadMultipleFiles = async () => {
     const resourcesPayload = selectedRows
-      .map(row => {
+      .map((row) => {
         return row.asset.url;
       })
-      .map(url => {
+      .map((url) => {
         const resourceId = parseResourceId(url);
         return {
           resourceId,
@@ -166,31 +149,23 @@ const Preview: React.FC<{
 
     try {
       // TODO: fix the SDK to handle empty response
-      await fetch(
-        `${apiEndpoint}/archives/${orgLabel}/${projectLabel}/${payload.archiveId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      await fetch(`${apiEndpoint}/archives/${orgLabel}/${projectLabel}/${payload.archiveId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+        },
+        body: JSON.stringify(payload),
+      });
     } catch (error) {
       notification.error({
         message: 'Failed to download the file',
         description: (error as TError).reason || (error as TError).message,
       });
     }
-    const archive = (await nexus.Archive.get(
-      orgLabel,
-      projectLabel,
-      archiveId,
-      {
-        as: 'x-tar',
-      }
-    )) as string;
+    const archive = (await nexus.Archive.get(orgLabel, projectLabel, archiveId, {
+      as: 'x-tar',
+    })) as string;
     const blob = new Blob([archive]);
     downloadBlobHelper(blob, `${archiveId}.tar.gz`);
   };
@@ -270,10 +245,7 @@ const Preview: React.FC<{
     }
   };
 
-  const downloadBlobHelper = (
-    rawData: string | NexusFile | Blob | FormData,
-    name: string
-  ) => {
+  const downloadBlobHelper = (rawData: string | NexusFile | Blob | FormData, name: string) => {
     const blob = new Blob([rawData as string], {
       type: 'octet/stream',
     });
@@ -297,17 +269,14 @@ const Preview: React.FC<{
         [distribution].flat().map((d, i) => {
           return {
             key: i,
-            name:
-              d.name ||
-              (d.repository && (d.repository.name || d.repository['@id'])),
+            name: d.name || (d.repository && (d.repository.name || d.repository['@id'])),
             asset: {
               url: d.contentUrl || d.url,
               name: d.name,
               encodingFormat: d.encodingFormat,
             },
             encodingFormat:
-              d.encodingFormat ||
-              (d.name?.includes('.') ? d.name.split('.').pop() : '-'),
+              d.encodingFormat || (d.name?.includes('.') ? d.name.split('.').pop() : '-'),
             contentSize: d.contentSize,
           };
         })
@@ -318,17 +287,12 @@ const Preview: React.FC<{
   };
 
   const fileFormat =
-    previewAsset && previewAsset.name?.includes('.')
-      ? previewAsset.name.split('.').pop()
-      : '-';
+    previewAsset && previewAsset.name?.includes('.') ? previewAsset.name.split('.').pop() : '-';
 
   return (
     <div>
       {previewAsset && previewAsset.encodingFormat === 'application/pdf' && (
-        <PDFViewer
-          url={previewAsset.url}
-          closePreview={() => setPreviewAsset(undefined)}
-        />
+        <PDFViewer url={previewAsset.url} closePreview={() => setPreviewAsset(undefined)} />
       )}
       {previewAsset && (fileFormat === 'csv' || fileFormat === 'tsv') && (
         <TableViewerContainer
@@ -363,9 +327,7 @@ const Preview: React.FC<{
                       if (selected) {
                         setSelectedRows([...selectedRows, record]);
                       } else {
-                        const currentRows = selectedRows.filter(
-                          s => s.key !== record.key
-                        );
+                        const currentRows = selectedRows.filter((s) => s.key !== record.key);
                         setSelectedRows(currentRows);
                       }
                     },

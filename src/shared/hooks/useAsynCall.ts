@@ -25,14 +25,14 @@ export default function useAsyncCall<T, E>(
     });
 
     remoteAction
-      .then(data => {
+      .then((data) => {
         setRemoteCall({
           data,
           error: null,
           loading: false,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         setRemoteCall({
           error,
           loading: false,

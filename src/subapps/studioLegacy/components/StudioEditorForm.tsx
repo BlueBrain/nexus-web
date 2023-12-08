@@ -1,12 +1,8 @@
 import './StudioEditorForm.scss';
 
-import {
-  CompassFilled,
-  MoreOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
+import { CompassFilled, MoreOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Button, Form, FormInstance,Input, Switch, Tooltip } from 'antd';
+import { Button, Form, FormInstance, Input, Switch, Tooltip } from 'antd';
 import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { SaveImageHandler } from 'react-mde';
@@ -56,11 +52,8 @@ const StudioEditorForm: React.FC<{
 
   React.useEffect(() => {
     const studioConfiguredPlugins =
-      studio &&
-      studio.plugins &&
-      studio.plugins.customise &&
-      studio.plugins.plugins
-        ? studio.plugins.plugins.map(p => ({ ...p, visible: true }))
+      studio && studio.plugins && studio.plugins.customise && studio.plugins.plugins
+        ? studio.plugins.plugins.map((p) => ({ ...p, visible: true }))
         : [];
 
     const nexusBuiltInPlugins = [
@@ -83,8 +76,8 @@ const StudioEditorForm: React.FC<{
     ];
 
     /* update studio configured plugins with built-in */
-    nexusBuiltInPlugins.forEach(f => {
-      const match = studioConfiguredPlugins.find(c => c.key === f.key);
+    nexusBuiltInPlugins.forEach((f) => {
+      const match = studioConfiguredPlugins.find((c) => c.key === f.key);
       if (match) {
         // if configured already, just set the name of it
         match.name = f.name;
@@ -99,7 +92,7 @@ const StudioEditorForm: React.FC<{
       }
     });
     const otherAvailablePlugins = Object.keys(pluginManifest || {})
-      .map(key => {
+      .map((key) => {
         return {
           key,
           name: pluginManifest ? pluginManifest[key].name : '',
@@ -107,12 +100,12 @@ const StudioEditorForm: React.FC<{
           expanded: false,
         };
       })
-      .filter(p => !studioConfiguredPlugins.find(c => c.key === p.key));
+      .filter((p) => !studioConfiguredPlugins.find((c) => c.key === p.key));
 
     // include names for studio configured plugins
     if (pluginManifest) {
-      studioConfiguredPlugins.forEach(p => {
-        const match = Object.keys(pluginManifest).find(k => p.key === k);
+      studioConfiguredPlugins.forEach((p) => {
+        const match = Object.keys(pluginManifest).find((k) => p.key === k);
         if (match) {
           p.name = pluginManifest[match].name;
         }
@@ -125,8 +118,8 @@ const StudioEditorForm: React.FC<{
   const handleSubmit = (values: any) => {
     const visiblePlugins = plugins
       ? plugins
-          .filter(p => p.visible)
-          .map(p => {
+          .filter((p) => p.visible)
+          .map((p) => {
             return { key: p.key, expanded: !!p.expanded };
           })
       : [];
@@ -159,12 +152,7 @@ const StudioEditorForm: React.FC<{
 
   return (
     <>
-      <Form
-        {...formItemLayout}
-        ref={formRef}
-        onFinish={handleSubmit}
-        layout="vertical"
-      >
+      <Form {...formItemLayout} ref={formRef} onFinish={handleSubmit} layout="vertical">
         <Form.Item
           label={
             <span>
@@ -208,7 +196,7 @@ const StudioEditorForm: React.FC<{
           <Switch
             title="Hide plugin"
             checked={isPluginsCustomised}
-            onChange={checked => {
+            onChange={(checked) => {
               setIsPluginsCustomised(checked);
             }}
           />{' '}
@@ -217,13 +205,12 @@ const StudioEditorForm: React.FC<{
           <>
             <p className="custom-plugins">
               <em>
-                Overrides the default resource plugin behaviour. Choose which
-                plugins to enable, the order in which they appear, and whether
-                they display expanded or not.
+                Overrides the default resource plugin behaviour. Choose which plugins to enable, the
+                order in which they appear, and whether they display expanded or not.
               </em>
             </p>
             <DragDropContext
-              onDragEnd={result => {
+              onDragEnd={(result) => {
                 const { destination, source } = result;
                 if (!destination || !plugins) {
                   return;
@@ -234,10 +221,8 @@ const StudioEditorForm: React.FC<{
                  It is possible to drag an item into the area of
                  disabled plugins, in which case put at end of
                  enabled list */
-                const indexOfLastEnabledPlugin = pluginsCopy.find(
-                  p => !p.visible
-                )
-                  ? pluginsCopy.findIndex(p => !p.visible) - 1
+                const indexOfLastEnabledPlugin = pluginsCopy.find((p) => !p.visible)
+                  ? pluginsCopy.findIndex((p) => !p.visible) - 1
                   : pluginsCopy.length - 1;
 
                 const destinationIndex =
@@ -278,8 +263,7 @@ const StudioEditorForm: React.FC<{
                               ref={provided.innerRef}
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
-                              className={`plugin ${!el.name &&
-                                'plugin--error'}`}
+                              className={`plugin ${!el.name && 'plugin--error'}`}
                             >
                               <Form.Item
                                 className="plugin__switch"
@@ -292,28 +276,23 @@ const StudioEditorForm: React.FC<{
                                     <MoreOutlined />
                                   </>
                                 ) : (
-                                  <MoreOutlined
-                                    style={{ color: 'transparent' }}
-                                  />
+                                  <MoreOutlined style={{ color: 'transparent' }} />
                                 )}
                                 <label className="plugin__label">
                                   <Switch
                                     title="Hide plugin"
                                     size="small"
                                     checked={el.visible}
-                                    onChange={checked => {
+                                    onChange={(checked) => {
                                       // Move to end of visible list. Leave where it is if itself is the first non visible
 
                                       const pluginsCopy = [...plugins];
                                       const thisPluginIx = pluginsCopy.findIndex(
-                                        p => p.key === el.key
+                                        (p) => p.key === el.key
                                       );
-                                      const thisPluginToMove = pluginsCopy.splice(
-                                        thisPluginIx,
-                                        1
-                                      );
+                                      const thisPluginToMove = pluginsCopy.splice(thisPluginIx, 1);
                                       const firstNonVisiblePluginIx = pluginsCopy.findIndex(
-                                        v => !v.visible
+                                        (v) => !v.visible
                                       );
                                       if (firstNonVisiblePluginIx === -1) {
                                         pluginsCopy.push({
@@ -321,14 +300,10 @@ const StudioEditorForm: React.FC<{
                                           visible: checked,
                                         });
                                       } else {
-                                        pluginsCopy.splice(
-                                          firstNonVisiblePluginIx,
-                                          0,
-                                          {
-                                            ...thisPluginToMove[0],
-                                            visible: checked,
-                                          }
-                                        );
+                                        pluginsCopy.splice(firstNonVisiblePluginIx, 0, {
+                                          ...thisPluginToMove[0],
+                                          visible: checked,
+                                        });
                                       }
                                       setPlugins(pluginsCopy);
                                     }}
@@ -348,9 +323,9 @@ const StudioEditorForm: React.FC<{
                                       ? 'Collapse plugin on load'
                                       : 'Expand plugin on load'
                                   }
-                                  onClick={e => {
+                                  onClick={(e) => {
                                     setPlugins(
-                                      plugins.map(p => {
+                                      plugins.map((p) => {
                                         if (p.key === el.key) {
                                           return {
                                             ...p,
@@ -364,9 +339,7 @@ const StudioEditorForm: React.FC<{
                                 >
                                   {' '}
                                   {el.visible && el.expanded && (
-                                    <CompassFilled
-                                      style={{ color: '#239fd9' }}
-                                    />
+                                    <CompassFilled style={{ color: '#239fd9' }} />
                                   )}
                                   {el.visible && !el.expanded && (
                                     <CompassFilled style={{ color: '#ccc' }} />

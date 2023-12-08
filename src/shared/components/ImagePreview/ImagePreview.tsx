@@ -1,10 +1,6 @@
 import './ImagePreview.scss';
 
-import {
-  DownloadOutlined,
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-} from '@ant-design/icons';
+import { DownloadOutlined, SortAscendingOutlined, SortDescendingOutlined } from '@ant-design/icons';
 import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk/es';
 import {
   Alert,
@@ -21,8 +17,8 @@ import {
   Tooltip,
 } from 'antd';
 import { ListProps } from 'antd/lib/list';
-import { isArray, isNil, isObject,orderBy } from 'lodash';
-import React, { createRef,useRef, useState } from 'react';
+import { isArray, isNil, isObject, orderBy } from 'lodash';
+import React, { createRef, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import nexusUrlHardEncode from '../../utils/nexusEncode';
@@ -88,12 +84,9 @@ const fetchImageResources = async ({
     if (isArray(resource.distribution)) {
       for (const item of resource.distribution) {
         const contentUrl = item.contentUrl;
-        const rawData = await nexus.File.get(
-          orgLabel,
-          projectLabel,
-          parseResourceId(contentUrl),
-          { as: 'blob' }
-        );
+        const rawData = await nexus.File.get(orgLabel, projectLabel, parseResourceId(contentUrl), {
+          as: 'blob',
+        });
         const blob = new Blob([rawData as string], {
           type: item.encodingFormat,
         });
@@ -113,12 +106,9 @@ const fetchImageResources = async ({
     if (isObject(resource.distribution)) {
       // @ts-ignore
       const contentUrl = resource.distribution?.contentUrl;
-      const rawData = await nexus.File.get(
-        orgLabel,
-        projectLabel,
-        nexusUrlHardEncode(contentUrl),
-        { as: 'blob' }
-      );
+      const rawData = await nexus.File.get(orgLabel, projectLabel, nexusUrlHardEncode(contentUrl), {
+        as: 'blob',
+      });
       const blob = new Blob([rawData as string], {
         // @ts-ignore
         type: resource.distribution.encodingFormat,
@@ -150,9 +140,9 @@ function calculateScore(input: string, text: string) {
   const inputSet = new Set(input.toLowerCase().split(/\W+/));
   const phraseSet = new Set(text.toLowerCase().split(/\W+/));
 
-  const intersection = new Set([...inputSet].filter(x => phraseSet.has(x)));
+  const intersection = new Set([...inputSet].filter((x) => phraseSet.has(x)));
   const contains = [...inputSet].filter(
-    x => [...phraseSet].filter(item => item.includes(x)).length
+    (x) => [...phraseSet].filter((item) => item.includes(x)).length
   );
   const union = new Set([...inputSet, ...phraseSet]);
   const score = (10 * intersection.size + contains.length) / union.size;
@@ -175,12 +165,7 @@ function fuzzySearch(input: string, data: TDataSource[], threshold: number) {
   return orderBy(matches, 'score', 'desc');
 }
 
-const ImagePreview: React.FC<Props> = ({
-  resource,
-  nexus,
-  collapsed,
-  handleCollapseChanged,
-}) => {
+const ImagePreview: React.FC<Props> = ({ resource, nexus, collapsed, handleCollapseChanged }) => {
   const [sortOption, setSortOption] = useState(DEFAULT_SORT_OPTION);
   const [currentListPage, setCurrentListPage] = useState(0);
   const [displayOption, setDisplayOption] = useState(DEFAULT_DISPLAY_OPTION);
@@ -188,7 +173,7 @@ const ImagePreview: React.FC<Props> = ({
   const dataSourceRef = useRef<TDataSource[]>([]);
   const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
 
-  const onSearchChange: React.ChangeEventHandler<HTMLInputElement> = e => {
+  const onSearchChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     if (isNil(e.target.value) || e.target.value === '') {
       return setDataSource(dataSourceRef.current);
     }
@@ -230,16 +215,14 @@ const ImagePreview: React.FC<Props> = ({
           pagination: {
             pageSize: 6,
             current: currentListPage,
-            onChange: (page: number, pageSize?: number) =>
-              setCurrentListPage(page),
+            onChange: (page: number, pageSize?: number) => setCurrentListPage(page),
           },
         };
 
   const { status, error } = useQuery({
     queryKey: ['image-preview-set', { resource: resource['@id'] }],
-    queryFn: () =>
-      fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
-    onSuccess: data => {
+    queryFn: () => fetchImageResources({ nexus, resource, orgLabel, projectLabel }),
+    onSuccess: (data) => {
       dataSourceRef.current = data;
       setDataSource(data);
     },
@@ -270,15 +253,8 @@ const ImagePreview: React.FC<Props> = ({
             children: (
               <>
                 <div className="preview-menu">
-                  <Search
-                    placeholder="Seach by name"
-                    onChange={onSearchChange}
-                    allowClear
-                  />
-                  <Dropdown
-                    dropdownRender={() => sortOptions}
-                    trigger={['hover', 'click']}
-                  >
+                  <Search placeholder="Seach by name" onChange={onSearchChange} allowClear />
+                  <Dropdown dropdownRender={() => sortOptions} trigger={['hover', 'click']}>
                     <Tooltip title="Sort resources">
                       <Button
                         ghost
@@ -301,27 +277,20 @@ const ImagePreview: React.FC<Props> = ({
                     buttonStyle="solid"
                   />
                 </div>
-                <div
-                  className={`preview-content ${
-                    displayOption === 'grid' ? 'grid' : 'list'
-                  }`}
-                >
+                <div className={`preview-content ${displayOption === 'grid' ? 'grid' : 'list'}`}>
                   <Spin spinning={status === 'loading'}>
                     {status === 'success' && (
                       <List
                         {...type}
                         dataSource={dataSource}
-                        renderItem={item =>
+                        renderItem={(item) =>
                           displayOption === 'list' ? (
                             <List.Item
                               style={{ flexDirection: 'row-reverse' }}
                               key={`list-${item.id}`}
                               extra={
                                 <div style={{ width: '30%' }}>
-                                  <Image
-                                    src={item.imageSrc}
-                                    preview={{ src: item.imageSrc }}
-                                  />
+                                  <Image src={item.imageSrc} preview={{ src: item.imageSrc }} />
                                 </div>
                               }
                             >
@@ -329,7 +298,7 @@ const ImagePreview: React.FC<Props> = ({
                                 <div>{item.title}</div>
                                 <div>{item.size}</div>
                                 <Button
-                                  onClick={e => downloadImageHandler(e, item)}
+                                  onClick={(e) => downloadImageHandler(e, item)}
                                   type="link"
                                   style={{ padding: '4px 0px' }}
                                 >
@@ -357,7 +326,7 @@ const ImagePreview: React.FC<Props> = ({
                                 <Button
                                   icon={<DownloadOutlined />}
                                   className="download-image-grid"
-                                  onClick={e => downloadImageHandler(e, item)}
+                                  onClick={(e) => downloadImageHandler(e, item)}
                                 />
                               </div>
                             </List.Item>

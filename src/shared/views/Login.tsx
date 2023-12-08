@@ -18,10 +18,10 @@ export interface LoginViewProps {
   userManager?: UserManager;
 }
 
-const Login: React.FunctionComponent<LoginViewProps> = props => {
+const Login: React.FunctionComponent<LoginViewProps> = (props) => {
   const { realms, redirect } = props;
   const defaultRealm: Realm =
-    realms.find(r => r._label === props.preferredRealm) || props.realms[0];
+    realms.find((r) => r._label === props.preferredRealm) || props.realms[0];
 
   const [preferredRealm, setPreferredRealm] = React.useState(defaultRealm.name);
   const notification = useNotification();
@@ -32,18 +32,14 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
   }
   return (
     <LoginBox
-      realms={realms.map(r => r.name)}
+      realms={realms.map((r) => r.name)}
       selectedRealm={preferredRealm}
       onLogin={async (e: React.SyntheticEvent) => {
         try {
           e.preventDefault();
           props.setPreferredRealm(preferredRealm);
-          const destination = new URL(window.location.href).searchParams.get(
-            'destination'
-          );
-          const redirectUri = destination
-            ? `${window.location.origin}/${destination}`
-            : null;
+          const destination = new URL(window.location.href).searchParams.get('destination');
+          const redirectUri = destination ? `${window.location.origin}/${destination}` : null;
 
           props.userManager &&
             (await props.userManager.signinRedirect({
@@ -57,8 +53,8 @@ const Login: React.FunctionComponent<LoginViewProps> = props => {
                 description: (
                   <div>
                     <p>
-                      Nexus Web could not connect to the openId provider
-                      configured for this instance.
+                      Nexus Web could not connect to the openId provider configured for this
+                      instance.
                     </p>{' '}
                     <p>Please contact your system administrators.</p>
                   </div>
@@ -97,7 +93,7 @@ const mapStateToProps = (state: RootState) => {
         auth.realms.data &&
         auth.realms.data._results &&
         auth.realms.data._results.filter(
-          r => r._label !== 'serviceaccounts' && !r._deprecated
+          (r) => r._label !== 'serviceaccounts' && !r._deprecated
         )) ||
       [],
     preferredRealm: config.preferredRealm || undefined,
@@ -106,8 +102,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => ({
   redirect: () => dispatch(push('/')),
-  setPreferredRealm: (name: string) =>
-    dispatch(configActions.setPreferredRealm(name)),
+  setPreferredRealm: (name: string) => dispatch(configActions.setPreferredRealm(name)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

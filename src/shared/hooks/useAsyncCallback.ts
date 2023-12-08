@@ -22,14 +22,14 @@ const useAsyncCallback = <C extends (...args: any) => any, T, E = Error>(
         loading: true,
       });
       asyncCall(...args)
-        .then(data => {
+        .then((data) => {
           setData({
             data,
             error: null,
             loading: false,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           setData({
             error,
             data: null,

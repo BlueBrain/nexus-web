@@ -12,9 +12,7 @@ const FiltersConfig: React.FC<{
   filters: FilterState[];
   columns: SearchConfigField;
 }> = ({ onRemoveFilter, filters, columns }) => {
-  const [isFiltersConfigVisible, setIsFiltersConfigVisible] = React.useState(
-    false
-  );
+  const [isFiltersConfigVisible, setIsFiltersConfigVisible] = React.useState(false);
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const positionModal = () => {
     const buttonRects = buttonRef.current?.getBoundingClientRect();
@@ -54,7 +52,7 @@ const FiltersConfig: React.FC<{
   };
 
   const filterTermFriendlyName = (filterTerm: string) =>
-    columns?.find(el => el.key === filterTerm.split('.')[0])?.label;
+    columns?.find((el) => el.key === filterTerm.split('.')[0])?.label;
 
   const filterText = (fieldFilter: string) => {
     try {
@@ -66,18 +64,10 @@ const FiltersConfig: React.FC<{
 
   return (
     <>
-      <Button
-        ref={buttonRef}
-        onClick={() => setIsFiltersConfigVisible(true)}
-        type="link"
-      >
+      <Button ref={buttonRef} onClick={() => setIsFiltersConfigVisible(true)} type="link">
         <FunnelPlotOutlined />
         {countFilters() > 0 && filters[0].filters.length > 0 ? (
-          <>
-            {` ${countFilters()} ${
-              countFilters() > 1 ? ' filters' : ' filter'
-            }`}
-          </>
+          <>{` ${countFilters()} ${countFilters() > 1 ? ' filters' : ' filter'}`}</>
         ) : (
           <> No filters</>
         )}
@@ -99,16 +89,14 @@ const FiltersConfig: React.FC<{
                   <CloseCircleOutlined />
                 </Button>
               </div>
-              <div className="filter__term">
-                {filterTermFriendlyName(el.filterTerm)}
-              </div>
+              <div className="filter__term">{filterTermFriendlyName(el.filterTerm)}</div>
               <div className="filter__type">
                 {filterTypeFriendlyName(el.filterType, el.filters)}
               </div>
               <div className="filter__values">
                 {el.filters
-                  .filter(f => f !== '')
-                  .map(fieldFilter => (
+                  .filter((f) => f !== '')
+                  .map((fieldFilter) => (
                     <Tag key={`${ix}${fieldFilter}`} className="filter__value">
                       {filterText(fieldFilter)}
                     </Tag>

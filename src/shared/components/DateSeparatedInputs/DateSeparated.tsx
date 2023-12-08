@@ -72,10 +72,7 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
       !isValidYearStart(year) ||
       !isValidYearLength(year));
   const allError =
-    (!!day &&
-      !!month &&
-      !!year &&
-      !moment(`${day}/${month}/${year}`, 'DD/MM/YYYY').isValid()) ||
+    (!!day && !!month && !!year && !moment(`${day}/${month}/${year}`, 'DD/MM/YYYY').isValid()) ||
     (dayError && monthError && yearError);
 
   useEffect(() => {
@@ -108,7 +105,7 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         className={clsx('seperated-input', (dayError || allError) && 'error')}
         ref={dayRef}
         value={day}
-        onChange={e => updateValue({ day: e.target.value })}
+        onChange={(e) => updateValue({ day: e.target.value })}
         type="text"
         maxLength={2}
         inputMode="numeric"
@@ -119,7 +116,7 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         className={clsx('seperated-input', (monthError || allError) && 'error')}
         ref={monthRef}
         value={month}
-        onChange={e => updateValue({ month: e.target.value })}
+        onChange={(e) => updateValue({ month: e.target.value })}
         type="text"
         maxLength={2}
         inputMode="numeric"
@@ -130,7 +127,7 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         className={clsx('seperated-input', (yearError || allError) && 'error')}
         ref={yearRef}
         value={year}
-        onChange={e => updateValue({ year: e.target.value })}
+        onChange={(e) => updateValue({ year: e.target.value })}
         type="text"
         maxLength={4}
         inputMode="numeric"

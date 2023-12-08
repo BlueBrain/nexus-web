@@ -68,7 +68,7 @@ const Graph: React.FunctionComponent<{
 
   const onRecenter = () => {
     if (graph.current) {
-      const origin = elements.find(element => element.data.isOrigin);
+      const origin = elements.find((element) => element.data.isOrigin);
 
       if (origin && origin.data && origin.data.id) {
         graph.current.center(graph.current.getElementById(origin.data.id));
@@ -84,10 +84,8 @@ const Graph: React.FunctionComponent<{
   const updateElements = (elements: cytoscape.ElementDefinition[]) => {
     if (graph.current) {
       // Updating old elements
-      graph.current.elements().forEach(graphElement => {
-        const match = elements.find(
-          dataElement => graphElement.id() === dataElement.data.id
-        );
+      graph.current.elements().forEach((graphElement) => {
+        const match = elements.find((dataElement) => graphElement.id() === dataElement.data.id);
         // update old elements
         if (match) {
           const matchData = { ...match.data };
@@ -105,19 +103,15 @@ const Graph: React.FunctionComponent<{
       });
 
       // Adding new elements
-      const graphElementIds = graph.current
-        .elements()
-        .map(element => element.id());
+      const graphElementIds = graph.current.elements().map((element) => element.id());
       const newElements = elements
-        .filter(element => !graphElementIds.includes(element.data.id || ''))
-        .map(newElement => {
+        .filter((element) => !graphElementIds.includes(element.data.id || ''))
+        .map((newElement) => {
           // If I have a parent, assign my initial position to be the same
           // that way it will appear I emerge out of my parent element
           // instead of 0,0
           if (newElement.data.parentId && graph.current) {
-            const parentEl = graph.current.getElementById(
-              newElement.data.parentId
-            );
+            const parentEl = graph.current.getElementById(newElement.data.parentId);
             const position = parentEl.position();
             return {
               position: {

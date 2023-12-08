@@ -1,7 +1,7 @@
 import { EditOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { AccessControl } from '@bbp/react-nexus';
-import { Alert,Collapse, Tabs } from 'antd';
+import { Alert, Collapse, Tabs } from 'antd';
 import * as React from 'react';
 
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
@@ -107,9 +107,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
                 orgLabel={orgLabel}
                 projectLabel={projectLabel}
                 rev={resource._rev}
-                defaultExpanded={
-                  !!expandedFromQuery && expandedFromQuery === 'true'
-                }
+                defaultExpanded={!!expandedFromQuery && expandedFromQuery === 'true'}
                 defaultEditable={editable}
                 onSubmit={handleEditFormSubmit}
                 onExpanded={handleExpanded}

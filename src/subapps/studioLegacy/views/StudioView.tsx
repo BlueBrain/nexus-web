@@ -1,4 +1,4 @@
-import { ACL,NexusClient } from '@bbp/nexus-sdk/es';
+import { ACL, NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useParams } from 'react-router';
@@ -17,9 +17,9 @@ const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {
   let isWritable = false;
   const WRITABLE_ACL = 'resources/write';
 
-  acls.forEach(aclContainer => {
+  acls.forEach((aclContainer) => {
     if (aclContainer.acl) {
-      aclContainer.acl.forEach(acl => {
+      aclContainer.acl.forEach((acl) => {
         if (acl.permissions.includes(WRITABLE_ACL)) {
           isWritable = true;
         }
@@ -42,7 +42,7 @@ const StudioView: React.FunctionComponent<{}> = () => {
   const nexus = useNexusContext();
 
   React.useEffect(() => {
-    writableStudio(permissionsPath, nexus).then(value => {
+    writableStudio(permissionsPath, nexus).then((value) => {
       setIsWritable(value);
     });
   }, [orgLabel, projectLabel]);
@@ -71,9 +71,7 @@ const StudioView: React.FunctionComponent<{}> = () => {
             <span>
               <Link to={`/orgs/${orgLabel}`}>{orgLabel}</Link>
               {' | '}
-              <Link to={`/orgs/${orgLabel}/${projectLabel}`}>
-                {projectLabel}
-              </Link>
+              <Link to={`/orgs/${orgLabel}/${projectLabel}`}>{projectLabel}</Link>
             </span>
           </h1>
         </div>

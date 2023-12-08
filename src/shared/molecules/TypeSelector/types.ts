@@ -40,10 +40,7 @@ export type TTypeSelectorProps = {
   styles?: TTypeSelectorStyle;
   defaultValue?: TType[];
   typeOperator: TTypeOperator;
-  updateOptions(options: {
-    types?: TType[];
-    typeOperator: TTypeOperator;
-  }): void;
+  updateOptions(options: { types?: TType[]; typeOperator: TTypeOperator }): void;
   afterUpdate?(typeOperator: TTypeOperator, types?: TType[]): void;
   popupContainer(): HTMLElement;
   onVisibilityChange?(open: boolean): void;

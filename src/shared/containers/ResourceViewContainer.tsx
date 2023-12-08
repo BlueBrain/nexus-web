@@ -1,27 +1,18 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { ExpandedResource,IncomingLink, Resource } from '@bbp/nexus-sdk/es';
+import { ExpandedResource, IncomingLink, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Alert, Collapse, Divider,Spin, Typography } from 'antd';
+import { Alert, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
 import queryString from 'query-string';
 import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useDispatch,useSelector } from 'react-redux';
-import {
-  matchPath,
-  useHistory,
-  useLocation,
-  useParams,
-  useRouteMatch,
-} from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { matchPath, useHistory, useLocation, useParams, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 
 import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
-import {
-  TErrorWithType,
-  TUpdateResourceFunctionError,
-} from '../../utils/types';
+import { TErrorWithType, TUpdateResourceFunctionError } from '../../utils/types';
 import ImagePreview from '../components/ImagePreview/ImagePreview';
 import Preview from '../components/Preview/Preview';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
@@ -54,15 +45,8 @@ export type PluginMapping = {
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 const containsImages = (distribution: any[]) => {
-  const encodingFormat = distribution.map(t => t.encodingFormat);
-  const formats = [
-    'image/png',
-    'image/webp',
-    'image/bmp',
-    'image/jpeg',
-    'image/jpg',
-    'image/gif',
-  ];
+  const encodingFormat = distribution.map((t) => t.encodingFormat);
+  const formats = ['image/png', 'image/webp', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/gif'];
   return intersection(encodingFormat, formats).length !== 0;
 };
 
@@ -95,8 +79,8 @@ const ResourceViewContainer: React.FunctionComponent<{
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
+      .then((versions) => setDeltaPlugins({ ...versions.plugins }))
+      .catch((error) => {
         // do nothing
       });
   };
@@ -114,8 +98,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const orgLabel = match?.params.orgLabel! ?? deOrgLabel;
   const projectLabel = match?.params.projectLabel! ?? deProjectLabel;
   const resourceId =
-    match?.params.resourceId! ??
-    (deResourceId ? encodeURIComponent(deResourceId) : '');
+    match?.params.resourceId! ?? (deResourceId ? encodeURIComponent(deResourceId) : '');
 
   const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
@@ -124,23 +107,16 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   React.useEffect(() => {
     if (location.state && location.state.background) {
-      const studioPathMatch = matchPath<{ StudioId: string }>(
-        location.state.background.pathname,
-        {
-          path: '/studios/:organisation/:project/studios/:StudioId',
-          exact: true,
-          strict: false,
-        }
-      );
+      const studioPathMatch = matchPath<{ StudioId: string }>(location.state.background.pathname, {
+        path: '/studios/:organisation/:project/studios/:StudioId',
+        exact: true,
+        strict: false,
+      });
 
       if (studioPathMatch) {
         // looks like we have us a studio
         const studioId = studioPathMatch.params.StudioId;
-        nexus.Resource.get<StudioResource>(
-          orgLabel,
-          projectLabel,
-          studioId
-        ).then(d => {
+        nexus.Resource.get<StudioResource>(orgLabel, projectLabel, studioId).then((d) => {
           if (Array.isArray((d as StudioResource).plugins)) {
             // @ts-ignore
             (d as StudioResource).plugins = (d as StudioResource).plugins[0];
@@ -174,9 +150,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     history.push(`/?_self=${selfUrl}`, location.state);
   };
 
-  const { expanded: expandedFromQuery, rev, tag } = queryString.parse(
-    location.search
-  );
+  const { expanded: expandedFromQuery, rev, tag } = queryString.parse(location.search);
 
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
@@ -244,7 +218,6 @@ const ResourceViewContainer: React.FunctionComponent<{
         )) as Resource;
         (error as TUpdateResourceFunctionError).wasUpdated =
           potentiallyUpdatedResource._rev !== resource._rev;
-
         (error as TUpdateResourceFunctionError).action = 'update';
         if ('@context' in (error as TUpdateResourceFunctionError)) {
           if ('rejections' in (error as TUpdateResourceFunctionError)) {
@@ -259,14 +232,9 @@ const ResourceViewContainer: React.FunctionComponent<{
           message: 'An error occurred whilst updating the resource',
         });
         if ((error as TUpdateResourceFunctionError).wasUpdated) {
-          const expandedResources = (await nexus.Resource.get(
-            orgLabel,
-            projectLabel,
-            resourceId,
-            {
-              format: 'expanded',
-            }
-          )) as ExpandedResource[];
+          const expandedResources = (await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+            format: 'expanded',
+          })) as ExpandedResource[];
 
           const expandedResource = expandedResources[0];
           setResource({
@@ -295,9 +263,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       (link as IncomingLink)._project
     )!;
 
-    const revisionOption = link.isRevisionSpecific
-      ? { revision: link._rev }
-      : {};
+    const revisionOption = link.isRevisionSpecific ? { revision: link._rev } : {};
 
     goToResource(orgLabel, projectLabel, encodeURIComponent(link['@id']), {
       ...revisionOption,
@@ -313,32 +279,18 @@ const ResourceViewContainer: React.FunctionComponent<{
     });
     try {
       const options = tag ? { tag: tag.toString() } : { rev: Number(rev) };
-      const resource = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        resourceId
-      )) as Resource;
+      const resource = (await nexus.Resource.get(orgLabel, projectLabel, resourceId)) as Resource;
       const selectedResource: Resource =
         rev || tag
-          ? ((await nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              resourceId,
-              options
-            )) as Resource)
+          ? ((await nexus.Resource.get(orgLabel, projectLabel, resourceId, options)) as Resource)
           : resource;
       dispatch({
         type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
         payload: resource,
       });
-      const expandedResources = (await nexus.Resource.get(
-        orgLabel,
-        projectLabel,
-        resourceId,
-        {
-          format: 'expanded',
-        }
-      )) as ExpandedResource[];
+      const expandedResources = (await nexus.Resource.get(orgLabel, projectLabel, resourceId, {
+        format: 'expanded',
+      })) as ExpandedResource[];
 
       const expandedResource = expandedResources[0];
       setLatestResource(resource);
@@ -358,7 +310,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
       if ((error as TErrorWithType)['@type'] === 'AuthorizationFailed') {
         nexus.Identity.list().then(({ identities }) => {
-          const user = identities.find(i => i['@type'] === 'User');
+          const user = identities.find((i) => i['@type'] === 'User');
 
           if (!user) {
             history.push(`/login${getDestinationParam()}`);
@@ -404,20 +356,13 @@ const ResourceViewContainer: React.FunctionComponent<{
   React.useEffect(() => {
     if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
       setOpenPlugins(
-        JSON.parse(
-          localStorage.getItem(
-            LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME
-          ) as string
-        )
+        JSON.parse(localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME) as string)
       );
     }
   }, []);
 
   React.useEffect(() => {
-    localStorage.setItem(
-      LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
-      JSON.stringify(openPlugins)
-    );
+    localStorage.setItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME, JSON.stringify(openPlugins));
   }, [openPlugins]);
 
   React.useEffect(() => {
@@ -425,16 +370,11 @@ const ResourceViewContainer: React.FunctionComponent<{
     if (studioPlugins?.customise && pluginManifest) {
       setOpenPlugins(
         studioPlugins.plugins
-          .filter(p => p.expanded)
-          .filter(
-            p =>
-              p.key in pluginManifest ||
-              builtInPlugins.find(b => b.key === p.key)
-          )
-          .map(p => {
-            if (builtInPlugins.find(b => b.key === p.key)) {
-              const pluginName = builtInPlugins.find(b => b.key === p.key)
-                ?.name;
+          .filter((p) => p.expanded)
+          .filter((p) => p.key in pluginManifest || builtInPlugins.find((b) => b.key === p.key))
+          .map((p) => {
+            if (builtInPlugins.find((b) => b.key === p.key)) {
+              const pluginName = builtInPlugins.find((b) => b.key === p.key)?.name;
               return pluginName ? pluginName : '';
             }
             return pluginManifest[p.key].name;
@@ -446,15 +386,14 @@ const ResourceViewContainer: React.FunctionComponent<{
   const pluginCollapsedToggle = (pluginName: string) => {
     setOpenPlugins(
       openPlugins.includes(pluginName)
-        ? openPlugins.filter(p => p !== pluginName)
+        ? openPlugins.filter((p) => p !== pluginName)
         : [...openPlugins, pluginName]
     );
   };
 
   const showPluginConsideringStudioContext = (pluginKey: string) => {
     return (
-      (studioPlugins?.customise &&
-        studioPlugins?.plugins.find(p => p.key === pluginKey)) ||
+      (studioPlugins?.customise && studioPlugins?.plugins.find((p) => p.key === pluginKey)) ||
       !studioPlugins?.customise
     );
   };
@@ -473,9 +412,7 @@ const ResourceViewContainer: React.FunctionComponent<{
       />
     );
   const resourceContainsImages =
-    resource &&
-    isArray(resource.distribution) &&
-    containsImages(resource.distribution);
+    resource && isArray(resource.distribution) && containsImages(resource.distribution);
   const imagePreviewPlugin = resource &&
     showPluginConsideringStudioContext('preview') &&
     resource.distribution &&
@@ -493,8 +430,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const adminPlugin = resource &&
     latestResource &&
-    ((studioPlugins?.customise &&
-      studioPlugins?.plugins.find(p => p.key === 'admin')) ||
+    ((studioPlugins?.customise && studioPlugins?.plugins.find((p) => p.key === 'admin')) ||
       !studioPlugins?.customise) && (
       <AdminPlugin
         key="adminPlugin"
@@ -523,8 +459,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const videoPlugin = resource &&
     resource['video'] &&
-    ((studioPlugins?.customise &&
-      studioPlugins?.plugins.find(p => p.key === 'video')) ||
+    ((studioPlugins?.customise && studioPlugins?.plugins.find((p) => p.key === 'video')) ||
       !studioPlugins?.customise) && (
       <VideoPluginContainer
         key="videoPlugin"
@@ -537,10 +472,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         }}
       />
     );
-  const {
-    isUserInSupportedJiraRealm,
-    jiraInaccessibleBecauseOfVPN,
-  } = useJiraPlugin();
+  const { isUserInSupportedJiraRealm, jiraInaccessibleBecauseOfVPN } = useJiraPlugin();
 
   const jiraPlugin = resource &&
     deltaPlugins &&
@@ -577,17 +509,15 @@ const ResourceViewContainer: React.FunctionComponent<{
   );
 
   const resourceTypes = resource && [resource['@type']].flat();
-  const resourceHasAnalysisIncludedType = resourceTypes?.some(t =>
-    analysisPluginShowOnTypes.some(showOnType => t === showOnType)
+  const resourceHasAnalysisIncludedType = resourceTypes?.some((t) =>
+    analysisPluginShowOnTypes.some((showOnType) => t === showOnType)
   );
-  const resourceHasAnalysisExcludedType = resourceTypes?.some(t =>
-    analysisPluginExcludeTypes.some(excludeOnType => t === excludeOnType)
+  const resourceHasAnalysisExcludedType = resourceTypes?.some((t) =>
+    analysisPluginExcludeTypes.some((excludeOnType) => t === excludeOnType)
   );
 
   const showAnalysisPlugin =
-    resource &&
-    resourceHasAnalysisIncludedType &&
-    !resourceHasAnalysisExcludedType;
+    resource && resourceHasAnalysisIncludedType && !resourceHasAnalysisExcludedType;
 
   const analysisPlugin = resource &&
     showAnalysisPlugin &&
@@ -657,18 +587,14 @@ const ResourceViewContainer: React.FunctionComponent<{
         <Spin spinning={busy}>
           {error ? (
             <Alert
-              message={
-                error.wasUpdated ? 'Resource updated with errors' : 'Error'
-              }
+              message={error.wasUpdated ? 'Resource updated with errors' : 'Error'}
               showIcon
               closable
               style={{ marginTop: 40 }}
               type="error"
               description={
                 <>
-                  <Typography.Paragraph
-                    ellipsis={{ rows: 2, expandable: true }}
-                  >
+                  <Typography.Paragraph ellipsis={{ rows: 2, expandable: true }}>
                     {error.message}
                   </Typography.Paragraph>
                   {error.rejections && (
@@ -688,8 +614,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                               </ul>
 
                               <p>
-                                For further information please refer to the API
-                                documentation,{' '}
+                                For further information please refer to the API documentation,{' '}
                                 <a
                                   target="_blank"
                                   href="https://bluebrainnexus.io/docs/delta/api/"
@@ -720,18 +645,11 @@ const ResourceViewContainer: React.FunctionComponent<{
               )}
               <h1 className="name">
                 <Link
-                  to={makeResourceUri(
-                    orgLabel,
-                    projectLabel,
-                    decodeURIComponent(resourceId),
-                    {}
-                  )}
+                  to={makeResourceUri(orgLabel, projectLabel, decodeURIComponent(resourceId), {})}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {resource
-                    ? getResourceLabel(resource)
-                    : labelOf(decodeURIComponent(resourceId))}
+                  {resource ? getResourceLabel(resource) : labelOf(decodeURIComponent(resourceId))}
                 </Link>
               </h1>
               {resource && (
@@ -757,8 +675,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                         type="error"
                         message={
                           <>
-                            <DeleteOutlined /> This resource is deprecated. You
-                            cannot modify it.
+                            <DeleteOutlined /> This resource is deprecated. You cannot modify it.
                           </>
                         }
                       />
@@ -771,13 +688,11 @@ const ResourceViewContainer: React.FunctionComponent<{
                     openPlugins={openPlugins}
                     studioDefinedPluginsToInclude={
                       studioPlugins && studioPlugins.customise
-                        ? studioPlugins.plugins.map(p => p.key)
+                        ? studioPlugins.plugins.map((p) => p.key)
                         : undefined
                     }
                     builtInPlugins={builtInPlugins}
-                    handleCollapseChange={pluginName =>
-                      pluginCollapsedToggle(pluginName)
-                    }
+                    handleCollapseChange={(pluginName) => pluginCollapsedToggle(pluginName)}
                   />
                   {!!resource['@type'] &&
                     typeof resource['@type'] === 'string' &&

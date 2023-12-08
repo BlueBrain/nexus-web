@@ -14,11 +14,9 @@ import {
 } from './constants';
 const rawBase: string = process.env.BASE_PATH || '';
 
-const subAppsManifestPath =
-  process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
+const subAppsManifestPath = process.env.SUB_APPS_MANIFEST_PATH || '/public/sub-apps';
 // to develop plugins locally, change PLUGINS_PATH to '/public/plugins'
-const pluginsManifestPath =
-  process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
+const pluginsManifestPath = process.env.PLUGINS_MANIFEST_PATH || '/public/plugins';
 
 // configure instance logo
 const layoutSettings = {
@@ -36,8 +34,7 @@ const layoutSettings = {
 
 // configure search settings
 const searchSettings = {
-  searchConfigProject:
-    process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
+  searchConfigProject: process.env.SEARCH_CONFIG_PROJECT || DEFAULT_SEARCH_CONFIG_PROJECT,
 };
 const dataModelsLocation = process.env.DATA_MODELS || '';
 const base: string = rawBase.replace(/\/$/, '');
@@ -56,18 +53,15 @@ const preloadedState: RootState = {
     basePath: base,
     clientId: process.env.CLIENT_ID || 'bbp-nise-dev-nexus-fusion',
     redirectHostName: '/',
-    serviceAccountsRealm:
-      process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
+    serviceAccountsRealm: process.env.SERVICE_ACCOUNTS_REALM || DEFAULT_SERVICE_ACCOUNTS_REALM,
     sentryDsn: process.env.SENTRY_DSN,
     gtmCode: process.env.GTM_CODE,
     studioView: process.env.STUDIO_VIEW || '',
     jiraUrl: process.env.JIRA_URL || '',
     jiraResourceCustomFieldName: process.env.JIRA_RESOURCE_FIELD_NAME || '',
-    jiraResourceCustomFieldLabel:
-      process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
+    jiraResourceCustomFieldLabel: process.env.JIRA_RESOURCE_FIELD_LABEL || 'Nexus Resource',
     jiraProjectCustomFieldName: process.env.JIRA_PROJECT_FIELD_NAME || '',
-    jiraProjectCustomFieldLabel:
-      process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
+    jiraProjectCustomFieldLabel: process.env.JIRA_PROJECT_FIELD_LABEL || 'Nexus Project',
     ...(process.env.JIRA_SUPPORTED_REALMS && {
       jiraSupportedRealms: process.env.JIRA_SUPPORTED_REALMS.split(','),
     }),
@@ -78,8 +72,7 @@ const preloadedState: RootState = {
       ? process.env.ANALYSIS_PLUGIN_EXCLUDE_TYPES.split(',')
       : [],
     analysisPluginSparqlDataQuery:
-      process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY ||
-      DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
+      process.env.ANALYSIS_PLUGIN_SPARQL_DATA_QUERY || DEFAULT_ANALYSIS_DATA_SPARQL_QUERY,
     analysisPluginCategories: process.env.ANALYSIS_PLUGIN_CATEGORIES
       ? JSON.parse(process.env.ANALYSIS_PLUGIN_CATEGORIES)
       : DEFAULT_REPORT_CATEGORIES,
@@ -87,8 +80,7 @@ const preloadedState: RootState = {
       ? JSON.parse(process.env.ANALYSIS_PLUGIN_TYPES)
       : DEFAULT_REPORT_TYPES,
     httpHeaderForInaccessibleDueToVPN:
-      process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN ||
-      'x-requires-vpn',
+      process.env.HTTP_HEADER_WHERE_INACCESSIBLE_OUTSIDE_OF_VPN || 'x-requires-vpn',
   },
   uiSettings: DEFAULT_UI_SETTINGS,
   oidc: {

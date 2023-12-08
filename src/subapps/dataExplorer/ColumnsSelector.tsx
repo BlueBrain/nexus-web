@@ -1,4 +1,4 @@
-import { Col,Input, Select } from 'antd';
+import { Col, Input, Select } from 'antd';
 import { orderBy } from 'lodash';
 import React, { useEffect, useReducer, useState } from 'react';
 
@@ -10,10 +10,7 @@ export type TColumn = { value: string; selected: boolean; key: string };
 type TColumnsSelectorProps = {
   columns: TColumn[];
   loading: boolean;
-  onColumnSelect: (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    value: TColumn
-  ) => void;
+  onColumnSelect: (e: React.MouseEvent<HTMLElement, MouseEvent>, value: TColumn) => void;
 };
 type TColumnsSelectorState = {
   inputColumns: TColumn[];
@@ -30,16 +27,9 @@ const ColumnItem = ({ value }: TColumn) => {
   );
 };
 
-const ColumnsSelector = ({
-  columns,
-  loading,
-  onColumnSelect,
-}: TColumnsSelectorProps) => {
+const ColumnsSelector = ({ columns, loading, onColumnSelect }: TColumnsSelectorProps) => {
   const [{ inputColumns, queryTerm }, updateSearchResults] = useReducer(
-    (
-      previous: TColumnsSelectorState,
-      next: Partial<TColumnsSelectorState>
-    ) => ({
+    (previous: TColumnsSelectorState, next: Partial<TColumnsSelectorState>) => ({
       ...previous,
       ...next,
     }),
@@ -54,7 +44,7 @@ const ColumnsSelector = ({
     }
     updateSearchResults({
       queryTerm: e.target.value,
-      inputColumns: columns.filter(column =>
+      inputColumns: columns.filter((column) =>
         normalizeString(column.value).includes(normalizeString(e.target.value))
       ),
     });
@@ -77,7 +67,7 @@ const ColumnsSelector = ({
           value={
             loading
               ? 'Loading...'
-              : `${columns.filter(item => item.selected).length} active columns`
+              : `${columns.filter((item) => item.selected).length} active columns`
           }
           loading={loading}
           disabled={loading}
@@ -93,13 +83,12 @@ const ColumnsSelector = ({
                 />
               </div>
               <div className="columns-selector-container">
-                {inputColumns.map(column => (
+                {inputColumns.map((column) => (
                   <RowRenderer<TColumn>
                     key={column.key}
                     value={column}
                     checked={Boolean(
-                      columns?.find(item => item.value === column.value)
-                        ?.selected
+                      columns?.find((item) => item.value === column.value)?.selected
                     )}
                     onCheck={onColumnSelect}
                     titleComponent={ColumnItem}

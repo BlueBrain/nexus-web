@@ -24,14 +24,9 @@ const PluginInfo: React.FC<{
   };
 
   return (
-    <Popover
-      content={<PopoverContent />}
-      trigger="click"
-      title={name}
-      placement="bottomRight"
-    >
+    <Popover content={<PopoverContent />} trigger="click" title={name} placement="bottomRight">
       <Button
-        onClick={event => event.stopPropagation()}
+        onClick={(event) => event.stopPropagation()}
         size="small"
         icon={<InfoCircleOutlined />}
       />

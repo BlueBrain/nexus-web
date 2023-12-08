@@ -38,11 +38,5 @@ function isAllowedProtocol(url: string): boolean {
   return url.startsWith('https://') || url.startsWith('http://');
 }
 
-export {
-  easyValidURL,
-  isAllowedProtocol,
-  isExternalLink,
-  isStorageLink,
-  isUrlCurieFormat,
-};
+export { easyValidURL, isAllowedProtocol, isExternalLink, isStorageLink, isUrlCurieFormat };
 export default isValidUrl;

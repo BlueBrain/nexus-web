@@ -7,10 +7,8 @@ import {
   NexusMultiFetchResponse,
 } from 'subapps/dataExplorer/DataExplorerUtils';
 
-export const getCompleteResources = (
-  resources: Resource[] = defaultPartialResources
-) => {
-  return resources.map(res => ({ ...res, ...propertiesOnlyInSource }));
+export const getCompleteResources = (resources: Resource[] = defaultPartialResources) => {
+  return resources.map((res) => ({ ...res, ...propertiesOnlyInSource }));
 };
 
 export const dataExplorerPageHandler = (
@@ -31,7 +29,7 @@ export const dataExplorerPageHandler = (
         ],
         _total: total,
         _results: passedType
-          ? partialResources.filter(res => res['@type'] === passedType)
+          ? partialResources.filter((res) => res['@type'] === passedType)
           : partialResources,
         _next:
           'https://bbp.epfl.ch/nexus/v1/resources?size=50&sort=@id&after=%5B1687269183553,%22https://bbp.epfl.ch/neurosciencegraph/data/31e22529-2c36-44f0-9158-193eb50526cd%22%5D',
@@ -45,8 +43,8 @@ export const dataExplorerPageHandler = (
       const response: NexusMultiFetchResponse = {
         format: 'compacted',
         resources: partialResources
-          .filter(res => requestedIds.includes(res['@id']))
-          .map(r => ({ value: { ...r, ...propertiesOnlyInSource } })),
+          .filter((res) => requestedIds.includes(res['@id']))
+          .map((r) => ({ value: { ...r, ...propertiesOnlyInSource } })),
       };
       return res(ctx.status(200), ctx.json(response));
     }),
@@ -54,84 +52,66 @@ export const dataExplorerPageHandler = (
 };
 
 export const graphAnalyticsTypeHandler = () => {
-  return rest.get(
-    deltaPath('/graph-analytics/:org/:project/properties/:type'),
-    (req, res, ctx) => {
-      const mockResponse = {
-        '@context':
-          'https://bluebrain.github.io/nexus/contexts/properties.json',
-        '@id': 'http://schema.org/Dataset',
-        _count: 50,
-        _name: 'Dataset',
-        _properties: [
-          {
-            '@id': 'https://neuroshapes.org/tag__apical',
-            _count: 30,
-            _name: 'author',
-          },
-          {
-            '@id': 'https://neuroshapes.org/nr__reconstruction_type',
-            _count: 30,
-            _name: 'propertyAlwaysThere',
-          },
-          {
-            '@id': 'https://neuroshapes.org/createdBy',
-            _count: 30,
-            _name: '_createdBy',
-          },
-          {
-            '@id': 'https://neuroshapes.org/edition',
-            _count: 30,
-            _name: 'edition',
-          },
-        ],
-      };
-      return res(ctx.status(200), ctx.json(mockResponse));
-    }
-  );
+  return rest.get(deltaPath('/graph-analytics/:org/:project/properties/:type'), (req, res, ctx) => {
+    const mockResponse = {
+      '@context': 'https://bluebrain.github.io/nexus/contexts/properties.json',
+      '@id': 'http://schema.org/Dataset',
+      _count: 50,
+      _name: 'Dataset',
+      _properties: [
+        {
+          '@id': 'https://neuroshapes.org/tag__apical',
+          _count: 30,
+          _name: 'author',
+        },
+        {
+          '@id': 'https://neuroshapes.org/nr__reconstruction_type',
+          _count: 30,
+          _name: 'propertyAlwaysThere',
+        },
+        {
+          '@id': 'https://neuroshapes.org/createdBy',
+          _count: 30,
+          _name: '_createdBy',
+        },
+        {
+          '@id': 'https://neuroshapes.org/edition',
+          _count: 30,
+          _name: 'edition',
+        },
+      ],
+    };
+    return res(ctx.status(200), ctx.json(mockResponse));
+  });
 };
 
 const propertiesOnlyInSource = { userProperty1: { subUserProperty1: 'bar' } };
 
-export const sourceResourceHandler = (
-  partialResources: Resource[] = defaultPartialResources
-) => {
-  return rest.get(
-    deltaPath(`/resources/:org/:project/_/:id`),
-    (req, res, ctx) => {
-      const { id } = req.params;
-      const decodedId = decodeURIComponent(id as string);
+export const sourceResourceHandler = (partialResources: Resource[] = defaultPartialResources) => {
+  return rest.get(deltaPath(`/resources/:org/:project/_/:id`), (req, res, ctx) => {
+    const { id } = req.params;
+    const decodedId = decodeURIComponent(id as string);
 
-      const partialResource = partialResources.find(
-        resource => resource['@id'] === decodedId
-      );
-      if (partialResource) {
-        return res(
-          ctx.status(200),
-          ctx.json({ ...partialResource, ...propertiesOnlyInSource })
-        );
-      }
-
-      return res(
-        ctx.status(200),
-        ctx.json(getMockResource(decodedId, { ...propertiesOnlyInSource }))
-      );
+    const partialResource = partialResources.find((resource) => resource['@id'] === decodedId);
+    if (partialResource) {
+      return res(ctx.status(200), ctx.json({ ...partialResource, ...propertiesOnlyInSource }));
     }
-  );
+
+    return res(
+      ctx.status(200),
+      ctx.json(getMockResource(decodedId, { ...propertiesOnlyInSource }))
+    );
+  });
 };
 
-export const filterByProjectHandler = (
-  mockResources: Resource[] = defaultPartialResources
-) => {
+export const filterByProjectHandler = (mockResources: Resource[] = defaultPartialResources) => {
   return rest.get(deltaPath(`/resources/:org/:project`), (req, res, ctx) => {
     if (req.url.searchParams.has('aggregations')) {
       return res(
         ctx.status(200),
         ctx.json(
           mockAggregationsResult([
-            getMockTypesBucket(
-              'https://bluebrain.github.io/nexus/vocabulary/File'
-            ),
+            getMockTypesBucket('https://bluebrain.github.io/nexus/vocabulary/File'),
             getMockTypesBucket('http://schema.org/StudioDashboard'),
             getMockTypesBucket('https://neuroshapes.org/NeuronMorphology'),
           ])
@@ -143,8 +123,7 @@ export const filterByProjectHandler = (
 
     const responseBody = project
       ? mockResources.filter(
-          res =>
-            res._project.slice(res._project.lastIndexOf('/') + 1) === project
+          (res) => res._project.slice(res._project.lastIndexOf('/') + 1) === project
         )
       : mockResources;
     const mockResponse = {
@@ -163,27 +142,24 @@ export const filterByProjectHandler = (
 };
 
 export const elasticSearchQueryHandler = (resources: Resource[]) => {
-  return rest.post(
-    deltaPath('/graph-analytics/:org/:project/_search'),
-    (req, res, ctx) => {
-      const esResponse = {
-        hits: {
-          hits: resources.map(resource => ({
-            _id: resource['@id'],
-            _source: {
-              '@id': resource['@id'],
-              _project: resource._project,
-            },
-          })),
-          max_score: 0,
-          total: {
-            value: 479,
+  return rest.post(deltaPath('/graph-analytics/:org/:project/_search'), (req, res, ctx) => {
+    const esResponse = {
+      hits: {
+        hits: resources.map((resource) => ({
+          _id: resource['@id'],
+          _source: {
+            '@id': resource['@id'],
+            _project: resource._project,
           },
+        })),
+        max_score: 0,
+        total: {
+          value: 479,
         },
-      };
-      return res(ctx.status(200), ctx.json(esResponse));
-    }
-  );
+      },
+    };
+    return res(ctx.status(200), ctx.json(esResponse));
+  });
 };
 
 const mockAggregationsResult = (
@@ -216,8 +192,7 @@ const mockAggregationsResult = (
 export const getAggregationsHandler = () =>
   rest.get(deltaPath(`/resources?aggregations=true`), (req, res, ctx) => {
     const aggregationsResponse: AggregationsResult = {
-      '@context':
-        'https://bluebrain.github.io/nexus/contexts/aggregations.json',
+      '@context': 'https://bluebrain.github.io/nexus/contexts/aggregations.json',
       total: 10,
       aggregations: {
         projects: {
@@ -266,9 +241,7 @@ const defaultBucketForTypes = [
   getMockTypesBucket('http://schema.org/Dataset'),
   getMockTypesBucket('https://neuroshapes.org/NeuronMorphology'),
   getMockTypesBucket('https://bluebrain.github.io/nexus/vocabulary/View'),
-  getMockTypesBucket(
-    'https://bluebrainnexus.io/studio/vocabulary/StudioDashboard'
-  ),
+  getMockTypesBucket('https://bluebrainnexus.io/studio/vocabulary/StudioDashboard'),
 ];
 
 export const getMockResource = (
@@ -280,10 +253,8 @@ export const getMockResource = (
   ...extra,
   '@id': `https://bbp.epfl.ch/neurosciencegraph/data/${selfSuffix}`,
   '@type': type,
-  _constrainedBy:
-    'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-  propertyAlwaysThere:
-    'Mock property in all test resources in DataExplorer spec',
+  _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+  propertyAlwaysThere: 'Mock property in all test resources in DataExplorer spec',
   _createdAt: '2023-06-21T09:39:47.217Z',
   _createdBy: 'https://bbp.epfl.ch/nexus/v1/realms/bbp/users/antonel',
   _deprecated: false,

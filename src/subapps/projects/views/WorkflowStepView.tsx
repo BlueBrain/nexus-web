@@ -6,9 +6,7 @@ import { Modal, Spin } from 'antd';
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
+import useNotification, { parseNexusError } from '../../../shared/hooks/useNotification';
 import { labelOf } from '../../../shared/utils';
 import { useProjectsSubappContext } from '..';
 import AddComponentButton from '../components/AddComponentButton';
@@ -25,7 +23,7 @@ import StepInfoContainer from '../containers/StepInfoContainer';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { fetchChildrenForStep, isTable } from '../utils';
-import { makeActivityTable,makeInputTable } from '../utils/tableUtils';
+import { makeActivityTable, makeInputTable } from '../utils/tableUtils';
 
 type BreadcrumbItem = {
   label: string;
@@ -49,13 +47,9 @@ const WorkflowStepView: React.FC = () => {
   // switch to trigger updates
   const [refreshSteps, setRefreshSteps] = React.useState<boolean>(false);
   const [refreshTables, setRefreshTables] = React.useState<boolean>(false);
-  const [siblings, setSiblings] = React.useState<
-    { name: string; '@id': string }[]
-  >([]);
+  const [siblings, setSiblings] = React.useState<{ name: string; '@id': string }[]>([]);
   const [showStepForm, setShowStepForm] = React.useState<boolean>(false);
-  const [showNewTableForm, setShowNewTableForm] = React.useState<boolean>(
-    false
-  );
+  const [showNewTableForm, setShowNewTableForm] = React.useState<boolean>(false);
   const [showDataSetForm, setShowDataSetForm] = React.useState<boolean>(false);
   const [busy, setBusy] = React.useState<boolean>(false);
 
@@ -65,16 +59,11 @@ const WorkflowStepView: React.FC = () => {
 
   const setupStepView = async () => {
     await nexus.Resource.get(orgLabel, projectLabel, stepId)
-      .then(response => {
+      .then((response) => {
         setStep(response as StepResource);
-        fetchBreadcrumbs(
-          orgLabel,
-          projectLabel,
-          response as StepResource,
-          setBreadcrumbs
-        );
+        fetchBreadcrumbs(orgLabel, projectLabel, response as StepResource, setBreadcrumbs);
       })
-      .catch(error =>
+      .catch((error) =>
         notification.error({
           message: 'Failed to load activity',
           description: parseNexusError(error),
@@ -111,36 +100,28 @@ const WorkflowStepView: React.FC = () => {
     await nexus.Resource.links(orgLabel, projectLabel, stepId, 'incoming', {
       deprecated: false,
     })
-      .then(response => {
+      .then((response) => {
         // There may be duplicates in the link.
         const uniq = [
-          ...new Set(
-            response._results
-              .filter(link => isTable(link))
-              .map(link => link['@id'])
-          ),
+          ...new Set(response._results.filter((link) => isTable(link)).map((link) => link['@id'])),
         ];
         Promise.all(
-          uniq.map(link => {
-            return nexus.Resource.get(
-              orgLabel,
-              projectLabel,
-              encodeURIComponent(link)
-            );
+          uniq.map((link) => {
+            return nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(link));
           })
         )
-          .then(responses => {
+          .then((responses) => {
             const allTables = responses as Resource[];
-            setTables(allTables.filter(t => !t._deprecated));
+            setTables(allTables.filter((t) => !t._deprecated));
           })
-          .catch(error => {
+          .catch((error) => {
             notification.error({
               message: 'Failed to load tables',
               description: parseNexusError(error),
             });
           });
       })
-      .catch(error => {
+      .catch((error) => {
         notification.error({
           message: 'Failed to load tables',
           description: parseNexusError(error),
@@ -157,7 +138,7 @@ const WorkflowStepView: React.FC = () => {
     )) as StepResource[];
     setSteps(children);
     setSiblings(
-      children.map(child => ({
+      children.map((child) => ({
         name: child.name,
         '@id': child._self,
       }))
@@ -186,20 +167,13 @@ const WorkflowStepView: React.FC = () => {
 
     const fetchNext = (step: StepResource, acc: BreadcrumbItem[]) => {
       if (step.hasParent) {
-        nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(step.hasParent['@id'])
-        )
-          .then(response => {
+        nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(step.hasParent['@id']))
+          .then((response) => {
             const activityResource = response as StepResource;
             // fetch parent of a parent recursively
-            fetchNext(activityResource, [
-              stepToBreadcrumbItem(activityResource),
-              ...acc,
-            ]);
+            fetchNext(activityResource, [stepToBreadcrumbItem(activityResource), ...acc]);
           })
-          .catch(error => {
+          .catch((error) => {
             // stay silent and display breadcrumbs without parents that failed to load
             crumbs = [homeCrumb, ...acc];
           });
@@ -222,7 +196,7 @@ const WorkflowStepView: React.FC = () => {
 
   const linkCodeToActivity = (codeResourceId: string) => {
     nexus.Resource.getSource(orgLabel, projectLabel, encodeURIComponent(stepId))
-      .then(response => {
+      .then((response) => {
         const payload = response as StepResource;
 
         if (payload.wasAssociatedWith) {
@@ -245,7 +219,7 @@ const WorkflowStepView: React.FC = () => {
           message: 'The code resource is added successfully',
         })
       )
-      .catch(error =>
+      .catch((error) =>
         notification.error({
           message: 'Failed to load original payload',
           description: parseNexusError(error),
@@ -274,7 +248,7 @@ const WorkflowStepView: React.FC = () => {
         });
         reloadSteps();
       })
-      .catch(error => {
+      .catch((error) => {
         setShowStepForm(false);
         notification.error({
           message: 'An error occurred',
@@ -333,7 +307,7 @@ const WorkflowStepView: React.FC = () => {
         <StepsBoard>
           {steps &&
             steps.length > 0 &&
-            steps.map(substep => (
+            steps.map((substep) => (
               <SingleStepContainer
                 key={`step-${substep['@id']}`}
                 orgLabel={orgLabel}

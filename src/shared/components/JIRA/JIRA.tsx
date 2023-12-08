@@ -1,16 +1,5 @@
 import { DownOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Dropdown,
-  Empty,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Select,
-  Spin,
-  Table,
-} from 'antd';
+import { Button, Dropdown, Empty, Form, Input, Menu, Modal, Select, Spin, Table } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
 
@@ -40,8 +29,7 @@ const AuthorizeJiraUI = ({
           <br />
         </li>
         <li>
-          Copy the <em>verification code</em> from step 1 into the text box
-          below and click Connect.
+          Copy the <em>verification code</em> from step 1 into the text box below and click Connect.
           <br />
           <br />
           <div style={{ display: 'flex' }}>
@@ -51,7 +39,7 @@ const AuthorizeJiraUI = ({
                 placeholder="Verification code"
                 style={{ backgroundColor: '#fff', width: 200 }}
                 value={verificationCode}
-                onChange={e => setVerificationCode(e.currentTarget.value)}
+                onChange={(e) => setVerificationCode(e.currentTarget.value)}
               />
             </div>
             <div>
@@ -133,7 +121,7 @@ export const CreateIssueUI = ({
             }
             data-testid="project-select"
           >
-            {projects.map(project => (
+            {projects.map((project) => (
               <Select.Option key={project.key} value={project.key}>
                 {project.name}
               </Select.Option>
@@ -153,7 +141,7 @@ export const CreateIssueUI = ({
           <Input
             type="text"
             value={summary}
-            onChange={e => setSummary(e.currentTarget.value)}
+            onChange={(e) => setSummary(e.currentTarget.value)}
             placeholder="Issue Summary"
           />
         </Form.Item>
@@ -161,7 +149,7 @@ export const CreateIssueUI = ({
           <Form.Item label="Description" name="description" {...formItemLayout}>
             <TextArea
               value={description}
-              onChange={e => setDescription(e.currentTarget.value)}
+              onChange={(e) => setDescription(e.currentTarget.value)}
               placeholder="Issue description"
               autoSize={{ minRows: 3, maxRows: 5 }}
             />
@@ -214,7 +202,7 @@ export const LinkIssueUI = ({
         <Input
           type="text"
           value={issueKey}
-          onChange={e => setIssueUrl(e.currentTarget.value)}
+          onChange={(e) => setIssueUrl(e.currentTarget.value)}
           placeholder="Jira Issue URL"
         />
       </Modal>
@@ -225,11 +213,7 @@ export const LinkIssueUI = ({
 type JIRAPluginUIProps = {
   projects: any[];
   issues: any[];
-  onCreateIssue: (
-    project: string,
-    summary: string,
-    description: string
-  ) => void;
+  onCreateIssue: (project: string, summary: string, description: string) => void;
   onLinkIssue: (issueKey: string) => void;
   onUnlinkIssue: (issueKey: string) => void;
   searchJiraLink: string;
@@ -254,8 +238,7 @@ const JIRAPluginUI = ({
   const confirmUnlinkIssue = (issueKey: string) => {
     Modal.confirm({
       title: 'Unlink Issue',
-      content:
-        'Are you sure you want to unlink the issue from this Nexus resource?',
+      content: 'Are you sure you want to unlink the issue from this Nexus resource?',
       onOk: () => {
         onUnlinkIssue(issueKey);
         return Promise.resolve();
@@ -299,7 +282,7 @@ const JIRAPluginUI = ({
       {linkIssueVisible && (
         <LinkIssueUI
           searchJiraLink={searchJiraLink}
-          onOk={issueUrl => {
+          onOk={(issueUrl) => {
             onLinkIssue(issueUrl);
             setLinkIssueVisible(false);
           }}
@@ -372,12 +355,12 @@ const JIRAPluginUI = ({
             displayType === 'project'
               ? {
                   title: 'Link type',
-                  render: issue => (issue.resourceId ? 'Resource' : 'Project'),
+                  render: (issue) => (issue.resourceId ? 'Resource' : 'Project'),
                 }
               : {},
             {
               title: 'Issue',
-              render: issue => {
+              render: (issue) => {
                 return (
                   <a href={issue.url} target="_blank" rel="noreferrer">
                     {issue.summary}
@@ -388,12 +371,11 @@ const JIRAPluginUI = ({
             displayType === 'project'
               ? {
                   title: 'Resource',
-                  render: issue =>
+                  render: (issue) =>
                     issue.resourceSelfUrl && (
                       <a
                         onClick={() =>
-                          onNavigateToResource &&
-                          onNavigateToResource(issue.resourceSelfUrl)
+                          onNavigateToResource && onNavigateToResource(issue.resourceSelfUrl)
                         }
                       >
                         {issue.resourceLabel}
@@ -403,25 +385,25 @@ const JIRAPluginUI = ({
               : {},
             {
               title: 'Last updated',
-              render: issue => {
+              render: (issue) => {
                 return <>{getFriendlyTimeAgoString(issue.updated)}</>;
               },
             },
             {
               title: 'Status',
-              render: issue => {
+              render: (issue) => {
                 return <>{issue.status}</>;
               },
             },
             {
               title: 'Comments',
-              render: issue => {
+              render: (issue) => {
                 return <>{issue.commentCount}</>;
               },
             },
             {
               key: 'id',
-              render: issue => {
+              render: (issue) => {
                 return (
                   <>
                     <Dropdown.Button

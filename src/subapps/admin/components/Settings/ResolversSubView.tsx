@@ -3,7 +3,7 @@ import './styles.scss';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { PromisePool } from '@supercharge/promise-pool';
-import { Alert,Button, Input, Table } from 'antd';
+import { Alert, Button, Input, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { orderBy } from 'lodash';
 import React, { useState } from 'react';
@@ -33,14 +33,14 @@ const fetchResolvers = async ({
     const response = await nexus.Resolver.list(orgLabel, projectLabel, {
       deprecated: false,
     });
-    const resolvers = response._results.map(item => ({
-      type: item['@type'].filter(t => t !== 'Resolver'),
+    const resolvers = response._results.map((item) => ({
+      type: item['@type'].filter((t) => t !== 'Resolver'),
       priority: item.priority,
       id: item['@id'],
     }));
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(resolvers!)
-      .process(async res => {
+      .process(async (res) => {
         const iResolver = await nexus.Resolver.get(
           orgLabel,
           projectLabel,
@@ -73,12 +73,7 @@ export const fetchResourceByResolver = async ({
   projectLabel: string;
 }) => {
   try {
-    return await nexus.Resolver.getResource(
-      orgLabel,
-      projectLabel,
-      '_',
-      resourceId
-    );
+    return await nexus.Resolver.getResource(orgLabel, projectLabel, '_', resourceId);
   } catch (error) {
     // @ts-ignore
     throw new Error(`Can not resolve the resources with ${resourceId}`, {
@@ -113,7 +108,7 @@ const ResolversSubView = (props: Props) => {
       key: 'type',
       dataIndex: 'type',
       title: 'Type',
-      render: text => (
+      render: (text) => (
         <div>
           {text.map((item: string) => (
             <div key={item}>{item}</div>
@@ -126,7 +121,7 @@ const ResolversSubView = (props: Props) => {
       dataIndex: 'priority',
       title: 'Priority',
       align: 'center',
-      render: text => <span>{text}</span>,
+      render: (text) => <span>{text}</span>,
     },
     {
       key: 'actions',
@@ -138,11 +133,7 @@ const ResolversSubView = (props: Props) => {
           `${record.id}`
         )}`;
         return (
-          <Button
-            type="link"
-            htmlType="button"
-            onClick={() => history.push(editURI)}
-          >
+          <Button type="link" htmlType="button" onClick={() => history.push(editURI)}>
             Edit
           </Button>
         );
@@ -154,19 +145,14 @@ const ResolversSubView = (props: Props) => {
     queryFn: () => fetchResolvers({ nexus, orgLabel, projectLabel }),
   });
 
-  const {
-    mutateAsync: resolveResourceByID,
-    error,
-    data,
-    status: resolving,
-  } = useMutation(fetchResourceByResolver);
-  const handleSubmitResolve: React.FormEventHandler<HTMLFormElement> = event => {
+  const { mutateAsync: resolveResourceByID, error, data, status: resolving } = useMutation(
+    fetchResourceByResolver
+  );
+  const handleSubmitResolve: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const resourceUri = data.get('resourceId') as string;
-    const resourceId = easyValidURL(resourceUri)
-      ? encodeURIComponent(resourceUri)
-      : resourceUri;
+    const resourceId = easyValidURL(resourceUri) ? encodeURIComponent(resourceUri) : resourceUri;
     setSelctedResource(resourceId);
     resolveResourceByID(
       {
@@ -175,7 +161,7 @@ const ResolversSubView = (props: Props) => {
         projectLabel,
         resourceId,
       },
-      { onError: error => {} }
+      { onError: (error) => {} }
     );
   };
   return (
@@ -195,7 +181,7 @@ const ResolversSubView = (props: Props) => {
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
-          rowKey={r => r.id}
+          rowKey={(r) => r.id}
           dataSource={resolvers?.results}
           sticky={true}
           size="middle"
@@ -213,11 +199,7 @@ const ResolversSubView = (props: Props) => {
             // onChange={handleQueryChange}
             role="search"
           />
-          <Button
-            type="ghost"
-            htmlType="submit"
-            loading={resolving === 'loading'}
-          >
+          <Button type="ghost" htmlType="submit" loading={resolving === 'loading'}>
             Resolve
           </Button>
         </form>
@@ -231,10 +213,9 @@ const ResolversSubView = (props: Props) => {
                   <Button
                     type="link"
                     onClick={() => {
-                      history.push(
-                        `/${orgLabel}/${projectLabel}/resources/${selectedResource}`,
-                        { background: location }
-                      );
+                      history.push(`/${orgLabel}/${projectLabel}/resources/${selectedResource}`, {
+                        background: location,
+                      });
                     }}
                   >
                     open resource

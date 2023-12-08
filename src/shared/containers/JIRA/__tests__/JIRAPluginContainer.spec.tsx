@@ -15,7 +15,7 @@ import {
   NotificationContextType,
 } from '../../../../shared/hooks/useNotification';
 import { configureStore } from '../../../../store';
-import { render, screen,server } from '../../../../utils/testUtil';
+import { render, screen, server } from '../../../../utils/testUtil';
 import JIRAPluginContainer from '../JIRAPluginContainer';
 
 describe('Jira Plugin Container', () => {
@@ -44,16 +44,13 @@ describe('Jira Plugin Container', () => {
         prov: 'http://www.w3.org/ns/prov#',
       },
     ],
-    '@id':
-      'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
+    '@id': 'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
     '@type': 'Analysis',
     generated: {
-      '@id':
-        'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/TestAnalysisReport_A',
+      '@id': 'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/TestAnalysisReport_A',
       '@type': 'AnalysisReport',
     },
-    _constrainedBy:
-      'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+    _constrainedBy: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
     _createdAt: '2022-06-20T09:07:18.137Z',
     _createdBy: 'https://localhost:3000/nexus/v1/realms/local/users/localuser',
     _deprecated: false,
@@ -63,10 +60,8 @@ describe('Jira Plugin Container', () => {
       'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA/outgoing',
     _project: 'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
     _rev: 5,
-    _schemaProject:
-      'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
-    _self:
-      'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
+    _schemaProject: 'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
+    _self: 'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
     _updatedAt: '2022-06-23T09:14:59.359Z',
     _updatedBy: 'https://localhost:3000/nexus/v1/realms/local/users/localuser',
   };
@@ -92,28 +87,23 @@ describe('Jira Plugin Container', () => {
         _prefix: 'nxv',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
+        _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
         _prefix: 'documents',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
+        _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
         _prefix: 'defaultResolver',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
+        _namespace: 'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
         _prefix: 'schema',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+        _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
         _prefix: 'resource',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+        _namespace: 'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
         _prefix: '_',
       },
       {
@@ -133,8 +123,7 @@ describe('Jira Plugin Container', () => {
         _prefix: 'resolver',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
+        _namespace: 'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
         _prefix: 'graph',
       },
       {
@@ -142,8 +131,7 @@ describe('Jira Plugin Container', () => {
         _prefix: 'archive',
       },
       {
-        _namespace:
-          'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
+        _namespace: 'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
         _prefix: 'defaultStorage',
       },
     ],
@@ -179,12 +167,10 @@ describe('Jira Plugin Container', () => {
         description: 'Building and simulation tools',
         id: '10022',
         name: 'Building and simulation',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/projectCategory/10022',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/projectCategory/10022',
       },
       projectTypeKey: 'software',
-      self:
-        'https://localhost:3000/jira/project/devissues/rest/api/2/project/15065',
+      self: 'https://localhost:3000/jira/project/devissues/rest/api/2/project/15065',
     },
     {
       archived: false,
@@ -206,12 +192,10 @@ describe('Jira Plugin Container', () => {
         description: 'External projects',
         id: '10320',
         name: 'Projects',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/projectCategory/10320',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/projectCategory/10320',
       },
       projectTypeKey: 'software',
-      self:
-        'https://localhost:3000/jira/project/devissues/rest/api/2/project/14577',
+      self: 'https://localhost:3000/jira/project/devissues/rest/api/2/project/14577',
     },
     {
       archived: false,
@@ -230,8 +214,7 @@ describe('Jira Plugin Container', () => {
       key: 'BBPP123',
       name: 'API Test [X]',
       projectTypeKey: 'software',
-      self:
-        'https://localhost:3000/jira/project/devissues/rest/api/2/project/15362',
+      self: 'https://localhost:3000/jira/project/devissues/rest/api/2/project/15362',
     },
   ];
 
@@ -239,8 +222,7 @@ describe('Jira Plugin Container', () => {
     expand: 'names,schema',
     issues: [
       {
-        expand:
-          'operations,versionedRepresentations,editmeta,changelog,renderedFields',
+        expand: 'operations,versionedRepresentations,editmeta,changelog,renderedFields',
         fields: {
           aggregateprogress: { progress: 0, total: 0 },
           components: [],
@@ -261,8 +243,7 @@ describe('Jira Plugin Container', () => {
             emailAddress: 'nicholas.wells@epfl.ch',
             key: 'JIRAUSER15008',
             name: 'wells',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
             timeZone: 'Europe/Zurich',
           },
           customfield_10210: {
@@ -294,8 +275,7 @@ describe('Jira Plugin Container', () => {
           },
           customfield_13517:
             'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
-          customfield_13518:
-            'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
+          customfield_13518: 'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
           fixVersions: [],
           issuelinks: [],
           issuetype: {
@@ -305,8 +285,7 @@ describe('Jira Plugin Container', () => {
               'https://localhost:3000/jira/project/devissues/secure/viewavatar?size=xsmall&avatarId=11478&avatarType=issuetype',
             id: '3',
             name: 'Task',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/issuetype/3',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issuetype/3',
             subtask: false,
           },
           labels: ['discussion'],
@@ -316,8 +295,7 @@ describe('Jira Plugin Container', () => {
               'https://localhost:3000/jira/project/devissues/images/icons/priorities/minor.svg',
             id: '10002',
             name: 'Low',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/priority/10002',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/priority/10002',
           },
           progress: { progress: 0, total: 0 },
           project: {
@@ -335,8 +313,7 @@ describe('Jira Plugin Container', () => {
             key: 'NEXUS',
             name: 'Blue Brain Nexus',
             projectTypeKey: 'software',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/project/14566',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/project/14566',
           },
           reporter: {
             active: true,
@@ -354,25 +331,21 @@ describe('Jira Plugin Container', () => {
             emailAddress: 'nicholas.wells@epfl.ch',
             key: 'JIRAUSER15008',
             name: 'wells',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
             timeZone: 'Europe/Zurich',
           },
           status: {
             description: '',
-            iconUrl:
-              'https://localhost:3000/jira/project/devissues/images/icons/statuses/open.png',
+            iconUrl: 'https://localhost:3000/jira/project/devissues/images/icons/statuses/open.png',
             id: '10109',
             name: 'To Do',
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/status/10109',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/status/10109',
             statusCategory: {
               colorName: 'blue-gray',
               id: 2,
               key: 'new',
               name: 'To Do',
-              self:
-                'https://localhost:3000/jira/project/devissues/rest/api/2/statuscategory/2',
+              self: 'https://localhost:3000/jira/project/devissues/rest/api/2/statuscategory/2',
             },
           },
           subtasks: [],
@@ -381,8 +354,7 @@ describe('Jira Plugin Container', () => {
           versions: [],
           votes: {
             hasVoted: false,
-            self:
-              'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/votes',
+            self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/votes',
             votes: 0,
           },
           watches: {
@@ -395,8 +367,7 @@ describe('Jira Plugin Container', () => {
         },
         id: '80811',
         key: 'NEXUS-57',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/issue/80811',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issue/80811',
       },
     ],
     maxResults: 50,
@@ -405,8 +376,7 @@ describe('Jira Plugin Container', () => {
   };
 
   const mockJiraIssueResponse = {
-    expand:
-      'renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations',
+    expand: 'renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations',
     fields: {
       aggregateprogress: { progress: 0, total: 0 },
       attachment: [],
@@ -422,29 +392,25 @@ describe('Jira Plugin Container', () => {
             'https://localhost:3000/jira/project/devissues/secure/useravatar?size=small&avatarId=10082',
           '32x32':
             'https://localhost:3000/jira/project/devissues/secure/useravatar?size=medium&avatarId=10082',
-          '48x48':
-            'https://localhost:3000/jira/project/devissues/secure/useravatar?avatarId=10082',
+          '48x48': 'https://localhost:3000/jira/project/devissues/secure/useravatar?avatarId=10082',
         },
         displayName: 'Nicholas Stephen Wells',
         emailAddress: 'nicholas.wells@epfl.ch',
         key: 'JIRAUSER15008',
         name: 'wells',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
         timeZone: 'Europe/Zurich',
       },
       customfield_10210: {
         disabled: false,
         id: '10102',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/10102',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/10102',
         value: 'Low',
       },
       customfield_10211: {
         disabled: false,
         id: '10117',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/10117',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/10117',
         value: 'Low',
       },
       customfield_10310: '9223372036854775807',
@@ -456,14 +422,12 @@ describe('Jira Plugin Container', () => {
       customfield_12597: {
         disabled: false,
         id: '11431',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/11431',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/customFieldOption/11431',
         value: 'No',
       },
       customfield_13517:
         'https://localhost:3000/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisA',
-      customfield_13518:
-        'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
+      customfield_13518: 'https://localhost:3000/nexus/v1/projects/bbp-users/nicholas',
       fixVersions: [],
       issuelinks: [],
       issuetype: {
@@ -473,19 +437,16 @@ describe('Jira Plugin Container', () => {
           'https://localhost:3000/jira/project/devissues/secure/viewavatar?size=xsmall&avatarId=11478&avatarType=issuetype',
         id: '3',
         name: 'Task',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/issuetype/3',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issuetype/3',
         subtask: false,
       },
       labels: ['discussion'],
       lastViewed: '2022-06-24T14:57:33.706+0200',
       priority: {
-        iconUrl:
-          'https://localhost:3000/jira/project/devissues/images/icons/priorities/minor.svg',
+        iconUrl: 'https://localhost:3000/jira/project/devissues/images/icons/priorities/minor.svg',
         id: '10002',
         name: 'Low',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/priority/10002',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/priority/10002',
       },
       progress: { progress: 0, total: 0 },
       project: {
@@ -503,8 +464,7 @@ describe('Jira Plugin Container', () => {
         key: 'NEXUS',
         name: 'Blue Brain Nexus',
         projectTypeKey: 'software',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/project/14566',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/project/14566',
       },
       reporter: {
         active: true,
@@ -515,32 +475,27 @@ describe('Jira Plugin Container', () => {
             'https://localhost:3000/jira/project/devissues/secure/useravatar?size=small&avatarId=10082',
           '32x32':
             'https://localhost:3000/jira/project/devissues/secure/useravatar?size=medium&avatarId=10082',
-          '48x48':
-            'https://localhost:3000/jira/project/devissues/secure/useravatar?avatarId=10082',
+          '48x48': 'https://localhost:3000/jira/project/devissues/secure/useravatar?avatarId=10082',
         },
         displayName: 'Nicholas Stephen Wells',
         emailAddress: 'nicholas.wells@epfl.ch',
         key: 'JIRAUSER15008',
         name: 'wells',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/user?username=wells',
         timeZone: 'Europe/Zurich',
       },
       status: {
         description: '',
-        iconUrl:
-          'https://localhost:3000/jira/project/devissues/images/icons/statuses/open.png',
+        iconUrl: 'https://localhost:3000/jira/project/devissues/images/icons/statuses/open.png',
         id: '10109',
         name: 'To Do',
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/status/10109',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/status/10109',
         statusCategory: {
           colorName: 'blue-gray',
           id: 2,
           key: 'new',
           name: 'To Do',
-          self:
-            'https://localhost:3000/jira/project/devissues/rest/api/2/statuscategory/2',
+          self: 'https://localhost:3000/jira/project/devissues/rest/api/2/statuscategory/2',
         },
       },
       subtasks: [],
@@ -550,14 +505,12 @@ describe('Jira Plugin Container', () => {
       versions: [],
       votes: {
         hasVoted: false,
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/votes',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/votes',
         votes: 0,
       },
       watches: {
         isWatching: true,
-        self:
-          'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/watchers',
+        self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issue/NEXUS-57/watchers',
         watchCount: 1,
       },
       worklog: { maxResults: 20, startAt: 0, total: 0, worklogs: [] },
@@ -565,22 +518,18 @@ describe('Jira Plugin Container', () => {
     },
     id: '80811',
     key: 'NEXUS-57',
-    self:
-      'https://localhost:3000/jira/project/devissues/rest/api/2/issue/80811',
+    self: 'https://localhost:3000/jira/project/devissues/rest/api/2/issue/80811',
   };
 
   it('displays table containing a row with the linked jira issue and a link to it', async () => {
     server.use(
-      rest.get(
-        'https://localhost:3000/projects/orgLabel/projectLabel',
-        (_, res, ctx) => {
-          return res(
-            // Respond with a 200 status code
-            ctx.status(200),
-            ctx.json(mockResponseProjects)
-          );
-        }
-      ),
+      rest.get('https://localhost:3000/projects/orgLabel/projectLabel', (_, res, ctx) => {
+        return res(
+          // Respond with a 200 status code
+          ctx.status(200),
+          ctx.json(mockResponseProjects)
+        );
+      }),
       rest.get('https://localhost:3000/jira/project', (_, res, ctx) => {
         return res(
           // Respond with a 200 status code

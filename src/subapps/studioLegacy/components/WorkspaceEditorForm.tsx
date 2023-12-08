@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Button,Form, Input, Tooltip } from 'antd';
+import { Button, Form, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
 
@@ -19,13 +19,7 @@ const WorkspaceEditorForm: React.FC<{
     wrapperCol: { span: 14 },
   };
 
-  const handleSubmit = ({
-    label,
-    description,
-  }: {
-    label: string;
-    description: string;
-  }) => {
+  const handleSubmit = ({ label, description }: { label: string; description: string }) => {
     saveWorkspace && saveWorkspace(label, description);
   };
 
@@ -35,12 +29,7 @@ const WorkspaceEditorForm: React.FC<{
   };
 
   return (
-    <Form
-      {...formItemLayout}
-      onFinish={handleSubmit}
-      layout="vertical"
-      role="form"
-    >
+    <Form {...formItemLayout} onFinish={handleSubmit} layout="vertical" role="form">
       <Form.Item
         label={
           <span>

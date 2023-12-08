@@ -33,27 +33,19 @@ const HistoryContainer: React.FunctionComponent<{
     const promises = [...Array(latestRev).keys()]
       // now map them to resource revisions
       .map((index: number) => {
-        return nexus.Resource.get(
-          orgLabel,
-          projectLabel,
-          encodeURIComponent(resourceId),
-          {
-            rev: index + 1,
-          }
-        );
+        return nexus.Resource.get(orgLabel, projectLabel, encodeURIComponent(resourceId), {
+          rev: index + 1,
+        });
       });
 
     const metadataKeys = ['_rev', '_updatedAt', '_updatedBy'];
     const revisions = await Promise.all(promises);
     setRevisions(
       (revisions as Resource[]).map((revision: Resource, index: number) => {
-        const previous = blacklistKeys(
-          revisions[index - 1] || {},
-          metadataKeys
-        );
+        const previous = blacklistKeys(revisions[index - 1] || {}, metadataKeys);
         const current = blacklistKeys(revision, metadataKeys);
         const changes = Object.entries(detailedDiff(previous, current))
-          .filter(property => !isEmpty(property[1]))
+          .filter((property) => !isEmpty(property[1]))
           .reduce(
             (acc, [key, value]) =>
               Object.assign(acc, {
@@ -61,9 +53,7 @@ const HistoryContainer: React.FunctionComponent<{
               }),
             {}
           );
-        const hasChanges = Object.entries(changes).some(
-          ([, value]) => !isEmpty(value)
-        );
+        const hasChanges = Object.entries(changes).some(([, value]) => !isEmpty(value));
 
         return {
           changes,

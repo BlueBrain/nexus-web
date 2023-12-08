@@ -2,17 +2,9 @@ import './style.scss';
 
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Checkbox,
-  Col,
-  Input,
-  Radio,
-  RadioChangeEvent,
-  Row,
-  Select,
-} from 'antd';
+import { Checkbox, Col, Input, Radio, RadioChangeEvent, Row, Select } from 'antd';
 import { isString, orderBy } from 'lodash';
-import React, { ReactElement,useCallback, useRef, useState } from 'react';
+import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -91,10 +83,7 @@ const useTypesAggregation = ({
 
 const typesOptionsBuilder = (typeBucket: TTypesAggregatedBucket): TType => {
   const typeKey = typeBucket.key;
-  const typeLabel =
-    isString(typeKey) && isValidUrl(typeKey)
-      ? typeKey.split('/').pop()
-      : typeKey;
+  const typeLabel = isString(typeKey) && isValidUrl(typeKey) ? typeKey.split('/').pop() : typeKey;
 
   return {
     key: typeKey,
@@ -125,7 +114,7 @@ export const RowRenderer = <T,>({
       justify="space-between"
       align="top"
       className="select-row"
-      onClick={e => onCheck(e, value)}
+      onClick={(e) => onCheck(e, value)}
       gutter={2}
     >
       {titleComponent(value)}
@@ -160,17 +149,13 @@ const TypeSelector = ({
   const originTypes = useRef<TType[]>([]);
   const [typeSearchValue, updateSearchType] = useState('');
   const [typesOptionsArray, setTypesOptionsArray] = useState<TType[]>([]);
-  const identities = useSelector(
-    (state: RootState) => state.auth.identities?.data?.identities
-  );
-  const issuerUri = identities?.find((item: any) => item['@type'] === 'User')?.[
-    '@id'
-  ];
+  const identities = useSelector((state: RootState) => state.auth.identities?.data?.identities);
+  const issuerUri = identities?.find((item: any) => item['@type'] === 'User')?.['@id'];
 
   const selectCallback = useCallback((data: TTypeAggregationsResult) => {
-    const options = (
-      data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])
-    ).map<TType>(item => typesOptionsBuilder(item));
+    const options = (data.aggregations.types?.buckets ?? ([] as TTypesAggregatedBucket[])).map<
+      TType
+    >((item) => typesOptionsBuilder(item));
     originTypes.current = options;
     return options;
   }, []);
@@ -184,16 +169,13 @@ const TypeSelector = ({
     issuerUri,
   });
 
-  const onChangeTypeChange = ({
-    target: { value },
-    type,
-  }: React.ChangeEvent<HTMLInputElement>) => {
+  const onChangeTypeChange = ({ target: { value }, type }: React.ChangeEvent<HTMLInputElement>) => {
     updateSearchType(value);
     if (value === '' || type === 'click') {
       setTypesOptionsArray(originTypes.current);
     } else {
       setTypesOptionsArray(
-        originTypes.current.filter(item =>
+        originTypes.current.filter((item) =>
           item.label.toLowerCase().includes(value.toLowerCase())
         ) ?? []
       );
@@ -215,10 +197,7 @@ const TypeSelector = ({
     afterUpdate?.('OR', []);
   };
 
-  const handleOnCheckType = (
-    e: React.MouseEvent<HTMLElement, MouseEvent>,
-    type: TType
-  ) => {
+  const handleOnCheckType = (e: React.MouseEvent<HTMLElement, MouseEvent>, type: TType) => {
     e.preventDefault();
     e.stopPropagation();
     const newTypes = types?.find((item: TType) => item.value === type.value)
@@ -282,11 +261,7 @@ const TypeSelector = ({
                   value={typeSearchValue}
                   onChange={onChangeTypeChange}
                 />
-                {
-                  <div className="count">{`${prettifyNumber(
-                    renderedTypes.length
-                  )} types`}</div>
-                }
+                {<div className="count">{`${prettifyNumber(renderedTypes.length)} types`}</div>}
               </div>
               <div className="my-data-type-filter-content">
                 {renderedTypes.length ? (
@@ -295,9 +270,7 @@ const TypeSelector = ({
                       <RowRenderer<TType>
                         key={type.key}
                         value={type}
-                        checked={Boolean(
-                          types?.find((item: TType) => item.key === type.key)
-                        )}
+                        checked={Boolean(types?.find((item: TType) => item.key === type.key))}
                         onCheck={handleOnCheckType}
                         titleComponent={TypeItem}
                       />

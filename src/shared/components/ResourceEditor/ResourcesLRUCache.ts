@@ -43,9 +43,7 @@ const lookBySearchApi = async ({
   resourceId: string;
 }): Promise<TPagedResources> => {
   return await nexus.httpGet({
-    path: `${apiEndpoint}/resources?locate=${encodeURIComponent(
-      parseResourceId(resourceId)
-    )}`,
+    path: `${apiEndpoint}/resources?locate=${encodeURIComponent(parseResourceId(resourceId))}`,
   });
 };
 
@@ -92,8 +90,6 @@ const Options: Options = {
     }
   },
 };
-const ResourceResolutionCache = new LRUCache<string, TResolutionReturnedData>(
-  Options
-);
+const ResourceResolutionCache = new LRUCache<string, TResolutionReturnedData>(Options);
 
 export default ResourceResolutionCache;

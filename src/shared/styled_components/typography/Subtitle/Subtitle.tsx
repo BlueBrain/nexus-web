@@ -6,9 +6,6 @@ interface SubtitleProps {
   className?: string;
 }
 
-export const Subtitle = ({
-  children,
-  className,
-}: React.PropsWithChildren<SubtitleProps>) => {
+export const Subtitle = ({ children, className }: React.PropsWithChildren<SubtitleProps>) => {
   return <h4 className={`subtitle ${className}`}>{children}</h4>;
 };

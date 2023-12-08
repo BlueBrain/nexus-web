@@ -1,6 +1,6 @@
 import './CategoryTypeEdits.scss';
 
-import { Form,Radio } from 'antd';
+import { Form, Radio } from 'antd';
 import { intersection } from 'lodash';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -13,9 +13,7 @@ const TypesEditWidget = ({
   dispatch,
   currentlyBeingEditedAnalysisReportTypes,
 }: TypeEditWidgetProps) => {
-  const { analysisPluginTypes } = useSelector(
-    (state: RootState) => state.config
-  );
+  const { analysisPluginTypes } = useSelector((state: RootState) => state.config);
   const typeLabels = analysisPluginTypes.map(({ label }) => label);
 
   const changeType = ({ target: { value } }: any) => {

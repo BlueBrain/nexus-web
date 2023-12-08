@@ -19,15 +19,9 @@ const ColumnConfig: React.FC<{
   column: TableColumn;
   onChange: (name: string, data: any) => void;
 }> = ({ column, onChange }) => {
-  const [enableSearch, setEnableSeacrh] = React.useState<boolean>(
-    column.enableSearch
-  );
-  const [enableSort, setEnableSort] = React.useState<boolean>(
-    column.enableSort
-  );
-  const [enableFilter, setEnableFilter] = React.useState<boolean>(
-    column.enableFilter
-  );
+  const [enableSearch, setEnableSeacrh] = React.useState<boolean>(column.enableSearch);
+  const [enableSort, setEnableSort] = React.useState<boolean>(column.enableSort);
+  const [enableFilter, setEnableFilter] = React.useState<boolean>(column.enableFilter);
   const [type, setType] = React.useState<string>(column.format);
 
   const onChangeType = (value: string) => {
@@ -78,7 +72,7 @@ const ColumnConfig: React.FC<{
         </Col>
         <Col xs={12} sm={12} md={12}>
           <Select value={type} style={{ width: 120 }} onChange={onChangeType}>
-            {Object.values(ColumnTypes).map(type => (
+            {Object.values(ColumnTypes).map((type) => (
               <Option key={type} value={type}>
                 {type}
               </Option>

@@ -1,10 +1,7 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { AnyAction } from 'redux';
 
-import {
-  UISettingsActions,
-  UISettingsActionTypes,
-} from '../actions/ui-settings';
+import { UISettingsActions, UISettingsActionTypes } from '../actions/ui-settings';
 
 export const DEFAULT_UI_SETTINGS: UISettingsState = {
   openCreationPanel: false,

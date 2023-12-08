@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { createNexusClient,ProjectList } from '@bbp/nexus-sdk';
+import { createNexusClient, ProjectList } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import { renderHook } from '@testing-library/react-hooks/dom';
 import { ConnectedRouter } from 'connected-react-router';

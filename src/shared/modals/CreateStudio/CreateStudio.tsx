@@ -1,27 +1,12 @@
-import {
-  CompassFilled,
-  MoreOutlined,
-  QuestionCircleOutlined,
-} from '@ant-design/icons';
-import { NexusClient,Resource } from '@bbp/nexus-sdk/es';
+import { CompassFilled, MoreOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Modal,
-  notification,
-  Row,
-  Select,
-  Switch,
-  Tooltip,
-} from 'antd';
+import { Button, Col, Form, Input, Modal, notification, Row, Select, Switch, Tooltip } from 'antd';
 import { useForm, useWatch } from 'antd/lib/form/Form';
 import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { useMutation, useQuery } from 'react-query';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
@@ -55,8 +40,7 @@ const formItemLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 24 },
 };
-const DEFAULT_STUDIO_TYPE =
-  'https://bluebrainnexus.io/studio/vocabulary/Studio';
+const DEFAULT_STUDIO_TYPE = 'https://bluebrainnexus.io/studio/vocabulary/Studio';
 const generateStudioResource = (
   label: string,
   description?: string,
@@ -81,11 +65,7 @@ const makeStudioContext = async ({
   project: string;
 }) => {
   try {
-    await nexus.Resource.get(
-      organization!,
-      project!,
-      encodeURIComponent(STUDIO_CONTEXT['@id'])
-    );
+    await nexus.Resource.get(organization!, project!, encodeURIComponent(STUDIO_CONTEXT['@id']));
   } catch (error) {
     // @ts-ignore
     if (error['@type'] === 'ResourceNotFound') {
@@ -135,23 +115,16 @@ const CreateStudio = () => {
   const { data: pluginManifest } = usePlugins();
   const [form] = useForm();
   const { identities } = useSelector((state: RootState) => state.auth);
-  const userUri = identities?.data?.identities.find(
-    t => t['@type'] === 'User'
-  )?.['@id'];
-  const { isCreateStudioModelVisible } = useSelector(
-    (state: RootState) => state.modals
-  );
+  const userUri = identities?.data?.identities.find((t) => t['@type'] === 'User')?.['@id'];
+  const { isCreateStudioModelVisible } = useSelector((state: RootState) => state.modals);
   const { namespace } = useStudioLegacySubappContext();
   const match = useRouteMatch<{ orgLabel: string; projectLabel: string }>(
     `/${namespace}/:orgLabel/:projectLabel/studios`
   );
   const orgLabel = match?.params.orgLabel;
   const projectLabel = match?.params.projectLabel;
-  const goToStudio = (resourceId: string) =>
-    history.push(makeStudioUri(resourceId));
-  const { mutateAsync: mutateStudioResource, status } = useMutation(
-    createStudioResource
-  );
+  const goToStudio = (resourceId: string) => history.push(makeStudioUri(resourceId));
+  const { mutateAsync: mutateStudioResource, status } = useMutation(createStudioResource);
   const handleSubmit = ({
     description,
     label,
@@ -159,8 +132,8 @@ const CreateStudio = () => {
     projectName,
   }: TCreationStudioForm) => {
     const visiblePlugins = plugins
-      .filter(p => p.visible)
-      .map(p => {
+      .filter((p) => p.visible)
+      .map((p) => {
         return { key: p.key, expanded: !!p.expanded };
       });
     mutateStudioResource(
@@ -188,7 +161,7 @@ const CreateStudio = () => {
             },
           });
         },
-        onError: error => {
+        onError: (error) => {
           notification.error({
             message: `An error occured when creating a new studio for ${organizationName ??
               orgLabel}/${projectName ?? projectLabel}`,
@@ -221,12 +194,11 @@ const CreateStudio = () => {
       projectLabel}/studios/${encodeURIComponent(resourceId)}`;
     return path;
   };
-  const customisePlugin = (value: boolean) =>
-    updateState({ isPluginsCustomised: value });
+  const customisePlugin = (value: boolean) => updateState({ isPluginsCustomised: value });
   const handleSelectAllPlugin = (checked: boolean) => {
     if (checked) {
       updateState({
-        plugins: plugins.map(plug => ({
+        plugins: plugins.map((plug) => ({
           ...plug,
           visible: true,
           expanded: true,
@@ -235,7 +207,7 @@ const CreateStudio = () => {
       });
     } else {
       updateState({
-        plugins: plugins.map(plug => ({
+        plugins: plugins.map((plug) => ({
           ...plug,
           visible: false,
           expanded: false,
@@ -300,7 +272,7 @@ const CreateStudio = () => {
       },
     ];
     const otherAvailablePlugins = Object.keys(pluginManifest || {})
-      .map(key => {
+      .map((key) => {
         return {
           key,
           name: pluginManifest ? pluginManifest[key].name : '',
@@ -308,10 +280,10 @@ const CreateStudio = () => {
           expanded: false,
         };
       })
-      .filter(p => !nexusBuiltInPlugins.find(c => c.key === p.key));
+      .filter((p) => !nexusBuiltInPlugins.find((c) => c.key === p.key));
     if (pluginManifest) {
-      nexusBuiltInPlugins.forEach(p => {
-        const match = Object.keys(pluginManifest).find(k => p.key === k);
+      nexusBuiltInPlugins.forEach((p) => {
+        const match = Object.keys(pluginManifest).find((k) => p.key === k);
         if (match) {
           p.name = pluginManifest[match].name;
         }
@@ -377,7 +349,7 @@ const CreateStudio = () => {
                     aria-label="select-organization"
                   >
                     <Select.Option value={''}>{''}</Select.Option>
-                    {organizations?._results.map(org => (
+                    {organizations?._results.map((org) => (
                       <Select.Option value={org._label} key={org['@id']}>
                         {org._label}
                       </Select.Option>
@@ -404,7 +376,7 @@ const CreateStudio = () => {
                     onSelect={handleChangeProject}
                   >
                     <Select.Option value={''}>{''}</Select.Option>
-                    {projects?._results.map(proj => (
+                    {projects?._results.map((proj) => (
                       <Select.Option value={proj._label} key={proj['@id']}>
                         {proj._label}
                       </Select.Option>
@@ -450,10 +422,7 @@ const CreateStudio = () => {
               initialValue={''}
             >
               <MarkdownEditorFormItemComponent
-                key={`${useWatch('organizationName', form)}-${useWatch(
-                  'projectName',
-                  form
-                )}`}
+                key={`${useWatch('organizationName', form)}-${useWatch('projectName', form)}`}
                 resource={{} as Resource}
                 rmeProps={{
                   maxEditorHeight: 300,
@@ -472,17 +441,13 @@ const CreateStudio = () => {
                 <Switch
                   title="Hide plugin"
                   checked={isPluginsCustomised}
-                  onChange={value => customisePlugin(value)}
+                  onChange={(value) => customisePlugin(value)}
                   style={{ marginLeft: 10 }}
                 />
               </label>
             </Form.Item>
             <Form.Item style={{ margin: '10px 0 0' }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={status === 'loading'}
-              >
+              <Button type="primary" htmlType="submit" loading={status === 'loading'}>
                 Save
               </Button>
             </Form.Item>
@@ -491,15 +456,11 @@ const CreateStudio = () => {
             <Col span={12}>
               <p className="custom-plugins">
                 <em>
-                  Overrides the default resource plugin behaviour. Choose which
-                  plugins to enable, the order in which they appear, and whether
-                  they display expanded or not.
+                  Overrides the default resource plugin behaviour. Choose which plugins to enable,
+                  the order in which they appear, and whether they display expanded or not.
                 </em>
               </p>
-              <label
-                className="plugin__label"
-                style={{ marginLeft: 14, marginBottom: 15 }}
-              >
+              <label className="plugin__label" style={{ marginLeft: 14, marginBottom: 15 }}>
                 <Switch
                   key="studio-plugin-all"
                   title="select all plugin"
@@ -514,16 +475,14 @@ const CreateStudio = () => {
                 {selectAllPlugin ? 'Unselect All' : 'Select All'}
               </label>
               <DragDropContext
-                onDragEnd={result => {
+                onDragEnd={(result) => {
                   const { destination, source } = result;
                   if (!destination || !plugins) {
                     return;
                   }
                   const pluginsCopy = [...plugins];
-                  const indexOfLastEnabledPlugin = pluginsCopy.find(
-                    p => !p.visible
-                  )
-                    ? pluginsCopy.findIndex(p => !p.visible) - 1
+                  const indexOfLastEnabledPlugin = pluginsCopy.find((p) => !p.visible)
+                    ? pluginsCopy.findIndex((p) => !p.visible) - 1
                     : pluginsCopy.length - 1;
 
                   const destinationIndex =
@@ -532,11 +491,7 @@ const CreateStudio = () => {
                       : destination.index;
 
                   // add item to array
-                  pluginsCopy.splice(
-                    destinationIndex,
-                    0,
-                    plugins[source.index]
-                  );
+                  pluginsCopy.splice(destinationIndex, 0, plugins[source.index]);
 
                   // remove original item from array
                   if (destination.index > source.index) {
@@ -549,7 +504,7 @@ const CreateStudio = () => {
                 }}
               >
                 <Droppable droppableId="droppable">
-                  {provided => (
+                  {(provided) => (
                     <div
                       className="plugin-options"
                       {...provided.droppableProps}
@@ -563,13 +518,12 @@ const CreateStudio = () => {
                             draggableId={el.key}
                             index={ix}
                           >
-                            {provided => (
+                            {(provided) => (
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`plugin ${!el.name &&
-                                  'plugin--error'}`}
+                                className={`plugin ${!el.name && 'plugin--error'}`}
                               >
                                 <Form.Item
                                   className="plugin__switch"
@@ -581,26 +535,24 @@ const CreateStudio = () => {
                                   {el.visible ? (
                                     <MoreOutlined />
                                   ) : (
-                                    <MoreOutlined
-                                      style={{ color: 'transparent' }}
-                                    />
+                                    <MoreOutlined style={{ color: 'transparent' }} />
                                   )}
                                   <label className="plugin__label">
                                     <Switch
                                       title="Hide plugin"
                                       size="small"
                                       checked={el.visible}
-                                      onChange={checked => {
+                                      onChange={(checked) => {
                                         const pluginsCopy = [...plugins];
                                         const thisPluginIx = pluginsCopy.findIndex(
-                                          p => p.key === el.key
+                                          (p) => p.key === el.key
                                         );
                                         const thisPluginToMove = pluginsCopy.splice(
                                           thisPluginIx,
                                           1
                                         );
                                         const firstNonVisiblePluginIx = pluginsCopy.findIndex(
-                                          v => !v.visible
+                                          (v) => !v.visible
                                         );
                                         if (firstNonVisiblePluginIx === -1) {
                                           pluginsCopy.push({
@@ -608,14 +560,10 @@ const CreateStudio = () => {
                                             visible: checked,
                                           });
                                         } else {
-                                          pluginsCopy.splice(
-                                            firstNonVisiblePluginIx,
-                                            0,
-                                            {
-                                              ...thisPluginToMove[0],
-                                              visible: checked,
-                                            }
-                                          );
+                                          pluginsCopy.splice(firstNonVisiblePluginIx, 0, {
+                                            ...thisPluginToMove[0],
+                                            visible: checked,
+                                          });
                                         }
                                         updateState({
                                           plugins: pluginsCopy,
@@ -628,8 +576,7 @@ const CreateStudio = () => {
                                       el.name
                                     ) : (
                                       <>
-                                        Plugin '<em>{el.key}</em>' not in
-                                        manifest
+                                        Plugin '<em>{el.key}</em>' not in manifest
                                       </>
                                     )}
                                   </label>
@@ -642,7 +589,7 @@ const CreateStudio = () => {
                                     }
                                     onClick={() => {
                                       updateState({
-                                        plugins: plugins.map(p => {
+                                        plugins: plugins.map((p) => {
                                           if (p.key === el.key) {
                                             return {
                                               ...p,
@@ -663,9 +610,7 @@ const CreateStudio = () => {
                                       />
                                     )}
                                     {el.visible && !el.expanded && (
-                                      <CompassFilled
-                                        style={{ color: '#ccc', marginLeft: 3 }}
-                                      />
+                                      <CompassFilled style={{ color: '#ccc', marginLeft: 3 }} />
                                     )}
                                   </Button>
                                 </Form.Item>

@@ -1,6 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { message,Modal } from 'antd';
+import { message, Modal } from 'antd';
 import * as React from 'react';
 
 import useNotification, {
@@ -26,14 +26,7 @@ const AddWorkspaceContainer: React.FC<{
   onAddWorkspace?(): void;
   showModal: boolean;
   onCancel(): void;
-}> = ({
-  orgLabel,
-  projectLabel,
-  studio,
-  onAddWorkspace,
-  showModal,
-  onCancel,
-}) => {
+}> = ({ orgLabel, projectLabel, studio, onAddWorkspace, showModal, onCancel }) => {
   const nexus = useNexusContext();
   const notification = useNotification();
 
@@ -45,10 +38,7 @@ const AddWorkspaceContainer: React.FC<{
     dashboards: [],
   });
 
-  const createWorkspaceResource = async (
-    label: string,
-    description?: string
-  ) => {
+  const createWorkspaceResource = async (label: string, description?: string) => {
     return await nexus.Resource.create(
       orgLabel,
       projectLabel,
@@ -66,10 +56,7 @@ const AddWorkspaceContainer: React.FC<{
   const saveWorkspace = async (label: string, description?: string) => {
     onCancel();
     try {
-      const createWorkspaceResponse = await createWorkspaceResource(
-        label,
-        description
-      );
+      const createWorkspaceResponse = await createWorkspaceResource(label, description);
       const studioSource = await nexus.Resource.getSource<StudioResource>(
         orgLabel,
         projectLabel,
@@ -78,10 +65,7 @@ const AddWorkspaceContainer: React.FC<{
       const newWorkspaceId = createWorkspaceResponse['@id'];
       const studioUpdatePayload = {
         ...studioSource,
-        workspaces: updatedWorkspacesList(
-          newWorkspaceId,
-          studioSource.workspaces
-        ),
+        workspaces: updatedWorkspacesList(newWorkspaceId, studioSource.workspaces),
       };
       await nexus.Resource.update(
         orgLabel,

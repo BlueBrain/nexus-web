@@ -1,6 +1,6 @@
 import React, { SVGProps } from 'react';
 
-const PersonOutline: React.FC<SVGProps<SVGSVGElement>> = props => {
+const PersonOutline: React.FC<SVGProps<SVGSVGElement>> = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

@@ -19,10 +19,7 @@ const ProjectView: React.FC = () => {
       {projectLabel && orgLabel ? (
         <div className="project-view__container">
           {orgLabel && projectLabel && (
-            <WorkflowStepsContainer
-              orgLabel={orgLabel}
-              projectLabel={projectLabel}
-            />
+            <WorkflowStepsContainer orgLabel={orgLabel} projectLabel={projectLabel} />
           )}
         </div>
       ) : (

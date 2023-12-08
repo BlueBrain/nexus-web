@@ -1,17 +1,7 @@
 import './ProjectForm.scss';
 
-import { MinusCircleOutlined,PlusCircleOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Col,
-  Collapse,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Space,
-  Spin,
-} from 'antd';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Button, Col, Collapse, Form, Input, Modal, Row, Space, Spin } from 'antd';
 import * as React from 'react';
 
 export interface PrefixMappingGroupInputState {
@@ -82,8 +72,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   mode = 'create',
 }) => {
   // logic for generating dynamic prefix mapping fields in form
-  const currentId =
-    project && project.apiMappings ? project.apiMappings.length : 0;
+  const currentId = project && project.apiMappings ? project.apiMappings.length : 0;
   const activeKeys = [...Array(currentId + 1).keys()].slice(1);
   const [prefixMappingKeys, setPrefixMappingKeys] = React.useState({
     currentId,
@@ -110,9 +99,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
 
   const handleSubmit = (data: any) => {
     const mappingObject = data.apiMappings ? data.apiMappings : {};
-    const apiMappings = Object.keys(mappingObject).map(
-      (mapping: any) => data.apiMappings[mapping]
-    );
+    const apiMappings = Object.keys(mappingObject).map((mapping: any) => data.apiMappings[mapping]);
 
     onSubmit({
       ...data,
@@ -168,10 +155,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
   };
 
   return (
-    <Spin
-      spinning={busy}
-      tip="Please be patient while the project is scaffolded."
-    >
+    <Spin spinning={busy} tip="Please be patient while the project is scaffolded.">
       <Form onFinish={handleSubmit} className="project-form">
         <Form.Item
           {...formItemLayout}
@@ -225,11 +209,7 @@ const ProjectForm: React.FunctionComponent<ProjectFormProps> = ({
                     <h4>API Mappings</h4>
                     {apiMappingsItems}
                     <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={add}
-                        className="project-form__add-button"
-                      >
+                      <Button type="dashed" onClick={add} className="project-form__add-button">
                         <PlusCircleOutlined /> Add API mapping
                       </Button>
                     </Form.Item>

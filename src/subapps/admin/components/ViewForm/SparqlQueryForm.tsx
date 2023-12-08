@@ -31,7 +31,7 @@ const SparqlQueryForm: React.FunctionComponent<{
     <div className="view-form">
       <SparqlQueryInput
         value={input}
-        onChange={text => {
+        onChange={(text) => {
           setInput(text);
         }}
       />

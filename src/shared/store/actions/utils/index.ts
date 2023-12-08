@@ -13,8 +13,7 @@ export interface FetchFulfilledAction<T, DATA> extends FetchAction<T> {
   payload: DATA;
 }
 
-export interface FetchFulfilledActionWithKey<T, DATA>
-  extends FetchActionWithKey<T> {
+export interface FetchFulfilledActionWithKey<T, DATA> extends FetchActionWithKey<T> {
   payload: DATA;
 }
 

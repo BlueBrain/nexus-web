@@ -67,7 +67,7 @@ export default function useSearchQueryFromStudio(
 
     // Sorting
     if (Array.isArray(sort)) {
-      sort.forEach(sort => {
+      sort.forEach((sort) => {
         body.sort(sort.key, sort.direction);
       });
     } else {

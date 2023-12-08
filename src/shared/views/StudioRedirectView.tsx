@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 
-const ResourceView: React.FunctionComponent = props => {
+const ResourceView: React.FunctionComponent = (props) => {
   const location = useLocation();
   return (
     <Redirect

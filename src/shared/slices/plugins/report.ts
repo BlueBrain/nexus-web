@@ -59,13 +59,10 @@ export const analysisUISlice = createSlice({
         imagePreviewScale: action.payload.scale,
       }),
     saveReport: (state, action) => {
-      mapKeys(
-        action.payload,
-        (v, k) => `currentlyBeingEditedAnalysisReport${capitalize(k)}`
-      );
+      mapKeys(action.payload, (v, k) => `currentlyBeingEditedAnalysisReport${capitalize(k)}`);
       updateObject(state, action.payload);
     },
-    addReport: state => updateObject(state, newReport),
+    addReport: (state) => updateObject(state, newReport),
     setReportResourceType: (state, action) =>
       updateObject(state, {
         analysisResourceType: action.payload.resourceType,
@@ -80,16 +77,13 @@ export const analysisUISlice = createSlice({
         currentlyBeingEditedAnalysisReportName: action.payload.analaysisName,
         currentlyBeingEditedAnalysisReportCategories: action.payload.categories,
         currentlyBeingEditedAnalysisReportTypes: action.payload.types,
-        currentlyBeingEditedAnalysisReportDescription:
-          action.payload.analysisDescription,
+        currentlyBeingEditedAnalysisReportDescription: action.payload.analysisDescription,
         currentlyBeingEditedAnalysisReportTools:
           action.payload.tools === undefined ? [] : action.payload.tools,
       }),
     selectAsset: (state, action) => {
       state.selectedAssets = state.selectedAssets ? state.selectedAssets : [];
-      const assetPresent = state.selectedAssets.includes(
-        action.payload.assetId
-      );
+      const assetPresent = state.selectedAssets.includes(action.payload.assetId);
 
       state.selectedAssets =
         assetPresent && state.selectedAssets?.length > 0
@@ -115,8 +109,7 @@ export const analysisUISlice = createSlice({
       }),
     changeAnalysisDescription: (state, action) =>
       updateObject(state, {
-        currentlyBeingEditedAnalysisReportDescription:
-          action.payload.description,
+        currentlyBeingEditedAnalysisReportDescription: action.payload.description,
       }),
     changeAnalysisCategories: (state, action) =>
       updateObject(state, {
@@ -130,12 +123,9 @@ export const analysisUISlice = createSlice({
       updateObject(state, {
         currentlyBeingEditedAnalysisReportTools: action.payload.tools,
       }),
-    changeScale: (state, action) =>
-      updateObject(state, { imagePreviewScale: action.payload }),
-    openFileUploadDialog: state =>
-      updateObject(state, { isUploadAssetDialogOpen: true }),
-    closeFileUploadDialog: state =>
-      updateObject(state, { isUploadAssetDialogOpen: false }),
+    changeScale: (state, action) => updateObject(state, { imagePreviewScale: action.payload }),
+    openFileUploadDialog: (state) => updateObject(state, { isUploadAssetDialogOpen: true }),
+    closeFileUploadDialog: (state) => updateObject(state, { isUploadAssetDialogOpen: false }),
   },
 });
 

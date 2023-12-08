@@ -9,9 +9,7 @@ import useLocalStorage from '../hooks/useLocalStorage';
 import useQueryString from '../hooks/useQueryString';
 import { RootState } from '../store/reducers';
 import { uuidv4 } from '../utils';
-import ResourceListContainer, {
-  decodeShareableList,
-} from './ResourceListContainer';
+import ResourceListContainer, { decodeShareableList } from './ResourceListContainer';
 
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',
@@ -34,16 +32,13 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   projectLabel: string;
   refreshLists?: boolean;
 }> = ({ orgLabel, projectLabel, refreshLists }) => {
-  const userId = useSelector(
-    (state: RootState) => state.oidc.user?.profile.sub
-  );
+  const userId = useSelector((state: RootState) => state.oidc.user?.profile.sub);
   const [{ shareList }, setQueryParams] = useQueryString();
 
-  const [resourceLists = [], setResourceLists] = useLocalStorage<
-    ResourceBoardList[]
-  >(`resource-lists-${userId}-${orgLabel}-${projectLabel}`, [
-    makeDefaultList(),
-  ]);
+  const [resourceLists = [], setResourceLists] = useLocalStorage<ResourceBoardList[]>(
+    `resource-lists-${userId}-${orgLabel}-${projectLabel}`,
+    [makeDefaultList()]
+  );
 
   React.useEffect(() => {
     const sharedList = shareList && decodeShareableList(shareList);
@@ -70,21 +65,18 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   };
 
   const handleDeleteList = (id: string) => {
-    const filteredList = resourceLists.filter(list => list.id !== id);
+    const filteredList = resourceLists.filter((list) => list.id !== id);
     setResourceLists(filteredList);
   };
 
   const handleCloneList = (list: ResourceBoardList) => {
-    setResourceLists([
-      ...resourceLists,
-      { ...list, id: uuidv4(), name: `clone of ${list.name}` },
-    ]);
+    setResourceLists([...resourceLists, { ...list, id: uuidv4(), name: `clone of ${list.name}` }]);
   };
 
   const handleListChanged = (updatedList: ResourceBoardList) => {
-    setResourceLists(lists => {
+    setResourceLists((lists) => {
       if (lists === undefined) return [updatedList];
-      const index = lists.findIndex(list => list.id === updatedList.id);
+      const index = lists.findIndex((list) => list.id === updatedList.id);
       const newResourceList = [...lists];
       newResourceList[index] = updatedList;
       return newResourceList;

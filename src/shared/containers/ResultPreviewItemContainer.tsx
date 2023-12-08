@@ -5,15 +5,14 @@ import * as React from 'react';
 import { FILE_SCHEMA } from '../types/nexus';
 import { getResourceLabel } from '../utils';
 import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
-import { ParsedNexusUrl,parseURL } from '../utils/nexusParse';
+import { ParsedNexusUrl, parseURL } from '../utils/nexusParse';
 import MarkdownViewerContainer from './MarkdownViewer';
 
 const ResultPreviewItemContainer: React.FC<{
   resource: Resource;
   defaultPreviewItemTemplate: string;
 }> = ({ resource, defaultPreviewItemTemplate }) => {
-  const markdownHandlebarTemplate =
-    resource.previewTemplate || defaultPreviewItemTemplate;
+  const markdownHandlebarTemplate = resource.previewTemplate || defaultPreviewItemTemplate;
 
   let parsedUrl: ParsedNexusUrl | undefined;
 
@@ -29,14 +28,10 @@ const ResultPreviewItemContainer: React.FC<{
       template={markdownHandlebarTemplate}
       data={{
         ...resource,
-        description: convertMarkdownHandlebarStringWithData(
-          resource.description || '',
-          resource
+        description: convertMarkdownHandlebarStringWithData(resource.description || '', resource),
+        type: (Array.isArray(resource['@type']) ? resource['@type'] : [resource['@type']]).map(
+          (typeURL) => typeURL?.split('/').reverse()[0]
         ),
-        type: (Array.isArray(resource['@type'])
-          ? resource['@type']
-          : [resource['@type']]
-        ).map(typeURL => typeURL?.split('/').reverse()[0]),
         resourceLabel: getResourceLabel(resource),
         resourceAdminData: parsedUrl || '',
         fileData: resource._constrainedBy === FILE_SCHEMA && {

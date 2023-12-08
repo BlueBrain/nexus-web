@@ -4,7 +4,7 @@ import { CloseCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { Button, Spin } from 'antd';
 import * as React from 'react';
-import ReactMde, { ReactMdeProps,SaveImageHandler } from 'react-mde';
+import ReactMde, { ReactMdeProps, SaveImageHandler } from 'react-mde';
 
 const MarkdownEditorComponent: React.FC<{
   resource: Resource;
@@ -29,9 +29,7 @@ const MarkdownEditorComponent: React.FC<{
   markdownViewer: MarkdownViewer,
 }) => {
   const [value, setValue] = React.useState(resource?.description);
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
 
   const handleSave = () => {
     onSave && value && value !== resource.description && onSave(value);
@@ -50,7 +48,7 @@ const MarkdownEditorComponent: React.FC<{
         onChange={setValue}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
-        generateMarkdownPreview={async markdown => (
+        generateMarkdownPreview={async (markdown) => (
           <MarkdownViewer template={markdown} data={resource} />
         )}
         readOnly={readOnly}
@@ -94,17 +92,8 @@ export const MarkdownEditorFormItemComponent: React.FC<{
     data: object;
   }>;
   rmeProps?: Partial<ReactMdeProps>;
-}> = ({
-  rmeProps,
-  value,
-  resource,
-  onChange,
-  onSaveImage,
-  markdownViewer: MarkdownViewer,
-}) => {
-  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>(
-    'write'
-  );
+}> = ({ rmeProps, value, resource, onChange, onSaveImage, markdownViewer: MarkdownViewer }) => {
+  const [selectedTab, setSelectedTab] = React.useState<'write' | 'preview'>('write');
 
   const handleChange = (description: string) => {
     onChange && onChange(description);
@@ -117,7 +106,7 @@ export const MarkdownEditorFormItemComponent: React.FC<{
         onChange={handleChange}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
-        generateMarkdownPreview={async markdown =>
+        generateMarkdownPreview={async (markdown) =>
           !!value && <MarkdownViewer template={markdown} data={resource} />
         }
         paste={{

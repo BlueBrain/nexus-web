@@ -1,7 +1,7 @@
 import './FilterOptions.scss';
 
 import { NexusClient } from '@bbp/nexus-sdk/es';
-import { Checkbox, Form, Input,Row, Select } from 'antd';
+import { Checkbox, Form, Input, Row, Select } from 'antd';
 import * as React from 'react';
 
 import { labelOf } from '../../../shared/utils';
@@ -47,11 +47,10 @@ const FilterOptions: React.FC<{
   const baseQuery = constructQuery(query);
   const withOtherFilters = constructFilterSet(
     baseQuery,
-    filter.filter(f => extractFieldName(f.filterTerm) !== field.name)
+    filter.filter((f) => extractFieldName(f.filterTerm) !== field.name)
   );
   const fieldFilter = filter.find(
-    filter =>
-      extractFieldName(extractFieldName(filter.filterTerm)) === field.name
+    (filter) => extractFieldName(extractFieldName(filter.filterTerm)) === field.name
   );
 
   const [aggregations, setAggregations] = React.useState<
@@ -84,9 +83,7 @@ const FilterOptions: React.FC<{
       matching: boolean;
     }[]
   ) => {
-    const selectedFilters = filters
-      .filter(a => a.selected)
-      .map(a => a.filterValue);
+    const selectedFilters = filters.filter((a) => a.selected).map((a) => a.filterValue);
     onFinish({
       filterType,
       filters: selectedFilters,
@@ -113,45 +110,35 @@ const FilterOptions: React.FC<{
       .aggregation('missing', filterKeyWord, '(missing)')
       .build();
 
-    const filteredSuggesetionsPromise = nexusClient.Search.query(
-      filterSuggestions
-    );
+    const filteredSuggesetionsPromise = nexusClient.Search.query(filterSuggestions);
 
-    Promise.all([allSuggestionsPromise, filteredSuggesetionsPromise]).then(
-      ([all, filtered]) => {
-        const aggs = all.aggregations['suggestions'].buckets.map(
-          (bucket: any) => {
-            const filteredBucket = filtered.aggregations[
-              'suggestions'
-            ].buckets.find((f: any) => f.key === bucket.key);
-
-            return {
-              filterValue: bucket.key,
-              count: filteredBucket ? filteredBucket.doc_count : 0,
-              selected: fieldFilter?.filters.includes(
-                extractFieldName(bucket.key)
-              ),
-              matching: true,
-            };
-          }
+    Promise.all([allSuggestionsPromise, filteredSuggesetionsPromise]).then(([all, filtered]) => {
+      const aggs = all.aggregations['suggestions'].buckets.map((bucket: any) => {
+        const filteredBucket = filtered.aggregations['suggestions'].buckets.find(
+          (f: any) => f.key === bucket.key
         );
-        aggs.push({
-          filterValue: '(Missing)',
-          count: filtered.aggregations['(missing)'].doc_count,
-          selected: fieldFilter?.filters.includes('(Missing)'),
+
+        return {
+          filterValue: bucket.key,
+          count: filteredBucket ? filteredBucket.doc_count : 0,
+          selected: fieldFilter?.filters.includes(extractFieldName(bucket.key)),
           matching: true,
-        });
+        };
+      });
+      aggs.push({
+        filterValue: '(Missing)',
+        count: filtered.aggregations['(missing)'].doc_count,
+        selected: fieldFilter?.filters.includes('(Missing)'),
+        matching: true,
+      });
 
-        aggs.sort((x: any, y: any) =>
-          x.selected === y.selected ? 0 : x.selected ? -1 : 1
-        );
+      aggs.sort((x: any, y: any) => (x.selected === y.selected ? 0 : x.selected ? -1 : 1));
 
-        setAggregations(aggs);
-      }
-    );
+      setAggregations(aggs);
+    });
   }, [field]);
   const changeFilterSelection = (filterValue: string, selected: boolean) => {
-    const aggs = aggregations.map(a => ({
+    const aggs = aggregations.map((a) => ({
       ...a,
       selected: a.filterValue === filterValue ? selected : a.selected,
     }));
@@ -162,7 +149,7 @@ const FilterOptions: React.FC<{
 
   const filterValues = React.useMemo(() => {
     return aggregations
-      .filter(a => a.matching)
+      .filter((a) => a.matching)
       .map(({ filterValue, selected, count }) => {
         return (
           <Row
@@ -178,13 +165,9 @@ const FilterOptions: React.FC<{
               className="filter-value-row__chk"
               checked={selected ? true : false}
               disabled={count === 0}
-              onChange={e =>
-                changeFilterSelection(filterValue, e.target.checked)
-              }
+              onChange={(e) => changeFilterSelection(filterValue, e.target.checked)}
             >
-              {`${
-                field.label === 'Types' ? labelOf(filterValue) : filterValue
-              }`}
+              {`${field.label === 'Types' ? labelOf(filterValue) : filterValue}`}
             </Checkbox>
             <span className="filter-value-row__count">
               {count > 10000 ? '10K+' : count.toLocaleString('en-US')}
@@ -196,9 +179,7 @@ const FilterOptions: React.FC<{
 
   return (
     <Form form={form} aria-label="Field Filter" className="field-filter-menu">
-      {!(
-        field.fields && field.fields.find(f => f.format.includes('number'))
-      ) && (
+      {!(field.fields && field.fields.find((f) => f.format.includes('number'))) && (
         <>
           <Form.Item
             rules={[
@@ -211,32 +192,26 @@ const FilterOptions: React.FC<{
             <Select
               dropdownStyle={{ zIndex: 1100 }}
               value={filterType}
-              onChange={v => setFilterType(v)}
+              onChange={(v) => setFilterType(v)}
             >
-              {field.array && (
-                <Select.Option value="allof">is all of (AND)</Select.Option>
-              )}
+              {field.array && <Select.Option value="allof">is all of (AND)</Select.Option>}
               <Select.Option value="anyof">is any of (OR)</Select.Option>
               <Select.Option value="noneof">is none of (NOT)</Select.Option>
-              {field.optional && (
-                <Select.Option value="missing">is missing</Select.Option>
-              )}
+              {field.optional && <Select.Option value="missing">is missing</Select.Option>}
             </Select>
           </Form.Item>
           {filterType !== 'missing' && (
             <>
               <Input.Search
                 placeholder="Search filter values..."
-                onChange={event => {
+                onChange={(event) => {
                   const val = event.target.value;
 
-                  const filteredSuggestions = aggregations.map(a => ({
+                  const filteredSuggestions = aggregations.map((a) => ({
                     ...a,
                     matching:
                       val && val.length > 0
-                        ? a.filterValue
-                            .toLowerCase()
-                            .indexOf(val.toLowerCase()) > -1
+                        ? a.filterValue.toLowerCase().indexOf(val.toLowerCase()) > -1
                         : true,
                   }));
                   setAggregations(filteredSuggestions);
