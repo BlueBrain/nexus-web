@@ -1,7 +1,7 @@
-import { ResourceLink, PaginatedList, Resource } from '@bbp/nexus-sdk/es';
+import { PaginatedList, Resource, ResourceLink } from '@bbp/nexus-sdk/es';
 
-import { labelOf, getOrgAndProjectFromResource } from '../../utils';
 import { ElementNodeData } from '../../components/Graph';
+import { getOrgAndProjectFromResource, labelOf } from '../../utils';
 
 const MAX_LABEL_LENGTH = 20;
 

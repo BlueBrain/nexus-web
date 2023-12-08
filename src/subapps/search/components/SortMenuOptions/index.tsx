@@ -1,3 +1,5 @@
+import './SortMenuOptions.scss';
+
 import {
   CloseCircleOutlined,
   SortAscendingOutlined,
@@ -5,8 +7,8 @@ import {
 } from '@ant-design/icons';
 import { Button } from 'antd';
 import * as React from 'react';
+
 import { ESSortField } from '../../hooks/useGlobalSearch';
-import './SortMenuOptions.scss';
 
 export enum SortDirection {
   DESCENDING = 'desc',

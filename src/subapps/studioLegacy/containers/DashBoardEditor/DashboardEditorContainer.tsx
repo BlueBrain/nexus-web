@@ -1,19 +1,18 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk/es';
-import { Modal, message, Spin } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import { message, Modal, Spin } from 'antd';
+import * as React from 'react';
 
-import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
-
+import useAsyncCall from '../../../../shared/hooks/useAsynCall';
+import useNotification from '../../../../shared/hooks/useNotification';
+import usePlugins from '../../../../shared/hooks/usePlugins';
+import { TError } from '../../../../utils/types';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
 import STUDIO_CONTEXT from '../../components/StudioContext';
 import { DASHBOARD_TYPE } from './CreateDashboardContainer';
-import usePlugins from '../../../../shared/hooks/usePlugins';
-import useAsyncCall from '../../../../shared/hooks/useAsynCall';
-import useNotification from '../../../../shared/hooks/useNotification';
-import { TError } from '../../../../utils/types';
+import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 
 const DashboardEditorContainer: React.FunctionComponent<{
   orgLabel: string;

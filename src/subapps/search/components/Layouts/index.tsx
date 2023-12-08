@@ -1,7 +1,9 @@
+import './SearchLayouts.scss';
+
 import { TableOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
+
 import { SearchLayout } from '../../hooks/useGlobalSearch';
-import './SearchLayouts.scss';
 
 type SearchLayoutProps = {
   layouts?: SearchLayout[];

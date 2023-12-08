@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { AutoComplete, Input } from 'antd';
-
-import Hit, { globalSearchOption } from './Hit';
-import { focusOnSlash } from '../../utils/keyboardShortcuts';
-
 import './SearchBar.scss';
+
+import { AutoComplete, Input } from 'antd';
+import * as React from 'react';
+
 import {
   LastVisited,
   ProjectSearchHit,
   StudioSearchHit,
 } from '../../containers/SearchBarContainer';
 import { makeProjectUri, makeStudioUri } from '../../utils';
+import { focusOnSlash } from '../../utils/keyboardShortcuts';
+import Hit, { globalSearchOption } from './Hit';
 
 const LABEL_MAX_LENGTH = 25;
 
@@ -112,7 +112,7 @@ const SearchBar: React.FC<{
         return {
           key: `project-${projectHit.label}${ix}`,
           path: makeProjectUri(projectHit.organisation, projectHit.project),
-          type: 'project' as 'project',
+          type: 'project' as const,
           label: (
             <Hit
               key={projectHit.label}
@@ -143,7 +143,7 @@ const SearchBar: React.FC<{
             studioHit.project,
             studioHit.studioId
           ),
-          type: 'studio' as 'studio',
+          type: 'studio' as const,
           label: (
             <Hit
               key={studioHit.label}

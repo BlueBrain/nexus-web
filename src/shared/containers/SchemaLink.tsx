@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
-
-import { getOrgAndProjectFromResource } from '../utils';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 import { useHistory } from 'react-router';
+
 import SchemaLink from '../components/SchemaLink';
+import { getOrgAndProjectFromResource } from '../utils';
 
 const EXPANDED_CONSTRAINED_BY_KEY =
   'https://bluebrain.github.io/nexus/vocabulary/constrainedBy';

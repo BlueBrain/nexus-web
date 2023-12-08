@@ -1,4 +1,5 @@
-import { combineReducers, AnyAction, Reducer, Action } from 'redux';
+import { Action, AnyAction, combineReducers, Reducer } from 'redux';
+
 import { RequestError } from '../../actions/utils/errors';
 
 export type ActionReducer = (state: any, action: AnyAction) => any;

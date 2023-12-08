@@ -1,15 +1,10 @@
-import { describe, it } from 'vitest';
-import { createNexusClient } from '@bbp/nexus-sdk/es';
-import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
 
-import { RenderResult, act, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
+  dashboardResource,
+  dashboardVocabulary,
+  fetchResourceForDownload,
+  getMockStudioResource,
   MOCK_VAR,
   ORIGINAL_1_SORTED_2,
   ORIGINAL_2_SORTED_1,
@@ -17,17 +12,23 @@ import {
   ORIGINAL_4_SORTED_4,
   ORIGINAL_5_SORTED_6,
   ORIGINAL_6_SORTED_5,
-  dashboardResource,
-  dashboardVocabulary,
-  fetchResourceForDownload,
-  getMockStudioResource,
   sparqlViewResultHandler,
   sparqlViewSingleResult,
 } from '__mocks__/handlers/DataTableContainer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
+import { NexusProvider } from '@bbp/react-nexus';
+import { act, RenderResult, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { createMemoryHistory } from 'history';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { describe, it } from 'vitest';
+
 import { configureStore } from '../../store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';

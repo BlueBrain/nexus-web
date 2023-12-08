@@ -1,9 +1,11 @@
-import React, { CSSProperties } from 'react';
-import { useSelector } from 'react-redux';
+import './styles.scss';
+
 import { PlusOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
+import React, { CSSProperties } from 'react';
+import { useSelector } from 'react-redux';
+
 import { RootState } from '../../shared/store/reducers';
-import './styles.scss';
 
 type TProps = {
   title: string;

@@ -1,6 +1,7 @@
 import { FilterFilled } from '@ant-design/icons';
 import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import PromisePool from '@supercharge/promise-pool';
 import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
 import bodybuilder from 'bodybuilder';
@@ -17,19 +18,14 @@ import {
 } from 'lodash';
 import * as React from 'react';
 import { useQuery } from 'react-query';
+
 import {
-  StudioTableRow,
-  TableError,
-  getStudioLocalStorageKey,
-  getStudioTableKey,
-} from '../containers/DataTableContainer';
-import {
+  getLocalStorageSize,
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  notifyTotalSizeExeeced,
   TDataSource,
   TResourceTableData,
-  getLocalStorageSize,
-  notifyTotalSizeExeeced,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -39,15 +35,20 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
+import { normalizeString } from '../../utils/stringUtils';
 import isValidUrl, { isUrlCurieFormat } from '../../utils/validUrl';
 import { Projection } from '../components/EditTableForm';
+import {
+  getStudioLocalStorageKey,
+  getStudioTableKey,
+  StudioTableRow,
+  TableError,
+} from '../containers/DataTableContainer';
 import { download } from '../utils/download';
 import { isNumeric, parseJsonMaybe } from '../utils/index';
 import { addColumnsForES, rowRender } from '../utils/parseESResults';
 import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
-import PromisePool from '@supercharge/promise-pool';
-import { normalizeString } from '../../utils/stringUtils';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';

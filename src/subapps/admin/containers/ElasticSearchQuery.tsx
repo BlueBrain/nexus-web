@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 
 import ElasticSearchQueryForm from '../components/ViewForm/ElasticSearchQueryForm';
 

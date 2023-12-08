@@ -1,9 +1,11 @@
-import React, { useEffect, useReducer, useRef } from 'react';
-import moment from 'moment';
-import { clsx } from 'clsx';
-import useDateTimeInputs from './useDateTimeInputs';
-import { DATE_PATTERN } from '../../canvas/MyData/types';
 import './styles.scss';
+
+import { clsx } from 'clsx';
+import moment from 'moment';
+import React, { useEffect, useReducer, useRef } from 'react';
+
+import { DATE_PATTERN } from '../../canvas/MyData/types';
+import useDateTimeInputs from './useDateTimeInputs';
 
 type TDate = {
   day: string;

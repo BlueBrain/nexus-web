@@ -1,10 +1,5 @@
-import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk/es';
-import { Button, Tooltip } from 'antd';
-import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
-import { useQueries } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus/es';
+import '../containers/SearchContainer.scss';
+
 import {
   CaretDownOutlined,
   EyeInvisibleOutlined,
@@ -12,25 +7,30 @@ import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
-import {
-  constructQuery,
-  constructFilterSet,
-  addPagination,
-  addSorting,
-} from '../utils';
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus/es';
+import { Button, Tooltip } from 'antd';
+import * as React from 'react';
+import { useQueries } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
 
+import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import { RootState } from '../../../shared/store/reducers';
-
 import { deltaUrlToFusionUrl, labelOf } from '../../../shared/utils';
+import SortMenuOptions from '../components/SortMenuOptions';
+import DateFilterOptions from '../containers/DateFilterOptions';
 import FilterOptions, {
   createKeyWord,
   extractFieldName,
 } from '../containers/FilterOptions';
-import DateFilterOptions from '../containers/DateFilterOptions';
 import NumberFilterOptions from '../containers/NumberFilterOptions';
-import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
-import SortMenuOptions from '../components/SortMenuOptions';
-import '../containers/SearchContainer.scss';
+import {
+  addPagination,
+  addSorting,
+  constructFilterSet,
+  constructQuery,
+} from '../utils';
 
 export type SearchConfigField =
   | {
@@ -288,7 +288,7 @@ function rowRenderer(field: ConfigField, basePath: string) {
             title={() =>
               labels.map((label, ix) => (
                 <div key={ix}>
-                  <a href={sanitizedLink} target="_blank">
+                  <a href={sanitizedLink} target="_blank" rel="noreferrer">
                     {label}
                   </a>
                 </div>
@@ -433,7 +433,7 @@ function useGlobalSearchData({
     const fieldVisibilityFromStorage = localStorage.getItem(
       'search-field-visibility'
     );
-    if (!!fieldVisibilityFromStorage) {
+    if (fieldVisibilityFromStorage) {
       return {
         isPersistent: true,
         fields: JSON.parse(fieldVisibilityFromStorage),

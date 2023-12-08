@@ -1,8 +1,9 @@
-import { vi } from 'vitest';
-import StudioList from '../StudioList';
-import { render, fireEvent, screen } from '../../../../utils/testUtil';
-
 import '@testing-library/jest-dom';
+
+import { vi } from 'vitest';
+
+import { fireEvent, render, screen } from '../../../../utils/testUtil';
+import StudioList from '../StudioList';
 describe('StudioList', () => {
   const studios = [
     {

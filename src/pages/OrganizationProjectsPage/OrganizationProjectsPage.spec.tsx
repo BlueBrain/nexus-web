@@ -1,26 +1,27 @@
 import '@testing-library/jest-dom';
-import { renderHook } from '@testing-library/react-hooks/dom';
-import fetch from 'node-fetch';
-import { NexusProvider } from '@bbp/react-nexus';
+
+import { deltaPath } from '__mocks__/handlers/handlers';
 import {
+  createNexusClient,
   Organization,
   ProjectList,
   ProjectResponseCommon,
-  createNexusClient,
 } from '@bbp/nexus-sdk';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
+import { NexusProvider } from '@bbp/react-nexus';
+import { renderHook } from '@testing-library/react-hooks/dom';
 import { ConnectedRouter } from 'connected-react-router';
+import { createMemoryHistory } from 'history';
+import { rest } from 'msw';
+import fetch from 'node-fetch';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 
-import { render, waitFor, screen, server } from '../../utils/testUtil';
 import { configureStore } from '../../store';
+import { render, screen, server,waitFor } from '../../utils/testUtil';
 import OrganizationProjectsPage, {
   useInfiniteOrganizationProjectsQuery,
 } from './OrganizationProjectsPage';
-import { rest } from 'msw';
-import { deltaPath } from '__mocks__/handlers/handlers';
-import { vi } from 'vitest';
 
 vi.mock('react-router', async () => {
   const actual: Object = await vi.importActual('react-router');

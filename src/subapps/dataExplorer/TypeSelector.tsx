@@ -1,12 +1,14 @@
+import './styles.scss';
+
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import * as Sentry from '@sentry/browser';
+import Select, { DefaultOptionType } from 'antd/lib/select';
 import { isString } from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
+
 import { normalizeString } from '../../utils/stringUtils';
 import isValidUrl from '../../utils/validUrl';
 import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.scss';
-import Select, { DefaultOptionType } from 'antd/lib/select';
 
 interface Props {
   defaultValue?: string;

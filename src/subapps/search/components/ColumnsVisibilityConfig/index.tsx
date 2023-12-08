@@ -1,12 +1,14 @@
+import './ColumnsVisibility.scss';
+
 import { EyeInvisibleOutlined, MoreOutlined } from '@ant-design/icons';
 import { Button, Form, Modal, Switch } from 'antd';
 import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+
 import {
-  fieldVisibilityActionType,
   FieldsVisibilityState,
+  fieldVisibilityActionType,
 } from '../../hooks/useGlobalSearch';
-import './ColumnsVisibility.scss';
 
 export type ColumnVisibility = {
   key: string;

@@ -1,11 +1,12 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
-import * as localforage from 'localforage';
 import { notification } from 'antd';
-import { distanceFromTopToDisplay } from './useNotification';
-import { useRouteMatch } from 'react-router-dom';
+import * as localforage from 'localforage';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
+
 import { RootState } from '../store/reducers';
+import { distanceFromTopToDisplay } from './useNotification';
 
 export const DATACART_KEY = 'NEXUS_DATACART';
 

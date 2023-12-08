@@ -1,11 +1,13 @@
-import * as React from 'react';
-import { Radio, Form } from 'antd';
-import { intersection } from 'lodash';
 import './CategoryTypeEdits.scss';
-import { TypeEditWidgetProps } from '../../types/plugins/report';
-import { changeAnalysisTypes } from '../../slices/plugins/report';
+
+import { Form,Radio } from 'antd';
+import { intersection } from 'lodash';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
+
+import { changeAnalysisTypes } from '../../slices/plugins/report';
+import { TypeEditWidgetProps } from '../../types/plugins/report';
 
 const TypesEditWidget = ({
   dispatch,

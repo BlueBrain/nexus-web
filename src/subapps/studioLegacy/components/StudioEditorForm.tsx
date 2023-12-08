@@ -1,15 +1,17 @@
-import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk/es';
-import { Input, Form, Tooltip, Button, Switch, FormInstance } from 'antd';
-import { SaveImageHandler } from 'react-mde';
+import './StudioEditorForm.scss';
+
 import {
   CompassFilled,
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import './StudioEditorForm.scss';
-import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { Button, Form, FormInstance,Input, Switch, Tooltip } from 'antd';
+import * as React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { SaveImageHandler } from 'react-mde';
+
+import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 import usePlugins from '../../../shared/hooks/usePlugins';
 
 type StudioResource = Resource<{

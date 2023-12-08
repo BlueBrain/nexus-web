@@ -1,10 +1,12 @@
+import './styles.scss';
+
+import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { AutoComplete, Input } from 'antd';
 import React, { useState } from 'react';
+
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
-import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.scss';
-import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { normalizeString } from '../../utils/stringUtils';
+import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
 
 interface Props {
   defaultValue?: string;

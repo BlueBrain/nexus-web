@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { Button, Dropdown, Menu, Popconfirm, Spin } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Dropdown, Menu, Popconfirm, Spin } from 'antd';
+import * as React from 'react';
+
 import useNotification from '../hooks/useNotification';
 
 const RemoveTagButton: React.FunctionComponent<{

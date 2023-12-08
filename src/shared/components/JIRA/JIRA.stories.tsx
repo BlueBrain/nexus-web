@@ -2,6 +2,7 @@ import { withInfo } from '@storybook/addon-info';
 import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
+
 import JIRAPluginUI from '../JIRA/JIRA';
 
 storiesOf('Components/JIRA', module)

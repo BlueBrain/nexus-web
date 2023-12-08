@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
-import { Resource, PaginatedList } from '@bbp/nexus-sdk/es';
-import { useQuery } from 'react-query';
+import { PaginatedList,Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { isString } from 'lodash';
+import { useEffect } from 'react';
+import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../shared/store/reducers';
 import { SearchResponse } from '../../shared/types/search';
 

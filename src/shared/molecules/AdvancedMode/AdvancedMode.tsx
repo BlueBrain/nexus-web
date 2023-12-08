@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { useLocation, useHistory } from 'react-router';
-import { match as pmatch } from 'ts-pattern';
-import { Switch } from 'antd';
 import './styles.scss';
+
+import { Switch } from 'antd';
+import * as React from 'react';
+import { useHistory,useLocation } from 'react-router';
+import { match as pmatch } from 'ts-pattern';
 
 export const advancedModeBlackList = ['/studios', '/studio'];
 type TAMLocationState = {

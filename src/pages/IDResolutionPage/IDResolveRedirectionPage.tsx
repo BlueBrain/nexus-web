@@ -1,20 +1,20 @@
+import './styles.less';
+
+import { LoadingOutlined } from '@ant-design/icons';
+import { Resource } from '@bbp/nexus-sdk';
+import { Collapse, Tag } from 'antd';
+import { isEmpty } from 'lodash';
 import { useCallback, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { Redirect, useHistory, useParams } from 'react-router';
-import { Collapse, Tag } from 'antd';
-import { isMatching, __ as P } from 'ts-pattern';
-import { useQuery } from 'react-query';
-import { isEmpty } from 'lodash';
-import { Resource } from '@bbp/nexus-sdk';
-import { LoadingOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { __ as P,isMatching } from 'ts-pattern';
 
+import ResolutionError from '../../shared/components/IDResolution/ErrorResolution';
+import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
 import { RootState } from '../../shared/store/reducers';
 import { getOrgAndProjectFromResource } from '../../shared/utils';
-import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
-import ResolutionError from '../../shared/components/IDResolution/ErrorResolution';
-
-import './styles.less';
 
 const checkIsAuthenticated = (state: RootState) => {
   const oidc = state.oidc;

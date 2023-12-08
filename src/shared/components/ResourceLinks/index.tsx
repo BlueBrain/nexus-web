@@ -1,8 +1,9 @@
-import * as React from 'react';
 import { Empty, Skeleton } from 'antd';
+import * as React from 'react';
+
+import InfiniteSearch from '../List/InfiniteSearch';
 import ListItem from '../List/Item';
 import ResourceLinkItem, { ResourceLinkAugmented } from './ResourceLinkItem';
-import InfiniteSearch from '../List/InfiniteSearch';
 
 const ResourceLinks: React.FunctionComponent<{
   busy: boolean;

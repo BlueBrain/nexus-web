@@ -1,5 +1,6 @@
 import { Location } from 'history';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+
 import NotFound from './404';
 
 const SubAppsView: React.FC<{

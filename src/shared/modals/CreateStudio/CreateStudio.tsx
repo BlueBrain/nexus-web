@@ -1,36 +1,37 @@
-import * as React from 'react';
-import { Resource, NexusClient } from '@bbp/nexus-sdk/es';
-import {
-  Input,
-  Form,
-  Tooltip,
-  Button,
-  Switch,
-  Modal,
-  Select,
-  Row,
-  Col,
-  notification,
-} from 'antd';
-import { useMutation, useQuery } from 'react-query';
 import {
   CompassFilled,
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
+import { NexusClient,Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Modal,
+  notification,
+  Row,
+  Select,
+  Switch,
+  Tooltip,
+} from 'antd';
 import { useForm, useWatch } from 'antd/lib/form/Form';
+import * as React from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useMutation, useQuery } from 'react-query';
+import { useDispatch,useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
+
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
-import { updateStudioModalVisibility } from '../../../shared/store/actions/modals';
-import { RootState } from '../../../shared/store/reducers';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import usePlugins from '../../../shared/hooks/usePlugins';
-import STUDIO_CONTEXT from '../../../subapps/studioLegacy/components/StudioContext';
+import { updateStudioModalVisibility } from '../../../shared/store/actions/modals';
+import { RootState } from '../../../shared/store/reducers';
 import { useStudioLegacySubappContext } from '../../../subapps/studioLegacy';
+import STUDIO_CONTEXT from '../../../subapps/studioLegacy/components/StudioContext';
 
 type TCreationStudio = {
   isPluginsCustomised: boolean;

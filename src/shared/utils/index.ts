@@ -1,13 +1,14 @@
-import { Resource, Identity } from '@bbp/nexus-sdk/es';
+import { Identity, Resource } from '@bbp/nexus-sdk/es';
 import {
+  isArray,
   isMatch,
   isMatchWith,
   isMatchWithCustomizer,
-  pick,
-  isArray,
   last,
+  pick,
 } from 'lodash';
 import moment from 'moment';
+
 import isValidUrl from '../../utils/validUrl';
 
 /**
@@ -186,7 +187,7 @@ export function getLogoutUrl(
   return realm.endSessionEndpoint;
 }
 
-export function hasExpired(timestamp: number): Boolean {
+export function hasExpired(timestamp: number): boolean {
   return timestamp < Date.now().valueOf() / 1000;
 }
 
@@ -668,7 +669,7 @@ export const parseJsonMaybe = <T = object>(
 };
 
 export const forceAsArray = <T>(objectOrArray: T | T[] | null | undefined) => {
-  return !!objectOrArray
+  return objectOrArray
     ? Array.isArray(objectOrArray)
       ? objectOrArray
       : [objectOrArray]

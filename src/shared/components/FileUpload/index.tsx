@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Upload, message, Select, Typography } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
 import { NexusFile, Storage } from '@bbp/nexus-sdk/es';
+import { message, Select, Typography,Upload } from 'antd';
+import { UploadFile, UploadProps } from 'antd/lib/upload/interface';
+import * as React from 'react';
 
-import { labelOf } from '../../utils';
 import useNotification from '../../hooks/useNotification';
+import { labelOf } from '../../utils';
 
 const Dragger = Upload.Dragger;
 

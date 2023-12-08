@@ -1,17 +1,19 @@
-import React, { useReducer } from 'react';
-import { Button, notification, Tooltip, List } from 'antd';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
-import { useMutation } from 'react-query';
+import './styles.scss';
+
 import { NexusClient } from '@bbp/nexus-sdk/es';
-import { makeOrganizationUri } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Button, List,notification, Tooltip } from 'antd';
+import React, { useReducer } from 'react';
+import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
+
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import DangerZoneAction, {
   TDangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.scss';
+import { RootState } from '../../../../shared/store/reducers';
+import { makeOrganizationUri } from '../../../../shared/utils';
 
 type TDangerZoneItem = {
   key: React.Key;

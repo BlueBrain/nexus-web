@@ -1,16 +1,5 @@
-import * as React from 'react';
-import {
-  Tooltip,
-  Button,
-  Spin,
-  Switch,
-  Empty,
-  Popover,
-  Menu,
-  Dropdown,
-  List,
-  Input,
-} from 'antd';
+import './ResourceList.scss';
+
 import {
   CloseCircleOutlined,
   CloseOutlined,
@@ -21,19 +10,30 @@ import {
   SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { ResourceList, Resource } from '@bbp/nexus-sdk/es';
+import { Resource,ResourceList } from '@bbp/nexus-sdk/es';
+import {
+  Button,
+  Dropdown,
+  Empty,
+  Input,
+  List,
+  Menu,
+  Popover,
+  Spin,
+  Switch,
+  Tooltip,
+} from 'antd';
 import { debounce } from 'lodash';
+import * as React from 'react';
 
-import RenameableItem from '../Renameable';
-import ListItem from '../List/Item';
-import ResourceCardComponent from '../ResourceCard';
-import { getResourceLabel } from '../../utils';
-import TypesIconList from '../Types/TypesIcon';
-import useMeasure from '../../hooks/useMeasure';
 import { DEFAULT_LIST } from '../../../shared/containers/ResourceListBoardContainer';
+import useMeasure from '../../hooks/useMeasure';
+import { getResourceLabel } from '../../utils';
 import Copy from '../Copy';
-
-import './ResourceList.scss';
+import ListItem from '../List/Item';
+import RenameableItem from '../Renameable';
+import ResourceCardComponent from '../ResourceCard';
+import TypesIconList from '../Types/TypesIcon';
 
 const { Search } = Input;
 

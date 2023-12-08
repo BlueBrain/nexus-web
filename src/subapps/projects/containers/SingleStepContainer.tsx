@@ -1,18 +1,19 @@
-import * as React from 'react';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Modal } from 'antd';
-import StepCard from '../components/WorkflowSteps/StepCard';
-import { isParentLink } from '../utils';
-import { useUpdateStep } from '../hooks/useUpdateStep';
-import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import fusionConfig from '../config';
-import { StepResource, WorkflowStepMetadata } from '../types';
-import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import * as React from 'react';
+
 import useNotification, {
   NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
-import { Resource } from '@bbp/nexus-sdk/es';
+import StepCard from '../components/WorkflowSteps/StepCard';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import { useUpdateStep } from '../hooks/useUpdateStep';
+import { StepResource, WorkflowStepMetadata } from '../types';
+import { isParentLink } from '../utils';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;

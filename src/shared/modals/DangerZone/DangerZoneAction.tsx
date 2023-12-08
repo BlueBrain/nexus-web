@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row } from 'antd';
+import React, { useState } from 'react';
 
 export type TDangerZoneActionProps = {
   open: boolean;

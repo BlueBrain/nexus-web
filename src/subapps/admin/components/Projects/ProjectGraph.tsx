@@ -1,7 +1,7 @@
-import React from 'react';
 import cytoscape from 'cytoscape';
 // @ts-ignore
 import avsdf from 'cytoscape-avsdf';
+import React from 'react';
 
 const GRAPH_STYLE: cytoscape.Stylesheet[] = [
   {

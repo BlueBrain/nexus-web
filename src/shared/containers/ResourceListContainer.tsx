@@ -1,18 +1,18 @@
-import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useNexusContext } from '@bbp/react-nexus';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
   Resource,
 } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import ResourceListComponent, {
   ResourceBoardList,
 } from '../components/ResourceList';
-import TypeDropdownFilterContainer from './TypeDropdownFilter';
 import SchemaDropdownFilterContainer from './SchemaDropdownFilters';
 import SchemaLinkContainer from './SchemaLink';
+import TypeDropdownFilterContainer from './TypeDropdownFilter';
 
 // Emojis cannot be base64 encoded without URI encoding
 export const encodeShareableList = (list: ResourceBoardList) => {
@@ -247,7 +247,7 @@ const ResourceListContainer: React.FunctionComponent<{
       ...list,
       query: {
         ...list.query,
-        type: !!value ? value : undefined,
+        type: value ? value : undefined,
         from: 0,
       },
     });
@@ -262,7 +262,7 @@ const ResourceListContainer: React.FunctionComponent<{
       ...list,
       query: {
         ...list.query,
-        schema: !!value ? value : undefined,
+        schema: value ? value : undefined,
         from: 0,
       },
     });

@@ -1,23 +1,25 @@
 import '@testing-library/jest-dom';
-import React from 'react';
-import { render, RenderResult } from '@testing-library/react';
-import { AnyAction, Store } from 'redux';
-import { Provider } from 'react-redux';
-import { createMemoryHistory, MemoryHistory } from 'history';
+
 import { createNexusClient, NexusClient } from '@bbp/nexus-sdk';
-import { Router } from 'react-router-dom';
+import { NexusProvider } from '@bbp/react-nexus';
+import { render, RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import { NexusProvider } from '@bbp/react-nexus';
+import { createMemoryHistory, MemoryHistory } from 'history';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { AnyAction, Store } from 'redux';
+
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
 import { configureStore } from '../../../store';
 import {
   AddNewNodeDataExplorerGraphFlow,
-  ResetDataExplorerGraphFlow,
-  PopulateDataExplorerGraphFlow,
-  TDataExplorerState,
   ExpandNavigationStackDataExplorerGraphFlow,
+  PopulateDataExplorerGraphFlow,
+  ResetDataExplorerGraphFlow,
   ShrinkNavigationStackDataExplorerGraphFlow,
+  TDataExplorerState,
 } from '../../store/reducers/data-explorer';
 import NavigationStack from './NavigationStack';
 

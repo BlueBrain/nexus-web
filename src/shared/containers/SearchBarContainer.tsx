@@ -1,12 +1,13 @@
 import { useNexusContext } from '@bbp/react-nexus';
 import { take } from 'lodash';
 import * as React from 'react';
-import { useHistory, useLocation } from 'react-router';
 import { useQuery } from 'react-query';
+import { useHistory, useLocation } from 'react-router';
+
 import SearchBar from '../components/SearchBar';
-import { sortObjectsBySimilarity } from '../utils/stringSimilarity';
 import useQueryString from '../hooks/useQueryString';
 import { makeSearchUri } from '../utils';
+import { sortObjectsBySimilarity } from '../utils/stringSimilarity';
 
 const STUDIO_RESULTS_DEFAULT_SIZE = 1000;
 const PROJECT_RESULTS_DEFAULT_SIZE = 1000;
@@ -137,7 +138,7 @@ const SearchBarContainer: React.FC = () => {
       project: project._label,
       label: project._label as string,
       searchString: `${project._organizationLabel}${project._label}`,
-      type: 'project' as 'project',
+      type: 'project' as const,
     }));
 
     if (query && labeledProjects && labeledProjects.length > 0) {
@@ -165,7 +166,7 @@ const SearchBarContainer: React.FC = () => {
       label: studio.label as string,
       searchString: `${studio.label}`,
       studioId: studio['@id'],
-      type: 'studio' as 'studio',
+      type: 'studio' as const,
     }));
 
     if (query && labeledStudios && labeledStudios.length > 0) {

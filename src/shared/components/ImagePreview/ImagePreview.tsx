@@ -1,31 +1,32 @@
-import React, { useState, useRef, createRef } from 'react';
+import './ImagePreview.scss';
+
+import {
+  DownloadOutlined,
+  SortAscendingOutlined,
+  SortDescendingOutlined,
+} from '@ant-design/icons';
 import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk/es';
 import {
+  Alert,
   Button,
   Collapse,
   Dropdown,
+  Image,
   Input,
+  List,
   Menu,
   Radio,
   RadioChangeEvent,
-  Tooltip,
-  List,
-  Image,
   Spin,
-  Alert,
+  Tooltip,
 } from 'antd';
 import { ListProps } from 'antd/lib/list';
+import { isArray, isNil, isObject,orderBy } from 'lodash';
+import React, { createRef,useRef, useState } from 'react';
 import { useQuery } from 'react-query';
-import {
-  SortAscendingOutlined,
-  SortDescendingOutlined,
-  DownloadOutlined,
-} from '@ant-design/icons';
-import { orderBy, isNil, isArray, isObject } from 'lodash';
-import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
-import nexusUrlHardEncode from '../../utils/nexusEncode';
 
-import './ImagePreview.scss';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
+import { parseProjectUrl, parseResourceId } from '../Preview/Preview';
 
 type Props = {
   resource: Resource;

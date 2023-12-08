@@ -1,9 +1,11 @@
-import { Form, Checkbox, DatePicker } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk/es';
-import * as React from 'react';
-import { FilterState } from '../hooks/useGlobalSearch';
 import './FilterOptions.scss';
+
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { Checkbox, DatePicker,Form } from 'antd';
 import moment from 'moment';
+import * as React from 'react';
+
+import { FilterState } from '../hooks/useGlobalSearch';
 
 type ConfigField =
   | {

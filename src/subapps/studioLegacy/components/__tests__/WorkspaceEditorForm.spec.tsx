@@ -1,8 +1,10 @@
-import WorkspaceEditorForm, { WorkspaceResource } from '../WorkspaceEditorForm';
-import { Context } from '@bbp/nexus-sdk';
-import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
+
+import { Context } from '@bbp/nexus-sdk';
 import { vi } from 'vitest';
+
+import { fireEvent, render, screen,waitFor } from '../../../../utils/testUtil';
+import WorkspaceEditorForm, { WorkspaceResource } from '../WorkspaceEditorForm';
 
 describe('WorkspaceEditorForm', () => {
   const context = {

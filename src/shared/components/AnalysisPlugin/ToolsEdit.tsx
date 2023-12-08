@@ -1,3 +1,5 @@
+import './ToolsEdit.scss';
+
 import {
   CloseCircleOutlined,
   InfoCircleOutlined,
@@ -6,7 +8,6 @@ import {
 import { Button, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
-import './ToolsEdit.scss';
 
 type ToolsEditProps = {
   tools: { scriptPath: string; description: string }[];

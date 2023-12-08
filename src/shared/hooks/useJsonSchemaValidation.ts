@@ -1,7 +1,7 @@
-import * as React from 'react';
 import Ajv from 'ajv';
-import addFormats from 'ajv-formats';
 import AJV from 'ajv-errors';
+import addFormats from 'ajv-formats';
+import * as React from 'react';
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 AJV(ajv, { singleError: true });

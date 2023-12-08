@@ -1,25 +1,26 @@
-import * as React from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useMutation, useQuery } from 'react-query';
-import { Table, Button, Row, Col, notification, Tooltip, Badge } from 'antd';
-import { isArray, isString, orderBy } from 'lodash';
-import { ColumnsType } from 'antd/es/table';
-import { NexusClient } from '@bbp/nexus-sdk/es';
-import { PromisePool } from '@supercharge/promise-pool';
-import { useSelector } from 'react-redux';
-import * as Sentry from '@sentry/browser';
-import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
-import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+import './styles.scss';
 
+import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import * as Sentry from '@sentry/browser';
+import { PromisePool } from '@supercharge/promise-pool';
+import { Badge,Button, Col, notification, Row, Table, Tooltip } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { isArray, isString, orderBy } from 'lodash';
+import * as React from 'react';
+import { useMutation, useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
+
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+import { RootState } from '../../../../shared/store/reducers';
+import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import {
+  fetchIndexingErrors,
   IndexingErrorResults,
   ViewIndexingErrors,
-  fetchIndexingErrors,
 } from './ViewIndexingErrors';
-import './styles.scss';
 
 type TViewType = {
   key: string;
@@ -367,7 +368,7 @@ const ViewsSubView = () => {
                 disabled={
                   isLoading ||
                   status === 'loading' ||
-                  (status === 'success' && !Boolean(views?.results))
+                  (status === 'success' && !views?.results)
                 }
                 loading={isLoading}
                 type="ghost"

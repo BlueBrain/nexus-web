@@ -1,14 +1,16 @@
+import '@testing-library/jest-dom';
+
 import { vi } from 'vitest';
+
+import { SearchLayout } from '../../../../../subapps/search/hooks/useGlobalSearch';
 import {
-  render,
-  fireEvent,
-  screen,
   act,
+  fireEvent,
+  render,
+  screen,
   waitFor,
 } from '../../../../../utils/testUtil';
-import '@testing-library/jest-dom';
 import SearchLayouts from '..';
-import { SearchLayout } from '../../../../../subapps/search/hooks/useGlobalSearch';
 
 describe('SearchLayouts', () => {
   // @ts-ignore

@@ -1,7 +1,9 @@
-import * as React from 'react';
-import { Tooltip, Tag } from 'antd';
-import { labelOf } from '../../utils';
 import './Types.scss';
+
+import { Tag,Tooltip } from 'antd';
+import * as React from 'react';
+
+import { labelOf } from '../../utils';
 
 export interface TypesIconProps {
   type: string;
@@ -51,7 +53,7 @@ const TypesIconList: React.SFC<TypesIconListProps> = ({
   }
 
   return (
-    <ul className={`types-list ${!!full ? '-full' : ''}`}>
+    <ul className={`types-list ${full ? '-full' : ''}`}>
       {typesToDisplay.map((type: string) => (
         <TypesIcon type={type} key={type} />
       ))}

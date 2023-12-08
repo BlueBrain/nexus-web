@@ -1,28 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router';
-import { Menu, Dropdown, MenuItemProps } from 'antd';
+import './Header.scss';
+
 import {
-  UserOutlined,
   BookOutlined,
-  SettingOutlined,
+  CopyOutlined,
   FileTextOutlined,
   LinkOutlined,
   LogoutOutlined,
-  CopyOutlined,
   MenuOutlined,
   PlusOutlined,
+  SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { Dropdown, Menu, MenuItemProps } from 'antd';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UISettingsActionTypes } from '../../store/actions/ui-settings';
-import { RootState } from '../../store/reducers';
-import { updateAboutModalVisibility } from '../../store/actions/modals';
-import { triggerCopy as copyCmd } from '../../utils/copy';
-import { AdvancedModeToggle } from '../../molecules';
+import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
+
 import useNotification from '../../hooks/useNotification';
 import fusionLogo from '../../images/fusion_logo.png';
-
-import './Header.scss';
+import { AdvancedModeToggle } from '../../molecules';
+import { updateAboutModalVisibility } from '../../store/actions/modals';
+import { UISettingsActionTypes } from '../../store/actions/ui-settings';
+import { RootState } from '../../store/reducers';
+import { triggerCopy as copyCmd } from '../../utils/copy';
 
 export interface HeaderProps {
   name?: string;

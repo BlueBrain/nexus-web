@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useNexus } from '@bbp/react-nexus';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
+import { useNexus } from '@bbp/react-nexus';
+import * as React from 'react';
 
 import DropdownFilter from '../components/DropdownFilter';
 

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
-import StudioListContainer from '../containers/StudioListContainer';
 import { Link } from 'react-router-dom';
+
+import StudioListContainer from '../containers/StudioListContainer';
 
 const StudioAdminView: React.FunctionComponent<{}> = () => {
   // @ts-ignore

@@ -1,3 +1,4 @@
+import { FileImageOutlined } from '@ant-design/icons';
 import {
   NexusClient,
   NexusFile,
@@ -5,37 +6,35 @@ import {
   SparqlView,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Image } from 'antd';
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import { sparqlQueryExecutor } from '../../utils/querySparqlView';
-import { Image } from 'antd';
-import FileUploadContainer from '../FileUploadContainer';
-import { FileImageOutlined } from '@ant-design/icons';
-import { makeResourceUri } from '../../../shared/utils';
 import { useHistory, useLocation } from 'react-router';
-import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
-import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
-import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
-import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
 
+import AnalysisPlugin from '../../../shared/components/AnalysisPlugin/AnalysisPlugin';
+import PDFFileInfo from '../../../shared/components/FileInfo/PDFFileInfo';
+import { PDFThumbnail } from '../../../shared/components/Preview/PDFPreview';
+import { makeResourceUri } from '../../../shared/utils';
+import ImageFileInfo from '../../components/FileInfo/ImageFileInfo';
+import useNotification from '../../hooks/useNotification';
 import analysisUIReducer, {
+  changeSelectedReports,
   setReportResourceType,
   setSelectedReportFirstLoad,
-  changeSelectedReports,
 } from '../../slices/plugins/report';
-
+import { RootState } from '../../store/reducers';
 import {
-  Asset,
   AnalysesState,
-  AnalysisReport,
-  AnalysisPluginContainerProps,
   AnalysisAssetSparqlQueryRowResult,
+  AnalysisPluginContainerProps,
+  AnalysisReport,
+  Asset,
   ReportGeneration,
 } from '../../types/plugins/report';
-import useNotification from '../../hooks/useNotification';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
+import { sparqlQueryExecutor } from '../../utils/querySparqlView';
+import FileUploadContainer from '../FileUploadContainer';
 
 async function fetchImageObjectUrl(
   nexus: NexusClient,

@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { SubApp } from '..';
+
 import SearchPage from '../../pages/SearchPage/SearchPage';
 import icon from '../../shared/images/search.svg';
+import { SubApp } from '..';
 
 const title = 'Search';
 const namespace = 'search';

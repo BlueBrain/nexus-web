@@ -1,11 +1,11 @@
-import * as React from 'react';
+import './DropdownFilter.scss';
+
 import { AutoComplete } from 'antd';
 import { SelectValue } from 'antd/lib/select';
+import * as React from 'react';
 
-import { labelOf, getProp } from '../../utils';
+import { getProp,labelOf } from '../../utils';
 import DropdownItem from './DropdownItem';
-
-import './DropdownFilter.scss';
 
 const DropdownFilter: React.FunctionComponent<{
   placeholder?: string;

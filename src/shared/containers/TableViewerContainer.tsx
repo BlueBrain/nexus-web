@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Modal } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-// import * as csvParser from 'csv-string';
+import { Modal } from 'antd';
+import * as React from 'react';
 
+import { parseResourceId } from '../components/Preview/Preview';
+// import * as csvParser from 'csv-string';
 import TableViewer from '../components/TableViewer';
 import useNotification from '../hooks/useNotification';
-import { parseResourceId } from '../components/Preview/Preview';
 import nexusUrlHardEncode from '../utils/nexusEncode';
 
 const TableViewerContainer: React.FC<{

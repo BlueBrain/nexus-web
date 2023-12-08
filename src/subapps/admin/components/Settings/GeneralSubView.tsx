@@ -1,13 +1,15 @@
-import * as React from 'react';
-import { useRouteMatch } from 'react-router';
-import { useMutation } from 'react-query';
-import { Form, Input, Button, Spin, Tooltip, Space } from 'antd';
+import './styles.scss';
+
 import { DeleteOutlined } from '@ant-design/icons';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Button, Form, Input, Space,Spin, Tooltip } from 'antd';
+import * as React from 'react';
+import { useMutation } from 'react-query';
+import { useRouteMatch } from 'react-router';
+
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import useNotification from '../../../../shared/hooks/useNotification';
-import './styles.scss';
 
 type TProps = {
   project: {

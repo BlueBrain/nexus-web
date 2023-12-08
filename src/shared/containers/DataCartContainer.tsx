@@ -1,31 +1,33 @@
-import * as React from 'react';
+import {
+  CloseCircleFilled,
+  DownloadOutlined,
+  ExclamationCircleOutlined,
+  ShoppingCartOutlined,
+  WarningFilled,
+} from '@ant-design/icons';
 import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
-import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';
-import {
-  ShoppingCartOutlined,
-  DownloadOutlined,
-  CloseCircleFilled,
-  WarningFilled,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
 import {
   Badge,
   Button,
   Drawer,
+  Dropdown,
   Empty,
+  Input,
   List,
   Menu,
-  Dropdown,
-  Input,
-  Tooltip,
   Popconfirm,
+  Tooltip,
 } from 'antd';
-import { CartContext } from '../hooks/useDataCart';
-import ResultPreviewItemContainer from './ResultPreviewItemContainer';
+import * as React from 'react';
+
 import DefaultResourcePreviewCard from '!!raw-loader!../templates/DefaultResourcePreviewCard.hbs';
+
+import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
+import { ParsedNexusUrl,parseURL } from '../../shared/utils/nexusParse';
+import { CartContext } from '../hooks/useDataCart';
 import useNotification, { NexusError } from '../hooks/useNotification';
+import ResultPreviewItemContainer from './ResultPreviewItemContainer';
 
 type DownloadResourcePayload = {
   '@type': string;

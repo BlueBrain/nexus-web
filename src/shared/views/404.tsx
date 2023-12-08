@@ -1,6 +1,6 @@
+import { Button,Result } from 'antd';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Result, Button } from 'antd';
 
 const NotFound: React.FunctionComponent = () => {
   return (

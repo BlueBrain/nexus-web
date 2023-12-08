@@ -1,42 +1,43 @@
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk/es';
-import { useHistory, useLocation } from 'react-router-dom';
-import React, { Key, useEffect, useReducer, useState } from 'react';
+import '../styles/data-table.scss';
+
 import {
-  Table,
-  Col,
-  Row,
-  Button,
-  Typography,
-  Input,
-  Spin,
-  Modal,
-  Popover,
-  notification as antnotifcation,
-} from 'antd';
-import {
-  DownloadOutlined,
-  ShoppingCartOutlined,
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
+  ShoppingCartOutlined,
   SmallDashOutlined,
 } from '@ant-design/icons';
-
-import '../styles/data-table.scss';
-import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
-import EditTableForm, { Projection } from '../components/EditTableForm';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import {
+  Button,
+  Col,
+  Input,
+  Modal,
+  notification as antnotifcation,
+  Popover,
+  Row,
+  Spin,
+  Table,
+  Typography,
+} from 'antd';
+import React, { Key, useEffect, useReducer, useState } from 'react';
 import { useMutation } from 'react-query';
-import { parseProjectUrl } from '../utils';
-import useNotification from '../hooks/useNotification';
-import { ErrorComponent } from '../components/ErrorComponent';
 import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import { RootState } from '../../shared/store/reducers';
+import EditTableForm, { Projection } from '../components/EditTableForm';
+import { ErrorComponent } from '../components/ErrorComponent';
+import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
+import useNotification from '../hooks/useNotification';
+import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../organisms/DataPanel/DataPanel';
-import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
-import { RootState } from '../../shared/store/reducers';
+import { parseProjectUrl } from '../utils';
 
 export type TableColumn = {
   '@type': string;

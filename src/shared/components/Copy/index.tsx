@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { triggerCopy } from '../../utils/copy';
 
 const DEFAULT_REVERT_DELAY = 2500;

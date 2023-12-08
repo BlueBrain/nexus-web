@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { animate } from 'motion';
-import { useSelector, useDispatch } from 'react-redux';
-import { AccessControl } from '@bbp/react-nexus';
-import { PlusOutlined } from '@ant-design/icons';
-import { camelCase } from 'lodash';
-import { RootState } from '../../store/reducers';
-import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 import './styles.scss';
+
+import { PlusOutlined } from '@ant-design/icons';
+import { AccessControl } from '@bbp/react-nexus';
+import { camelCase } from 'lodash';
+import { animate } from 'motion';
+import * as React from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+
+import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
+import { RootState } from '../../store/reducers';
 
 type TCreationButton = {
   title: string;

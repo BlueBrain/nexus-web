@@ -1,5 +1,6 @@
-import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { rest } from 'msw';
+
 import { getMockResource } from '../DataExplorer/handlers';
 
 const resource = {
@@ -751,9 +752,9 @@ const getDataExplorerGraphFlowResourceObjectTags = rest.get(
 );
 
 export {
-  resource,
-  initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
   getDataExplorerGraphFlowResourceSource,
+  initialResource,
+  resource,
 };

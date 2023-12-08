@@ -1,15 +1,16 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk/es';
-import { Modal, message } from 'antd';
+import { useNexusContext } from '@bbp/react-nexus';
+import { message,Modal } from 'antd';
+import * as React from 'react';
+
+import useNotification from '../../../../shared/hooks/useNotification';
+import usePlugins from '../../../../shared/hooks/usePlugins';
+import { TError } from '../../../../utils/types';
 import DashboardConfigEditor, {
   DashboardPayload,
 } from '../../components/DashboardEditor/DashboardConfigEditor';
-import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 import STUDIO_CONTEXT from '../../components/StudioContext';
-import usePlugins from '../../../../shared/hooks/usePlugins';
-import useNotification from '../../../../shared/hooks/useNotification';
-import { TError } from '../../../../utils/types';
+import useLinkToDashboardQueryEditor from './hooks/useLinkToDashboardQueryEditor';
 
 export const DASHBOARD_TYPE = 'StudioDashboard';
 

@@ -1,14 +1,16 @@
-import React, { useMemo } from 'react';
-import { groupBy, sortBy } from 'lodash';
-import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { useRouteMatch } from 'react-router';
-import { useQuery } from 'react-query';
+import './styles.scss';
+
 import { Identity, NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Checkbox, Collapse, Empty, Spin, Table, Tag } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { groupBy, sortBy } from 'lodash';
+import React, { useMemo } from 'react';
+import { useQuery } from 'react-query';
+import { useRouteMatch } from 'react-router';
 import { match as pmatch } from 'ts-pattern';
+
 import { useOrganisationsSubappContext } from '../../../../subapps/admin';
-import './styles.scss';
 
 type TError = Error & { cause: any };
 type Props = {};

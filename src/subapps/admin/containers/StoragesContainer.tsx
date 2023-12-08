@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 
 import Storages from '../components/Projects/Storages';
 

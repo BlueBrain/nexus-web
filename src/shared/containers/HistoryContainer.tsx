@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
-import { detailedDiff } from 'deep-object-diff';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-
-import { blacklistKeys, getUsername } from '../utils';
-import HistoryComponent from '../components/History';
+import { detailedDiff } from 'deep-object-diff';
 import { isEmpty } from 'lodash';
+import * as React from 'react';
+import { useAsyncEffect } from 'use-async-effect';
+
+import HistoryComponent from '../components/History';
+import { blacklistKeys, getUsername } from '../utils';
 
 const HistoryContainer: React.FunctionComponent<{
   resourceId: string;

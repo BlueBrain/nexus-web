@@ -1,8 +1,9 @@
-import * as React from 'react';
+import './ProjectWarning.scss';
+
 import { Alert } from 'antd';
 import moment from 'moment';
+import * as React from 'react';
 
-import './ProjectWarning.scss';
 import { getDateString } from '../../../../shared/utils';
 
 const ProjectWarning: React.FC<{

@@ -1,10 +1,12 @@
+import './styles.scss';
+
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import ResourceViewContainer from '../../containers/ResourceViewContainer';
+
 import ResourceEditorContainer from '../../containers/ResourceEditor';
+import ResourceViewContainer from '../../containers/ResourceViewContainer';
 import { DEFGContentFullscreenHeader } from '../../molecules/DataExplorerGraphFlowMolecules';
-import './styles.scss';
+import { RootState } from '../../store/reducers';
 
 const DataExplorerContentPage = ({}) => {
   const { current, fullscreen } = useSelector(

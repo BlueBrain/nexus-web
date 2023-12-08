@@ -1,8 +1,10 @@
-import { vi } from 'vitest';
-import StudioHeader from '../StudioHeader';
-import { Resource, Context } from '@bbp/nexus-sdk';
-import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
+
+import { Context,Resource } from '@bbp/nexus-sdk';
+import { vi } from 'vitest';
+
+import { render, screen } from '../../../../utils/testUtil';
+import StudioHeader from '../StudioHeader';
 
 describe('StudioHeader', () => {
   const context = {

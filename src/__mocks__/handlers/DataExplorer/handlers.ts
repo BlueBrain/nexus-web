@@ -1,6 +1,6 @@
-import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { Resource } from '@bbp/nexus-sdk';
+import { rest } from 'msw';
 import {
   AggregatedBucket,
   AggregationsResult,

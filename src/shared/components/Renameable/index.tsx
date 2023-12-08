@@ -1,7 +1,8 @@
-import * as React from 'react';
+import './Renameable.scss';
+
 import { Input, Tooltip } from 'antd';
 import { SizeType } from 'antd/es/config-provider/SizeContext';
-import './Renameable.scss';
+import * as React from 'react';
 
 interface RenameableItemProps {
   defaultValue: string;

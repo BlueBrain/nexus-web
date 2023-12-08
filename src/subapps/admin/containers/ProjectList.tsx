@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
+
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 
 const DEFAULT_PAGE_SIZE = 20;

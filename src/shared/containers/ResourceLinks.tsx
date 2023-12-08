@@ -1,11 +1,12 @@
-import * as React from 'react';
-import { useAsyncEffect } from 'use-async-effect';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, ResourceLink } from '@bbp/nexus-sdk/es';
-import ResourceLinks from '../components/ResourceLinks';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/reducers';
+import { useAsyncEffect } from 'use-async-effect';
+
+import ResourceLinks from '../components/ResourceLinks';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import { RootState } from '../store/reducers';
 
 const PAGE_SIZE = 10;
 

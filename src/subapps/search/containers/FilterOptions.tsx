@@ -1,10 +1,12 @@
-import { Form, Select, Checkbox, Row, Input } from 'antd';
+import './FilterOptions.scss';
+
 import { NexusClient } from '@bbp/nexus-sdk/es';
+import { Checkbox, Form, Input,Row, Select } from 'antd';
 import * as React from 'react';
+
+import { labelOf } from '../../../shared/utils';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructFilterSet, constructQuery } from '../utils';
-import { labelOf } from '../../../shared/utils';
-import './FilterOptions.scss';
 
 type ConfigField =
   | {

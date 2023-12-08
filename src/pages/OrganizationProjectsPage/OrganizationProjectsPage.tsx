@@ -1,15 +1,5 @@
-import React, {
-  Fragment,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { useRouteMatch } from 'react-router';
-import { Link } from 'react-router-dom';
-import { useInfiniteQuery, useQuery } from 'react-query';
-import { InputRef, Input, Spin, Alert, List } from 'antd';
-import { capitalize } from 'lodash';
+import '../../shared/styles/route-layout.scss';
+
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -22,25 +12,37 @@ import {
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useDispatch, useSelector } from 'react-redux';
+import { Alert, Input, InputRef, List,Spin } from 'antd';
+import { capitalize } from 'lodash';
 import pluralize from 'pluralize';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
+import React, {
+  Fragment,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
+import { Link } from 'react-router-dom';
+
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
+import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
+import hippocampus from '../../shared/images/hippocampus.png';
+import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
+import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
+import { RootState } from '../../shared/store/reducers';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import timeago from '../../utils//timeago';
+import formatNumber from '../../utils/formatNumber';
 import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import { RootState } from '../../shared/store/reducers';
-import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
-import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
-import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import timeago from '../../utils//timeago';
-import formatNumber from '../../utils/formatNumber';
-import hippocampus from '../../shared/images/hippocampus.png';
-import '../../shared/styles/route-layout.scss';
+import { DATA_SET_TYPE } from '../ProjectsPage/ProjectsPage';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = true;

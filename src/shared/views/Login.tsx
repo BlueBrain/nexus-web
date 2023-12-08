@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
 import { Realm } from '@bbp/nexus-sdk/es';
 import { push } from 'connected-react-router';
 import { UserManager } from 'oidc-client';
+import * as React from 'react';
+import { connect } from 'react-redux';
 
-import LoginBox from '../components/Login';
 import getUserManager from '../../client/userManager';
-import { RootState } from '../store/reducers';
-import * as configActions from '../store/actions/config';
+import LoginBox from '../components/Login';
 import useNotification from '../hooks/useNotification';
+import * as configActions from '../store/actions/config';
+import { RootState } from '../store/reducers';
 
 export interface LoginViewProps {
   realms: Realm[];

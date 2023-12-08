@@ -1,13 +1,15 @@
-import React, { forwardRef } from 'react';
-import { EditorConfiguration } from 'codemirror';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-import { clsx } from 'clsx';
-import { Spin } from 'antd';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/addon/fold/brace-fold';
+
+import { Spin } from 'antd';
+import { clsx } from 'clsx';
+import { EditorConfiguration } from 'codemirror';
+import React, { forwardRef } from 'react';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+
+import { highlightUrlOverlay,INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;

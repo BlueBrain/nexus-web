@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Button, Popover } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Popover } from 'antd';
+import * as React from 'react';
 
 const PluginInfo: React.FC<{
   plugin: any;

@@ -1,10 +1,11 @@
-import { Route, useLocation, useHistory } from 'react-router-dom';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Drawer,message } from 'antd';
 import { Location } from 'history';
 import * as React from 'react';
-import { message, Drawer } from 'antd';
+import { Route, useHistory,useLocation } from 'react-router-dom';
+
 import ResourceViewContainer from '../containers/ResourceViewContainer';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk/es';
 import { parseProjectUrl } from '../utils';
 
 const getUrlParameter = (name: string) => {

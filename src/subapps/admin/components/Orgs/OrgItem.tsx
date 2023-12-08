@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Tag } from 'antd';
-import { OrgResponseCommon } from '@bbp/nexus-sdk/es';
-
 import './OrgItem.scss';
+
+import { OrgResponseCommon } from '@bbp/nexus-sdk/es';
+import { Tag } from 'antd';
+import * as React from 'react';
 
 export const OrgItem: React.FunctionComponent<OrgResponseCommon> = props => {
   return (

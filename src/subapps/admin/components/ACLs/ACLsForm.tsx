@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { Tabs } from 'antd';
+import './ACLs.scss';
+
 import { ACL } from '@bbp/nexus-sdk/es';
+import { Tabs } from 'antd';
+import * as React from 'react';
 
 import ACLCard from './ACLCard';
-
-import './ACLs.scss';
 
 interface ACLsFormProps {
   acls: ACL[];

@@ -1,13 +1,15 @@
-import * as React from 'react';
+import '../../styles/video-plugin.scss';
+
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import ReactPlayer from 'react-player';
+import { Button, Collapse, List, Modal, notification } from 'antd';
 import moment from 'moment';
-import { Collapse, Modal, Button, List, notification } from 'antd';
-import '../../styles/video-plugin.scss';
+import * as React from 'react';
+import ReactPlayer from 'react-player';
+
 import { getDateString } from '../../utils';
-import * as schema from './schema.json';
 import SchemaValidationFallbackContainer from '../SchemaValidationFallbackContainer';
+import * as schema from './schema.json';
 
 type VideoProps = {
   orgLabel: string;
@@ -151,7 +153,7 @@ const VideoPluginContainer: React.FunctionComponent<VideoProps> = ({
                     width={640}
                     footer={null}
                   >
-                    {!!selectedVideo.embedUrl ? (
+                    {selectedVideo.embedUrl ? (
                       <ReactPlayer url={selectedVideo.embedUrl} />
                     ) : null}
                   </Modal>

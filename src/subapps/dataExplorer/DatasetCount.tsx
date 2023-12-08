@@ -1,9 +1,11 @@
-import React from 'react';
-import pluralize from 'pluralize';
+import './styles.scss';
+
 import { isNil } from 'lodash';
+import pluralize from 'pluralize';
+import React from 'react';
+
 import { getTypesTrancated } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TType } from '../../shared/molecules/TypeSelector/types';
-import './styles.scss';
 
 interface Props {
   nexusTotal: number;

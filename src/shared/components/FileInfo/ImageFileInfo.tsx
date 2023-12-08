@@ -1,7 +1,8 @@
+import { Image } from 'antd';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import FileInfo from './FileInfo';
-import { Image } from 'antd';
 
 type ImagePreviewProps = {
   src?: string;

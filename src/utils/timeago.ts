@@ -9,7 +9,7 @@ type IntervalType = {
 };
 
 function timeago(date: Date) {
-  // @ts-ignore
+  // @ts-expect-error
   const seconds = Math.floor((new Date() - date) / 1000);
   const intervals = {
     year: 31536000,

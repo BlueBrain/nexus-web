@@ -1,10 +1,10 @@
-import * as React from 'react';
+import './Storages.scss';
+
 import { Table } from 'antd';
+import * as React from 'react';
 
 import { labelOf } from '../../../../shared/utils';
 import { StorageData } from '../../containers/StoragesContainer';
-
-import './Storages.scss';
 
 const Storages: React.FC<{ storages: StorageData[] }> = ({ storages }) => {
   const columns = [

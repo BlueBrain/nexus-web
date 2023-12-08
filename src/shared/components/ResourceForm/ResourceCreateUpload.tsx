@@ -1,11 +1,13 @@
-import * as React from 'react';
-import FileUploadContainer from '../../containers/FileUploadContainer';
-import ResourceForm from './ResourceForm';
 import './ResourceCreateUpload.scss';
+
 import { Resource, ResourcePayload } from '@bbp/nexus-sdk/es';
 import { notification } from 'antd';
-import { camelCaseToTitleCase } from '../../utils';
+import * as React from 'react';
+
 import { TErrorWithType } from '../../../utils/types';
+import FileUploadContainer from '../../containers/FileUploadContainer';
+import { camelCaseToTitleCase } from '../../utils';
+import ResourceForm from './ResourceForm';
 
 const ResourceCreateUpload: React.FunctionComponent<{
   orgLabel: string;
@@ -35,7 +37,7 @@ const ResourceCreateUpload: React.FunctionComponent<{
       return true;
     } catch (error) {
       notification.error({
-        message: !!(error as TErrorWithType)['@type']
+        message: (error as TErrorWithType)['@type']
           ? camelCaseToTitleCase((error as TErrorWithType)['@type'])
           : 'Error creating resource',
         description: (error as TErrorWithType).reason,

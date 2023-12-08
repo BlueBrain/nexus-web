@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { SortAscendingOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
+import * as React from 'react';
+
 import SortConfig from '../components/SortConfig';
 import { ESSortField } from '../hooks/useGlobalSearch';
 

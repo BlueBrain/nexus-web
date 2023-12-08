@@ -1,9 +1,11 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
-import { act, fireEvent, render, screen } from '../../../utils/testUtil';
-import Copy from '.';
+
 import { Button, Tooltip } from 'antd';
+import { vi } from 'vitest';
+
+import { act, fireEvent, render, screen } from '../../../utils/testUtil';
 import * as CopyUtils from '../../utils/copy';
+import Copy from '.';
 
 Object.defineProperty(document, 'queryCommandSupported', {
   writable: true,

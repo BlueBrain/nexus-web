@@ -1,5 +1,5 @@
 // NOTE: This file will be removed when delta introduce http cache headers
-import { NexusClient, Resource, PaginatedList } from '@bbp/nexus-sdk/es';
+import { NexusClient, PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 import LRUCache from 'lru-cache';
 
 // TODO: Use nexus.httpGet to prepare for using http cache headers

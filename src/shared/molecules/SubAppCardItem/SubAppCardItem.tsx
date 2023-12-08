@@ -1,9 +1,11 @@
-import React, { Fragment, CSSProperties, useState } from 'react';
-import { Link } from 'react-router-dom';
+import './styles.scss';
+
 import { PlusOutlined } from '@ant-design/icons';
+import React, { CSSProperties, Fragment, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import CreateOrganization from '../../modals/CreateOrganization/CreateOrganization';
 import CreateProject from '../../modals/CreateProject/CreateProject';
-import './styles.scss';
 
 type TProps = {
   id: string;

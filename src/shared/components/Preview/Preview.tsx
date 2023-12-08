@@ -1,22 +1,23 @@
-import * as React from 'react';
-import {
-  Resource,
-  NexusClient,
-  GetFileOptions,
-  NexusFile,
-  ArchivePayload,
-} from '@bbp/nexus-sdk/es';
-import { Button, Col, Collapse, Row, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
+import {
+  ArchivePayload,
+  GetFileOptions,
+  NexusClient,
+  NexusFile,
+  Resource,
+} from '@bbp/nexus-sdk/es';
 import { AccessControl } from '@bbp/react-nexus';
-import { uuidv4 } from '../../utils';
-import PDFViewer from './PDFPreview';
-import useNotification from '../../hooks/useNotification';
-import TableViewerContainer from '../../containers/TableViewerContainer';
+import { Button, Col, Collapse, Row, Table, Tooltip } from 'antd';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import nexusUrlHardEncode from '../../utils/nexusEncode';
+
 import { TError } from '../../../utils/types';
+import TableViewerContainer from '../../containers/TableViewerContainer';
+import useNotification from '../../hooks/useNotification';
+import { RootState } from '../../store/reducers';
+import { uuidv4 } from '../../utils';
+import nexusUrlHardEncode from '../../utils/nexusEncode';
+import PDFViewer from './PDFPreview';
 
 export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;

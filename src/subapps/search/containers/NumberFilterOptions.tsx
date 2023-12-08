@@ -1,22 +1,24 @@
-import {
-  Slider,
-  InputNumber,
-  Radio,
-  Form,
-  Col,
-  Row,
-  Checkbox,
-  Descriptions,
-  Statistic,
-} from 'antd';
+import './NumberFilterOptionsContainer.scss';
+import './FilterOptions.scss';
+
 import * as charts from '@ant-design/charts';
 import { NexusClient } from '@bbp/nexus-sdk/es';
+import {
+  Checkbox,
+  Col,
+  Descriptions,
+  Form,
+  InputNumber,
+  Radio,
+  Row,
+  Slider,
+  Statistic,
+} from 'antd';
 import * as React from 'react';
+
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
 import { createKeyWord } from './FilterOptions';
-import './NumberFilterOptionsContainer.scss';
-import './FilterOptions.scss';
 
 type ConfigField =
   | {

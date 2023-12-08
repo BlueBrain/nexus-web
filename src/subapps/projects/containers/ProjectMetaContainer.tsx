@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { Drawer } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Project, Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Drawer } from 'antd';
+import * as React from 'react';
 
-import fusionConfig from '../config';
-import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
-import { PROJECT_METADATA_CONTEXT } from '../fusionContext';
-import { createResource } from '../utils/workFlowMetadataUtils';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';
+import fusionConfig from '../config';
+import { PROJECT_METADATA_CONTEXT } from '../fusionContext';
+import { createResource } from '../utils/workFlowMetadataUtils';
 
 const ProjectMetaContaier: React.FC<{
   orgLabel: string;

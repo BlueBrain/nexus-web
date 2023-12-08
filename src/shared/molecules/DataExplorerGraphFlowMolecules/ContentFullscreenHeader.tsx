@@ -1,9 +1,11 @@
-import * as React from 'react';
-import { Switch } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
-import { InitDataExplorerGraphFlowFullscreenVersion } from '../../store/reducers/data-explorer';
 import './styles.scss';
+
+import { Switch } from 'antd';
+import * as React from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
+
+import { InitDataExplorerGraphFlowFullscreenVersion } from '../../store/reducers/data-explorer';
 
 const DataExplorerGraphFlowContentLimitedHeader = () => {
   const dispatch = useDispatch();

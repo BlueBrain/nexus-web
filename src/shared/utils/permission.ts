@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { AccessControl } from '@bbp/react-nexus';
+import * as React from 'react';
 
 export const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,

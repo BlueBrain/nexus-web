@@ -1,10 +1,11 @@
-import configureStore from './shared/store';
-import { RootState } from './shared/store/reducers';
-import { createBrowserHistory } from 'history';
-import { Link, Operation, Observable } from '@bbp/nexus-link';
+import { Link, Observable, Operation } from '@bbp/nexus-link';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
+import { createBrowserHistory } from 'history';
+
 import defaultState from './defaultState';
+import configureStore from './shared/store';
 import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from './shared/store/actions/search';
+import { RootState } from './shared/store/reducers';
 
 let preferredRealm, searchPrefenceLocalStorag;
 try {
@@ -61,7 +62,7 @@ const store = configureStore(
   }
 );
 
-export { nexus, history };
+export { history, nexus };
 export type TStore = typeof store;
 
 export { configureStore };

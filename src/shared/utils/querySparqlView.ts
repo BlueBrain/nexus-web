@@ -4,6 +4,7 @@ import {
   SparqlView,
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
+
 import { camelCaseToLabelString } from '.';
 import { parseURL } from './nexusParse';
 

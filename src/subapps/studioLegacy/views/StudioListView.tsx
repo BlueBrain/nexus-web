@@ -1,13 +1,15 @@
-import * as React from 'react';
+import '../studio.scss';
+
 import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, List, Input } from 'antd';
-import { useHistory } from 'react-router-dom';
+import { Input,List, Spin } from 'antd';
+import * as React from 'react';
 import { useQuery } from 'react-query';
+import { useHistory } from 'react-router-dom';
+
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../../shared/utils';
-import '../studio.scss';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

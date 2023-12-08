@@ -1,15 +1,17 @@
+import './FusionMainLayout.scss';
+
+import { Layout } from 'antd';
+import { MenuItemProps } from 'antd/lib/menu/MenuItem';
+import { getUserManager } from 'authManager';
+import { isEmpty } from 'lodash';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { Layout } from 'antd';
-import { isEmpty } from 'lodash';
-import { MenuItemProps } from 'antd/lib/menu/MenuItem';
-import { RootState } from '../store/reducers';
+
 import Header from '../components/Header/Header';
-import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
 import useLocalStorage from '../hooks/useLocalStorage';
-import './FusionMainLayout.scss';
-import { getUserManager } from 'authManager';
+import { RootState } from '../store/reducers';
+import SeoHeaders from './SeoHeaders';
 
 const { Content } = Layout;
 

@@ -1,4 +1,5 @@
 import { MenuProps } from 'antd';
+
 import { TType, TTypeOperator } from '../../molecules/TypeSelector/types';
 
 export type TIssuer = 'createdBy' | 'updatedBy';

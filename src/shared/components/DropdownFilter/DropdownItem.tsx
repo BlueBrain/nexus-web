@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { AutoComplete, Tooltip } from 'antd';
+import * as React from 'react';
 
 import { TypesIcon } from '../Types/TypesIcon';
 

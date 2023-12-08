@@ -1,5 +1,6 @@
-import { getUpdateResourceFunction } from '../updateResource';
 import { createNexusClient } from '@bbp/nexus-sdk';
+
+import { getUpdateResourceFunction } from '../updateResource';
 
 const nexus = createNexusClient({
   uri: 'https://localhost',

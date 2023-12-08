@@ -1,23 +1,23 @@
-import * as React from 'react';
+import './WorkflowStepWithActivityForm.scss';
+
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import {
+  Button,
+  Col,
+  DatePicker,
   Form,
   Input,
-  DatePicker,
+  Modal,
   Radio,
   Row,
-  Col,
-  Button,
-  Spin,
   Select,
-  Modal,
+  Spin,
 } from 'antd';
-import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import * as React from 'react';
 
 import { Status, StepResource, WorkflowStepMetadata } from '../../types';
 import { isEmptyInput } from '../../utils';
-
-import './WorkflowStepWithActivityForm.scss';
 
 const WorkflowStepWithActivityForm: React.FC<{
   onClickCancel(): void;

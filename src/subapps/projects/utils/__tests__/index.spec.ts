@@ -1,10 +1,11 @@
+import { ResourceLink } from '@bbp/nexus-sdk';
+
 import {
-  isParentLink,
   isActivityResourceLink,
+  isParentLink,
   isSubClass,
   userOrgLabel,
 } from '..';
-import { ResourceLink } from '@bbp/nexus-sdk';
 
 const linkToSibling: ResourceLink = {
   '@id': '123',

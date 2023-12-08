@@ -1,5 +1,6 @@
-import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { rest } from 'msw';
+
 import sample1 from '../../../shared/components/AnalysisPlugin/sample-images/sample1.png';
 
 export const sparqlAnalysisReportNoResultsHandler = rest.post(

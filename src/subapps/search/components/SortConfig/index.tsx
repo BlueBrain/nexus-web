@@ -1,12 +1,14 @@
+import './SortConfig.scss';
+
 import {
   CloseCircleOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
 import { Button } from 'antd';
+
 import { SortDirection } from '../../../../shared/hooks/useAccessDataForTable';
 import { ESSortField } from '../../hooks/useGlobalSearch';
-import './SortConfig.scss';
 
 type SortConfigProps = {
   sortedFields: ESSortField[];

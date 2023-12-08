@@ -1,10 +1,10 @@
-import * as React from 'react';
-import ReactMde, { SaveImageHandler, ReactMdeProps } from 'react-mde';
-import { Button, Spin } from 'antd';
+import 'react-mde/lib/styles/css/react-mde-all.css';
+
 import { CloseCircleOutlined, SaveOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-
-import 'react-mde/lib/styles/css/react-mde-all.css';
+import { Button, Spin } from 'antd';
+import * as React from 'react';
+import ReactMde, { ReactMdeProps,SaveImageHandler } from 'react-mde';
 
 const MarkdownEditorComponent: React.FC<{
   resource: Resource;

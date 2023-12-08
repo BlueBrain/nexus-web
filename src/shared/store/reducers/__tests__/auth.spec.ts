@@ -1,5 +1,5 @@
-import authReducer, { AuthState } from '../auth';
 import { AuthActionTypes } from '../../actions/auth';
+import authReducer, { AuthState } from '../auth';
 
 describe('Auth Reducer', () => {
   describe('Identities', () => {

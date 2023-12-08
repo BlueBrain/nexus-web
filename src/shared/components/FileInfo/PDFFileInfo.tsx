@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import PDFViewer, { PDFThumbnail } from '../Preview/PDFPreview';
 import FileInfo from './FileInfo';
 

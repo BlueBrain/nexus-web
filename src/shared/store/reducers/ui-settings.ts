@@ -1,5 +1,6 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { AnyAction } from 'redux';
+
 import {
   UISettingsActions,
   UISettingsActionTypes,

@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { notification as antdNotification } from 'antd';
 import { NotificationPlacement } from 'antd/es/notification/interface';
+import * as React from 'react';
 
 export type NotificationContextType = {
   error: (args: {

@@ -1,20 +1,22 @@
-import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import './styles.scss';
+
+import { FullscreenOutlined } from '@ant-design/icons';
 import { Space, Tag, Tooltip } from 'antd';
 import { clsx } from 'clsx';
 import { isArray } from 'lodash';
-import { FullscreenOutlined } from '@ant-design/icons';
-import {
-  TDEResource,
-  JumpToNodeDataExplorerGraphFlow,
-  TNavigationStackSide,
-  MAX_NAVIGATION_ITEMS_IN_STACK,
-} from '../../store/reducers/data-explorer';
-import { RootState } from '../../store/reducers';
+import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+
 import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
+import { RootState } from '../../store/reducers';
+import {
+  JumpToNodeDataExplorerGraphFlow,
+  MAX_NAVIGATION_ITEMS_IN_STACK,
+  TDEResource,
+  TNavigationStackSide,
+} from '../../store/reducers/data-explorer';
 import NavigationCollapseButton from './NavigationCollapseButton';
-import './styles.scss';
 
 export type TNavigationStackItem = {
   _self: string;

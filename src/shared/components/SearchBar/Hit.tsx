@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Spin, Tooltip } from 'antd';
+import './Hit.scss';
+
 import {
   AppstoreOutlined,
   DatabaseOutlined,
@@ -8,7 +8,8 @@ import {
   SearchOutlined,
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import './Hit.scss';
+import { Spin, Tooltip } from 'antd';
+import * as React from 'react';
 
 export const globalSearchOption = (value: string | undefined) => {
   return (

@@ -1,24 +1,25 @@
-import * as React from 'react';
-import { labelOf } from '../../../shared/utils';
 import {
-  Resource,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   DEFAULT_SPARQL_VIEW_ID,
   ElasticSearchViewQueryResponse,
+  Resource,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Alert,
-  Input,
+  Button,
   Form,
+  Input,
+  message,
   Modal,
   Select,
-  Button,
   Transfer,
-  message,
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import * as React from 'react';
+
 import useNotification from '../../../shared/hooks/useNotification';
+import { labelOf } from '../../../shared/utils';
 
 type NexusSparqlError = {
   reason: string;

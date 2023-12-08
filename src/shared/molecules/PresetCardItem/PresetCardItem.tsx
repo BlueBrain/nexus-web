@@ -1,7 +1,8 @@
+import './styles.scss';
+
+import { clsx } from 'clsx';
 import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { clsx } from 'clsx';
-import './styles.scss';
 
 type TProps = {
   containerStyle?: CSSProperties;

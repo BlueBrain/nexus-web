@@ -1,10 +1,11 @@
+import { IdentityList, PaginatedList, Realm } from '@bbp/nexus-sdk/es';
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { PaginatedList, Realm, IdentityList } from '@bbp/nexus-sdk/es';
+
 import { getUserManager } from '../../../authManager';
-import { RootState } from '../reducers';
-import { ThunkAction } from '..';
-import { FetchAction, FetchFulfilledAction, FetchFailedAction } from './utils';
 import { TLocationState } from '../../../pages/IdentityPage/IdentityPage';
+import { ThunkAction } from '..';
+import { RootState } from '../reducers';
+import { FetchAction, FetchFailedAction, FetchFulfilledAction } from './utils';
 
 export enum AuthActionTypes {
   IDENTITY_FETCHING = '@@nexus/AUTH_IDENTITY_FETCHING',

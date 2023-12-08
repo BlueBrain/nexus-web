@@ -1,6 +1,7 @@
+import { clsx } from 'clsx';
 import * as React from 'react';
 import { useHistory } from 'react-router';
-import { clsx } from 'clsx';
+
 import ResourceViewContainer from '../containers/ResourceViewContainer';
 
 const ResourceView: React.FunctionComponent = () => {

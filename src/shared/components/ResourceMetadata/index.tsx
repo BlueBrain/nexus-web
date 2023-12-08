@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { Col, Row, Tag } from 'antd';
-import { Link } from 'react-router-dom';
-import { getUsername } from '../../utils';
 import { Resource } from '@bbp/nexus-sdk/lib/types';
+import { Col, Row, Tag } from 'antd';
 import moment from 'moment';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
+
+import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const ResourceMetadata: React.FC<{

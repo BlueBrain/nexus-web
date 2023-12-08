@@ -1,15 +1,16 @@
-import * as React from 'react';
+import { EditOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Tabs, Collapse, Alert } from 'antd';
+import { AccessControl } from '@bbp/react-nexus';
+import { Alert,Collapse, Tabs } from 'antd';
+import * as React from 'react';
+
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import GraphContainer from '../containers/GraphContainer';
 import HistoryContainer from '../containers/HistoryContainer';
-import ResourceLinksContainer from '../containers/ResourceLinks';
 import ResourceActionsContainer from '../containers/ResourceActionsContainer';
 import ResourceEditorContainer from '../containers/ResourceEditor';
-import GraphContainer from '../containers/GraphContainer';
+import ResourceLinksContainer from '../containers/ResourceLinks';
 import MarkdownEditorContainer from './MarkdownEditorContainer';
-import { AccessControl } from '@bbp/react-nexus';
-import { EditOutlined } from '@ant-design/icons';
-import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
 
 type AdminProps = {
   editable: boolean;

@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { Spin } from 'antd';
-import ListItem from '../../../shared/components/List/Item';
-
 import './Studio.scss';
+
+import { Spin } from 'antd';
+import * as React from 'react';
+
+import ListItem from '../../../shared/components/List/Item';
 
 type StudioItemProps = {
   id: string;

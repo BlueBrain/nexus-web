@@ -1,15 +1,17 @@
-import { vi } from 'vitest';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient, Resource } from '@bbp/nexus-sdk';
-import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
-import fetch from 'node-fetch';
-import { render, server } from '../../../utils/testUtil';
-import { rest } from 'msw';
 import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
+
+import { createNexusClient, Resource } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
 import { RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { rest } from 'msw';
+import fetch from 'node-fetch';
+import { act } from 'react-dom/test-utils';
+import { vi } from 'vitest';
+
+import { render, server } from '../../../utils/testUtil';
+import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 
 describe('VideoPluginContainer', () => {
   // establish API mocking before all tests

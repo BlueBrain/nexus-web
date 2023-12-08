@@ -1,15 +1,16 @@
-import * as React from 'react';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import './styles.scss';
+
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { get, isObject, isString } from 'lodash';
+import * as React from 'react';
+import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 
 import { MyDataHeader, MyDataTable } from '../../molecules';
 import { RootState } from '../../store/reducers';
 import { TFilterOptions } from './types';
 import { makeDatetimePattern } from './utils';
-import './styles.scss';
 
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();

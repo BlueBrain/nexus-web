@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import CreateProject from './CreateProject/CreateProject';
-import CreateOrganization from './CreateOrganization/CreateOrganization';
-import CreateStudio from './CreateStudio/CreateStudio';
+
 import { RootState } from '../store/reducers';
+import CreateOrganization from './CreateOrganization/CreateOrganization';
+import CreateProject from './CreateProject/CreateProject';
+import CreateStudio from './CreateStudio/CreateStudio';
 
 function EntityCreation() {
   const oidc = useSelector((state: RootState) => state.oidc);

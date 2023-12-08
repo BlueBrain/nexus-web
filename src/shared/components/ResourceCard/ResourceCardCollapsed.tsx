@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Card, Button, Skeleton } from 'antd';
 import { UpOutlined } from '@ant-design/icons';
+import { Button, Card, Skeleton } from 'antd';
+import * as React from 'react';
 
 import TypesIcon from '../Types/TypesIcon';
 
@@ -50,7 +50,7 @@ const ResourceCardCollapsed: React.FunctionComponent<{
         <div>{!!types && <TypesIcon type={types} full={true} />}</div>
       )}
       {!!isExternal && (
-        <a href={resourceUrl} target="_blank">
+        <a href={resourceUrl} target="_blank" rel="noreferrer">
           {resourceUrl}
         </a>
       )}

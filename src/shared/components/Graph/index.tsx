@@ -1,13 +1,12 @@
-import * as React from 'react';
+import './GraphComponent.scss';
+
 import cytoscape from 'cytoscape';
 import cola from 'cytoscape-cola';
-
-import style from './style';
+import * as React from 'react';
 
 import GraphLegend from './GraphLegend';
-
-import './GraphComponent.scss';
 import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
+import style from './style';
 
 export type ElementNodeData = {
   label: string;

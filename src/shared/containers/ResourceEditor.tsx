@@ -1,14 +1,15 @@
-import React from 'react';
 import {
   ExpandedResource,
-  ResourceSource,
-  Resource,
   NexusClient,
+  Resource,
+  ResourceSource,
 } from '@bbp/nexus-sdk/es';
-import { useHistory, useLocation } from 'react-router';
-import { useDispatch } from 'react-redux';
-import { pick } from 'lodash';
 import { useNexusContext } from '@bbp/react-nexus';
+import { pick } from 'lodash';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+
 import ResourceEditor from '../components/ResourceEditor';
 import { getDataExplorerResourceItemArray } from '../components/ResourceEditor/editorUtils';
 import useNotification, { parseNexusError } from '../hooks/useNotification';

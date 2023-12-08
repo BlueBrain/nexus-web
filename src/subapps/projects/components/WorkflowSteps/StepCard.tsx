@@ -1,18 +1,18 @@
+import './StepCard.scss';
+
+import { DownOutlined } from '@ant-design/icons';
+import { Button, Dropdown, Form, Input,Menu, Tooltip } from 'antd';
 import * as React from 'react';
 import Draggable from 'react-draggable';
 import { Link } from 'react-router-dom';
-import { Tooltip, Dropdown, Button, Menu, Form, Input } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
 
-import { Status, StepResource } from '../../types';
 import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewer';
-import SubStepItem from './SubStepItem';
-import { isEmptyInput } from '../../utils';
-import { labelOf } from '../../../../shared/utils';
-import settingIcon from '../../../../shared/images/settingIcon.svg';
 import editIcon from '../../../../shared/images/pencil.svg';
-
-import './StepCard.scss';
+import settingIcon from '../../../../shared/images/settingIcon.svg';
+import { labelOf } from '../../../../shared/utils';
+import { Status, StepResource } from '../../types';
+import { isEmptyInput } from '../../utils';
+import SubStepItem from './SubStepItem';
 
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;

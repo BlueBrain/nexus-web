@@ -1,18 +1,19 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { AccessControl,useNexusContext } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
+import * as React from 'react';
 import { useHistory } from 'react-router';
-import EditStudio from '../components/EditStudio';
-import StudioHeader from '../components/StudioHeader';
-import StudioReactContext from '../contexts/StudioContext';
-import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
+
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import { getDestinationParam } from '../../../shared/utils';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import { getDestinationParam } from '../../../shared/utils';
+import EditStudio from '../components/EditStudio';
+import StudioHeader from '../components/StudioHeader';
+import WorkspaceMenuContainer from '../containers/WorkspaceMenuContainer';
+import StudioReactContext from '../contexts/StudioContext';
 
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,

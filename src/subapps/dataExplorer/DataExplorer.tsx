@@ -1,10 +1,19 @@
-import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import './styles.scss';
 
 import { Resource } from '@bbp/nexus-sdk/es';
-import { useHistory } from 'react-router';
-import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';
 import { find, merge, unionWith } from 'lodash';
+import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useHistory } from 'react-router';
+import { matchPath } from 'react-router-dom';
+
+import {
+  TType,
+  TTypeOperator,
+} from '../../shared/molecules/TypeSelector/types';
+import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
+import ColumnsSelector, { TColumn } from './ColumnsSelector';
+import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import { DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
@@ -13,18 +22,10 @@ import {
   useGraphAnalyticsPath,
   usePaginatedExpandedResources,
 } from './DataExplorerUtils';
-import {
-  TType,
-  TTypeOperator,
-} from '../../shared/molecules/TypeSelector/types';
-import TypeSelector from '../../shared/molecules/TypeSelector/TypeSelector';
-import { ProjectSelector } from './ProjectSelector';
-import { PredicateSelector } from './PredicateSelector';
 import { DatasetCount } from './DatasetCount';
-import { DataExplorerCollapsibleHeader } from './DataExplorerCollapsibleHeader';
 import DateExplorerScrollArrows from './DateExplorerScrollArrows';
-import ColumnsSelector, { TColumn } from './ColumnsSelector';
-import './styles.scss';
+import { PredicateSelector } from './PredicateSelector';
+import { ProjectSelector } from './ProjectSelector';
 
 const $update = <T,>(
   array: T[],

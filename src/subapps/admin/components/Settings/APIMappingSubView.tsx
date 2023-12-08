@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Spin, Row, Space } from 'antd';
+import './styles.scss';
+
 import { DeleteOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Form, Input, Row, Space,Spin } from 'antd';
+import React, { useState } from 'react';
 import { useRouteMatch } from 'react-router';
+
 import useNotification from '../../../../shared/hooks/useNotification';
-import './styles.scss';
 export interface PrefixMappingGroupInputState {
   prefix: string;
   namespace: string;

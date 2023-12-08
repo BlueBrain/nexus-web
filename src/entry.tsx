@@ -1,14 +1,15 @@
-import React, { useRef } from 'react';
-import { ConnectedRouter } from 'connected-react-router';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { NexusProvider } from '@bbp/react-nexus';
+import { ConnectedRouter } from 'connected-react-router';
+import React, { useRef } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
+import App from './shared/App';
 import {
   getNotificationContextValue,
   NotificationContext,
   NotificationContextType,
 } from './shared/hooks/useNotification';
-import { nexus, history } from './store';
-import App from './shared/App';
+import { history,nexus } from './store';
 
 function EntryPoint() {
   const queryClient = useRef(new QueryClient());

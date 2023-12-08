@@ -1,26 +1,26 @@
-import React from 'react';
-import CodeMirror from 'codemirror';
-import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
-import { useSelector } from 'react-redux';
+import clsx from 'clsx';
+import CodeMirror from 'codemirror';
 import pluralize from 'pluralize';
+import React from 'react';
+import { useSelector } from 'react-redux';
+
+import copyConfirmedImage from '../../images/confirmAnimated.svg';
+import copyImg from '../../images/copyColor.svg';
+import downloadImg from '../../images/DownloadingLoop.svg';
+import infoImg from '../../images/InfoCircleLine.svg';
+import { RootState } from '../../store/reducers';
+import { TDELink } from '../../store/reducers/data-explorer';
+import { triggerCopy } from '../../utils/copy';
 import {
   CODEMIRROR_COPY_URL_CLASS,
   CODEMIRROR_HOVER_CLASS,
-  TEditorPopoverResolvedData,
   editorLinkResolutionHandler,
   getTokenAndPosAt,
   mayBeResolvableLink,
+  TEditorPopoverResolvedData,
 } from './editorUtils';
-import { TDELink } from '../../store/reducers/data-explorer';
-import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
-import { triggerCopy } from '../../utils/copy';
-
-import downloadImg from '../../images/DownloadingLoop.svg';
-import infoImg from '../../images/InfoCircleLine.svg';
-import copyImg from '../../images/copyColor.svg';
-import copyConfirmedImage from '../../images/confirmAnimated.svg';
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,

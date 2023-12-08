@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AnalysesState, Asset } from '../../types/plugins/report';
-import { without, mapKeys, capitalize } from 'lodash';
+import { capitalize, mapKeys, without } from 'lodash';
+
 import { DEFAULT_SCALE } from '../../../constants';
+import { AnalysesState, Asset } from '../../types/plugins/report';
 
 interface Analyses {
   mode: 'view' | 'edit' | 'create';

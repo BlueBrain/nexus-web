@@ -1,12 +1,14 @@
 import '../init';
-import { StrictMode } from 'react';
-import { Provider } from 'react-redux';
-import ReactDOM from 'react-dom/client';
-import store from './store';
-import EntryPoint from './entry';
-import { getUserManager, setupUserSession } from 'authManager';
-import { fetchRealms } from './shared/store/actions/auth';
 import './styles';
+
+import { getUserManager, setupUserSession } from 'authManager';
+import { StrictMode } from 'react';
+import ReactDOM from 'react-dom/client';
+import { Provider } from 'react-redux';
+
+import EntryPoint from './entry';
+import { fetchRealms } from './shared/store/actions/auth';
+import store from './store';
 
 const root = document.getElementById('root')!;
 

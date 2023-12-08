@@ -1,13 +1,13 @@
+import './ProjectCard.scss';
+
+import { Tooltip } from 'antd';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Tooltip } from 'antd';
 
-import StatusIcon from './StatusIcon';
-import { Status } from '../types';
 import arrowIcon from '../../../shared/images/arrow.svg';
 import editIcon from '../../../shared/images/pencil.svg';
-
-import './ProjectCard.scss';
+import { Status } from '../types';
+import StatusIcon from './StatusIcon';
 
 type ProjectCardProps = {
   name: string;

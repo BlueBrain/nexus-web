@@ -25,8 +25,8 @@ const updateAboutModalVisibility = (payload: boolean) => ({
 });
 
 export {
-  updateProjectModalVisibility,
-  updateOrganizationModalVisibility,
-  updateStudioModalVisibility,
   updateAboutModalVisibility,
+  updateOrganizationModalVisibility,
+  updateProjectModalVisibility,
+  updateStudioModalVisibility,
 };

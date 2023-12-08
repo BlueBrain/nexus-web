@@ -1,33 +1,35 @@
-import { vi } from 'vitest';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk/es';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import AnalysisPluginContainer from '../AnalysisPluginContainer';
-import { deltaPath } from '__mocks__/handlers/handlers';
-import {
-  render,
-  server,
-  waitFor,
-  screen,
-  cleanup,
-} from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
-import userEvent from '@testing-library/user-event';
+
 import {
-  sparqlAnalysisReportNoResultsHandler,
-  resourcesAnalysisReportType,
-  sparqlAnalysisReportSingleResult,
   imageResourceFile,
   reportResource,
+  resourcesAnalysisReportType,
+  sparqlAnalysisReportNoResultsHandler,
+  sparqlAnalysisReportSingleResult,
 } from '__mocks__/handlers/AnalysisPlugin/handlers';
+import { deltaPath } from '__mocks__/handlers/handlers';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
+import { NexusProvider } from '@bbp/react-nexus';
+import userEvent from '@testing-library/user-event';
+import { createMemoryHistory } from 'history';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { vi } from 'vitest';
+
 import {
   DEFAULT_REPORT_CATEGORIES,
   DEFAULT_REPORT_TYPES,
 } from '../../../../constants';
 import { configureStore } from '../../../../store';
+import {
+  cleanup,
+  render,
+  screen,
+  server,
+  waitFor,
+} from '../../../../utils/testUtil';
+import AnalysisPluginContainer from '../AnalysisPluginContainer';
 
 describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();

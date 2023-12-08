@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Empty, Skeleton } from 'antd';
+import * as React from 'react';
 import { match, when } from 'ts-pattern';
 
+import MarkdownEditorComponent from '../components/MarkdownEditor';
 import useAsyncCall from '../hooks/useAsynCall';
 import useAsyncCallback from '../hooks/useAsyncCallback';
-import MarkdownEditorComponent from '../components/MarkdownEditor';
 import MarkdownViewerContainer from './MarkdownViewer';
 
 const fetchResource = (nexus: NexusClient) => async (

@@ -1,9 +1,11 @@
-import React, { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import './styles.scss';
-import { Button } from 'antd';
-import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
+
 import { CloseOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import { throttle } from 'lodash';
+import React, { ReactNode, useLayoutEffect, useRef, useState } from 'react';
+
+import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
 
 interface Props {
   children: ReactNode;

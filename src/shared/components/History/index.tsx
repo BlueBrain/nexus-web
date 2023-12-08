@@ -1,9 +1,10 @@
-import * as React from 'react';
-import { Timeline, Card, TimelineItemProps } from 'antd';
-import { StarOutlined } from '@ant-design/icons';
-import moment from 'moment';
-
 import './History.scss';
+
+import { StarOutlined } from '@ant-design/icons';
+import { Card, Timeline, TimelineItemProps } from 'antd';
+import moment from 'moment';
+import * as React from 'react';
+
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const HistoryComponent: React.FunctionComponent<{

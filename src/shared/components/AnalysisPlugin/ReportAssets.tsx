@@ -1,12 +1,11 @@
-import { Button, Checkbox } from 'antd';
 import { CalendarOutlined, UserOutlined } from '@ant-design/icons';
-import FriendlyTimeAgo from '../FriendlyDate';
-import { getUsername } from '../../../shared/utils';
+import { Button, Checkbox } from 'antd';
 import moment from 'moment';
 
-import { selectAsset, openFileUploadDialog } from '../../slices/plugins/report';
-
+import { getUsername } from '../../../shared/utils';
+import { openFileUploadDialog,selectAsset } from '../../slices/plugins/report';
 import { ReportAssetProps } from '../../types/plugins/report';
+import FriendlyTimeAgo from '../FriendlyDate';
 
 const ReportAssets = ({
   dispatch,

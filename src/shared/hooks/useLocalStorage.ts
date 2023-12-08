@@ -6,7 +6,7 @@ export default function useLocalStorage<T = any>(
 ) {
   const val = localStorage.getItem(key);
   const [value, setValue] = React.useState<T | undefined>(
-    !!val ? JSON.parse(val) : defaultValue
+    val ? JSON.parse(val) : defaultValue
   );
 
   React.useEffect(() => {

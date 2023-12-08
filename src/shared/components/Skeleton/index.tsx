@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { List, Skeleton } from 'antd';
 import { SkeletonProps } from 'antd/lib/skeleton';
+import * as React from 'react';
 
 export interface CustomSkeletonProps extends SkeletonProps {
   itemNumber?: number;

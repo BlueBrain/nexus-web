@@ -1,12 +1,13 @@
+import { clsx } from 'clsx';
 import React, { useEffect, useReducer, useRef } from 'react';
-import RightSpeedArrow, {
-  RightArrow,
-} from '../../shared/components/Icons/RightSpeedArrow';
+
 import LeftSpeedArrow, {
   LeftArrow,
 } from '../../shared/components/Icons/LeftSpeedArrow';
+import RightSpeedArrow, {
+  RightArrow,
+} from '../../shared/components/Icons/RightSpeedArrow';
 import { TType } from '../../shared/molecules/TypeSelector/types';
-import { clsx } from 'clsx';
 
 type TArrowsDisplay = {
   returnToStart: boolean;

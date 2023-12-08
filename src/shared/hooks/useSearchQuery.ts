@@ -1,11 +1,11 @@
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import bodybuilder from 'bodybuilder';
-import { Resource } from '@bbp/nexus-sdk/es';
 
-import useAsyncCall, { AsyncCall } from './useAsynCall';
-import { parseURL } from '../utils/nexusParse';
-import { SearchResponse } from '../types/search';
 import { FacetConfig, FacetType } from '../store/reducers/search';
+import { SearchResponse } from '../types/search';
+import { parseURL } from '../utils/nexusParse';
+import useAsyncCall, { AsyncCall } from './useAsynCall';
 
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;

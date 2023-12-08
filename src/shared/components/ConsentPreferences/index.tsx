@@ -1,5 +1,6 @@
-import * as React from 'react';
 import { Button } from 'antd';
+import * as React from 'react';
+
 import { ConsentType } from '../../layouts/FusionMainLayout';
 
 const ConsentPreferences: React.FunctionComponent<{

@@ -1,31 +1,32 @@
-import * as React from 'react';
-import { useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
+import './styles.scss';
+
+import { SelectOutlined } from '@ant-design/icons';
 import {
-  ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk/es';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover, Empty } from 'antd';
-import { SelectOutlined } from '@ant-design/icons';
+import { AccessControl,useNexusContext } from '@bbp/react-nexus';
+import { Empty,Popover, Tabs } from 'antd';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import { useJiraPlugin } from '../../shared/hooks/useJIRA';
-import { RootState } from '../../shared/store/reducers';
-import useNotification from '../../shared/hooks/useNotification';
-import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
+
 import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
-import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
+import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
+import { useJiraPlugin } from '../../shared/hooks/useJIRA';
+import useNotification from '../../shared/hooks/useNotification';
+import { RootState } from '../../shared/store/reducers';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
+import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
+import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
 import ProjectStatsContainer from '../../subapps/admin/containers/ProjectStatsContainer';
 import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDeleteContainer';
-import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
+import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
-import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
-import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
-
-import './styles.scss';
+import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();

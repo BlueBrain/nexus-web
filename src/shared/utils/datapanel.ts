@@ -1,10 +1,11 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import * as Sentry from '@sentry/browser';
 import { compact, flatMap, isArray, isNil, sum } from 'lodash';
+import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
+
 import { TDataSource } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 import isValidUrl from '../../utils/validUrl';
-import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
 import { getResourceLabel, uuidv4 } from '.';
 import { parseURL } from './nexusParse';
 
@@ -166,7 +167,7 @@ export const fileNameForDistributionItem = (
       )
   );
 
-  if (!Boolean(distItem?.name) || !distNameHasExtension) {
+  if (!distItem?.name || !distNameHasExtension) {
     Sentry.captureMessage(
       'Distribution item does not have name or extension.',
       {
@@ -212,7 +213,6 @@ export const distributionMatchesTypes = (
 };
 
 export const getSizeOfResourcesToDownload = (
-  /* tslint:disable-next-line */
   resultsObject: Array<ResourceObscured | undefined>,
   types: string[]
 ) => {

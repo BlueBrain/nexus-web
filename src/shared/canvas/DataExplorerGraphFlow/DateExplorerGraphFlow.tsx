@@ -1,27 +1,28 @@
-import React, { useRef, useEffect, CSSProperties } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useHistory } from 'react-router';
+import './styles.scss';
+
 import { clsx } from 'clsx';
-import { RootState } from '../../store/reducers';
-import {
-  DATA_EXPLORER_GRAPH_FLOW_DIGEST,
-  DATA_EXPLORER_GRAPH_FLOW_PATH,
-  PopulateDataExplorerGraphFlow,
-  ResetDataExplorerGraphFlow,
-  DataExplorerFlowSliceListener,
-  DataExplorerMiddlewareMatcher,
-  calculateDateExplorerGraphFlowDigest,
-} from '../../store/reducers/data-explorer';
+import React, { CSSProperties,useEffect, useRef } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+import { useHistory,useLocation } from 'react-router';
+
+import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
 import {
   NavigationArrows,
   NavigationStack,
 } from '../../organisms/DataExplorerGraphFlowNavigationStack';
-import DataExplorerContentPage from '../../organisms/DataExplorerGraphFlowContent/DataExplorerGraphFlowContent';
 import useNavigationStackManager from '../../organisms/DataExplorerGraphFlowNavigationStack/useNavigationStack';
-import ResourceResolutionCache from '../../components/ResourceEditor/ResourcesLRUCache';
+import { RootState } from '../../store/reducers';
+import {
+  calculateDateExplorerGraphFlowDigest,
+  DATA_EXPLORER_GRAPH_FLOW_DIGEST,
+  DATA_EXPLORER_GRAPH_FLOW_PATH,
+  DataExplorerFlowSliceListener,
+  DataExplorerMiddlewareMatcher,
+  PopulateDataExplorerGraphFlow,
+  ResetDataExplorerGraphFlow,
+} from '../../store/reducers/data-explorer';
 import DataExplorerGraphFlowEmpty from './DataExplorerGraphFlowEmpty';
-
-import './styles.scss';
 
 const DataExplorerGraphFlow = () => {
   const history = useHistory();

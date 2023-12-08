@@ -1,8 +1,10 @@
-import * as React from 'react';
-import { Button, Tooltip } from 'antd';
 import './Categories.scss';
-import { CategoryWidgetProps } from '../../types/plugins/report';
+
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+import * as React from 'react';
+
+import { CategoryWidgetProps } from '../../types/plugins/report';
 
 const CategoryWidget = ({
   allCategories,

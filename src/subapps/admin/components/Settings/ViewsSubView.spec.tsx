@@ -1,25 +1,26 @@
-import { setupServer } from 'msw/node';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { createNexusClient } from '@bbp/nexus-sdk';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
-import { NexusProvider } from '@bbp/react-nexus';
-import ViewsSubView from './ViewsSubView';
-import { render, screen, waitFor } from '../../../../utils/testUtil';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import userEvent from '@testing-library/user-event';
 import {
   aclsHandler,
   identitiesHandler,
   viewErrorsHandler,
+  viewsHandler,
   viewStatsHandler,
   viewWithIndexingErrors,
   viewWithNoIndexingErrors,
-  viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
+import { createNexusClient } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { createMemoryHistory } from 'history';
+import { setupServer } from 'msw/node';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Route, Router } from 'react-router-dom';
+
 import { configureStore } from '../../../../store';
+import { render, screen, waitFor } from '../../../../utils/testUtil';
+import ViewsSubView from './ViewsSubView';
 
 describe('ViewsSubView', () => {
   const mockOrganisation = 'copies';

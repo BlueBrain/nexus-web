@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { Button } from 'antd';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
-import { AccessControl } from '@bbp/react-nexus';
 import {
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from '@ant-design/icons';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import { AccessControl } from '@bbp/react-nexus';
+import { Button } from 'antd';
+import * as React from 'react';
 
-import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import ProjectCard from '../components/ProjectCard';
+import ProjectMetaContainer from '../containers/ProjectMetaContainer';
 import { Status } from '../types';
 
 type ProjectsListContainerType = {

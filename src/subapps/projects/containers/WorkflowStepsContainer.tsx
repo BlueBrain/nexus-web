@@ -1,27 +1,28 @@
-import * as React from 'react';
-import { Modal, Spin } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient } from '@bbp/nexus-sdk/es';
+import './WorkflowStepsContainer.scss';
 
-import SingleStepContainer from './SingleStepContainer';
-import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import ProjectPanel from '../components/ProjectPanel';
-import { fetchTopLevelSteps } from '../utils';
-import AddComponentButton from '../components/AddComponentButton';
-import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import fusionConfig from '../config';
-import { StepResource, WorkflowStepMetadata } from '../types';
-import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
-import {
-  createTableContext,
-  createWorkflowStepContext,
-} from '../utils/workFlowMetadataUtils';
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Modal, Spin } from 'antd';
+import * as React from 'react';
+
 import useNotification, {
   NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 import { TErrorWithType } from '../../../utils/types';
-import './WorkflowStepsContainer.scss';
+import AddComponentButton from '../components/AddComponentButton';
+import ProjectPanel from '../components/ProjectPanel';
+import StepsBoard from '../components/WorkflowSteps/StepsBoard';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import { StepResource, WorkflowStepMetadata } from '../types';
+import { fetchTopLevelSteps } from '../utils';
+import {
+  createTableContext,
+  createWorkflowStepContext,
+} from '../utils/workFlowMetadataUtils';
+import SingleStepContainer from './SingleStepContainer';
 
 const WorkflowStepContainer: React.FC<{
   orgLabel: string;

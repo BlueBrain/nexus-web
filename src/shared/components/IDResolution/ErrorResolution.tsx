@@ -1,8 +1,9 @@
-import { useHistory } from 'react-router';
+import '../../../pages/IDResolutionPage/styles.less';
+
 import { Button } from 'antd';
+import { useHistory } from 'react-router';
 
 import ResponseViewer from './ResponseViewer';
-import '../../../pages/IDResolutionPage/styles.less';
 
 type Props = {
   redirectUri: string;

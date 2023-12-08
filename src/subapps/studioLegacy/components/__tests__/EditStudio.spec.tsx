@@ -1,9 +1,11 @@
-import { vi } from 'vitest';
-import EditStudio, { StudioResource } from '../EditStudio';
-import * as React from 'react';
-import { Context } from '@bbp/nexus-sdk';
-import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
+
+import { Context } from '@bbp/nexus-sdk';
+import * as React from 'react';
+import { vi } from 'vitest';
+
+import { render, screen } from '../../../../utils/testUtil';
+import EditStudio, { StudioResource } from '../EditStudio';
 
 describe('EditStudio', () => {
   it('Renders EditStduio', () => {

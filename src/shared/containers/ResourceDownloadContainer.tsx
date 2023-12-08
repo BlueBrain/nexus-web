@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { Button, Dropdown, Menu } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DownOutlined } from '@ant-design/icons';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Dropdown, Menu } from 'antd';
+import * as React from 'react';
+
 import useNotification from '../hooks/useNotification';
 
 type formatType = 'vnd.graph-viz' | 'n-triples' | 'json';

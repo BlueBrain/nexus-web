@@ -1,13 +1,15 @@
-import * as React from 'react';
+import './SettingsContainer.scss';
+
 import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { Menu, MenuProps } from 'antd';
-import GeneralSVComponent from '../components/Settings/GeneralSubView';
-import ViewsSVComponent from '../components/Settings/ViewsSubView';
-import StoragesSVComponent from '../components/Settings/StoragesSubView';
-import ResolversSVComponent from '../components/Settings/ResolversSubView';
-import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import * as React from 'react';
+
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
-import './SettingsContainer.scss';
+import GeneralSVComponent from '../components/Settings/GeneralSubView';
+import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import ResolversSVComponent from '../components/Settings/ResolversSubView';
+import StoragesSVComponent from '../components/Settings/StoragesSubView';
+import ViewsSVComponent from '../components/Settings/ViewsSubView';
 
 type Props = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;

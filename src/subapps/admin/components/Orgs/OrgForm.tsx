@@ -1,5 +1,5 @@
+import { Button, Form, Input, Modal,Spin } from 'antd';
 import * as React from 'react';
-import { Form, Input, Button, Spin, Modal } from 'antd';
 
 export interface OrgFormProps {
   org?: {

@@ -1,8 +1,5 @@
-import React, { useReducer, useRef, useState } from 'react';
-import { useInfiniteQuery, useQuery } from 'react-query';
-import { Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNexusContext } from '@bbp/react-nexus';
+import '../../shared/styles/route-layout.scss';
+
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -14,25 +11,29 @@ import {
   ProjectList,
   ProjectResponseCommon,
 } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Input, InputRef, List, Spin } from 'antd';
-import { match as pmatch } from 'ts-pattern';
 import pluralize from 'pluralize';
-import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
+import React, { useReducer, useRef, useState } from 'react';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { match as pmatch } from 'ts-pattern';
+
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
+import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
+import defaultProjectsImg from '../../shared/images/hippocampus.png';
+import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
+import RouteHeader from '../../shared/RouteHeader/RouteHeader';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
+import formatNumber from '../../utils/formatNumber';
+import timeago from '../../utils/timeago';
 import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
-import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
-import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import timeago from '../../utils/timeago';
-import formatNumber from '../../utils/formatNumber';
-import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
-import defaultProjectsImg from '../../shared/images/hippocampus.png';
-
-import '../../shared/styles/route-layout.scss';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 
 type TProjectOptions = {
   from: number;

@@ -1,14 +1,5 @@
-import React, {
-  Fragment,
-  forwardRef,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { Link } from 'react-router-dom';
-import { useInfiniteQuery, useQuery } from 'react-query';
-import { Alert, Input, Spin, List, InputRef } from 'antd';
+import '../../shared/styles/route-layout.scss';
+
 import {
   LoadingOutlined,
   RightSquareOutlined,
@@ -20,20 +11,30 @@ import {
   OrganizationList,
   OrgResponseCommon,
 } from '@bbp/nexus-sdk/es';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Input, InputRef,List, Spin } from 'antd';
 import pluralize from 'pluralize';
+import React, {
+  forwardRef,
+  Fragment,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import { useInfiniteQuery, useQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { match as pmatch } from 'ts-pattern';
-import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
-import { ModalsActionsEnum } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
+
 import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
+import organizationImg from '../../shared/images/sscx-by-layers-v3.png';
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
+import { ModalsActionsEnum } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
 import formatNumber from '../../utils/formatNumber';
-import organizationImg from '../../shared/images/sscx-by-layers-v3.png';
-
-import '../../shared/styles/route-layout.scss';
+import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;

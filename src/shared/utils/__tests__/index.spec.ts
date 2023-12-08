@@ -1,27 +1,28 @@
 import { Identity, Resource } from '@bbp/nexus-sdk';
+import moment from 'moment';
+
 import {
-  getUserList,
-  getOrderedPermissions,
   addLeadingSlash,
-  stripBasename,
-  getLogoutUrl,
-  hasExpired,
   camelCaseToLabelString,
   camelCaseToTitleCase,
-  matchResultUrls,
-  isISODate,
-  matchPlugins,
-  pluginsMap,
-  pluginsExcludeMap,
-  makeStudioUri,
-  parseJsonMaybe,
-  forceAsArray,
   deltaUrlToFusionUrl,
-  getFriendlyTimeAgoString,
+  forceAsArray,
   getDateString,
+  getFriendlyTimeAgoString,
+  getLogoutUrl,
+  getOrderedPermissions,
   getResourceLabel,
+  getUserList,
+  hasExpired,
+  isISODate,
+  makeStudioUri,
+  matchPlugins,
+  matchResultUrls,
+  parseJsonMaybe,
+  pluginsExcludeMap,
+  pluginsMap,
+  stripBasename,
 } from '..';
-import moment from 'moment';
 import { getMockResource } from '../__mocks__/data_panel_download_resource';
 
 const identities: Identity[] = [

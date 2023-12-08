@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, forwardRef, useReducer } from 'react';
-import moment from 'moment';
 import './styles.scss';
+
+import moment from 'moment';
+import React, { forwardRef, useEffect, useReducer,useRef } from 'react';
 
 type TDInput = {
   id: string;

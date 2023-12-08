@@ -1,19 +1,21 @@
-import { vi } from 'vitest';
-import { NexusProvider } from '@bbp/react-nexus';
+import '@testing-library/jest-dom';
+
 import { createNexusClient } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
+import { rest } from 'msw';
 import fetch from 'node-fetch';
+import { act } from 'react-dom/test-utils';
+import { ConfigField } from 'subapps/search/hooks/useGlobalSearch';
+import { vi } from 'vitest';
+
 import {
-  render,
   fireEvent,
+  render,
   screen,
   server,
   within,
 } from '../../../../utils/testUtil';
-import { rest } from 'msw';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
 import FilterOptions from '../FilterOptions';
-import { ConfigField } from 'subapps/search/hooks/useGlobalSearch';
 
 const mockFiltersResponse = {
   aggregations: {

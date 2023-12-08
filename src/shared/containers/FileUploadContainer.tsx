@@ -1,7 +1,7 @@
+import { NexusFile,Storage } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Storage, NexusFile } from '@bbp/nexus-sdk/es';
-import { useNexusContext } from '@bbp/react-nexus';
 
 import FileUploader from '../components/FileUpload';
 

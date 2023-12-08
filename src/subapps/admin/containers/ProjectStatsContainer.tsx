@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 
 import ProjectGraph from '../components/Projects/ProjectGraph';
 import ResourceInfoPanel from '../components/Projects/ResourceInfoPanel';

@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom';
-import JIRA, { AuthorizeJiraUI, CreateIssueUI, LinkIssueUI } from '../JIRA';
-import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
+
 import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
+
+import { fireEvent, render, screen,waitFor } from '../../../../utils/testUtil';
+import JIRA, { AuthorizeJiraUI, CreateIssueUI, LinkIssueUI } from '../JIRA';
 
 window.computedStyle = vi.fn();
 

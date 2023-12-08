@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { Tooltip } from 'antd';
+import './ACLs.scss';
+
 import {
-  GlobalOutlined,
   CrownOutlined,
+  GlobalOutlined,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { Identity } from '@bbp/nexus-sdk/es';
-
-import './ACLs.scss';
+import { Tooltip } from 'antd';
+import * as React from 'react';
 
 const getTitle = (identity: Identity): React.ReactElement<any> => {
   switch (identity['@type']) {

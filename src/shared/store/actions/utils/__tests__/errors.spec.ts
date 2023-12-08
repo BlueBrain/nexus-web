@@ -1,5 +1,5 @@
 import { RequestError } from '../errors';
-import { HTTP_STATUSES, HTTP_STATUS_TYPE_KEYS } from '../statusCodes';
+import { HTTP_STATUS_TYPE_KEYS, HTTP_STATUSES } from '../statusCodes';
 
 describe('RequestError', () => {
   it('creates an error with a default code property equal to a BadRequest', () => {

@@ -1,24 +1,26 @@
+import './styles.scss';
+
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { PromisePool } from '@supercharge/promise-pool';
+import { Alert, Spin } from 'antd';
+import clsx from 'clsx';
+import { orderBy } from 'lodash';
+import { animate } from 'motion';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient } from '@bbp/nexus-sdk/es';
-import { Alert, Spin } from 'antd';
-import { orderBy } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
-import { PromisePool } from '@supercharge/promise-pool';
-import { animate } from 'motion';
-import clsx from 'clsx';
-import {
-  PresetCardItem,
-  PresetCardItemSkeleton,
-  PresetCardItemCompact,
-} from '../../molecules';
+
+import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
 import {
   SearchConfig,
   SearchLayout,
 } from '../../../subapps/search/hooks/useGlobalSearch';
-import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
-import './styles.scss';
+import {
+  PresetCardItem,
+  PresetCardItemCompact,
+  PresetCardItemSkeleton,
+} from '../../molecules';
 
 type TProps = {};
 type TLayout = {

@@ -1,11 +1,11 @@
-import * as React from 'react';
+import './NotificationsPopover.scss';
+
 import { Button, Tooltip } from 'antd';
 import moment from 'moment';
+import * as React from 'react';
 
-import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 import TypesIconList from '../../../shared/components/Types/TypesIcon';
-
-import './NotificationsPopover.scss';
+import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 
 const NotififcationsPopover: React.FC<{
   activities: {

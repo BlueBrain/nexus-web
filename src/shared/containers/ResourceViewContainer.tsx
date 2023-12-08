@@ -1,50 +1,51 @@
+import { DeleteOutlined } from '@ant-design/icons';
+import { ExpandedResource,IncomingLink, Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Collapse, Divider,Spin, Typography } from 'antd';
+import { intersection, isArray } from 'lodash';
+import queryString from 'query-string';
 import * as React from 'react';
 import Helmet from 'react-helmet';
+import { useDispatch,useSelector } from 'react-redux';
 import {
-  useLocation,
-  useHistory,
-  useParams,
   matchPath,
+  useHistory,
+  useLocation,
+  useParams,
   useRouteMatch,
 } from 'react-router';
-import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
-import queryString from 'query-string';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk/es';
-import { useSelector, useDispatch } from 'react-redux';
-import { intersection, isArray } from 'lodash';
-import AdminPlugin from '../containers/AdminPluginContainer';
-import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
-import ResourcePlugins from './ResourcePlugins';
-import usePlugins from '../hooks/usePlugins';
-import useMeasure from '../hooks/useMeasure';
-import {
-  getResourceLabel,
-  getOrgAndProjectFromProjectId,
-  getDestinationParam,
-  labelOf,
-  makeResourceUri,
-} from '../utils';
-import { isDeprecated } from '../utils/nexusMaybe';
-import useNotification from '../hooks/useNotification';
-import Preview from '../components/Preview/Preview';
-import ImagePreview from '../components/ImagePreview/ImagePreview';
-import { getUpdateResourceFunction } from '../utils/updateResource';
-import { DeleteOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
-import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
-import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import { RootState } from '../store/reducers';
-import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
-import { useJiraPlugin } from '../hooks/useJIRA';
-import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+
 import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import {
   TErrorWithType,
   TUpdateResourceFunctionError,
 } from '../../utils/types';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
+import Preview from '../components/Preview/Preview';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import ResourceMetadata from '../components/ResourceMetadata';
+import AdminPlugin from '../containers/AdminPluginContainer';
+import { useJiraPlugin } from '../hooks/useJIRA';
+import useMeasure from '../hooks/useMeasure';
+import useNotification from '../hooks/useNotification';
+import usePlugins from '../hooks/usePlugins';
+import { RootState } from '../store/reducers';
+import {
+  getDestinationParam,
+  getOrgAndProjectFromProjectId,
+  getResourceLabel,
+  labelOf,
+  makeResourceUri,
+} from '../utils';
+import { isDeprecated } from '../utils/nexusMaybe';
+import { getUpdateResourceFunction } from '../utils/updateResource';
+import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import ResourcePlugins from './ResourcePlugins';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -654,7 +655,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         />
 
         <Spin spinning={busy}>
-          {!!error ? (
+          {error ? (
             <Alert
               message={
                 error.wasUpdated ? 'Resource updated with errors' : 'Error'
@@ -692,6 +693,7 @@ const ResourceViewContainer: React.FunctionComponent<{
                                 <a
                                   target="_blank"
                                   href="https://bluebrainnexus.io/docs/delta/api/"
+                                  rel="noreferrer"
                                 >
                                   https://bluebrainnexus.io/docs/delta/api/
                                 </a>

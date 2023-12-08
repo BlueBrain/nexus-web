@@ -1,9 +1,10 @@
+import { AnyAction } from 'redux';
+
 import {
   ModalsActionsEnum,
-  updateProjectModalVisibility,
   updateOrganizationModalVisibility,
+  updateProjectModalVisibility,
 } from '../actions/modals';
-import { AnyAction } from 'redux';
 
 export const DEFAULT_MODALS_STATE = {
   isCreateOrganizationModelVisible: false,

@@ -58,7 +58,7 @@ const Tools = ({ tools, onAddTool }: ToolsProps) => {
                       <a
                         style={{ color: '#262626' }}
                         href={t.scriptPath}
-                        target="_blank"
+                        target="_blank" rel="noreferrer"
                       >
                         {t.scriptPath}&nbsp;&#x2197;
                       </a>

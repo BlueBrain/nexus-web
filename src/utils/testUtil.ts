@@ -1,5 +1,6 @@
-import { ReactElement } from 'react';
 import { cleanup, render, RenderOptions } from '@testing-library/react';
+import { ReactElement } from 'react';
+
 import { server } from '../__mocks__/server';
 
 const customRender = (

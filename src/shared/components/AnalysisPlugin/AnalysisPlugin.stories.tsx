@@ -1,10 +1,11 @@
 import { withInfo } from '@storybook/addon-info';
 import { number, withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
-import * as React from 'react';
 import { Image } from 'antd';
-import AnalysisPlugin, { AnalysisReport } from './AnalysisPlugin';
+import * as React from 'react';
+
 import { AnalysesAction } from '../../containers/AnalysisPlugin/AnalysisPluginContainer';
+import AnalysisPlugin, { AnalysisReport } from './AnalysisPlugin';
 // import sample1 from './sample-images/sample1.png';
 import sample1 from './sample-images/sample1.png';
 import sample2 from './sample-images/sample2.png';

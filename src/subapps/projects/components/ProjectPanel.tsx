@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { Button } from 'antd';
-
-import ProjectMetaContaier from '../containers/ProjectMetaContainer';
-import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
-
 import './ProjectPanel.scss';
+
+import { Button } from 'antd';
+import * as React from 'react';
+
+import ActivitiesLinkingContainer from '../containers/ActivitiesLinkingContainer';
+import ProjectMetaContaier from '../containers/ProjectMetaContainer';
 
 const ProjectPanel: React.FC<{
   projectLabel: string;

@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 
+import { ElementNodeData } from '../components/Graph';
 import ResourceCard from '../components/ResourceCard';
 import ResourceCardCollapsed from '../components/ResourceCard/ResourceCardCollapsed';
 import ResourcePreviewCard from '../components/ResourceCard/ResourcePreviewCard';
-import { labelOf, getResourceLabel } from '../utils';
-import { ElementNodeData } from '../components/Graph';
 import useNotification from '../hooks/useNotification';
+import { getResourceLabel,labelOf } from '../utils';
 
 const ResourcePreviewCardContainer: React.FunctionComponent<{
   resourceData?: ElementNodeData['resourceData'];

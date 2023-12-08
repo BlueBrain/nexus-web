@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { SubApp } from '..';
-import StudioView from './views/StudioView';
+
 import FusionStudiosPage from '../../pages/StudiosPage/StudiosPage';
 // import StudioAdminView from './views/StudioAdminView';
 import icon from '../../shared/images/gridIcon.svg';
+import { SubApp } from '..';
+import StudioView from './views/StudioView';
 
 const subAppType = 'internal';
 const title = 'Studios';

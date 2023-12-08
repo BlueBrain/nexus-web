@@ -1,5 +1,6 @@
-import * as React from 'react';
 import { Table } from 'antd';
+import * as React from 'react';
+
 import { Bounds } from '../../../shared/hooks/useMeasure';
 
 const TableHeightWrapper: React.FC<{

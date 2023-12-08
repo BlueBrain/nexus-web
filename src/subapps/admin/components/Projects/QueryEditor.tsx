@@ -1,16 +1,18 @@
-import * as React from 'react';
-import { Tabs } from 'antd';
-import { useHistory, useRouteMatch } from 'react-router';
+import './QueryEditor.scss';
+
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   DEFAULT_SPARQL_VIEW_ID,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import SparqlQueryView from '../../views/SparqlQueryView';
-import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
+import { Tabs } from 'antd';
+import * as React from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
+
 import useNotification from '../../../../shared/hooks/useNotification';
 import { useOrganisationsSubappContext } from '../..';
-import './QueryEditor.scss';
+import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
+import SparqlQueryView from '../../views/SparqlQueryView';
 
 const QueryEditor: React.FC<{
   orgLabel: string;

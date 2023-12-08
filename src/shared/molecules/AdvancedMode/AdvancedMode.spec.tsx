@@ -1,15 +1,16 @@
 import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
+
+import { createNexusClient } from '@bbp/nexus-sdk';
+import { ConnectedRouter } from 'connected-react-router';
+import { createBrowserHistory, History } from 'history';
 import { act } from 'react-dom/test-utils';
+import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { Store } from 'redux';
 
-import { createBrowserHistory, History } from 'history';
-import { ConnectedRouter } from 'connected-react-router';
-import { createNexusClient } from '@bbp/nexus-sdk';
-import AdvancedModeToggle from './AdvancedMode';
 import { configureStore } from '../../../store';
-import { render, fireEvent, waitFor, screen } from '../../../utils/testUtil';
+import { fireEvent, render, screen,waitFor } from '../../../utils/testUtil';
+import AdvancedModeToggle from './AdvancedMode';
 
 describe('AdvancedModeToggle', () => {
   let history: History<unknown>;

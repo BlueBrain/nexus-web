@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { useNexusContext } from '@bbp/react-nexus';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { View } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Tooltip } from 'antd';
+import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 const useLinkToDashboardQueryEditor = (
   viewId: string,
@@ -45,7 +45,7 @@ const useLinkToDashboardQueryEditor = (
               View query in Elastic Search Query Editor
             </Link>{' '}
             {' | '}
-            <a href={dashboardSPARQLDocumentationURL} target="_blank">
+            <a href={dashboardSPARQLDocumentationURL} target="_blank" rel="noreferrer">
               Read Docs
             </a>
           </span>
@@ -66,7 +66,7 @@ const useLinkToDashboardQueryEditor = (
             View query in Sparql Editor
           </Link>{' '}
           {' | '}
-          <a href={dashboardSPARQLDocumentationURL} target="_blank">
+          <a href={dashboardSPARQLDocumentationURL} target="_blank" rel="noreferrer">
             Read Docs
           </a>
         </span>

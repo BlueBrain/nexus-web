@@ -1,8 +1,10 @@
-import React from 'react';
-import { SubAppCardItem } from '../../molecules';
-import { useDispatch } from 'react-redux';
-import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
 import './styles.scss';
+
+import React from 'react';
+import { useDispatch } from 'react-redux';
+
+import { ModalsActionsEnum } from '../../../shared/store/actions/modals';
+import { SubAppCardItem } from '../../molecules';
 
 type AppDetails = {
   key: React.Key;

@@ -1,11 +1,11 @@
 import {
-  GraphAnalyticsProperty,
   getUniquePathsForProperties,
+  GraphAnalyticsProperty,
 } from './DataExplorerUtils';
 import {
+  checkPathExistence,
   doesResourceContain,
   getAllPaths,
-  checkPathExistence,
 } from './PredicateSelector';
 
 describe('DataExplorerSpec-Utils', () => {

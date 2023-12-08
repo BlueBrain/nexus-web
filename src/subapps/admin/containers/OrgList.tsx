@@ -1,5 +1,6 @@
-import * as React from 'react';
 import { OrgResponseCommon } from '@bbp/nexus-sdk/es';
+import * as React from 'react';
+
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
 
 const OrgListContainer: React.FunctionComponent<{

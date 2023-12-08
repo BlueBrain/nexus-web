@@ -1,17 +1,17 @@
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk/es';
+import { message } from 'antd';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { message } from 'antd';
-import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk/es';
 
-import { uuidv4 } from '../utils';
+import { ResourceBoardList } from '../components/ResourceList';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
+import useLocalStorage from '../hooks/useLocalStorage';
+import useQueryString from '../hooks/useQueryString';
+import { RootState } from '../store/reducers';
+import { uuidv4 } from '../utils';
 import ResourceListContainer, {
   decodeShareableList,
 } from './ResourceListContainer';
-import { ResourceBoardList } from '../components/ResourceList';
-import useLocalStorage from '../hooks/useLocalStorage';
-import { RootState } from '../store/reducers';
-import useQueryString from '../hooks/useQueryString';
 
 export const DEFAULT_LIST: ResourceBoardList = {
   name: 'Default Query',

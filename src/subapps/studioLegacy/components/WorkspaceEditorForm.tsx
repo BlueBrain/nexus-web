@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk/es';
-import { Input, Form, Tooltip, Button } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { Button,Form, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import * as React from 'react';
 
 export type WorkspaceResource = Resource<{
   label: string;

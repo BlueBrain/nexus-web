@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_SPARQL_VIEW_ID } from '@bbp/nexus-sdk/es';
-
+import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
+import * as React from 'react';
+
 import {
   distanceFromTopToDisplay,
   parseNexusError,

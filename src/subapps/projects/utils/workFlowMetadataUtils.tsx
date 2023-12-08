@@ -1,13 +1,14 @@
-import { ProjectMetadata } from '../components/ProjectForm';
-import { Exception } from 'handlebars';
 import { NexusClient } from '@bbp/nexus-sdk/es';
+import { Exception } from 'handlebars';
+
+import { TErrorWithType } from '../../../utils/types';
+import { ProjectMetadata } from '../components/ProjectForm';
+import fusionConfig from '../config';
 import {
-  WORKFLOW_STEP_CONTEXT,
   FUSION_TABLE_CONTEXT,
   PROJECT_METADATA_CONTEXT,
+  WORKFLOW_STEP_CONTEXT,
 } from '../fusionContext';
-import { TErrorWithType } from '../../../utils/types';
-import fusionConfig from '../config';
 
 /**
  *

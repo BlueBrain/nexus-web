@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { Modal, message } from 'antd';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import { message,Modal } from 'antd';
+import * as React from 'react';
 
-import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 import useNotification, {
   NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import WorkspaceEditorForm from '../components/WorkspaceEditorForm';
 
 const DEFAULT_WORKSPACE_TYPE = 'StudioWorkspace';
 

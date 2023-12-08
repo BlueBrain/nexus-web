@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { Cascader, Form, Button, Spin, Modal } from 'antd';
-import { DefaultOptionType } from 'antd/lib/cascader';
+import './ResourceForm.scss';
+
 import { ResourcePayload } from '@bbp/nexus-sdk/es';
+import { Button, Cascader, Form, Modal,Spin } from 'antd';
+import { DefaultOptionType } from 'antd/lib/cascader';
+import * as React from 'react';
 
 import ResourceEditor from '../ResourceEditor';
 import {
   DEFAULT_RESOURCE,
-  RESOURCES_SCHEMA_URI,
   DEFAULT_RESOURCES,
+  RESOURCES_SCHEMA_URI,
 } from './defaultResourcePayloads';
-
-import './ResourceForm.scss';
 
 const AVAILABLE_SCHEMAS: DefaultOptionType[] = [
   {

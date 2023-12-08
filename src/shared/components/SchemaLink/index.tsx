@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
+import * as React from 'react';
 
 const SchemaLink: React.FunctionComponent<{
   resource: Resource;
@@ -16,7 +16,7 @@ const SchemaLink: React.FunctionComponent<{
           e.preventDefault();
           goToSchema();
         }
-      }}
+      }} rel="noreferrer"
     >
       {constrainedBy}
     </a>

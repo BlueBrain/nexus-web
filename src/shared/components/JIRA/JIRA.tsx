@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import * as React from 'react';
+
 import { getFriendlyTimeAgoString } from '../../utils';
 
 const AuthorizeJiraUI = ({
@@ -32,7 +33,7 @@ const AuthorizeJiraUI = ({
           Visit Jira to log-in and authorize access to Jira from Nexus Fusion
           <br />
           <br />
-          <a href={jiraAuthUrl} target="_blank">
+          <a href={jiraAuthUrl} target="_blank" rel="noreferrer">
             Authorize Jira access
           </a>
           <br />
@@ -205,7 +206,7 @@ export const LinkIssueUI = ({
         onOk={() => onOk(issueKey)}
         onCancel={() => onCancel()}
       >
-        <a href={searchJiraLink} target="_blank">
+        <a href={searchJiraLink} target="_blank" rel="noreferrer">
           Search for issue in Jira
         </a>
         <br />
@@ -378,7 +379,7 @@ const JIRAPluginUI = ({
               title: 'Issue',
               render: issue => {
                 return (
-                  <a href={issue.url} target="_blank">
+                  <a href={issue.url} target="_blank" rel="noreferrer">
                     {issue.summary}
                   </a>
                 );

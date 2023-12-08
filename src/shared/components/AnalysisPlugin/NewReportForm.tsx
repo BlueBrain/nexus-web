@@ -1,12 +1,14 @@
-import * as React from 'react';
-import { Form, Button, Input, Select, Typography } from 'antd';
 import './NewReportForm.scss';
-import CategoryWidget from './CategoryWidget';
-import TypeWidget from './TypeWidget';
+
+import { Button, Form, Input, Select, Typography } from 'antd';
 import { without } from 'lodash';
-import { NewReportFormProps } from '../../types/plugins/report';
+import * as React from 'react';
+
 import { initialize, saveReport } from '../../slices/plugins/report';
+import { NewReportFormProps } from '../../types/plugins/report';
+import CategoryWidget from './CategoryWidget';
 import ToolsEdit from './ToolsEdit';
+import TypeWidget from './TypeWidget';
 
 const { Option } = Select;
 const { TextArea } = Input;

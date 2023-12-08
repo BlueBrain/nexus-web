@@ -1,20 +1,22 @@
 import '@testing-library/jest-dom';
+
+import { createNexusClient } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
+import { ConnectedRouter } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
 import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
-import { ConnectedRouter } from 'connected-react-router';
+
+import { configureStore } from '../../store';
 import {
-  render,
   fireEvent,
-  waitFor,
+  render,
   screen,
   server,
+  waitFor,
 } from '../../utils/testUtil';
-import { configureStore } from '../../store';
 import StudiosPage from './StudiosPage';
 
 describe('StudiosPage', () => {

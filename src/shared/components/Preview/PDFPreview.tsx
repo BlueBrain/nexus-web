@@ -1,9 +1,10 @@
-import * as React from 'react';
 import { Alert, Button } from 'antd';
+import * as React from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
 import './PDFThumbnail.scss';
 import './PDFPreview.scss';
+
 import {
   CloseOutlined,
   EyeOutlined,
@@ -11,8 +12,9 @@ import {
   LoadingOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import useMeasure from '../../hooks/useMeasure';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+
+import useMeasure from '../../hooks/useMeasure';
 
 type PDFThumbnailProps = {
   url: string;

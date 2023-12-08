@@ -1,21 +1,22 @@
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useDispatch } from 'react-redux';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { Resource } from '@bbp/nexus-sdk/es';
+
 import {
-  TDELink,
   AddNewNodeDataExplorerGraphFlow,
   InitNewVisitDataExplorerGraphView,
+  TDELink,
 } from '../../store/reducers/data-explorer';
 import {
   getNormalizedTypes,
   getOrgAndProjectFromProjectId,
   getResourceLabel,
 } from '../../utils';
-import { parseResourceId } from '../Preview/Preview';
 import { download } from '../../utils/download';
-import { getDataExplorerResourceItemArray } from './editorUtils';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
+import { parseResourceId } from '../Preview/Preview';
+import { getDataExplorerResourceItemArray } from './editorUtils';
 
 const useResolvedLinkEditorPopover = () => {
   const nexus = useNexusContext();

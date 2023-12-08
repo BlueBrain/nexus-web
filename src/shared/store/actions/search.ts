@@ -1,7 +1,8 @@
 import { Resource } from '@bbp/nexus-sdk/es';
 import { ActionCreator, AnyAction, Dispatch } from 'redux';
-import { ThunkAction } from '..';
+
 import { ResultTableFields } from '../../types/search';
+import { ThunkAction } from '..';
 import { RootState } from '../reducers';
 import {
   FacetConfig,
@@ -109,7 +110,7 @@ export const fetchSearchConfigs: ActionCreator<ThunkAction> = () => {
               )) as Resource
           ) as Promise<
             Resource<{
-              label: String;
+              label: string;
               view: string;
               description?: string;
               fields?: ResultTableFields[];

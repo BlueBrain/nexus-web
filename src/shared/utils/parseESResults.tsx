@@ -1,21 +1,22 @@
-import * as React from 'react';
-import { Tooltip } from 'antd';
 import { Resource } from '@bbp/nexus-sdk/es';
+import { Tooltip } from 'antd';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { FilterConfigByColumnFn } from 'shared/hooks/useAccessDataForTable';
 import { match } from 'ts-pattern';
-import { UseSearchResponse } from '../hooks/useSearchQuery';
+
 import TypesIconList from '../components/Types/TypesIcon';
+import { UseSearchResponse } from '../hooks/useSearchQuery';
+import { RootState } from '../store/reducers';
+import { ResultTableFields } from '../types/search';
 import {
-  getResourceLabel,
-  parseJsonMaybe,
-  isURL,
   deltaUrlToFusionUrl,
+  getResourceLabel,
+  isURL,
+  parseJsonMaybe,
 } from '.';
 import { convertMarkdownHandlebarStringWithData } from './markdownTemplate';
 import { parseURL } from './nexusParse';
-import { ResultTableFields } from '../types/search';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/reducers';
-import { FilterConfigByColumnFn } from 'shared/hooks/useAccessDataForTable';
 
 export const rowRender = (value: string, basePath: string) => {
   // const basePath =

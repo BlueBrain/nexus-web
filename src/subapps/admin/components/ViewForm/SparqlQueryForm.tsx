@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Button } from 'antd';
-import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
-
-import SparqlQueryResults, { NexusSparqlError } from './SparqlQueryResults';
-import SparqlQueryInput from './SparqlQueryInput';
-
 import './view-form.scss';
+
+import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
+import { Button } from 'antd';
+import * as React from 'react';
+
+import SparqlQueryInput from './SparqlQueryInput';
+import SparqlQueryResults, { NexusSparqlError } from './SparqlQueryResults';
 
 const SparqlQueryForm: React.FunctionComponent<{
   query: string;

@@ -1,12 +1,14 @@
-import React, { Fragment } from 'react';
+import './styles.scss';
+
 import { clsx } from 'clsx';
-import { TNavigationStackSide } from '../../store/reducers/data-explorer';
+import React, { Fragment } from 'react';
+
 import {
   NavigationStackItem,
   NavigationStackShrinkedItem,
 } from '../../molecules/DataExplorerGraphFlowMolecules';
+import { TNavigationStackSide } from '../../store/reducers/data-explorer';
 import useNavigationStackManager from './useNavigationStack';
-import './styles.scss';
 
 const NavigationStack = ({ side }: { side: TNavigationStackSide }) => {
   const {

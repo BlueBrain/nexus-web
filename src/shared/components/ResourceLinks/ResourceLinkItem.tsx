@@ -1,9 +1,11 @@
-import * as React from 'react';
-import { Tooltip } from 'antd';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk/es';
-import TypesIconList from '../Types/TypesIcon';
 import './ResourceLinkItem.scss';
+
+import { Resource,ResourceLink } from '@bbp/nexus-sdk/es';
+import { Tooltip } from 'antd';
+import * as React from 'react';
+
 import { labelOf } from '../../utils';
+import TypesIconList from '../Types/TypesIcon';
 
 export type ResourceLinkAugmented = ResourceLink &
   Resource & {
@@ -38,7 +40,7 @@ const ResourceLinkItem: React.FunctionComponent<{
           {isInternal ? (
             labelOf(link['originalLinkID'])
           ) : (
-            <a href={link['originalLinkID']} target="_blank">
+            <a href={link['originalLinkID']} target="_blank" rel="noreferrer">
               {link['originalLinkID']}
             </a>
           )}

@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { Input, Form, Tooltip, Button, Alert } from 'antd';
-import { View } from '@bbp/nexus-sdk/es';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { View } from '@bbp/nexus-sdk/es';
+import { Alert,Button, Form, Input, Tooltip } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
+import * as React from 'react';
 
+import ElasticSearchQueryInput from '../../../admin/components/ViewForm/ElasticSearchQueryInput';
+import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
 import DEFAULT_DASHBOARD_VIEW_QUERY, {
   DEFAULT_DASHBOARD_ES_VIEW_QUERY,
 } from './DefaultDashboardViewQuery';
-import SparqlQueryFormInput from '../../../admin/components/ViewForm/SparqlQueryInput';
-import ElasticSearchQueryInput from '../../../admin/components/ViewForm/ElasticSearchQueryInput';
 
 export type DashboardPayload = {
   description?: string;

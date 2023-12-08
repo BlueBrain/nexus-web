@@ -1,9 +1,9 @@
+import './NewTableForm.scss';
+
+import { Button, Form, Input, Spin } from 'antd';
 import * as React from 'react';
-import { Form, Input, Button, Spin } from 'antd';
 
 import { isEmptyInput } from '../utils';
-
-import './NewTableForm.scss';
 
 const { Item } = Form;
 

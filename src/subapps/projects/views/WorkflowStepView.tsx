@@ -1,31 +1,31 @@
+import './WorkflowStepView.scss';
+
+import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Modal, Spin } from 'antd';
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk/es';
-import { Modal, Spin } from 'antd';
-import { useProjectsSubappContext } from '..';
-import ProjectPanel from '../components/ProjectPanel';
-import StepsBoard from '../components/WorkflowSteps/StepsBoard';
-import Breadcrumbs from '../components/Breadcrumbs';
-import SingleStepContainer from '../containers/SingleStepContainer';
-import StepInfoContainer from '../containers/StepInfoContainer';
-import { fetchChildrenForStep, isTable } from '../utils';
 
-import InputsContainer from '../containers/InputsContainer';
-import TableContainer from '../containers/DraggableTablesContainer';
-import AddComponentButton from '../components/AddComponentButton';
-import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import fusionConfig from '../config';
-import { StepResource, WorkflowStepMetadata } from '../types';
-import NewTableContainer from '../containers/NewTableContainer';
-import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
-
-import './WorkflowStepView.scss';
-import { makeInputTable, makeActivityTable } from '../utils/tableUtils';
-import { labelOf } from '../../../shared/utils';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
+import { labelOf } from '../../../shared/utils';
+import { useProjectsSubappContext } from '..';
+import AddComponentButton from '../components/AddComponentButton';
+import Breadcrumbs from '../components/Breadcrumbs';
+import ProjectPanel from '../components/ProjectPanel';
+import StepsBoard from '../components/WorkflowSteps/StepsBoard';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import TableContainer from '../containers/DraggableTablesContainer';
+import InputsContainer from '../containers/InputsContainer';
+import NewTableContainer from '../containers/NewTableContainer';
+import SingleStepContainer from '../containers/SingleStepContainer';
+import StepInfoContainer from '../containers/StepInfoContainer';
+import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
+import { StepResource, WorkflowStepMetadata } from '../types';
+import { fetchChildrenForStep, isTable } from '../utils';
+import { makeActivityTable,makeInputTable } from '../utils/tableUtils';
 
 type BreadcrumbItem = {
   label: string;

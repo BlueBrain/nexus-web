@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Tag } from 'antd';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
-
 import './ProjectItem.scss';
+
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import { Tag } from 'antd';
+import * as React from 'react';
 
 const ProjectItem: React.FunctionComponent<ProjectResponseCommon> = props => {
   return (

@@ -1,5 +1,6 @@
+import { Checkbox, Col, Row, Select } from 'antd';
 import * as React from 'react';
-import { Row, Col, Checkbox, Select } from 'antd';
+
 import { TableColumn } from '../containers/DataTableContainer';
 
 export enum ColumnTypes {

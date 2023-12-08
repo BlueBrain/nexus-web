@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import { NexusProvider } from '@bbp/react-nexus';
+
 import { createNexusClient } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
+import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+
 import { act, render, screen, server, waitFor } from '../../../utils/testUtil';
 import AppInfo, { EnvironmentInfo } from './AppInfo';
 

@@ -1,43 +1,43 @@
+import './AnalysisPlugin.scss';
+
 import {
-  LeftSquareFilled,
-  FolderAddOutlined,
-  EditOutlined,
-  MessageOutlined,
   CalendarOutlined,
+  EditOutlined,
+  FolderAddOutlined,
+  LeftSquareFilled,
+  MessageOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
 import { Button, Collapse, Input, Modal } from 'antd';
-import { without, intersection, uniq, flatten, map } from 'lodash';
-import * as React from 'react';
-import { getUsername } from '../../../shared/utils';
-import FriendlyTimeAgo from '../FriendlyDate';
-import './AnalysisPlugin.scss';
+import { flatten, intersection, map,uniq, without } from 'lodash';
 import moment from 'moment';
-import CategoryWidget from './CategoryWidget';
-import TypeWidget from './TypeWidget';
-import TypeEditWidget from './TypeEditWidget';
-import CategoryEditWidget from './CategoryEditWidget';
-import ReportAssets from './ReportAssets';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
-import NewReportForm from './NewReportForm';
+import { getUsername } from '../../../shared/utils';
 import {
-  editReport,
-  changeAnalysisName,
-  closeFileUploadDialog,
-  initialize,
-  changeAnalysisDescription,
   addReport,
+  changeAnalysisDescription,
+  changeAnalysisName,
   changeTools,
+  closeFileUploadDialog,
+  editReport,
+  initialize,
 } from '../../slices/plugins/report';
-
 import {
   AnalysisPluginProps,
   SoftwareContribution,
 } from '../../types/plugins/report';
+import FriendlyTimeAgo from '../FriendlyDate';
+import CategoryEditWidget from './CategoryEditWidget';
+import CategoryWidget from './CategoryWidget';
+import NewReportForm from './NewReportForm';
+import ReportAssets from './ReportAssets';
 import Tools from './Tools';
 import ToolsEdit from './ToolsEdit';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
+import TypeEditWidget from './TypeEditWidget';
+import TypeWidget from './TypeWidget';
 
 const AnalysisPlugin = ({
   analysisResourceType,

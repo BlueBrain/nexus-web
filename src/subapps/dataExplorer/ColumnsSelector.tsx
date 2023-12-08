@@ -1,9 +1,10 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { Input, Select, Col } from 'antd';
-import { normalizeString } from '../../utils/stringUtils';
-import { RowRenderer } from '../../shared/molecules/TypeSelector/TypeSelector';
-import Light from '../../shared/components/Icons/Light';
+import { Col,Input, Select } from 'antd';
 import { orderBy } from 'lodash';
+import React, { useEffect, useReducer, useState } from 'react';
+
+import Light from '../../shared/components/Icons/Light';
+import { RowRenderer } from '../../shared/molecules/TypeSelector/TypeSelector';
+import { normalizeString } from '../../utils/stringUtils';
 
 export type TColumn = { value: string; selected: boolean; key: string };
 type TColumnsSelectorProps = {

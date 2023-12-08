@@ -1,12 +1,12 @@
 import * as React from 'react';
-import progressIcon from '../../../shared/images/progressIcon.svg';
-import blockedIcon from '../../../shared/images/blockedStatus.svg';
-import todoIcon from '../../../shared/images/todoStatus.svg';
-import doneIcon from '../../../shared/images/done.svg';
-import progressIconMini from '../../../shared/images/progressIconMini.svg';
-import blockedIconMini from '../../../shared/images/blockedIconMini.svg';
-import doneIconMini from '../../../shared/images/doneIconMini.svg';
 
+import blockedIconMini from '../../../shared/images/blockedIconMini.svg';
+import blockedIcon from '../../../shared/images/blockedStatus.svg';
+import doneIcon from '../../../shared/images/done.svg';
+import doneIconMini from '../../../shared/images/doneIconMini.svg';
+import progressIcon from '../../../shared/images/progressIcon.svg';
+import progressIconMini from '../../../shared/images/progressIconMini.svg';
+import todoIcon from '../../../shared/images/todoStatus.svg';
 import { Status } from '../types';
 
 const StatusIcon: React.FC<{

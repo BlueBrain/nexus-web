@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import {
   DEFAULT_SPARQL_VIEW_ID,
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 
 import SparqlQueryForm from '../components/ViewForm/SparqlQueryForm';
 

@@ -1,12 +1,12 @@
+import { get } from 'lodash';
 import * as React from 'react';
 import { Redirect, useLocation, useRouteMatch } from 'react-router';
-import { get } from 'lodash';
 
-import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
 import OrganizationProjectsPage from '../../pages/OrganizationProjectsPage/OrganizationProjectsPage';
+import OrganizationListPage from '../../pages/OrganizationsListPage/OrganizationListPage';
 import ProjectView from '../../pages/ProjectPage/ProjectPage';
-import { SubApp } from '..';
 import icon from '../../shared/images/dbIcon.svg';
+import { SubApp } from '..';
 
 const subAppType = 'internal';
 const title = 'Admin';

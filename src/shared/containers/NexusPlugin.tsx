@@ -1,10 +1,10 @@
 /**
  * This component requires SystemJS to be available globally (in window)
  */
-import * as React from 'react';
-import invariant from 'ts-invariant';
 import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { Result } from 'antd';
+import * as React from 'react';
+import invariant from 'ts-invariant';
 
 import Loading from '../components/Loading';
 

@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Col, Row, Button, Select } from 'antd';
-import moment from 'moment';
-
-import { getDateString, getUsername, labelOf } from '../../../shared/utils';
-import TypesIconList from '../../../shared/components/Types/TypesIcon';
-
 import './LinkActivityForm.scss';
+
+import { Button, Col, Row, Select } from 'antd';
+import moment from 'moment';
+import * as React from 'react';
+
+import TypesIconList from '../../../shared/components/Types/TypesIcon';
+import { getDateString, getUsername, labelOf } from '../../../shared/utils';
 
 const { Option } = Select;
 

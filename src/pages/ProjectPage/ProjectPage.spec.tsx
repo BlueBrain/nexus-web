@@ -1,22 +1,24 @@
 import '@testing-library/jest-dom/vitest';
-import * as React from 'react';
-import fetch from 'node-fetch';
-import { rest } from 'msw';
-import { NexusProvider } from '@bbp/react-nexus';
+
 import { createNexusClient } from '@bbp/nexus-sdk';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { render, server, screen, waitFor } from '../../utils/testUtil';
+import { NexusProvider } from '@bbp/react-nexus';
+import { createMemoryHistory } from 'history';
+import { rest } from 'msw';
+import fetch from 'node-fetch';
+import * as React from 'react';
 import { act } from 'react-dom/test-utils';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { Route, MemoryRouter } from 'react-router-dom';
-import { configureStore } from '../../store';
+import { MemoryRouter,Route } from 'react-router-dom';
+
 import {
   getNotificationContextValue,
   NotificationContext,
   NotificationContextType,
 } from '../../shared/hooks/useNotification';
+import { configureStore } from '../../store';
+import { render, screen, server, waitFor } from '../../utils/testUtil';
 import ProjectPage from './ProjectPage';
-import { createMemoryHistory } from 'history';
 
 describe('ProjectPage', () => {
   // establish API mocking before all tests

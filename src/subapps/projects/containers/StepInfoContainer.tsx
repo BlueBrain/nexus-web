@@ -1,22 +1,23 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Drawer, Button } from 'antd';
 import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button,Drawer } from 'antd';
+import * as React from 'react';
+import { useHistory } from 'react-router-dom';
+
+import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
+import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
+import useNotification, {
+  parseNexusError,
+} from '../../../shared/hooks/useNotification';
+import { labelOf } from '../../../shared/utils';
+import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
+import fusionConfig from '../config';
+import { StepResource } from '../types';
 import {
   fetchChildrenForStep,
   fetchTablesForStep,
   fetchTopLevelSteps,
 } from '../utils';
-import { StepResource } from '../types';
-import WorkflowStepWithActivityForm from '../components/WorkflowSteps/WorkflowStepWithActivityForm';
-import fusionConfig from '../config';
-import MarkdownEditorComponent from '../../../shared/components/MarkdownEditor';
-import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
-import { labelOf } from '../../../shared/utils';
-import { useHistory } from 'react-router-dom';
-import useNotification, {
-  parseNexusError,
-} from '../../../shared/hooks/useNotification';
 
 const StepInfoContainer: React.FC<{
   step: StepResource;

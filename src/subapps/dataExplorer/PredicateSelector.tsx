@@ -1,23 +1,24 @@
-import React, { useEffect, useRef } from 'react';
+import './styles.scss';
+
 import { UndoOutlined } from '@ant-design/icons';
-import { Button, Form, Input, Select, Tooltip } from 'antd';
 import { Resource } from '@bbp/nexus-sdk/es';
+import { Button, Form, Input, Select, Tooltip } from 'antd';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';
+import React, { useEffect, useRef } from 'react';
+
 import { TType } from '../../shared/molecules/TypeSelector/types';
 import { normalizeString } from '../../utils/stringUtils';
 import { TColumn } from './ColumnsSelector';
 import { DataExplorerConfiguration } from './DataExplorer';
 import {
-  PropertyPath,
   columnFromPath,
   isObject,
   isUserColumn,
+  PropertyPath,
   sortColumns,
   useGraphAnalyticsPath,
 } from './DataExplorerUtils';
-
-import './styles.scss';
 
 interface Props {
   columns: TColumn[];

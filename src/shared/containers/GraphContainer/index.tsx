@@ -1,22 +1,21 @@
+import { Resource,ResourceLink } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
-import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk/es';
 
-import { getResourceLabel, getOrgAndProjectFromResource } from '../../utils';
+import { TError } from '../../../utils/types';
 import Graph, { ElementNodeData } from '../../components/Graph';
 import GraphControlPanel from '../../components/Graph/GraphControlPanel';
-
-import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
+import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 import { DEFAULT_ACTIVE_TAB_KEY } from '../../containers/ResourceViewContainer';
+import useNotification from '../../hooks/useNotification';
+import { getOrgAndProjectFromResource,getResourceLabel } from '../../utils';
+import ResourcePreviewCardContainer from './../ResourcePreviewCardContainer';
 import {
   createNodesAndEdgesFromResourceLinks,
-  makeNode,
   getListOfChildrenRecursive,
+  makeNode,
 } from './Graph';
-import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
-import useNotification from '../../hooks/useNotification';
-import { TError } from '../../../utils/types';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;

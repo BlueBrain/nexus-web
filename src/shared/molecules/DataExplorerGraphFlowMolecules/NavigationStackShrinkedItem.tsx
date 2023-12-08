@@ -1,11 +1,13 @@
-import React from 'react';
+import './styles.scss';
+
+import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
-import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import './styles.scss';
+import React from 'react';
+import { useDispatch,useSelector } from 'react-redux';
 import { TDELink } from 'shared/store/reducers/data-explorer';
+
+import { RootState } from '../../store/reducers';
 
 const BORDER_ITEMS = 2;
 const NavigationStackShrinkedItem = ({

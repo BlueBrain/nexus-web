@@ -1,28 +1,29 @@
-import * as React from 'react';
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import {
-  Input,
-  Modal,
-  Row,
-  notification,
   Button,
   Col,
   Collapse,
   Form,
+  Input,
+  Modal,
+  notification,
+  Row,
   Select,
   Space,
 } from 'antd';
-import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import * as React from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useDispatch,useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector, useDispatch } from 'react-redux';
-import { useOrganisationsSubappContext } from '../../../subapps/admin';
+
 import {
   ModalsActionsEnum,
   updateProjectModalVisibility,
 } from '../../../shared/store/actions/modals';
 import { RootState } from '../../../shared/store/reducers';
+import { useOrganisationsSubappContext } from '../../../subapps/admin';
 
 type TProject = {
   organization: string;

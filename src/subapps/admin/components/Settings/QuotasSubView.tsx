@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import './styles.scss';
+
+import { Gauge } from '@ant-design/charts';
+import { Quota } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouteMatch } from 'react-router';
-import { Gauge } from '@ant-design/charts';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Quota } from '@bbp/nexus-sdk/es';
-import './styles.scss';
 
 type Props = {};
 type GaugeProps = {

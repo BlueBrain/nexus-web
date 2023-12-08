@@ -1,12 +1,13 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
-import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusPlugin } from '../containers/NexusPlugin';
-import PluginInfo from '../components/PluginInfo';
-import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
-import usePlugins from '../hooks/usePlugins';
+import { Collapse } from 'antd';
+import * as React from 'react';
+
 import ErrorBoundary from '../../shared/components/ErrorBoundary';
+import PluginInfo from '../components/PluginInfo';
+import { NexusPlugin } from '../containers/NexusPlugin';
+import usePlugins from '../hooks/usePlugins';
+import { matchPlugins, pluginsExcludeMap,pluginsMap } from '../utils';
 
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;

@@ -1,12 +1,14 @@
-import * as React from 'react';
-import moment from 'moment';
-import { Input, Table, Button, Tooltip, Typography } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
-import { omit, difference } from 'lodash';
-import { parseProjectUrl, isISODate, getDateString } from '../../utils/index';
-import { download } from '../../utils/download';
 import './../../styles/result-table.scss';
+
+import { DownloadOutlined } from '@ant-design/icons';
+import { Button, Input, Table, Tooltip, Typography } from 'antd';
+import { difference,omit } from 'lodash';
+import moment from 'moment';
+import * as React from 'react';
+
 import useNotification from '../../hooks/useNotification';
+import { download } from '../../utils/download';
+import { getDateString,isISODate, parseProjectUrl } from '../../utils/index';
 import FriendlyTimeAgo from '../FriendlyDate';
 
 const { Search } = Input;

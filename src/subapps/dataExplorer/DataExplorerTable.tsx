@@ -1,39 +1,40 @@
-import React, { useEffect, useReducer, forwardRef } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import './styles.scss';
+
 import { Resource } from '@bbp/nexus-sdk/es';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-import { isArray, isNil, isString, startCase } from 'lodash';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import { clsx } from 'clsx';
+import { isArray, isNil, isString, startCase } from 'lodash';
+import React, { forwardRef,useEffect, useReducer } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import {
-  MAX_DATA_SELECTED_SIZE__IN_BYTES,
-  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
-  TDataSource,
-  TResourceTableData,
   getLocalStorageSize,
   makeOrgProjectTuple,
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   notifyTotalSizeExeeced,
+  TDataSource,
+  TResourceTableData,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
-import isValidUrl from '../../utils/validUrl';
-import { NoDataCell } from './NoDataCell';
-import {
-  DataExplorerConfiguration,
-  updateSelectedFiltersCached,
-} from './DataExplorer';
-import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
-import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../../shared/organisms/DataPanel/DataPanel';
+import { makeResourceUri, parseProjectUrl } from '../../shared/utils';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
-import './styles.scss';
+import isValidUrl from '../../utils/validUrl';
+import {
+  DataExplorerConfiguration,
+  updateSelectedFiltersCached,
+} from './DataExplorer';
+import { FUSION_TITLEBAR_HEIGHT } from './DataExplorerCollapsibleHeader';
+import { NoDataCell } from './NoDataCell';
 
 interface TDataExplorerTable {
   isLoading: boolean;

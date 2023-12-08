@@ -1,14 +1,15 @@
 import { RouteProps } from 'react-router-dom';
-import ResourceView from './views/ResourceView';
-import UserPage from '../pages/UserPage/UserPage';
-import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
-import Home from '../pages/HomePage/HomePage';
-import IdentityPage from '../pages/IdentityPage/IdentityPage';
-import StudioRedirectView from './views/StudioRedirectView';
-import MyDataPage from '../pages/MyDataPage/MyDataPage';
+
 import DataExplorerGraphFlowPage from '../pages/DataExplorerGraphFlowPage/DataExplorerGraphFlowPage';
 import DataExplorerPage from '../pages/DataExplorerPage/DataExplorerPage';
+import Home from '../pages/HomePage/HomePage';
+import IdentityPage from '../pages/IdentityPage/IdentityPage';
 import IDResolveRedirectionPage from '../pages/IDResolutionPage/IDResolveRedirectionPage';
+import MyDataPage from '../pages/MyDataPage/MyDataPage';
+import ProjectsPage from '../pages/ProjectsPage/ProjectsPage';
+import UserPage from '../pages/UserPage/UserPage';
+import ResourceView from './views/ResourceView';
+import StudioRedirectView from './views/StudioRedirectView';
 
 type TRoutePropsExtended = RouteProps & { protected: boolean };
 

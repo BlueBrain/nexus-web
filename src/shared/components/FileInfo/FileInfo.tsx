@@ -1,3 +1,5 @@
+import './FileInfo.scss';
+
 import {
   CalendarOutlined,
   EditOutlined,
@@ -8,9 +10,9 @@ import TextArea from 'antd/lib/input/TextArea';
 import Paragraph from 'antd/lib/typography/Paragraph';
 import moment from 'moment';
 import * as React from 'react';
+
 import { getUsername } from '../../utils';
 import FriendlyTimeAgo from '../FriendlyDate';
-import './FileInfo.scss';
 
 type FileInfoProps = {
   text: string;

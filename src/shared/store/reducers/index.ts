@@ -1,12 +1,13 @@
 import { StaticRouterProps } from 'react-router';
 import { UserState } from 'redux-oidc';
+
+import analysisUIReducer from '../../slices/plugins/report';
 import auth, { AuthState } from './auth';
 import config, { ConfigState } from './config';
-import searchReducer, { SearchState } from './search';
-import uiSettingsReducer, { UISettingsState } from './ui-settings';
 import dataExplorerReducer, { TDataExplorerState } from './data-explorer';
 import modalsReducer, { modalsState } from './modals';
-import analysisUIReducer from '../../slices/plugins/report';
+import searchReducer, { SearchState } from './search';
+import uiSettingsReducer, { UISettingsState } from './ui-settings';
 
 export interface RootState {
   auth: AuthState;

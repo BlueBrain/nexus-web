@@ -1,10 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { vi, describe } from 'vitest';
-import { Resource, createNexusClient } from '@bbp/nexus-sdk';
-import { NexusProvider } from '@bbp/react-nexus';
-import { RenderResult, act, fireEvent, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+
 import {
   dataExplorerPageHandler,
   elasticSearchQueryHandler,
@@ -15,12 +10,23 @@ import {
   sourceResourceHandler,
 } from '__mocks__/handlers/DataExplorer/handlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { createNexusClient,Resource } from '@bbp/nexus-sdk';
+import { NexusProvider } from '@bbp/react-nexus';
+import { act, fireEvent, RenderResult, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { createMemoryHistory } from 'history';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { describe,vi } from 'vitest';
+
+import { configureStore } from '../../store';
 import { render, screen, waitFor } from '../../utils/testUtil';
 import DataExplorer from './DataExplorer';
-import { AllProjects } from './ProjectSelector';
 import { getColumnTitle } from './DataExplorerTable';
+import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 import {
   CONTAINS,
   DOES_NOT_CONTAIN,
@@ -28,11 +34,7 @@ import {
   EXISTS,
   FRONTEND_PREDICATE_WARNING,
 } from './PredicateSelector';
-import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { configureStore } from '../../store';
-import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
+import { AllProjects } from './ProjectSelector';
 
 window.scrollTo = vi.fn();
 

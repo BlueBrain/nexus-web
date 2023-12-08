@@ -1,42 +1,44 @@
-import React, {
-  Fragment,
-  useMemo,
-  useReducer,
-  useEffect,
-  useState,
-  CSSProperties,
-} from 'react';
-import { Button, Empty, Table, Tag, Tooltip, notification } from 'antd';
+import './styles.scss';
+
 import {
   CaretDownOutlined,
   CaretUpOutlined,
   VerticalAlignMiddleOutlined,
 } from '@ant-design/icons';
-import { Link, useHistory, useLocation } from 'react-router-dom';
 import { PaginatedList, Resource } from '@bbp/nexus-sdk/es';
-import { isString, isArray, isNil } from 'lodash';
-import { clsx } from 'clsx';
-import { useSelector } from 'react-redux';
+import { useNexusContext } from '@bbp/react-nexus';
+import PromisePool from '@supercharge/promise-pool';
+import { Button, Empty, notification,Table, Tag, Tooltip } from 'antd';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
-import {
-  DataPanelEvent,
-  DATA_PANEL_STORAGE,
-  DATA_PANEL_STORAGE_EVENT,
-} from '../../organisms/DataPanel/DataPanel';
-import { RootState } from '../../../shared/store/reducers';
+import { clsx } from 'clsx';
+import { isArray, isNil,isString } from 'lodash';
+import React, {
+  CSSProperties,
+  Fragment,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useHistory, useLocation } from 'react-router-dom';
+
 import { TFilterOptions } from '../../../shared/canvas/MyData/types';
-import timeago from '../../../utils/timeago';
-import isValidUrl from '../../../utils/validUrl';
-import './styles.scss';
+import { fetchResourceForDownload } from '../../../shared/hooks/useAccessDataForTable';
+import { RootState } from '../../../shared/store/reducers';
+import { getResourceLabel } from '../../../shared/utils';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
-import { getResourceLabel } from '../../../shared/utils';
-import { useNexusContext } from '@bbp/react-nexus';
-import { fetchResourceForDownload } from '../../../shared/hooks/useAccessDataForTable';
-import PromisePool from '@supercharge/promise-pool';
+import timeago from '../../../utils/timeago';
+import isValidUrl from '../../../utils/validUrl';
+import {
+  DATA_PANEL_STORAGE,
+  DATA_PANEL_STORAGE_EVENT,
+  DataPanelEvent,
+} from '../../organisms/DataPanel/DataPanel';
 
 export const MAX_DATA_SELECTED_SIZE__IN_BYTES = 1_073_741_824;
 export const MAX_LOCAL_STORAGE_ALLOWED_SIZE = 4.5;

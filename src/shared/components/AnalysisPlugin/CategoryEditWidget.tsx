@@ -1,8 +1,10 @@
-import * as React from 'react';
-import { Select, Form } from 'antd';
 import './CategoryTypeEdits.scss';
-import { CategoryEditWidgetProps } from '../../types/plugins/report';
+
+import { Form,Select } from 'antd';
+import * as React from 'react';
+
 import { changeAnalysisCategories } from '../../slices/plugins/report';
+import { CategoryEditWidgetProps } from '../../types/plugins/report';
 
 const CategoryEditWidget = ({
   allCategories,

@@ -1,37 +1,37 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Spin, List, Input, Alert, Tag } from 'antd';
-import { Link, useParams } from 'react-router-dom';
-import { useInfiniteQuery } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
+import '../../shared/styles/route-layout.scss';
+
+import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
 import {
   NexusClient,
-  ResourceList,
-  Resource,
   PaginatedList,
+  Resource,
+  ResourceList,
 } from '@bbp/nexus-sdk/es';
-import { match as pmatch } from 'ts-pattern';
-import { LoadingOutlined, RightSquareOutlined } from '@ant-design/icons';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Input, List, Spin, Tag } from 'antd';
 import pluralize from 'pluralize';
+import * as React from 'react';
+import { useInfiniteQuery } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import { match as pmatch } from 'ts-pattern';
 
+import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
+import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
+import defaultStudiosImg from '../../shared/images/neocortex.png';
+import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
+import RouteHeader from '../../shared/RouteHeader/RouteHeader';
+import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
 import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../shared/utils';
-import { RootState } from '../../shared/store/reducers';
-import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
-import RouteHeader from '../../shared/RouteHeader/RouteHeader';
-import DeprecatedIcon from '../../shared/components/Icons/DeprecatedIcon';
-import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver';
-import { updateStudioModalVisibility } from '../../shared/store/actions/modals';
+import timeago from '../../utils/timeago';
 import {
   LoadMoreFooter,
   TSort,
 } from '../OrganizationsListPage/OrganizationListPage';
-import timeago from '../../utils/timeago';
-import defaultStudiosImg from '../../shared/images/neocortex.png';
-
-import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

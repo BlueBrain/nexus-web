@@ -1,8 +1,8 @@
-import * as React from 'react';
-import { Progress } from 'antd';
-import { ProjectStatistics, Quota } from '@bbp/nexus-sdk/es';
-
 import './ProjectQuotas.scss';
+
+import { ProjectStatistics, Quota } from '@bbp/nexus-sdk/es';
+import { Progress } from 'antd';
+import * as React from 'react';
 
 const ProjectQuotas: React.FC<{
   quota: Quota;

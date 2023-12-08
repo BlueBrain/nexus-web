@@ -1,5 +1,5 @@
-import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { rest } from 'msw';
 
 export const dashboardResource = rest.get(
   deltaPath(

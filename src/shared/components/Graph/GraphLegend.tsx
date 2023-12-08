@@ -1,6 +1,6 @@
-import * as React from 'react';
-
 import './GraphLegend.scss';
+
+import * as React from 'react';
 
 const GraphLegend: React.FunctionComponent = () => (
   <div className="legend">

@@ -1,4 +1,5 @@
 import { TTitleProps } from 'shared/canvas/MyData/types';
+
 import { prettifyNumber } from '../../../../utils/formatNumber';
 
 const PageTitle = ({ text, label, total }: TTitleProps) => {

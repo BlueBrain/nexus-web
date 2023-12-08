@@ -1,39 +1,41 @@
-import * as React from 'react';
+import '../studio.scss';
+
 import {
-  NexusClient,
+  DeleteOutlined,
+  DownOutlined,
+  EditOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
+import {
   DEFAULT_SPARQL_VIEW_ID,
+  NexusClient,
   Resource,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  DownOutlined,
-} from '@ant-design/icons';
 import PromisePool from '@supercharge/promise-pool';
+import { Button, Empty, Menu, Modal, Popover, Spin } from 'antd';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
-import { useQuery } from 'react-query';
 import { find, orderBy } from 'lodash';
-import useNotification from '../../../shared/hooks/useNotification';
+import * as React from 'react';
+import { useQuery } from 'react-query';
+
 import EditTableForm from '../../../shared/components/EditTableForm';
-import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
-import AddWorkspaceContainer from './AddWorkspaceContainer';
-import WorkspaceForm from './WorkspaceFormContainer';
-import useQueryString from '../../../shared/hooks/useQueryString';
-import StudioReactContext from './../contexts/StudioContext';
-import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
-import { ResultTableFields } from '../../../shared/types/search';
-import DashboardResultsContainer from './DashboardResultsContainer';
+import { ErrorComponent } from '../../../shared/components/ErrorComponent';
 import DataTableContainer, {
   TableResource,
   UnsavedTableResource,
 } from '../../../shared/containers/DataTableContainer';
-import STUDIO_CONTEXT from '../components/StudioContext';
+import useNotification from '../../../shared/hooks/useNotification';
+import useQueryString from '../../../shared/hooks/useQueryString';
+import { ResultTableFields } from '../../../shared/types/search';
+import { resourcesWritePermissionsWrapper } from '../../../shared/utils/permission';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
-import { ErrorComponent } from '../../../shared/components/ErrorComponent';
-import '../studio.scss';
+import STUDIO_CONTEXT from '../components/StudioContext';
+import StudioReactContext from './../contexts/StudioContext';
+import AddWorkspaceContainer from './AddWorkspaceContainer';
+import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
+import DashboardResultsContainer from './DashboardResultsContainer';
+import WorkspaceForm from './WorkspaceFormContainer';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 

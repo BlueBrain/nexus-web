@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { Modal } from 'antd';
-import { ConsentType } from '../layouts/FusionMainLayout';
+import * as React from 'react';
 import { useSelector } from 'react-redux';
+
+import { ConsentType } from '../layouts/FusionMainLayout';
 import { RootState } from '../store/reducers';
 
 declare global {

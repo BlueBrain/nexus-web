@@ -1,20 +1,22 @@
 import '@testing-library/jest-dom';
-import * as React from 'react';
-import { NexusProvider } from '@bbp/react-nexus';
+
 import { createNexusClient } from '@bbp/nexus-sdk/es';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { rest } from 'msw';
-import { Provider } from 'react-redux';
-import { configureStore } from '../../../../store';
-import { Router } from 'react-router-dom';
+import { NexusProvider } from '@bbp/react-nexus';
 import { createMemoryHistory } from 'history';
-import JIRAPluginContainer from '../JIRAPluginContainer';
-import { render, server, screen } from '../../../../utils/testUtil';
+import { rest } from 'msw';
+import * as React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+
 import {
   getNotificationContextValue,
   NotificationContext,
   NotificationContextType,
 } from '../../../../shared/hooks/useNotification';
+import { configureStore } from '../../../../store';
+import { render, screen,server } from '../../../../utils/testUtil';
+import JIRAPluginContainer from '../JIRAPluginContainer';
 
 describe('Jira Plugin Container', () => {
   // establish API mocking before all tests

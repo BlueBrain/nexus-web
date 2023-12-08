@@ -4,14 +4,14 @@ import {
   isAnyOf,
 } from '@reduxjs/toolkit';
 import {
-  slice,
   clone,
-  dropRight,
-  nth,
-  last,
   concat,
-  first,
   drop,
+  dropRight,
+  first,
+  last,
+  nth,
+  slice,
 } from 'lodash';
 
 type TProject = string;
@@ -379,9 +379,9 @@ const DataExplorerMiddlewareMatcher = isAnyOf(
   InitDataExplorerGraphFlowFullscreenVersion
 );
 export {
+  calculateDateExplorerGraphFlowDigest,
+  DataExplorerFlowSliceListener,
   DataExplorerFlowSliceName,
   DataExplorerMiddlewareMatcher,
-  DataExplorerFlowSliceListener,
-  calculateDateExplorerGraphFlowDigest,
 };
 export default dataExplorerSlice.reducer;

@@ -1,9 +1,11 @@
-import { vi } from 'vitest';
-import { render, fireEvent, screen, within } from '../../../../utils/testUtil';
-import SortConfigContainer from '../SortConfigContainer';
-import { ESSortField } from 'subapps/search/hooks/useGlobalSearch';
-import { SortDirection } from '../../../../shared/hooks/useAccessDataForTable';
 import '@testing-library/jest-dom';
+
+import { ESSortField } from 'subapps/search/hooks/useGlobalSearch';
+import { vi } from 'vitest';
+
+import { SortDirection } from '../../../../shared/hooks/useAccessDataForTable';
+import { fireEvent, render, screen, within } from '../../../../utils/testUtil';
+import SortConfigContainer from '../SortConfigContainer';
 
 describe('Sort Config Container', () => {
   it('Sort button shows text to indicate no sorted columns when there are none', () => {

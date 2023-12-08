@@ -1,17 +1,18 @@
 import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { has } from 'lodash';
+
 import isValidUrl, {
   isAllowedProtocol,
   isExternalLink,
   isStorageLink,
   isUrlCurieFormat,
 } from '../../../utils/validUrl';
+import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
 import {
   getNormalizedTypes,
   getOrgAndProjectFromResourceObject,
   getResourceLabel,
 } from '../../utils';
-import { TDELink, TDEResource } from '../../store/reducers/data-explorer';
 import ResourceResolutionCache, {
   ResourceResolutionFetchFn,
   TPagedResources,

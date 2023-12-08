@@ -1,6 +1,7 @@
 import { ElasticSearchView, Resource } from '@bbp/nexus-sdk/es';
 import { Empty } from 'antd';
 import * as React from 'react';
+
 import ElasticSearchResultsTable, {
   DEFAULT_FIELDS,
 } from '../../../../shared/components/ElasticSearchResultsTable';

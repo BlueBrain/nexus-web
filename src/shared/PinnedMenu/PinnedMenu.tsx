@@ -1,14 +1,16 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import {
-  SearchOutlined,
-  FolderOutlined,
-  WalletOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
-import { RootState } from '../../shared/store/reducers';
 import './styles.scss';
+
+import {
+  FolderOutlined,
+  HomeOutlined,
+  SearchOutlined,
+  WalletOutlined,
+} from '@ant-design/icons';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+
+import { RootState } from '../../shared/store/reducers';
 
 type Props = {};
 type TMenuItem = {

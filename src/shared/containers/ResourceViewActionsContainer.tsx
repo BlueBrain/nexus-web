@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Context, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -9,25 +8,23 @@ import {
   Form,
   Input,
   Menu,
+  notification,
   Popover,
   Row,
-  notification,
 } from 'antd';
-import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { isArray, isString, uniq } from 'lodash';
+import * as React from 'react';
 import { useMutation } from 'react-query';
-import { makeResourceUri } from '../utils';
-import { RootState } from '../store/reducers';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import Copy from '../components/Copy';
+import { useSelector } from 'react-redux';
+import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
+
 import {
-  MAX_DATA_SELECTED_SIZE__IN_BYTES,
-  TResourceTableData,
-  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
-  getLocalStorageSize,
-  notifyTotalSizeExeeced,
   Distribution,
+  getLocalStorageSize,
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  notifyTotalSizeExeeced,
+  TResourceTableData,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -37,6 +34,10 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import Copy from '../components/Copy';
+import { RootState } from '../store/reducers';
+import { makeResourceUri } from '../utils';
 
 const ResourceViewActionsContainer: React.FC<{
   resource: Resource;

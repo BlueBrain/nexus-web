@@ -1,6 +1,6 @@
-import * as React from 'react';
-
 import './loading.scss';
+
+import * as React from 'react';
 
 const classPrefix = 'loading';
 

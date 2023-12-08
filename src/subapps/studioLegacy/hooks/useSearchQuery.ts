@@ -1,6 +1,6 @@
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import bodybuilder from 'bodybuilder';
-import { Resource } from '@bbp/nexus-sdk/es';
 
 import useAsyncCall, { AsyncCall } from '../../../shared/hooks/useAsynCall';
 import { SearchResponse } from '../../../shared/types/search';

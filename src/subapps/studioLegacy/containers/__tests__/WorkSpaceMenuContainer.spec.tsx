@@ -1,29 +1,31 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createBrowserHistory } from 'history';
+
+import { deltaPath, handlers } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import { Provider } from 'react-redux';
+import { NexusProvider } from '@bbp/react-nexus';
+import { act,RenderResult } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { ConnectedRouter } from 'connected-react-router';
+import { createBrowserHistory } from 'history';
+import { setupServer } from 'msw/node';
 import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ConnectedRouter } from 'connected-react-router';
-import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
+import { Provider } from 'react-redux';
+import { vi } from 'vitest';
+
 import { configureStore } from '../../../../store';
-import { render, fireEvent, screen } from '../../../../utils/testUtil';
+import { fireEvent, render, screen } from '../../../../utils/testUtil';
 import StudioReactContext, {
   StudioContextType,
 } from '../../contexts/StudioContext';
-import { deltaPath, handlers } from '__mocks__/handlers/handlers';
+import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
 import {
   aclHandler,
   dashboardHandler,
   tableHandler,
   workspaceHandler,
 } from './WorkSpaceMenuContainerHandlers';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import { RenderResult, act } from '@testing-library/react';
-import { setupServer } from 'msw/node';
 
 describe('workSpaceMenu', () => {
   const history = createBrowserHistory({ basename: '/' });

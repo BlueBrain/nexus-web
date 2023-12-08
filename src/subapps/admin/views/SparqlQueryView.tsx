@@ -1,14 +1,15 @@
+import { DEFAULT_SPARQL_VIEW_ID, View,ViewList } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Col, Row, Select } from 'antd';
+import queryString from 'query-string';
 import * as React from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { Button, Col, Row, Select } from 'antd';
 import { Link } from 'react-router-dom';
-import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk/es';
-import { useNexusContext } from '@bbp/react-nexus';
-import queryString from 'query-string';
-import { useOrganisationsSubappContext } from '..';
-import { getResourceLabel } from '../../../shared/utils';
-import SparqlQueryContainer from '../containers/SparqlQuery';
+
 import useNotification from '../../../shared/hooks/useNotification';
+import { getResourceLabel } from '../../../shared/utils';
+import { useOrganisationsSubappContext } from '..';
+import SparqlQueryContainer from '../containers/SparqlQuery';
 
 const { Option } = Select;
 const SparqlQueryView: React.FunctionComponent = (): JSX.Element => {

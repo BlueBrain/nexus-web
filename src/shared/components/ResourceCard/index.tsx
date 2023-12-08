@@ -1,16 +1,16 @@
-import * as React from 'react';
-import moment from 'moment';
-import { Card, Button, Tooltip, Divider } from 'antd';
-import { DownOutlined, CheckOutlined, CopyOutlined } from '@ant-design/icons';
-import { Resource } from '@bbp/nexus-sdk/es';
-
-import TypesIcon from '../Types/TypesIcon';
-import Copy from '../Copy';
-import { getUsername, getResourceLabel } from '../../utils';
-
 import './ResourceCard.scss';
-import SchemaLink from '../SchemaLink';
+
+import { CheckOutlined, CopyOutlined,DownOutlined } from '@ant-design/icons';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { Button, Card, Divider,Tooltip } from 'antd';
+import moment from 'moment';
+import * as React from 'react';
+
+import { getResourceLabel,getUsername } from '../../utils';
+import Copy from '../Copy';
 import FriendlyTimeAgo from '../FriendlyDate';
+import SchemaLink from '../SchemaLink';
+import TypesIcon from '../Types/TypesIcon';
 
 const ResourceCardComponent: React.FunctionComponent<{
   resource: Resource;

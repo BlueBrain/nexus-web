@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { useRouteMatch } from 'react-router-dom';
-import { Empty, Spin } from 'antd';
 import { ACL } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Empty, Spin } from 'antd';
+import * as React from 'react';
+import { useRouteMatch } from 'react-router-dom';
 
-import ACLsForm from '../components/ACLs/ACLsForm';
 import { useAdminSubappContext } from '..';
+import ACLsForm from '../components/ACLs/ACLsForm';
 
 const ACLs: React.FunctionComponent = () => {
   const { namespace } = useAdminSubappContext();
@@ -23,7 +23,7 @@ const ACLs: React.FunctionComponent = () => {
   const path = `${orgLabel}${projectLabel ? `/${projectLabel}` : ''}`;
 
   const [{ busy, error, acls }, setACLs] = React.useState<{
-    busy: Boolean;
+    busy: boolean;
     error: Error | null;
     acls: ACL[] | null;
   }>({

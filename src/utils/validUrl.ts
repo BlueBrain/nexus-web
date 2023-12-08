@@ -40,9 +40,9 @@ function isAllowedProtocol(url: string): boolean {
 
 export {
   easyValidURL,
-  isUrlCurieFormat,
+  isAllowedProtocol,
   isExternalLink,
   isStorageLink,
-  isAllowedProtocol,
+  isUrlCurieFormat,
 };
 export default isValidUrl;

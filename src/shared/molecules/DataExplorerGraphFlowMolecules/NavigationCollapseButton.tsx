@@ -1,6 +1,7 @@
-import * as React from 'react';
-import { clsx } from 'clsx';
 import { Tooltip } from 'antd';
+import { clsx } from 'clsx';
+import * as React from 'react';
+
 import CollapseIcon from '../../components/Icons/Collapse';
 import { TNavigationStackSide } from '../../store/reducers/data-explorer';
 

@@ -1,14 +1,15 @@
 import pluralize from 'pluralize';
-import TypeSelector from '../../TypeSelector/TypeSelector';
-import DateSelector from './DateSelector';
-import DateFieldSelector from './DateFieldSelector';
-import PageTitle from './PageTitle';
-import IssuerSelector from './IssuerSelector';
-import SearchInput from './SearchInput';
+
 import {
   THeaderFilterProps,
   THeaderTitleProps,
 } from '../../../canvas/MyData/types';
+import TypeSelector from '../../TypeSelector/TypeSelector';
+import DateFieldSelector from './DateFieldSelector';
+import DateSelector from './DateSelector';
+import IssuerSelector from './IssuerSelector';
+import PageTitle from './PageTitle';
+import SearchInput from './SearchInput';
 
 const MyDataHeaderTitle = ({
   total,

@@ -1,18 +1,19 @@
-import React from 'react';
-import { Route, MemoryRouter } from 'react-router';
-import { NexusProvider } from '@bbp/react-nexus';
+import '@testing-library/jest-dom';
+
+import { deltaPath } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import StudioAdminView from '../StudioAdminView';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { NexusProvider } from '@bbp/react-nexus';
 import { createBrowserHistory } from 'history';
+import fetch from 'node-fetch';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
+import { MemoryRouter,Route } from 'react-router';
 
 import { configureStore } from '../../../../store';
-import fetch from 'node-fetch';
 import { render, screen, server } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
-import { act } from 'react-dom/test-utils';
-import { deltaPath } from '__mocks__/handlers/handlers';
+import StudioAdminView from '../StudioAdminView';
 
 describe('StudioAdminView', () => {
   const queryClient = new QueryClient();

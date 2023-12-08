@@ -1,17 +1,18 @@
 import { Realm } from '@bbp/nexus-sdk/es';
-import { WebStorageStateStore, UserManager } from 'oidc-client';
 import * as Sentry from '@sentry/browser';
-import { RootState } from './shared/store/reducers';
-import store from './store';
+import { UserManager,WebStorageStateStore } from 'oidc-client';
 import {
   loadUser,
-  userExpired,
-  silentRenewError,
   sessionTerminated,
+  silentRenewError,
+  userExpired,
   userExpiring,
   userSignedOut,
 } from 'redux-oidc';
 import { fetchIdentitiesFulfilledAction } from 'shared/store/actions/auth';
+
+import { RootState } from './shared/store/reducers';
+import store from './store';
 
 const userManagerCache: Map<string, UserManager> = new Map();
 

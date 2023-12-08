@@ -1,11 +1,11 @@
-import * as React from 'react';
-import { Alert, Button } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-
-import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
-
 import './GraphControlPanel.scss';
+
+import { DownOutlined } from '@ant-design/icons';
+import { Alert, Button } from 'antd';
+import * as React from 'react';
+
 import { downloadCanvasAsImage } from '../../utils/download';
+import { DEFAULT_LAYOUT, LAYOUTS } from './LayoutDefinitions';
 
 const GraphControlPanel: React.FunctionComponent<{
   label: string;

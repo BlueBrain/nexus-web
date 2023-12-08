@@ -1,6 +1,7 @@
 import { withKnobs } from '@storybook/addon-knobs';
 import { storiesOf } from '@storybook/react';
 import * as React from 'react';
+
 import FileInfo from './FileInfo';
 
 storiesOf('Components/FileInfo', module)

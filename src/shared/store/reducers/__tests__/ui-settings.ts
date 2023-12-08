@@ -1,8 +1,8 @@
-import uiSettingsReducer, { DEFAULT_UI_SETTINGS } from '../ui-settings';
 import {
-  UISettingsActionTypes,
   UISettingsActions,
+  UISettingsActionTypes,
 } from '../../actions/ui-settings';
+import uiSettingsReducer, { DEFAULT_UI_SETTINGS } from '../ui-settings';
 
 describe('UISettings Reducer', () => {
   it('should return default state if no match', () => {

@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk/es';
-
-import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
-import useAsyncCall from '../hooks/useAsynCall';
-import { parseURL } from '../utils/nexusParse';
-import { getResourceLabel } from '../utils';
-import { match, when } from 'ts-pattern';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Skeleton } from 'antd';
+import * as React from 'react';
+import { match, when } from 'ts-pattern';
+
+import useAsyncCall from '../hooks/useAsynCall';
+import { getResourceLabel } from '../utils';
+import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
+import { parseURL } from '../utils/nexusParse';
 
 export const requestNexusImage = async (
   nexus: NexusClient,

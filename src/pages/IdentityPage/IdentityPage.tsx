@@ -1,19 +1,20 @@
-import React, { useRef, useState } from 'react';
-import { Button, Divider } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import './styles.scss';
+
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk/es';
-import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
+import { Button, Divider } from 'antd';
+import React, { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+
 import useClickOutside from '../../shared/hooks/useClickOutside';
-import * as authActions from '../../shared/store/actions/auth';
-import * as configActions from '../../shared/store/actions/config';
-import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
 import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
-
-import './styles.scss';
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
+import * as authActions from '../../shared/store/actions/auth';
+import * as configActions from '../../shared/store/actions/config';
+import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
+import { RootState } from '../../shared/store/reducers';
 
 const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   <video

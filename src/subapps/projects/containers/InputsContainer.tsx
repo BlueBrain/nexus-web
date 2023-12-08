@@ -1,13 +1,15 @@
-import * as React from 'react';
-import { Button, notification, Input } from 'antd';
+import './InputsContainer.scss';
+
+import { NexusFile, Resource,Storage } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Storage, NexusFile, Resource } from '@bbp/nexus-sdk/es';
-import { useInputs } from '../hooks/useInputs';
+import { Button, Input,notification } from 'antd';
+import * as React from 'react';
+
+import FileUploader from '../../../shared/components/FileUpload';
 import useLocalStorage from '../../../shared/hooks/useLocalStorage';
 import { forceAsArray } from '../../../shared/utils';
-import FileUploader from '../../../shared/components/FileUpload';
 import { TError } from '../../../utils/types';
-import './InputsContainer.scss';
+import { useInputs } from '../hooks/useInputs';
 
 export const DATASET_KEY = 'nexus-dataset';
 const InputsContainer: React.FC<{

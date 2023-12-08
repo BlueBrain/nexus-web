@@ -1,8 +1,9 @@
-import { Button, Tooltip } from 'antd';
 import './Categories.scss';
 
-import { TypeWidgetProps } from '../../types/plugins/report';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Tooltip } from 'antd';
+
+import { TypeWidgetProps } from '../../types/plugins/report';
 
 const TypeWidget = ({
   allTypes,

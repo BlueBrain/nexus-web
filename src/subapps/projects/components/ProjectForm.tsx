@@ -1,10 +1,11 @@
-import * as React from 'react';
-import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
-import moment from 'moment';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { isEmptyInput } from '../utils';
-
 import './ProjectForm.scss';
+
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Form, Input, Radio, Row, Spin } from 'antd';
+import moment from 'moment';
+import * as React from 'react';
+
+import { isEmptyInput } from '../utils';
 
 const { Item } = Form;
 

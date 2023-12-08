@@ -1,14 +1,16 @@
 import '@testing-library/jest-dom';
-import { renderHook } from '@testing-library/react-hooks/dom';
-import fetch from 'node-fetch';
+
+import { createNexusClient,ProjectList } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
-import { ProjectList, createNexusClient } from '@bbp/nexus-sdk';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { createBrowserHistory } from 'history';
-import { Provider } from 'react-redux';
+import { renderHook } from '@testing-library/react-hooks/dom';
 import { ConnectedRouter } from 'connected-react-router';
-import { render, screen, server } from '../../utils/testUtil';
+import { createBrowserHistory } from 'history';
+import fetch from 'node-fetch';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+
 import { configureStore } from '../../store';
+import { render, screen, server } from '../../utils/testUtil';
 import ProjectsPage, { useInfiniteProjectsQuery } from './ProjectsPage';
 import { aclHandler, infiniteProjectsHandler } from './ProjectsPageHandlers';
 

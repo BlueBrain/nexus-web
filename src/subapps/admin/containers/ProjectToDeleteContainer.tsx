@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { ProjectDeletionConfig,ProjectStatistics } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectStatistics, ProjectDeletionConfig } from '@bbp/nexus-sdk/es';
+import * as React from 'react';
 
 import ProjectWarning from '../components/Projects/ProjectWarning';
 

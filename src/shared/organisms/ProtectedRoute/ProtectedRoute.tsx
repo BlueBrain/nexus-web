@@ -14,7 +14,7 @@ const PrivateRoute = ({ children, ...rest }: Props) => {
     <Route
       {...rest}
       render={props => {
-        return Boolean(userAuthenticated) ? (
+        return userAuthenticated ? (
           children
         ) : (
           <Redirect

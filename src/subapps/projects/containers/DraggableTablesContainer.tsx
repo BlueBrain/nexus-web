@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
 import Draggable from 'react-draggable';
+
 import DataTableContainer from '../../../shared/containers/DataTableContainer';
 import useNotification, {
   NexusError,

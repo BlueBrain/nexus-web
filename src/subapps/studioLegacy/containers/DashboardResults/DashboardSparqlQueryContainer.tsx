@@ -1,7 +1,8 @@
-import * as React from 'react';
 import { SparqlView } from '@bbp/nexus-sdk/es';
-import { Alert, Spin } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Spin } from 'antd';
+import * as React from 'react';
+
 import SparqlResultsTable, {
   ResultTableProps,
 } from '../../../../shared/components/SparqlResultsTable';

@@ -1,10 +1,11 @@
+import { ACL,NexusClient } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
-import StudioContainer from '../containers/StudioContainer';
+
 import useQueryString from '../../../shared/hooks/useQueryString';
-import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, ACL } from '@bbp/nexus-sdk/es';
+import StudioContainer from '../containers/StudioContainer';
 import StudioReactContext from './../contexts/StudioContext';
 
 const writableStudio = async (permissionsPath: string, nexus: NexusClient) => {

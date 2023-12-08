@@ -1,6 +1,7 @@
 import { Tooltip } from 'antd';
-import * as React from 'react';
 import moment from 'moment';
+import * as React from 'react';
+
 import { getDateString, getFriendlyTimeAgoString } from '../../utils';
 
 const FriendlyTimeAgo: React.FC<{

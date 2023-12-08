@@ -1,8 +1,10 @@
-import * as React from 'react';
-import { Collapse, Drawer, Popover, Button } from 'antd';
-import { labelOf } from '../../../../shared/utils';
-import { InfoCircleOutlined } from '@ant-design/icons';
 import './ResourceInfoPanel.scss';
+
+import { InfoCircleOutlined } from '@ant-design/icons';
+import { Button,Collapse, Drawer, Popover } from 'antd';
+import * as React from 'react';
+
+import { labelOf } from '../../../../shared/utils';
 
 const ResourceInfoPanel: React.FC<{
   typeStats: any;
@@ -44,11 +46,11 @@ const ResourceInfoPanel: React.FC<{
 
       return (
         <li key={index}>
-          <a href={source['@id']} target="_blank">
+          <a href={source['@id']} target="_blank" rel="noreferrer">
             {source._name}
           </a>{' '}
           {arrow}{' '}
-          <a href={destination} target="_blank">
+          <a href={destination} target="_blank" rel="noreferrer">
             {labelOf(destination)}
           </a>
           {`: ${formattedCount}`}
@@ -88,7 +90,7 @@ const ResourceInfoPanel: React.FC<{
     >
       <div className="resource-info-panel">
         <p>
-          <a href={typeStats['@id']} target="_blank">
+          <a href={typeStats['@id']} target="_blank" rel="noreferrer">
             {typeStats['@id']}
           </a>
         </p>
@@ -109,7 +111,7 @@ const ResourceInfoPanel: React.FC<{
                       return (
                         <li key={property._name}>
                           <span>
-                            <a href={property['@id']} target="_blank">
+                            <a href={property['@id']} target="_blank" rel="noreferrer">
                               {property._name}
                             </a>
                             : {formattedProCount}{' '}
@@ -122,7 +124,7 @@ const ResourceInfoPanel: React.FC<{
                             <ul>
                               {property._properties.map((subProperty: any) => (
                                 <li key={subProperty._name}>
-                                  <a href={subProperty['@id']} target="_blank">
+                                  <a href={subProperty['@id']} target="_blank" rel="noreferrer">
                                     {subProperty._name}
                                   </a>
                                   : {subProperty._count}

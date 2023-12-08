@@ -1,10 +1,11 @@
+import { useNexusContext } from '@bbp/react-nexus';
+import { Button, Descriptions, List, Typography } from 'antd';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { Button, Descriptions, List, Typography } from 'antd';
-import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';
-import { RootState } from '../../shared/store/reducers';
+
 import useNotification from '../../shared/hooks/useNotification';
+import { RootState } from '../../shared/store/reducers';
 
 export type UserPageData = {
   user?: string;

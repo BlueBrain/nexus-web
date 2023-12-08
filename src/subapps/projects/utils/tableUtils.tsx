@@ -1,5 +1,5 @@
-import { notification } from 'antd';
 import { DEFAULT_SPARQL_VIEW_ID, NexusClient } from '@bbp/nexus-sdk/es';
+import { notification } from 'antd';
 
 /**
  * Makes a data table with a query to fetch inputs of a workflow.

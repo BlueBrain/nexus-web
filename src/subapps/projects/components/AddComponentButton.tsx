@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { Menu, Dropdown } from 'antd';
-import addIconClear from '../../../shared/images/addIconClear.svg';
-
 import './AddComponentButton.scss';
+
+import { Dropdown,Menu } from 'antd';
+import * as React from 'react';
+
+import addIconClear from '../../../shared/images/addIconClear.svg';
 
 const AddComponentButton: React.FC<{
   addNewStep: () => void;

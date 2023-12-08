@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
+
 import favicon from '../favicon.png';
 
 const TITLE = 'A knowledge graph for data-driven science';

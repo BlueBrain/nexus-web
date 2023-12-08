@@ -1,6 +1,3 @@
-import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { Empty, message, Skeleton } from 'antd';
 import {
   ElasticSearchView,
   Resource,
@@ -8,13 +5,16 @@ import {
   View,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Empty, message, Skeleton } from 'antd';
+import * as React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import { match, when } from 'ts-pattern';
 
-import { parseProjectUrl } from '../../../shared/utils';
 import useAsyncCall from '../../../shared/hooks/useAsynCall';
-import DashboardSparqlQueryContainer from './DashboardResults/DashboardSparqlQueryContainer';
-import DashboardElasticSearchQueryContainer from './DashboardResults/DashboardElasticSearchQueryContainer';
 import { ResultTableFields } from '../../../shared/types/search';
+import { parseProjectUrl } from '../../../shared/utils';
+import DashboardElasticSearchQueryContainer from './DashboardResults/DashboardElasticSearchQueryContainer';
+import DashboardSparqlQueryContainer from './DashboardResults/DashboardSparqlQueryContainer';
 
 const DashboardResultsContainer: React.FunctionComponent<{
   dataQuery: string;

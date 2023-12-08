@@ -1,25 +1,26 @@
-import * as Sentry from '@sentry/browser';
-import { PromisePool } from '@supercharge/promise-pool';
-import React, {
-  Fragment,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef,
-  useState,
-} from 'react';
-import { Link } from 'react-router-dom';
+import './styles.scss';
 
+import {
+  CloseOutlined,
+  CloseSquareOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+  FileDoneOutlined,
+  FileZipOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { ArchivePayload, NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import * as Sentry from '@sentry/browser';
+import { PromisePool } from '@supercharge/promise-pool';
 import {
   Button,
   Checkbox,
   Dropdown,
+  notification,
   Table,
   Tag,
   Tooltip,
-  notification,
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { ColumnsType } from 'antd/lib/table';
@@ -41,38 +42,37 @@ import {
   uniqBy,
 } from 'lodash';
 import { animate, spring } from 'motion';
-import { useMutation } from 'react-query';
-
-import {
-  CloseOutlined,
-  CloseSquareOutlined,
-  DeleteOutlined,
-  DownloadOutlined,
-  FileDoneOutlined,
-  FileZipOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
 import pluralize from 'pluralize';
+import React, {
+  Fragment,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
+import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RootState } from 'shared/store/reducers';
+
 import useOnClickOutside from '../../../shared/hooks/useClickOutside';
 import { parseProjectUrl, uuidv4 } from '../../../shared/utils';
-import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
-import formatBytes from '../../../utils/formatBytesUnit';
-import isValidUrl from '../../../utils/validUrl';
-import {
-  TDataSource,
-  TResourceTableData,
-  makeOrgProjectTuple,
-} from '../../molecules/MyDataTable/MyDataTable';
 import {
   distributionMatchesTypes,
   getSizeOfResourcesToDownload,
   pathForChildDistributions,
   pathForTopLevelResources,
 } from '../../../shared/utils/datapanel';
+import { ParsedNexusUrl, parseURL } from '../../../shared/utils/nexusParse';
 import { getNormalizedFileExtension } from '../../../utils/contentTypes';
-import './styles.scss';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
+import formatBytes from '../../../utils/formatBytesUnit';
+import isValidUrl from '../../../utils/validUrl';
+import {
+  makeOrgProjectTuple,
+  TDataSource,
+  TResourceTableData,
+} from '../../molecules/MyDataTable/MyDataTable';
 
 type Props = {
   authenticated?: boolean;
@@ -673,7 +673,7 @@ const DataPanel: React.FC<Props> = ({}) => {
     datapanelRef,
     () => openDataPanel && handleCloseDataPanel()
   );
-  return Boolean(dataSource.length) ? (
+  return dataSource.length ? (
     <div className="datapanel">
       <div ref={datapanelRef} className="datapanel-content">
         <div className="datapanel-content-wrapper">

@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, NexusClient } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import * as React from 'react';
+import { useQuery } from 'react-query';
 
 import DropdownFilter from '../components/DropdownFilter';
 import { TypeDropdownItem } from '../components/DropdownFilter/DropdownItem';
-import { useQuery } from 'react-query';
 
 // must be explicitly set for elasticSearch, default is 10
 const RESULTS_SIZE = 10000;

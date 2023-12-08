@@ -1,5 +1,6 @@
+import { NexusClient,Resource, ResourceLink } from '@bbp/nexus-sdk/es';
+
 import { labelOf } from '../../../shared/utils';
-import { ResourceLink, Resource, NexusClient } from '@bbp/nexus-sdk/es';
 import fusionConfig from '../config';
 import { StepResource } from '../types';
 

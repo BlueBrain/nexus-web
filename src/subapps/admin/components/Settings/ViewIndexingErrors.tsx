@@ -1,8 +1,9 @@
+import './styles.scss';
+
 import { NexusClient } from '@bbp/nexus-sdk';
 import { Alert, Collapse, List } from 'antd';
 import React from 'react';
 import ReactJson from 'react-json-view';
-import './styles.scss';
 
 interface Props {
   indexingErrors: IndexingErrorResults;

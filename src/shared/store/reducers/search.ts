@@ -1,12 +1,13 @@
 import { AnyAction } from 'redux';
-import { createFetchReducer, FetchableState } from './utils';
+
+import { ResultTableFields } from '../../types/search';
 import {
   SearchActionTypes,
   SearchConfigActions,
   SearchPreferenceActions,
   SearchPreferenceTypes,
 } from '../actions/search';
-import { ResultTableFields } from '../../types/search';
+import { createFetchReducer, FetchableState } from './utils';
 
 export const SearchConfigType =
   'https://bluebrain.github.io/nexus/vocabulary/SearchConfig';

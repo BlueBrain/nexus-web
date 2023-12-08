@@ -1,25 +1,26 @@
-import { useSelector } from 'react-redux';
-import { ReactQueryDevtools } from 'react-query/devtools';
-import { useQuery } from 'react-query';
+import './App.scss';
+
 import { useNexusContext } from '@bbp/react-nexus';
-import GalleryView from './views/GalleryView';
+import { ConfigProvider } from 'antd';
+import { useQuery } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import { useSelector } from 'react-redux';
+import { antdTheme } from 'theme/antd';
+
 import routes from '../shared/routes';
-import FusionMainLayout from './layouts/FusionMainLayout';
-import SubAppsView from './views/SubAppsView';
-import useSubApps from './hooks/useSubApps';
 import {
   getNotificationContextValue,
   NotificationContext,
   NotificationContextType,
 } from './hooks/useNotification';
-import { RootState } from './store/reducers';
-import DataPanel from './organisms/DataPanel/DataPanel';
-import AppInfo from './modals/AppInfo/AppInfo';
+import useSubApps from './hooks/useSubApps';
+import FusionMainLayout from './layouts/FusionMainLayout';
 import EntityCreation from './modals';
-
-import './App.scss';
-import { ConfigProvider } from 'antd';
-import { antdTheme } from 'theme/antd';
+import AppInfo from './modals/AppInfo/AppInfo';
+import DataPanel from './organisms/DataPanel/DataPanel';
+import { RootState } from './store/reducers';
+import GalleryView from './views/GalleryView';
+import SubAppsView from './views/SubAppsView';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();

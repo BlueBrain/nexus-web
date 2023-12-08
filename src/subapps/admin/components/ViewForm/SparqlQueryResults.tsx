@@ -1,16 +1,17 @@
-import { Card, Table, Tooltip } from 'antd';
-import Column from 'antd/lib/table/Column';
-import hash from 'object-hash';
-import { matchResultUrls } from '../../../../shared/utils';
+import './view-form.scss';
+
 import {
   AskQueryResponse,
   SelectQueryResponse,
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
+import { Card, Table, Tooltip } from 'antd';
+import Column from 'antd/lib/table/Column';
+import hash from 'object-hash';
 
-import './view-form.scss';
-import useNotification from '../../../../shared/hooks/useNotification';
 import { ErrorComponent } from '../../../../shared/components/ErrorComponent';
+import useNotification from '../../../../shared/hooks/useNotification';
+import { matchResultUrls } from '../../../../shared/utils';
 import { TError } from '../../../../utils/types';
 
 export type NexusSparqlError =
@@ -36,14 +37,14 @@ const SparqlQueryResults: React.FunctionComponent<{
   // then we have to make our own column header
   const columnHeaders: string[] =
     (response &&
-      (!!(response as AskQueryResponse).boolean
+      ((response as AskQueryResponse).boolean
         ? ['Result']
         : response.head && (response as SelectQueryResponse).head.vars)) ||
     [];
 
   const data: any[] =
     (response &&
-      (!!(response as AskQueryResponse).boolean
+      ((response as AskQueryResponse).boolean
         ? [(response as AskQueryResponse).boolean.toString()]
         : (response as SelectQueryResponse).results.bindings)) ||
     [];

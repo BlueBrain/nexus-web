@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SubApp } from '..';
 
+import icon from '../../shared/images/flowIcon.svg';
+import { SubApp } from '..';
 import ProjectsListView from './views/ProjectsListView';
 import ProjectView from './views/ProjectView';
 import WorkflowStepView from './views/WorkflowStepView';
-import icon from '../../shared/images/flowIcon.svg';
 
 const title = 'Workflow';
 const namespace = 'workflow';

@@ -1,5 +1,5 @@
-import { rest } from 'msw';
 import { deltaPath } from '__mocks__/handlers/handlers';
+import { rest } from 'msw';
 
 const resourceResolverApiId =
   'https://bbp.epfl.ch/neurosciencegraph/data/neuronmorphologies/bfdd4d1a-8b06-46fe-b663-7d9f8020dcaf';
@@ -482,10 +482,10 @@ const getSearchApiResponseObject = rest.get(
 );
 
 export {
-  resourceResolverApi,
-  resourceResolverApiId,
-  resourceFromSearchApiId,
-  resourceFromSearchApi,
   getResolverResponseObject,
   getSearchApiResponseObject,
+  resourceFromSearchApi,
+  resourceFromSearchApiId,
+  resourceResolverApi,
+  resourceResolverApiId,
 };

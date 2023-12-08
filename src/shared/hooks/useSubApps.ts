@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import SubApps, { SubAppObject, SubApp } from '../../subapps/index';
+
+import SubApps, { SubApp, SubAppObject } from '../../subapps/index';
 import { RootState } from '../store/reducers';
 
 async function addExternalSubApps(

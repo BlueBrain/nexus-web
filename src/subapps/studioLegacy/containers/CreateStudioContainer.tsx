@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { Button, Modal, message } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Button, message,Modal } from 'antd';
+import * as React from 'react';
 
-import StudioEditorForm from '../components/StudioEditorForm';
-import STUDIO_CONTEXT from '../components/StudioContext';
 import { saveImage } from '../../../shared/containers/MarkdownEditorContainer';
 import MarkdownViewerContainer from '../../../shared/containers/MarkdownViewer';
 import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 import { TErrorWithType } from '../../../utils/types';
+import STUDIO_CONTEXT from '../components/StudioContext';
+import StudioEditorForm from '../components/StudioEditorForm';
 
 export const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

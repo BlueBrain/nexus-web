@@ -1,14 +1,15 @@
-import React, { useMemo, useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
-import { Table, Button, Spin, Tooltip } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useQuery } from 'react-query';
-import { NexusClient, Storage } from '@bbp/nexus-sdk/es';
-import moment from 'moment';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-
 import './styles.scss';
+
+import { NexusClient, Storage } from '@bbp/nexus-sdk/es';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Button, Spin, Table, Tooltip } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import moment from 'moment';
+import React, { useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
+import { useHistory, useRouteMatch } from 'react-router';
+
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 
 type Props = {};
 type StorageData = {

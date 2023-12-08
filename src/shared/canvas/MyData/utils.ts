@@ -1,4 +1,5 @@
 import moment from 'moment';
+
 import { TDateFilterType } from './types';
 
 const makeDatetimePattern = ({

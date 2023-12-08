@@ -1,22 +1,22 @@
-import * as React from 'react';
-import { Button, Switch } from 'antd';
-import { useLocation } from 'react-router';
+import './ResourceEditor.scss';
+
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
 import { AccessControl } from '@bbp/react-nexus';
+import { Button, Switch } from 'antd';
 import CodeMirror from 'codemirror';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
 import { RootState } from '../../store/reducers';
-import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
-import ResourceResolutionCache from './ResourcesLRUCache';
 import CodeEditor from './CodeEditor';
-
-import './ResourceEditor.scss';
+import ResourceResolutionCache from './ResourcesLRUCache';
+import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };

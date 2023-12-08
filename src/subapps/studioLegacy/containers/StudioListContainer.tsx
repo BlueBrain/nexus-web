@@ -1,15 +1,16 @@
-import * as React from 'react';
-import { useQuery, useQueries } from 'react-query';
-import { useHistory } from 'react-router-dom';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Resource } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
 import { Empty } from 'antd';
 import { parseInt } from 'lodash';
+import * as React from 'react';
+import { useQueries,useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+
 import InfiniteSearch from '../../../shared/components/List/InfiniteSearch';
+import { RootState } from '../../../shared/store/reducers';
 import StudioList from '../components/StudioList';
 import CreateStudioContainer from './CreateStudioContainer';
-import { RootState } from '../../../shared/store/reducers';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

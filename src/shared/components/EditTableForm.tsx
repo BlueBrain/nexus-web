@@ -1,3 +1,13 @@
+import './EditTableForm.scss';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/sparql/sparql';
+import 'codemirror/theme/base16-light.css';
+import 'codemirror/addon/display/placeholder';
+
 import { View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
@@ -11,10 +21,11 @@ import {
   Spin,
   Tooltip,
 } from 'antd';
-
+import { isNil } from 'lodash';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useQuery } from 'react-query';
+
 import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
 import {
   TableColumn,
@@ -27,17 +38,7 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
-import './EditTableForm.scss';
-import { isNil } from 'lodash';
 import { ErrorComponent } from './ErrorComponent';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/sparql/sparql';
-import 'codemirror/theme/base16-light.css';
-import 'codemirror/addon/display/placeholder';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -256,9 +257,8 @@ const EditTableForm: React.FC<{
               ? undefined
               : projectionId
           );
-          // tslint:disable-next-line
         } catch (error) {
-          const anyerror = error as any; // Hack until we migrate from tslint to typescript-eslint.
+          const anyerror = error as any;
           const message =
             anyerror?.reason ??
             anyerror?.message ??

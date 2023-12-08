@@ -1,11 +1,12 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
-import * as React from 'react';
-import { render, waitFor } from '../../../utils/testUtil';
-import { resourceResolverApi } from '__mocks__/handlers/ResourceEditor/handlers';
-import CodeEditor from './CodeEditor';
 
+import { resourceResolverApi } from '__mocks__/handlers/ResourceEditor/handlers';
 import codemiror from 'codemirror';
+import * as React from 'react';
+import { vi } from 'vitest';
+
+import { render, waitFor } from '../../../utils/testUtil';
+import CodeEditor from './CodeEditor';
 document.createRange = () => {
   const range = new Range();
 

@@ -1,4 +1,5 @@
 import { Action, Dispatch } from 'redux';
+
 import { RootState } from '../reducers';
 
 interface SetPreferredRealmAction extends Action {

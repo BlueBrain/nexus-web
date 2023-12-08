@@ -1,11 +1,11 @@
+import './SubStepItem.scss';
+
+import { Tooltip } from 'antd';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Tooltip } from 'antd';
 
-import StatusIcon from '../StatusIcon';
 import { StepResource } from '../../types';
-
-import './SubStepItem.scss';
+import StatusIcon from '../StatusIcon';
 
 const MAX_TITLE_LENGTH = 45;
 

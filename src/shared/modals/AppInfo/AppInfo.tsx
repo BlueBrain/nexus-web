@@ -1,20 +1,21 @@
-import * as React from 'react';
-import { Button, Divider, Modal, Tooltip } from 'antd';
-import { parseUserAgent } from 'react-device-detect';
-import { useSelector, useDispatch } from 'react-redux';
-import { GithubOutlined } from '@ant-design/icons';
-import { Subtitle } from '../../../shared/styled_components/typography/Subtitle/Subtitle';
-import { CopyIcon } from '../../../shared/components/Icons/CopyIcon';
-import { RootState } from '../../../shared/store/reducers';
-import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
-import { url as githubIssueURL } from '../../../../package.json';
-import Copy from '../../../shared/components/Copy';
-import bbpLogo from '../../images/EPFL_BBP_logo.png';
-
 import './styles.scss';
 
-declare var FUSION_VERSION: string;
-declare var COMMIT_HASH: string;
+import { GithubOutlined } from '@ant-design/icons';
+import { Button, Divider, Modal, Tooltip } from 'antd';
+import * as React from 'react';
+import { parseUserAgent } from 'react-device-detect';
+import { useDispatch,useSelector } from 'react-redux';
+
+import { url as githubIssueURL } from '../../../../package.json';
+import Copy from '../../../shared/components/Copy';
+import { CopyIcon } from '../../../shared/components/Icons/CopyIcon';
+import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
+import { RootState } from '../../../shared/store/reducers';
+import { Subtitle } from '../../../shared/styled_components/typography/Subtitle/Subtitle';
+import bbpLogo from '../../images/EPFL_BBP_logo.png';
+
+declare let FUSION_VERSION: string;
+declare let COMMIT_HASH: string;
 
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
 

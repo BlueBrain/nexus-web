@@ -1,42 +1,44 @@
-import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { Pagination, Table, Button, Checkbox, Result } from 'antd';
-import { useSelector } from 'react-redux';
+import './SearchContainer.scss';
+
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
-import { clsx } from 'clsx';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { Button, Checkbox, Pagination, Result,Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import useGlobalSearchData from '../hooks/useGlobalSearch';
-import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
+import { clsx } from 'clsx';
+import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+
 import useQueryString from '../../../shared/hooks/useQueryString';
-import useSearchPagination, {
-  useAdjustTableHeight,
-  SearchPagination,
-  ESMaxResultWindowSize,
-} from '../hooks/useSearchPagination';
-import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
-import FiltersConfig from '../components/FiltersConfig';
-import SortConfigContainer from './SortConfigContainer';
 import {
+  getLocalStorageSize,
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  notifyTotalSizeExeeced,
   TDataSource,
   TResourceTableData,
-  getLocalStorageSize,
-  notifyTotalSizeExeeced,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
+import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
 import { RootState } from '../../../shared/store/reducers';
-import './SearchContainer.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
-import { Resource } from '@bbp/nexus-sdk/es';
+import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
+import FiltersConfig from '../components/FiltersConfig';
+import useGlobalSearchData from '../hooks/useGlobalSearch';
+import useSearchPagination, {
+  ESMaxResultWindowSize,
+  SearchPagination,
+  useAdjustTableHeight,
+} from '../hooks/useSearchPagination';
+import SortConfigContainer from './SortConfigContainer';
 
 type TRecord = Resource & {
   key: string;

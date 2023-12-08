@@ -1,32 +1,34 @@
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { RenderResult, act, waitFor } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { NexusClient, createNexusClient } from '@bbp/nexus-sdk/es';
-import { AnyAction, Store } from 'redux';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createMemoryHistory, MemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
-import { setupServer } from 'msw/node';
+
 import { deltaPath } from '__mocks__/handlers/handlers';
-import { cleanup, render, screen } from '../../../utils/testUtil';
+import { createNexusClient,NexusClient } from '@bbp/nexus-sdk/es';
+import { NexusProvider } from '@bbp/react-nexus';
+import { act, RenderResult, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { createMemoryHistory, MemoryHistory } from 'history';
+import { setupServer } from 'msw/node';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { AnyAction, Store } from 'redux';
+
+import {
+  getDataExplorerGraphFlowResourceObject,
+  getDataExplorerGraphFlowResourceObjectTags,
+  getDataExplorerGraphFlowResourceSource,
+  initialResource,
+} from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
 import {
   DATA_EXPLORER_GRAPH_FLOW_DIGEST,
   InitNewVisitDataExplorerGraphView,
   TDataExplorerState,
 } from '../../../shared/store/reducers/data-explorer';
-import DateExplorerGraphFlow from './DateExplorerGraphFlow';
-import {
-  initialResource,
-  getDataExplorerGraphFlowResourceObject,
-  getDataExplorerGraphFlowResourceObjectTags,
-  getDataExplorerGraphFlowResourceSource,
-} from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { getResourceLabel } from '../../../shared/utils';
 import { configureStore } from '../../../store';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { cleanup, render, screen } from '../../../utils/testUtil';
+import DateExplorerGraphFlow from './DateExplorerGraphFlow';
 
 const initialDataExplorerState: TDataExplorerState = {
   current: {
