@@ -182,26 +182,24 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     >
       {showControlPanel && (
         <div className="control-panel">
-          <div>
-            {editable && isEditing && valid && !lintError && (
-              <div className="feedback _positive">
-                <CheckCircleOutlined /> Valid
-              </div>
-            )}
-            {editable && isEditing && !valid && (
-              <div className="feedback _negative">
-                <ExclamationCircleOutlined /> Invalid JSON-LD
-              </div>
-            )}
-            {editable && isEditing && lintError && (
-              <div className="feedback _negative">
-                {/* TODO Get lint error from custom linter */}
-                {/* TODO Fix styling */}
-                <ExclamationCircleOutlined /> Cannot have fields starting with
-                an underscore
-              </div>
-            )}
-          </div>
+          {editable && isEditing && valid && !lintError && (
+            <div className="feedback _positive">
+              <CheckCircleOutlined /> Valid structure
+            </div>
+          )}
+          {editable && isEditing && !valid && (
+            <div className="feedback _negative">
+              <ExclamationCircleOutlined /> Invalid JSON-LD structure
+            </div>
+          )}
+          {editable && isEditing && lintError && (
+            <div className="feedback _negative">
+              {/* TODO Get lint error from custom linter */}
+              {/* TODO Fix styling */}
+              <ExclamationCircleOutlined /> Cannot have fields starting with an
+              underscore
+            </div>
+          )}
 
           <div className="editor-controls-panel">
             <div className="left-side">
