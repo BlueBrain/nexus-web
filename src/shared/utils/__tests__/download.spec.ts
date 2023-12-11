@@ -103,4 +103,40 @@ describe('download function', () => {
     expect(linkClickMock).toHaveBeenCalled();
     expect(mockCreateObjectURL).toHaveBeenCalled();
   });
+
+  it('should handle if filename is another type than extension', () => {
+    const linkClickMock = jest.fn();
+    jest.spyOn(document, 'createElement').mockImplementation(
+      () =>
+        ({
+          set href(url: string) {
+            mockCreateObjectURL(url);
+          },
+          click: linkClickMock,
+          download: '',
+        } as any)
+    );
+
+    download('example.png', 'application/json', 'test data');
+    expect(linkClickMock).toHaveBeenCalled();
+    expect(mockCreateObjectURL).toHaveBeenCalled();
+  });
+
+  it('should download without a mediaType', () => {
+    const linkClickMock = jest.fn();
+    jest.spyOn(document, 'createElement').mockImplementation(
+      () =>
+        ({
+          set href(url: string) {
+            mockCreateObjectURL(url);
+          },
+          click: linkClickMock,
+          download: '',
+        } as any)
+    );
+
+    download('example', undefined, 'test data');
+    expect(linkClickMock).toHaveBeenCalled();
+    expect(mockCreateObjectURL).toHaveBeenCalled();
+  });
 });
