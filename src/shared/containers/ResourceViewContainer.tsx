@@ -61,6 +61,22 @@ const containsImages = (distribution: any[]) => {
   return intersection(encodingFormat, formats).length !== 0;
 };
 
+function constructUnDeprecateUrl(
+  apiEndpoint: string,
+  resource: Resource,
+  latestResource: Resource,
+  orgLabel: string,
+  projectLabel: string
+) {
+  return `${apiEndpoint}/${
+    resource!['@type'] === 'File' ? 'files' : 'resources'
+  }/${orgLabel}/${projectLabel}/${
+    resource!['@type'] === 'File' ? '' : '_/'
+  }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
+    latestResource!._rev
+  }`;
+}
+
 const ResourceViewContainer: FC<{
   render?: (
     resource: Resource<{
@@ -615,22 +631,6 @@ const ResourceViewContainer: FC<{
       });
     };
   }, []);
-
-  function constructUnDeprecateUrl(
-    apiEndpoint: string,
-    resource: Resource,
-    latestResource: Resource,
-    orgLabel: string,
-    projectLabel: string
-  ) {
-    return `${apiEndpoint}/${
-      resource!['@type'] === 'File' ? 'files' : 'resources'
-    }/${orgLabel}/${projectLabel}/${
-      resource!['@type'] === 'File' ? '' : '_/'
-    }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
-      latestResource!._rev
-    }`;
-  }
 
   const { mutate: unDeprecateResource } = useMutation({
     mutationFn: async () => {
