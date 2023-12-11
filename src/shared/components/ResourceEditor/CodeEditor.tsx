@@ -61,6 +61,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
 
         // Only call onLintError if there are changes in the errors
         if (
+          // TODO Improve the performance by comparing the stringified version of the arrays
           JSON.stringify(linterErrors) !==
           JSON.stringify(prevLinterErrorsRef.current)
         ) {
