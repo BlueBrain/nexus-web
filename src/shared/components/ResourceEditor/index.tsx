@@ -5,7 +5,7 @@ import {
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { Button, Switch } from 'antd';
-import codemiror from 'codemirror';
+import codemirror from 'codemirror';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
@@ -24,22 +24,22 @@ import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
 export interface ResourceEditorProps {
-  rawData: { [key: string]: any };
-  editable?: boolean;
-  editing?: boolean;
   busy?: boolean;
+  orgLabel: string;
+  editing?: boolean;
+  editable?: boolean;
   expanded?: boolean;
+  projectLabel: string;
   showMetadata?: boolean;
   showExpanded?: boolean;
-  showMetadataToggle?: boolean;
-  orgLabel: string;
-  projectLabel: string;
   showFullScreen: boolean;
   showControlPanel?: boolean;
-  onSubmit: (rawData: { [key: string]: any }) => void;
+  showMetadataToggle?: boolean;
+  rawData: { [key: string]: any };
+  onFullScreen(): void;
   onFormatChange?(expanded: boolean): void;
   onMetadataChange?(expanded: boolean): void;
-  onFullScreen(): void;
+  onSubmit: (rawData: { [key: string]: any }) => void;
 }
 
 const switchMarginRight = { marginRight: 5 };
@@ -47,25 +47,25 @@ const switchMarginRight = { marginRight: 5 };
 const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const {
     rawData,
-    onFormatChange,
-    onMetadataChange,
-    onSubmit,
-    editable = false,
-    busy = false,
-    editing = false,
-    expanded = false,
-    showMetadata = false,
-    showExpanded = true,
-    showMetadataToggle = true,
     orgLabel,
+    busy = false,
     projectLabel,
     showFullScreen,
-    onFullScreen,
+    editing = false,
+    editable = false,
+    expanded = false,
+    showExpanded = true,
+    showMetadata = false,
     showControlPanel = true,
+    showMetadataToggle = true,
+    onSubmit,
+    onFullScreen,
+    onFormatChange,
+    onMetadataChange,
   } = props;
   const location = useLocation();
   const [isEditing, setEditing] = useState(editing);
-  const [valid, setValid] = useState(true);
+  const [isValidJSON, setIsValidJSON] = useState(true);
   const [lintError, setLintError] = useState(false);
   const [parsedValue, setParsedValue] = useState(rawData);
   const [stringValue, setStringValue] = useState(
@@ -73,7 +73,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   );
   const {
     dataExplorer: { fullscreen },
-    oidc,
   } = useSelector((state: RootState) => ({
     dataExplorer: state.dataExplorer,
     oidc: state.oidc,
@@ -82,38 +81,34 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
-  const codeMirorRef = useRef<codemiror.Editor>();
-  const [foldCodeMiror, setFoldCodeMiror] = useState<boolean>(false);
+  const codeMirrorRef = useRef<codemirror.Editor>();
+  const [foldCodeMirror, setFoldCodeMirror] = useState<boolean>(false);
   const onFoldChange = () => {
-    if (codeMirorRef.current) {
-      if (foldCodeMiror) {
-        codeMirorRef.current.execCommand('unfoldAll');
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+    if (codeMirrorRef.current) {
+      if (foldCodeMirror) {
+        codeMirrorRef.current.execCommand('unfoldAll');
+        setFoldCodeMirror(stateFoldCodeMirror => !stateFoldCodeMirror);
       } else {
-        codeMirorRef.current.execCommand('foldAll');
-        codeMirorRef.current.foldCode(0);
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+        codeMirrorRef.current.execCommand('foldAll');
+        codeMirrorRef.current.foldCode(0);
+        setFoldCodeMirror(stateFoldCodeMirror => !stateFoldCodeMirror);
       }
     }
   };
 
-  const handleLintError = (hasError: boolean) => {
-    setLintError(hasError);
-  };
-
   const onFormatChangeFold = (expanded: boolean) => {
-    if (codeMirorRef.current) {
-      codeMirorRef.current.execCommand('foldAll');
-      codeMirorRef.current.foldCode(0);
-      setFoldCodeMiror(() => false);
+    if (codeMirrorRef.current) {
+      codeMirrorRef.current.execCommand('foldAll');
+      codeMirrorRef.current.foldCode(0);
+      setFoldCodeMirror(() => false);
     }
     onFormatChange?.(expanded);
   };
   const onMetadataChangeFold = (checked: boolean) => {
-    if (codeMirorRef.current) {
-      codeMirorRef.current.execCommand('foldAll');
-      codeMirorRef.current.foldCode(0);
-      setFoldCodeMiror(() => false);
+    if (codeMirrorRef.current) {
+      codeMirrorRef.current.execCommand('foldAll');
+      codeMirrorRef.current.foldCode(0);
+      setFoldCodeMirror(() => false);
     }
     onMetadataChange?.(checked);
   };
@@ -123,7 +118,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
     return () => {
-      setFoldCodeMiror(false);
+      setFoldCodeMirror(false);
     };
   }, [rawData]); // only runs when Editor receives new resource to edit
 
@@ -134,11 +129,12 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     }
 
     try {
-      const parsedVal = JSON.parse(value);
-      setParsedValue(parsedVal);
-      setValid(true);
+      // Validate if JSON is valid
+      const parsedJSON = JSON.parse(value);
+      setParsedValue(parsedJSON);
+      setIsValidJSON(true);
     } catch (error) {
-      setValid(false);
+      setIsValidJSON(false);
     }
     setStringValue(value);
     setEditing(value !== JSON.stringify(rawData, null, 2));
@@ -152,20 +148,25 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
 
   const handleCancel = () => {
     setStringValue(JSON.stringify(rawData, null, 2));
-    setValid(true);
+    setIsValidJSON(true);
     setEditing(false);
+  };
+
+  const handleLintError = (hasError: boolean) => {
+    setLintError(hasError);
   };
 
   useEditorTooltip({
     orgLabel,
     projectLabel,
     isEditing,
-    ref: codeMirorRef,
+    ref: codeMirrorRef,
   });
+
   useEditorPopover({
     orgLabel,
     projectLabel,
-    ref: codeMirorRef,
+    ref: codeMirrorRef,
   });
 
   useEffect(() => {
@@ -179,16 +180,16 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   return (
     <div
       data-testid="resource-editor"
-      className={valid ? 'resource-editor' : 'resource-editor _invalid'}
+      className={isValidJSON ? 'resource-editor' : 'resource-editor _invalid'}
     >
       {showControlPanel && (
         <div className="control-panel">
-          {editable && isEditing && valid && !lintError && (
+          {editable && isEditing && isValidJSON && !lintError && (
             <div className="feedback _positive">
               <CheckCircleOutlined /> Valid
             </div>
           )}
-          {editable && isEditing && !valid && (
+          {editable && isEditing && !isValidJSON && (
             <div className="feedback _negative">
               <ExclamationCircleOutlined /> Invalid JSON-LD
             </div>
@@ -220,11 +221,11 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               <Switch
                 checkedChildren="Unfold"
                 unCheckedChildren="Fold"
-                checked={foldCodeMiror}
+                checked={foldCodeMirror}
                 onChange={onFoldChange}
                 style={switchMarginRight}
               />
-              {!expanded && !isEditing && valid && showMetadataToggle && (
+              {!expanded && !isEditing && isValidJSON && showMetadataToggle && (
                 <Switch
                   checkedChildren="Metadata"
                   unCheckedChildren="Show Metadata"
@@ -233,7 +234,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
                   style={switchMarginRight}
                 />
               )}
-              {showExpanded && !isEditing && valid && (
+              {showExpanded && !isEditing && isValidJSON && (
                 <Switch
                   checkedChildren="Expanded"
                   unCheckedChildren="Expand"
@@ -263,18 +264,19 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
                   type="primary"
                   size="small"
                   onClick={handleSubmit}
-                  disabled={!valid || !editable || !isEditing}
+                  disabled={!isValidJSON || !editable || !isEditing}
                 >
-                  Save
+                  Save changes
                 </Button>
               </AccessControl>
             </div>
           </div>
         </div>
       )}
+
       <CodeEditor
         busy={busy}
-        ref={codeMirorRef}
+        ref={codeMirrorRef}
         value={stringValue}
         editable={editable}
         handleChange={handleChange}
