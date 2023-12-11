@@ -210,7 +210,9 @@ const AnalysisPlugin = ({
                       key: i,
                       label: (
                         <>
-                          {analysisReport.name}
+                          <span style={{ color: 'white' }}>
+                            {analysisReport.name}
+                          </span>
                           {!!analysisReport.categories &&
                             analysisReport.categories.length > 0 && (
                               <span
@@ -391,34 +393,35 @@ const AnalysisPlugin = ({
                                     }}
                                     icon={<EditOutlined />}
                                     title="Edit report"
-                                    onClick={() =>
+                                    onClick={() => {
                                       analysisReport.id &&
-                                      dispatch(
-                                        editReport({
-                                          analysisId: analysisReport.id,
-                                          analaysisName: analysisReport.name,
-                                          analysisDescription:
-                                            analysisReport.description,
-                                          categories: analysisReport.categories,
-                                          types: analysisReport.types,
-                                          tools: (analysisReport.contribution?.filter(
-                                            c =>
-                                              [c.agent]
-                                                .flat()
-                                                .find(a =>
-                                                  [a['@type']]
-                                                    .flat()
-                                                    .includes('Software')
-                                                )
-                                          ) as SoftwareContribution[])?.map(
-                                            s => ({
-                                              scriptPath: s.repository,
-                                              description: s.description,
-                                            })
-                                          ),
-                                        })
-                                      )
-                                    }
+                                        dispatch(
+                                          editReport({
+                                            analysisId: analysisReport.id,
+                                            analaysisName: analysisReport.name,
+                                            analysisDescription:
+                                              analysisReport.description,
+                                            categories:
+                                              analysisReport.categories,
+                                            types: analysisReport.types,
+                                            tools: (analysisReport.contribution?.filter(
+                                              c =>
+                                                [c.agent]
+                                                  .flat()
+                                                  .find(a =>
+                                                    [a['@type']]
+                                                      .flat()
+                                                      .includes('Software')
+                                                  )
+                                            ) as SoftwareContribution[])?.map(
+                                              s => ({
+                                                scriptPath: s.repository,
+                                                description: s.description,
+                                              })
+                                            ),
+                                          })
+                                        );
+                                    }}
                                   ></Button>
                                   {analysisResourceType ===
                                     'individual_report' &&
@@ -620,6 +623,7 @@ const AnalysisPlugin = ({
                                   hidden={true}
                                   onClick={() => console.log('download')}
                                   icon={<LeftSquareFilled />}
+                                  style={{ color: 'white' }}
                                 >
                                   Download
                                 </Button>

@@ -62,10 +62,10 @@ export default defineConfig(() => {
             setupFiles: ["./vitest-setup.js"],
             minThreads: 2,
             maxThreads: 4,
-            // reporters: 'html',
+            // reporters: 'html', // Uncomment this to get the test output in html (which might be easier to share and read after the test run)
             sequence: {
                 shuffle: true,
-                // seed: 1695803934123,
+                // seed: 1699605577955, // Set this value to reproduce test run
             }
         },
         build: {
@@ -84,7 +84,7 @@ export default defineConfig(() => {
                 output: {
                     manualChunks: {
                         lodash: ['lodash'],
-                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.js'],
+                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.worker.min.js'],
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }

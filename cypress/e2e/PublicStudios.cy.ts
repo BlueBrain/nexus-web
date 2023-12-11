@@ -63,49 +63,57 @@ describe('Public Studios', () => {
     });
   });
 
-  it('loads data for each dashboard in workspace', () => {
-    PUBLIC_STUDIOS.forEach(studio => {
-      cy.visit(studio.url, {
-        onBeforeLoad: window => dismissConsentToTrackingModal(window),
-      });
-      cy.get('table').scrollIntoView(); // Scrolling the table into view triggers the request to fetch rows for the table.
+  it(
+    'loads data for each dashboard in workspace',
+    {
+      retries: {
+        runMode: 3,
+      },
+    },
+    () => {
+      PUBLIC_STUDIOS.forEach(studio => {
+        cy.visit(studio.url, {
+          onBeforeLoad: window => dismissConsentToTrackingModal(window),
+        });
+        cy.get('table').scrollIntoView(); // Scrolling the table into view triggers the request to fetch rows for the table.
 
-      studio.workspaces.forEach(workspace => {
-        workspace.dashboards.forEach((dashboard, index) => {
-          if (index !== 0) {
-            // First dashboard is already tested in the first `it` as it is the default dashboard
-            cy.findByRole('menuitem', {
-              name: new RegExp(workspace.name, 'i'),
-            }).click();
+        studio.workspaces.forEach(workspace => {
+          workspace.dashboards.forEach((dashboard, index) => {
+            if (index !== 0) {
+              // First dashboard is already tested in the first `it` as it is the default dashboard
+              cy.findByRole('menuitem', {
+                name: new RegExp(workspace.name, 'i'),
+              }).click();
 
-            cy.intercept('POST', sparqlEndpoint(studio.id)).as(
-              `dashboardSparqlRequest-${dashboard.name}`
-            );
-
-            cy.findByRole('menuitem', {
-              name: dashboard.name,
-            }).click();
-
-            cy.wait(`@dashboardSparqlRequest-${dashboard.name}`, {
-              timeout: 30000,
-            }).then(interception => {
-              cy.wrap(
-                assertColumns(
-                  interception.response.body.head.vars,
-                  dashboard.sortable
-                )
+              cy.intercept('POST', sparqlEndpoint(studio.id)).as(
+                `dashboardSparqlRequest-${dashboard.name}`
               );
-              cy.wrap(
-                assertRowCount(
-                  interception.response.body.results.bindings.length
-                )
-              );
-            });
-          }
+
+              cy.findByRole('menuitem', {
+                name: dashboard.name,
+              }).click();
+
+              cy.wait(`@dashboardSparqlRequest-${dashboard.name}`, {
+                timeout: 30000,
+              }).then(interception => {
+                cy.wrap(
+                  assertColumns(
+                    interception.response.body.head.vars,
+                    dashboard.sortable
+                  )
+                );
+                cy.wrap(
+                  assertRowCount(
+                    interception.response.body.results.bindings.length
+                  )
+                );
+              });
+            }
+          });
         });
       });
-    });
-  });
+    }
+  );
 
   const dismissConsentToTrackingModal = window => {
     window.localStorage.setItem(

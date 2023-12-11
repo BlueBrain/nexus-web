@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { vi, describe } from 'vitest';
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
-import { RenderResult, act, fireEvent, within } from '@testing-library/react';
+import { RenderResult, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
@@ -239,10 +239,15 @@ describe(
     const getDropdownOption = async (
       optionLabel: string,
       selector: string = DropdownOptionSelector
-    ) =>
-      await screen.getByText(new RegExp(`${optionLabel}$`, 'i'), {
-        selector,
-      });
+    ) => {
+      const option = await screen.findByText(
+        new RegExp(`${optionLabel}$`, 'i'),
+        {
+          selector,
+        }
+      );
+      return option;
+    };
 
     const getRowsForNextPage = async (
       resources: Resource[],
@@ -277,9 +282,6 @@ describe(
     const openMenuFor = async (ariaLabel: string) => {
       const menuInput = await getInputForLabel(ariaLabel);
       await userEvent.click(menuInput, { pointerEventsCheck: 0 });
-      await act(async () => {
-        fireEvent.mouseDown(menuInput);
-      });
       const menuDropdown = document.querySelector(DropdownSelector);
       expect(menuDropdown).toBeInTheDocument();
       return menuDropdown;
@@ -295,12 +297,14 @@ describe(
       if (!projectInput.value.match(new RegExp(project, 'i'))) {
         await selectOptionFromMenu(ProjectMenuLabel, project);
       }
+      await userEvent.click(container); // Close project menu
 
       // Select `type` type if it is not already selected
       const typeInput = await getSelectedValueInMenu(TypeMenuLabel);
       if (!typeInput?.match(new RegExp(type, 'i'))) {
         await selectOptionFromMenu(TypeMenuLabel, type, TypeOptionSelector);
       }
+      await userEvent.click(container); // Close type menu
 
       await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
     };
@@ -1041,8 +1045,6 @@ describe(
     });
 
     it('resets predicate search term when different predicate verb is selected', async () => {
-      console.log('@@1032');
-      console.log('@@1032', container.innerHTML);
       await updateResourcesShownInTable(mockResourcesForPage2);
 
       await selectPath('author');

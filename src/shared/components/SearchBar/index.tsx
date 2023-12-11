@@ -166,7 +166,6 @@ const SearchBar: React.FC<{
     }
     return options;
   }, [value, projectList, studioList]);
-  console.log('SearchBar');
   return (
     <AutoComplete
       backfill={false}

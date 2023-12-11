@@ -599,7 +599,6 @@ export const useAccessDataForTable = (
         projectLabel,
         encodeURIComponent(tableResourceId)
       )) as TableResource;
-
       const view: View = (await nexus.View.get(
         orgLabel,
         projectLabel,

@@ -73,7 +73,6 @@ const AnalysisPluginContainer = ({
   const queryClient = useQueryClient();
 
   const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([]);
-
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
@@ -295,7 +294,7 @@ const AnalysisPluginContainer = ({
           const fileResource = (await nexus.File.get(
             orgLabel,
             projectLabel,
-            encodeURIComponent(imageId)
+            imageId
           )) as Resource;
 
           const src = await fetchImageObjectUrl(
