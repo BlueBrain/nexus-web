@@ -1,6 +1,10 @@
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 
-export const download = (filename: string, mediaType: string, data: any) => {
+export const download = (
+  filename: string,
+  mediaType: string | undefined,
+  data: any
+) => {
   const blob = new Blob([data], { type: mediaType });
   const extension = fileExtensionFromResourceEncoding(mediaType);
 
