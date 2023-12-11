@@ -25,9 +25,6 @@ import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
-  onSubmit: (rawData: { [key: string]: any }) => void;
-  onFormatChange?(expanded: boolean): void;
-  onMetadataChange?(expanded: boolean): void;
   editable?: boolean;
   editing?: boolean;
   busy?: boolean;
@@ -39,6 +36,9 @@ export interface ResourceEditorProps {
   projectLabel: string;
   showFullScreen: boolean;
   showControlPanel?: boolean;
+  onSubmit: (rawData: { [key: string]: any }) => void;
+  onFormatChange?(expanded: boolean): void;
+  onMetadataChange?(expanded: boolean): void;
   onFullScreen(): void;
 }
 
@@ -185,7 +185,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         <div className="control-panel">
           {editable && isEditing && valid && !lintError && (
             <div className="feedback _positive">
-              <CheckCircleOutlined /> Valid JSON-LD
+              <CheckCircleOutlined /> Valid
             </div>
           )}
           {editable && isEditing && !valid && (
@@ -196,7 +196,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
           {editable && isEditing && lintError && (
             <div className="feedback _negative">
               {/* TODO Get lint error from custom linter */}
-              {/* TODO Fix styling */}
               <ExclamationCircleOutlined /> Cannot have fields starting with an
               underscore
             </div>
