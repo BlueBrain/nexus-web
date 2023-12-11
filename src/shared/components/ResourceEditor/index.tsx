@@ -104,6 +104,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     }
     onFormatChange?.(expanded);
   };
+
   const onMetadataChangeFold = (checked: boolean) => {
     if (codeMirrorRef.current) {
       codeMirrorRef.current.execCommand('foldAll');
@@ -112,15 +113,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     }
     onMetadataChange?.(checked);
   };
-
-  useEffect(() => {
-    setEditing(false);
-    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
-    setParsedValue(rawData); // Update parsed value for submit.
-    return () => {
-      setFoldCodeMirror(false);
-    };
-  }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (editor: any, data: any, value: any) => {
     editor;
@@ -170,6 +162,15 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   });
 
   useEffect(() => {
+    setEditing(false);
+    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor
+    setParsedValue(rawData); // Update parsed value for submit
+    return () => {
+      setFoldCodeMirror(false);
+    };
+  }, [rawData]); // Only runs when Editor receives new resource to edit
+
+  useEffect(() => {
     return () => {
       if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
         ResourceResolutionCache.clear();
@@ -194,7 +195,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               <ExclamationCircleOutlined /> Invalid JSON-LD
             </div>
           )}
-          {editable && isEditing && lintError && (
+          {editable && isEditing && isValidJSON && lintError && (
             <div className="feedback _negative">
               {/* TODO Get lint error from custom linter */}
               <ExclamationCircleOutlined /> Cannot have fields starting with an
