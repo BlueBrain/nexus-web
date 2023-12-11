@@ -11,8 +11,8 @@ export const download = (
   // Check if filename already ends with the correct extension
   const hasCorrectExtension = filename.endsWith(`.${extension}`);
 
-  if (window.navigator.msSaveBlob) {
-    window.navigator.msSaveBlob(blob, filename);
+  if ((window.navigator as any).msSaveBlob) {
+    (window.navigator as any).msSaveBlob(blob, filename);
   } else {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
