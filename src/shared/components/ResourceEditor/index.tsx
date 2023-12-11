@@ -66,7 +66,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const location = useLocation();
   const [isEditing, setEditing] = useState(editing);
   const [isValidJSON, setIsValidJSON] = useState(true);
-  const [lintError, setLintError] = useState(false);
+  const [linterErrors, setLinterErrors] = useState(false);
   const [parsedValue, setParsedValue] = useState(rawData);
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
@@ -114,7 +114,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const handleChange = (editor: any, data: any, value: any) => {
+  const handleChange = (editor: any, _data: any, value: any) => {
     editor;
     if (!editable) {
       return;
@@ -145,7 +145,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   };
 
   const handleLintError = (hasError: boolean) => {
-    setLintError(hasError);
+    setLinterErrors(hasError);
   };
 
   useEditorTooltip({
@@ -185,7 +185,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     >
       {showControlPanel && (
         <div className="control-panel">
-          {editable && isEditing && isValidJSON && !lintError && (
+          {editable && isEditing && isValidJSON && !linterErrors && (
             <div className="feedback _positive">
               <CheckCircleOutlined /> Valid
             </div>
@@ -195,7 +195,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               <ExclamationCircleOutlined /> Invalid JSON-LD
             </div>
           )}
-          {editable && isEditing && isValidJSON && lintError && (
+          {editable && isEditing && isValidJSON && linterErrors && (
             <div className="feedback _negative">
               {/* TODO Get lint error from custom linter */}
               <ExclamationCircleOutlined /> Cannot have fields starting with an
