@@ -185,12 +185,12 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         <div className="control-panel">
           {editable && isEditing && valid && !lintError && (
             <div className="feedback _positive">
-              <CheckCircleOutlined /> Valid structure
+              <CheckCircleOutlined /> Valid JSON-LD
             </div>
           )}
           {editable && isEditing && !valid && (
             <div className="feedback _negative">
-              <ExclamationCircleOutlined /> Invalid JSON-LD structure
+              <ExclamationCircleOutlined /> Invalid JSON-LD
             </div>
           )}
           {editable && isEditing && lintError && (
