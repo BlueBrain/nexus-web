@@ -202,7 +202,8 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               )}
               {isValidJSON && linterIssues && linterIssues.length > 0 && (
                 <div className="feedback _negative">
-                  <ExclamationCircleOutlined /> {linterIssues[0].message}
+                  <ExclamationCircleOutlined /> {linterIssues[0].message} (Line:{' '}
+                  {linterIssues[0].line})
                 </div>
               )}
             </>
