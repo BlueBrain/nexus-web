@@ -13,8 +13,9 @@ export const download = (filename: string, mediaType: string, data: any) => {
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
 
-    // Only append extension if it's not already present
-    link.download = hasCorrectExtension ? filename : `${filename}.${extension}`;
+    // Only append extension if it's not already present or no mediaType is passed
+    link.download =
+      hasCorrectExtension || !mediaType ? filename : `${filename}.${extension}`;
     link.click();
   }
 };
