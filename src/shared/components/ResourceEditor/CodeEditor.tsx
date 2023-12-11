@@ -19,7 +19,8 @@ const customLinter = (
   }[] = [];
   const lines = text.split('\n');
 
-  lines.forEach((line, index) => {
+  // TODO Only check the current updated line to improve performance
+  lines.forEach(line => {
     // Regex to find a field name with an underscore
     const regex = /"([^"]*_[^"]*)"\s*:/g;
 
