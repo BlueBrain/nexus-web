@@ -114,6 +114,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
+  // TODO Don't use this, use the custom linter instead
   const handleChange = (editor: any, data: any, value: any) => {
     editor;
     if (!editable) {

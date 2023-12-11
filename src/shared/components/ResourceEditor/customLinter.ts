@@ -3,19 +3,25 @@ export type LinterIssue = {
   line: number;
 };
 
-export const customLinter = (text: string): LinterIssue[] => {
-  const linterErrors: LinterIssue[] = [];
-  const lines = text.split('\n');
+// Define the type for the changed lines you'll pass into the linter
+export type ChangedLineInfo = {
+  lineNumber: number;
+  content: string;
+};
 
-  // Check for fields starting with an underscore
+export const customLinter = (
+  changedLines: ChangedLineInfo[]
+): LinterIssue[] => {
+  const linterErrors: LinterIssue[] = [];
   const regex = /"\s*_(\w+)"/g;
 
-  // TODO Improve the performance of this linter by only checking the lines that have changed
-  lines.forEach(line => {
-    if (line.match(regex)) {
+  changedLines.forEach(({ lineNumber, content }) => {
+    // Check for fields starting with an underscore
+    if (regex.test(content)) {
+      // If the regex matches, push a new LinterIssue to the array
       linterErrors.push({
         message: 'Cannot have fields starting with an underscore',
-        line: lines.indexOf(line) + 1,
+        line: lineNumber, // Use the lineNumber from the ChangedLineInfo
       });
     }
   });
