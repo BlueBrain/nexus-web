@@ -1,26 +1,27 @@
-import * as React from 'react';
-import { Button, Switch } from 'antd';
-import { useLocation } from 'react-router';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
 import { AccessControl } from '@bbp/react-nexus';
+import { Button, Switch } from 'antd';
 import codemiror from 'codemirror';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
 
-import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/mode/javascript/javascript';
 
-import CodeEditor from './CodeEditor';
+import { useEffect, useRef, useState } from 'react';
 import { RootState } from '../../store/reducers';
-import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
-import ResourceResolutionCache from './ResourcesLRUCache';
+import CodeEditor from './CodeEditor';
 import './ResourceEditor.less';
+import ResourceResolutionCache from './ResourcesLRUCache';
+import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
 export interface ResourceEditorProps {
   rawData: { [key: string]: any };
@@ -43,7 +44,7 @@ export interface ResourceEditorProps {
 
 const switchMarginRight = { marginRight: 5 };
 
-const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
+const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const {
     rawData,
     onFormatChange,
@@ -63,11 +64,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     showControlPanel = true,
   } = props;
   const location = useLocation();
-  const [isEditing, setEditing] = React.useState(editing);
-  const [valid, setValid] = React.useState(true);
-  const [lintError, setLintError] = React.useState(false);
-  const [parsedValue, setParsedValue] = React.useState(rawData);
-  const [stringValue, setStringValue] = React.useState(
+  const [isEditing, setEditing] = useState(editing);
+  const [valid, setValid] = useState(true);
+  const [lintError, setLintError] = useState(false);
+  const [parsedValue, setParsedValue] = useState(rawData);
+  const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
   const {
@@ -81,8 +82,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
-  const codeMirorRef = React.useRef<codemiror.Editor>();
-  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
+  const codeMirorRef = useRef<codemiror.Editor>();
+  const [foldCodeMiror, setFoldCodeMiror] = useState<boolean>(false);
   const onFoldChange = () => {
     if (codeMirorRef.current) {
       if (foldCodeMiror) {
@@ -117,7 +118,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
@@ -167,7 +168,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     ref: codeMirorRef,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
         ResourceResolutionCache.clear();
