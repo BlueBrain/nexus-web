@@ -1,5 +1,6 @@
 import { Spin } from 'antd';
 import { clsx } from 'clsx';
+import { customLinter, LinterIssue } from './customLinter'; // Adjust the import path as necessary
 import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
@@ -7,11 +8,6 @@ import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScrip
 import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-
-export type LinterIssue = {
-  message: string;
-  line: number;
-};
 
 type TCodeEditor = {
   busy: boolean;
@@ -42,35 +38,18 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     ref
   ) => {
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
-
-    const customLinter = useCallback(
-      (text: string, onLintError: (issues: LinterIssue[]) => void) => {
-        const linterErrors: LinterIssue[] = [];
-        const lines = text.split('\n');
-
-        // TODO Only check the current updated line to improve performance
-        lines.forEach(line => {
-          const regex = /"([^"]*_[^"]*)"\s*:/g;
-          if (line.match(regex)) {
-            linterErrors.push({
-              message: 'Cannot have fields starting with an underscore',
-              line: lines.indexOf(line) + 1,
-            });
-          }
-        });
-
-        // Only call onLintError if there are changes in the errors
-        if (
-          // TODO Improve the performance by comparing the stringified version of the arrays
-          JSON.stringify(linterErrors) !==
-          JSON.stringify(prevLinterErrorsRef.current)
-        ) {
-          onLintError(linterErrors);
-          prevLinterErrorsRef.current = linterErrors;
-        }
-      },
-      []
-    );
+    const handleLintErrors = useCallback((text: string) => {
+      const linterErrors = customLinter(text);
+      // TODO Don't do the stringification comparison here, it's expensive
+      if (
+        JSON.stringify(linterErrors) !==
+        JSON.stringify(prevLinterErrorsRef.current)
+      ) {
+        onLintError?.(linterErrors);
+        prevLinterErrorsRef.current = linterErrors;
+      }
+      return linterErrors;
+    }, []);
 
     return (
       <Spin spinning={busy}>
@@ -100,9 +79,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
                 'Ctrl-Q': keyFoldCode,
               },
               lint: {
-                getAnnotations: (text: string) => {
-                  return customLinter(text, onLintError || (() => {}));
-                },
+                getAnnotations: handleLintErrors,
                 async: true,
               },
             } as TEditorConfiguration

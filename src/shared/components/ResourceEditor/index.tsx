@@ -17,7 +17,8 @@ import 'codemirror/mode/javascript/javascript';
 
 import { RootState } from '../../store/reducers';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
-import CodeEditor, { LinterIssue } from './CodeEditor';
+import CodeEditor from './CodeEditor';
+import { LinterIssue } from './customLinter';
 import './ResourceEditor.less';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
