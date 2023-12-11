@@ -8,7 +8,6 @@ import React, { forwardRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
 
-// Custom Linter Function
 const customLinter = (
   text: string,
   onLintError: (hasError: boolean) => void

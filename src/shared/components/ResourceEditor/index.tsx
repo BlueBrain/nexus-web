@@ -247,6 +247,16 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 permissions={['resources/write']}
                 noAccessComponent={() => <></>}
               >
+                {editable && isEditing && (
+                  <Button
+                    className="cancel"
+                    danger
+                    size="small"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                )}
                 <Button
                   role="submit"
                   icon={<SaveOutlined />}
@@ -258,11 +268,6 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   Save
                 </Button>
               </AccessControl>
-              {editable && isEditing && (
-                <Button danger size="small" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              )}
             </div>
           </div>
         </div>
