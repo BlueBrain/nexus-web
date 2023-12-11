@@ -195,6 +195,8 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
             )}
             {editable && isEditing && lintError && (
               <div className="feedback _negative">
+                {/* TODO Get lint error from custom linter */}
+                {/* TODO Fix styling */}
                 <ExclamationCircleOutlined /> Cannot have fields starting with
                 an underscore
               </div>
