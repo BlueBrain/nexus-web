@@ -4,36 +4,13 @@ import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
 
-const customLinter = (
-  text: string,
-  onLintError: (hasError: boolean) => void
-) => {
-  const found: {
-    message: string;
-    severity: string;
-  }[] = [];
-  const lines = text.split('\n');
-
-  // TODO Only check the current updated line to improve performance
-  lines.forEach(line => {
-    // Regex to find a field name with an underscore
-    const regex = /"([^"]*_[^"]*)"\s*:/g;
-
-    if (line ? line.match(regex) : false) {
-      found.push({
-        message: 'Field name contains an underscore',
-        severity: 'warning',
-      });
-    }
-  });
-
-  const hasError = found.length > 0;
-  onLintError(hasError);
-  return found;
+export type LinterIssue = {
+  message: string;
+  line: number;
 };
 
 type TCodeEditor = {
@@ -43,8 +20,9 @@ type TCodeEditor = {
   fullscreen: boolean;
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
-  onLintError?: (hasError: boolean) => void;
+  onLintError?: (errors: LinterIssue[]) => void;
 };
+
 type TEditorConfiguration = codemirror.EditorConfiguration & {
   foldCode: boolean;
   lint?: boolean | any;
@@ -63,6 +41,36 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     },
     ref
   ) => {
+    const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
+
+    const customLinter = useCallback(
+      (text: string, onLintError: (issues: LinterIssue[]) => void) => {
+        const linterErrors: LinterIssue[] = [];
+        const lines = text.split('\n');
+
+        // TODO Only check the current updated line to improve performance
+        lines.forEach(line => {
+          const regex = /"([^"]*_[^"]*)"\s*:/g;
+          if (line.match(regex)) {
+            linterErrors.push({
+              message: 'Cannot have fields starting with an underscore',
+              line: lines.indexOf(line) + 1,
+            });
+          }
+        });
+
+        // Only call onLintError if there are changes in the errors
+        if (
+          JSON.stringify(linterErrors) !==
+          JSON.stringify(prevLinterErrorsRef.current)
+        ) {
+          onLintError(linterErrors);
+          prevLinterErrorsRef.current = linterErrors;
+        }
+      },
+      []
+    );
+
     return (
       <Spin spinning={busy}>
         <CodeMirror

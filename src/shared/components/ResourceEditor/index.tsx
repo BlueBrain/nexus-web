@@ -15,10 +15,10 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/mode/javascript/javascript';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RootState } from '../../store/reducers';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
-import CodeEditor from './CodeEditor';
+import CodeEditor, { LinterIssue } from './CodeEditor';
 import './ResourceEditor.less';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
@@ -66,7 +66,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const location = useLocation();
   const [isEditing, setEditing] = useState(editing);
   const [isValidJSON, setIsValidJSON] = useState(true);
-  const [linterErrors, setLinterErrors] = useState(false);
+  const [linterIssues, setLinterIssues] = useState<LinterIssue[]>();
   const [parsedValue, setParsedValue] = useState(rawData);
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
@@ -144,9 +144,13 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setEditing(false);
   };
 
-  const handleLintError = (hasError: boolean) => {
-    setLinterErrors(hasError);
-  };
+  const handleLintError = useCallback(
+    (errors: LinterIssue[]) => {
+      console.log(errors);
+      setLinterIssues(errors);
+    },
+    [setLinterIssues]
+  );
 
   useEditorTooltip({
     orgLabel,
@@ -185,22 +189,24 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     >
       {showControlPanel && (
         <div className="control-panel">
-          {editable && isEditing && isValidJSON && !linterErrors && (
-            <div className="feedback _positive">
-              <CheckCircleOutlined /> Valid
-            </div>
-          )}
-          {editable && isEditing && !isValidJSON && (
-            <div className="feedback _negative">
-              <ExclamationCircleOutlined /> Invalid JSON-LD
-            </div>
-          )}
-          {editable && isEditing && isValidJSON && linterErrors && (
-            <div className="feedback _negative">
-              {/* TODO Get lint error from custom linter */}
-              <ExclamationCircleOutlined /> Cannot have fields starting with an
-              underscore
-            </div>
+          {editable && isEditing && (
+            <>
+              {isValidJSON && (!linterIssues || linterIssues.length === 0) && (
+                <div className="feedback _positive">
+                  <CheckCircleOutlined /> Valid
+                </div>
+              )}
+              {!isValidJSON && (
+                <div className="feedback _negative">
+                  <ExclamationCircleOutlined /> Invalid JSON-LD
+                </div>
+              )}
+              {isValidJSON && linterIssues && linterIssues.length > 0 && (
+                <div className="feedback _negative">
+                  <ExclamationCircleOutlined /> {linterIssues[0].message}
+                </div>
+              )}
+            </>
           )}
 
           <div className="editor-controls-panel">
@@ -265,7 +271,12 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
                   type="primary"
                   size="small"
                   onClick={handleSubmit}
-                  disabled={!isValidJSON || !editable || !isEditing}
+                  disabled={
+                    !isValidJSON ||
+                    !editable ||
+                    !isEditing ||
+                    (linterIssues && linterIssues.length > 0)
+                  }
                 >
                   Save changes
                 </Button>
