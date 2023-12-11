@@ -238,7 +238,7 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   checkedChildren="Expanded"
                   unCheckedChildren="Expand"
                   checked={expanded}
-                  onChange={expaned => onFormatChangeFold(expanded)}
+                  onChange={expanded => onFormatChangeFold(expanded)}
                   style={switchMarginRight}
                 />
               )}
