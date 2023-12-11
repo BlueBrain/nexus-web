@@ -100,7 +100,11 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
           resource={resource}
           refreshResource={refreshResource}
         />
-        <Tabs activeKey={activeTabKey} onChange={onTabChange}>
+        <Tabs
+          activeKey={activeTabKey}
+          onChange={onTabChange}
+          tabBarStyle={{ paddingLeft: '1rem' }}
+        >
           <TabPane tab="JSON" key="#JSON">
             <ResourceEditorContainer
               resourceId={resource['@id']}
