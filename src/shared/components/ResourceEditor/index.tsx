@@ -6,7 +6,7 @@ import {
 import { AccessControl } from '@bbp/react-nexus';
 import { Button, Switch } from 'antd';
 import codemirror from 'codemirror';
-import * as React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 
@@ -15,7 +15,6 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
 import 'codemirror/mode/javascript/javascript';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { RootState } from '../../store/reducers';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import CodeEditor, { LinterIssue } from './CodeEditor';
@@ -114,7 +113,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const handleChange = (editor: any, _data: any, value: any) => {
+  const handleChange = (editor: any, data: any, value: any) => {
     editor;
     if (!editable) {
       return;
