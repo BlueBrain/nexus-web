@@ -1,20 +1,11 @@
-import { customLinter, ChangedLineInfo } from './customLinter';
-
-// Helper function to create ChangedLineInfo from a JSON string
-function createChangedLineInfo(jsonString: string): ChangedLineInfo[] {
-  return jsonString.split('\n').map((content, index) => ({
-    lineNumber: index + 1,
-    content: content.trim(), // Trim the line to remove whitespace if necessary
-  }));
-}
+import { customLinter } from './customLinter';
 
 describe('customLinter', () => {
   it('should return an empty array for valid text', () => {
     const text = `{
       "validField": "value"
     }`;
-    const changedLines = createChangedLineInfo(text);
-    const result = customLinter(changedLines);
+    const result = customLinter(text);
     expect(result).toEqual([]);
   });
 
@@ -22,8 +13,7 @@ describe('customLinter', () => {
     const text = `{
       "_invalidField": "value"
     }`;
-    const changedLines = createChangedLineInfo(text);
-    const result = customLinter(changedLines);
+    const result = customLinter(text);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       message: 'Cannot have fields starting with an underscore',
@@ -37,8 +27,7 @@ describe('customLinter', () => {
       "validField": "value",
       "_invalidField2": "value"
     }`;
-    const changedLines = createChangedLineInfo(text);
-    const result = customLinter(changedLines);
+    const result = customLinter(text);
     expect(result).toHaveLength(2);
     expect(result).toContainEqual({
       message: 'Cannot have fields starting with an underscore',
@@ -54,8 +43,7 @@ describe('customLinter', () => {
     const text = `{
       "  _invalidField": "value"
     }`;
-    const changedLines = createChangedLineInfo(text);
-    const result = customLinter(changedLines);
+    const result = customLinter(text);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       message: 'Cannot have fields starting with an underscore',
@@ -67,8 +55,7 @@ describe('customLinter', () => {
     const text = `{
       "valid_Field": "value"
     }`;
-    const changedLines = createChangedLineInfo(text);
-    const result = customLinter(changedLines);
+    const result = customLinter(text);
     expect(result).toEqual([]);
   });
 });

@@ -5,29 +5,9 @@ import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
-import React, { forwardRef, useCallback, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-
-interface Change {
-  from: CodeMirror.Position;
-  to: CodeMirror.Position;
-  text: string[];
-}
-
-interface ChangedLineInfo {
-  lineNumber: number;
-  content: string;
-}
-
-type ChangeData = {
-  changes?: Change[];
-};
-
-type EditorType = {
-  lineCount: () => number;
-  getLine: (line: number) => string;
-};
 
 type TCodeEditor = {
   busy: boolean;
@@ -58,69 +38,9 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     ref
   ) => {
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
-
-    const handleEditorChange = (editor: any, data: any, value: any) => {
-      handleChange(editor, data, value);
-
-      // Extract changed lines and their content
-      const changedLinesInfo = extractChangedLines(editor, data);
-      const linterErrors = customLinter(changedLinesInfo);
-
-      if (
-        JSON.stringify(linterErrors) !==
-        JSON.stringify(prevLinterErrorsRef.current)
-      ) {
-        onLintError?.(linterErrors);
-        prevLinterErrorsRef.current = linterErrors;
-      }
-    };
-
-    const extractChangedLines = (
-      editor: EditorType,
-      changeData: ChangeData | Change
-    ): ChangedLineInfo[] => {
-      // Convert changeData to an array of changes
-      const changes = ('changes' in changeData
-        ? changeData.changes
-        : [changeData]) as Change[];
-      let changedLinesInfo: ChangedLineInfo[] = [];
-
-      changes.forEach(change => {
-        const startLine = change.from.line;
-        const endLine = change.to.line;
-
-        for (let i = startLine; i <= endLine; i += 1) {
-          if (i < editor.lineCount()) {
-            const lineContent = editor.getLine(i);
-            changedLinesInfo.push({ lineNumber: i, content: lineContent });
-          }
-        }
-      });
-
-      // Remove duplicates
-      changedLinesInfo = changedLinesInfo.reduce((unique, item) => {
-        if (!unique.some(obj => obj.lineNumber === item.lineNumber)) {
-          unique.push(item);
-        }
-        return unique;
-      }, [] as ChangedLineInfo[]); // Make sure to initialize the array with the correct type
-
-      return changedLinesInfo;
-    };
-
     const handleLintErrors = useCallback((text: string) => {
-      // Split the text by new lines to get an array of lines
-      const lines = text.split('\n');
-
-      // Create an array of ChangedLineInfo objects
-      const changedLines: ChangedLineInfo[] = lines.map((content, index) => ({
-        content,
-        lineNumber: index + 1, // Line numbers typically start at 1, not 0
-      }));
-
-      // Call customLinter with the array of ChangedLineInfo objects
-      const linterErrors = customLinter(changedLines);
-
+      const linterErrors = customLinter(text);
+      // TODO Don't do the stringification comparison here, it's expensive
       if (
         JSON.stringify(linterErrors) !==
         JSON.stringify(prevLinterErrorsRef.current)
@@ -128,7 +48,6 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
         onLintError?.(linterErrors);
         prevLinterErrorsRef.current = linterErrors;
       }
-
       return linterErrors;
     }, []);
 
@@ -169,7 +88,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             'code-mirror-editor',
             fullscreen && 'full-screen-mode'
           )}
-          onChange={handleEditorChange}
+          onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
             (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
