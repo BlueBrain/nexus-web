@@ -18,7 +18,7 @@ const html = ({
   preloadedState: object;
 }): string => `
   <!doctype html>
-  <html ${helmet.htmlAttributes.toString()}>
+  <html lang="en" dir="ltr">
     <head>
       ${helmet.title.toString()}
       ${helmet.meta.toString()}
