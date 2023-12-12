@@ -1,6 +1,6 @@
 import { Spin } from 'antd';
 import { clsx } from 'clsx';
-import { customLinter, LinterIssue } from './customLinter'; // Adjust the import path as necessary
+import { customLinter, LinterIssue } from './customLinter';
 import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
@@ -40,7 +40,6 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
-      // TODO Don't do the stringification comparison here, it's expensive
       if (
         JSON.stringify(linterErrors) !==
         JSON.stringify(prevLinterErrorsRef.current)

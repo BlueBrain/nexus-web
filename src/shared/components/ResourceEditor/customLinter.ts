@@ -10,7 +10,6 @@ export const customLinter = (text: string): LinterIssue[] => {
   // Check for fields starting with an underscore
   const regex = /"\s*_(\w+)"/g;
 
-  // TODO Improve the performance of this linter by only checking the lines that have changed
   lines.forEach(line => {
     if (line.match(regex)) {
       linterErrors.push({
