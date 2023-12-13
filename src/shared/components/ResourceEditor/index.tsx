@@ -66,7 +66,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const location = useLocation();
   const [isEditing, setEditing] = useState(editing);
   const [isValidJSON, setIsValidJSON] = useState(true);
-  const [linterIssues, setLinterIssues] = useState<LinterIssue[]>();
+  const [linterIssues, setLinterIssues] = useState<LinterIssue[]>([]);
   const [parsedValue, setParsedValue] = useState(rawData);
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
@@ -190,7 +190,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         <div className="control-panel">
           {editable && isEditing && (
             <>
-              {isValidJSON && (!linterIssues || linterIssues.length === 0) && (
+              {isValidJSON && linterIssues.length === 0 && (
                 <div className="feedback _positive">
                   <CheckCircleOutlined /> Valid
                 </div>
@@ -200,7 +200,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
                   <ExclamationCircleOutlined /> Invalid JSON-LD
                 </div>
               )}
-              {isValidJSON && linterIssues && linterIssues.length > 0 && (
+              {isValidJSON && linterIssues.length > 0 && (
                 <div className="feedback _negative">
                   <ExclamationCircleOutlined /> {linterIssues[0].message} (Line:{' '}
                   {linterIssues[0].line})
@@ -275,7 +275,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
                     !isValidJSON ||
                     !editable ||
                     !isEditing ||
-                    (linterIssues && linterIssues.length > 0)
+                    linterIssues.length > 0
                   }
                 >
                   Save changes
