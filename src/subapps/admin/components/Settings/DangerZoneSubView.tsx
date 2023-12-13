@@ -1,16 +1,16 @@
-import React, { useReducer } from 'react';
-import { Button, notification, Tooltip, List } from 'antd';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
-import { useMutation } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk';
-import { makeOrganizationUri } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Button, List, Tooltip, notification } from 'antd';
+import React, { useReducer } from 'react';
+import { useMutation } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import DangerZoneAction, {
   TDangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+import { RootState } from '../../../../shared/store/reducers';
+import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.less';
 
 type TDangerZoneItem = {
@@ -19,6 +19,12 @@ type TDangerZoneItem = {
   description: string;
   action: React.ReactElement;
 };
+
+type TDangerZoneActionState = Omit<
+  TDangerZoneActionProps,
+  'onClose' | 'status'
+>;
+
 type Props = {
   project: {
     _label: string;
@@ -30,6 +36,7 @@ type Props = {
     _deprecated: boolean;
   };
 };
+
 const deprecateProject = async ({
   nexus,
   orgLabel,
@@ -48,6 +55,7 @@ const deprecateProject = async ({
     throw new Error('Can not deprecate your project', { cause: error });
   }
 };
+
 const deleteProject = async ({
   nexus,
   apiEndpoint,
@@ -70,10 +78,7 @@ const deleteProject = async ({
     throw new Error('Can not delete your project', { cause: error });
   }
 };
-type TDangerZoneActionState = Omit<
-  TDangerZoneActionProps,
-  'onClose' | 'status'
->;
+
 const DangerZoneSubView = ({ project }: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
@@ -130,6 +135,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       },
     }
   );
+
   const {
     mutateAsync: deleteProjectAsync,
     status: deletionStatus,
@@ -149,8 +155,10 @@ const DangerZoneSubView = ({ project }: Props) => {
       });
     },
   });
+
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
+
   const handleDeletion = () =>
     deleteProjectAsync({
       nexus,
@@ -159,6 +167,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       projectLabel,
       rev: project._rev,
     });
+
   const handleOpenDeprecationModal = () =>
     updateModalState({
       open: true,
@@ -168,6 +177,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       action: 'deprecate',
       handler: handleDeprecation,
     });
+
   const handleOpenDeleteModal = () =>
     updateModalState({
       open: true,
