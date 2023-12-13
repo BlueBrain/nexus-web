@@ -146,7 +146,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
 
   const handleLintError = useCallback(
     (errors: LinterIssue[]) => {
-      console.log(errors);
       setLinterIssues(errors);
     },
     [setLinterIssues]
