@@ -160,13 +160,9 @@ const DangerZoneSubView = ({ project }: Props) => {
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
 
   // TODO: Implement undo deprecation
-  // const handleUndoDeprecation = () =>
-  //   undoDeprecateProjectAsync({
-  //     nexus,
-  //     orgLabel,
-  //     projectLabel,
-  //     rev: project._rev,
-  //   });
+  const undoDeprecateProjectAsync = () => {
+    // Implement the logic to undo deprecation
+  };
 
   const handleDeletion = () =>
     deleteProjectAsync({
@@ -194,6 +190,15 @@ const DangerZoneSubView = ({ project }: Props) => {
       description: 'This action cannot be undone. This will permanently delete',
       action: 'delete',
       handler: handleDeletion,
+    });
+
+  const handleOpenUndoDeprecationModal = () =>
+    updateModalState({
+      open: true,
+      title: 'Undo Deprecate Project',
+      description: 'This will restore the project to its active state.',
+      action: 'undo-deprecate',
+      handler: undoDeprecateProjectAsync,
     });
 
   const dangerZoneDataSource: TDangerZoneItem[] = [
@@ -254,6 +259,35 @@ const DangerZoneSubView = ({ project }: Props) => {
             onClick={handleOpenDeleteModal}
           >
             Delete this Project
+          </Button>
+        </AccessControl>
+      ),
+    },
+    {
+      key: 'undo-deprecate-project-section',
+      title: 'Undo Deprecation of this Project',
+      description: 'Restore this project to its active state.',
+      action: (
+        <AccessControl
+          path={[`${orgLabel}/${projectLabel}`]}
+          permissions={['projects/write']}
+          noAccessComponent={() => (
+            <Tooltip title="You have no permissions to undo the deprecation of this project">
+              <Button disabled style={{ margin: 0, marginRight: 10 }}>
+                <span>Undo Deprecation</span>
+                <HasNoPermission />
+              </Button>
+            </Tooltip>
+          )}
+        >
+          <Button
+            style={{ margin: 0, marginRight: 10 }}
+            type="primary"
+            htmlType="button"
+            disabled={!project._deprecated} // Enable button only if project is deprecated
+            onClick={handleOpenUndoDeprecationModal}
+          >
+            Undo Deprecation
           </Button>
         </AccessControl>
       ),
