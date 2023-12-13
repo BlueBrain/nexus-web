@@ -28,15 +28,16 @@ describe('customLinter', () => {
       "_invalidField2": "value"
     }`;
     const result = customLinter(text);
-    expect(result).toHaveLength(2);
-    expect(result).toContainEqual({
-      message: 'Cannot have fields starting with an underscore',
-      line: 2,
-    });
-    expect(result).toContainEqual({
-      message: 'Cannot have fields starting with an underscore',
-      line: 4,
-    });
+    expect(result).toEqual([
+      {
+        message: 'Cannot have fields starting with an underscore',
+        line: 2,
+      },
+      {
+        message: 'Cannot have fields starting with an underscore',
+        line: 4,
+      },
+    ]);
   });
 
   it('should detect a field starting with an underscore with spaces', () => {
