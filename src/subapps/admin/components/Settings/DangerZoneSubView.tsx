@@ -159,6 +159,15 @@ const DangerZoneSubView = ({ project }: Props) => {
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
 
+  // TODO: Implement undo deprecation
+  // const handleUndoDeprecation = () =>
+  //   undoDeprecateProjectAsync({
+  //     nexus,
+  //     orgLabel,
+  //     projectLabel,
+  //     rev: project._rev,
+  //   });
+
   const handleDeletion = () =>
     deleteProjectAsync({
       nexus,
@@ -186,6 +195,7 @@ const DangerZoneSubView = ({ project }: Props) => {
       action: 'delete',
       handler: handleDeletion,
     });
+
   const dangerZoneDataSource: TDangerZoneItem[] = [
     {
       key: 'deprecate-project-section',
