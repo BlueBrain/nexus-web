@@ -57,6 +57,27 @@ const deprecateProject = async ({
   }
 };
 
+const undoDeprecateProject = async ({
+  nexus,
+  orgLabel,
+  projectLabel,
+  rev,
+}: {
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  rev: number;
+}) => {
+  try {
+    await nexus.httpPut({
+      path: `/v1/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
+    });
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Cannot undo deprecation of the project', { cause: error });
+  }
+};
+
 const deleteProject = async ({
   nexus,
   apiEndpoint,
@@ -137,6 +158,26 @@ const DangerZoneSubView = ({ project }: Props) => {
     }
   );
 
+  const undoDeprecateProjectAsync = async (
+    nexus: NexusClient,
+    orgLabel: string,
+    projectLabel: string,
+    rev: number
+  ) => {
+    try {
+      await nexus.httpPut({
+        path: `/v1/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
+      });
+      console.log('Undid deprecation of project');
+    } catch (error) {
+      notification.error({
+        message: `Error undoing deprecation of project ${projectLabel}`,
+        // @ts-ignore
+        description: <code>{error.cause.message}</code>,
+      });
+    }
+  };
+
   const {
     mutateAsync: deleteProjectAsync,
     status: deletionStatus,
@@ -159,11 +200,6 @@ const DangerZoneSubView = ({ project }: Props) => {
 
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
-
-  // TODO: Implement undo deprecation
-  const undoDeprecateProjectAsync = () => {
-    // Implement the logic to undo deprecation
-  };
 
   const handleDeletion = () =>
     deleteProjectAsync({
@@ -279,7 +315,14 @@ const DangerZoneSubView = ({ project }: Props) => {
             type="primary"
             htmlType="button"
             disabled={!project._deprecated} // Enable button only if project is deprecated
-            onClick={undoDeprecateProjectAsync}
+            onClick={() =>
+              undoDeprecateProjectAsync(
+                nexus,
+                orgLabel,
+                projectLabel,
+                project._rev
+              )
+            }
           >
             <UndoOutlined />
             Undo Deprecation
