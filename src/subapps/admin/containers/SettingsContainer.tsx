@@ -1,12 +1,12 @@
-import * as React from 'react';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Menu, MenuProps } from 'antd';
-import GeneralSVComponent from '../components/Settings/GeneralSubView';
-import ViewsSVComponent from '../components/Settings/ViewsSubView';
-import StoragesSVComponent from '../components/Settings/StoragesSubView';
-import ResolversSVComponent from '../components/Settings/ResolversSubView';
-import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import * as React from 'react';
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
+import GeneralSVComponent from '../components/Settings/GeneralSubView';
+import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import ResolversSVComponent from '../components/Settings/ResolversSubView';
+import StoragesSVComponent from '../components/Settings/StoragesSubView';
+import ViewsSVComponent from '../components/Settings/ViewsSubView';
 import './SettingsContainer.less';
 
 type Props = {
@@ -50,15 +50,6 @@ const subViewsMapper = new Map<string, TMenuItem>([
       Component: StoragesSVComponent,
     },
   ],
-  // [
-  //   'quotas',
-  //   {
-  //     id: 'setting/quotas',
-  //     key: 'setting/quotas',
-  //     label: 'Quotas',
-  //     Component: QuotasSVComponent,
-  //   },
-  // ],
   [
     'resolvers',
     {
@@ -99,7 +90,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
   const handleOnSelectSubMenuItem: OnSelectHandler = info =>
     setSelectedKey(info.key);
-  const subViewSelectedComponenet = (props: Props) => {
+  const subViewSelectedComponent = (props: Props) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;
     const key = view!.key;
@@ -120,7 +111,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
         ))}
       </Menu>
       <div className="settings-content">
-        {subViewSelectedComponenet({ project, apiMappings, mode })}
+        {subViewSelectedComponent({ project, apiMappings, mode })}
       </div>
     </div>
   );
