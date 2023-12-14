@@ -192,15 +192,6 @@ const DangerZoneSubView = ({ project }: Props) => {
       handler: handleDeletion,
     });
 
-  const handleOpenUndoDeprecationModal = () =>
-    updateModalState({
-      open: true,
-      title: 'Undo Deprecate Project',
-      description: 'This will restore the project to its active state.',
-      action: 'undo-deprecate',
-      handler: undoDeprecateProjectAsync,
-    });
-
   const dangerZoneDataSource: TDangerZoneItem[] = [
     {
       key: 'deprecate-project-section',
@@ -285,7 +276,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             type="primary"
             htmlType="button"
             disabled={!project._deprecated} // Enable button only if project is deprecated
-            onClick={handleOpenUndoDeprecationModal}
+            onClick={undoDeprecateProjectAsync}
           >
             Undo Deprecation
           </Button>
