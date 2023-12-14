@@ -58,11 +58,13 @@ const deprecateProject = async ({
 };
 
 const undoDeprecateProject = async ({
+  apiEndpoint,
   nexus,
   orgLabel,
   projectLabel,
   rev,
 }: {
+  apiEndpoint: string;
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
@@ -70,7 +72,7 @@ const undoDeprecateProject = async ({
 }) => {
   try {
     await nexus.httpPut({
-      path: `/v1/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
+      path: `${apiEndpoint}/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
     });
   } catch (error) {
     // @ts-ignore
@@ -159,13 +161,14 @@ const DangerZoneSubView = ({ project }: Props) => {
   );
 
   const undoDeprecateProjectAsync = async (
+    apiEndpoint: string,
     nexus: NexusClient,
     orgLabel: string,
     projectLabel: string,
     rev: number
   ) => {
     try {
-      undoDeprecateProject({ nexus, orgLabel, projectLabel, rev });
+      undoDeprecateProject({ apiEndpoint, nexus, orgLabel, projectLabel, rev });
     } catch (error) {
       notification.error({
         message: `Error undoing deprecation of project ${projectLabel}`,
@@ -314,6 +317,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             disabled={!project._deprecated} // Enable button only if project is deprecated
             onClick={() =>
               undoDeprecateProjectAsync(
+                apiEndpoint,
                 nexus,
                 orgLabel,
                 projectLabel,
