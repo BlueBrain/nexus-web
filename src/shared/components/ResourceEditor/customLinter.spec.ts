@@ -71,4 +71,17 @@ describe('customLinter', () => {
     const result = customLinter(text);
     expect(result).toEqual([]);
   });
+
+  it('should throw an error if the field starts with an underscore followed by a special character', () => {
+    const text = `{
+      "_!invalidField": "value"
+    }`;
+    const result = customLinter(text);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual({
+      message:
+        'Fields starting with an underscore are reserved for internal use',
+      line: 2,
+    });
+  });
 });
