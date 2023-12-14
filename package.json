@@ -12,7 +12,7 @@
     "codecov": "codecov",
     "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
     "cy:open": "cypress open",
-    "cy:publicstudios": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
+    "cy:publicstudios": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --record --spec \"cypress/e2e/PublicStudios.cy.ts\"",
     "cy:run": "cypress run",
     "lint": "tslint --project tsconfig.json",
     "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
