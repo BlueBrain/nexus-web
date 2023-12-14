@@ -34,7 +34,7 @@ const RouteHeader = ({
   return (
     <div
       className="route-header"
-      style={{ background: layoutSettings.mainColor }}
+      style={{ backgroundColor: layoutSettings.mainColor }}
     >
       <img src={bg} alt={alt} style={{ ...imgCss }} />
       <div className="title">

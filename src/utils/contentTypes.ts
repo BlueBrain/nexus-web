@@ -45,7 +45,7 @@ export const MIME_TYPE_TO_EXTENSION: { [key: string]: string } = {
  * @param encodingType - Should be one of:
  *                       * undefined
  *                       * A string containing only MIME types (e.g. -> 'text/html')
- *                       * A stirng containing MIME type and character encoding, separated by semicolons (e.g. -> 'text/plain; charset=UTF-8')
+ *                       * A string containing MIME type and character encoding, separated by semicolons (e.g. -> 'text/plain; charset=UTF-8')
  * @returns File extension best supported for the given "encodedType" as listed in MDN (https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
  * If no extension could be derived, the function returns an empty string.
  */
