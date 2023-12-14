@@ -21,11 +21,11 @@ export const customLinter = (text: string): LinterIssue[] => {
   const linterErrors: LinterIssue[] = [];
   const lines = text.split('\n');
 
-  // Regex to match fields starting with an underscore
-  const regex = /"\s*_(\w+)"/g;
+  // Regex to match keys starting with an underscore followed by any character except a space or double quote
+  const regex = /"\s*_[^"\s]+"\s*:/g;
 
   lines.forEach((line, index) => {
-    if (line.match(regex)) {
+    if (regex.test(line)) {
       linterErrors.push({
         message:
           'Fields starting with an underscore are reserved for internal use',
