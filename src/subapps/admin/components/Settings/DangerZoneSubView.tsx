@@ -170,11 +170,11 @@ const DangerZoneSubView = ({ project }: Props) => {
     try {
       // TODO Improve the UX of "redirecting" etc. as it's currently not very clear
       undoDeprecateProject({ apiEndpoint, nexus, orgLabel, projectLabel, rev });
+      history.push(makeOrganizationUri(orgLabel));
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
-        description: 'Project has been undeprecated successfully',
+        description: 'Project deprecation has been undone successfully',
       });
-      history.push(makeOrganizationUri(orgLabel));
     } catch (error) {
       notification.error({
         message: `Error undoing deprecation of project ${projectLabel}`,
