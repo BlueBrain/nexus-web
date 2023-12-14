@@ -165,10 +165,7 @@ const DangerZoneSubView = ({ project }: Props) => {
     rev: number
   ) => {
     try {
-      await nexus.httpPut({
-        path: `/v1/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
-      });
-      console.log('Undid deprecation of project');
+      undoDeprecateProject({ nexus, orgLabel, projectLabel, rev });
     } catch (error) {
       notification.error({
         message: `Error undoing deprecation of project ${projectLabel}`,
