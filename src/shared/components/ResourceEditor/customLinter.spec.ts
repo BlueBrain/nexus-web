@@ -63,4 +63,12 @@ describe('customLinter', () => {
     const result = customLinter(text);
     expect(result).toEqual([]);
   });
+
+  it('should ignore a value that starts with an underscore', () => {
+    const text = `{
+      "validField": "_value"
+    }`;
+    const result = customLinter(text);
+    expect(result).toEqual([]);
+  });
 });
