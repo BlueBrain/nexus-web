@@ -82,6 +82,13 @@ const ResourceActionsContainer: React.FunctionComponent<{
       danger: true,
     },
     {
+      name: 'downloadFile',
+      predicate: toPromise(isFile),
+      title: 'Download this file',
+      shortTitle: 'Download File',
+      icon: <DownloadOutlined />,
+    },
+    {
       name: 'deprecateResource',
       predicate: async (resource: Resource) => {
         const isLatest = await isLatestResource(resource);
@@ -97,13 +104,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
       shortTitle: 'Deprecate',
       icon: <DeleteOutlined />,
       danger: true,
-    },
-    {
-      name: 'downloadFile',
-      predicate: toPromise(isFile),
-      title: 'Download this file',
-      shortTitle: 'Download File',
-      icon: <DownloadOutlined />,
     },
   ];
 
