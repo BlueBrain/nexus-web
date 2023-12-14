@@ -168,6 +168,7 @@ const DangerZoneSubView = ({ project }: Props) => {
     rev: number
   ) => {
     try {
+      // TODO Improve the UX of "redirecting" etc. as it's currently not very clear
       undoDeprecateProject({ apiEndpoint, nexus, orgLabel, projectLabel, rev });
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
