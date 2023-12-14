@@ -272,7 +272,10 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
           message={
             <>
               <WarningOutlined style={{ marginRight: '1em' }} />{' '}
-              {linterIssues[0].message} (Line: {linterIssues[0].line})
+              <span style={{ fontWeight: 'bold' }}>
+                Warning on Line {linterIssues[0].line}:{' '}
+              </span>
+              {linterIssues[0].message}.
             </>
           }
           style={{ border: 'none', margin: '0' }}
@@ -285,8 +288,11 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         <Alert
           message={
             <>
-              <WarningOutlined style={{ marginRight: '1em' }} /> Invalid JSON-LD
-              syntax detected. Please review and correct the format error
+              <WarningOutlined style={{ marginRight: '1em' }} />
+              <span style={{ fontWeight: 'bold' }}>
+                Error: Incorrect JSON-LD Format.
+              </span>{' '}
+              Please check the format and fix any errors.
             </>
           }
           style={{ border: 'none' }}
