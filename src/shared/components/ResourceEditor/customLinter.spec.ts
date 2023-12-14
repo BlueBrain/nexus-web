@@ -16,7 +16,8 @@ describe('customLinter', () => {
     const result = customLinter(text);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      message: 'Cannot have fields starting with an underscore',
+      message:
+        'Fields starting with an underscore are reserved for internal use',
       line: 2,
     });
   });
@@ -30,11 +31,13 @@ describe('customLinter', () => {
     const result = customLinter(text);
     expect(result).toEqual([
       {
-        message: 'Cannot have fields starting with an underscore',
+        message:
+          'Fields starting with an underscore are reserved for internal use',
         line: 2,
       },
       {
-        message: 'Cannot have fields starting with an underscore',
+        message:
+          'Fields starting with an underscore are reserved for internal use',
         line: 4,
       },
     ]);
@@ -47,7 +50,8 @@ describe('customLinter', () => {
     const result = customLinter(text);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      message: 'Cannot have fields starting with an underscore',
+      message:
+        'Fields starting with an underscore are reserved for internal use',
       line: 2,
     });
   });

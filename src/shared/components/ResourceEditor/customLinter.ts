@@ -27,7 +27,8 @@ export const customLinter = (text: string): LinterIssue[] => {
   lines.forEach((line, index) => {
     if (line.match(regex)) {
       linterErrors.push({
-        message: 'Cannot have fields starting with an underscore',
+        message:
+          'Fields starting with an underscore are reserved for internal use',
         line: index + 1,
       });
     }
