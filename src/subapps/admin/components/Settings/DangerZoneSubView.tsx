@@ -12,6 +12,7 @@ import DangerZoneAction, {
 import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.less';
+import { DeleteOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
 
 type TDangerZoneItem = {
   key: React.Key;
@@ -219,6 +220,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             disabled={project._deprecated}
             onClick={handleOpenDeprecationModal}
           >
+            <StopOutlined />
             Deprecate this Project
           </Button>
         </AccessControl>
@@ -249,6 +251,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             htmlType="button"
             onClick={handleOpenDeleteModal}
           >
+            <DeleteOutlined />
             Delete this Project
           </Button>
         </AccessControl>
@@ -278,6 +281,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             disabled={!project._deprecated} // Enable button only if project is deprecated
             onClick={undoDeprecateProjectAsync}
           >
+            <UndoOutlined />
             Undo Deprecation
           </Button>
         </AccessControl>
