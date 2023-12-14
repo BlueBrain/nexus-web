@@ -1,10 +1,11 @@
 import {
   CheckCircleOutlined,
+  WarningOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import { Button, Switch } from 'antd';
+import { Alert, Button, Switch } from 'antd';
 import codemirror from 'codemirror';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -188,27 +189,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     >
       {showControlPanel && (
         <div className="control-panel">
-          {editable && isEditing && (
-            <>
-              {isValidJSON && linterIssues.length === 0 && (
-                <div className="feedback _positive">
-                  <CheckCircleOutlined /> Valid
-                </div>
-              )}
-              {!isValidJSON && (
-                <div className="feedback _negative">
-                  <ExclamationCircleOutlined /> Invalid JSON-LD
-                </div>
-              )}
-              {isValidJSON && linterIssues.length > 0 && (
-                <div className="feedback _negative">
-                  <ExclamationCircleOutlined /> {linterIssues[0].message} (Line:{' '}
-                  {linterIssues[0].line})
-                </div>
-              )}
-            </>
-          )}
-
           <div className="editor-controls-panel">
             <div className="left-side">
               {showFullScreen && (
@@ -284,6 +264,34 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Show to the user if there's a custom linter issue */}
+      {isValidJSON && linterIssues.length > 0 && (
+        <Alert
+          message={
+            <>
+              <WarningOutlined style={{ marginRight: '1em' }} />{' '}
+              {linterIssues[0].message} (Line: {linterIssues[0].line})
+            </>
+          }
+          style={{ border: 'none', margin: '0' }}
+          type="warning"
+        />
+      )}
+
+      {/* Show to the user if there's a general issue with the JSON-LD */}
+      {!isValidJSON && (
+        <Alert
+          message={
+            <>
+              <WarningOutlined style={{ marginRight: '1em' }} /> Invalid JSON-LD
+              syntax detected. Please review and correct the format error
+            </>
+          }
+          style={{ border: 'none' }}
+          type="error"
+        />
       )}
 
       <CodeEditor
