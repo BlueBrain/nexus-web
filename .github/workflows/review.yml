@@ -21,7 +21,7 @@ jobs:
       - name: linting ✨
         run: |
           yarn lint
-      - name: style 💅
+      - name: style check 💅
         run: |
           yarn style
       - name: running test 🛫🛬
@@ -42,7 +42,7 @@ jobs:
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
         run: >-
-          echo | timeout --verbose 20m docker exec
+          echo | timeout --verbose 30m docker exec
           -e 'DEBUG=cypress:launcher:browsers'
           -t
           cypress

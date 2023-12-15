@@ -150,7 +150,7 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         <Link to="/">
           <div className="logo-container__logo">
             <img
-              src={logoImg || require('../../images/fusion_logo.png')}
+              src={logoImg || require('../../images/fusion_logo.svg')}
               alt="Logo"
             />
           </div>
