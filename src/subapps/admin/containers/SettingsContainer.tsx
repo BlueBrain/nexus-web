@@ -8,14 +8,11 @@ import ResolversSVComponent from '../components/Settings/ResolversSubView';
 import StoragesSVComponent from '../components/Settings/StoragesSubView';
 import ViewsSVComponent from '../components/Settings/ViewsSubView';
 import './SettingsContainer.less';
-import { useState } from 'react';
 
 type Props = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
   apiMappings?: ProjectResponseCommon['apiMappings'];
   mode: string;
-  projectDeprecated: boolean;
-  setProjectDeprecated: (deprecated: boolean) => void;
 };
 
 type TMenuItem = {
@@ -90,11 +87,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const menuItems = Array.from(subViewsMapper.entries()).map(
     ([, value]) => value
   );
-  const [selectedKey, setSelectedKey] = useState(() => menuItems[0].id);
-  const [projectDeprecated, setProjectDeprecated] = useState(
-    project?._deprecated ?? false
-  );
-
+  const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
   const handleOnSelectSubMenuItem: OnSelectHandler = info =>
     setSelectedKey(info.key);
   const subViewSelectedComponent = (props: Props) => {
@@ -118,13 +111,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
         ))}
       </Menu>
       <div className="settings-content">
-        {subViewSelectedComponent({
-          project,
-          apiMappings,
-          mode,
-          projectDeprecated,
-          setProjectDeprecated,
-        })}
+        {subViewSelectedComponent({ project, apiMappings, mode })}
       </div>
     </div>
   );
