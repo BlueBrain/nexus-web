@@ -27,6 +27,7 @@ import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
 
 // import './ProjectView.less';
 import './styles.less';
+import { useState } from 'react';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -151,6 +152,10 @@ const ProjectView: React.FunctionComponent = () => {
         });
       });
   }, [orgLabel, projectLabel, nexus]);
+
+  const [projectDeprecated, setProjectDeprecated] = useState(
+    project?._deprecated
+  );
 
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
@@ -342,6 +347,8 @@ const ProjectView: React.FunctionComponent = () => {
                   }}
                   apiMappings={project.apiMappings}
                   mode="edit"
+                  projectDeprecated
+                  setProjectDeprecated={setProjectDeprecated}
                 />
               </TabPane>
               {deltaPlugins &&

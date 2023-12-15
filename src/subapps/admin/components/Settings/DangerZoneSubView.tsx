@@ -1,7 +1,7 @@
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Button, List, Tooltip, notification } from 'antd';
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
@@ -36,6 +36,8 @@ type Props = {
     mode: string;
     _deprecated: boolean;
   };
+  setProjectDeprecated: (deprecated: boolean) => void;
+  projectDeprecated: boolean;
 };
 
 const deprecateProject = async ({
@@ -103,7 +105,12 @@ const deleteProject = async ({
   }
 };
 
-const DangerZoneSubView = ({ project }: Props) => {
+const DangerZoneSubView = ({
+  project,
+  setProjectDeprecated,
+  projectDeprecated,
+}: Props) => {
+  const [isDeprecated, setIsDeprecated] = useState(project._deprecated);
   const nexus = useNexusContext();
   const history = useHistory();
   const apiEndpoint = useSelector(
@@ -168,13 +175,12 @@ const DangerZoneSubView = ({ project }: Props) => {
     rev: number
   ) => {
     try {
-      // TODO Improve the UX of "redirecting" etc. as it's currently not very clear
       undoDeprecateProject({ apiEndpoint, nexus, orgLabel, projectLabel, rev });
-      history.push(makeOrganizationUri(orgLabel));
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
         description: 'Project deprecation has been undone successfully',
       });
+      setIsDeprecated(false);
     } catch (error) {
       notification.error({
         message: `Error undoing deprecation of project ${projectLabel}`,
@@ -183,6 +189,10 @@ const DangerZoneSubView = ({ project }: Props) => {
       });
     }
   };
+
+  useEffect(() => {
+    setIsDeprecated(project._deprecated);
+  }, [projectDeprecated]);
 
   const {
     mutateAsync: deleteProjectAsync,
