@@ -3,45 +3,67 @@ name: Review
 on: [pull_request]
 
 jobs:
-  test-and-build:
+  setup:
     runs-on: it
+    outputs:
+      cache-key: ${{ steps.cache-keys.outputs.cache-key }}
     steps:
+      - name: Generate cache key
+        id: cache-keys
+        run: echo "::set-output name=cache-key::$(date +%Y%m%d)"
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache-node-modules
+        with:
+          path: ~/.cache/yarn
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
       - uses: actions/setup-node@v3
         with:
           cache: 'yarn'
-      - name: Prune containers
-        run: |
-          docker system prune -af
-      - name: install dependencies 🚀
-        run: |
-          yarn install --frozen-lockfile # optional, --immutable
-      - name: linting ✨
-        run: |
-          yarn lint
-      - name: style check 💅
-        run: |
-          yarn style
-      - name: running test 🛫🛬
-        run: |
-          yarn test --coverage src
-      - name: upload coverage to Codecov 💌
+      - name: Install dependencies 🚀
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+
+  lint-and-style:
+    needs: setup
+    runs-on: it
+    steps:
+      - uses: actions/checkout@v3
+      - name: Linting ✨
+        run: yarn lint
+      - name: Style check 💅
+        run: yarn style
+
+  test:
+    needs: setup
+    runs-on: it
+    steps:
+      - uses: actions/checkout@v3
+      - name: Running test 🛫🛬
+        run: yarn test --coverage src
+      - name: Upload coverage to Codecov 💌
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: build fusion docker image
-        run: |
-          docker build . --tag=nexus-web:fresh
+
+  docker-build-and-e2e:
+    needs: setup
+    runs-on: it
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build fusion docker image
+        run: docker build . --tag=nexus-web:fresh
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
       - name: Copy nexus-web into Cypress container
-        # avoids permission issue where cypress writes screenshots to host with root as user
-        # which we can't then delete easily
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
-        run: >-
+        run: >
           echo | timeout --verbose 30m docker exec
           -e 'DEBUG=cypress:launcher:browsers'
           -t
@@ -52,5 +74,5 @@ jobs:
           --record
           --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cleanup Docker Containers
-        if: ${{ always() }}
+        if: always()
         run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
