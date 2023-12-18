@@ -177,14 +177,13 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
         projectLabel,
         rev,
       });
+
       onProjectUpdate && onProjectUpdate();
 
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
         description: 'Project deprecation has been undone successfully',
       });
-
-      // TODO Refresh the state of this component
     } catch (error) {
       notification.error({
         message: `Error undoing deprecation of project ${projectLabel}`,
