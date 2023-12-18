@@ -251,33 +251,57 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
 
   const dangerZoneDataSource: DangerZoneItem[] = [
     {
-      key: 'deprecate-project-section',
-      title: 'Deprecate this project',
-      description: 'Mark this project as deprecated and read-only.',
+      key: 'deprecation-action-section',
+      title: project._deprecated
+        ? 'Undo Deprecation of this project'
+        : 'Deprecate this project',
+      description: project._deprecated
+        ? 'Restore this project to its active state.'
+        : 'Mark this project as deprecated and read-only.',
       action: (
         <AccessControl
           path={[`${orgLabel}/${projectLabel}`]}
           permissions={['projects/write']}
           noAccessComponent={() => (
-            <Tooltip title="You have no permissions to deprecate this project">
+            <Tooltip
+              title={`You have no permissions to ${
+                project._deprecated ? 'undo the deprecation of' : 'deprecate'
+              } this project`}
+            >
               <Button disabled danger style={{ margin: 0, marginRight: 10 }}>
-                <span>Deprecate this Project</span>
+                <span>
+                  {project._deprecated
+                    ? 'Undo Deprecation'
+                    : 'Deprecate this Project'}
+                </span>
                 <HasNoPermission />
               </Button>
             </Tooltip>
           )}
         >
           <Button
-            danger
-            className="deprecate-btn"
-            style={{ margin: 0, marginRight: 10 }}
-            type="ghost"
+            danger={!project._deprecated}
+            type={project._deprecated ? 'primary' : 'ghost'}
             htmlType="button"
-            disabled={project._deprecated}
-            onClick={handleOpenDeprecationModal}
+            disabled={
+              project._deprecated && undoDeprecationStatus === 'loading'
+            }
+            loading={
+              project._deprecated
+                ? undoDeprecationStatus === 'loading'
+                : status === 'loading'
+            }
+            onClick={
+              project._deprecated
+                ? handleUndoDeprecation
+                : handleOpenDeprecationModal
+            }
+            style={{ margin: 0, marginRight: 10 }}
           >
-            <StopOutlined />
-            Deprecate this Project
+            {project._deprecated ? <UndoOutlined /> : <StopOutlined />}
+            {project._deprecated
+              ? 'Undo Deprecation'
+              : 'Deprecate this Project'}
           </Button>
         </AccessControl>
       ),
@@ -309,37 +333,6 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
           >
             <DeleteOutlined />
             Delete this Project
-          </Button>
-        </AccessControl>
-      ),
-    },
-    {
-      key: 'undo-deprecate-project-section',
-      title: 'Undo Deprecation of this Project',
-      description: 'Restore this project to its active state.',
-      action: (
-        <AccessControl
-          path={[`${orgLabel}/${projectLabel}`]}
-          permissions={['projects/write']}
-          noAccessComponent={() => (
-            <Tooltip title="You have no permissions to undo the deprecation of this project">
-              <Button disabled style={{ margin: 0, marginRight: 10 }}>
-                <span>Undo Deprecation</span>
-                <HasNoPermission />
-              </Button>
-            </Tooltip>
-          )}
-        >
-          <Button
-            style={{ margin: 0, marginRight: 10 }}
-            type="primary"
-            htmlType="button"
-            disabled={!project._deprecated} // Enable button only if project is deprecated
-            loading={undoDeprecationStatus === 'loading'}
-            onClick={handleUndoDeprecation}
-          >
-            <UndoOutlined />
-            Undo Deprecation
           </Button>
         </AccessControl>
       ),
