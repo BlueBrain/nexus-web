@@ -203,7 +203,7 @@ Cypress has a desktop application as well as a CLI. The desktop application is u
 
 ### Configuration
 
-There are several Cypress environment variables that must be specified in order for the tests to run successfully. The cypress.env.json.sample includes these variables. Rename the file to cypress.env.json in order for it be picked up by Cypress and set the variables appropriately. Note that if you specify any Cypress variable at the command line it must be prefixed with CYPRESS\_ and it will override any variables set in the cypress.env.json file.
+There are a few Cypress environment variables that must be specified in order for the tests to run successfully. The cypress.env.json.sample includes these variables. Rename the file to cypress.env.json in order for it be picked up by Cypress and set the variables appropriately. Note that if you specify any Cypress variable at the command line it must be prefixed with CYPRESS\_ and it will override any variables set in the cypress.env.json file.
 
 - **use_existing_delta_instance** whether to use an existing instance of Delta or a new one is being set-up
 - **NEXUS_API_URL** the url to the Nexus API for which the tests will be run. It is used as part of the setup and teardown process
