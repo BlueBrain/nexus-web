@@ -2,29 +2,30 @@ import { Button, Col, Form, Input, Modal, Row } from 'antd';
 import React, { useState } from 'react';
 
 export type TDangerZoneActionProps = {
-  open: boolean;
-  onClose(): void;
-  matchTerm: string;
-  handler(values: any): void;
   action: 'deprecate' | 'delete' | 'undo-deprecate';
-  title: string;
   description: string;
+  matchTerm: string;
+  open: boolean;
   status: boolean;
+  title: string;
+  handler(values: any): void;
+  onClose(): void;
 };
 
 const DangerZoneAction = ({
-  open,
-  onClose,
-  matchTerm,
-  handler,
   action,
-  title,
   description,
+  matchTerm,
+  open,
   status,
+  title,
+  onClose,
+  handler,
 }: TDangerZoneActionProps) => {
   const [matchTermValue, setMatchTermValue] = useState('');
   const handleValueChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setMatchTermValue(e.target.value);
+
   return (
     <Modal
       open={open}
