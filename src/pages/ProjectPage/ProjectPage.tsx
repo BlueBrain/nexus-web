@@ -49,7 +49,7 @@ const ProjectView: React.FC = () => {
     params: { orgLabel, projectLabel },
   } = match;
 
-  const { data: projectVar, isLoading, error } = useQuery(
+  const { data: project } = useQuery<ProjectResponseCommon>(
     ['project', orgLabel, projectLabel],
     () => fetchProjectData(orgLabel, projectLabel),
     {}
@@ -98,16 +98,6 @@ const ProjectView: React.FC = () => {
     return `${base}browse`;
   };
 
-  const [{ project }, setState] = useState<{
-    project: ProjectResponseCommon | null;
-    busy: boolean;
-    error: Error | null;
-  }>({
-    project: null,
-    busy: false,
-    error: null,
-  });
-
   const [refreshLists, setRefreshLists] = useState(false);
   const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
 
@@ -121,33 +111,6 @@ const ProjectView: React.FC = () => {
   useEffect(() => {
     setActiveKey(tabFromPath(match.path));
   }, [match.path]);
-
-  useEffect(() => {
-    setState({
-      project,
-      error: null,
-      busy: true,
-    });
-    nexus.Project.get(orgLabel, projectLabel)
-      .then(response => {
-        setState({
-          project: response,
-          busy: false,
-          error: null,
-        });
-      })
-      .catch(error => {
-        notification.error({
-          message: `Could not load project ${projectLabel}`,
-          description: error.message,
-        });
-        setState({
-          project,
-          error,
-          busy: false,
-        });
-      });
-  }, [orgLabel, projectLabel, nexus]);
 
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
@@ -330,14 +293,14 @@ const ProjectView: React.FC = () => {
               <TabPane tab="Settings" key="settings">
                 <SettingsContainer
                   project={{
-                    _label: projectVar?._label,
-                    _rev: projectVar?._rev,
-                    description: projectVar?.description || '',
-                    base: projectVar?.base,
-                    vocab: projectVar?.vocab,
-                    _deprecated: projectVar?._deprecated,
+                    _label: project._label,
+                    _rev: project._rev,
+                    description: project.description || '',
+                    base: project.base,
+                    vocab: project.vocab,
+                    _deprecated: project._deprecated,
                   }}
-                  apiMappings={projectVar?.apiMappings}
+                  apiMappings={project.apiMappings}
                   mode="edit"
                 />
               </TabPane>
