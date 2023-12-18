@@ -1,28 +1,23 @@
-import * as React from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
+import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
+import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useMutation, useQuery } from 'react-query';
-import { Table, Button, Row, Col, notification, Tooltip, Badge } from 'antd';
-import { isArray, isString, orderBy } from 'lodash';
-import { ColumnsType } from 'antd/es/table';
-import { NexusClient, View } from '@bbp/nexus-sdk';
-import { PromisePool } from '@supercharge/promise-pool';
-import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
-import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
+import { PromisePool } from '@supercharge/promise-pool';
+import { Badge, Button, Col, Row, Table, Tooltip, notification } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { isArray, isString, orderBy } from 'lodash';
+import { useMutation, useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.less';
+import { RootState } from '../../../../shared/store/reducers';
+import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import {
   IndexingErrorResults,
   ViewIndexingErrors,
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
-import {
-  MinusCircleTwoTone,
-  PlusCircleTwoTone,
-  WarningOutlined,
-} from '@ant-design/icons';
+import './styles.less';
 
 type TViewType = {
   key: string;
@@ -50,8 +45,8 @@ const aggregateFilterPredicate = (type?: string | string[]) => {
 const fetchViewsList = async ({
   nexus,
   orgLabel,
-  projectLabel,
   apiEndpoint,
+  projectLabel,
 }: {
   nexus: NexusClient;
   orgLabel: string;
