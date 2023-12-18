@@ -189,7 +189,7 @@ This means that for development, all we need to run is `ts-node server/index.ts`
 
 ## Lint
 
-We use `ts-lint`` with Airbnb rules.
+We use `ts-lint` with Airbnb rules.
 
 ## Unit and Integration tests
 
