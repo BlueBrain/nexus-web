@@ -1,52 +1,52 @@
-import * as React from 'react';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
+import { ExpandedResource, IncomingLink, Resource } from '@bbp/nexus-sdk';
+import { useNexusContext } from '@bbp/react-nexus';
+import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
+import { intersection, isArray } from 'lodash';
+import * as queryString from 'query-string';
+import { useEffect, useState, ReactElement, FC } from 'react';
 import Helmet from 'react-helmet';
+import { useDispatch, useSelector } from 'react-redux';
 import {
-  useLocation,
-  useHistory,
-  useParams,
   matchPath,
+  useHistory,
+  useLocation,
   useRouteMatch,
 } from 'react-router';
-import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
-import * as queryString from 'query-string';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk';
-import { useSelector, useDispatch } from 'react-redux';
-import { intersection, isArray } from 'lodash';
+import { Link } from 'react-router-dom';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
+import Preview from '../components/Preview/Preview';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import ResourceMetadata from '../components/ResourceMetadata';
 import AdminPlugin from '../containers/AdminPluginContainer';
-import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
-import ResourcePlugins from './ResourcePlugins';
-import usePlugins from '../hooks/usePlugins';
+import { useJiraPlugin } from '../hooks/useJIRA';
 import useMeasure from '../hooks/useMeasure';
+import useNotification from '../hooks/useNotification';
+import usePlugins from '../hooks/usePlugins';
+import { RootState } from '../store/reducers';
 import {
-  getResourceLabel,
-  getOrgAndProjectFromProjectId,
   getDestinationParam,
+  getOrgAndProjectFromProjectId,
+  getResourceLabel,
   labelOf,
   makeResourceUri,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
-import useNotification from '../hooks/useNotification';
-import Preview from '../components/Preview/Preview';
-import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
-import { DeleteOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import ResourceMetadata from '../components/ResourceMetadata';
-import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
-import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import { RootState } from '../store/reducers';
-import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
-import { useJiraPlugin } from '../hooks/useJIRA';
 import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import ResourcePlugins from './ResourcePlugins';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
+import { useMutation } from 'react-query';
+
+export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
-
-export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
@@ -61,16 +61,32 @@ const containsImages = (distribution: any[]) => {
   return intersection(encodingFormat, formats).length !== 0;
 };
 
-const ResourceViewContainer: React.FunctionComponent<{
+function constructUnDeprecateUrl(
+  apiEndpoint: string,
+  resource: Resource,
+  latestResource: Resource,
+  orgLabel: string,
+  projectLabel: string
+) {
+  return `${apiEndpoint}/${
+    resource!['@type'] === 'File' ? 'files' : 'resources'
+  }/${orgLabel}/${projectLabel}/${
+    resource!['@type'] === 'File' ? '' : '_/'
+  }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
+    latestResource!._rev
+  }`;
+}
+
+const ResourceViewContainer: FC<{
   render?: (
     resource: Resource<{
       [key: string]: any;
     }> | null
-  ) => React.ReactElement | null;
+  ) => ReactElement | null;
   deOrgLabel?: string;
   deProjectLabel?: string;
   deResourceId?: string;
-}> = ({ render, deOrgLabel, deProjectLabel, deResourceId }) => {
+}> = ({ deOrgLabel, deProjectLabel, deResourceId }) => {
   const history = useHistory();
   const nexus = useNexusContext();
   const notification = useNotification();
@@ -81,7 +97,7 @@ const ResourceViewContainer: React.FunctionComponent<{
   const { data: pluginManifest } = usePlugins();
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
-  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+  const [deltaPlugins, setDeltaPlugins] = useState<{
     [key: string]: string;
   }>();
   const fetchDeltaVersion = async () => {
@@ -92,11 +108,11 @@ const ResourceViewContainer: React.FunctionComponent<{
       })
       .then(versions => setDeltaPlugins({ ...versions.plugins }))
       .catch(error => {
-        // do nothing
+        // Do nothing
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchDeltaVersion();
   }, []);
 
@@ -104,7 +120,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     orgLabel: string;
     projectLabel: string;
     resourceId: string;
-  }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
+  }>('/:orgLabel/:projectLabel/resources/:resourceId');
 
   const orgLabel = match?.params.orgLabel! ?? deOrgLabel;
   const projectLabel = match?.params.projectLabel! ?? deProjectLabel;
@@ -112,12 +128,12 @@ const ResourceViewContainer: React.FunctionComponent<{
     match?.params.resourceId! ??
     (deResourceId ? encodeURIComponent(deResourceId) : '');
 
-  const [studioPlugins, setStudioPlugins] = React.useState<{
+  const [studioPlugins, setStudioPlugins] = useState<{
     customise: boolean;
     plugins: { key: string; expanded: boolean }[];
   }>();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (location.state && location.state.background) {
       const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
@@ -129,7 +145,6 @@ const ResourceViewContainer: React.FunctionComponent<{
       );
 
       if (studioPathMatch) {
-        // looks like we have us a studio
         const studioId = studioPathMatch.params.StudioId;
         nexus.Resource.get<StudioResource>(
           orgLabel,
@@ -175,7 +190,7 @@ const ResourceViewContainer: React.FunctionComponent<{
 
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
-  const [{ busy, resource, error }, setResource] = React.useState<{
+  const [{ busy, resource, error }, setResource] = useState<{
     busy: boolean;
     resource: Resource | null;
     error:
@@ -190,7 +205,7 @@ const ResourceViewContainer: React.FunctionComponent<{
     resource: null,
     error: null,
   });
-  const [latestResource, setLatestResource] = React.useState<
+  const [latestResource, setLatestResource] = useState<
     (Resource & { [key: string]: any }) | null
   >(null);
 
@@ -384,17 +399,16 @@ const ResourceViewContainer: React.FunctionComponent<{
   };
 
   const nonEditableResourceTypes = ['File'];
-
   const refreshResource = () => setResources();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
-  const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
+  const [openPlugins, setOpenPlugins] = useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
       setOpenPlugins(
         JSON.parse(
@@ -406,15 +420,15 @@ const ResourceViewContainer: React.FunctionComponent<{
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem(
       LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
       JSON.stringify(openPlugins)
     );
   }, [openPlugins]);
 
-  React.useEffect(() => {
-    // if coming from studio, override what user has set in localstorage
+  useEffect(() => {
+    // If coming from studio, override what user has set in local storage
     if (studioPlugins?.customise && pluginManifest) {
       setOpenPlugins(
         studioPlugins.plugins
@@ -608,7 +622,8 @@ const ResourceViewContainer: React.FunctionComponent<{
     { key: 'jira', name: 'jira', pluginComponent: jiraPlugin },
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
-  React.useEffect(() => {
+
+  useEffect(() => {
     return () => {
       dispatch({
         type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
@@ -616,6 +631,31 @@ const ResourceViewContainer: React.FunctionComponent<{
       });
     };
   }, []);
+
+  const { mutate: unDeprecateResource } = useMutation({
+    mutationFn: async () => {
+      try {
+        await nexus.httpPut({
+          path: constructUnDeprecateUrl(
+            apiEndpoint,
+            resource!,
+            latestResource!,
+            orgLabel,
+            projectLabel
+          ),
+        });
+
+        goToResource(orgLabel, projectLabel, resourceId, {});
+      } catch (error) {
+        notification.error({
+          message: `Error undoing deprecated resource`,
+          description:
+            'An error occurred whilst attempting to undo the deprecation of the resource. Please try again.',
+        });
+      }
+    },
+  });
+
   return (
     <>
       <div className="resource-details">
@@ -665,9 +705,9 @@ const ResourceViewContainer: React.FunctionComponent<{
                             documentation,{' '}
                             <a
                               target="_blank"
-                              href="https://bluebrainnexus.io/docs/delta/api/"
+                              href="https://bluebrainnexus.io/docs/delta/api"
                             >
-                              https://bluebrainnexus.io/docs/delta/api/
+                              https://bluebrainnexus.io/docs/delta/api
                             </a>
                           </p>
                         </>
@@ -726,10 +766,53 @@ const ResourceViewContainer: React.FunctionComponent<{
                       <Alert
                         type="error"
                         message={
-                          <>
-                            <DeleteOutlined /> This resource is deprecated. You
-                            cannot modify it.
-                          </>
+                          <div>
+                            <DeleteOutlined /> This resource is deprecated and
+                            not modifiable.
+                            {// Don't show the undo deprecated button if the resource is
+                            // of any unsupported resource. However, it needs to be shown
+                            // e.g. for custom types of resources.
+                            !resource['@type']?.includes(
+                              'View' || 'Resolver' || 'Storage' || 'Schema'
+                            ) ? (
+                              <>
+                                <br />
+                                {// If not newest revision, then don't show the button
+                                resource._rev === latestResource._rev ? (
+                                  <Button
+                                    icon={<UndoOutlined />}
+                                    style={{
+                                      marginTop: '10px',
+                                      marginBottom: '5px',
+                                    }}
+                                    onClick={() => {
+                                      unDeprecateResource();
+                                    }}
+                                  >
+                                    Undo deprecation
+                                  </Button>
+                                ) : null}
+                              </>
+                            ) : (
+                              <>
+                                {/* If unsupported resource type for undoing deprecation, then show the message to the user */}
+                                <br />
+                                As it includes at least one of the unsupported
+                                types (
+                                <span style={{ fontWeight: 'bold' }}>
+                                  {(resource['@type'] as []).find(type =>
+                                    [
+                                      'View',
+                                      'Resolver',
+                                      'Storage',
+                                      'Schema',
+                                    ].includes(type)
+                                  )}
+                                </span>
+                                ), the deprecation currently cannot be undone.
+                              </>
+                            )}
+                          </div>
                         }
                       />
                       <br />
