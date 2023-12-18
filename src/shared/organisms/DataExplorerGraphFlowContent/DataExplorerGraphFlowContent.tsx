@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import ResourceViewContainer from '../../containers/ResourceViewContainer';
@@ -13,7 +13,7 @@ const DataExplorerContentPage = ({}) => {
   return (
     <div className="degf-content__wrapper">
       {fullscreen ? (
-        <Fragment>
+        <>
           <DEFGContentFullscreenHeader />
           <ResourceEditorContainer
             key={current?._self}
@@ -31,7 +31,7 @@ const DataExplorerContentPage = ({}) => {
             showExpanded={true}
             showControlPanel={true}
           />
-        </Fragment>
+        </>
       ) : (
         <ResourceViewContainer
           key={current?._self}
