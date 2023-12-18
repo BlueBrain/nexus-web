@@ -6,7 +6,7 @@ import {
 } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Empty, Popover, Tabs } from 'antd';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -24,10 +24,9 @@ import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDe
 import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-
 import './styles.less';
 
-const ProjectView: React.FunctionComponent = () => {
+const ProjectView: React.FC = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();
@@ -88,7 +87,7 @@ const ProjectView: React.FunctionComponent = () => {
     return `${base}browse`;
   };
 
-  const [{ project }, setState] = React.useState<{
+  const [{ project }, setState] = useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
@@ -98,25 +97,21 @@ const ProjectView: React.FunctionComponent = () => {
     error: null,
   });
 
-  const [refreshLists, setRefreshLists] = React.useState(false);
-  const [activeKey, setActiveKey] = React.useState<string>(
-    tabFromPath(match.path)
-  );
+  const [refreshLists, setRefreshLists] = useState(false);
+  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
 
-  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
-    false
-  );
-  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
+  const [deltaPlugins, setDeltaPlugins] = useState<{
     [key: string]: string;
   }>();
 
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setActiveKey(tabFromPath(match.path));
   }, [match.path]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setState({
       project,
       error: null,
@@ -153,22 +148,7 @@ const ProjectView: React.FunctionComponent = () => {
     }, durationInMs);
   };
 
-  const refreshProject = async () => {
-    try {
-      const updatedProject = await nexus.Project.get(orgLabel, projectLabel);
-      setState({ project: updatedProject, busy: false, error: null });
-    } catch (error) {
-      notification.error({
-        message: `Error updating project information`,
-        description:
-          typeof error === 'object' && error !== null && 'message' in error
-            ? error.message
-            : 'Unknown error',
-      });
-    }
-  };
-
-  React.useEffect(() => {
+  useEffect(() => {
     /* if location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
     const refresh =
@@ -182,7 +162,7 @@ const ProjectView: React.FunctionComponent = () => {
     }
   }, [location]);
 
-  const [statistics, setStatistics] = React.useState<Statistics>();
+  const [statistics, setStatistics] = useState<Statistics>();
 
   const fetchAndSetStatistics = async () => {
     const stats = ((await nexus.View.statistics(
@@ -193,7 +173,7 @@ const ProjectView: React.FunctionComponent = () => {
     setStatistics(stats);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAndSetStatistics();
     fetchDeltaVersion();
   }, []);
@@ -348,7 +328,6 @@ const ProjectView: React.FunctionComponent = () => {
                   }}
                   apiMappings={project.apiMappings}
                   mode="edit"
-                  onProjectUpdate={refreshProject}
                 />
               </TabPane>
               {deltaPlugins &&

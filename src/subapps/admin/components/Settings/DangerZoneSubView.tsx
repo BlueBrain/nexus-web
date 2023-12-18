@@ -1,32 +1,29 @@
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Button, List, Tooltip, notification } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
-import { useMutation } from 'react-query';
+import React, { useReducer } from 'react';
+import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import DangerZoneAction, {
-  TDangerZoneActionProps,
+  DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.less';
 import { DeleteOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
 
-type TDangerZoneItem = {
+type DangerZoneItem = {
   key: React.Key;
   title: string;
   description: string;
   action: React.ReactElement;
 };
 
-type TDangerZoneActionState = Omit<
-  TDangerZoneActionProps,
-  'onClose' | 'status'
->;
+type DangerZoneActionState = Omit<DangerZoneActionProps, 'onClose' | 'status'>;
 
-type Props = {
+type DangerZoneSubViewProps = {
   project: {
     _label: string;
     _rev: number;
@@ -36,7 +33,6 @@ type Props = {
     mode: string;
     _deprecated: boolean;
   };
-  onProjectUpdate?: () => void;
 };
 
 const deprecateProject = async ({
@@ -104,7 +100,8 @@ const deleteProject = async ({
   }
 };
 
-const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
+const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
+  const queryClient = useQueryClient();
   const nexus = useNexusContext();
   const history = useHistory();
   const apiEndpoint = useSelector(
@@ -125,8 +122,8 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
     updateModalState,
   ] = useReducer(
     (
-      previous: TDangerZoneActionState,
-      nextState: Partial<TDangerZoneActionState>
+      previous: DangerZoneActionState,
+      nextState: Partial<DangerZoneActionState>
     ) => ({
       ...previous,
       ...nextState,
@@ -162,36 +159,40 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
     }
   );
 
-  const undoDeprecateProjectAsync = async (
-    apiEndpoint: string,
-    nexus: NexusClient,
-    orgLabel: string,
-    projectLabel: string,
-    rev: number
-  ) => {
-    try {
-      await undoDeprecateProject({
+  const {
+    mutateAsync: undoDeprecateProjectAsync,
+    status: undoDeprecationStatus,
+  } = useMutation(
+    () =>
+      undoDeprecateProject({
         apiEndpoint,
         nexus,
         orgLabel,
         projectLabel,
-        rev,
-      });
+        rev: project._rev,
+      }),
+    {
+      onSuccess: () => {
+        // TODO UI should be updated after undoing deprecation
+        queryClient.invalidateQueries(['project', { orgLabel, projectLabel }]);
 
-      onProjectUpdate && onProjectUpdate();
-
-      notification.success({
-        message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
-        description: 'Project deprecation has been undone successfully',
-      });
-    } catch (error) {
-      notification.error({
-        message: `Error undoing deprecation of project ${projectLabel}`,
-        // @ts-ignore
-        description: <code>{error.cause.message}</code>,
-      });
+        notification.success({
+          message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
+          description: 'Project deprecation has been undone successfully',
+        });
+      },
+      onError: (error: any) => {
+        notification.error({
+          message: `Error undoing deprecation of project ${projectLabel}`,
+          description: (
+            <code>
+              {error && error.cause ? error.cause.message : 'An error occurred'}
+            </code>
+          ),
+        });
+      },
     }
-  };
+  );
 
   const {
     mutateAsync: deleteProjectAsync,
@@ -215,6 +216,10 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
 
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
+
+  const handleUndoDeprecation = () => {
+    undoDeprecateProjectAsync();
+  };
 
   const handleDeletion = () =>
     deleteProjectAsync({
@@ -244,7 +249,7 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
       handler: handleDeletion,
     });
 
-  const dangerZoneDataSource: TDangerZoneItem[] = [
+  const dangerZoneDataSource: DangerZoneItem[] = [
     {
       key: 'deprecate-project-section',
       title: 'Deprecate this project',
@@ -330,15 +335,8 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
             type="primary"
             htmlType="button"
             disabled={!project._deprecated} // Enable button only if project is deprecated
-            onClick={() =>
-              undoDeprecateProjectAsync(
-                apiEndpoint,
-                nexus,
-                orgLabel,
-                projectLabel,
-                project._rev
-              )
-            }
+            loading={undoDeprecationStatus === 'loading'}
+            onClick={handleUndoDeprecation}
           >
             <UndoOutlined />
             Undo Deprecation
@@ -354,7 +352,7 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
         <h2>Danger Zone</h2>
         <div className="settings-view-container">
           <div className="danger-actions">
-            <List<TDangerZoneItem>
+            <List<DangerZoneItem>
               size="large"
               bordered
               className="danger-zone-container"

@@ -13,7 +13,6 @@ type Props = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
   apiMappings?: ProjectResponseCommon['apiMappings'];
   mode: string;
-  onProjectUpdate?: () => void;
 };
 
 type TMenuItem = {
@@ -84,7 +83,6 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   project,
   apiMappings,
   mode,
-  onProjectUpdate,
 }) => {
   const menuItems = Array.from(subViewsMapper.entries()).map(
     ([, value]) => value
@@ -117,7 +115,6 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
           project,
           apiMappings,
           mode,
-          onProjectUpdate,
         })}
       </div>
     </div>
