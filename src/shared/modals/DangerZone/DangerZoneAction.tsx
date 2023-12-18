@@ -28,11 +28,11 @@ const DangerZoneAction = ({
 
   return (
     <Modal
+      centered
       open={open}
+      footer={null}
       onCancel={onClose}
       maskClosable={false}
-      footer={null}
-      centered
       title={<strong>{title}</strong>}
     >
       <Form onFinish={handler}>
@@ -85,11 +85,11 @@ const DangerZoneAction = ({
                   (projectName as string)?.toLowerCase() !== matchTerm;
                 return (
                   <Button
-                    loading={status}
-                    disabled={disabled}
-                    type="primary"
-                    htmlType="submit"
                     danger
+                    type="primary"
+                    loading={status}
+                    htmlType="submit"
+                    disabled={disabled}
                   >
                     I understand the consequences, {action} this project
                   </Button>

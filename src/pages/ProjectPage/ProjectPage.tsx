@@ -105,20 +105,6 @@ const ProjectView: React.FC = () => {
     return `${base}browse`;
   };
 
-  const [refreshLists, setRefreshLists] = useState(false);
-  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
-
-  const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
-  const [deltaPlugins, setDeltaPlugins] = useState<{
-    [key: string]: string;
-  }>();
-
-  const { apiEndpoint } = useSelector((state: RootState) => state.config);
-
-  useEffect(() => {
-    setActiveKey(tabFromPath(match.path));
-  }, [match.path]);
-
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
     setTimeout(() => {
@@ -129,8 +115,22 @@ const ProjectView: React.FC = () => {
     }, durationInMs);
   };
 
+  const [refreshLists, setRefreshLists] = useState(false);
+  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
+  const [statistics, setStatistics] = useState<Statistics>();
+  const [deltaPlugins, setDeltaPlugins] = useState<{
+    [key: string]: string;
+  }>();
+
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
   useEffect(() => {
-    /* if location has changed, check to see if we should refresh our
+    setActiveKey(tabFromPath(match.path));
+  }, [match.path]);
+
+  useEffect(() => {
+    /* If location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
@@ -142,8 +142,6 @@ const ProjectView: React.FC = () => {
       pauseStatisticsPolling(5000);
     }
   }, [location]);
-
-  const [statistics, setStatistics] = useState<Statistics>();
 
   const fetchAndSetStatistics = async () => {
     const stats = ((await nexus.View.statistics(

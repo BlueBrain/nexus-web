@@ -102,11 +102,11 @@ const SettingsContainer: React.FC<SettingsContainerProps> = ({
   return (
     <div className="settings-container">
       <Menu
-        defaultSelectedKeys={[menuItems[0].id]}
-        defaultOpenKeys={[menuItems[0].id]}
-        selectedKeys={[selectedKey]}
-        onSelect={handleOnSelectSubMenuItem}
         multiple={false}
+        selectedKeys={[selectedKey]}
+        defaultOpenKeys={[menuItems[0].id]}
+        onSelect={handleOnSelectSubMenuItem}
+        defaultSelectedKeys={[menuItems[0].id]}
       >
         {menuItems.map(item => (
           <Menu.Item key={item.key}>{item.label}</Menu.Item>
