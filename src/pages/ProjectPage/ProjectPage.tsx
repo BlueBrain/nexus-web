@@ -1,31 +1,30 @@
-import * as React from 'react';
-import { useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
+import { SelectOutlined } from '@ant-design/icons';
 import {
-  ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk';
-import { useNexusContext, AccessControl } from '@bbp/react-nexus';
-import { Tabs, Popover, Empty } from 'antd';
-import { SelectOutlined } from '@ant-design/icons';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { Empty, Popover, Tabs } from 'antd';
+import * as React from 'react';
+import { useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import { useJiraPlugin } from '../../shared/hooks/useJIRA';
-import { RootState } from '../../shared/store/reducers';
-import useNotification from '../../shared/hooks/useNotification';
-import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
 import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
-import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
+import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
+import { useJiraPlugin } from '../../shared/hooks/useJIRA';
+import useNotification from '../../shared/hooks/useNotification';
+import { RootState } from '../../shared/store/reducers';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
+import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
+import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
 import ProjectStatsContainer from '../../subapps/admin/containers/ProjectStatsContainer';
 import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDeleteContainer';
-import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
+import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
-import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
-import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
+import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 
-// import './ProjectView.less';
 import './styles.less';
 
 const ProjectView: React.FunctionComponent = () => {
@@ -52,16 +51,12 @@ const ProjectView: React.FunctionComponent = () => {
     switch (path) {
       case `${base}`:
         return 'browse';
-
       case `${base}create`:
         return 'create_upload';
-
       case `${base}query/:viewId?`:
         return 'query';
-
       case `${base}statistics`:
         return 'stats';
-
       case `${base}settings`:
         return 'settings';
       case `${base}graph-analytics`:
@@ -77,16 +72,12 @@ const ProjectView: React.FunctionComponent = () => {
     switch (tab) {
       case 'browse':
         return `${base}`;
-
       case 'query':
         return `${base}query`;
-
       case 'create_upload':
         return `${base}create`;
-
       case 'stats':
         return `${base}statistics`;
-
       case 'settings':
         return `${base}settings`;
       case 'graph-analytics':
@@ -97,7 +88,7 @@ const ProjectView: React.FunctionComponent = () => {
     return `${base}browse`;
   };
 
-  const [{ project, busy, error }, setState] = React.useState<{
+  const [{ project }, setState] = React.useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
@@ -377,20 +368,6 @@ const ProjectView: React.FunctionComponent = () => {
                 }
                 key="studios"
               ></TabPane>
-              {/* <TabPane
-                tab={
-                  <span>
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      to={`/workflow/${orgLabel}/${projectLabel}`}
-                    >
-                      <SelectOutlined /> Workflows
-                    </Link>
-                  </span>
-                }
-                key="workflows"
-              ></TabPane> */}
             </Tabs>
           </div>
         </>
