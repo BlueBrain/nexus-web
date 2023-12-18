@@ -9,20 +9,22 @@ import StoragesSVComponent from '../components/Settings/StoragesSubView';
 import ViewsSVComponent from '../components/Settings/ViewsSubView';
 import './SettingsContainer.less';
 
-type Props = {
+type SettingsContainerProps = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
   apiMappings?: ProjectResponseCommon['apiMappings'];
   mode: string;
 };
 
-type TMenuItem = {
+type MenuItem = {
   key: string;
   id: string;
   label: string;
   Component: (props: any) => JSX.Element;
 };
+
 type OnSelectHandler = MenuProps['onSelect'];
-const subViewsMapper = new Map<string, TMenuItem>([
+
+const subViewsMapper = new Map<string, MenuItem>([
   [
     'general',
     {
@@ -79,7 +81,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
   ],
 ]);
 
-const SettingsContainer: React.FunctionComponent<Props> = ({
+const SettingsContainer: React.FC<SettingsContainerProps> = ({
   project,
   apiMappings,
   mode,
@@ -90,7 +92,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
   const handleOnSelectSubMenuItem: OnSelectHandler = info =>
     setSelectedKey(info.key);
-  const subViewSelectedComponent = (props: Props) => {
+  const subViewSelectedComponent = (props: SettingsContainerProps) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;
     const key = view!.key;

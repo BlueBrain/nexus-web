@@ -173,8 +173,8 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
       }),
     {
       onSuccess: () => {
-        // TODO UI should be updated after undoing deprecation
-        queryClient.invalidateQueries(['project', { orgLabel, projectLabel }]);
+        // Invalidate project query to refetch the project to update the UI
+        queryClient.invalidateQueries(['project', orgLabel, projectLabel]);
 
         notification.success({
           message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,

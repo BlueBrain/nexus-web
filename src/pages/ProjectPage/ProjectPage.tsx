@@ -4,6 +4,7 @@ import {
   ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk';
+import { useQuery } from 'react-query';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Empty, Popover, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
@@ -40,9 +41,19 @@ const ProjectView: React.FC = () => {
     viewId?: string;
   }>();
 
+  const fetchProjectData = async (orgLabel: string, projectLabel: string) => {
+    return await nexus.Project.get(orgLabel, projectLabel);
+  };
+
   const {
     params: { orgLabel, projectLabel },
   } = match;
+
+  const { data: projectVar, isLoading, error } = useQuery(
+    ['project', orgLabel, projectLabel],
+    () => fetchProjectData(orgLabel, projectLabel),
+    {}
+  );
 
   const tabFromPath = (path: string) => {
     const base = `/${subApp.namespace}/:orgLabel/:projectLabel/`;
@@ -319,14 +330,14 @@ const ProjectView: React.FC = () => {
               <TabPane tab="Settings" key="settings">
                 <SettingsContainer
                   project={{
-                    _label: project._label,
-                    _rev: project._rev,
-                    description: project.description || '',
-                    base: project.base,
-                    vocab: project.vocab,
-                    _deprecated: project._deprecated,
+                    _label: projectVar?._label,
+                    _rev: projectVar?._rev,
+                    description: projectVar?.description || '',
+                    base: projectVar?.base,
+                    vocab: projectVar?.vocab,
+                    _deprecated: projectVar?._deprecated,
                   }}
-                  apiMappings={project.apiMappings}
+                  apiMappings={projectVar?.apiMappings}
                   mode="edit"
                 />
               </TabPane>
