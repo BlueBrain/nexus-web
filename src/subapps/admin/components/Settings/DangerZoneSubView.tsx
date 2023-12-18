@@ -1,7 +1,7 @@
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Button, List, Tooltip, notification } from 'antd';
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
@@ -36,6 +36,7 @@ type Props = {
     mode: string;
     _deprecated: boolean;
   };
+  onProjectUpdate?: (project: any) => void;
 };
 
 const deprecateProject = async ({
@@ -103,12 +104,13 @@ const deleteProject = async ({
   }
 };
 
-const DangerZoneSubView = ({ project }: Props) => {
+const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
+
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -168,7 +170,20 @@ const DangerZoneSubView = ({ project }: Props) => {
     rev: number
   ) => {
     try {
-      undoDeprecateProject({ apiEndpoint, nexus, orgLabel, projectLabel, rev });
+      await undoDeprecateProject({
+        apiEndpoint,
+        nexus,
+        orgLabel,
+        projectLabel,
+        rev,
+      });
+      onProjectUpdate &&
+        onProjectUpdate({
+          ...project,
+          _deprecated: false,
+          _rev: rev + 1,
+        });
+
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
         description: 'Project deprecation has been undone successfully',

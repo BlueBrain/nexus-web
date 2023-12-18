@@ -32,7 +32,7 @@ const ProjectView: React.FunctionComponent = () => {
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
-  const subapp = useOrganisationsSubappContext();
+  const subApp = useOrganisationsSubappContext();
   const { TabPane } = Tabs;
 
   const match = useRouteMatch<{
@@ -46,7 +46,7 @@ const ProjectView: React.FunctionComponent = () => {
   } = match;
 
   const tabFromPath = (path: string) => {
-    const base = `/${subapp.namespace}/:orgLabel/:projectLabel/`;
+    const base = `/${subApp.namespace}/:orgLabel/:projectLabel/`;
 
     switch (path) {
       case `${base}`:
@@ -68,7 +68,7 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const pathFromTab = (tab: string | undefined) => {
-    const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
+    const base = `/${subApp.namespace}/${orgLabel}/${projectLabel}/`;
     switch (tab) {
       case 'browse':
         return `${base}`;
@@ -151,6 +151,21 @@ const ProjectView: React.FunctionComponent = () => {
         setStatisticsPollingPaused(false);
       })();
     }, durationInMs);
+  };
+
+  const refreshProject = async () => {
+    try {
+      const updatedProject = await nexus.Project.get(orgLabel, projectLabel);
+      setState({ project: updatedProject, busy: false, error: null });
+    } catch (error) {
+      notification.error({
+        message: `Error updating project information`,
+        description:
+          typeof error === 'object' && error !== null && 'message' in error
+            ? error.message
+            : 'Unknown error',
+      });
+    }
   };
 
   React.useEffect(() => {
@@ -333,6 +348,7 @@ const ProjectView: React.FunctionComponent = () => {
                   }}
                   apiMappings={project.apiMappings}
                   mode="edit"
+                  onProjectUpdate={refreshProject}
                 />
               </TabPane>
               {deltaPlugins &&
