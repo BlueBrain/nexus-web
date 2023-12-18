@@ -231,7 +231,7 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
       open: true,
       title: 'Deprecate Project',
       description:
-        'Deprecating a project will make it read-only. You will not be able to create new resources in this project.',
+        'Deprecating a project will make it read-only. You will not be able to create new resources in this project',
       action: 'deprecate',
       handler: handleDeprecation,
     });

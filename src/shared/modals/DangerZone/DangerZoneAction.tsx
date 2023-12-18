@@ -37,9 +37,8 @@ const DangerZoneAction = ({
     >
       <Form onFinish={handler}>
         <Row>
+          <p style={{ marginBottom: '1rem' }}>{description}.</p>
           <p>
-            {description} {matchTerm}.
-            <br />
             Please type <strong>{matchTerm}</strong> to confirm.
           </p>
         </Row>
