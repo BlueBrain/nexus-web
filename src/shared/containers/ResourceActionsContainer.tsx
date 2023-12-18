@@ -78,7 +78,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
           deprecateMethod = nexus.File.deprecate;
         }
 
-        const deprecatedResource = await deprecateMethod(
+        const { _rev } = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),
@@ -89,7 +89,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
           message: `Deprecated ${getResourceLabel(resource)}`,
         });
 
-        const { _rev } = deprecatedResource;
         goToResource(
           orgLabel,
           projectLabel,
