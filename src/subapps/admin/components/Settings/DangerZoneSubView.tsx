@@ -36,7 +36,7 @@ type Props = {
     mode: string;
     _deprecated: boolean;
   };
-  onProjectUpdate?: (project: any) => void;
+  onProjectUpdate?: () => void;
 };
 
 const deprecateProject = async ({
@@ -177,12 +177,7 @@ const DangerZoneSubView = ({ project, onProjectUpdate }: Props) => {
         projectLabel,
         rev,
       });
-      onProjectUpdate &&
-        onProjectUpdate({
-          ...project,
-          _deprecated: false,
-          _rev: rev + 1,
-        });
+      onProjectUpdate && onProjectUpdate();
 
       notification.success({
         message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,

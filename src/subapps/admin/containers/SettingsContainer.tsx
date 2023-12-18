@@ -13,7 +13,7 @@ type Props = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
   apiMappings?: ProjectResponseCommon['apiMappings'];
   mode: string;
-  onProjectUpdate?(project: Partial<ProjectResponseCommon>): void;
+  onProjectUpdate?: () => void;
 };
 
 type TMenuItem = {
