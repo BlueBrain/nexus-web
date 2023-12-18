@@ -27,7 +27,7 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     />
     {/* Load an image as a Fallback */}
     <img
-      alt="Landing page video"
+      alt="Landing page image"
       src={require('../../shared/images/BrainRegionsNexusPage.jpg')}
     />
   </video>
