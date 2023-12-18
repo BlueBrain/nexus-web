@@ -4,10 +4,10 @@ import {
   ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk';
-import { useQuery } from 'react-query';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Empty, Popover, Tabs } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router';
 import { Link, useHistory, useLocation } from 'react-router-dom';
@@ -49,11 +49,18 @@ const ProjectView: React.FC = () => {
     params: { orgLabel, projectLabel },
   } = match;
 
-  const { data: project } = useQuery<ProjectResponseCommon>(
+  const { data: project, error } = useQuery<ProjectResponseCommon, Error>(
     ['project', orgLabel, projectLabel],
     () => fetchProjectData(orgLabel, projectLabel),
     {}
   );
+
+  if (error) {
+    notification.error({
+      message: `Could not load project ${projectLabel}`,
+      description: error.message,
+    });
+  }
 
   const tabFromPath = (path: string) => {
     const base = `/${subApp.namespace}/:orgLabel/:projectLabel/`;

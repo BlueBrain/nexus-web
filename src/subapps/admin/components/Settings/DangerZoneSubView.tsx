@@ -1,3 +1,4 @@
+import { DeleteOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { Button, List, Tooltip, notification } from 'antd';
@@ -12,7 +13,6 @@ import DangerZoneAction, {
 import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.less';
-import { DeleteOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
 
 type DangerZoneItem = {
   key: React.Key;
