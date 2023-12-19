@@ -51,9 +51,27 @@ const ResourceActionsContainer: React.FunctionComponent<{
   const actionTypes = [
     {
       name: 'deprecateResource',
+      predicate: async (resource: Resource) => {
+        const isLatest = await isLatestResource(resource);
+        return (
+          isLatest &&
+          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
+        );
+      },
       title: 'Deprecate this resource',
       message: "Are you sure you'd like to deprecate this resource?",
       shortTitle: 'Deprecate',
+      shortTitle: 'Dangerously Deprecate',
+      message: (
+        <div>
+          <h3>Warning!</h3>
+          <p>
+            This is your default ElasticSearch View. Deprecating this resource
+            will break this application for this project. Are you sure you want
+            to deprecate it?
+          </p>
+        </div>
+      ),
       icon: <DeleteOutlined />,
       danger: true,
     },
@@ -63,6 +81,23 @@ const ResourceActionsContainer: React.FunctionComponent<{
       title: 'Download this file',
       shortTitle: 'Download File',
       icon: <DownloadOutlined />,
+    },
+    {
+      name: 'deprecateResource',
+      predicate: async (resource: Resource) => {
+        const isLatest = await isLatestResource(resource);
+        return (
+          isLatest &&
+          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
+            resource
+          )
+        );
+      },
+      title: 'Deprecate this resource',
+      message: "Are you sure you'd like to deprecate this resource?",
+      shortTitle: 'Deprecate',
+      icon: <DeleteOutlined />,
+      danger: true,
     },
   ];
 

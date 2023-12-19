@@ -78,29 +78,16 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
       activeKey={collapsed ? 'admin' : undefined}
     >
       <Panel header="Advanced View" key="admin">
-        <AccessControl
-          path={`/${orgLabel}/${projectLabel}`}
-          permissions={['resources/write']}
-          noAccessComponent={() => <></>}
-        >
-          {editable && (
-            <Alert
-              message={
-                <>
-                  <EditOutlined /> You can edit this resource.
-                </>
-              }
-              type="success"
-            />
-          )}
-        </AccessControl>
-
         <ResourceActionsContainer
           editable={editable}
           resource={resource}
           refreshResource={refreshResource}
         />
-        <Tabs activeKey={activeTabKey} onChange={onTabChange}>
+        <Tabs
+          activeKey={activeTabKey}
+          onChange={onTabChange}
+          tabBarStyle={{ paddingLeft: '1rem' }}
+        >
           <TabPane tab="JSON" key="#JSON">
             <ResourceEditorContainer
               resourceId={resource['@id']}
