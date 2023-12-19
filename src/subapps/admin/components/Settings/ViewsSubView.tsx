@@ -19,7 +19,7 @@ import {
 } from './ViewIndexingErrors';
 import './styles.less';
 
-type TViewType = {
+type SubView = {
   key: string;
   id: string;
   name: string;
@@ -45,17 +45,15 @@ const aggregateFilterPredicate = (type?: string | string[]) => {
 const fetchViewsList = async ({
   nexus,
   orgLabel,
-  apiEndpoint,
   projectLabel,
 }: {
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
-  apiEndpoint: string;
 }) => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: Omit<TViewType, 'indexingErrors'>[] = views._results.map(
+    const result: Omit<SubView, 'indexingErrors'>[] = views._results.map(
       item => {
         const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
           item._project
@@ -72,17 +70,10 @@ const fetchViewsList = async ({
         };
       }
     );
+
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
       .process(async view => {
-        const indexingErrors = await fetchIndexingErrors({
-          nexus,
-          apiEndpoint,
-          orgLabel,
-          projectLabel,
-          viewId: view.id,
-        });
-
         if (!view.isAggregateView) {
           const iViewStats = await nexus.View.statistics(
             orgLabel,
@@ -97,15 +88,22 @@ const fetchViewsList = async ({
             : 0;
           return {
             ...view,
-            indexingErrors,
+            errors: [],
             status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
+            indexingErrors: {
+              '@context': [],
+              _next: null,
+              _total: 0,
+              _results: [],
+            },
           };
         }
 
         return {
           ...view,
-          indexingErrors,
+          errors: [],
           status: 'N/A',
+          indexingErrors: { _total: 0, _results: [] },
         };
       });
 
@@ -157,13 +155,14 @@ const restartIndexOneView = async ({
     });
   }
 };
+
 const restartIndexingAllViews = async ({
   nexus,
   apiEndpoint,
   views,
 }: {
   nexus: NexusClient;
-  views: TViewType[];
+  views: SubView[];
   apiEndpoint: string;
 }) => {
   const { results, errors } = await PromisePool.withConcurrency(4)
@@ -177,6 +176,7 @@ const restartIndexingAllViews = async ({
         viewId,
       });
     });
+
   if (errors.length) {
     Sentry.captureException('Error restarting views', {
       extra: {
@@ -184,7 +184,7 @@ const restartIndexingAllViews = async ({
       },
     });
     // @ts-ignore
-    throw new Error('Error captured when reindexing the views', {
+    throw new Error('Error captured when re-indexing the views', {
       cause: errors,
     });
   }
@@ -211,8 +211,7 @@ const ViewsSubView = () => {
   };
   const { data: views, status } = useQuery({
     queryKey: [`views-${orgLabel}-${projectLabel}`],
-    queryFn: () =>
-      fetchViewsList({ nexus, orgLabel, projectLabel, apiEndpoint }),
+    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel }),
     refetchInterval: 30 * 1000, // 30s
   });
 
@@ -231,7 +230,51 @@ const ViewsSubView = () => {
     }
   );
 
-  const columns: ColumnsType<TViewType> = [
+  const fetchIndexingErrorsOnDemand = async ({
+    nexus,
+    apiEndpoint,
+    orgLabel,
+    projectLabel,
+    viewId,
+  }: {
+    nexus: NexusClient;
+    apiEndpoint: string;
+    orgLabel: string;
+    projectLabel: string;
+    viewId: string;
+  }) => {
+    try {
+      // Fetch indexing errors for the specified view
+      const indexingErrors = await fetchIndexingErrors({
+        nexus,
+        apiEndpoint,
+        orgLabel,
+        projectLabel,
+        viewId,
+      });
+
+      return indexingErrors;
+    } catch (error) {
+      console.error('Error fetching indexing errors on demand', error);
+      Sentry.captureException(error, {
+        extra: {
+          orgLabel,
+          projectLabel,
+          viewId,
+          error,
+        },
+      });
+
+      return {
+        '@context': [],
+        _next: null,
+        _total: 0,
+        _results: [],
+      };
+    }
+  };
+
+  const columns: ColumnsType<SubView> = [
     {
       key: 'name',
       dataIndex: 'name',
@@ -375,9 +418,9 @@ const ViewsSubView = () => {
                   handleReindexingAllViews({
                     nexus,
                     apiEndpoint,
-                    views:
-                      views?.results.filter(item => !item.isAggregateView) ||
-                      [],
+                    // TODO Fix this type
+                    // @ts-ignore
+                    views: views?.results.filter(item => !item.isAggregateView),
                   });
                 }}
               >
@@ -387,11 +430,13 @@ const ViewsSubView = () => {
           </Col>
         </Row>
 
-        <Table<TViewType>
+        <Table<SubView>
           loading={status === 'loading'}
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
+          // TODO Fix this type
+          // @ts-ignore
           dataSource={views?.results}
           sticky={true}
           size="middle"
@@ -399,26 +444,25 @@ const ViewsSubView = () => {
           rowKey={r => r.key}
           expandIcon={({ expanded, onExpand, record }) =>
             expanded ? (
-              <MinusCircleTwoTone
-                title="Collapse indexing errors"
-                onClick={e => onExpand(record, e)}
-              />
+              <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
             ) : (
-              <Badge
-                count={record.indexingErrors._total}
-                showZero={false}
-                size="small"
-              >
-                <PlusCircleTwoTone
-                  title="Expand indexing errors"
-                  data-testid="Expand indexing errors"
-                  onClick={e => onExpand(record, e)}
-                  style={{ fontSize: '16px' }}
-                />
-              </Badge>
+              <PlusCircleTwoTone
+                onClick={async e => {
+                  // Fetch indexing errors when expanding the row
+                  // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
+                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                    nexus,
+                    apiEndpoint,
+                    orgLabel: record.orgLabel,
+                    projectLabel: record.projectLabel,
+                    viewId: record.id,
+                  });
+                  onExpand(record, e);
+                }}
+              />
             )
           }
-          expandedRowRender={(r: TViewType) => {
+          expandedRowRender={(r: SubView) => {
             return (
               <ViewIndexingErrors
                 key={r.id}
