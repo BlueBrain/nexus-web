@@ -2,7 +2,6 @@ import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { push } from 'connected-react-router';
-import * as React from 'react';
 import { connect } from 'react-redux';
 import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
 import ResourceActions from '../components/ResourceActions';
