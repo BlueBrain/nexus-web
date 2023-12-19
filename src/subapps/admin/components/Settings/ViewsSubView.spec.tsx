@@ -1,16 +1,7 @@
-import { setupServer } from 'msw/node';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { deltaPath } from '__mocks__/handlers/handlers';
-import configureStore from '../../../../shared/store';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
 import { NexusProvider } from '@bbp/react-nexus';
-import ViewsSubView from './ViewsSubView';
-import { render, screen, waitFor } from '../../../../utils/testUtil';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   aclsHandler,
   identitiesHandler,
@@ -20,6 +11,15 @@ import {
   viewWithNoIndexingErrors,
   viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
+import { deltaPath } from '__mocks__/handlers/handlers';
+import { createMemoryHistory } from 'history';
+import { setupServer } from 'msw/node';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Route, Router } from 'react-router-dom';
+import configureStore from '../../../../shared/store';
+import { render, screen, waitFor } from '../../../../utils/testUtil';
+import ViewsSubView from './ViewsSubView';
 
 describe('ViewsSubView', () => {
   const mockOrganisation = 'copies';
@@ -79,14 +79,14 @@ describe('ViewsSubView', () => {
     expect(getErrorBadgeContent(viewWithIndexingErrors)).toEqual('2');
   });
 
-  it('does not show error badge for views that dont have errors', async () => {
+  it("does not show error badge for views that don't have errors", async () => {
     expect(getErrorBadgeContent(viewWithNoIndexingErrors)).toBeUndefined();
   });
 
   it('shows indexing errors when view row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
-    await screen.getByText(/2 Total errors/i, { selector: 'h3' });
+    screen.getByText(/2 Total errors/i, { selector: 'h3' });
 
     const indexingErrorRows = await getErrorRows();
     expect(indexingErrorRows.length).toEqual(2);
