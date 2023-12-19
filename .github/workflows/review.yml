@@ -6,27 +6,21 @@ jobs:
   setup:
     runs-on: it
     outputs:
-      cache-key: ${{ steps.cache-keys.outputs.cache-key }}
+      cache-key: ${{ steps.cache-node-modules.outputs.cache-key }}
     steps:
-      - name: Generate cache key
-        id: cache-keys
-        run: echo "::set-output name=cache-key::$(date +%Y%m%d)"
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          fetch-depth: 0
+          cache: 'yarn'
       - name: Cache node modules
-        uses: actions/cache@v3
         id: cache-node-modules
+        uses: actions/cache@v3
         with:
           path: ~/.cache/yarn
           key: yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             yarn-
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
       - name: Install dependencies 🚀
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
   lint-and-style:
@@ -34,6 +28,11 @@ jobs:
     runs-on: it
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+      - name: Install dependencies 🚀
+        run: yarn install --frozen-lockfile
       - name: Linting ✨
         run: yarn lint
       - name: Style check 💅
@@ -44,6 +43,11 @@ jobs:
     runs-on: it
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+      - name: Install dependencies 🚀
+        run: yarn install --frozen-lockfile
       - name: Running test 🛫🛬
         run: yarn test --coverage src
       - name: Upload coverage to Codecov 💌
@@ -56,6 +60,11 @@ jobs:
     runs-on: it
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'yarn'
+      - name: Install dependencies 🚀
+        run: yarn install --frozen-lockfile
       - name: Build fusion docker image
         run: docker build . --tag=nexus-web:fresh
       - name: Start services
