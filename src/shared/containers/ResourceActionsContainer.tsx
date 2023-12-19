@@ -12,15 +12,16 @@ import { download } from '../utils/download';
 import { isFile, isView, toPromise } from '../utils/nexusMaybe';
 import RemoveTagButton from './RemoveTagButtonContainer';
 import ResourceDownloadButton from './ResourceDownloadContainer';
+import { useEffect, useState } from 'react';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
   editable: boolean;
   refreshResource: () => void;
   goToView: (
+    viewId: string,
     orgLabel: string,
     projectLabel: string,
-    viewId: string,
     viewType: string[] | string
   ) => void;
   goToResource: (
@@ -30,11 +31,12 @@ const ResourceActionsContainer: React.FunctionComponent<{
     revision: number
   ) => void;
 }> = ({ resource, editable, refreshResource, goToView, goToResource }) => {
-  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
-  const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
+  const resourceId = resource['@id'];
   const notification = useNotification();
+  const [isLatest, setIsLatest] = useState(false);
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -47,24 +49,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
     });
     return resource._rev === latest._rev;
   };
-
-  const actionTypes = [
-    {
-      name: 'downloadFile',
-      predicate: toPromise(isFile),
-      title: 'Download this file',
-      shortTitle: 'Download File',
-      icon: <DownloadOutlined />,
-    },
-    {
-      name: 'deprecateResource',
-      title: 'Deprecate this resource',
-      message: "Are you sure you'd like to deprecate this resource?",
-      shortTitle: 'Deprecate',
-      icon: <DeleteOutlined />,
-      danger: true,
-    },
-  ];
 
   const actions = {
     deprecateResource: async () => {
@@ -133,6 +117,33 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
+  const actionTypes = [
+    {
+      name: 'downloadFile',
+      predicate: toPromise(isFile),
+      title: 'Download this file',
+      shortTitle: 'Download File',
+      icon: <DownloadOutlined />,
+    },
+    {
+      name: 'deprecateResource',
+      title: 'Deprecate this resource',
+      message: "Are you sure you'd like to deprecate this resource?",
+      shortTitle: 'Deprecate',
+      icon: <DeleteOutlined />,
+      danger: true,
+    },
+  ];
+
+  useEffect(() => {
+    const checkIsLatest = async () => {
+      const result = await isLatestResource(resource);
+      setIsLatest(result);
+    };
+
+    checkIsLatest();
+  }, [resource]);
+
   return (
     <div className="resource-actions-container">
       <div className="resource-actions">
@@ -148,6 +159,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
         */}
         {!resource['@id'].includes('defaultElasticSearchIndex') &&
         !resource['@id'].includes('defaultSparqlIndex') &&
+        isLatest &&
         !resource._deprecated ? (
           <ResourceActions
             resource={resource}
