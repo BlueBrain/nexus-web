@@ -8,7 +8,8 @@ import {
   viewErrorsHandler,
   viewStatsHandler,
   viewWithIndexingErrors,
-  viewWithNoIndexingErrors,
+  // TODO Create a test case for a view with no indexing errors
+  // viewWithNoIndexingErrors,
   viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -81,19 +82,13 @@ describe('ViewsSubView', () => {
     await waitFor(() => {
       const errorRows = getErrorRows();
       expect(errorRows.length).toEqual(2);
+      screen.getByText(/2 Total errors/i, { selector: 'h3' });
+
+      const errorRow1 = getErrorRow('Mock Error 1');
+      expect(errorRow1).toBeTruthy();
+      const errorRow2 = getErrorRow('Mock Error 2');
+      expect(errorRow2).toBeTruthy();
     });
-
-    expect(
-      screen.getByText(/2 Total errors/i, { selector: 'h3' })
-    ).toBeInTheDocument();
-
-    const indexingErrorRows = await getErrorRows();
-    expect(indexingErrorRows.length).toEqual(2);
-
-    const errorRow1 = await getErrorRow('Mock Error 1');
-    expect(errorRow1).toBeTruthy();
-    const errorRow2 = await getErrorRow('Mock Error 2');
-    expect(errorRow2).toBeTruthy();
   });
 
   it('shows detailed error when error row is expanded', async () => {

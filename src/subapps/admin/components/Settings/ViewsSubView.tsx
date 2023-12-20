@@ -90,6 +90,7 @@ const fetchViewsList = async ({
             ...view,
             errors: [],
             status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
+            // TODO Don't return the empty indexing errors, we should fix this in the SDK
             indexingErrors: {
               '@context': [],
               _next: null,
@@ -183,7 +184,7 @@ const restartIndexingAllViews = async ({
         views,
       },
     });
-    // @ts-ignore
+    // TODO For some reason when there's a faulty view, the error results into removing the view from the list
     throw new Error('Error captured when re-indexing the views', {
       cause: errors,
     });
@@ -446,6 +447,7 @@ const ViewsSubView = () => {
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
             ) : (
+              // TODO Is there a way to show the amount of errors?
               <PlusCircleTwoTone
                 data-testid="Expand indexing errors"
                 onClick={async e => {
