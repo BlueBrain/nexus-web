@@ -32,7 +32,7 @@ jobs:
         with:
           cache: 'yarn'
       - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Linting ✨
         run: yarn lint
       - name: Style check 💅
@@ -47,7 +47,7 @@ jobs:
         with:
           cache: 'yarn'
       - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Running test 🛫🛬
         run: yarn test --coverage src
       - name: Upload coverage to Codecov 💌
@@ -64,7 +64,7 @@ jobs:
         with:
           cache: 'yarn'
       - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --prefer-offline
       - name: Build fusion docker image
         run: docker build . --tag=nexus-web:fresh
       - name: Start services
