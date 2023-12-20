@@ -86,7 +86,11 @@ describe('ViewsSubView', () => {
   it('shows indexing errors when view row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
-    screen.getByText(/2 Total errors/i, { selector: 'h3' });
+    await waitFor(() => {
+      expect(
+        screen.getByText(/2 Total errors/i, { selector: 'h3' })
+      ).toBeInTheDocument();
+    });
 
     const indexingErrorRows = await getErrorRows();
     expect(indexingErrorRows.length).toEqual(2);

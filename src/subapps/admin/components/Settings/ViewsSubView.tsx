@@ -446,20 +446,28 @@ const ViewsSubView = () => {
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
             ) : (
-              <PlusCircleTwoTone
-                onClick={async e => {
-                  // Fetch indexing errors when expanding the row
-                  // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
-                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
-                    nexus,
-                    apiEndpoint,
-                    orgLabel: record.orgLabel,
-                    projectLabel: record.projectLabel,
-                    viewId: record.id,
-                  });
-                  onExpand(record, e);
-                }}
-              />
+              <>
+                <Badge
+                  count={record.indexingErrors._total}
+                  showZero={false}
+                  size="small"
+                ></Badge>
+                <PlusCircleTwoTone
+                  data-testid="Expand indexing errors"
+                  onClick={async e => {
+                    // Fetch indexing errors when expanding the row
+                    // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
+                    record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                      nexus,
+                      apiEndpoint,
+                      orgLabel: record.orgLabel,
+                      projectLabel: record.projectLabel,
+                      viewId: record.id,
+                    });
+                    onExpand(record, e);
+                  }}
+                />
+              </>
             )
           }
           expandedRowRender={(r: SubView) => {
