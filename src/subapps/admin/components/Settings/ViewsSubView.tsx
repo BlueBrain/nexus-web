@@ -473,6 +473,7 @@ const ViewsSubView = () => {
           expandedRowRender={(r: SubView) => {
             return (
               <ViewIndexingErrors
+                data-testid="indexing-error-list"
                 key={r.id}
                 indexingErrors={r.indexingErrors}
               />
