@@ -87,10 +87,13 @@ describe('ViewsSubView', () => {
     await expandRow(viewWithIndexingErrors);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/2 Total errors/i, { selector: 'h3' })
-      ).toBeInTheDocument();
+      const errorRows = getErrorRows();
+      expect(errorRows.length).toEqual(2);
     });
+
+    expect(
+      screen.getByText(/2 Total errors/i, { selector: 'h3' })
+    ).toBeInTheDocument();
 
     const indexingErrorRows = await getErrorRows();
     expect(indexingErrorRows.length).toEqual(2);
