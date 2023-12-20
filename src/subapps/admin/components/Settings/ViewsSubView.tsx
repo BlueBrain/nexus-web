@@ -3,7 +3,7 @@ import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import * as Sentry from '@sentry/browser';
 import { PromisePool } from '@supercharge/promise-pool';
-import { Badge, Button, Col, Row, Table, Tooltip, notification } from 'antd';
+import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { isArray, isString, orderBy } from 'lodash';
 import { useMutation, useQuery } from 'react-query';
@@ -446,28 +446,21 @@ const ViewsSubView = () => {
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
             ) : (
-              <>
-                <Badge
-                  count={record.indexingErrors._total}
-                  showZero={false}
-                  size="small"
-                ></Badge>
-                <PlusCircleTwoTone
-                  data-testid="Expand indexing errors"
-                  onClick={async e => {
-                    // Fetch indexing errors when expanding the row
-                    // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
-                    record.indexingErrors = await fetchIndexingErrorsOnDemand({
-                      nexus,
-                      apiEndpoint,
-                      orgLabel: record.orgLabel,
-                      projectLabel: record.projectLabel,
-                      viewId: record.id,
-                    });
-                    onExpand(record, e);
-                  }}
-                />
-              </>
+              <PlusCircleTwoTone
+                data-testid="Expand indexing errors"
+                onClick={async e => {
+                  // Fetch indexing errors when expanding the row
+                  // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
+                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                    nexus,
+                    apiEndpoint,
+                    orgLabel: record.orgLabel,
+                    projectLabel: record.projectLabel,
+                    viewId: record.id,
+                  });
+                  onExpand(record, e);
+                }}
+              />
             )
           }
           expandedRowRender={(r: SubView) => {

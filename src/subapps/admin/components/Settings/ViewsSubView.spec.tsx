@@ -75,14 +75,6 @@ describe('ViewsSubView', () => {
     await expectRowCountToBe(3);
   });
 
-  it('shows a badge for views that have errors', async () => {
-    expect(getErrorBadgeContent(viewWithIndexingErrors)).toEqual('2');
-  });
-
-  it("does not show error badge for views that don't have errors", async () => {
-    expect(getErrorBadgeContent(viewWithNoIndexingErrors)).toBeUndefined();
-  });
-
   it('shows indexing errors when view row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
@@ -150,10 +142,5 @@ describe('ViewsSubView', () => {
 
   const visibleTableRows = () => {
     return container.querySelectorAll('table tbody tr.view-item-row');
-  };
-
-  const getErrorBadgeContent = (rowId: string) => {
-    const row = getViewRowById(rowId);
-    return row.querySelector('sup')?.textContent;
   };
 });
