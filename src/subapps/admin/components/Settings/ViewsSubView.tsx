@@ -80,7 +80,7 @@ const fetchViewsList = async ({
             projectLabel,
             encodeURIComponent(view.key)
           );
-          //  TODO: we should update the type in nexus-sdk! as the response is not the same from delta!
+          //  TODO: We should update the type in nexus-sdk! as the response is not the same from delta!
           // @ts-ignore
           const percentage = iViewStats.totalEvents
             ? // @ts-ignore
@@ -88,23 +88,13 @@ const fetchViewsList = async ({
             : 0;
           return {
             ...view,
-            errors: [],
             status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
-            // TODO Don't return the empty indexing errors, we should fix this in the SDK
-            indexingErrors: {
-              '@context': [],
-              _next: null,
-              _total: 0,
-              _results: [],
-            },
           };
         }
 
         return {
           ...view,
-          errors: [],
           status: 'N/A',
-          indexingErrors: { _total: 0, _results: [] },
         };
       });
 
@@ -125,6 +115,7 @@ const fetchViewsList = async ({
     throw new Error('Can not fetch views', { cause: error });
   }
 };
+
 const restartIndexOneView = async ({
   nexus,
   apiEndpoint,
@@ -222,7 +213,7 @@ const ViewsSubView = () => {
   const { mutateAsync: handleReindexingAllViews, isLoading } = useMutation(
     restartIndexingAllViews,
     {
-      onError: error => {
+      onError: () => {
         notification.error({
           message: `Error when restarting indexing the views`,
           description: '',
@@ -256,7 +247,13 @@ const ViewsSubView = () => {
 
       return indexingErrors;
     } catch (error) {
+      // TODO There is some issue with some views that have no indexing errors
       console.error('Error fetching indexing errors on demand', error);
+      notification.error({
+        message: `Error fetching indexing errors for the selected view`,
+        description: '',
+      });
+
       Sentry.captureException(error, {
         extra: {
           orgLabel,
