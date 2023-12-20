@@ -184,7 +184,10 @@ const restartIndexingAllViews = async ({
         views,
       },
     });
-    throw new Error('Error restarting views');
+    // @ts-ignore
+    throw new Error('Error captured when re-indexing the views', {
+      cause: errors,
+    });
   }
   return results;
 };
