@@ -39,8 +39,12 @@ const testRealm: Realm = {
   logo: 'http://nexus.example.com/logo.png',
 };
 
-const keycloak = keycloakUrl => {
-  const importRealm = async (realm: Realm, clientCredentials, users) => {
+const keycloak = (keycloakUrl: string) => {
+  const importRealm = async (
+    realm: Realm,
+    clientCredentials: { id: any; secret: any },
+    users: any
+  ) => {
     const adminAccessToken = await userToken(keycloakAdmin, adminClient);
 
     const realmImportTemplate = fs
@@ -63,19 +67,22 @@ const keycloak = keycloakUrl => {
       },
 
       body: realmJson,
-    }).then(response => {
+    }).then((response: { status: number; text: () => Promise<any> }) => {
       if (response.status !== 201) {
-        response.text().then(responseText => {
+        response.text().then((responseText: any) => {
           throw Error(`Error creating realm\n\n${responseText}`);
         });
       }
     });
   };
 
-  const realmEndpoint = realmName =>
+  const realmEndpoint = (realmName: any) =>
     `${keycloakUrl}/realms/${realmName}/protocol/openid-connect/token`;
 
-  const userToken = (user, client) => {
+  const userToken = (
+    user: { username: any; password: any; realm: any },
+    client: { id: any; secret: any; realm?: string }
+  ) => {
     const clientFields = {
       client_id: client.id,
       ...(client.secret !== '' && { client_secret: client.secret }),
@@ -93,8 +100,8 @@ const keycloak = keycloakUrl => {
     };
     //@ts-ignore
     return fetch(realmEndpoint(user.realm), request)
-      .then(response => response.json())
-      .then(data => {
+      .then((response: Response) => response.json())
+      .then((data: { access_token: string }) => {
         return data.access_token;
       });
   };
@@ -125,21 +132,6 @@ function createDeltaRealm(realm: Realm) {
   });
 }
 
-// // function addPermissions(path, acls) {
-
-// //     return fetch(`http://local:9090/v1/realms/${realmName}`, {
-// //       headers: {
-// //         'Content-Type': 'application/json',
-// //       },
-// //       method: 'put',
-// //       body: {
-// //         acl: [
-
-// //         ]
-// //       },
-// //     });
-// //   }
-
 type User = {
   username: string;
   password: string;
@@ -169,19 +161,21 @@ async function setup(users: { [key: string]: User }) {
 
     console.log('Creating internal realm for use by our Service account');
     await getDeltaRealm(internalRealm.name)
-      .then(async response => {
+      .then(async (response: Response) => {
         if (response.status !== 200) {
           await kc.importRealm(
             internalRealm,
             { id: 'ServiceAccount', secret: '' },
             []
           );
-          await createDeltaRealm(internalRealm).then(response => {
+          await createDeltaRealm(internalRealm).then((response: Response) => {
             if (response.status === 201) {
               console.log('internal realm successfully created');
             } else {
-              response.text().then(json => {
-                throw Error(`Error occured creating realm in Delta\n\n${json}`);
+              response.text().then((json: any) => {
+                throw Error(
+                  `Error occurred creating realm in Delta\n\n${json}`
+                );
               });
             }
           });
@@ -189,34 +183,40 @@ async function setup(users: { [key: string]: User }) {
           console.log('realm already exists');
         }
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.log('error realm', error);
       });
     console.log(`Checking if ${testRealm.name} already exists`);
     /* create test realm for use by our test users */
-    await getDeltaRealm(testRealm.name).then(async response => {
-      if (response.status !== 200) {
-        console.log(
-          'Realm does not exist. Creating test realm for use by our authenticated users...'
-        );
-        await kc.importRealm(
-          testRealm,
-          { id: 'fusion', secret: '' },
-          Object.values(users)
-        );
-        await createDeltaRealm(testRealm).then(response => {
-          if (response.status === 201) {
-            console.log(`Realm ${testRealm.name} successfully created`);
-          } else {
-            response.text().then(json => {
-              throw Error(`Error occured creating realm in Delta\n\n${json}`);
-            });
-          }
-        });
-      } else {
-        console.log(`${testRealm.name} already exists`);
+    await getDeltaRealm(testRealm.name).then(
+      async (response: { status: number }) => {
+        if (response.status !== 200) {
+          console.log(
+            'Realm does not exist. Creating test realm for use by our authenticated users...'
+          );
+          await kc.importRealm(
+            testRealm,
+            { id: 'fusion', secret: '' },
+            Object.values(users)
+          );
+          await createDeltaRealm(testRealm).then(
+            (response: { status: number; text: () => Promise<any> }) => {
+              if (response.status === 201) {
+                console.log(`Realm ${testRealm.name} successfully created`);
+              } else {
+                response.text().then((json: any) => {
+                  throw Error(
+                    `Error occured creating realm in Delta\n\n${json}`
+                  );
+                });
+              }
+            }
+          );
+        } else {
+          console.log(`${testRealm.name} already exists`);
+        }
       }
-    });
+    );
   } catch (e) {
     console.log('Error occurred whilst setting up realms and users', e);
   }
