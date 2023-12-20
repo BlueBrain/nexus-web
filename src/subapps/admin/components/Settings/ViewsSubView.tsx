@@ -184,10 +184,7 @@ const restartIndexingAllViews = async ({
         views,
       },
     });
-    // TODO For some reason when there's a faulty view, the error results into removing the view from the list
-    throw new Error('Error captured when re-indexing the views', {
-      cause: errors,
-    });
+    throw new Error('Error restarting views');
   }
   return results;
 };
