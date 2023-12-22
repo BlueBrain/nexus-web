@@ -3,7 +3,8 @@ name: Pre-merge Review
 on: [pull_request]
 
 jobs:
-  setup:
+  # Job for installing dependencies
+  install_dependencies:
     runs-on: it
     outputs:
       cache-key: ${{ steps.cache-node-modules.outputs.cache-key }}
@@ -23,52 +24,52 @@ jobs:
       - name: Install dependencies 🚀
         run: yarn install --frozen-lockfile
 
-  lint-and-style:
-    needs: setup
+  # Job for linting
+  lint:
+    needs: install_dependencies
     runs-on: it
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
-      - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
       - name: Linting ✨
         run: yarn lint
+
+  # Job for style checking
+  style_check:
+    needs: install_dependencies
+    runs-on: it
+    steps:
+      - uses: actions/checkout@v3
       - name: Style check 💅
         run: yarn style
 
-  test:
-    needs: setup
+  # Job for running unit tests
+  unit_tests:
+    needs: install_dependencies
     runs-on: it
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
-      - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
-      - name: Running test 🛫🛬
+      - name: Running unit tests 🛫🛬
         run: yarn test --coverage src
       - name: Upload coverage to Codecov 💌
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  docker-build-and-e2e:
-    needs: setup
+  # Job for building docker image
+  build_docker_image:
+    needs: unit_tests
     runs-on: it
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetches all history for all branches and tags
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
-      - name: Install dependencies 🚀
-        run: yarn install --frozen-lockfile
       - name: Build fusion docker image
         run: docker build . --tag=nexus-web:fresh
+
+  # Job for e2e tests
+  e2e_tests:
+    needs: [build_docker_image]
+    runs-on: it
+    steps:
+      - uses: actions/checkout@v3
       - name: Start services
         run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
       - name: Copy nexus-web into Cypress container
