@@ -1,4 +1,4 @@
-name: Review
+name: Pre-merge Review
 
 on: [pull_request]
 
