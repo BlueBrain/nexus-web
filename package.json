@@ -19,6 +19,7 @@
     "preview": "cross-env NODE_ENV=production node ./dist",
     "test:watch": "vitest watch",
     "test:ci": "vitest run",
+    "test:ci:silent": "vitest run --silent",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "knip": "knip",
