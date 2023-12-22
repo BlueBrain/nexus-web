@@ -27,7 +27,7 @@ jobs:
           yarn style
       - name: running test 🛫🛬
         run: |
-          yarn test:ci
+          yarn test:ci:silent
       - name: upload coverage to Codecov 💌
         uses: codecov/codecov-action@v1
         with:
