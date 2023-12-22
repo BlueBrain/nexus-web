@@ -32,18 +32,6 @@ import { configureStore } from '../../../../store';
 describe('Analysis Plugin', () => {
   const queryClient = new QueryClient();
 
-  // const mockState = {
-  //   config: {
-  //     apiEndpoint: deltaPath(),
-  //     analysisPluginSparqlDataQuery: 'detailedCircuit',
-  //     analysisPluginTypes: DEFAULT_REPORT_TYPES,
-  //     analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
-  //   },
-  //   auth: {
-  //     identities: [],
-  //   },
-  // };
-
   // establish API mocking before all tests
   beforeAll(() => server.listen());
   // reset any request handlers that are declared as a part of our tests
@@ -110,7 +98,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    // // const store = mockStore(mockState);
+
     render(
       <Router history={history}>
         <Provider store={store}>
