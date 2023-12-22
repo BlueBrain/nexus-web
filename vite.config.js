@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 /** @type {import('vite').UserConfig} */
 import { defineConfig } from 'vite';
 import { fileURLToPath } from 'url';
@@ -60,13 +61,11 @@ export default defineConfig(() => {
             globals: true,
             environment: 'jsdom',
             setupFiles: ["./vitest-setup.js"],
-            minThreads: 2,
-            maxThreads: 4,
-            // reporters: 'html', // Uncomment this to get the test output in html (which might be easier to share and read after the test run)
+            testTimeout: 60000,
+            reporters: process.env.REPORT === 'true',
             sequence: {
                 shuffle: true,
-                // seed: 1699605577955, // Set this value to reproduce test run
-            }
+            },
         },
         build: {
             minify: true,
