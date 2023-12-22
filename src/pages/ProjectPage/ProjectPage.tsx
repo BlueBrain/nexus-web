@@ -51,8 +51,7 @@ const ProjectView: React.FC = () => {
 
   const { data: project, error } = useQuery<ProjectResponseCommon, Error>(
     ['project', orgLabel, projectLabel],
-    () => fetchProjectData(orgLabel, projectLabel),
-    {}
+    () => fetchProjectData(orgLabel, projectLabel)
   );
 
   if (error) {

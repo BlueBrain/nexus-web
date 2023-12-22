@@ -14,7 +14,7 @@ import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.less';
 
-type DangerZoneItem = {
+type TDangerZoneItem = {
   key: React.Key;
   title: string;
   description: string;
@@ -249,7 +249,7 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
       handler: handleDeletion,
     });
 
-  const dangerZoneDataSource: DangerZoneItem[] = [
+  const dangerZoneDataSource: TDangerZoneItem[] = [
     {
       key: 'deprecation-action-section',
       title: project._deprecated
@@ -345,7 +345,7 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
         <h2>Danger Zone</h2>
         <div className="settings-view-container">
           <div className="danger-actions">
-            <List<DangerZoneItem>
+            <List<TDangerZoneItem>
               size="large"
               bordered
               className="danger-zone-container"
