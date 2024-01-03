@@ -1,27 +1,22 @@
 .settings-view {
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px 20px;
-
-  .settings-view-container {
-    margin-left: 60px;
-  }
+  max-width: 1200px;
 
   .api-mapping-title {
+    display: grid;
+    grid-template-rows: repeat(2, max-content);
+    margin-bottom: 10px;
     h2 {
+      margin-bottom: 0px;
       font-weight: bold;
       font-size: 20px;
-      margin-bottom: 0px;
     }
 
     button {
       padding: 0px;
       text-align: left;
     }
-
-    display: grid;
-    grid-template-rows: repeat(2, max-content);
-    margin-bottom: 10px;
   }
 
   h2 {
@@ -38,8 +33,8 @@
     margin-top: 40px;
 
     .ant-table-thead .ant-table-cell {
-      background: #fff !important;
       border-bottom: 2px solid #f0f0f0;
+      background: #fff !important;
 
       &::before {
         content: none !important;
@@ -52,8 +47,8 @@
 
     .view-item-row {
       .ant-table-cell {
-        background: #fff !important;
         border-bottom: 1px solid #f8f8f8 !important;
+        background: #fff !important;
       }
 
       &:hover {
@@ -99,10 +94,10 @@
 
 .settings-quotas-view {
   .quota-data-volume {
-    padding: 20px 20px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    padding: 20px 20px;
   }
 
   .quota-storage {
@@ -112,8 +107,8 @@
   .quotas-gauge-chart {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
 
     .qgauge-chart {
       margin-bottom: 10px;
@@ -145,17 +140,26 @@
   }
 }
 
+.ant-list-item-meta-description {
+  margin-left: 0px !important;
+  padding-right: 2rem !important;
+}
+
+.ant-modal-header {
+  padding-bottom: 0px !important;
+}
+
 .api-mapping-row {
   display: flex !important;
-  align-items: center;
-  justify-content: center;
   column-gap: 5px;
+  justify-content: center;
+  align-items: center;
 
   &-inputs {
     display: flex !important;
-    align-items: center;
-    justify-content: center;
     column-gap: 5px;
+    justify-content: center;
+    align-items: center;
 
     input:first-child {
       flex: 1 1 30%;
@@ -169,35 +173,35 @@
 
 .resolver-search {
   &-bar {
-    margin-top: 20px;
     display: grid;
     grid-template-columns: 400px max-content;
-    gap: 10px;
-    align-items: center;
     justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
   }
 
   &-results {
     margin-top: 20px;
-    max-width: 800px;
     width: 100%;
+    max-width: 800px;
   }
 }
 
 .danger-zone-container {
-  width: 100%;
   border-radius: 8px !important;
+  width: 100%;
 }
 
 .danger-zone-item {
   + button,
   + span > button {
+    display: flex !important;
+    column-gap: 10px;
+    justify-content: center;
+    align-items: center;
     width: 200px !important;
     font-weight: 700;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    column-gap: 10px;
 
     &.deprecate-btn {
       background: white !important;
@@ -212,14 +216,14 @@
 
 .row-center {
   display: flex !important;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 }
 
 .indexing-error-header {
   .ant-collapse-header-text {
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden;
   }
 }
