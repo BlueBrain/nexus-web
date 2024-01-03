@@ -14,9 +14,9 @@ export const ViewIndexingErrors: React.FC<Props> = ({
   return (
     <div>
       {<h3>{indexingErrors._total} Total errors</h3>}
-      {indexingErrors._total && (
+      {indexingErrors._total > 0 && (
         <Alert
-          message="The list below shows all indexing errors - even the ones that are now resolved."
+          message="The list below shows all indexing errors – even the ones that are now resolved."
           showIcon
           style={{ margin: '20px' }}
         />

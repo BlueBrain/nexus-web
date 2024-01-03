@@ -18,6 +18,8 @@ import {
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
 import './styles.less';
+import { useState } from 'react';
+import { not } from 'ajv/dist/compile/codegen';
 
 type SubView = {
   key: string;
@@ -197,6 +199,10 @@ const ViewsSubView = () => {
     params: { orgLabel, projectLabel },
   } = match;
 
+  const [expandedRows, setExpandedRows] = useState<{
+    [key: string]: IndexingErrorResults | undefined;
+  }>({});
+
   const createNewViewHandler = () => {
     const queryURI = `/orgs/${orgLabel}/${projectLabel}/create`;
     history.push(queryURI);
@@ -247,7 +253,6 @@ const ViewsSubView = () => {
 
       return indexingErrors;
     } catch (error) {
-      // TODO There is some issue with some views that have no indexing errors
       console.error('Error fetching indexing errors on demand', error);
       notification.error({
         message: `Error fetching indexing errors for the selected view`,
@@ -463,11 +468,40 @@ const ViewsSubView = () => {
             )
           }
           expandedRowRender={(r: SubView) => {
+            if (!expandedRows[r.key]) {
+              // Fetch errors if not already fetched for this row
+              fetchIndexingErrorsOnDemand({
+                nexus,
+                apiEndpoint,
+                orgLabel: r.orgLabel,
+                projectLabel: r.projectLabel,
+                viewId: r.id,
+              })
+                .then(indexingErrors => {
+                  // Update the state with the new errors
+                  setExpandedRows(prevExpandedRows => ({
+                    ...prevExpandedRows,
+                    [r.key]: indexingErrors,
+                  }));
+                })
+                .catch(error => {
+                  console.error(
+                    `Error fetching indexing errors for view ${r.key}`,
+                    error
+                  );
+                  notification.error({
+                    message: `Error fetching indexing errors for view ${r.key}`,
+                    description: '',
+                  });
+                });
+              return <div>Loading errors...</div>;
+            }
+
             return (
               <ViewIndexingErrors
                 data-testid="indexing-error-list"
                 key={r.id}
-                indexingErrors={r.indexingErrors}
+                indexingErrors={expandedRows[r.key]!}
               />
             );
           }}
