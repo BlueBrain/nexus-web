@@ -91,19 +91,22 @@ describe('ViewsSubView', () => {
     });
   });
 
-  // TODO Fix this test
   it('shows detailed error when error row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
     const errorRow1 = await getErrorRow('Mock Error 1');
     await user.click(errorRow1);
 
-    const detailedErrorContainer = container.querySelector('.react-json-view');
-    expect(detailedErrorContainer).toBeTruthy();
+    await waitFor(() => {
+      const detailedErrorContainer = container.querySelector(
+        '.react-json-view'
+      );
+      expect(detailedErrorContainer).toBeTruthy();
+    });
   });
 
   const getErrorRow = async (errorMessage: string) => {
-    const row = await screen.getByText(new RegExp(errorMessage, 'i'), {
+    const row = await screen.findByText(new RegExp(errorMessage, 'i'), {
       selector: '.ant-collapse-header-text',
     });
     return row;
