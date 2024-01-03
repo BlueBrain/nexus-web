@@ -1,4 +1,4 @@
-import APIMappinsSVComponent from './APIMappingSubView';
+import APIMappingsSVComponent from './APIMappingSubView';
 import DangerZoneSVComponent from './DangerZoneSubView';
 import GeneralSVComponent from './GeneralSubView';
 import PermissionsAclsSVComponent from './PermissionsAclsSubView';
@@ -8,7 +8,7 @@ import StoragesSVComponent from './StoragesSubView';
 import ViewsSVComponent from './ViewsSubView';
 
 export {
-  APIMappinsSVComponent,
+  APIMappingsSVComponent,
   DangerZoneSVComponent,
   GeneralSVComponent,
   PermissionsAclsSVComponent,
