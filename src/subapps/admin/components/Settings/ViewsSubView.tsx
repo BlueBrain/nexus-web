@@ -421,9 +421,9 @@ const ViewsSubView = () => {
                   handleReindexingAllViews({
                     nexus,
                     apiEndpoint,
-                    // TODO Fix this type
-                    // @ts-ignore
-                    views: views?.results.filter(item => !item.isAggregateView),
+                    views: views?.results.filter(
+                      item => item.isAggregateView
+                    ) as SubView[],
                   });
                 }}
               >
@@ -438,9 +438,7 @@ const ViewsSubView = () => {
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
-          // TODO Fix this type
-          // @ts-ignore
-          dataSource={views?.results}
+          dataSource={views?.results as SubView[]}
           sticky={true}
           size="middle"
           pagination={false}
@@ -449,7 +447,6 @@ const ViewsSubView = () => {
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
             ) : (
-              // TODO Is there a way to show the amount of errors?
               <PlusCircleTwoTone
                 data-testid="Expand indexing errors"
                 onClick={async e => {
