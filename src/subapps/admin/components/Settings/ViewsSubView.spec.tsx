@@ -91,6 +91,7 @@ describe('ViewsSubView', () => {
     });
   });
 
+  // TODO Fix this test
   it('shows detailed error when error row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
