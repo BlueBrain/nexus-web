@@ -64,10 +64,10 @@ export const fetchIndexingErrors = async ({
 };
 
 export interface IndexingErrorResults {
-  '@context': any;
-  _next: any;
+  '@context'?: string[] | string;
+  _next: string;
   _total: number;
-  _results: any[];
+  _results: IndexingError[];
 }
 
 interface IndexingError {
