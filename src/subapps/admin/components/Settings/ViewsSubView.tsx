@@ -218,7 +218,15 @@ const ViewsSubView = () => {
   const { mutateAsync: handleReindexingAllViews, isLoading } = useMutation(
     restartIndexingAllViews,
     {
-      onError: () => {
+      onError: error => {
+        Sentry.captureException(error, {
+          extra: {
+            orgLabel,
+            projectLabel,
+            error,
+          },
+        });
+
         notification.error({
           message: `Error when restarting indexing the views`,
           description: '',
