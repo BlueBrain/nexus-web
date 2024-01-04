@@ -19,7 +19,6 @@ import {
 } from './ViewIndexingErrors';
 import './styles.less';
 import { useState } from 'react';
-import { not } from 'ajv/dist/compile/codegen';
 
 type SubView = {
   key: string;
