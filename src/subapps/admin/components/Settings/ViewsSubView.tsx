@@ -30,7 +30,9 @@ type SubView = {
   orgLabel: string;
   projectLabel: string;
   isAggregateView: boolean;
-  indexingErrors: IndexingErrorResults;
+  indexingErrors:
+    | IndexingErrorResults
+    | { '@context': never[]; _next: null; _total: number; _results: never[] };
 };
 
 const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
@@ -478,7 +480,7 @@ const ViewsSubView = () => {
                   // Update the state with the new errors
                   setExpandedRows(prevExpandedRows => ({
                     ...prevExpandedRows,
-                    [r.key]: indexingErrors,
+                    [r.key]: indexingErrors as IndexingErrorResults,
                   }));
                 })
                 .catch(error => {
