@@ -29,9 +29,7 @@ type SubView = {
   orgLabel: string;
   projectLabel: string;
   isAggregateView: boolean;
-  indexingErrors:
-    | IndexingErrorResults
-    | { '@context': never[]; _next: null; _total: number; _results: never[] };
+  indexingErrors: IndexingErrorResults | null;
 };
 
 const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
