@@ -269,12 +269,7 @@ const ViewsSubView = () => {
         },
       });
 
-      return {
-        '@context': [],
-        _next: null,
-        _total: 0,
-        _results: [],
-      };
+      return null;
     }
   };
 
