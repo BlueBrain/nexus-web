@@ -98,8 +98,9 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
               CodeMirror.Editor
             >).current.getWrapperElement();
             if (editor) editor.remove();
-            if (wrapperRef.current)
+            if (wrapperRef.current) {
               (wrapperRef.current as { hydrated: boolean }).hydrated = false;
+            }
           }}
         />
       </Spin>

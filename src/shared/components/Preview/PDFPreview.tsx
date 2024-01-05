@@ -1,14 +1,6 @@
 import * as React from 'react';
 import { Alert, Button } from 'antd';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { Document, Page, pdfjs } from 'react-pdf';
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url
-).toString();
-import './PDFThumbnail.scss';
-import './PDFPreview.scss';
 import {
   CloseOutlined,
   EyeOutlined,
@@ -18,6 +10,15 @@ import {
 } from '@ant-design/icons';
 import useMeasure from '../../hooks/useMeasure';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import './PDFThumbnail.scss';
+import './PDFPreview.scss';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url
+).toString();
 
 type PDFThumbnailProps = {
   url: string;
