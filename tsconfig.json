@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "module": "ESNext",
     "target": "ES2020",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "experimentalDecorators": true,
     "sourceMap": true,
@@ -18,20 +18,20 @@
     "baseUrl": "src",
     "paths": {
       "testUtil": ["./utils/testUtil"],
-      "@/*": ["./src/*"],
-      "pages/*": ["./src/pages/*"],
-      "shared/*": ["./src/shared/*"],
-      "components/*": ["./src/shared/components/*"],
-      "molecules/*": ["./src/shared/molecules/*"],
-      "modals/*": ["./src/shared/modals/*"],
-      "hooks/*": ["./src/shared/hooks/*"],
-      "server/*": ["./server/*"]
+      "pages/*": ["./pages/*"],
+      "shared/*": ["./shared/*"],
+      "components/*": ["./shared/components/*"],
+      "molecules/*": ["./shared/molecules/*"],
+      "modals/*": ["./shared/modals/*"],
+      "hooks/*": ["./shared/hooks/*"],
+      "server/*": ["./server/*"],
+      "@/*": ["./src/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src/**/*"],
   "files": ["custom.d.ts"],
   "exclude": [
     "node_modules",

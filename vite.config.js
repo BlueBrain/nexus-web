@@ -31,14 +31,6 @@ export default defineConfig(() => {
         ],
         resolve: {
             alias: {
-                '@': fileURLToPath(new URL('./src', import.meta.url)),
-                'shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
-                'pages': fileURLToPath(new URL('./src/pages', import.meta.url)),
-                'components': fileURLToPath(new URL('./src/shared/components', import.meta.url)),
-                'molecules': fileURLToPath(new URL('./src/shared/molecules', import.meta.url)),
-                'modals': fileURLToPath(new URL('./src/shared/modals', import.meta.url)),
-                'hooks': fileURLToPath(new URL('./src/shared/hooks', import.meta.url)),
-                'server': fileURLToPath(new URL('./server', import.meta.url)),
                 process: 'process/browser',
                 buffer: 'buffer',
                 crypto: 'crypto-browserify',
@@ -87,7 +79,7 @@ export default defineConfig(() => {
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
-            },
+            }
         },
         assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4', '**/*.png', '**/*.svg']
     })
