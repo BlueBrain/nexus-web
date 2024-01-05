@@ -242,7 +242,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint && yarn style && yarn test",
+      "pre-push": "yarn lint && yarn style && yarn test:ci:silent",
       "pre-commit": "lint-staged"
     }
   },
