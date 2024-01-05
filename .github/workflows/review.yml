@@ -30,7 +30,7 @@ jobs:
         run: yarn install --frozen-lockfile 
 
   prettify:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
@@ -59,7 +59,7 @@ jobs:
         run: yarn style
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
@@ -88,7 +88,7 @@ jobs:
         run: yarn lint
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
