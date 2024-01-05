@@ -7,10 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [cache]
     steps:
-      - name: Prune containers
-        run: |
-          docker system prune -af
-
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -165,7 +161,6 @@ jobs:
           --headless
           --config-file cypress.config.ts
           --browser chrome
-          --headless
           --record
           --key ${{ secrets.CYPRESS_RECORD_KEY }}
 
