@@ -165,6 +165,7 @@ jobs:
           --headless
           --config-file cypress.config.ts
           --browser chrome
+          --headless
           --record
           --key ${{ secrets.CYPRESS_RECORD_KEY }}
 
