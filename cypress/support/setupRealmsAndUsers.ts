@@ -1,6 +1,5 @@
-const Mustache = require('mustache');
-const fetch = require('node-fetch');
-const fs = require('fs');
+import * as Mustache from 'mustache';
+import * as fs from 'fs';
 
 const keycloakUrl = 'http://keycloak.test:8080';
 const deltaBaseUrl = 'http://delta.test:8098/v1';
