@@ -1,9 +1,10 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
+import { Server } from 'node:http';
+import { fileURLToPath } from 'node:url';
 import compression from 'compression';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
-import { Server } from 'http';
 import { ViteDevServer } from 'vite';
 import { Helmet } from 'react-helmet';
 import { base, gePreloadedState } from './constants';
@@ -14,6 +15,7 @@ const PORT = Number(process.env.PORT) || 8000;
 // @ts-ignore
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = DISABLE_SSL;
 const mode = NODE_ENV === 'production' ? 'production' : 'development';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.use(compression());
