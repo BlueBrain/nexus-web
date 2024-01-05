@@ -19,7 +19,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-modules-
 
-      - name: PRETTIFY Install Dependencies
+      - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile 
 
@@ -140,7 +140,7 @@ jobs:
         run: docker build . --tag=nexus-web:fresh
 
   e2e:
-    runs-on: it
+    runs-on: ubuntu-latest
     needs: [lint, prettify, test, build]
     steps:
       - name: Checkout code
