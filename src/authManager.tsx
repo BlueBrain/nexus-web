@@ -120,20 +120,33 @@ export const setupUserSession = async (userManager: UserManager) => {
     localStorage.removeItem('nexus__token');
   });
 
+  let user;
   try {
-    let user;
     // do we already have a user?
     user = await userManager.getUser();
-    if (user) {
-      // we've loaded a user, refresh it
+  } catch (e) {}
+
+  if (user) {
+    // we've loaded a user, refresh it
+    try {
       user = await userManager.signinSilent();
+    } catch (error) {
+      console.error(
+        '@@error',
+        "we've loaded a user, refresh it raised an error",
+        error
+      );
     }
+  } else {
     // nope, are we receiving a new token?
-    else {
+    try {
       user = await userManager.signinRedirectCallback();
+    } catch (error) {
+      console.error(
+        '@@error',
+        'nope, are we receiving a new token? but an error raised',
+        error
+      );
     }
-  } catch (e) {
-    // nothing to do, we are just not logged in
-    console.error('@@error', 'auth\n', e);
   }
 };

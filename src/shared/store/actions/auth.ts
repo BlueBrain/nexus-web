@@ -136,14 +136,12 @@ const fetchRealms: ActionCreator<ThunkAction> = () => {
   };
 };
 
-function performLogin(state: TLocationState) {
+function performLogin() {
   return async (
     dispatch: Dispatch<any>,
     getState: () => RootState
   ): Promise<any> => {
     const userManager = getUserManager(getState());
-    const baseURl = getState().config.basePath;
-    console.log('@@baseURl', baseURl);
     try {
       // default Redirect is home page so to avoid double slash '//' in the route (may it be temporary solution)
       // use baseURl instead of window location to get the real location
