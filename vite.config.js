@@ -16,8 +16,12 @@ export default defineConfig(() => {
     let commitHash = '', version = '';
 
     if(process.env.VITEST !== 'true') {
-        commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
-        version = execSync('git describe --tags').toString().trimEnd();
+        try {
+            commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
+            version = execSync('git describe --tags --always').toString().trimEnd();
+        } catch (error) {
+            console.log('⛔️ describe may not getting the latest tag')
+        }
     }
 
     return ({
