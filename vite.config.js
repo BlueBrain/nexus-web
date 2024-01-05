@@ -13,8 +13,12 @@ import viteCompression from 'vite-plugin-compression';
 import 'vite-compatible-readable-stream';
 
 export default defineConfig(() => {
-    const commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
-    const version = execSync('git describe --tags').toString().trimEnd();
+    let commitHash = '', version = '';
+
+    if(process.env.VITEST !== 'true') {
+        commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
+        version = execSync('git describe --tags').toString().trimEnd();
+    }
 
     return ({
         base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
