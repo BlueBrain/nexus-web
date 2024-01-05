@@ -1,5 +1,5 @@
 import { Request } from 'express';
-// Report Constants
+
 export const DEFAULT_SCALE = 50;
 
 export const DEFAULT_REPORT_TYPES = [
