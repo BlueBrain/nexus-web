@@ -32,7 +32,7 @@
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "e2e:open": "cypress open",
     "e2e:run": "cypress run --config-file cypress.config.ts",
-    "e2e:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
+    "e2e:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome --headless",
     "e2e:ps": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
     "e2e:ui": "API_ENDPOINT=http://test start-server-and-test dev http://localhost:8000 cy:run"
   },
