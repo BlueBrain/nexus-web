@@ -1,12 +1,10 @@
 import { Resource, Identity } from '@bbp/nexus-sdk/es';
-import {
-  isMatch,
-  isMatchWith,
-  isMatchWithCustomizer,
-  pick,
-  isArray,
-  last,
-} from 'lodash';
+import { isMatchWithCustomizer } from 'lodash';
+import isMatch from 'lodash/isMatch';
+import isMatchWith from 'lodash/isMatchWith';
+import pick from 'lodash/pick';
+import isArray from 'lodash/isArray';
+import last from 'lodash/last';
 import moment from 'moment';
 import isValidUrl from '../../utils/validUrl';
 
