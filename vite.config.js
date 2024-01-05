@@ -92,7 +92,7 @@ export default defineConfig(() => {
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
-            },
+            }
         },
         assetsInclude: ['**/*.jpg', '**/*.jpeg', '**/*.mp4', '**/*.png', '**/*.svg']
     })
