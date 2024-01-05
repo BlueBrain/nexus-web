@@ -64,9 +64,6 @@ declare module promBundle {
   }
 }
 declare function promBundle(options: promBundle.PromBundleOptions): any;
-declare module 'express-prom-bundle' {
-  export = promBundle;
-}
 
 declare module 'cytoscape-cola';
 
