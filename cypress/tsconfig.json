@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "ESNext",
     "lib": ["es5", "dom"],
     "types": [
       "cypress",
       "node",
       "@testing-library/cypress",
       "cypress-file-upload"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "include": ["**/*.ts", "support/e2e.js", "support/setupRealmsAndUsers.ts"]
 }
