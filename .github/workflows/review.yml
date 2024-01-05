@@ -9,7 +9,7 @@ jobs:
       - name: Prune containers
         run: |
           docker system prune -af
-          
+
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -22,6 +22,11 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-modules-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.10.0
 
       - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
