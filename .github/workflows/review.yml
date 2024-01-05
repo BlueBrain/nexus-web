@@ -4,12 +4,12 @@ on: [pull_request]
 
 jobs:
   cache:
-    runs-on: ubuntu-latest
+    runs-on: it
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: INIT Cache dependencies
+      - name: Cache dependencies
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -24,13 +24,13 @@ jobs:
         run: yarn install --frozen-lockfile 
 
   prettify:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: PRETTIFY Cache dependencies
+      - name: Cache dependencies
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -45,7 +45,7 @@ jobs:
         with:
           node-version: 20.10.0
           
-      - name: PRETTIFY Install Dependencies
+      - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
@@ -53,13 +53,13 @@ jobs:
         run: yarn style
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: LINT Cache dependencies
+      - name: Cache dependencies
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -74,7 +74,7 @@ jobs:
         with:
           node-version: 20.10.0
 
-      - name: LINT Install Dependencies
+      - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
@@ -82,13 +82,13 @@ jobs:
         run: yarn lint
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [cache]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: TEST Cache dependencies
+      - name: Cache dependencies
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -103,7 +103,7 @@ jobs:
         with:
           node-version: 20.10.0
 
-      - name: TEST Install Dependencies
+      - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
@@ -111,13 +111,13 @@ jobs:
         run: yarn test:ci:silent
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [lint, prettify, test]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: BUILD Cache dependencies
+      - name: Cache dependencies
         id: cache-node-modules
         uses: actions/cache@v3
         with:
@@ -132,7 +132,7 @@ jobs:
         with:
           node-version: 20.10.0
 
-      - name: BUILD Install Dependencies
+      - name: Install Dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
@@ -140,7 +140,7 @@ jobs:
         run: docker build . --tag=nexus-web:fresh
 
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: it
     needs: [lint, prettify, test, build]
     steps:
       - name: Checkout code
