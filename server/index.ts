@@ -25,7 +25,9 @@ async function startServer(server: Server) {
   const vite = await createServer({
     clearScreen: false,
     appType: 'custom',
-    server: { middlewareMode: true },
+    server: {
+      middlewareMode: true,
+    },
   });
 
   server.on('close', () => vite.close());
