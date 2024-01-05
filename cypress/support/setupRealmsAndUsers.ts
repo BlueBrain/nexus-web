@@ -1,4 +1,4 @@
-import * as Mustache from 'mustache';
+import Mustache from 'mustache';
 import * as fs from 'fs';
 
 const keycloakUrl = 'http://keycloak.test:8080';
