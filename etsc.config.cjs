@@ -1,4 +1,3 @@
-
 module.exports = {
     tsConfigFile: './tsconfig.node.json',
     esbuild: {
@@ -9,16 +8,25 @@ module.exports = {
         format: 'esm',
         target: "esnext",
         outdir: 'dist',
-        mainFields: ['module', 'main'],
         entryPoints: ['./server/index.ts'],
         loader: { ".node": "file" },
         external: [
-            "esbuild",
-            "lightningcss"
+            "fsevents",
+            "lightningcss",
         ],
-        // issue on gh: https://github.com/evanw/esbuild/issues/1921#issuecomment-1710527349
+        // gh: https://github.com/evanw/esbuild/issues/1921
         banner: {
-            js: "const require = (await import('node:module')).createRequire(import.meta.url);const __filename = (await import('node:url')).fileURLToPath(import.meta.url);const __dirname = (await import('node:path')).dirname(__filename);"
+            js: `
+                import path from 'path';
+                import { fileURLToPath } from 'url';
+                import { createRequire as topLevelCreateRequire } from 'module';
+                const require = topLevelCreateRequire(import.meta.url);
+                const __filename = fileURLToPath(import.meta.url);
+                const __dirname = path.dirname(__filename);
+            `
+        },
+        outExtension: {
+            '.js': '.mjs'
         }
     },
 };
