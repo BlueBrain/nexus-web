@@ -903,7 +903,6 @@ describe(
     });
 
     it('resets predicate fields when reset predicate clicked', async () => {
-      console.log('@@container', container.innerHTML);
       await updateResourcesShownInTable(mockResourcesForPage2);
       mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
       await selectPath('author');
