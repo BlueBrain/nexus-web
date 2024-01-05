@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   cache:
-    runs-on: it
+    runs-on: ubuntu-latest
     steps:
       - name: Prune containers
         run: |
@@ -33,7 +33,7 @@ jobs:
         run: yarn install --frozen-lockfile 
 
   prettify:
-    runs-on: it
+    runs-on: ubuntu-latest
     needs: [cache]
     steps:
       - name: Checkout code
@@ -62,7 +62,7 @@ jobs:
         run: yarn style
 
   lint:
-    runs-on: it
+    runs-on: ubuntu-latest
     needs: [cache]
     steps:
       - name: Checkout code
@@ -91,7 +91,7 @@ jobs:
         run: yarn lint
 
   test:
-    runs-on: it
+    runs-on: ubuntu-latest
     needs: [cache]
     steps:
       - name: Checkout code
@@ -120,7 +120,7 @@ jobs:
         run: yarn test:ci:silent
 
   build:
-    runs-on: it
+    runs-on: ubuntu-latest
     needs: [lint, prettify, test]
     steps:
       - name: Checkout code
