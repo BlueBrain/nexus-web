@@ -10,7 +10,7 @@ jobs:
       - name: Prune containers
         run: |
           docker system prune -af
-          
+
       - name: Checkout code
         uses: actions/checkout@v3
 
