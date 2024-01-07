@@ -484,10 +484,6 @@ const ViewsSubView = () => {
                   }));
                 })
                 .catch(error => {
-                  console.error(
-                    `Error fetching indexing errors for view ${r.key}`,
-                    error
-                  );
                   notification.error({
                     message: `Error fetching indexing errors for view ${r.key}`,
                     description: '',
