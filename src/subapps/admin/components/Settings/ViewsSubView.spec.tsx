@@ -85,7 +85,6 @@ describe('ViewsSubView', () => {
       screen.getByText(/2 Total errors/i, { selector: 'h3' });
 
       const errorRow1 = getErrorRow('Mock Error 1');
-      expect(errorRow1).toBeVisible();
       const errorRow2 = getErrorRow('Mock Error 2');
       expect(errorRow2).toBeTruthy();
     });

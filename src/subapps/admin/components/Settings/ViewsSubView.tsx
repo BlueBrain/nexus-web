@@ -445,6 +445,7 @@ const ViewsSubView = () => {
           size="middle"
           pagination={false}
           rowKey={r => r.key}
+          // TODO Somehow, when window is unfocused, the expanded row function is called three times
           expandIcon={({ expanded, onExpand, record }) =>
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
