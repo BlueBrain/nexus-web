@@ -2,7 +2,7 @@ import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import * as Sentry from '@sentry/browser';
-import { PromisePool } from '@supercharge/promise-pool';
+import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
 import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { isArray, isString, orderBy } from 'lodash';
@@ -51,26 +51,28 @@ const fetchViewsList = async ({
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
-}) => {
+}): Promise<{
+  errors: PromisePoolError<SubView, any>[];
+  results: SubView[];
+}> => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: Omit<SubView, 'indexingErrors'>[] = views._results.map(
-      item => {
-        const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
-          item._project
-        )!;
-        return {
-          orgLabel,
-          projectLabel,
-          id: item['@id'],
-          key: item['@id'] as string,
-          name: (item['@id'] as string).split('/').pop() as string,
-          type: item['@type'],
-          isAggregateView: aggregateFilterPredicate(item['@type']),
-          status: '100%',
-        };
-      }
-    );
+    const result: SubView[] = views._results.map(item => {
+      const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
+        item._project
+      )!;
+      return {
+        orgLabel,
+        projectLabel,
+        id: item['@id'],
+        key: item['@id'] as string,
+        name: (item['@id'] as string).split('/').pop() as string,
+        type: item['@type'],
+        isAggregateView: aggregateFilterPredicate(item['@type']),
+        status: '100%',
+        indexingErrors: null,
+      };
+    });
 
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
@@ -423,9 +425,8 @@ const ViewsSubView = () => {
                   handleReindexingAllViews({
                     nexus,
                     apiEndpoint,
-                    views: views?.results.filter(
-                      item => item.isAggregateView
-                    ) as SubView[],
+                    views:
+                      views?.results.filter(item => item.isAggregateView) || [],
                   });
                 }}
               >
@@ -440,7 +441,7 @@ const ViewsSubView = () => {
           className="views-table"
           rowClassName="view-item-row"
           columns={columns}
-          dataSource={views?.results as SubView[]}
+          dataSource={views?.results}
           sticky={true}
           size="middle"
           pagination={false}
