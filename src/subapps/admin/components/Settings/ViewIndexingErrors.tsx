@@ -13,14 +13,17 @@ export const ViewIndexingErrors: React.FC<Props> = ({
 }: Props) => {
   return (
     <div>
-      {<h3>{indexingErrors._total} Total errors</h3>}
       {!!indexingErrors._total && (
-        <Alert
-          message="The list below shows all indexing errors – even the ones that are now resolved."
-          showIcon
-          style={{ margin: '20px' }}
-        />
+        <>
+          <h3>{indexingErrors._total} Total errors</h3>
+          <Alert
+            message="The list below shows all indexing errors – even the ones that are now resolved."
+            showIcon
+            style={{ margin: '20px' }}
+          />
+        </>
       )}
+
       <List
         itemLayout="horizontal"
         dataSource={indexingErrors?._results}
