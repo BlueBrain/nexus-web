@@ -262,7 +262,6 @@ const ViewsSubView = () => {
 
       return indexingErrors;
     } catch (error) {
-      console.error('Error fetching indexing errors on demand', error);
       notification.error({
         message: `Error fetching indexing errors for the selected view`,
         description: '',
