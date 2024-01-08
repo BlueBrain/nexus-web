@@ -11,11 +11,12 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import commonjs from 'vite-plugin-commonjs';
 import viteCompression from 'vite-plugin-compression';
 import 'vite-compatible-readable-stream';
+import { ViteFaviconsPlugin } from "vite-plugin-favicon2";
 
+const versionRegex = /^v(\d+\.\d+\.\d+)/;
 export default defineConfig(() => {
     let commitHash = '', version = '';
-
-    if(process.env.VITEST !== 'true') {
+    if (process.env.VITEST !== 'true') {
         try {
             commitHash = execSync('git rev-parse HEAD').toString().trimEnd();
             version = execSync('git describe --tags --always').toString().trimEnd();
@@ -23,6 +24,7 @@ export default defineConfig(() => {
             console.log('⛔️ describe may not getting the latest tag')
         }
     }
+    const appVersion = version.match(versionRegex)?.[1] ?? '';
 
     return ({
         base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
@@ -35,7 +37,24 @@ export default defineConfig(() => {
             dynamicBase({
                 publicPath: 'window.__BASE__',
                 transformIndexHtml: true,
-            })
+            }),
+            ViteFaviconsPlugin({
+                inject: true,
+                logo: './public/favicon.svg',
+                favicons: {
+                    version: appVersion,
+                    appName: 'Nexus Fusion',
+                    appShortName: 'BBP-NF',
+                    appDescription: 'The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.',
+                    developerName: 'Blue Brain project',
+                    orientation: 'portrait',
+                    start_url: '/',
+                    icons: {
+                        coast: false,
+                        yandex: false
+                    }
+                }
+            }),
         ],
         resolve: {
             alias: {
