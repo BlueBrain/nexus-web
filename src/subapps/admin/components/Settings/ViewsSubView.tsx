@@ -484,7 +484,7 @@ const ViewsSubView = () => {
                     [r.key]: indexingErrors as IndexingErrorResults,
                   }));
                 })
-                .catch(error => {
+                .catch(() => {
                   notification.error({
                     message: `Error fetching indexing errors for view ${r.key}`,
                     description: '',
