@@ -131,10 +131,9 @@ export const setupUserSession = async (userManager: UserManager) => {
     try {
       user = await userManager.signinSilent();
     } catch (error) {
-      console.error(
-        '@@error',
-        "we've loaded a user, refresh it raised an error",
-        error
+      Sentry.captureException(
+        'we have loaded a user, refresh it raised an error',
+        { extra: { error } }
       );
     }
   } else {
@@ -142,10 +141,9 @@ export const setupUserSession = async (userManager: UserManager) => {
     try {
       user = await userManager.signinRedirectCallback();
     } catch (error) {
-      console.error(
-        '@@error',
-        'nope, are we receiving a new token? but an error raised',
-        error
+      Sentry.captureException(
+        'are we receiving a new token? but an error raised',
+        { extra: { error } }
       );
     }
   }
