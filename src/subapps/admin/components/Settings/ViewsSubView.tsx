@@ -449,6 +449,7 @@ const ViewsSubView = () => {
             if (expanded) {
               return <MinusCircleTwoTone onClick={e => onExpand(record, e)} />;
             } else {
+              // TODO In case of reopening the row, we should not fetch the errors again
               const alreadyFetchedErrors = expandedRows[record.key];
               return (
                 <PlusCircleTwoTone

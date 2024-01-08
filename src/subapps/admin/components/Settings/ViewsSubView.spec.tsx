@@ -8,8 +8,6 @@ import {
   viewErrorsHandler,
   viewStatsHandler,
   viewWithIndexingErrors,
-  // TODO Create a test case for a view with no indexing errors
-  // viewWithNoIndexingErrors,
   viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
