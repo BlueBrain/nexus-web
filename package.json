@@ -203,7 +203,6 @@
     "vite-plugin-cp": "^4.0.7",
     "vite-plugin-dynamic-base": "^1.0.0",
     "vite-plugin-dynamic-import": "^1.5.0",
-    "vite-plugin-favicon2": "^1.1.5",
     "vitest": "^1.1.1"
   },
   "prettier": {
