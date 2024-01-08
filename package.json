@@ -1,7 +1,6 @@
 {
   "name": "nexus-fusion",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
-  "version": "1.10.x",
   "author": "Blue Brain project",
   "license": "Apache-2.0",
   "author": "Blue Brain Project",
@@ -243,7 +242,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint && yarn style && yarn test",
+      "pre-push": "yarn lint && yarn style && yarn test:ci:silent",
       "pre-commit": "lint-staged"
     }
   },
