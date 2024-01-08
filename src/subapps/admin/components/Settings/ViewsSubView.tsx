@@ -445,62 +445,51 @@ const ViewsSubView = () => {
           size="middle"
           pagination={false}
           rowKey={r => r.key}
-          expandIcon={({ expanded, onExpand, record }) =>
-            expanded ? (
-              <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
-            ) : (
-              <PlusCircleTwoTone
-                data-testid="Expand indexing errors"
-                onClick={async e => {
-                  // Fetch indexing errors when expanding the row
-                  // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
-                  // TODO Fix when called first time, it should not run multiple times
-                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
-                    nexus,
-                    apiEndpoint,
-                    orgLabel: record.orgLabel,
-                    projectLabel: record.projectLabel,
-                    viewId: record.id,
-                  });
-                  onExpand(record, e);
-                }}
-              />
-            )
-          }
-          expandedRowRender={(r: SubView) => {
-            if (!expandedRows[r.key]) {
-              // TODO Fix when called first time, it should not run multiple times
-              // Fetch errors if not already fetched for this row
-              fetchIndexingErrorsOnDemand({
-                nexus,
-                apiEndpoint,
-                orgLabel: r.orgLabel,
-                projectLabel: r.projectLabel,
-                viewId: r.id,
-              })
-                .then(indexingErrors => {
-                  // Update the state with the new errors
-                  setExpandedRows(prevExpandedRows => ({
-                    ...prevExpandedRows,
-                    [r.key]: indexingErrors as IndexingErrorResults,
-                  }));
-                })
-                .catch(() => {
-                  notification.error({
-                    message: `Error fetching indexing errors for view ${r.key}`,
-                    description: '',
-                  });
-                });
-              return <div>Loading errors...</div>;
+          expandIcon={({ expanded, onExpand, record }) => {
+            if (expanded) {
+              return <MinusCircleTwoTone onClick={e => onExpand(record, e)} />;
+            } else {
+              const alreadyFetchedErrors = expandedRows[record.key];
+              return (
+                <PlusCircleTwoTone
+                  data-testid="Expand indexing errors"
+                  onClick={async e => {
+                    if (!alreadyFetchedErrors) {
+                      // Only fetch errors if not already present
+                      record.indexingErrors = await fetchIndexingErrorsOnDemand(
+                        {
+                          nexus,
+                          apiEndpoint,
+                          orgLabel: record.orgLabel,
+                          projectLabel: record.projectLabel,
+                          viewId: record.id,
+                        }
+                      );
+                      setExpandedRows(prevExpandedRows => ({
+                        ...prevExpandedRows,
+                        [record.key]: record.indexingErrors || undefined,
+                      }));
+                    }
+                    onExpand(record, e);
+                  }}
+                />
+              );
             }
-
-            return (
-              <ViewIndexingErrors
-                data-testid="indexing-error-list"
-                key={r.id}
-                indexingErrors={expandedRows[r.key]!}
-              />
-            );
+          }}
+          expandedRowRender={record => {
+            const indexingErrors = expandedRows[record.key];
+            if (!indexingErrors) {
+              // Fallback content in case errors haven't been set yet
+              return <p>Loading errors...</p>;
+            } else {
+              return (
+                <ViewIndexingErrors
+                  data-testid="indexing-error-list"
+                  key={record.id}
+                  indexingErrors={indexingErrors}
+                />
+              );
+            }
           }}
         />
       </div>
