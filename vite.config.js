@@ -12,7 +12,9 @@ import commonjs from 'vite-plugin-commonjs';
 import viteCompression from 'vite-plugin-compression';
 import vitePluginCp from 'vite-plugin-cp';
 import 'vite-compatible-readable-stream';
+import { ViteFaviconsPlugin } from "vite-plugin-favicon2";
 
+const versionRegex = /^v(\d+\.\d+\.\d+)/;
 export default defineConfig(() => {
     let commitHash = '', version = '';
     if (process.env.VITEST !== 'true') {
@@ -23,7 +25,8 @@ export default defineConfig(() => {
             console.log('⛔️ describe may not getting the latest tag')
         }
     }
-    
+    const appVersion = version.match(versionRegex)?.[1] ?? '';
+
     return ({
         base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
         plugins: [
@@ -36,11 +39,23 @@ export default defineConfig(() => {
                 publicPath: 'window.__BASE__',
                 transformIndexHtml: true,
             }),
-            vitePluginCp({
-                targets: [
-                    { src: 'public/', dest: 'dist/public' },
-                ]
-            })
+            ViteFaviconsPlugin({
+                inject: true,
+                logo: './public/favicon.svg',
+                favicons: {
+                    version: appVersion,
+                    appName: 'Nexus Fusion',
+                    appShortName: 'BBP-NF',
+                    appDescription: 'The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.',
+                    developerName: 'Blue Brain project',
+                    orientation: 'portrait',
+                    start_url: '/',
+                    icons: {
+                        coast: false,
+                        yandex: false
+                    }
+                }
+            }),
         ],
         resolve: {
             alias: {
