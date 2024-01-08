@@ -448,49 +448,45 @@ const ViewsSubView = () => {
           expandIcon={({ expanded, onExpand, record }) => {
             if (expanded) {
               return <MinusCircleTwoTone onClick={e => onExpand(record, e)} />;
-            } else {
-              // TODO In case of reopening the row, we should not fetch the errors again
-              const alreadyFetchedErrors = expandedRows[record.key];
-              return (
-                <PlusCircleTwoTone
-                  data-testid="Expand indexing errors"
-                  onClick={async e => {
-                    if (!alreadyFetchedErrors) {
-                      // Only fetch errors if not already present
-                      record.indexingErrors = await fetchIndexingErrorsOnDemand(
-                        {
-                          nexus,
-                          apiEndpoint,
-                          orgLabel: record.orgLabel,
-                          projectLabel: record.projectLabel,
-                          viewId: record.id,
-                        }
-                      );
-                      setExpandedRows(prevExpandedRows => ({
-                        ...prevExpandedRows,
-                        [record.key]: record.indexingErrors || undefined,
-                      }));
-                    }
-                    onExpand(record, e);
-                  }}
-                />
-              );
             }
+            // TODO In case of reopening the row, we should not fetch the errors again
+            const alreadyFetchedErrors = expandedRows[record.key];
+            return (
+              <PlusCircleTwoTone
+                data-testid="Expand indexing errors"
+                onClick={async e => {
+                  if (!alreadyFetchedErrors) {
+                    // Only fetch errors if not already present
+                    record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                      nexus,
+                      apiEndpoint,
+                      orgLabel: record.orgLabel,
+                      projectLabel: record.projectLabel,
+                      viewId: record.id,
+                    });
+                    setExpandedRows(prevExpandedRows => ({
+                      ...prevExpandedRows,
+                      [record.key]: record.indexingErrors || undefined,
+                    }));
+                  }
+                  onExpand(record, e);
+                }}
+              />
+            );
           }}
           expandedRowRender={record => {
             const indexingErrors = expandedRows[record.key];
             if (!indexingErrors) {
               // Fallback content in case errors haven't been set yet
               return <p>Loading errors...</p>;
-            } else {
-              return (
-                <ViewIndexingErrors
-                  data-testid="indexing-error-list"
-                  key={record.id}
-                  indexingErrors={indexingErrors}
-                />
-              );
             }
+            return (
+              <ViewIndexingErrors
+                data-testid="indexing-error-list"
+                key={record.id}
+                indexingErrors={indexingErrors}
+              />
+            );
           }}
         />
       </div>
