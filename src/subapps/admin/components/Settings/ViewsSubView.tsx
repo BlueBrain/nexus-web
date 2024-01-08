@@ -445,7 +445,6 @@ const ViewsSubView = () => {
           size="middle"
           pagination={false}
           rowKey={r => r.key}
-          // TODO Somehow, when window is unfocused, the expanded row function is called three times
           expandIcon={({ expanded, onExpand, record }) =>
             expanded ? (
               <MinusCircleTwoTone onClick={e => onExpand(record, e)} />
@@ -455,6 +454,7 @@ const ViewsSubView = () => {
                 onClick={async e => {
                   // Fetch indexing errors when expanding the row
                   // We do this on demand to avoid fetching all indexing errors for all views at once (which can be a lot)
+                  // TODO Fix when called first time, it should not run multiple times
                   record.indexingErrors = await fetchIndexingErrorsOnDemand({
                     nexus,
                     apiEndpoint,
@@ -469,6 +469,7 @@ const ViewsSubView = () => {
           }
           expandedRowRender={(r: SubView) => {
             if (!expandedRows[r.key]) {
+              // TODO Fix when called first time, it should not run multiple times
               // Fetch errors if not already fetched for this row
               fetchIndexingErrorsOnDemand({
                 nexus,
