@@ -1,7 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { Server } from 'node:http';
-import { fileURLToPath } from 'node:url';
 import compression from 'compression';
 import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
@@ -97,7 +96,7 @@ async function transformer(html: string, req: Request) {
       <link rel="icon" href="${base}/public/favicon.ico" sizes="48x48" >
       <link rel="icon" href="${base}/public/favicon.svg" sizes="any" type="image/svg+xml" >
       <link rel="apple-touch-icon" href="${base}/public/apple-touch-icon-180x180.png" >
-      <link rel="manifest" href="${base}/public/web-manifest.json" >
+      <link rel="manifest" href="${base}/web-manifest" >
       `
     )
     .replace(
@@ -183,6 +182,18 @@ async function injectProdIndexMiddleware(app: Express) {
 
 app.get(`${base}/status`, (_, res) => {
   return res.send('100% running');
+});
+
+app.get(`${base}/web-manifest`, (req, res) => {
+  const startUrl = `${req.protocol}://${req.get('host')}${base}`;
+  const manifestTempalte = fs.readFileSync(
+    path.join(__dirname, 'web-manifest.json'),
+    'utf-8'
+  );
+  const manifest = manifestTempalte.replace('<!--start-url-->', startUrl);
+
+  res.header('content-type', 'application/json');
+  return res.status(200).send(manifest);
 });
 
 async function bind(app: Express, server: Server) {
