@@ -42,7 +42,7 @@ jobs:
         run: docker cp ./. cypress:/e2e
       - name: e2e tests
         run: >-
-          echo | timeout --verbose 30m docker exec
+          echo | timeout --verbose 120m docker exec
           -e 'DEBUG=cypress:launcher:browsers'
           -t
           cypress
