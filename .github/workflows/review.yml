@@ -49,6 +49,7 @@ jobs:
           cypress run
           --config-file cypress.config.ts
           --browser chrome
+          --headless
           --record
           --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cleanup Docker Containers
