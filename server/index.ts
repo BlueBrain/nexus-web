@@ -7,7 +7,7 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import morgan from 'morgan';
 import { ViteDevServer } from 'vite';
 import { Helmet } from 'react-helmet';
-import { base, gePreloadedState } from './constants';
+import { base, getPreloadedState } from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
 const DISABLE_SSL = process.env.DISABLE_SSL;
@@ -15,11 +15,11 @@ const PORT = Number(process.env.PORT) || 8000;
 // @ts-ignore
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = DISABLE_SSL;
 const mode = NODE_ENV === 'production' ? 'production' : 'development';
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = new URL('.', import.meta.url).pathname;
 
 const app = express();
 app.use(compression());
-app.use(morgan('tiny'));
+app.use(morgan('common'));
 
 async function startServer(server: Server) {
   const { createServer } = await import('vite');
@@ -82,7 +82,7 @@ async function injectStaticMiddleware(app: express.Express, middleware: any) {
 
 async function transformer(html: string, req: Request) {
   const helmet = Helmet.renderStatic();
-  const preloadedState = gePreloadedState({ req, mode });
+  const preloadedState = getPreloadedState({ req, mode });
 
   const regexBody = /<body(.*?)/gi;
   const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
@@ -92,12 +92,17 @@ async function transformer(html: string, req: Request) {
     .replace(regexHtml, htmlTag)
     .replace(regexBody, bodyTag)
     .replace(
+      '<!--app-manifest-->',
+      `
+      <link rel="icon" href="${base}/public/favicon.ico" sizes="48x48" >
+      <link rel="icon" href="${base}/public/favicon.svg" sizes="any" type="image/svg+xml" >
+      <link rel="apple-touch-icon" href="${base}/public/apple-touch-icon-180x180.png" >
+      <link rel="manifest" href="${base}/public/web-manifest.json" >
+      `
+    )
+    .replace(
       '<!--app-head-->',
       `
-        <link rel="icon" href="favicon.ico" sizes="48x48" >
-        <link rel="icon" href="favicon.svg" sizes="any" type="image/svg+xml" >
-        <link rel="apple-touch-icon" href="apple-touch-icon-180x180.png" >
-        <link rel="manifest" href="manifest.json" >
         <script>
           window.__BASE__ = '${base}'
         </script>
