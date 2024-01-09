@@ -1,9 +1,13 @@
-import React, { forwardRef } from 'react';
-import codemiror, { EditorConfiguration } from 'codemirror';
+import { Spin } from 'antd';
+import { clsx } from 'clsx';
+import { customLinter, LinterIssue } from './customLinter';
+import codemirror from 'codemirror';
+import 'codemirror/addon/lint/lint.css';
+import 'codemirror/addon/lint/lint.js';
+import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-import { clsx } from 'clsx';
-import { Spin } from 'antd';
 
 type TCodeEditor = {
   busy: boolean;
@@ -12,13 +16,40 @@ type TCodeEditor = {
   fullscreen: boolean;
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
-};
-type TEditorConfiguration = EditorConfiguration & {
-  foldCode: boolean;
+  onLintError?: (errors: LinterIssue[]) => void;
 };
 
-const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
-  ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
+type TEditorConfiguration = codemirror.EditorConfiguration & {
+  foldCode: boolean;
+  lint?: boolean | any;
+};
+
+const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
+  (
+    {
+      busy,
+      value,
+      editable,
+      fullscreen,
+      keyFoldCode,
+      handleChange,
+      onLintError,
+    },
+    ref
+  ) => {
+    const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
+    const handleLintErrors = useCallback((text: string) => {
+      const linterErrors = customLinter(text);
+      if (
+        JSON.stringify(linterErrors) !==
+        JSON.stringify(prevLinterErrorsRef.current)
+      ) {
+        onLintError?.(linterErrors);
+        prevLinterErrorsRef.current = linterErrors;
+      }
+      return linterErrors;
+    }, []);
+
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -37,10 +68,18 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
               foldGutter: true,
               foldCode: true,
               indentUnit: INDENT_UNIT,
-              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+              gutters: [
+                'CodeMirror-linenumbers',
+                'CodeMirror-foldgutter',
+                'CodeMirror-lint-markers',
+              ],
               lineWiseCopyCut: true,
               extraKeys: {
                 'Ctrl-Q': keyFoldCode,
+              },
+              lint: {
+                getAnnotations: handleLintErrors,
+                async: true,
               },
             } as TEditorConfiguration
           }
@@ -51,7 +90,7 @@ const CodeEditor = forwardRef<codemiror.Editor | undefined, TCodeEditor>(
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemiror.Editor>).current = editor;
+            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
           }}
         />
       </Spin>

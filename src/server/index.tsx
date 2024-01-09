@@ -35,6 +35,7 @@ const pluginsManifestPath =
 const layoutSettings = {
   docsLink: process.env.DOCS_LINK || '',
   logoImg: process.env.LOGO_IMG || '',
+  logoImgLink: process.env.LOGO_LINK || '',
   forgeLink: process.env.FORGE_LINK || '',
   organizationImg: process.env.ORGANIZATION_IMG || '',
   projectsImg: process.env.PROJECTS_IMG || '',
@@ -165,7 +166,12 @@ app.get('*', async (req: express.Request, res: express.Response) => {
 
 app.listen(PORT_NUMBER, () => {
   // tslint:disable-next-line:no-console
-  console.log(`Nexus Web is listening on a port ${PORT_NUMBER} ...`);
+  console.log(
+    `🚀 Nexus Fusion is listening on http://${process.env.HOST_NAME ||
+      'localhost'}:${PORT_NUMBER}${
+      process.env.BASE_PATH ? process.env.BASE_PATH : ''
+    }`
+  );
 });
 
 export default app;

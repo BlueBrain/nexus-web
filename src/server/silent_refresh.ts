@@ -2,7 +2,7 @@ const base: string = process.env.BASE_PATH || '/';
 
 const html = (): string => `
   <!doctype html>
-  <html>
+  <html lang="en" dir="ltr">
     <head>
     </head>
     <body>

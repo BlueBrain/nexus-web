@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { HomeSeachByPresets, HomeSearchByApps } from '../../shared/organisms';
+import { HomeSearchByPresets, HomeSearchByApps } from '../../shared/organisms';
 import { MyData } from '../../shared/canvas';
 import { RootState } from '../../shared/store/reducers';
 import IdentityPage from '../../pages/IdentityPage/IdentityPage';
@@ -14,7 +14,7 @@ const Home: React.FunctionComponent = () => {
 
   return (
     <div className="home-view view-container">
-      <HomeSeachByPresets />
+      <HomeSearchByPresets />
       <HomeSearchByApps />
       <MyData />
     </div>

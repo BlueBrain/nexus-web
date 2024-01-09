@@ -1,28 +1,77 @@
 {
   "name": "nexus-fusion",
-  "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
   "version": "1.6.0-M5",
-  "author": "Blue Brain project",
+  "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
+  "repository": "github:bluebrain/nexus-web",
   "license": "Apache-2.0",
+  "author": "Blue Brain Project",
   "main": "dist/server.js",
-  "repository": "github:bluebrain/nexus-explorer",
-  "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion",
   "scripts": {
-    "start": "NODE_ENV=development  DEBUG=* webpack --mode development --config-name server && node dist/server.js",
     "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --mode production",
-    "test": "jest",
-    "test:watch": "jest --watch --maxWorkers=4",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
-    "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
-    "cy:publicstudios": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
-    "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
+    "build:storybook": "build-storybook",
     "codecov": "codecov",
+    "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
+    "cy:open": "cypress open",
+    "cy:publicstudios": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --record --spec \"cypress/e2e/PublicStudios.cy.ts\"",
+    "cy:run": "cypress run",
     "lint": "tslint --project tsconfig.json",
+    "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
+    "start:storybook": "start-storybook -p 6006",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
-    "start:storybook": "start-storybook -p 6006",
-    "build:storybook": "build-storybook"
+    "test": "jest",
+    "test-ui": "API_ENDPOINT=http://test start-server-and-test start http://localhost:8000 cy:run",
+    "test:watch": "jest --watch --maxWorkers=4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "yarn lint && yarn style && yarn test"
+    }
+  },
+  "lint-staged": {
+    "*.{ts, tsx, js, jsx, less}": [
+      "prettier --write",
+      "git add"
+    ],
+    "!(package).json": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "globals": {
+      "FUSION_VERSION": "1.0.0",
+      "COMMIT_HASH": "9013fa343",
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    },
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.js"
+    },
+    "modulePaths": [
+      "<rootDir>/src"
+    ],
+    "preset": "ts-jest",
+    "setupFilesAfterEnv": [
+      "jest-enzyme",
+      "./jest.setup.js"
+    ],
+    "testEnvironment": "jest-environment-jsdom-sixteen",
+    "testPathIgnorePatterns": [
+      "<rootDir>/cypress/",
+      "<rootDir>/migrations/"
+    ],
+    "watchPathIgnorePatterns": [
+      "node_modules"
+    ]
   },
   "dependencies": {
     "@ant-design/charts": "^1.3.4",
@@ -51,7 +100,7 @@
     "cytoscape-avsdf": "^1.0.0",
     "cytoscape-cola": "^2.5.0",
     "deep-object-diff": "^1.1.0",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "express-prom-bundle": "^5.0.2",
     "git-revision-webpack-plugin": "^3.0.6",
     "handlebars": "^4.7.7",
@@ -70,7 +119,6 @@
     "pluralize": "^8.0.0",
     "pretty-bytes": "^5.4.1",
     "prom-client": "^11.2.1",
-    "qs": "^6.9.4",
     "query-string": "^6.3.0",
     "rc-tween-one": "^2.7.3",
     "react": "^16.12.0",
@@ -192,54 +240,5 @@
     "webpack-hot-middleware": "^2.24.3",
     "webpack-node-externals": "^1.7.2"
   },
-  "jest": {
-    "modulePaths": [
-      "<rootDir>/src"
-    ],
-    "collectCoverage": true,
-    "preset": "ts-jest",
-    "setupFilesAfterEnv": [
-      "jest-enzyme",
-      "./jest.setup.js"
-    ],
-    "testEnvironment": "jest-environment-jsdom-sixteen",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.js"
-    },
-    "testPathIgnorePatterns": [
-      "<rootDir>/cypress/",
-      "<rootDir>/migrations/"
-    ],
-    "globals": {
-      "FUSION_VERSION": "1.0.0",
-      "COMMIT_HASH": "9013fa343",
-      "ts-jest": {
-        "isolatedModules": true
-      }
-    },
-    "watchPathIgnorePatterns": [
-      "node_modules"
-    ]
-  },
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
-  "lint-staged": {
-    "*.{ts, tsx, js, jsx, less}": [
-      "prettier --write",
-      "git add"
-    ],
-    "!(package).json": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint && yarn style && yarn test",
-      "pre-commit": "lint-staged"
-    }
-  }
+  "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion"
 }

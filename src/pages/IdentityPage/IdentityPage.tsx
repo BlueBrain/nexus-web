@@ -1,14 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { Button, Divider } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk';
+import { Button, Divider } from 'antd';
+import { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import useClickOutside from '../../shared/hooks/useClickOutside';
+import { performLogin } from '../../shared/store/actions/auth';
+import { setPreferredRealm } from '../../shared/store/actions/config';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
-import useClickOutside from '../../shared/hooks/useClickOutside';
-import * as authActions from '../../shared/store/actions/auth';
-import * as configActions from '../../shared/store/actions/config';
 
 import './styles.less';
 
@@ -18,13 +18,17 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     muted
     autoPlay
     className="home-authentication-fusion"
-    poster={require('../../shared/images/BrainRegionsNexusPage.jpg')}
     preload="auto"
     controls={false}
   >
     <source
       type="video/mp4"
-      src={videoUrl || require('../../shared/images/BrainRegionsNexusPage.mp4')}
+      src={videoUrl || require('../../shared/videos/BrainRegionsNexusPage.mp4')}
+    />
+    {/* Load an image as a Fallback */}
+    <img
+      alt="Landing page image"
+      src={require('../../shared/images/BrainRegionsNexusPage.jpg')}
     />
   </video>
 );
@@ -57,28 +61,24 @@ const IdentityPage: React.FC<{}> = () => {
   );
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
+
   return (
     <div
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
-      <img
-        src={
-          layoutSettings.landingPosterImg ||
-          require('../../shared/images/EPFL_BBP_logo.png')
-        }
-        className="home-authentication-epfl"
-      />
-      <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
-        <div className="title">Nexus.Fusion</div>
-        <div className="actions">
+        <h1 className="title">Nexus.Fusion</h1>
+        <nav
+          className="actions"
+          title="Main navigation"
+          aria-label="Main navigation"
+        >
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
               <Button
                 key="no-realms"
-                disabled
-                role="button"
+                title="No realms available, please contact your administrator."
                 size="large"
                 className="no-realms-btn"
               >
@@ -88,8 +88,8 @@ const IdentityPage: React.FC<{}> = () => {
               <Button
                 key="realm-selector"
                 size="large"
-                role="button"
-                aria-label="identity-login"
+                title="Select a realm to connect to"
+                aria-label="Identity connect"
                 onClick={() => onPopoverVisibleChange(true)}
               >
                 Connect
@@ -113,17 +113,16 @@ const IdentityPage: React.FC<{}> = () => {
                     <Button
                       onClick={e => {
                         e.preventDefault();
-                        dispatch(configActions.setPreferredRealm(item.name));
+                        dispatch(setPreferredRealm(item.name));
                         dispatch(
-                          authActions.performLogin(
-                            location.state as TLocationState
-                          )
+                          performLogin(location.state as TLocationState)
                         );
                       }}
                       className="connect-btn"
                       size="large"
                       type="link"
-                      role="button"
+                      title={`Connect via ${item.name}`}
+                      aria-label={`Connect via ${item.name}`}
                     >
                       {item.name}
                     </Button>
@@ -136,6 +135,7 @@ const IdentityPage: React.FC<{}> = () => {
           <Button
             className="nav-btn"
             size="large"
+            title="View all available studios"
             onClick={() => history.push('/studios')}
           >
             View Studios
@@ -145,16 +145,40 @@ const IdentityPage: React.FC<{}> = () => {
             size="large"
             rel="noopener noreferrer"
             target="_blank"
+            title="View the documentation for Nexus Fusion"
             href="https://bluebrainnexus.io/docs/index.html"
             className="nav-btn"
           >
             Documentation
           </Button>
-          <Button className="nav-btn" size="large" onClick={openAboutModal}>
+          <Button
+            className="nav-btn"
+            size="large"
+            onClick={openAboutModal}
+            title="About Nexus Fusion"
+          >
             About
           </Button>
-        </div>
+        </nav>
       </div>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={
+          layoutSettings.logoImgLink ||
+          'https://www.epfl.ch/research/domains/bluebrain'
+        }
+      >
+        <img
+          alt="Landing page logo"
+          src={
+            layoutSettings.landingPosterImg ||
+            require('../../shared/images/EPFL_BBP_logo.svg')
+          }
+          className="home-authentication-epfl"
+        />
+      </a>
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
     </div>
   );
 };
