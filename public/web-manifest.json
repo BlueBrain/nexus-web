@@ -8,7 +8,6 @@
   "orientation": "portrait",
   "background_color": "#fff",
   "theme_color": "#fff",
-  "start_url": "<!--start-url-->",
   "icons": [
     {
       "src": "favicon-64x64.png",
