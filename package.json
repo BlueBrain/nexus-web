@@ -198,7 +198,7 @@
     "tsx": "^4.7.0",
     "typescript": "^5.1.6",
     "util": "^0.12.5",
-    "vite": "^5.0.10",
+    "vite": "4.4.9",
     "vite-compatible-readable-stream": "^3.6.1",
     "vite-plugin-cp": "^4.0.7",
     "vite-plugin-dynamic-base": "^1.0.0",

@@ -88,7 +88,6 @@ async function transformer(html: string, req: Request) {
   const bodyTag = `<body ${helmet.bodyAttributes.toString()}`;
   const regexHtml = /<html(.*?)/gi;
   const htmlTag = `<html ${helmet.htmlAttributes.toString()}`;
-
   let dom = html
     .replace(regexHtml, htmlTag)
     .replace(regexBody, bodyTag)
