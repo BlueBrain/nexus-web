@@ -154,7 +154,7 @@ const base = rawBase.replace(/\/$/, '');
 
 type TMode = 'production' | 'development';
 
-const gePreloadedState = ({ req, mode }: { req: Request; mode: TMode }) => ({
+const getPreloadedState = ({ req, mode }: { req: Request; mode: TMode }) => ({
   auth: {},
   config: {
     searchSettings,
@@ -240,4 +240,4 @@ const gePreloadedState = ({ req, mode }: { req: Request; mode: TMode }) => ({
   },
 });
 
-export { base, gePreloadedState };
+export { base, getPreloadedState };
