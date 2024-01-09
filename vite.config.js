@@ -23,7 +23,7 @@ export default defineConfig(() => {
             console.log('⛔️ describe may not getting the latest tag')
         }
     }
-
+    
     return ({
         base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
         plugins: [
