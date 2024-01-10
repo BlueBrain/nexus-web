@@ -453,62 +453,6 @@ const ResourceViewActionsContainer: React.FC<{
           <Button>Tag Resource</Button>
         </Popover>
       </Col>
-      <Col>
-        <Popover
-          destroyTooltipOnHide
-          showArrow={false}
-          key={resource._rev}
-          trigger={['click']}
-          title={
-            <div>
-              <div style={{ fontSize: 16 }}>Tag Resource</div>
-              <i style={{ fontSize: 12 }}>
-                The tag will be applied to revision{' '}
-                <strong>{resource._rev}</strong>
-              </i>
-            </div>
-          }
-          content={
-            <Form<{ tag: string }>
-              autoComplete="off"
-              name="tag-resource-form"
-              initialValues={{ tag: '' }}
-              onFinish={handleTagResource}
-              style={{ width: 300, padding: '8px 8px O' }}
-            >
-              <Form.Item
-                name="tag"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    pattern: /^\S+$/g,
-                    message: 'Tag must not contains spaces',
-                  },
-                  {
-                    pattern: /^[a-zA-Z0-9_-]+$/,
-                    message:
-                      'Tag should include only letters, numbers, underscores, and dashes.',
-                  },
-                ]}
-                style={{ marginBottom: 8 }}
-              >
-                <Input placeholder="Resource tag" style={{ width: '100%' }} />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{ offset: 8, span: 8 }}
-                style={{ marginBottom: 0 }}
-              >
-                <Button type="primary" htmlType="submit">
-                  Confirm
-                </Button>
-              </Form.Item>
-            </Form>
-          }
-        >
-          <Button>Tag Resource</Button>
-        </Popover>
-      </Col>
       {view && (
         <Col>
           <Link to={redirectToQueryTab()}>

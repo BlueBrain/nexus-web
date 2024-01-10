@@ -13,7 +13,7 @@ const fetch = require('node-fetch');
 export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
-  video: true,
+  video: false,
   screenshotOnRunFailure: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
