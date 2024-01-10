@@ -270,6 +270,10 @@
   }
 }
 
+td.ant-table-cell.data-explorer-column {
+  box-sizing: content-box !important;
+}
+
 .data-explorer-table {
   margin-bottom: 60px;
 
@@ -292,8 +296,8 @@
     color: #8c8c8c;
     height: 52px;
     min-width: 72px;
-    width: 100%;
     max-width: fit-content;
+    box-sizing: content-box !important;
   }
 
   .ant-table-thead > tr > th::before {

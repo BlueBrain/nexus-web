@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, forwardRef } from 'react';
+import React, { useEffect, useReducer, forwardRef, ElementRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { Empty, Table, Tooltip } from 'antd';
@@ -53,9 +53,10 @@ type TDateExplorerTableData = {
   selectedRows: TDataSource[];
 };
 
+export type AntdTableRef = ElementRef<typeof Table>;
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
 const DATA_EXPLORER_NAMESPACE = 'data-explorer';
-export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
+export const DataExplorerTable = forwardRef<AntdTableRef, TDataExplorerTable>(
   (
     {
       isLoading,
