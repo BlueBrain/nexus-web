@@ -185,7 +185,9 @@ app.get(`${base}/status`, (_, res) => {
 });
 
 app.get(`${base}/web-manifest`, (req, res) => {
-  const startUrl = `${req.protocol}://${req.get('host')}${base}`;
+  const host = req.get('host');
+  const isLocalhost = host?.startsWith('localhost');
+  const startUrl = `${isLocalhost ? req.protocol : 'https'}://${host}${base}`;
   const manifestTempalte = fs.readFileSync(
     path.join(__dirname, 'web-manifest.json'),
     'utf-8'
