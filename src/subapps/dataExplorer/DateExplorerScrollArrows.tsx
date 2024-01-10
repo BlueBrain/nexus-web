@@ -1,4 +1,5 @@
-import React, { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useReducer } from 'react';
+import { clsx } from 'clsx';
 import RightSpeedArrow, {
   RightArrow,
 } from '../../shared/components/Icons/RightSpeedArrow';
@@ -6,7 +7,7 @@ import LeftSpeedArrow, {
   LeftArrow,
 } from '../../shared/components/Icons/LeftSpeedArrow';
 import { TType } from '../../shared/molecules/TypeSelector/types';
-import { clsx } from 'clsx';
+import { AntdTableRef } from './DataExplorerTable';
 
 type TArrowsDisplay = {
   returnToStart: boolean;
@@ -22,7 +23,7 @@ type TArrowsDisplay = {
 type TDateExplorerScrollArrowsProps = {
   isLoading: boolean;
   container: HTMLDivElement | null;
-  table: HTMLDivElement | null;
+  table: AntdTableRef | null;
   orgAndProject: [string, string] | undefined;
   types: TType[] | undefined;
   showEmptyDataCells: boolean;
@@ -64,7 +65,7 @@ const DateExplorerScrollArrows = ({
     window.scrollTo({ left: 0, behavior: 'smooth' });
   };
   const onRightArrowClick = () => {
-    const tableRect = table?.getBoundingClientRect();
+    const tableRect = table?.nativeElement.getBoundingClientRect();
     const tableWidth = tableRect?.width || 0;
     window.scrollTo({ left: tableWidth, behavior: 'smooth' });
   };
@@ -95,7 +96,7 @@ const DateExplorerScrollArrows = ({
   useEffect(() => {
     const onScroll = (ev?: Event) => {
       const containerRect = container?.getBoundingClientRect();
-      const tableRect = table?.getBoundingClientRect();
+      const tableRect = table?.nativeElement.getBoundingClientRect();
       const x = containerRect?.x || 0;
       const width = containerRect?.width || 0;
       const tableWidth = tableRect?.width || 0;
@@ -136,7 +137,7 @@ const DateExplorerScrollArrows = ({
     });
   }, [orgAndProject, types, showEmptyDataCells, showMetadataColumns]);
 
-  const tableRect = table?.getBoundingClientRect();
+  const tableRect = table?.nativeElement.getBoundingClientRect();
   const hideRightArrows = tableRect
     ? tableRect.width + tableRect.x - window.innerWidth < 60
     : false;
