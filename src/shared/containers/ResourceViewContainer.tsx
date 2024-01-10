@@ -784,6 +784,7 @@ const ResourceViewContainer: FC<{
                                       marginBottom: '5px',
                                     }}
                                     onClick={() => {
+                                      // TODO Shows the button correctly, but the undoing of the deprecation doesn't work
                                       unDeprecateResource();
                                     }}
                                   >
