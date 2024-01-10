@@ -772,9 +772,7 @@ const ResourceViewContainer: FC<{
                             {// Don't show the undo deprecated button if the resource is
                             // of any unsupported resource. However, it needs to be shown
                             // e.g. for custom types of resources.
-                            !resource['@type']?.includes(
-                              'View' || 'Resolver' || 'Storage' || 'Schema'
-                            ) ? (
+                            !resource['@type']?.includes('Resolver') ? (
                               <>
                                 <br />
                                 {// If not newest revision, then don't show the button
