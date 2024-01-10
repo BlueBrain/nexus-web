@@ -5,12 +5,11 @@ import { useHistory } from 'react-router';
 import { matchPath } from 'react-router-dom';
 import { Spin, Switch } from 'antd';
 import { find, merge, unionWith } from 'lodash';
-import { DataExplorerTable } from './DataExplorerTable';
+import { AntdTableRef, DataExplorerTable } from './DataExplorerTable';
 import {
   columnFromPath,
   isUserColumn,
   sortColumns,
-  useGraphAnalyticsPath,
   usePaginatedExpandedResources,
 } from './DataExplorerUtils';
 import {
@@ -130,7 +129,7 @@ const DataExplorer: React.FC<{}> = () => {
   const [showEmptyDataCells, setShowEmptyDataCells] = useState(true);
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<AntdTableRef>(null);
   const [typeFilterFocused, setTypeFilterFocused] = useState(false);
   const handleTypeFilterFocused = (open: boolean) => setTypeFilterFocused(open);
 
