@@ -449,26 +449,23 @@ const ViewsSubView = () => {
             if (expanded) {
               return <MinusCircleTwoTone onClick={e => onExpand(record, e)} />;
             }
-            // TODO In case of reopening the row, we should not fetch the errors again
-            const alreadyFetchedErrors = expandedRows[record.key];
+
             return (
               <PlusCircleTwoTone
                 data-testid="Expand indexing errors"
                 onClick={async e => {
-                  if (!alreadyFetchedErrors) {
-                    // Only fetch errors if not already present
-                    record.indexingErrors = await fetchIndexingErrorsOnDemand({
-                      nexus,
-                      apiEndpoint,
-                      orgLabel: record.orgLabel,
-                      projectLabel: record.projectLabel,
-                      viewId: record.id,
-                    });
-                    setExpandedRows(prevExpandedRows => ({
-                      ...prevExpandedRows,
-                      [record.key]: record.indexingErrors || undefined,
-                    }));
-                  }
+                  // Fetch errors every time the row is expanded
+                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                    nexus,
+                    apiEndpoint,
+                    orgLabel: record.orgLabel,
+                    projectLabel: record.projectLabel,
+                    viewId: record.id,
+                  });
+                  setExpandedRows(prevExpandedRows => ({
+                    ...prevExpandedRows,
+                    [record.key]: record.indexingErrors || undefined,
+                  }));
                   onExpand(record, e);
                 }}
               />
