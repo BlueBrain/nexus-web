@@ -69,9 +69,16 @@ function constructUnDeprecateUrl(
   projectLabel: string
 ) {
   return `${apiEndpoint}/${
-    resource!['@type'] === 'File' ? 'files' : 'resources'
+    resource!['@type']?.includes('File')
+      ? 'files'
+      : resource!['@type']?.includes('Storage')
+      ? 'storages'
+      : 'resources'
   }/${orgLabel}/${projectLabel}/${
-    resource!['@type'] === 'File' ? '' : '_/'
+    resource!['@type']?.includes('Storage') ||
+    resource!['@type']?.includes('File')
+      ? ''
+      : '_/'
   }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
     latestResource!._rev
   }`;
