@@ -67,28 +67,37 @@ function constructUnDeprecateUrl(
   latestResource: Resource,
   orgLabel: string,
   projectLabel: string
-) {
-  // TODO Make this function more generic
-  return `${apiEndpoint}/${
-    resource!['@type']?.includes('File')
-      ? 'files'
-      : resource!['@type']?.includes('Storage')
-      ? 'storages'
-      : resource!['@type']?.includes('View')
-      ? 'views'
-      : resource!['@type']?.includes('Schema')
-      ? 'schemas'
-      : 'resources'
-  }/${orgLabel}/${projectLabel}/${
-    resource!['@type']?.includes('Storage') ||
-    resource!['@type']?.includes('File') ||
-    resource!['@type']?.includes('View') ||
-    resource!['@type']?.includes('Schema')
-      ? ''
-      : '_/'
-  }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
-    latestResource!._rev
-  }`;
+): string {
+  const typeToPathSegment = (type: string): string => {
+    switch (type) {
+      case 'File':
+        return 'files';
+      case 'Storage':
+        return 'storages';
+      case 'View' || 'ElasticSearchView' || 'SparqlView':
+        return 'views';
+      case 'Schema':
+        return 'schemas';
+      default:
+        return 'resources';
+    }
+  };
+
+  const resourceType = Array.isArray(resource['@type'])
+      resource['@type'][0]
+    : resource['@type'];
+  const resourcePathSegment = resourceType
+    ? typeToPathSegment(resourceType)
+    : 'resources';
+  const slashPrefix = ['Storage', 'File', 'View', 'Schema'].includes(
+    resourceType || ''
+  )
+    ? ''
+    : '_/';
+
+  return `${apiEndpoint}/${resourcePathSegment}/${orgLabel}/${projectLabel}/${slashPrefix}${encodeURIComponent(
+    resource['@id']
+  )}/undeprecate?rev=${latestResource._rev}`;
 }
 
 const ResourceViewContainer: FC<{
