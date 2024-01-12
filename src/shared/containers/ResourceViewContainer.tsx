@@ -83,7 +83,6 @@ function constructUnDeprecateUrl(
   ): string => {
     const types = Array.isArray(inputTypes) ? inputTypes : [inputTypes];
 
-    // Check each type and select the most specific one that has a mapping
     for (const type of types) {
       if (type in typePathMapping) {
         return typePathMapping[type];
