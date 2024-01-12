@@ -1,16 +1,16 @@
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Form, Button, Card, List, Empty } from 'antd';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-// import { UnControlled as CodeMirror } from 'react-codemirror2';
 import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk/es';
+import * as codemirror from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
-// import 'react-json-view';
+
 import './view-form.scss';
 
 const FormItem = Form.Item;
@@ -49,12 +49,14 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   onQueryChange,
   onChangePageSize,
 }): JSX.Element => {
-  const [initialQuery, setInitialQuery] = React.useState('');
-  const [valid, setValid] = React.useState(true);
-  const [value, setValue] = React.useState<string>();
-  const [pageSize, setPageSize] = React.useState<number>(size);
+  const [initialQuery, setInitialQuery] = useState('');
+  const [valid, setValid] = useState(true);
+  const [value, setValue] = useState<string>();
+  const [pageSize, setPageSize] = useState<number>(size);
+  const editor = useRef<codemirror.Editor>();
+  const wrapper = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // only on first render!
     const formattedInitialQuery = JSON.stringify(query, null, 2);
     setInitialQuery(formattedInitialQuery);
@@ -67,7 +69,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
 
-  const handleChange = (editor: any, data: any, value: string) => {
+  const handleChange = (_: any, __: any, value: string) => {
     try {
       JSON.parse(value);
       setValue(value);
@@ -77,7 +79,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     }
   };
 
-  const changePageSize = (current: number, size: number) => {
+  const changePageSize = (_: number, size: number) => {
     setPageSize(size);
     onChangePageSize(size);
   };
@@ -112,6 +114,18 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
               viewportMargin: Infinity,
             }}
             onChange={handleChange}
+            editorDidMount={editorElement => {
+              (editor as React.MutableRefObject<codemirror.Editor>).current = editorElement;
+            }}
+            editorWillUnmount={() => {
+              const editorWrapper = (editor as React.MutableRefObject<
+                CodeMirror.Editor
+              >).current.getWrapperElement();
+              if (editor) editorWrapper.remove();
+              if (wrapper.current) {
+                (wrapper.current as { hydrated: boolean }).hydrated = false;
+              }
+            }}
           />
         </>
         <FormItem>
