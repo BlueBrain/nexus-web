@@ -10,7 +10,7 @@ import * as codemirror from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
-// import 'react-json-view';
+
 import './view-form.scss';
 
 const FormItem = Form.Item;
@@ -84,114 +84,6 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     onChangePageSize(size);
   };
 
-    return (
-      <div className="view-form">
-        <Form
-          onFinish={() => {
-            value && onQueryChange(JSON.parse(value));
-          }}
-          layout="vertical"
-        >
-          <>
-            <div className="control-panel">
-              <div>
-                <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                  {valid ? (
-                    <CheckCircleOutlined />
-                  ) : (
-                    <ExclamationCircleOutlined />
-                  )}{' '}
-                  {valid ? 'Valid JSON' : 'Invalid JSON'}
-                </div>
-              </div>
-            </div>
-          </div>
-          <CodeMirror
-            value={initialQuery}
-            options={{
-              mode: { name: 'javascript', json: true },
-              theme: 'base16-light',
-              placeholder: 'Enter a valid ElasticSearch query',
-              viewportMargin: Infinity,
-            }}
-            onChange={handleChange}
-            editorDidMount={editorElement => {
-              (editor as React.MutableRefObject<
-                codemirror.Editor
-              >).current = editorElement;
-            }}
-            editorWillUnmount={() => {
-              const editorWrapper = (editor as React.MutableRefObject<
-                CodeMirror.Editor
-              >).current.getWrapperElement();
-              if (editor) editorWrapper.remove();
-              if (wrapper.current) {
-                (wrapper.current as { hydrated: boolean }).hydrated = false;
-              }
-            }}
-          />
-        </>
-        <FormItem>
-          <Button type="primary" htmlType="submit" disabled={!valid}>
-            Execute ElasticSearch query
-          </Button>
-        </FormItem>
-      </Form>
-      <Card bordered className="results">
-        {error && (
-          <Empty
-            description={`An error occurred: ${error.reason ||
-              (error.error && error.error.reason)}`}
-          />
-        )}
-        {!error && (
-          <List
-            bordered
-            size="small"
-            className="elasticsearch-results"
-            itemLayout="vertical"
-            loading={busy}
-            header={
-              <p className="result">{`Found ${total} result${
-                total > 1 ? 's' : ''
-              }`}</p>
-            }
-            dataSource={data || []}
-            pagination={{
-              total,
-              current,
-              pageSize,
-              onChange: onPaginationChange,
-              position: 'both',
-              showSizeChanger: true,
-              onShowSizeChange: changePageSize,
-            }}
-            renderItem={(result?: object) => (
-              <ListItem>
-                {(result && (
-                  <ReactJson
-                    src={result}
-                    name={null}
-                    enableClipboard={false}
-                    displayObjectSize={false}
-                    displayDataTypes={false}
-                  />
-                )) ||
-                  ''}
-              </ListItem>
-            )}
-          />
-        )}
-      </Card>
-    </div>
-  );
-};
-
-  const changePageSize = (current: number, size: number) => {
-    setPageSize(size);
-    onChangePageSize(size);
-  };
-
   return (
     <div className="view-form">
       <Form
@@ -222,6 +114,18 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
               viewportMargin: Infinity,
             }}
             onChange={handleChange}
+            editorDidMount={editorElement => {
+              (editor as React.MutableRefObject<codemirror.Editor>).current = editorElement;
+            }}
+            editorWillUnmount={() => {
+              const editorWrapper = (editor as React.MutableRefObject<
+                CodeMirror.Editor
+              >).current.getWrapperElement();
+              if (editor) editorWrapper.remove();
+              if (wrapper.current) {
+                (wrapper.current as { hydrated: boolean }).hydrated = false;
+              }
+            }}
           />
         </>
         <FormItem>
