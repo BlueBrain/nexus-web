@@ -1,25 +1,30 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import * as codemirror from 'codemirror';
+import { UnControlled as UnControlledCodeMirror } from 'react-codemirror2';
 import 'codemirror/mode/javascript/javascript';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import 'codemirror/lib/codemirror.css';
 import 'codemirror/addon/display/autorefresh';
-import 'codemirror/theme/base16-light.css';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/sparql/sparql';
+import 'codemirror/theme/base16-light.css';
+import 'codemirror/lib/codemirror.css';
 import './SparqlQueryInput.scss';
 
 const SparqlQueryInput: React.FunctionComponent<{
   value?: string;
   onChange?: (query: string) => void;
 }> = ({ value = '', onChange }) => {
-  const handleChange = (editor: any, data: any, value: string) => {
-    onChange && onChange(value);
+  const editor = useRef<codemirror.Editor>();
+  const wrapper = useRef(null);
+
+  const handleChange = (_: any, __: any, value: string) => {
+    onChange?.(value);
   };
 
   return (
     <div className="sparql-input">
       <div className="code">
-        <CodeMirror
+        <UnControlledCodeMirror
+          ref={wrapper}
           value={value}
           autoCursor={true}
           autoScroll={true}
@@ -32,7 +37,19 @@ const SparqlQueryInput: React.FunctionComponent<{
             lineWrapping: true,
             autoRefresh: true,
           }}
-          onBeforeChange={handleChange}
+          onChange={handleChange}
+          editorDidMount={e => {
+            (editor as React.MutableRefObject<codemirror.Editor>).current = e;
+          }}
+          editorWillUnmount={() => {
+            const editorWrapper = (editor as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editor) editorWrapper.remove();
+            if (wrapper.current) {
+              (wrapper.current as { hydrated: boolean }).hydrated = false;
+            }
+          }}
         />
       </div>
     </div>
