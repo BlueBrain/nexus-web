@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState, FC } from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
@@ -9,13 +9,15 @@ import {
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Row, Select } from 'antd';
 import queryString from 'query-string';
+
 import { useOrganisationsSubappContext } from '..';
-import { getResourceLabel } from '../../../shared/utils';
-import useNotification from '../../../shared/hooks/useNotification';
+import { getResourceLabel } from 'shared/utils';
+import useNotification from 'shared/hooks/useNotification';
 import ElasticSearchQueryContainer from '../containers/ElasticSearchQuery';
 
 const { Option } = Select;
-const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
+
+const ElasticSearchQueryView: FC = (): JSX.Element => {
   const subapp = useOrganisationsSubappContext();
   const match = useRouteMatch<{
     orgLabel: string;
@@ -34,24 +36,26 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
       viewId: '',
     },
   };
-  const [{ _results: views }, setViews] = React.useState<ViewList>({
+  const [{ _results: views }, setViews] = useState<ViewList>({
     '@context': {},
     _total: 0,
     _results: [],
   });
   const nexus = useNexusContext();
   const query = queryString.parse(location.search).query;
-  const [selectedView, setSelectedView] = React.useState<string>(
+  const [selectedView, setSelectedView] = useState<string>(
     viewId ? decodeURIComponent(viewId) : DEFAULT_ELASTIC_SEARCH_VIEW_ID
   );
 
-  React.useEffect(() => {
+  const onViewChange = (view: string) => {
+    setSelectedView(view);
     history.replace(
       `/${
         subapp.namespace
-      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(selectedView)}`
+      }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(view)}`
     );
-  }, [selectedView]);
+  };
+
   const menu = (
     <Row
       gutter={3}
@@ -62,9 +66,10 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
       <Col flex="auto">
         <Select
           value={selectedView as string}
-          onChange={v => setSelectedView(v)}
+          onChange={onViewChange}
           style={{ width: '100%' }}
           defaultActiveFirstOption={false}
+          defaultValue={selectedView}
         >
           {[views]
             .flat()
@@ -94,7 +99,7 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
     </Row>
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     nexus.View.list(orgLabel, projectLabel, { deprecated: false })
       .then(result => {
         setViews(result);
@@ -109,15 +114,13 @@ const ElasticSearchQueryView: React.FunctionComponent = (): JSX.Element => {
 
   return (
     <>
-      <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>{menu}</div>
-      <div className="view-view view-container -unconstrained-width">
-        <ElasticSearchQueryContainer
-          orgLabel={orgLabel}
-          projectLabel={projectLabel}
-          initialQuery={query ? JSON.parse(`${query}`) : null}
-          viewId={encodeURIComponent(selectedView)}
-        />
-      </div>
+      {menu}
+      <ElasticSearchQueryContainer
+        orgLabel={orgLabel}
+        projectLabel={projectLabel}
+        initialQuery={query ? JSON.parse(`${query}`) : null}
+        viewId={encodeURIComponent(selectedView)}
+      />
     </>
   );
 };
