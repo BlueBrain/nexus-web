@@ -68,6 +68,7 @@ function constructUnDeprecateUrl(
   orgLabel: string,
   projectLabel: string
 ) {
+  // TODO Make this function more generic
   return `${apiEndpoint}/${
     resource!['@type']?.includes('File')
       ? 'files'
@@ -801,6 +802,7 @@ const ResourceViewContainer: FC<{
                                       marginBottom: '5px',
                                     }}
                                     onClick={() => {
+                                      // TODO Component doesn't reload after undoing deprecation when on side-panel view
                                       unDeprecateResource();
                                     }}
                                   >
