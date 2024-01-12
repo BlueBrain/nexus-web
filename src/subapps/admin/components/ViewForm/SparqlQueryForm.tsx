@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, useState } from 'react';
 import { Button } from 'antd';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
 
@@ -7,7 +7,7 @@ import SparqlQueryInput from './SparqlQueryInput';
 
 import './view-form.scss';
 
-const SparqlQueryForm: React.FunctionComponent<{
+const SparqlQueryForm: FC<{
   query: string;
   response: SparqlViewQueryResponse | null;
   busy: boolean;
@@ -26,15 +26,12 @@ const SparqlQueryForm: React.FunctionComponent<{
   onQueryChange,
   resultsComponent = SparqlQueryResults,
 }): JSX.Element => {
-  const [input, setInput] = React.useState<string>(query);
+  const [input, setInput] = useState<string>(query);
+  const onChange = (text: string) => setInput(text);
+
   return (
     <div className="view-form">
-      <SparqlQueryInput
-        value={input}
-        onChange={text => {
-          setInput(text);
-        }}
-      />
+      <SparqlQueryInput value={input} onChange={onChange} />
       <Button
         type="primary"
         onClick={() => {
