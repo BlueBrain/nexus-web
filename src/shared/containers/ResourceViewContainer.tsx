@@ -73,10 +73,16 @@ function constructUnDeprecateUrl(
       ? 'files'
       : resource!['@type']?.includes('Storage')
       ? 'storages'
+      : resource!['@type']?.includes('View')
+      ? 'views'
+      : resource!['@type']?.includes('Schema')
+      ? 'schemas'
       : 'resources'
   }/${orgLabel}/${projectLabel}/${
     resource!['@type']?.includes('Storage') ||
-    resource!['@type']?.includes('File')
+    resource!['@type']?.includes('File') ||
+    resource!['@type']?.includes('View') ||
+    resource!['@type']?.includes('Schema')
       ? ''
       : '_/'
   }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
