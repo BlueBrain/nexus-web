@@ -1,11 +1,15 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
+import { Button } from 'antd';
+import { useMutation } from 'react-query';
 import {
   DEFAULT_SPARQL_VIEW_ID,
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
 
 import SparqlQueryForm from '../components/ViewForm/SparqlQueryForm';
+import { NexusSparqlError } from '../components/ViewForm/SparqlQueryResults';
+import './SettingsContainer.scss';
 
 const DEFAULT_QUERY = `# Directly edit this query
 SELECT ?s ?p ?o
@@ -25,54 +29,34 @@ const SparqlQueryContainer: React.FunctionComponent<{
   viewId = DEFAULT_SPARQL_VIEW_ID,
 }) => {
   const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<string>(
-    initialQuery || DEFAULT_QUERY
-  );
-  const [{ response, busy, error }, setResponse] = React.useState<{
-    response: SparqlViewQueryResponse | null;
-    busy: boolean;
-    error: string | null;
-  }>({
-    response: null,
-    busy: false,
-    error: null,
-  });
+  const [query, setQuery] = useState<string>(initialQuery || DEFAULT_QUERY);
+  const { mutate, isLoading, data, error } = useMutation<
+    SparqlViewQueryResponse,
+    NexusSparqlError
+  >(() => nexus.View.sparqlQuery(orgLabel, projectLabel, viewId, query), {});
 
-  React.useEffect(() => {
-    setResponse({
-      response: null,
-      busy: true,
-      error: null,
-    });
-    nexus.View.sparqlQuery(orgLabel, projectLabel, viewId, query)
-      .then(response => {
-        setResponse({
-          response,
-          busy: false,
-          error: null,
-        });
-      })
-      .catch(error => {
-        setResponse({
-          error,
-          response: null,
-          busy: false,
-        });
-      });
-  }, [orgLabel, projectLabel, viewId, query]);
-
-  const onQueryChange = (query: string) => {
-    setQuery(query);
-  };
+  const runSparqlQuery = () => mutate();
 
   return (
-    <SparqlQueryForm
-      query={query}
-      response={response}
-      busy={busy}
-      error={error}
-      onQueryChange={onQueryChange}
-    />
+    <>
+      <div className="query-control-panel">
+        <Button
+          type="primary"
+          onClick={runSparqlQuery}
+          loading={isLoading}
+          className="execute-sparql-query-btn"
+        >
+          Execute SPARQL query
+        </Button>
+      </div>
+      <SparqlQueryForm
+        query={query}
+        response={data}
+        busy={isLoading}
+        error={error}
+        onQueryChange={setQuery}
+      />
+    </>
   );
 };
 
