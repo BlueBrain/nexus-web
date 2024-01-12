@@ -68,52 +68,40 @@ function constructUnDeprecateUrl(
   orgLabel: string,
   projectLabel: string
 ): string {
-  const typeToPathSegment = (type: string): string => {
-    switch (type) {
-      case 'File':
-        return 'files';
-      case 'Storage':
-        return 'storages';
-      case 'ElasticSearchView':
-      case 'SparqlView':
-      case 'CompositeView':
-      case 'View':
-        return 'views';
-      case 'Schema':
-        return 'schemas';
-      default:
-        return 'resources';
-    }
+  const typePathMapping: { [key: string]: string } = {
+    File: 'files',
+    Storage: 'storages',
+    ElasticSearchView: 'views',
+    SparqlView: 'views',
+    CompositeView: 'views',
+    View: 'views',
+    Schema: 'schemas',
   };
 
-  // Determine the primary type for resource path segment
-  const determinePrimaryType = (types: string | string[]): string => {
-    if (Array.isArray(types)) {
-      // Prioritize specific view types over generic 'View'
-      const viewType = types.find(type =>
-        ['ElasticSearchView', 'SparqlView', 'CompositeView', 'View'].includes(
-          type
-        )
-      );
-      return viewType || types[0];
+  const determineResourcePathSegment = (types: string | string[]): string => {
+    if (!Array.isArray(types)) {
+      types = [types];
     }
-    return types;
+
+    // Check each type and select the most specific one that has a mapping
+    for (const type of types) {
+      if (type in typePathMapping) {
+        return typePathMapping[type];
+      }
+    }
+
+    return 'resources';
   };
 
-  const primaryResourceType = determinePrimaryType(resource['@type'] || '');
-  const resourcePathSegment = primaryResourceType
-    ? typeToPathSegment(primaryResourceType)
-    : 'resources';
-
-  const slashPrefix = [
-    'Storage',
-    'File',
-    'View',
-    'Schema',
-    'ElasticSearchView',
-    'SparqlView',
-    'CompositeView',
-  ].includes(primaryResourceType)
+  const primaryResourceType = resource['@type'] || '';
+  const resourcePathSegment = determineResourcePathSegment(primaryResourceType);
+  const slashPrefix = Array.isArray(primaryResourceType)
+    ? primaryResourceType.some(type =>
+        Object.keys(typePathMapping).includes(type)
+      )
+      ? ''
+      : '_/'
+    : Object.keys(typePathMapping).includes(primaryResourceType)
     ? ''
     : '_/';
 
