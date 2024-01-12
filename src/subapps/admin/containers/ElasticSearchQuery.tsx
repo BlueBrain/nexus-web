@@ -1,8 +1,14 @@
-import * as React from 'react';
+import { useState, FC } from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk/es';
+import {
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ElasticSearchViewQueryResponse,
+} from '@bbp/nexus-sdk/es';
 
-import ElasticSearchQueryForm from '../components/ViewForm/ElasticSearchQueryForm';
+import ElasticSearchQueryForm, {
+  NexusESError,
+} from '../components/ViewForm/ElasticSearchQueryForm';
+import { useQuery } from 'react-query';
 
 const DEFAULT_PAGE_SIZE = 5;
 const DEFAULT_QUERY = {
@@ -13,7 +19,7 @@ const DEFAULT_QUERY = {
   },
 };
 
-const ElasticSearchQueryContainer: React.FunctionComponent<{
+const ElasticSearchQueryContainer: FC<{
   orgLabel: string;
   projectLabel: string;
   initialQuery?: object;
@@ -25,44 +31,26 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
   viewId = DEFAULT_ELASTIC_SEARCH_VIEW_ID,
 }) => {
   const nexus = useNexusContext();
-  const [query, setQuery] = React.useState<object>(
-    initialQuery || DEFAULT_QUERY
-  );
-  const [{ from, size }, setPagination] = React.useState({
+  const [query, setQuery] = useState<object>(initialQuery || DEFAULT_QUERY);
+  const [{ from, size }, setPagination] = useState({
     from: 0,
     size: DEFAULT_PAGE_SIZE,
   });
-  const [{ response, busy, error }, setResponse] = React.useState({
-    response: null,
-    busy: false,
-    error: null,
-  });
 
-  React.useEffect(() => {
-    setResponse({
-      response: null,
-      busy: true,
-      error: null,
-    });
-    nexus.View.elasticSearchQuery(orgLabel, projectLabel, viewId, query, {
-      from,
-      size,
-    })
-      .then(response => {
-        setResponse({
-          response,
-          busy: false,
-          error: null,
-        });
-      })
-      .catch(error => {
-        setResponse({
-          error,
-          response: null,
-          busy: false,
-        });
-      });
-  }, [from, size, orgLabel, projectLabel, viewId, query]);
+  const { data, isLoading, error } = useQuery<
+    ElasticSearchViewQueryResponse<any>,
+    NexusESError
+  >({
+    queryKey: [
+      `elastic-query-${orgLabel}-${projectLabel}`,
+      { from, size, viewId, query },
+    ],
+    queryFn: () =>
+      nexus.View.elasticSearchQuery(orgLabel, projectLabel, viewId, query, {
+        from,
+        size,
+      }),
+  });
 
   const onPaginationChange = (pageNumber: number) => {
     // NOTE: AntD Page numbers start from 1!
@@ -73,29 +61,28 @@ const ElasticSearchQueryContainer: React.FunctionComponent<{
     }));
   };
 
-  const onQueryChange = (query: object) => {
-    setQuery(query);
-  };
+  const onQueryChange = (query: object) => setQuery(query);
 
-  const onChangePageSize = (size: number) => {
+  const onChangePageSize = (size: number) =>
     setPagination({
       size,
       from: 0,
     });
-  };
 
   return (
-    <ElasticSearchQueryForm
-      query={query}
-      response={response}
-      busy={busy}
-      error={error}
-      from={from}
-      size={size}
-      onPaginationChange={onPaginationChange}
-      onQueryChange={onQueryChange}
-      onChangePageSize={onChangePageSize}
-    />
+    <>
+      <ElasticSearchQueryForm
+        query={query}
+        response={data}
+        busy={isLoading}
+        error={error}
+        from={from}
+        size={size}
+        onPaginationChange={onPaginationChange}
+        onQueryChange={onQueryChange}
+        onChangePageSize={onChangePageSize}
+      />
+    </>
   );
 };
 
