@@ -272,6 +272,7 @@ const ProjectView: React.FunctionComponent = () => {
           )}
           <div className="tabs-container">
             <Tabs
+              className="project-tabs"
               onChange={handleTabChange}
               activeKey={activeKey}
               items={[
