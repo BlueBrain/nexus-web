@@ -13,5 +13,19 @@
   }
   .ant-menu-item-selected {
     border-right: 3px solid #0985a4 !important;
+    width: 100%;
   }
+}
+
+.query-control-panel {
+  width: 100%;
+  padding: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background-color: #f0efef;
+}
+
+.execute-sparql-query-btn {
+  align-self: flex-end;
 }
