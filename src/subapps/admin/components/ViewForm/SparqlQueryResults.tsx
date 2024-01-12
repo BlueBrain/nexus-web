@@ -1,17 +1,17 @@
 import { Card, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
 import hash from 'object-hash';
-import { matchResultUrls } from '../../../../shared/utils';
 import {
   AskQueryResponse,
   SelectQueryResponse,
   SparqlViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
 
+import { matchResultUrls } from 'shared/utils';
+import useNotification from 'shared/hooks/useNotification';
+import { ErrorComponent } from 'shared/components/ErrorComponent';
+import { TError } from 'utils/types';
 import './view-form.scss';
-import useNotification from '../../../../shared/hooks/useNotification';
-import { ErrorComponent } from '../../../../shared/components/ErrorComponent';
-import { TError } from '../../../../utils/types';
 
 export type NexusSparqlError =
   | string
@@ -28,7 +28,7 @@ export type Entry = {
 };
 
 const SparqlQueryResults: React.FunctionComponent<{
-  response: SparqlViewQueryResponse | null;
+  response?: SparqlViewQueryResponse | null;
   busy: boolean;
   error: NexusSparqlError | null;
 }> = ({ response, busy, error }): JSX.Element => {
@@ -72,7 +72,7 @@ const SparqlQueryResults: React.FunctionComponent<{
       {!error && (
         <Table
           dataSource={data}
-          pagination={{ position: ['topLeft', 'bottomRight'] }}
+          pagination={{ position: ['bottomRight'] }}
           rowKey={record => hash(record)}
           loading={busy}
         >
