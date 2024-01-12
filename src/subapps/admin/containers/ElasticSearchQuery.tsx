@@ -70,19 +70,17 @@ const ElasticSearchQueryContainer: FC<{
     });
 
   return (
-    <>
-      <ElasticSearchQueryForm
-        query={query}
-        response={data}
-        busy={isLoading}
-        error={error}
-        from={from}
-        size={size}
-        onPaginationChange={onPaginationChange}
-        onQueryChange={onQueryChange}
-        onChangePageSize={onChangePageSize}
-      />
-    </>
+    <ElasticSearchQueryForm
+      query={query}
+      response={data}
+      busy={isLoading}
+      error={error}
+      from={from}
+      size={size}
+      onPaginationChange={onPaginationChange}
+      onQueryChange={onQueryChange}
+      onChangePageSize={onChangePageSize}
+    />
   );
 };
 
