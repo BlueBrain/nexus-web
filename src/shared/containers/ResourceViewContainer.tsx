@@ -777,9 +777,13 @@ const ResourceViewContainer: FC<{
                             <DeleteOutlined /> This resource is deprecated and
                             not modifiable.
                             {// Don't show the undo deprecated button if the resource is
-                            // of any unsupported resource. However, it needs to be shown
-                            // e.g. for custom types of resources.
-                            !resource['@type']?.includes('Resolver') ? (
+                            // of any unsupported resource (e.g. Resolver). However, it needs
+                            // to be shown e.g. for custom types of resources.
+                            !resource['@type']?.includes(
+                              'Resolver' ||
+                                'AggregateElasticSearchView' ||
+                                'AggregateSparqlView'
+                            ) ? (
                               <>
                                 <br />
                                 {// If not newest revision, then don't show the button
@@ -791,7 +795,6 @@ const ResourceViewContainer: FC<{
                                       marginBottom: '5px',
                                     }}
                                     onClick={() => {
-                                      // TODO Shows the button correctly, but the undoing of the deprecation doesn't work
                                       unDeprecateResource();
                                     }}
                                   >
