@@ -78,10 +78,10 @@ function constructUnDeprecateUrl(
     Schema: 'schemas',
   };
 
-  const determineResourcePathSegment = (types: string | string[]): string => {
-    if (!Array.isArray(types)) {
-      types = [types];
-    }
+  const determineResourcePathSegment = (
+    inputTypes: string | string[]
+  ): string => {
+    const types = Array.isArray(inputTypes) ? inputTypes : [inputTypes];
 
     // Check each type and select the most specific one that has a mapping
     for (const type of types) {
