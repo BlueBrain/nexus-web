@@ -74,7 +74,10 @@ function constructUnDeprecateUrl(
         return 'files';
       case 'Storage':
         return 'storages';
-      case 'View' || 'ElasticSearchView' || 'SparqlView':
+      case 'ElasticSearchView':
+      case 'SparqlView':
+      case 'CompositeView':
+      case 'View':
         return 'views';
       case 'Schema':
         return 'schemas';
@@ -83,15 +86,34 @@ function constructUnDeprecateUrl(
     }
   };
 
-  const resourceType = Array.isArray(resource['@type'])
-      resource['@type'][0]
-    : resource['@type'];
-  const resourcePathSegment = resourceType
-    ? typeToPathSegment(resourceType)
+  // Determine the primary type for resource path segment
+  const determinePrimaryType = (types: string | string[]): string => {
+    if (Array.isArray(types)) {
+      // Prioritize specific view types over generic 'View'
+      const viewType = types.find(type =>
+        ['ElasticSearchView', 'SparqlView', 'CompositeView', 'View'].includes(
+          type
+        )
+      );
+      return viewType || types[0];
+    }
+    return types;
+  };
+
+  const primaryResourceType = determinePrimaryType(resource['@type'] || '');
+  const resourcePathSegment = primaryResourceType
+    ? typeToPathSegment(primaryResourceType)
     : 'resources';
-  const slashPrefix = ['Storage', 'File', 'View', 'Schema'].includes(
-    resourceType || ''
-  )
+
+  const slashPrefix = [
+    'Storage',
+    'File',
+    'View',
+    'Schema',
+    'ElasticSearchView',
+    'SparqlView',
+    'CompositeView',
+  ].includes(primaryResourceType)
     ? ''
     : '_/';
 
@@ -811,7 +833,6 @@ const ResourceViewContainer: FC<{
                                       marginBottom: '5px',
                                     }}
                                     onClick={() => {
-                                      // TODO Component doesn't reload after undoing deprecation when on side-panel view
                                       unDeprecateResource();
                                     }}
                                   >
