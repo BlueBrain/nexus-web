@@ -10,7 +10,6 @@ import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission
 import DangerZoneAction, {
   DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import './styles.scss';
@@ -282,7 +281,7 @@ const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
         >
           <Button
             danger={!project._deprecated}
-            type={project._deprecated ? 'primary' : 'ghost'}
+            type={project._deprecated ? 'primary' : 'default'}
             htmlType="button"
             disabled={
               project._deprecated && undoDeprecationStatus === 'loading'

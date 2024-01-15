@@ -18,6 +18,7 @@ import {
 } from './ViewIndexingErrors';
 import './styles.scss';
 import { useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
 
 type SubView = {
   key: string;
@@ -399,7 +400,7 @@ const ViewsSubView = () => {
                   title="You have no permissions to re-index the views"
                 >
                   <Button
-                    type="ghost"
+                    type="default"
                     disabled
                     style={{ margin: 0, marginTop: 20 }}
                   >
@@ -416,7 +417,7 @@ const ViewsSubView = () => {
                   (status === 'success' && !Boolean(views?.results))
                 }
                 loading={isLoading}
-                type="ghost"
+                type="default"
                 style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
                 htmlType="button"
                 onClick={() => {
