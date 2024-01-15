@@ -115,7 +115,9 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             }}
             onChange={handleChange}
             editorDidMount={editorElement => {
-              (editor as React.MutableRefObject<codemirror.Editor>).current = editorElement;
+              (editor as React.MutableRefObject<
+                codemirror.Editor
+              >).current = editorElement;
             }}
             editorWillUnmount={() => {
               const editorWrapper = (editor as React.MutableRefObject<
