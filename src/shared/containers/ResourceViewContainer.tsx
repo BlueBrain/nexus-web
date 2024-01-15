@@ -46,6 +46,8 @@ import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 
+export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
