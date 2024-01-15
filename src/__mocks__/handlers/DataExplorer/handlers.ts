@@ -56,7 +56,7 @@ export const dataExplorerPageHandler = (
 export const graphAnalyticsTypeHandler = () => {
   return rest.get(
     deltaPath('/graph-analytics/:org/:project/properties/:type'),
-    (req, res, ctx) => {
+    (_, res, ctx) => {
       const mockResponse = {
         '@context':
           'https://bluebrain.github.io/nexus/contexts/properties.json',
@@ -165,7 +165,7 @@ export const filterByProjectHandler = (
 export const elasticSearchQueryHandler = (resources: Resource[]) => {
   return rest.post(
     deltaPath('/graph-analytics/:org/:project/_search'),
-    (req, res, ctx) => {
+    (_, res, ctx) => {
       const esResponse = {
         hits: {
           hits: resources.map(resource => ({
@@ -214,7 +214,7 @@ const mockAggregationsResult = (
 };
 
 export const getAggregationsHandler = () =>
-  rest.get(deltaPath(`/resources?aggregations=true`), (req, res, ctx) => {
+  rest.get(deltaPath(`/resources?aggregations=true`), (_, res, ctx) => {
     const aggregationsResponse: AggregationsResult = {
       '@context':
         'https://bluebrain.github.io/nexus/contexts/aggregations.json',

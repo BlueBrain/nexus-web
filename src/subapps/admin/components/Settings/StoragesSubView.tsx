@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import { Table, Button, Spin, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
@@ -10,14 +10,6 @@ import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission
 
 import './styles.scss';
 
-type Props = {};
-type StorageData = {
-  maxFileSize?: number;
-  capacity?: number;
-  files: number;
-  spaceUsed: number;
-  '@id': string;
-};
 type TDataType = {
   id: string;
   name: string;
@@ -90,8 +82,7 @@ const fetchStorages = async ({
     throw new Error('Can not load the storages', { cause: error });
   }
 };
-const StoragesSubView = (props: Props) => {
-  const handleOnEdit = () => {};
+const StoragesSubView = () => {
   const history = useHistory();
   const nexus = useNexusContext();
   const match = useRouteMatch<{

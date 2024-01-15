@@ -295,11 +295,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
     return items;
   };
 
-  const handleChange = (
-    targetKeys: string[],
-    direction: string,
-    moveKeys: string[]
-  ) => {
+  const handleChange = (targetKeys: string[]) => {
     setTargetKeys(targetKeys);
   };
 
@@ -388,7 +384,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
             <Form.Item>
               <Button
                 disabled={namePrompt}
-                onClick={e => {
+                onClick={() => {
                   try {
                     saveDashBoards(workspace);
                   } catch (e) {

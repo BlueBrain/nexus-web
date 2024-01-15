@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
-import { isArray, isNil, isString, startCase } from 'lodash';
+import { isArray, isString, startCase } from 'lodash';
 import { SelectionSelectFn } from 'antd/lib/table/interface';
 import { clsx } from 'clsx';
 
@@ -167,7 +167,6 @@ export const DataExplorerTable = forwardRef<AntdTableRef, TDataExplorerTable>(
     };
     const onSelectAllChange = async (
       selected: boolean,
-      tSelectedRows: Resource[],
       changeRows: Resource[]
     ) => {
       const dataPanelLS: TDateExplorerTableData = JSON.parse(

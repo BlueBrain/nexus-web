@@ -10,7 +10,6 @@ import { PromisePool } from '@supercharge/promise-pool';
 import { easyValidURL } from '../../../../utils/validUrl';
 import './styles.scss';
 
-type Props = {};
 type TDataType = {
   id: string;
   name?: string;
@@ -84,7 +83,7 @@ export const fetchResourceByResolver = async ({
     });
   }
 };
-const ResolversSubView = (props: Props) => {
+const ResolversSubView = () => {
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -105,7 +104,7 @@ const ResolversSubView = (props: Props) => {
       key: 'name',
       dataIndex: 'name',
       title: 'Name',
-      render: (text, record) => <span>{record.id.split('/').pop()}</span>,
+      render: (_text, record) => <span>{record.id.split('/').pop()}</span>,
     },
     {
       key: 'type',
@@ -155,7 +154,6 @@ const ResolversSubView = (props: Props) => {
   const {
     mutateAsync: resolveResourceByID,
     error,
-    data,
     status: resolving,
   } = useMutation(fetchResourceByResolver);
   const handleSubmitResolve: React.FormEventHandler<HTMLFormElement> = event => {
@@ -166,15 +164,12 @@ const ResolversSubView = (props: Props) => {
       ? encodeURIComponent(resourceUri)
       : resourceUri;
     setSelctedResource(resourceId);
-    resolveResourceByID(
-      {
-        nexus,
-        orgLabel,
-        projectLabel,
-        resourceId,
-      },
-      { onError: error => {} }
-    );
+    resolveResourceByID({
+      nexus,
+      orgLabel,
+      projectLabel,
+      resourceId,
+    });
   };
   return (
     <div className="settings-view settings-resolvers-view">
@@ -212,7 +207,7 @@ const ResolversSubView = (props: Props) => {
             role="search"
           />
           <Button
-            type="ghost"
+            type="default"
             htmlType="submit"
             loading={resolving === 'loading'}
           >
@@ -250,29 +245,16 @@ const ResolversSubView = (props: Props) => {
               /> */}
             </>
           )}
-          {error && (
-            <>
-              <Alert
-                type="error"
-                // @ts-ignore
-                message={error.message}
-                // @ts-ignore
-                description={error.cause.message}
-                style={{ marginBottom: 10 }}
-              />
-              {/* {// @ts-ignore
-              isObject(error.cause) && (
-                <ReactJson
-                  name="Error"
-                  // @ts-ignore
-                  src={error.cause}
-                  enableClipboard={false}
-                  displayObjectSize={false}
-                  displayDataTypes={false}
-                />
-              )} */}
-            </>
-          )}
+          {error ? (
+            <Alert
+              type="error"
+              // @ts-ignore
+              message={error.message}
+              // @ts-ignore
+              description={error.cause.message}
+              style={{ marginBottom: 10 }}
+            />
+          ) : null}
         </div>
       </div>
     </div>

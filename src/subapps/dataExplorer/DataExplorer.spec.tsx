@@ -3,8 +3,7 @@ import { vi, describe } from 'vitest';
 import { Resource, createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import { RenderResult, fireEvent, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import {
   dataExplorerPageHandler,
   elasticSearchQueryHandler,
@@ -34,7 +33,8 @@ import { Provider } from 'react-redux';
 import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
-window.scrollTo = vi.fn();
+// Mock scrollTo to avoid errors in tests
+window.scrollTo = vi.fn(() => {});
 
 describe(
   'DataExplorer',
@@ -84,6 +84,7 @@ describe(
         <Provider store={store}>
           <QueryClientProvider client={queryClient}>
             <Router history={history}>
+              {/* @ts-ignore */}
               <NexusProvider nexusClient={nexus}>
                 <DataExplorer />
               </NexusProvider>
@@ -321,18 +322,6 @@ describe(
       await openMenuFor(menuAriaLabel);
       const option = await getDropdownOption(optionLabel, optionSelector);
       await userEvent.click(option, { pointerEventsCheck: 0 });
-    };
-
-    /**
-     * @returns All options visible in the currently open dropdown menu in the DOM.
-     * NOTE: Since antd menus use virtual scroll, not all options inside the menu are visible.
-     * This function only returns those options that are visible.
-     */
-    const getVisibleOptionsFromMenu = (
-      selector: string = DropdownOptionSelector
-    ) => {
-      const menuDropdown = document.querySelector(DropdownSelector);
-      return Array.from(menuDropdown?.querySelectorAll(selector) ?? []);
     };
 
     const getTotalSizeOfDataset = async (expectedCount: string) => {

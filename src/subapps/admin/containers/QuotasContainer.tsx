@@ -22,7 +22,7 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
       .then((response: any) => {
         setQuota(response);
       })
-      .catch(error => {
+      .catch(() => {
         // fail silently
       });
   };
@@ -32,7 +32,7 @@ const QuotasContainer: React.FC<{ orgLabel: string; projectLabel: string }> = ({
       .then((response: ProjectStatistics) => {
         setProjectStats(response);
       })
-      .catch(error => {
+      .catch(() => {
         // fail silently
       });
   };

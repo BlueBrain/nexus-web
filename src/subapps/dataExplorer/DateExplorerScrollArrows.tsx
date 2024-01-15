@@ -94,7 +94,7 @@ const DateExplorerScrollArrows = ({
   };
 
   useEffect(() => {
-    const onScroll = (ev?: Event) => {
+    const onScroll = () => {
       const containerRect = container?.getBoundingClientRect();
       const tableRect = table?.nativeElement.getBoundingClientRect();
       const x = containerRect?.x || 0;

@@ -106,7 +106,6 @@ const SettingsContainer: React.FC<SettingsContainerProps> = ({
         selectedKeys={[selectedKey]}
         defaultOpenKeys={[menuItems[0].id]}
         onSelect={handleOnSelectSubMenuItem}
-        multiple={false}
         defaultSelectedKeys={[menuItems[0].id]}
       >
         {menuItems.map(item => (

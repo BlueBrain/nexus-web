@@ -23,30 +23,26 @@ const StoragesContainer: React.FC<{
   }, []);
 
   const loadStorages = async () => {
-    await nexus.Storage.list(orgLabel, projectLabel)
-      .then(response => {
-        Promise.all(
-          response._results.map(storage => {
-            return Promise.all([
-              nexus.Storage.get(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(storage['@id'])
-              ),
-              nexus.Storage.statistics(
-                orgLabel,
-                projectLabel,
-                encodeURIComponent(storage['@id'])
-              ),
-            ]);
-          })
-        ).then(results => {
-          setStorages(parseResponses(results));
-        });
-      })
-      .catch(error => {
-        // fail silently
+    await nexus.Storage.list(orgLabel, projectLabel).then(response => {
+      Promise.all(
+        response._results.map(storage => {
+          return Promise.all([
+            nexus.Storage.get(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(storage['@id'])
+            ),
+            nexus.Storage.statistics(
+              orgLabel,
+              projectLabel,
+              encodeURIComponent(storage['@id'])
+            ),
+          ]);
+        })
+      ).then(results => {
+        setStorages(parseResponses(results));
       });
+    });
   };
 
   const parseResponses = (storagesData: any[][]) => {

@@ -1,5 +1,4 @@
-import { FC, useState } from 'react';
-import { Button } from 'antd';
+import { FC } from 'react';
 import { SparqlViewQueryResponse } from '@bbp/nexus-sdk/es';
 
 import SparqlQueryResults, { NexusSparqlError } from './SparqlQueryResults';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Route, MemoryRouter } from 'react-router';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
@@ -8,7 +7,6 @@ import { createBrowserHistory } from 'history';
 import { Provider } from 'react-redux';
 
 import { configureStore } from '../../../../store';
-import fetch from 'node-fetch';
 import { render, screen, server } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
@@ -40,6 +38,7 @@ describe('StudioAdminView', () => {
           <MemoryRouter initialEntries={['/studios/org/project/studios']}>
             <Route path="/studios/:orgLabel/:projectLabel/studios">
               <QueryClientProvider client={queryClient}>
+                {/* @ts-ignore */}
                 <NexusProvider nexusClient={nexus}>
                   <StudioAdminView />
                 </NexusProvider>
@@ -58,6 +57,7 @@ describe('StudioAdminView', () => {
           <MemoryRouter initialEntries={['/studios/org/project/studios']}>
             <Route path="/studios/:orgLabel/:projectLabel/studios">
               <QueryClientProvider client={queryClient}>
+                {/* @ts-ignore */}
                 <NexusProvider nexusClient={nexus}>
                   <StudioAdminView />
                 </NexusProvider>

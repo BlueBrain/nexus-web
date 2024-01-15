@@ -48,7 +48,7 @@ export const TypeSelector: React.FC<Props> = ({
           setDisplayedOptions(filteredOptions);
         }}
         filterOption={false}
-        onSelect={(text, option) => {
+        onSelect={(_text, option) => {
           setShowClearIcon(true);
           onSelect(option.key);
         }}

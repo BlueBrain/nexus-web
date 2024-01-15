@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
@@ -7,7 +7,6 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Quota } from '@bbp/nexus-sdk/es';
 import './styles.scss';
 
-type Props = {};
 type GaugeProps = {
   percent: number;
   name: string;
@@ -54,7 +53,7 @@ const GaugeComponent = ({ percent, total, quota, name }: GaugeProps) => {
   );
 };
 
-const QuotasSubView = (props: Props) => {
+const QuotasSubView = () => {
   const nexus = useNexusContext();
   const match = useRouteMatch<{
     orgLabel: string;
@@ -62,7 +61,7 @@ const QuotasSubView = (props: Props) => {
     viewId?: string;
   }>();
 
-  const [quota, setQuota] = useState<Quota>();
+  const [, setQuota] = useState<Quota>();
   const {
     params: { orgLabel, projectLabel },
   } = match;
@@ -130,13 +129,9 @@ const QuotasSubView = (props: Props) => {
   ];
   useEffect(() => {
     const loadQuotas = async () => {
-      await nexus.Quotas.get(orgLabel, projectLabel)
-        .then((response: any) => {
-          setQuota(response);
-        })
-        .catch(error => {
-          // fail silently
-        });
+      await nexus.Quotas.get(orgLabel, projectLabel).then((response: any) => {
+        setQuota(response);
+      });
     };
     loadQuotas();
   }, []);
