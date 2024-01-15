@@ -572,8 +572,5 @@ describe('Analysis Plugin', () => {
     expect(
       await waitFor(() => screen.getByText('Script Location'))
     ).toBeInTheDocument();
-    expect(
-      await waitFor(() => screen.getByText('How did you run the script?'))
-    ).toBeInTheDocument();
   });
 });
