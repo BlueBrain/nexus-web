@@ -86,7 +86,7 @@ const SparqlQueryResults: React.FunctionComponent<{
                   return <span className="empty">no value</span>;
                 }
 
-                // TODO: Improve sparql repsonse types visuall
+                // TODO: Improve sparql response types visual
                 // https://github.com/BlueBrain/nexus/issues/756
                 return (
                   <Tooltip title={entry.datatype}>
