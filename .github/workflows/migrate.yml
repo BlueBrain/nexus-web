@@ -2,7 +2,7 @@ name: Migration
 on:
   push:
     branches:
-      - fusion-react-18-vite
+      - develop-migratation-rebase
 
 jobs:
   publish-migration:
