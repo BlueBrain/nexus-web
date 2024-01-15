@@ -9,7 +9,6 @@ import {
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Col, Row, Select } from 'antd';
 import queryString from 'query-string';
-
 import { useOrganisationsSubappContext } from '..';
 import { getResourceLabel } from 'shared/utils';
 import useNotification from 'shared/hooks/useNotification';
