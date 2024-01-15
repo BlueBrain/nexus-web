@@ -1,7 +1,7 @@
 {
   "name": "nexus-fusion",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
-  "author": "Blue Brain project",
+  "author": "Blue Brain Project",
   "license": "Apache-2.0",
   "repository": "github:bluebrain/nexus-explorer",
   "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion",

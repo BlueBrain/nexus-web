@@ -14,6 +14,11 @@ declare module '!!raw-loader!*' {
   export = contents;
 }
 
+declare module '*.mp4' {
+  const src: string;
+  export default src;
+}
+
 //
 // Identicon.js Types
 //
