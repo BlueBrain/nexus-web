@@ -140,10 +140,7 @@ const ResourceViewContainer: FC<{
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
-        // Do nothing
-      });
+      .then(versions => setDeltaPlugins({ ...versions.plugins }));
   };
 
   useEffect(() => {
@@ -548,7 +545,11 @@ const ResourceViewContainer: FC<{
         resource={resource}
         latestResource={latestResource}
         activeTabKey={activeTabKey}
-        expandedFromQuery={expandedFromQuery}
+        expandedFromQuery={
+          Array.isArray(expandedFromQuery)
+            ? expandedFromQuery.filter((item): item is string => item !== null)
+            : expandedFromQuery
+        }
         refProp={ref}
         goToResource={goToResource}
         handleTabChange={handleTabChange}
