@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import React from 'react';
 import { RenderResult, act, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -23,8 +23,6 @@ import {
   getDataExplorerGraphFlowResourceObjectTags,
   getDataExplorerGraphFlowResourceSource,
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import { getResourceLabel } from '../../../shared/utils';
 import { configureStore } from '../../../store';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -99,12 +97,12 @@ describe('DataExplorerGraphFlow', () => {
       fetch,
       uri: deltaPath(),
     });
-    const queryClient = new QueryClient();
     store = configureStore(history, { nexus }, {});
     app = (
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <Router history={history}>
+            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <DateExplorerGraphFlow />
             </NexusProvider>

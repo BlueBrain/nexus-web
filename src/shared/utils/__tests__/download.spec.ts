@@ -1,5 +1,6 @@
 import { download } from '../download';
 import { fileExtensionFromResourceEncoding } from '../../../utils/contentTypes';
+import { vi as jest } from 'vitest';
 
 // Mock fileExtensionFromResourceEncoding
 jest.mock('../../../utils/contentTypes', () => ({
