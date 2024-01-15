@@ -142,8 +142,8 @@ const ProjectView: React.FC = () => {
           description: error.message,
         });
         setState({
-          project: project ? project : null,
           error,
+          project: project ? project : null,
           busy: false,
         });
       });

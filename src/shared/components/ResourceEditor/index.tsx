@@ -1,9 +1,4 @@
-import {
-  CheckCircleOutlined,
-  WarningOutlined,
-  ExclamationCircleOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { WarningOutlined, SaveOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { Alert, Button, Switch } from 'antd';
 import codemirror from 'codemirror';
@@ -72,6 +67,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
+
   const {
     dataExplorer: { fullscreen },
   } = useSelector((state: RootState) => ({
@@ -120,14 +116,10 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
 
-    return () => setFoldCodeMiror(false);
+    return () => setFoldCodeMirror(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
 
-  const handleChange = (
-    editor: CodeMirror.Editor,
-    data: CodeMirror.EditorChange,
-    value: string
-  ) => {
+  const handleChange = (value: string) => {
     if (!editable) {
       return;
     }
