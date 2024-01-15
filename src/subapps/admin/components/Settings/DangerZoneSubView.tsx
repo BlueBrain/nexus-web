@@ -8,13 +8,12 @@ import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import DangerZoneAction, {
-  TDangerZoneActionProps,
   DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import { RootState } from '../../../../shared/store/reducers';
 import { makeOrganizationUri } from '../../../../shared/utils';
-import './styles.less';
+import './styles.scss';
 
 type TDangerZoneItem = {
   key: React.Key;

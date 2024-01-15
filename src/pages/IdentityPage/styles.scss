@@ -39,7 +39,6 @@
       font-weight: 700;
       font-size: 120px;
       line-height: 90%;
-      font-family: @font-family;
       letter-spacing: 0.01em;
       user-select: none;
     }
@@ -78,7 +77,6 @@
       button:first-child {
         color: $fusion-daybreak-10;
         background-color: #fff;
-        color: @fusion-daybreak-10;
         &.no-realms-btn {
           cursor: not-allowed;
           border: 1px solid black;
@@ -94,7 +92,6 @@
       .nav-btn:hover {
         color: $fusion-daybreak-10 !important;
         background-color: #fff !important;
-        color: @fusion-daybreak-10 !important;
       }
       button:last-child {
         border-right: 1px solid white;
@@ -108,7 +105,6 @@
       }
       button.connect-btn {
         border: 1px solid #fff;
-        color: @fusion-daybreak-10;
         font-weight: 400;
         font-size: 13px;
         color: $fusion-daybreak-10 !important;
