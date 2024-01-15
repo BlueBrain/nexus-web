@@ -25,7 +25,7 @@ import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDe
 import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import './styles.less';
+import './styles.scss';
 
 const ProjectView: React.FC = () => {
   const notification = useNotification();

@@ -5,24 +5,18 @@ import * as Sentry from '@sentry/browser';
 import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
 import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
-import { NexusClient } from '@bbp/nexus-sdk/es';
-import { PromisePool } from '@supercharge/promise-pool';
 import { isArray, isString, orderBy } from 'lodash';
 import { useMutation, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import * as Sentry from '@sentry/browser';
-import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import { RootState } from '../../../../shared/store/reducers';
-import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import {
   IndexingErrorResults,
   ViewIndexingErrors,
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
-import './styles.less';
+import './styles.scss';
 import { useState } from 'react';
 
 type SubView = {

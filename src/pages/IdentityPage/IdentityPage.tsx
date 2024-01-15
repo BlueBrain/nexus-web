@@ -9,8 +9,8 @@ import { setPreferredRealm } from '../../shared/store/actions/config';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
 import useClickOutside from '../../shared/hooks/useClickOutside';
-import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
-import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.png';
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.svg';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/videos/BrainRegionsNexusPage.mp4';
 
 import './styles.scss';

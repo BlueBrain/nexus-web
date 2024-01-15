@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { Menu, MenuProps } from 'antd';
-import * as React from 'react';
-import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
 import GeneralSVComponent from '../components/Settings/GeneralSubView';
-import ViewsSVComponent from '../components/Settings/ViewsSubView';
-import StoragesSVComponent from '../components/Settings/StoragesSubView';
-import ResolversSVComponent from '../components/Settings/ResolversSubView';
 import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
 import ResolversSVComponent from '../components/Settings/ResolversSubView';
 import StoragesSVComponent from '../components/Settings/StoragesSubView';
 import ViewsSVComponent from '../components/Settings/ViewsSubView';
-import './SettingsContainer.less';
+import './SettingsContainer.scss';
 
 type SettingsContainerProps = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
@@ -111,7 +106,6 @@ const SettingsContainer: React.FC<SettingsContainerProps> = ({
         selectedKeys={[selectedKey]}
         defaultOpenKeys={[menuItems[0].id]}
         onSelect={handleOnSelectSubMenuItem}
-        multiple={false}
         defaultSelectedKeys={[menuItems[0].id]}
       >
         {menuItems.map(item => (

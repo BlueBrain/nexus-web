@@ -67,6 +67,7 @@ export const setSearchPreference: ActionCreator<SetSearchPreference> = (
 });
 
 export const SEARCH_PREFERENCE_LOCAL_STORAGE_KEY = 'nexusSearchPreference';
+export const SEARCH_PREFENCE_LOCAL_STORAGE_KEY = 'nexusSearchPreference';
 
 export const setSearchPreferenceToLocalStore: ActionCreator<ThunkAction> = (
   searchPreference: string
