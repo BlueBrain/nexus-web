@@ -95,12 +95,10 @@ function constructUnDeprecateUrl(
   const primaryResourceType = resource['@type'] || '';
   const resourcePathSegment = determineResourcePathSegment(primaryResourceType);
   const slashPrefix = Array.isArray(primaryResourceType)
-    ? primaryResourceType.some(type =>
-        Object.keys(typePathMapping).includes(type)
-      )
+    ? primaryResourceType.some(type => type in typePathMapping)
       ? ''
       : '_/'
-    : Object.keys(typePathMapping).includes(primaryResourceType)
+    : primaryResourceType in typePathMapping
     ? ''
     : '_/';
 
