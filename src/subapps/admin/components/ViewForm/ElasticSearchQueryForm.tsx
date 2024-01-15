@@ -20,7 +20,7 @@ const ListItem = List.Item;
  *
  * In the case of ES, the reason message is nested within an error object
  */
-type NexusESError = {
+export type NexusESError = {
   reason?: string;
   error?: {
     reason?: string;
@@ -30,7 +30,7 @@ type NexusESError = {
 // TODO this needs to be broken into Input, Result, and Form components.
 const ElasticSearchQueryForm: React.FunctionComponent<{
   query: object;
-  response: ElasticSearchViewQueryResponse<any> | null;
+  response?: ElasticSearchViewQueryResponse<any> | null;
   busy: boolean;
   error: NexusESError | null;
   from: number;
@@ -161,7 +161,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
               current,
               pageSize,
               onChange: onPaginationChange,
-              position: 'both',
+              position: 'bottom',
               showSizeChanger: true,
               onShowSizeChange: changePageSize,
             }}
@@ -169,11 +169,13 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
               <ListItem>
                 {(result && (
                   <ReactJson
+                    collapsed
                     src={result}
                     name={null}
                     enableClipboard={false}
                     displayObjectSize={false}
                     displayDataTypes={false}
+                    style={{ width: '100%' }}
                   />
                 )) ||
                   ''}

@@ -3,3 +3,18 @@
     flex-grow: 1;
   }
 }
+
+.query-editor__header {
+  padding: 1.5rem 0;
+  h3 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: .25rem;
+  }
+}
+
+.query-tabs {
+  .ant-tabs-nav {
+    padding: 0 !important;
+  }
+}

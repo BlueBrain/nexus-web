@@ -17,7 +17,9 @@ import CodeEditor from './CodeEditor';
 import { LinterIssue } from './customLinter';
 import './ResourceEditor.scss';
 import ResourceResolutionCache from './ResourcesLRUCache';
-import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
+import CodeEditor from './CodeEditor';
+
+import './ResourceEditor.scss';
 
 export interface ResourceEditorProps {
   busy?: boolean;

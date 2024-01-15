@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
@@ -16,7 +16,7 @@ const QueryEditor: React.FC<{
   orgLabel: string;
   projectLabel: string;
   onUpdate: () => void;
-}> = ({ orgLabel, projectLabel, onUpdate }) => {
+}> = ({ orgLabel, projectLabel }) => {
   const subapp = useOrganisationsSubappContext();
   const history = useHistory();
   const match = useRouteMatch<{
@@ -26,10 +26,10 @@ const QueryEditor: React.FC<{
   }>();
   const nexus = useNexusContext();
   const notification = useNotification();
-  const [activeKey, setActiveKey] = React.useState('sparql');
-  const [loading, setLoading] = React.useState(true);
+  const [activeKey, setActiveKey] = useState('sparql');
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (match.params.viewId) {
       nexus.View.get(orgLabel, projectLabel, match.params.viewId)
         .then(result => {
@@ -65,12 +65,15 @@ const QueryEditor: React.FC<{
   }
   return (
     <div className="query-editor">
-      <h3>Query Browser</h3>
-      <p>
-        View resources in your project using pre-defined query-helper lists.
-      </p>
+      <div className="query-editor__header">
+        <h3>Query Browser</h3>
+        <p>
+          View resources in your project using pre-defined query-helper lists.
+        </p>
+      </div>
       <div className="project-menu__controls">
         <Tabs
+          className="query-tabs"
           onChange={tab => {
             setActiveKey(tab);
             history.replace(

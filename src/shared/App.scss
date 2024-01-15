@@ -1,6 +1,9 @@
 @import './antd-styles.scss';
 @import './lib.scss';
 @import 'styles/project-banner.scss';
+@import './antd-styles.scss';
+@import './lib.scss';
+@import 'styles/project-banner.scss';
 
 .view-container {
   padding: 3em;
@@ -15,6 +18,7 @@
 
   &.resource-view {
     max-width: 1320px;
+    background-color: #050a56;
     background-color: #050a56;
     min-height: calc(100vh - 40px);
     transition: background-image ease-out 1s;

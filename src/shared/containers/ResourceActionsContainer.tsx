@@ -1,5 +1,7 @@
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
-import { Resource } from '@bbp/nexus-sdk';
+import { connect } from 'react-redux';
+import { push } from 'connected-react-router';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { push } from 'connected-react-router';
 import { connect } from 'react-redux';

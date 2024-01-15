@@ -3,6 +3,8 @@ import { Realm } from '@bbp/nexus-sdk';
 import { Button, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router';
 import { performLogin } from '../../shared/store/actions/auth';
 import { setPreferredRealm } from '../../shared/store/actions/config';
@@ -38,6 +40,7 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
+  const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
   const { layoutSettings, serviceAccountsRealm } = useSelector(
     (state: RootState) => state.config

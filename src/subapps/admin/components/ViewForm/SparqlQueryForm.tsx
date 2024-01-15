@@ -9,11 +9,11 @@ import './view-form.scss';
 
 const SparqlQueryForm: FC<{
   query: string;
-  response: SparqlViewQueryResponse | null;
+  response?: SparqlViewQueryResponse | null;
   busy: boolean;
   error: NexusSparqlError | null;
   resultsComponent?(props: {
-    response: SparqlViewQueryResponse | null;
+    response?: SparqlViewQueryResponse | null;
     busy: boolean;
     error: NexusSparqlError | null;
   }): React.ReactElement;
@@ -26,20 +26,9 @@ const SparqlQueryForm: FC<{
   onQueryChange,
   resultsComponent = SparqlQueryResults,
 }): JSX.Element => {
-  const [input, setInput] = useState<string>(query);
-  const onChange = (text: string) => setInput(text);
-
   return (
     <div className="view-form">
-      <SparqlQueryInput value={input} onChange={onChange} />
-      <Button
-        type="primary"
-        onClick={() => {
-          onQueryChange(input);
-        }}
-      >
-        Execute SPARQL query
-      </Button>
+      <SparqlQueryInput value={query} onChange={onQueryChange} />
       {resultsComponent({ error, busy, response })}
     </div>
   );

@@ -1,16 +1,19 @@
 import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import * as Sentry from '@sentry/browser';
-import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
-import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
-import { ColumnsType } from 'antd/es/table';
-import { isArray, isString, orderBy } from 'lodash';
 import { useMutation, useQuery } from 'react-query';
+import { Table, Button, Row, Col, notification, Tooltip, Badge } from 'antd';
+import { isArray, isString, orderBy } from 'lodash';
+import { ColumnsType } from 'antd/es/table';
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { PromisePool } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
+import * as Sentry from '@sentry/browser';
+import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+
 import {
   IndexingErrorResults,
   ViewIndexingErrors,

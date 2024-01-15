@@ -3,13 +3,10 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ProjectResponseCommon,
   Statistics,
-} from '@bbp/nexus-sdk';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Empty, Popover, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
-import { useRouteMatch } from 'react-router';
+} from '@bbp/nexus-sdk/es';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { Tabs, Popover, Empty } from 'antd';
+import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
 import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
@@ -27,12 +24,14 @@ import SettingsContainer from '../../subapps/admin/containers/SettingsContainer'
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 import './styles.scss';
 
-const ProjectView: React.FC = () => {
+import './styles.scss';
+
+const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
-  const subApp = useOrganisationsSubappContext();
+  const subapp = useOrganisationsSubappContext();
 
   const match = useRouteMatch<{
     orgLabel: string;
@@ -270,6 +269,7 @@ const ProjectView: React.FC = () => {
           )}
           <div className="tabs-container">
             <Tabs
+              className="project-tabs"
               onChange={handleTabChange}
               activeKey={activeKey}
               items={[
