@@ -5,7 +5,7 @@ import {
   Resource,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
+import { Button, Modal, Menu, Popover, Empty } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -193,9 +193,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     Resource<any>
   >();
   const [dashboards, setDashboards] = React.useState<Resource<any>[]>([]);
-  const [dashboardSpinner, setDashboardSpinner] = React.useState<boolean>(
-    false
-  );
+  const [, setDashboardSpinner] = React.useState<boolean>(false);
   const [selectedKeys, setSelectedKeys] = React.useState<Resource<any>[]>([]);
   const [queryParams, setQueryString] = useQueryString();
   const [showDataTableEdit, setShowDataTableEdit] = React.useState(false);
@@ -328,7 +326,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<DeleteOutlined />}
-              onClick={e => {
+              onClick={() => {
                 setDeleteDashBoardConfirmation(true);
               }}
             >
@@ -340,7 +338,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               type="default"
               icon={<EditOutlined />}
               data-testid="edit-dashboard"
-              onClick={e => {
+              onClick={() => {
                 if (selectedDashboard && 'dataTable' in selectedDashboard) {
                   setShowDataTableEdit(true);
                 } else {
@@ -364,7 +362,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           block
           type="default"
           icon={<PlusOutlined />}
-          onClick={e => {
+          onClick={() => {
             setShowModal(true);
           }}
         >
@@ -376,7 +374,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<DeleteOutlined />}
-              onClick={e => {
+              onClick={() => {
                 setDeleteConfirmation(true);
               }}
             >
@@ -475,7 +473,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }
         }
       })
-      .catch(e => {
+      .catch(() => {
         notification.error({
           message: 'Failed to fetch dashboards',
         });
@@ -578,7 +576,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             setSelectedWorkspace(values[0]);
           }
         })
-        .catch(e => {
+        .catch(() => {
           notification.error({
             message: 'Failed to fetch workpaces',
           });

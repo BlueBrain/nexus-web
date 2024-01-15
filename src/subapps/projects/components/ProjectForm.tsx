@@ -3,6 +3,7 @@ import { Form, Input, DatePicker, Radio, Row, Col, Button, Spin } from 'antd';
 import moment from 'moment';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { isEmptyInput } from '../utils';
+import dayjs from 'dayjs';
 
 import './ProjectForm.scss';
 
@@ -52,7 +53,7 @@ const ProjectForm: React.FC<{
   const [dueDate, setDueDate] = React.useState<any>(
     project ? project.dueDate : null
   );
-  const [dateError, setDateError] = React.useState<boolean>(false);
+  const [, setDateError] = React.useState<boolean>(false);
   const [visibility, setVisibility] = React.useState(
     project && project.visibility ? project.visibility : 'public'
   );
@@ -115,7 +116,7 @@ const ProjectForm: React.FC<{
   };
 
   const onChangeDate = (date: any) => {
-    setDueDate(moment(date).format());
+    setDueDate(dayjs(date).format());
     setDateError(false);
   };
 
@@ -184,7 +185,7 @@ const ProjectForm: React.FC<{
               </Item>
               <Item label="Provisional End Date">
                 <DatePicker
-                  value={dueDate ? moment(dueDate) : null}
+                  value={dueDate ? dayjs(dueDate) : null}
                   onChange={onChangeDate}
                   allowClear={false}
                 />

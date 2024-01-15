@@ -1,7 +1,6 @@
 import { RouteProps } from 'react-router';
 import { Organizations } from './admin';
 import StudioLegacy from './studioLegacy';
-import Workflow from './projects';
 import Search from './search';
 
 export type SubAppObject = {

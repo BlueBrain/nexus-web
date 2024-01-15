@@ -20,7 +20,7 @@ const ElasticSearchQueryInput: React.FunctionComponent<{
 }> = ({ value = '', onChange }) => {
   const [valid, setValid] = React.useState(true);
 
-  const handleChange = (editor: any, data: any, value: string) => {
+  const handleChange = (_editor: any, _data: any, value: string) => {
     try {
       JSON.parse(value);
       onChange && onChange(value);

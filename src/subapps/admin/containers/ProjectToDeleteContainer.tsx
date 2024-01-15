@@ -20,13 +20,11 @@ const ProjectToDeleteContainer: React.FC<{
   }, []);
 
   const loadStatistics = async () => {
-    await nexus.Project.statistics(orgLabel, projectLabel)
-      .then((response: ProjectStatistics) => {
+    await nexus.Project.statistics(orgLabel, projectLabel).then(
+      (response: ProjectStatistics) => {
         setLastUpdated(response.lastProcessedEventDateTime);
-      })
-      .catch(error => {
-        // fail silently
-      });
+      }
+    );
   };
 
   const loadDeletionConfig = async () => {
@@ -34,7 +32,7 @@ const ProjectToDeleteContainer: React.FC<{
       .then((response: ProjectDeletionConfig) => {
         setDeletionConfig(response);
       })
-      .catch(error => {
+      .catch(() => {
         // fail silently
       });
   };

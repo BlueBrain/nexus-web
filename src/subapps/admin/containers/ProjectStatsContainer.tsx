@@ -38,7 +38,7 @@ const ProjectStatsContainer: React.FC<{
         setElements(elements);
         setGraphData(data);
       })
-      .catch(error => console.log('error'));
+      .catch(() => console.log('error'));
     return () => {
       setSelectedType(undefined);
     };

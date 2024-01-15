@@ -5,6 +5,7 @@ import { Resource } from '@bbp/nexus-sdk/es';
 import useAsyncCall, { AsyncCall } from '../../../shared/hooks/useAsynCall';
 import { SearchResponse } from '../../../shared/types/search';
 import { parseURL } from '../../../shared/utils/nexusParse';
+import { useState } from 'react';
 
 // TODO move to global default list
 const DEFAULT_PAGE_SIZE = 20;
@@ -45,7 +46,7 @@ export default function useSearchQueryFromStudio(
   paginationFrom: number,
   paginationSize: number
 ) {
-  const [searchProps, setSearchProps] = React.useState<UseSearchProps>({
+  const [searchProps, setSearchProps] = useState<UseSearchProps>({
     ...DEFAULT_SEARCH_PROPS,
   });
   const { sort = DEFAULT_SEARCH_PROPS.sort } = searchProps;

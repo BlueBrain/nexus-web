@@ -47,7 +47,7 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-export const RedirectAdmin: React.FunctionComponent = props => {
+export const RedirectAdmin: React.FunctionComponent = () => {
   const location = useLocation();
   const route = useRouteMatch();
   return (

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import JIRAPluginUI, {
