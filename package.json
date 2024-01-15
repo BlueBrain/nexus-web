@@ -190,7 +190,6 @@
     "sass": "^1.65.1",
     "stream-browserify": "^3.0.0",
     "style-loader": "^0.23.1",
-    "ts-jest": "27",
     "tsc": "^2.0.4",
     "tslint": "^5.13.1",
     "tslint-config-airbnb": "^5.11.1",
