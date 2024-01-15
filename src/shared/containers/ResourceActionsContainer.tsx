@@ -1,8 +1,6 @@
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
-import { push } from 'connected-react-router';
-import { connect } from 'react-redux';
 import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
 import ResourceActions from '../components/ResourceActions';
 import useNotification from '../hooks/useNotification';
@@ -81,7 +79,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
       } catch (error) {
         notification.error({
           message: `Could not deprecate ${getResourceLabel(resource)}`,
-          description: error,
+          description: JSON.stringify(error),
         });
       }
     },

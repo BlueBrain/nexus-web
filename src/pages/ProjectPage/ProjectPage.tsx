@@ -27,7 +27,9 @@ import SettingsContainer from '../../subapps/admin/containers/SettingsContainer'
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 import './styles.scss';
 
-import './styles.scss';
+import { useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
@@ -105,7 +107,7 @@ const ProjectView: React.FunctionComponent = () => {
     return `${base}browse`;
   };
 
-  const [, setState] = React.useState<{
+  const [, setState] = useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
@@ -115,16 +117,14 @@ const ProjectView: React.FunctionComponent = () => {
     error: null,
   });
 
-  const [activeKey, setActiveKey] = React.useState<string>(
-    tabFromPath(match.path)
-  );
+  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
 
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
-  React.useEffect(() => {
+  useEffect(() => {
     setActiveKey(tabFromPath(match.path));
   }, [match.path]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setState({
       project: project ? project : null,
       error: null,
