@@ -3,19 +3,15 @@ import { Realm } from '@bbp/nexus-sdk';
 import { Button, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import useClickOutside from '../../shared/hooks/useClickOutside';
+import { useHistory } from 'react-router';
 import { performLogin } from '../../shared/store/actions/auth';
 import { setPreferredRealm } from '../../shared/store/actions/config';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import { RootState } from '../../shared/store/reducers';
 import useClickOutside from '../../shared/hooks/useClickOutside';
-import * as authActions from '../../shared/store/actions/auth';
-import * as configActions from '../../shared/store/actions/config';
 import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
-import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
-import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.png';
+import BrainRegionsNexusPageVideo from '../../shared/videos/BrainRegionsNexusPage.mp4';
 
 import './styles.scss';
 
@@ -42,7 +38,6 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
-  const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
   const { layoutSettings, serviceAccountsRealm } = useSelector(
     (state: RootState) => state.config
@@ -66,6 +61,7 @@ const IdentityPage: React.FC<{}> = () => {
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
       <img
+        alt="Landing page poster image"
         src={layoutSettings.landingPosterImg || landingPosterImg}
         className="home-authentication-epfl"
       />
@@ -117,9 +113,7 @@ const IdentityPage: React.FC<{}> = () => {
                       onClick={e => {
                         e.preventDefault();
                         dispatch(setPreferredRealm(item.name));
-                        dispatch(
-                          performLogin(location.state as TLocationState)
-                        );
+                        dispatch(performLogin());
                       }}
                       className="connect-btn"
                       size="large"

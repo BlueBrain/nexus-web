@@ -33,7 +33,6 @@ const ProjectView: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
   const subApp = useOrganisationsSubappContext();
-  const { TabPane } = Tabs;
 
   const match = useRouteMatch<{
     orgLabel: string;
@@ -104,7 +103,7 @@ const ProjectView: React.FC = () => {
     return `${base}browse`;
   };
 
-  const [{ project, busy, error }, setState] = React.useState<{
+  const [, setState] = React.useState<{
     project: ProjectResponseCommon | null;
     busy: boolean;
     error: Error | null;
@@ -114,17 +113,9 @@ const ProjectView: React.FC = () => {
     error: null,
   });
 
-  const [refreshLists, setRefreshLists] = React.useState(false);
   const [activeKey, setActiveKey] = React.useState<string>(
     tabFromPath(match.path)
   );
-
-  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
-    false
-  );
-  const [deltaPlugins, setDeltaPlugins] = React.useState<{
-    [key: string]: string;
-  }>();
 
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
   React.useEffect(() => {
@@ -133,7 +124,7 @@ const ProjectView: React.FC = () => {
 
   React.useEffect(() => {
     setState({
-      project,
+      project: project ? project : null,
       error: null,
       busy: true,
     });
@@ -151,7 +142,7 @@ const ProjectView: React.FC = () => {
           description: error.message,
         });
         setState({
-          project,
+          project: project ? project : null,
           error,
           busy: false,
         });
@@ -169,14 +160,11 @@ const ProjectView: React.FC = () => {
   };
 
   const [refreshLists, setRefreshLists] = useState(false);
-  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
   const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
   const [statistics, setStatistics] = useState<Statistics>();
   const [deltaPlugins, setDeltaPlugins] = useState<{
     [key: string]: string;
   }>();
-
-  const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
   useEffect(() => {
     setActiveKey(tabFromPath(match.path));
@@ -216,10 +204,7 @@ const ProjectView: React.FC = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
-        // do nothing
-      });
+      .then(versions => setDeltaPlugins({ ...versions.plugins }));
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
@@ -329,8 +314,8 @@ const ProjectView: React.FC = () => {
                       permissions={['files/write']}
                       noAccessComponent={() => (
                         <Empty>
-                          You don't have the access to create/upload. Please
-                          contact the Administrator for access.
+                          You don't have access to create or upload resources.
+                          Please contact the Administrator for access.
                         </Empty>
                       )}
                     >
@@ -385,40 +370,54 @@ const ProjectView: React.FC = () => {
                     />
                   ),
                 },
+                // Conditional tabs based on plugins
                 ...(deltaPlugins &&
                 'jira' in deltaPlugins &&
                 isUserInSupportedJiraRealm &&
-                !jiraInaccessibleBecauseOfVPN && (
-                  <TabPane tab="Jira" key="jira">
-                    <JiraPluginProjectContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  </TabPane>
-                )}
-              {deltaPlugins && 'graph-analytics' in deltaPlugins && (
-                <TabPane tab="Graph Analytics" key="graph-analytics">
-                  <ProjectStatsContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </TabPane>
-              )}
-              <TabPane
-                tab={
-                  <span>
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      to={`/studios/${orgLabel}/${projectLabel}/studios`}
-                    >
-                      <SelectOutlined /> Studios
-                    </Link>
-                  </span>
-                }
-                key="studios"
-              ></TabPane>
-            </Tabs>
+                !jiraInaccessibleBecauseOfVPN
+                  ? [
+                      {
+                        key: 'jira',
+                        label: 'Jira',
+                        children: (
+                          <JiraPluginProjectContainer
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                          />
+                        ),
+                      },
+                    ]
+                  : []),
+                ...(deltaPlugins && 'graph-analytics' in deltaPlugins
+                  ? [
+                      {
+                        key: 'graph-analytics',
+                        label: 'Graph Analytics',
+                        children: (
+                          <ProjectStatsContainer
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                          />
+                        ),
+                      },
+                    ]
+                  : []),
+                {
+                  key: 'studios',
+                  label: (
+                    <span>
+                      <Link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        to={`/studios/${orgLabel}/${projectLabel}/studios`}
+                      >
+                        <SelectOutlined /> Studios
+                      </Link>
+                    </span>
+                  ),
+                },
+              ]}
+            />
           </div>
         </>
       )}

@@ -3,7 +3,7 @@ import { ExpandedResource, IncomingLink, Resource } from '@bbp/nexus-sdk';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
 import { intersection, isArray } from 'lodash';
-import * as queryString from 'query-string';
+import queryString from 'query-string';
 import { useEffect, useState, ReactElement, FC } from 'react';
 import Helmet from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,6 @@ import {
   useRouteMatch,
 } from 'react-router';
 import { Link } from 'react-router-dom';
-import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
 import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
 import ImagePreview from '../components/ImagePreview/ImagePreview';
 import Preview from '../components/Preview/Preview';
@@ -41,6 +40,11 @@ import {
   TErrorWithType,
   TUpdateResourceFunctionError,
 } from '../../utils/types';
+import { useMutation } from 'react-query';
+import ResourcePlugins from './ResourcePlugins';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
+import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -735,26 +739,20 @@ const ResourceViewContainer: FC<{
                     {error.message}
                   </Typography.Paragraph>
                   {error.rejections && (
-                    <Collapse
-                      bordered={false}
-                      ghost
-                      items={[
-                        {
-                          key: '1',
-                          label: 'More detail...',
-                          children: (
-                            <>
-                              <ul>
-                                {error.rejections.map((el, ix) => (
-                                  <li key={ix}>{el.reason}</li>
-                                ))}
-                              </ul>
-
+                    <Collapse bordered={false} ghost>
+                      <Collapse.Panel header="More detail..." key="1">
+                        <>
+                          <ul>
+                            {error.rejections.map((rejection, index) => (
+                              <li key={index}>{rejection.reason}</li>
+                            ))}
+                          </ul>
                           <p>
                             For further information please refer to the API
                             documentation,{' '}
                             <a
                               target="_blank"
+                              rel="noopener noreferrer"
                               href="https://bluebrainnexus.io/docs/delta/api"
                             >
                               https://bluebrainnexus.io/docs/delta/api
