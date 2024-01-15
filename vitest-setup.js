@@ -1,4 +1,3 @@
-fetch = require('node-fetch');
 import { vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 
@@ -34,10 +33,10 @@ vi.mock('lru-cache', () => {
   return {
     __esModule: true,
     default: vi.fn().mockImplementation(() => {
-      return ({
+      return {
         fetch: vi.fn(),
         clear: vi.fn(),
-      })
-    })
-  }
+      };
+    }),
+  };
 });
