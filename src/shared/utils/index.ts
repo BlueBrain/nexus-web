@@ -339,7 +339,7 @@ export function getOrgAndProjectFromProjectId(
   projectId: string
 ): TOrgAndProject {
   if (projectId) {
-    const [projectLabel, orgLabel, ...rest] = projectId.split('/').reverse();
+    const [projectLabel, orgLabel] = projectId.split('/').reverse();
     return {
       orgLabel,
       projectLabel,
@@ -425,7 +425,7 @@ export const matchResultUrls = (entry: string) => {
   }
   if (resourceUrlPattern.test(entry)) {
     const labels = entry.match(resourceUrlPattern) as string[];
-    const [, orgLabel, projectLabel, schema, resourceId] = labels;
+    const [, orgLabel, projectLabel, resourceId] = labels;
     return `/${orgLabel}/${projectLabel}/resources/${resourceId}`;
   }
   if (fileUrlPattern.test(entry)) {

@@ -1,6 +1,5 @@
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { deltaPath } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
 import userEvent, { UserEvent } from '@testing-library/user-event';
@@ -14,7 +13,6 @@ import {
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { createMemoryHistory } from 'history';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { Route, Router } from 'react-router-dom';
 import configureStore from '../../../../shared/store';
@@ -59,6 +57,7 @@ describe('ViewsSubView', () => {
         <QueryClientProvider client={queryClient}>
           <Router history={history}>
             <Route path="/orgs/:orgLabel/:projectLabel/settings">
+              {/* @ts-ignore */}
               <NexusProvider nexusClient={nexus}>
                 <ViewsSubView />
               </NexusProvider>
@@ -83,7 +82,6 @@ describe('ViewsSubView', () => {
       expect(errorRows.length).toEqual(2);
       screen.getByText(/2 Total errors/i, { selector: 'h3' });
 
-      const errorRow1 = getErrorRow('Mock Error 1');
       const errorRow2 = getErrorRow('Mock Error 2');
       expect(errorRow2).toBeTruthy();
     });

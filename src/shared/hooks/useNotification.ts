@@ -111,7 +111,7 @@ export const getNotificationContextValue = () => {
         duration: messageDuration(notificationMessage.type),
         placement: notificationMessage.position ?? 'topRight',
         onClose: () => {
-          setNotifications(notification => {
+          setNotifications(() => {
             const { [message]: _, ...withoutMessageState } = notifications;
             return withoutMessageState;
           });
