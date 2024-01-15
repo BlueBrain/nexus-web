@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import fetch from 'node-fetch';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';

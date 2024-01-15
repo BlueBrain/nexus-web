@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest';
 import * as React from 'react';
-import fetch from 'node-fetch';
 import { rest } from 'msw';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';

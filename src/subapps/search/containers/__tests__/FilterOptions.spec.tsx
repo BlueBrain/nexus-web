@@ -1,7 +1,6 @@
 import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import fetch from 'node-fetch';
 import {
   render,
   fireEvent,

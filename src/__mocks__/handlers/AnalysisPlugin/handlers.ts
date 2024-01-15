@@ -4,7 +4,7 @@ import sample1 from '../../../shared/components/AnalysisPlugin/sample-images/sam
 
 export const sparqlAnalysisReportNoResultsHandler = rest.post(
   deltaPath('/views/:orgLabel/:projectLabel/graph/sparql'),
-  (req, res, ctx) => {
+  (_req, res, ctx) => {
     const mockResponse = {
       head: {
         vars: [

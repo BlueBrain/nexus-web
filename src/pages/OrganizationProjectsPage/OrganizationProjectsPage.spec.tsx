@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import { renderHook } from '@testing-library/react-hooks/dom';
-import fetch from 'node-fetch';
 import { NexusProvider } from '@bbp/react-nexus';
 import {
   Organization,

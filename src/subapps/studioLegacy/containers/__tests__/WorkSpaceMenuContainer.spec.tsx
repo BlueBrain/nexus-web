@@ -4,7 +4,6 @@ import { NexusProvider } from '@bbp/react-nexus';
 import { createBrowserHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { Provider } from 'react-redux';
-import fetch from 'node-fetch';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ConnectedRouter } from 'connected-react-router';
 import WorkSpaceMenu, { StudioResource } from '../WorkspaceMenuContainer';
@@ -20,8 +19,7 @@ import {
   tableHandler,
   workspaceHandler,
 } from './WorkSpaceMenuContainerHandlers';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import { RenderResult, act } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
