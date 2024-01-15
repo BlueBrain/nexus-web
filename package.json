@@ -62,6 +62,7 @@
     "cytoscape": "^3.18.1",
     "cytoscape-avsdf": "^1.0.0",
     "cytoscape-cola": "^2.5.0",
+    "dayjs": "^1.11.10",
     "deep-object-diff": "^1.1.0",
     "express": "^4.18.2",
     "handlebars": "^4.7.7",
