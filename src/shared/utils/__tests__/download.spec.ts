@@ -135,7 +135,7 @@ describe('download function', () => {
         } as any)
     );
 
-    download('example', undefined, 'test data');
+    download('example', '', 'test data');
     expect(linkClickMock).toHaveBeenCalled();
     expect(mockCreateObjectURL).toHaveBeenCalled();
   });
