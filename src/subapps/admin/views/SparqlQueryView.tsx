@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { ViewList, DEFAULT_SPARQL_VIEW_ID, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import queryString from 'query-string';
-
 import { useOrganisationsSubappContext } from '..';
 import SparqlQueryContainer from '../containers/SparqlQuery';
 import { getResourceLabel } from 'shared/utils';
