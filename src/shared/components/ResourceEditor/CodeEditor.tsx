@@ -37,6 +37,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     },
     ref
   ) => {
+    const wrapperRef = useRef(null);
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
