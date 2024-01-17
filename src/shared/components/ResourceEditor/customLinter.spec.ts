@@ -56,6 +56,16 @@ describe('customLinter', () => {
     });
   });
 
+  it('should ignore a subfield starting with an underscore', () => {
+    const text = `{
+      "validField": {
+        "_thisShouldStillBeValid": "value"
+      }
+    }`;
+    const result = customLinter(text);
+    expect(result).toEqual([]);
+  });
+
   it('should ignore a field that has an underscore in the middle', () => {
     const text = `{
       "valid_Field": "value"
