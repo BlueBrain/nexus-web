@@ -91,9 +91,9 @@ async function transformer(html: string, req: Request) {
     .replace(
       '<!--app-manifest-->',
       `
-      <link rel="icon" href="${base}/public/favicon.ico" sizes="48x48" >
-      <link rel="icon" href="${base}/public/favicon.svg" sizes="any" type="image/svg+xml" >
-      <link rel="apple-touch-icon" href="${base}/public/apple-touch-icon-180x180.png" >
+      <link rel="icon" href="${base}/favicon.ico" sizes="48x48" >
+      <link rel="icon" href="${base}/favicon.svg" sizes="any" type="image/svg+xml" >
+      <link rel="apple-touch-icon" href="${base}/apple-touch-icon-180x180.png" >
       <link rel="manifest" href="${base}/web-manifest" >
       `
     )
