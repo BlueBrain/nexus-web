@@ -391,12 +391,12 @@ describe('Filter Options Container', () => {
     };
 
     server.use(
-      rest.post('https://localhost:3000/search/query*', (req, res, ctx) => {
+      rest.post('https://localhost:3000/search/query*', (_req, res, ctx) => {
         return res(ctx.status(200), ctx.json(mockFiltersResponse));
       })
     );
 
-    await act(() => {
+    act(() => {
       render(
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
@@ -449,7 +449,7 @@ describe('Filter Options Container', () => {
     };
 
     server.use(
-      rest.post('https://localhost:3000/search/query*', (req, res, ctx) => {
+      rest.post('https://localhost:3000/search/query*', (_req, res, ctx) => {
         return res(ctx.status(200), ctx.json(mockFiltersResponse));
       })
     );
@@ -495,7 +495,7 @@ describe('Filter Options Container', () => {
     };
 
     server.use(
-      rest.post('https://localhost:3000/search/query*', (req, res, ctx) => {
+      rest.post('https://localhost:3000/search/query*', (_req, res, ctx) => {
         return res(ctx.status(200), ctx.json(mockFiltersResponse));
       })
     );
