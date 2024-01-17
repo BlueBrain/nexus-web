@@ -24,23 +24,22 @@ export const customLinter = (text: string): LinterIssue[] => {
   try {
     json = JSON.parse(text);
   } catch (error) {
-    // Handle JSON parsing errors if necessary
-    console.error('Invalid JSON:', error);
     return linterErrors;
   }
 
   // We only iterate through top-level keys of the parsed object
-  for (const key in json) {
-    if (
-      Object.prototype.hasOwnProperty.call(json, key) &&
-      key.startsWith('_')
-    ) {
-      // Push an error for every top-level field starting with an underscore
-      linterErrors.push({
-        message:
-          'Top-level fields starting with an underscore are reserved for internal use',
-        line: findLineOfKey(text, key),
-      });
+  for (let key in json) {
+    if (Object.prototype.hasOwnProperty.call(json, key)) {
+      // Identify the actual key starting character by trimming the left side
+      const actualKeyStart = key.trimLeft()[0];
+
+      if (actualKeyStart === '_') {
+        linterErrors.push({
+          message:
+            'Top-level fields starting with an underscore are reserved for internal use',
+          line: findLineOfKey(text, key),
+        });
+      }
     }
   }
 
@@ -62,5 +61,5 @@ function findLineOfKey(text: string, key: string): number {
   if (matches && matches.index !== undefined) {
     return text.substring(0, matches.index).split('\n').length;
   }
-  return -1; // Return -1 if the key is not found (this shouldn't happen for valid JSON)
+  return -1;
 }

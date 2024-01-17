@@ -51,7 +51,7 @@ describe('customLinter', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       message:
-        'Fields starting with an underscore are reserved for internal use',
+        'Top-level fields starting with an underscore are reserved for internal use',
       line: 2,
     });
   });
