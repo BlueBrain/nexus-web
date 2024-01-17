@@ -1,38 +1,53 @@
-/**
- * Represents an issue identified by the linter.
- */
 export type LinterIssue = {
-  /** A message describing the issue. */
   message: string;
-  /** The line number where the issue occurs. */
   line: number;
 };
 
-/**
- * A custom linter function that checks for issues in a given text.
- *
- * The function specifically looks for fields in the text that start with an underscore,
- * which are considered as errors according to the linter's rules.
- *
- * @param text The text to be linted.
- * @returns An array of LinterIssue objects, each representing a specific issue found in the text.
- */
 export const customLinter = (text: string): LinterIssue[] => {
   const linterErrors: LinterIssue[] = [];
-  const lines = text.split('\n');
 
-  // Regex to match keys starting with an underscore followed by any character except a space or double quote
-  const regex = /"\s*_[^"\s]+"\s*:/g;
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (error) {
+    // Handle JSON parsing errors if necessary
+    console.error('Invalid JSON:', error);
+    return linterErrors;
+  }
 
-  lines.forEach((line, index) => {
-    if (regex.test(line)) {
+  // We only iterate through top-level keys of the parsed object
+  for (const key in json) {
+    if (
+      Object.prototype.hasOwnProperty.call(json, key) &&
+      key.startsWith('_')
+    ) {
+      // Push an error for every top-level field starting with an underscore
       linterErrors.push({
         message:
-          'Fields starting with an underscore are reserved for internal use',
-        line: index + 1,
+          'Top-level fields starting with an underscore are reserved for internal use',
+        line: findLineOfKey(text, key),
       });
     }
-  });
+  }
 
   return linterErrors;
 };
+
+/**
+ * Find the line number of the first occurrence of a key in the given text.
+ * @param text The text to search through.
+ * @param key The key whose line number we want to find.
+ * @return The line number where the key is first found.
+ */
+function findLineOfKey(text: string, key: string): number {
+  // Create a regex to escape the key and match it in the text
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`"${escapedKey}"\s*:`);
+  const matches = text.match(regex);
+
+  // Calculate the line number based on the position of the match
+  if (matches && matches.index !== undefined) {
+    return text.substring(0, matches.index).split('\n').length;
+  }
+  return -1; // Return -1 if the key is not found (this shouldn't happen for valid JSON)
+}
