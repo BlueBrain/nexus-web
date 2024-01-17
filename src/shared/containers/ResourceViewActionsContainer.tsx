@@ -335,7 +335,7 @@ const ResourceViewActionsContainer: React.FC<{
                         );
                       }}
                     >
-                      URL
+                      Fusion URL
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
@@ -355,20 +355,20 @@ const ResourceViewActionsContainer: React.FC<{
                         );
                       }}
                     >
-                      URL (with revision)
+                      Fusion URL (with revision)
                     </Menu.Item>
                     <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
-                      ID
+                      Resource ID
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
                         triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
                       }
                     >
-                      ID (with revision)
+                      Resource ID (with revision)
                     </Menu.Item>
                     <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
-                      Nexus address
+                      Nexus API endpoint
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
@@ -379,7 +379,7 @@ const ResourceViewActionsContainer: React.FC<{
                         )
                       }
                     >
-                      Nexus address (with revision)
+                      Nexus API endpoint (with revision)
                     </Menu.Item>
                   </Menu>
                 }
