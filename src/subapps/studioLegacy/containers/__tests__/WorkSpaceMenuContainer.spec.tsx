@@ -103,10 +103,9 @@ describe(
         component.unmount();
       }
 
-      component = await render(
+      component = render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
-            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
                 <StudioReactContext.Provider value={contextValue}>
@@ -122,6 +121,7 @@ describe(
         </Provider>
       );
 
+      let container: HTMLElement;
       container = component.container;
 
       user = userEvent.setup();
@@ -161,7 +161,6 @@ describe(
       await render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
-            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
                 <StudioReactContext.Provider value={contextValue}>
@@ -240,7 +239,7 @@ describe(
       expect(editForm).toBeInTheDocument();
     });
 
-    it('it displays dashboard edit/add/remove options on clicking dahsboard edit action', async () => {
+    it('it displays dashboard edit/add/remove options on clicking dashboard edit action', async () => {
       const dashboardAction = await screen.findByText('Dashboard');
       await fireEvent.click(dashboardAction);
       const addButton = await screen.findByText('Add');
