@@ -281,7 +281,11 @@ const ResourceViewActionsContainer: React.FC<{
   return (
     <Row gutter={5}>
       <Col>
-        <Dropdown dropdownRender={() => revisionMenuItems}>
+        <Dropdown
+          overlay={revisionMenuItems}
+          placement="bottom"
+          overlayStyle={{ overflowY: 'scroll', maxHeight: '500px' }}
+        >
           <Button>
             Revision {resource._rev}{' '}
             {revisionLabels(resource._rev).length > 0 &&
