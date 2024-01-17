@@ -207,7 +207,9 @@ app.get(`${base}/web-manifest`, (req, res) => {
 
 async function bind(app: Express, server: Server) {
   if (mode === 'development') {
-    console.info(`Fusion is up an running (development) ${PORT}`);
+    console.info(
+      `Fusion is up an running (development): http://localhost:${PORT}`
+    );
     const vite = await startServer(server);
     await injectStaticMiddleware(app, vite.middlewares);
     await injectDevIndexMiddleware(app, vite);
