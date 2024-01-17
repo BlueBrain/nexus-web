@@ -28,7 +28,7 @@ export const customLinter = (text: string): LinterIssue[] => {
   }
 
   // We only iterate through top-level keys of the parsed object
-  for (let key in json) {
+  for (const key in json) {
     if (Object.prototype.hasOwnProperty.call(json, key)) {
       // Identify the actual key starting character by trimming the left side
       const actualKeyStart = key.trimLeft()[0];
