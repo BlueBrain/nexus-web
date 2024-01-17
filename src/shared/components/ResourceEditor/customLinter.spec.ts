@@ -17,7 +17,7 @@ describe('customLinter', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       message:
-        'Fields starting with an underscore are reserved for internal use',
+        'Top-level fields starting with an underscore are reserved for internal use',
       line: 2,
     });
   });
@@ -32,12 +32,12 @@ describe('customLinter', () => {
     expect(result).toEqual([
       {
         message:
-          'Fields starting with an underscore are reserved for internal use',
+          'Top-level fields starting with an underscore are reserved for internal use',
         line: 2,
       },
       {
         message:
-          'Fields starting with an underscore are reserved for internal use',
+          'Top-level fields starting with an underscore are reserved for internal use',
         line: 4,
       },
     ]);
@@ -45,7 +45,7 @@ describe('customLinter', () => {
 
   it('should detect a field starting with an underscore with spaces', () => {
     const text = `{
-      "  _invalidField": "value"
+      " _invalidField": "value"
     }`;
     const result = customLinter(text);
     expect(result).toHaveLength(1);
@@ -72,7 +72,7 @@ describe('customLinter', () => {
     expect(result).toEqual([]);
   });
 
-  it('should throw an error if the field starts with an underscore followed by a special character', () => {
+  it('should detect a field starting with an underscore followed by a special character', () => {
     const text = `{
       "_!invalidField": "value"
     }`;
@@ -80,7 +80,7 @@ describe('customLinter', () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       message:
-        'Fields starting with an underscore are reserved for internal use',
+        'Top-level fields starting with an underscore are reserved for internal use',
       line: 2,
     });
   });
