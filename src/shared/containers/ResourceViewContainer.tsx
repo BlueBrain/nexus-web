@@ -67,14 +67,44 @@ function constructUnDeprecateUrl(
   latestResource: Resource,
   orgLabel: string,
   projectLabel: string
-) {
-  return `${apiEndpoint}/${
-    resource!['@type'] === 'File' ? 'files' : 'resources'
-  }/${orgLabel}/${projectLabel}/${
-    resource!['@type'] === 'File' ? '' : '_/'
-  }${encodeURIComponent(resource!['@id'])}/undeprecate?rev=${
-    latestResource!._rev
-  }`;
+): string {
+  const typePathMapping: { [key: string]: string } = {
+    File: 'files',
+    Storage: 'storages',
+    ElasticSearchView: 'views',
+    SparqlView: 'views',
+    CompositeView: 'views',
+    View: 'views',
+    Schema: 'schemas',
+  };
+
+  const determineResourcePathSegment = (
+    inputTypes: string | string[]
+  ): string => {
+    const types = Array.isArray(inputTypes) ? inputTypes : [inputTypes];
+
+    for (const type of types) {
+      if (type in typePathMapping) {
+        return typePathMapping[type];
+      }
+    }
+
+    return 'resources';
+  };
+
+  const primaryResourceType = resource['@type'] || '';
+  const resourcePathSegment = determineResourcePathSegment(primaryResourceType);
+  const slashPrefix = Array.isArray(primaryResourceType)
+    ? primaryResourceType.some(type => type in typePathMapping)
+      ? ''
+      : '_/'
+    : primaryResourceType in typePathMapping
+    ? ''
+    : '_/';
+
+  return `${apiEndpoint}/${resourcePathSegment}/${orgLabel}/${projectLabel}/${slashPrefix}${encodeURIComponent(
+    resource['@id']
+  )}/undeprecate?rev=${latestResource._rev}`;
 }
 
 const ResourceViewContainer: FC<{
@@ -770,10 +800,12 @@ const ResourceViewContainer: FC<{
                             <DeleteOutlined /> This resource is deprecated and
                             not modifiable.
                             {// Don't show the undo deprecated button if the resource is
-                            // of any unsupported resource. However, it needs to be shown
-                            // e.g. for custom types of resources.
+                            // of any unsupported resource (e.g. Resolver). However, it needs
+                            // to be shown e.g. for custom types of resources.
                             !resource['@type']?.includes(
-                              'View' || 'Resolver' || 'Storage' || 'Schema'
+                              'Resolver' ||
+                                'AggregateElasticSearchView' ||
+                                'AggregateSparqlView'
                             ) ? (
                               <>
                                 <br />
