@@ -1,6 +1,6 @@
 {
-  "name": "Nexus Fusion",
-  "short_name": "BBP-NF",
+  "name": "Blue Brain – Nexus Fusion",
+  "short_name": "Nexus Fusion",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
   "dir": "left",
   "lang": "en-US",
