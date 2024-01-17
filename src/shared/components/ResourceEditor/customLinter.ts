@@ -54,7 +54,6 @@ export const customLinter = (text: string): LinterIssue[] => {
  * @return The line number where the key is first found.
  */
 function findLineOfKey(text: string, key: string): number {
-  // Create a regex to escape the key and match it in the text
   const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`"${escapedKey}"\s*:`);
   const matches = text.match(regex);
