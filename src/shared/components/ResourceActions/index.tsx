@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Tooltip, Button, Popconfirm } from 'antd';
 import { Resource } from '@bbp/nexus-sdk';
+import useNotification from '../../hooks/useNotification';
 
 import './ResourceActions.less';
-import useNotification from '../../hooks/useNotification';
 
 export type ActionType = {
   name: string; // A unique name for your action type
