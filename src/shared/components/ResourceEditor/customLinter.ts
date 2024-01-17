@@ -1,5 +1,10 @@
+/**
+ * Represents an issue identified by the linter.
+ */
 export type LinterIssue = {
+  /** A message describing the issue. */
   message: string;
+  /** The line number where the issue occurs. */
   line: number;
 };
 
