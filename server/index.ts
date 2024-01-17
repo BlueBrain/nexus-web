@@ -1,17 +1,16 @@
-import path from 'node:path';
+import compression from 'compression';
+import express, { Express, NextFunction, Request, Response } from 'express';
+import morgan from 'morgan';
 import fs from 'node:fs';
 import { Server } from 'node:http';
-import compression from 'compression';
-import express, { Express, Request, Response, NextFunction } from 'express';
-import morgan from 'morgan';
-import { ViteDevServer } from 'vite';
+import path from 'node:path';
 import { Helmet } from 'react-helmet';
+import { ViteDevServer } from 'vite';
 import { base, getPreloadedState } from './constants';
 
 const NODE_ENV = process.env.NODE_ENV;
 const DISABLE_SSL = process.env.DISABLE_SSL;
 const PORT = Number(process.env.PORT) || 8000;
-// @ts-ignore
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = DISABLE_SSL;
 const mode = NODE_ENV === 'production' ? 'production' : 'development';
 const __dirname = new URL('.', import.meta.url).pathname;
@@ -32,7 +31,6 @@ async function startServer(server: Server) {
   });
 
   server.on('close', () => vite.close());
-
   return vite;
 }
 
@@ -190,7 +188,7 @@ app.get(`${base}/web-manifest`, (req, res) => {
     NODE_ENV === 'development' ? req.protocol : 'https'
   }://${host}${base}`;
 
-  const manifestTempalte = fs.readFileSync(
+  const manifestTemplate = fs.readFileSync(
     path.join(
       __dirname,
       NODE_ENV === 'development' ? '../public' : '',
@@ -199,7 +197,7 @@ app.get(`${base}/web-manifest`, (req, res) => {
     'utf-8'
   );
 
-  const manifest = manifestTempalte.replace('<!--start-url-->', startUrl);
+  const manifest = manifestTemplate.replace('<!--start-url-->', startUrl);
 
   res.header('content-type', 'application/json');
   return res.status(200).send(manifest);
@@ -208,7 +206,7 @@ app.get(`${base}/web-manifest`, (req, res) => {
 async function bind(app: Express, server: Server) {
   if (mode === 'development') {
     console.info(
-      `Fusion is up an running (development): http://localhost:${PORT}`
+      `✨ Fusion is up an running (development): http://localhost:${PORT}`
     );
     const vite = await startServer(server);
     await injectStaticMiddleware(app, vite.middlewares);

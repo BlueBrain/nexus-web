@@ -83,7 +83,6 @@ describe('workSpaceMenu', () => {
 
     const queryClient = new QueryClient();
 
-    let container: HTMLElement;
     let user: UserEvent;
     let component: RenderResult;
     const server = setupServer(...handlers);
@@ -103,6 +102,7 @@ describe('workSpaceMenu', () => {
       }
         <Provider store={store}>
           <ConnectedRouter history={history}>
+            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
                 <StudioReactContext.Provider value={contextValue}>
@@ -159,6 +159,7 @@ describe('workSpaceMenu', () => {
       await render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
+            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <QueryClientProvider client={queryClient}>
                 <StudioReactContext.Provider value={contextValue}>

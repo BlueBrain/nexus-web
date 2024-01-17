@@ -314,7 +314,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           block
           type="default"
           icon={<PlusOutlined />}
-          onClick={e => {
+          onClick={() => {
             setShowEditTableForm(true);
           }}
         >
@@ -385,7 +385,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               block
               type="default"
               icon={<EditOutlined />}
-              onClick={e => {
+              onClick={() => {
                 setShowEdit(true);
               }}
             >
@@ -578,7 +578,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
         })
         .catch(() => {
           notification.error({
-            message: 'Failed to fetch workpaces',
+            message: 'Failed to fetch workspaces',
           });
         });
     }

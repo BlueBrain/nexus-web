@@ -2,19 +2,19 @@
 
 .Header {
   display: flex;
-  justify-content: space-between;
-  box-sizing: content-box;
-  height: 52px;
-  background-color: $fusion-menu-color;
   position: fixed;
-  width: 100%;
+  justify-content: space-between;
   z-index: 1000;
+  box-sizing: content-box;
+  background-color: $fusion-menu-color;
+  width: 100%;
+  height: 52px;
 
   .selectors {
     display: flex;
+    flex-grow: 1;
     justify-content: flex-start;
     align-items: center;
-    flex-grow: 1;
     margin: 0 4px;
 
     .OrgDropdown {
@@ -35,36 +35,36 @@
 
     .menu-dropdown {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       align-self: center;
-      width: 100%;
-      color: $fusion-background-color;
       border: none;
-      height: 100%;
       border-radius: 0 !important;
-      padding: 5px 30px;
       background-color: $fusion-daybreak-7;
+      padding: 5px 30px;
+      width: 100%;
+      height: 100%;
+      color: $fusion-background-color;
 
       span {
-        user-select: none;
         margin-left: 5px;
+        user-select: none;
         text-transform: capitalize;
       }
     }
   }
 
   .menu-open-creation-panel {
-    cursor: pointer;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 0px;
+    cursor: pointer;
     background: #003a8c;
-    height: 100%;
-    min-width: 50px;
+    padding: 0px;
     width: 100%;
+    min-width: 50px;
+    height: 100%;
 
     &:hover {
       svg {
@@ -75,8 +75,8 @@
   }
 
   .ui-header-info-button {
-    margin: 5px 5px 4px;
     cursor: pointer;
+    margin: 5px 5px 4px;
     border: 1px solid $fusion-background-color;
     border-radius: $border-radius-base;
     padding: 5px;
@@ -84,24 +84,24 @@
   }
 
   .cart {
-    color: $fusion-background-color;
     background-color: $fusion-menu-color;
+    color: $fusion-background-color;
   }
 
   .copy-token-button {
-    height: 32px;
-    width: 115px;
-    border-radius: $border-radius-base;
-    outline-style: none;
-    line-height: 1rem;
-    cursor: pointe r;
-    font-size: 0.9rem;
-    text-align: left;
-    border: 1px solid $fusion-background-color;
     display: flex;
     align-items: center;
-    background-color: inherit;
+    cursor: pointe r;
     cursor: pointer;
+    outline-style: none;
+    border: 1px solid $fusion-background-color;
+    border-radius: $border-radius-base;
+    background-color: inherit;
+    width: 115px;
+    height: 32px;
+    font-size: 0.9rem;
+    line-height: 1rem;
+    text-align: left;
 
     .button-text {
       margin-left: 0.4rem;
@@ -110,30 +110,30 @@
   }
 
   .forge-button {
-    height: 32px;
-    padding: 0 7px;
-    border-radius: $border-radius-base;
-    outline-style: none;
-    line-height: 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    background-color: $alternative-button-color;
+    cursor: pointer;
     margin-left: 0.4rem;
+    outline-style: none;
+    border-radius: $border-radius-base;
+    background-color: $alternative-button-color;
+    padding: 0 7px;
+    height: 32px;
     color: #fff;
+    font-size: 0.9rem;
+    line-height: 1rem;
   }
 
   .logo-container {
     z-index: 21;
 
     &__logo {
+      display: flex;
       padding: 0.85rem;
       padding-left: 0.95rem;
-      display: flex;
-      letter-spacing: 1px;
-      color: #ffffff;
       height: 100%;
+      color: #ffffff;
+      letter-spacing: 1px;
     }
   }
 }
@@ -142,10 +142,10 @@
   top: 52px !important;
 
   .ant-dropdown-menu {
-    background-color: $fusion-main-color !important;
+    box-shadow: none !important;
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-    box-shadow: none !important;
+    background-color: $fusion-main-color !important;
     padding: 0 !important;
 
     .ant-dropdown-menu-item {
@@ -188,15 +188,15 @@
   border-radius: 0 !important;
 
   .ant-dropdown-menu {
-    background-color: $fusion-daybreak-3 !important;
-    box-shadow: none !important;
-    margin-left: 0px !important;
     margin-right: 0px !important;
+    margin-left: 0px !important;
+    box-shadow: none !important;
+    background-color: $fusion-daybreak-3 !important;
     padding: 0px 0px;
 
     .ant-dropdown-menu-item {
-      line-height: 30px !important;
       color: $fusion-daybreak-9 !important;
+      line-height: 30px !important;
     }
   }
 }
