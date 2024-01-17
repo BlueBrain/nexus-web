@@ -8,6 +8,15 @@ export type LinterIssue = {
   line: number;
 };
 
+/**
+ * A custom linter function that checks for issues in a given text.
+ *
+ * The function specifically looks for fields in the text that start with an underscore,
+ * which are considered as errors according to the linter's rules.
+ *
+ * @param text The text to be linted.
+ * @returns An array of LinterIssue objects, each representing a specific issue found in the text.
+ */
 export const customLinter = (text: string): LinterIssue[] => {
   const linterErrors: LinterIssue[] = [];
 
