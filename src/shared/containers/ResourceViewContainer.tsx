@@ -688,7 +688,7 @@ const ResourceViewContainer: FC<{
 
   return (
     <>
-      <div className="resource-details">
+      <div className="resource-details" data-testid="resource-details">
         <Helmet
           title={`${
             resource ? getResourceLabel(resource) : resourceId
