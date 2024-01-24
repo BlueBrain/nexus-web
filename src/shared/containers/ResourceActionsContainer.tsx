@@ -10,6 +10,8 @@ import { isFile, isView, toPromise } from '../utils/nexusMaybe';
 import RemoveTagButton from './RemoveTagButtonContainer';
 import ResourceDownloadButton from './ResourceDownloadContainer';
 import { useEffect, useState } from 'react';
+import { push } from 'connected-react-router';
+import { connect } from 'react-redux';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
