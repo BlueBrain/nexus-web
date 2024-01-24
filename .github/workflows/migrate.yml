@@ -2,7 +2,7 @@ name: Migration
 on:
   push:
     branches:
-      - develop-migratation-rebase
+      - develop-migration-rebase
 
 jobs:
   publish-migration:
