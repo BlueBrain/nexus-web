@@ -6,9 +6,7 @@ import React, { useReducer } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import DangerZoneAction, {
-  TDangerZoneActionProps,
   DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';

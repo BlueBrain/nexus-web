@@ -27,10 +27,6 @@ import SettingsContainer from '../../subapps/admin/containers/SettingsContainer'
 import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
 import './styles.scss';
 
-import { useQuery } from 'react-query';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-
 const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();

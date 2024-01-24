@@ -1,8 +1,6 @@
 import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
-import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import * as Sentry from '@sentry/browser';
-import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
+import { PromisePoolError } from '@supercharge/promise-pool';
 import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { NexusClient } from '@bbp/nexus-sdk/es';

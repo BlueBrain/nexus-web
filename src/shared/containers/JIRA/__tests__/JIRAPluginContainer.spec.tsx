@@ -1,12 +1,6 @@
 import '@testing-library/jest-dom';
 import * as React from 'react';
-import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk/es';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { rest } from 'msw';
-import { render, server, waitFor, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
-import * as React from 'react';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -631,6 +625,7 @@ describe('Jira Plugin Container', () => {
           <Provider store={store}>
             <NotificationContext.Provider value={notificationData}>
               <QueryClientProvider client={queryClient}>
+                {/* @ts-ignore */}
                 <NexusProvider nexusClient={nexus}>
                   <JIRAPluginContainer
                     projectLabel="projectLabel"
