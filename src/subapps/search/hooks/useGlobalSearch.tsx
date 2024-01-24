@@ -218,7 +218,7 @@ function renderColumnTitle(
           trigger="click"
           placement="bottom"
           title={filterMenu(field)}
-          getTooltipContainer={node =>
+          getTooltipContainer={() =>
             document.getElementsByClassName(
               'tooltipContainer'
             )[0] as HTMLElement
@@ -347,29 +347,29 @@ export type ESSortField = {
   direction: SortDirection;
   format?: string;
 };
-const fetchNexusSearchConfig = async ({ nexus }: { nexus: NexusClient }) => {
-  try {
-    const response = await nexus.Search.config();
-    const searchConfig = response as SearchConfig;
-    return searchConfig;
-  } catch (error) {
-    return error;
-  }
-};
-const fetchNexusSearchQuery = async ({
-  nexus,
-  esQuery,
-}: {
-  nexus: NexusClient;
-  esQuery: any;
-}) => {
-  try {
-    const queryResponse = await nexus.Search.query(esQuery);
-    return queryResponse;
-  } catch (error) {
-    return error;
-  }
-};
+// const fetchNexusSearchConfig = async ({ nexus }: { nexus: NexusClient }) => {
+//   try {
+//     const response = await nexus.Search.config();
+//     const searchConfig = response as SearchConfig;
+//     return searchConfig;
+//   } catch (error) {
+//     return error;
+//   }
+// };
+// const fetchNexusSearchQuery = async ({
+//   nexus,
+//   esQuery,
+// }: {
+//   nexus: NexusClient;
+//   esQuery: any;
+// }) => {
+//   try {
+//     const queryResponse = await nexus.Search.query(esQuery);
+//     return queryResponse;
+//   } catch (error) {
+//     return error;
+//   }
+// };
 type TGlobalSearch = {
   query: string;
   page: number;

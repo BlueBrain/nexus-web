@@ -52,7 +52,7 @@ const DashboardResultsContainer: React.FunctionComponent<{
         }
         history.push(path, { background: location });
       })
-      .catch(error => {
+      .catch(() => {
         message.error(`Resource ${self} could not be found`);
       });
   };

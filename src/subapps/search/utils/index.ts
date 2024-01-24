@@ -57,7 +57,6 @@ const missingFilterValueAdder = (filterTerm: string) => {
 export const constructNumberFilter = (
   body: bodybuilder.Bodybuilder,
   filters: string[],
-  filterType: string,
   filterTerm: string
 ) => {
   if (filters[0] === 'isMissing') {

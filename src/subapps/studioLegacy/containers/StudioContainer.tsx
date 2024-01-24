@@ -34,6 +34,7 @@ export type StudioResource = Resource<{
     customise: boolean;
     plugins: { key: string; expanded: boolean }[];
   };
+  children?: React.ReactNode; // Add this line
 }>;
 
 const StudioContainer: React.FunctionComponent = () => {
@@ -120,7 +121,7 @@ const StudioContainer: React.FunctionComponent = () => {
           plugins,
         }
       )
-        .then(response => {
+        .then(() => {
           fetchAndSetupStudio();
 
           message.success(

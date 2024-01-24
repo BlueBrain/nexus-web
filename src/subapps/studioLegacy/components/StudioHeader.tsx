@@ -9,6 +9,7 @@ const StudioHeader: React.FC<{
     template: string;
     data: object;
   }>;
+  children?: React.ReactNode;
 }> = ({ children, resource, markdownViewer: MarkdownViewer }) => {
   const { label, description } = resource;
   return (

@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { useSelector } from 'react-redux';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
+import { uniq } from 'lodash';
 import { clsx } from 'clsx';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
@@ -186,11 +186,7 @@ const SearchContainer: React.FC = () => {
       })
     );
   };
-  const onSelectAllChange = (
-    selected: boolean,
-    tSelectedRows: TRecord[],
-    changeRows: Resource[]
-  ) => {
+  const onSelectAllChange = (selected: boolean, changeRows: Resource[]) => {
     const changedRowsLS: TDataSource[] = [];
     changeRows.forEach(row => {
       const localStorageRows = toLocalStorageResources(row, layout);

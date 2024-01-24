@@ -257,7 +257,7 @@ const StudioEditorForm: React.FC<{
               }}
             >
               <Droppable droppableId="droppable">
-                {(provided, snapshot) => (
+                {(provided, _snapshot) => (
                   <div
                     className="plugin-options"
                     {...provided.droppableProps}

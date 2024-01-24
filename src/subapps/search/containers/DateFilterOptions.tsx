@@ -83,7 +83,7 @@ const DateFilterOptions: React.FC<{
             dateEnd ? moment(dateEnd) : null,
           ]}
           allowEmpty={[true, true]}
-          onChange={(date, dateString) => {
+          onChange={(_date, dateString) => {
             setDateStart(dateString[0]);
             setDateEnd(dateString[1]);
           }}

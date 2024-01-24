@@ -49,7 +49,7 @@ function useSearchPagination() {
   };
 
   const onPageSizeOptionChanged = React.useCallback(
-    (current, size) => {
+    (_current: any, size: number) => {
       if (defaultPageSizeOptions.includes(size)) {
         localStorage.setItem('searchPageSize', size.toString());
         setPagination(prevPagination => {
@@ -72,7 +72,7 @@ function useSearchPagination() {
   );
 
   const renderShowTotal = React.useCallback(
-    (total: number, range: [number, number]) =>
+    (total: number) =>
       pagination.trueTotalNumberOfResults <= ESMaxResultWindowSize ? (
         <span>
           {total.toLocaleString('en-US')} {pluralize('result', total)}

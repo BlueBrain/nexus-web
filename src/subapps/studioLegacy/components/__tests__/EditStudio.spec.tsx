@@ -1,6 +1,5 @@
 import { vi } from 'vitest';
 import EditStudio, { StudioResource } from '../EditStudio';
-import * as React from 'react';
 import { Context } from '@bbp/nexus-sdk';
 import { render, screen } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
