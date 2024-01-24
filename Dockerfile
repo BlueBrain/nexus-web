@@ -3,12 +3,12 @@ FROM timbru31/node-alpine-git:20 as builder
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web
 RUN apk add --no-cache \
-    build-base \
-    g++ \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev
+  build-base \
+  g++ \
+  cairo-dev \
+  jpeg-dev \
+  pango-dev \
+  giflib-dev
 
 RUN yarn
 RUN NODE_OPTIONS=--max-old-space-size=8192 yarn build
