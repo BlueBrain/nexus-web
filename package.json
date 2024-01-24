@@ -104,7 +104,7 @@
     "express-prom-bundle": "^5.0.2",
     "git-revision-webpack-plugin": "^3.0.6",
     "handlebars": "^4.7.7",
-    "history": "^4.7.2",
+    "history": "4.5.1",
     "http-proxy-middleware": "^2.0.1",
     "json2csv": "^5.0.5",
     "jwt-decode": "^2.2.0",
@@ -239,6 +239,9 @@
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-middleware": "^2.24.3",
     "webpack-node-externals": "^1.7.2"
+  },
+  "resolutions": {
+    "history": "4.5.1"
   },
   "url": "https://github.com/BlueBrain/nexus/issues/new?labels=fusion"
 }

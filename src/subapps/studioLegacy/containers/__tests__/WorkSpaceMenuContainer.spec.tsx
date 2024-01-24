@@ -3,7 +3,7 @@ import * as React from 'react';
 import { rest } from 'msw';
 import { act } from 'react-dom/test-utils';
 import { NexusProvider } from '@bbp/react-nexus';
-import { createBrowserHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { Provider } from 'react-redux';
 import fetch from 'node-fetch';
@@ -26,7 +26,7 @@ import { deltaPath } from '__mocks__/handlers/handlers';
 import { ButtonHTMLType } from 'antd/lib/button/button';
 
 describe('workSpaceMenu', () => {
-  const history = createBrowserHistory({ basename: '/' });
+  const history = createMemoryHistory({});
   const contextValue: StudioContextType = {
     orgLabel: 'org',
     projectLabel: 'project',
