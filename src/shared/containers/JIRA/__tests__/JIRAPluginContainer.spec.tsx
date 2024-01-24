@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import * as React from 'react';
 import '@testing-library/jest-dom';
 import { NexusProvider } from '@bbp/react-nexus';

@@ -83,8 +83,7 @@ describe('workSpaceMenu', () => {
 
     const queryClient = new QueryClient();
 
-    let user: UserEvent;
-    let component: RenderResult;
+    const component: RenderResult;
     const server = setupServer(...handlers);
 
     // establish API mocking before all tests
