@@ -21,19 +21,5 @@ export const antdTheme: ThemeConfig = {
       darkSubMenuItemBg: '#050a56',
     },
   },
-  components: {
-    Modal: {
-      titleColor: '#333333', // $fusion-primary-text-color,
-      contentBg: '#f2f2f2',
-      headerBg: '#f2f2f2',
-    },
-    Table: {
-      headerColor: '#8c8c8c', // $fusion-neutral-7
-    },
-    Menu: {
-      darkItemBg: '#050a56',
-      darkSubMenuItemBg: '#050a56',
-    },
-  },
   hashed: false,
 };

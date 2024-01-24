@@ -22,16 +22,16 @@
 
     &.background {
       max-width: 60%;
-      background-image: linear-gradient(
-        315deg,
-        @primary-card 0%,
-        @subtle-white 74%
-      );
+      // background-image: linear-gradient(
+      //   315deg,
+      //   @primary-card 0% 50% 50% 100%,
+      //   @subtle-white 74%
+      // );
 
       .resource-details {
         padding: 1em;
         width: 100%;
-        background-color: @background-color-subtle;
+        // background-color: @background-color-subtle;
       }
     }
 
