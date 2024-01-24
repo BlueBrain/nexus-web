@@ -175,226 +175,116 @@ const Preview: React.FC<{
           },
           body: JSON.stringify(payload),
         }
-      }
-      const sizeInMB = (parseInt(contentSize.value, 10) / 1000000).toFixed(2);
-      if (sizeInMB !== '0.00') {
-        return `${sizeInMB} MB`;
-      }
+      );
+    } catch (error) {
+      notification.error({
+        message: 'Failed to download the file',
+        description: (error as TError).reason || (error as TError).message,
+      });
     }
-    const sizeInMB = (parseInt(contentSize.value, 10) / 1000000).toFixed(2);
-    if (sizeInMB !== '0.00') {
-      return `${sizeInMB} MB`;
+    const archive = (await nexus.Archive.get(
+      orgLabel,
+      projectLabel,
+      archiveId,
+      {
+        as: 'x-tar',
+      }
+    )) as string;
+    const blob = new Blob([archive]);
+    downloadBlobHelper(blob, `${archiveId}.tar.gz`);
+  };
+
+  const downloadButton = (disabled: boolean) => {
+    const isDisabled = disabled || selectedRows.length <= 0;
+    const disabledToolTip =
+      selectedRows.length <= 0
+        ? 'Please Select files to download'
+        : 'You don’t have the required permissions to create an archive for some of the selected resources. Please contact your project administrator to request to be granted the required archives/write permission.';
+    const btn = (
+      <Button
+        onClick={() => {
+          downloadMultipleFiles();
+        }}
+        style={{
+          float: 'right',
+          marginBottom: '10px',
+        }}
+        type={'primary'}
+        icon={<DownloadOutlined />}
+        disabled={isDisabled}
+      >
+        Download Selected File(s)
+      </Button>
+    );
+
+    if (isDisabled) {
+      return <Tooltip title={disabledToolTip}>{btn}</Tooltip>;
     }
 
-      return `${contentSize.value} Bytes`;
+    return btn;
+  };
+
+  const copyURI = (id: string) => {
+    try {
+      navigator.clipboard.writeText(id);
+      notification.success({ message: 'URL Copied to clipboard' });
+    } catch {
+      notification.error({
+        message: 'Failed to copy the url',
+      });
+    }
+  };
+
+  const downloadSingleFile = async (
+    nexus: NexusClient,
+    orgLabel: string,
+    projectLabel: string,
+    asset: { url: string; name: string }
+  ) => {
+    const resourceId = parseResourceId(asset.url);
+    let contentUrl = resourceId;
+    const options: GetFileOptions = {
+      as: 'blob',
     };
 
-    const isNexusFile = (url: string) => {
-      const resourceId = parseResourceId(url);
-      return resourceId !== '';
-    };
+    if (resourceId.includes('?rev=')) {
+      const [url, rev] = resourceId.split('?rev=');
+      contentUrl = url;
+      options.rev = parseInt(rev, 10);
+    }
 
-    const columns = [
-      {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: (text: string) => text || '-',
-      },
-      {
-        title: 'Asset Type / Encoding Format',
-        dataIndex: 'encodingFormat',
-        key: 'encodingFormat',
-        render: (text: string) => text || '-',
-      },
-      {
-        title: 'File Size',
-        dataIndex: 'contentSize',
-        key: 'contentSize',
-        render: renderFileSize,
-      },
-      {
-        title: 'Actions',
-        dataIndex: 'asset',
-        key: 'actions',
-        render: (asset: {
-          url: string;
-          name: string;
-          encodingFormat: string;
-        }) => {
-          return (
-            <Row gutter={5}>
-              <Col>
-                <Button
-                  onClick={() =>
-                    downloadSingleFile(nexus, orgLabel, projectLabel, asset)
-                  }
-                  disabled={!isNexusFile(asset.url)}
-                >
-                  Download
-                </Button>
-              </Col>
-              <Col>
-                <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
-              </Col>
-              <Col>
-                <Button
-                  onClick={() => setPreviewAsset(asset)}
-                  disabled={!isSupportedFile(asset)}
-                >
-                  Preview
-                </Button>
-              </Col>
-            </Row>
-          );
-        },
-      },
-    ];
-
-    const downloadMultipleFiles = async () => {
-      const resourcesPayload = selectedRows
-        .map(row => {
-          return row.asset.url;
-        })
-        .map(url => {
-          const resourceId = parseResourceId(url);
-          return {
-            resourceId,
-            '@type': 'File',
-            project: `${orgLabel}/${projectLabel}`,
-          };
-        });
-      const archiveId = uuidv4();
-      const payload: ArchivePayload = {
-        archiveId,
-        resources: resourcesPayload,
-      };
-
-      try {
-        // TODO: fix the SDK to handle empty response
-        await fetch(
-          `${apiEndpoint}/archives/${orgLabel}/${projectLabel}/${payload.archiveId}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
-            },
-            body: JSON.stringify(payload),
-          }
-        );
-      } catch (error) {
-        notification.error({
-          message: 'Failed to download the file',
-          description: (error as TError).reason || (error as TError).message,
-        });
-      }
-      const archive = (await nexus.Archive.get(
+    try {
+      const rawData = await nexus.File.get(
         orgLabel,
         projectLabel,
-        archiveId,
-        {
-          as: 'x-tar',
-        }
-      )) as string;
-      const blob = new Blob([archive]);
-      downloadBlobHelper(blob, `${archiveId}.tar.gz`);
-    };
-
-    const downloadButton = (disabled: boolean) => {
-      const isDisabled = disabled || selectedRows.length <= 0;
-      const disabledToolTip =
-        selectedRows.length <= 0
-          ? 'Please Select files to download'
-          : 'You don’t have the required permissions to create an archive for some of the selected resources. Please contact your project administrator to request to be granted the required archives/write permission.';
-      const btn = (
-        <Button
-          onClick={() => {
-            downloadMultipleFiles();
-          }}
-          style={{
-            float: 'right',
-            marginBottom: '10px',
-          }}
-          type={'primary'}
-          icon={<DownloadOutlined />}
-          disabled={isDisabled}
-        >
-          Download Selected File(s)
-        </Button>
+        nexusUrlHardEncode(contentUrl),
+        options
       );
-
-      if (isDisabled) {
-        return <Tooltip title={disabledToolTip}>{btn}</Tooltip>;
-      }
-
-      return btn;
-    };
-
-    const copyURI = (id: string) => {
-      try {
-        navigator.clipboard.writeText(id);
-        notification.success({ message: 'URL Copied to clipboard' });
-      } catch {
-        notification.error({
-          message: 'Failed to copy the url',
-        });
-      }
-    };
-
-    const downloadSingleFile = async (
-      nexus: NexusClient,
-      orgLabel: string,
-      projectLabel: string,
-      asset: { url: string; name: string }
-    ) => {
-      const resourceId = parseResourceId(asset.url);
-      let contentUrl = resourceId;
-      const options: GetFileOptions = {
-        as: 'blob',
-      };
-
-      if (resourceId.includes('?rev=')) {
-        const [url, rev] = resourceId.split('?rev=');
-        contentUrl = url;
-        options.rev = parseInt(rev, 10);
-      }
-
-      try {
-        const rawData = await nexus.File.get(
-          orgLabel,
-          projectLabel,
-          nexusUrlHardEncode(contentUrl),
-          options
-        );
-        downloadBlobHelper(rawData, asset.name);
-      } catch (error) {
-        notification.error({
-          message: 'Failed to download the file',
-          description: (error as TError).reason || (error as TError).message,
-        });
-      }
-    };
-
-    const downloadBlobHelper = (
-      rawData: string | NexusFile | Blob | FormData,
-      name: string
-    ) => {
-      const blob = new Blob([rawData as string], {
-        type: 'octet/stream',
+      downloadBlobHelper(rawData, asset.name);
+    } catch (error) {
+      notification.error({
+        message: 'Failed to download the file',
+        description: (error as TError).reason || (error as TError).message,
       });
-      const src = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.download = name;
-      document.body.appendChild(a);
-      a.href = src;
-      a.click();
-      URL.revokeObjectURL(src);
-    };
+    }
+  };
 
-    const getResourceAssets = (resource: Resource) => {
-      let data: any = [];
+  const downloadBlobHelper = (
+    rawData: string | NexusFile | Blob | FormData,
+    name: string
+  ) => {
+    const blob = new Blob([rawData as string], {
+      type: 'octet/stream',
+    });
+    const src = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.download = name;
+    document.body.appendChild(a);
+    a.href = src;
+    a.click();
+    URL.revokeObjectURL(src);
+  };
 
   const getResourceAssets = (resource: Resource) => {
     let data: any = [];
