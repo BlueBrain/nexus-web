@@ -81,10 +81,6 @@ const ResourceListContainer: React.FunctionComponent<{
       size: pageSize,
     };
 
-    if (searchValue) {
-      query.sort = undefined;
-    }
-
     if (searchValue !== list.query.q) {
       return setList({
         ...list,
@@ -174,8 +170,13 @@ const ResourceListContainer: React.FunctionComponent<{
             size: 10,
           }
         ),
-        nexus.Resource.list(orgLabel, projectLabel, list.query),
+        nexus.Resource.list(
+          orgLabel,
+          projectLabel,
+          list.query.q ? { ...list.query, sort: undefined } : list.query
+        ),
       ]);
+
       if (resourcesByIdOrSelf.status === 'fulfilled') {
         const resultsLength = resourcesByIdOrSelf.value.hits.hits.length;
         const hits = resourcesByIdOrSelf.value.hits.hits;
