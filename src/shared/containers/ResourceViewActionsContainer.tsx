@@ -281,11 +281,7 @@ const ResourceViewActionsContainer: React.FC<{
   return (
     <Row gutter={5}>
       <Col>
-        <Dropdown
-          overlay={revisionMenuItems}
-          placement="bottom"
-          overlayStyle={{ overflowY: 'scroll', maxHeight: '500px' }}
-        >
+        <Dropdown dropdownRender={() => revisionMenuItems}>
           <Button>
             Revision {resource._rev}{' '}
             {revisionLabels(resource._rev).length > 0 &&
@@ -337,59 +333,62 @@ const ResourceViewActionsContainer: React.FC<{
                             }
                           )}`;
 
-                        triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}`
-                        );
-                      }}
-                    >
-                      Fusion URL
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() => {
-                        const pathToResource = `${basePath}${generatePath(
-                          '/:orgLabel/:projectLabel/resources/:resourceId',
-                          {
-                            orgLabel,
-                            projectLabel,
-                            resourceId: encodedResourceId,
-                          }
-                        )}`;
+                          triggerCopy(
+                            `${window.location.origin.toString()}${pathToResource}`
+                          );
+                        },
+                      },
+                      {
+                        key: 'url_with_revision',
+                        label: 'URL (with revision)',
+                        onClick: () => {
+                          const pathToResource = `${basePath}${generatePath(
+                            '/:orgLabel/:projectLabel/resources/:resourceId',
+                            {
+                              orgLabel,
+                              projectLabel,
+                              resourceId: encodedResourceId,
+                            }
+                          )}`;
 
-                        triggerCopy(
-                          `${window.location.origin.toString()}${pathToResource}?rev=${
-                            resource._rev
-                          }`
-                        );
-                      }}
-                    >
-                      Fusion URL (with revision)
-                    </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
-                      Resource ID
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() =>
-                        triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
-                      }
-                    >
-                      Resource ID (with revision)
-                    </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
-                      Nexus API endpoint
-                    </Menu.Item>
-                    <Menu.Item
-                      onClick={() =>
-                        triggerCopy(
-                          self
-                            ? `${self}?rev=${resource ? resource._rev : ''}`
-                            : ''
-                        )
-                      }
-                    >
-                      Nexus API endpoint (with revision)
-                    </Menu.Item>
-                  </Menu>
-                }
+                          triggerCopy(
+                            `${window.location.origin.toString()}${pathToResource}?rev=${
+                              resource._rev
+                            }`
+                          );
+                        },
+                      },
+                      {
+                        key: 'id',
+                        label: 'ID',
+                        onClick: () => triggerCopy(resource['@id']),
+                      },
+                      {
+                        key: 'id_with_revision',
+                        label: 'ID (with revision)',
+                        onClick: () =>
+                          triggerCopy(
+                            `${resource['@id']}?rev=${resource._rev}`
+                          ),
+                      },
+                      {
+                        key: 'nexus_address',
+                        label: 'Nexus address',
+                        onClick: () => triggerCopy(self ? self : ''),
+                      },
+                      {
+                        key: 'nexus_address_with_revision',
+                        label: 'Nexus address (with revision)',
+                        onClick: () =>
+                          triggerCopy(
+                            self
+                              ? `${self}?rev=${resource ? resource._rev : ''}`
+                              : ''
+                          ),
+                      },
+                    ]}
+                  />
+                )}
               >
                 {copySuccess ? 'Copied!' : 'Copy'}
               </Dropdown.Button>
@@ -429,17 +428,15 @@ const ResourceViewActionsContainer: React.FC<{
                 name="tag"
                 rules={[
                   {
-                    pattern: /^[\x00-\x7F]/,
-                    message: 'Tag should include only ASCII characters.',
+                    required: true,
+                    whitespace: true,
+                    pattern: /^\S+$/g,
+                    message: 'Tag must not contains spaces',
                   },
                   {
-                    max: 64,
-                    message: 'Tag should not exceed 64 characters.',
-                  },
-                  {
-                    pattern: /^(?!latest$)/,
+                    pattern: /^[a-zA-Z0-9_-]+$/,
                     message:
-                      "Please choose a different name, 'latest' is a reserved word.",
+                      'Tag should include only letters, numbers, underscores, and dashes.',
                   },
                 ]}
                 style={{ marginBottom: 8 }}

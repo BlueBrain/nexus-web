@@ -177,108 +177,13 @@ const EditTableForm: React.FC<{
     return viewDetails;
   };
 
-      if (table?.projection) {
-        if (table.projection['@id']) {
-          setProjectionId(table.projection['@id']);
-        } else {
-          /* 
-              when no projection id it means search all of the
-              specified projection type
-              */
-          setProjectionId(`All_${table.projection['@type']}`);
-        }
+  const getView = async (viewId: string) =>
+    await nexus.View.get(orgLabel, projectLabel, encodeURIComponent(viewId));
 
-        const result = await querySparql(
-          nexus,
-          dataQuery,
-          viewResource,
-          !!projectionId,
-          projectionId === 'All_SparqlProjection' ? undefined : projectionId
-        )
-          .then(result => {
-            return result.headerProperties
-              .sort((a, b) => {
-                return a.title > b.title ? 1 : -1;
-              })
-              .map(x => ({
-                '@type': 'text',
-                name: x.dataIndex,
-                format: '',
-                enableSearch: false,
-                enableSort: false,
-                enableFilter: false,
-              }));
-          })
-          .catch(error => {
-            // Sometimes delta's error message can be in `name` or `reason` field.
-            const message =
-              error.message ??
-              error.reason ??
-              error.name ??
-              'Failed to fetch sparql table';
-            // @ts-ignore TODO: Remove ts-ignore when we support es2022 for ts.
-            throw new Error(message, {
-              cause: error.cause ?? error.details ?? error.stack,
-            });
-          });
-
-        return result;
-      },
-      {
-        onSuccess: data => {
-          updateTableDataError(null);
-          if (
-            isNil(configuration) ||
-            (configuration as TableColumn[]).length === 0
-          ) {
-            setConfiguration(data);
-          }
-        },
-        onError: (error: Error) => {
-          updateTableDataError(error);
-        },
-        enabled: preview,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        retry: false,
-      }
-    );
-
-    const onChangeName = (event: any) => {
-      setName(event.target.value);
-      setNameError(false);
-    };
-
-    const onChangeDescription = (event: any) => {
-      setDescription(event.target.value);
-    };
-
-    const updateTableDataError = (error: Error | null) => {
-      setTableDataError(error);
-      onError(error); // Notify parent of EditTableForm of the error.
-    };
-
-    const onClickSave = async () => {
-      if (
-        !name ||
-        isEmptyInput(name) ||
-        !viewName ||
-        (view && view.projections && !projectionId)
-      ) {
-        if (!name || isEmptyInput(name)) {
-          setNameError(true);
-        }
-        if (!viewName) {
-          setViewError(true);
-        }
-        if (view && view.projections && !projectionId) {
-          setProjectionError(true);
-        }
-
-        return;
-      }
-
-      let projection =
+  const setQueries = React.useCallback(
+    (viewDetails: View) => {
+      const viewTypes = [viewDetails['@type']].flat();
+      const projection =
         view &&
         view.projections &&
         (view.projections as {
@@ -598,7 +503,7 @@ const EditTableForm: React.FC<{
         if (table.projection['@id']) {
           setProjectionId(table.projection['@id']);
         } else {
-          /* 
+          /*
               when no projection id it means search all of the
               specified projection type
               */
