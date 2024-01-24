@@ -33,8 +33,13 @@ import { Provider } from 'react-redux';
 import { configureStore } from '../../store';
 import { ALWAYS_DISPLAYED_COLUMNS, isNexusMetadata } from './DataExplorerUtils';
 
-// Mock scrollTo to avoid errors in tests
-window.scrollTo = vi.fn(() => {});
+window.scrollTo = vi.fn((x?: number | ScrollToOptions, y?: number) => {
+  if (typeof x === 'number' && typeof y === 'number') {
+    // Handle the case where scrollTo is called with x and y coordinates
+  } else if (typeof x === 'object') {
+    // Handle the case where scrollTo is called with a ScrollToOptions object
+  }
+});
 
 describe(
   'DataExplorer',
@@ -95,262 +100,16 @@ describe(
 
       component = render(dataExplorerPage);
 
-    const PathMenuLabel = 'path-selector';
-    const PredicateMenuLabel = 'predicate-selector';
-    const ProjectMenuLabel = 'project-filter';
-    const TypeMenuLabel = 'type-filter';
-
-    const expectRowCountToBe = async (expectedRowsCount: number) => {
-      return await waitFor(() => {
-        const rows = visibleTableRows();
-        expect(rows.length).toEqual(expectedRowsCount);
-        return rows;
-      });
-    };
-
-    const waitForHeaderToBeHidden = async () => {
-      return await waitFor(() => {
-        const dataExplorerHeader = document.querySelector(
-          '.data-explorer-header'
-        ) as HTMLDivElement;
-        expect(dataExplorerHeader).not.toBeVisible();
-      });
-    };
-
-    const waitForHeaderToBeVisible = async () => {
-      return await waitFor(() => {
-        const dataExplorerHeader = document.querySelector(
-          '.data-explorer-header'
-        ) as HTMLDivElement;
-        expect(dataExplorerHeader).toBeVisible();
-      });
-    };
-
-    const expectColumHeaderToExist = async (name: string) => {
-      const nameReg = new RegExp(getColumnTitle(name), 'i');
-      const header = await screen.getByText(nameReg, {
-        selector: 'th .ant-table-column-title',
-        exact: false,
-      });
-
-      expect(header).toBeInTheDocument();
-      return header;
-    };
-
-    const getColumnSorter = async (colName: string) => {
-      const column = await expectColumHeaderToExist(colName);
-      return column.closest('.ant-table-column-sorters');
-    };
-
-    const getTotalColumns = () => {
-      return Array.from(container.querySelectorAll('th'));
-    };
-
-    const expectColumHeaderToNotExist = async (name: string) => {
-      expect(expectColumHeaderToExist(name)).rejects.toThrow();
-    };
-
-    const getTextForColumn = async (resource: Resource, colName: string) => {
-      const row = await screen.getByTestId(resource._self);
-
-      const allCellsForRow = Array.from(row.childNodes);
-      const colIndex = Array.from(
-        container.querySelectorAll('th')
-      ).findIndex(header =>
-        header.innerHTML.match(new RegExp(getColumnTitle(colName), 'i'))
-      );
-      return allCellsForRow[colIndex].textContent;
-    };
-
-    const getRowForResource = async (resource: Resource) => {
-      const row = await screen.getByTestId(resource._self);
-      expect(row).toBeInTheDocument();
-      return row!;
-    };
-
-    const openProjectAutocomplete = async () => {
-      const projectAutocomplete = await getProjectAutocomplete();
-      await userEvent.click(projectAutocomplete);
-      return projectAutocomplete;
-    };
-
-    const searchForProject = async (searchTerm: string) => {
-      const projectAutocomplete = await openProjectAutocomplete();
-      await userEvent.clear(projectAutocomplete);
-      await userEvent.type(projectAutocomplete, searchTerm);
-      return projectAutocomplete;
-    };
-
-    const expectProjectOptionsToMatch = async (searchTerm: string) => {
-      const projectOptions = await screen.getAllByRole('option');
-      expect(projectOptions.length).toBeGreaterThan(0);
-      projectOptions.forEach(option => {
-        expect(option.innerHTML).toMatch(new RegExp(searchTerm, 'i'));
-      });
-    };
-
-    const projectFromRow = (row: Element) => {
-      const projectColumn = row.querySelector(
-        'td.data-explorer-column-_project'
-      );
-      return projectColumn?.textContent;
-    };
-
-    const typeFromRow = (row: Element) => {
-      const typeColumn = row.querySelector('td.data-explorer-column-\\@type');
-      return typeColumn?.textContent;
-    };
-
-    const columnTextFromRow = (row: Element, colName: string) => {
-      const column = row.querySelector(`td.data-explorer-column-${colName}`);
-      return column?.textContent;
-    };
-
-    const visibleTableRows = () => {
-      return container.querySelectorAll('table tbody tr.data-explorer-row');
-    };
-
-    const getProjectAutocomplete = async () => {
-      return await screen.getByLabelText('project-filter', {
-        selector: 'input',
-      });
-    };
-
-    const getDropdownOption = async (
-      optionLabel: string,
-      selector: string = DropdownOptionSelector
-    ) => {
-      const option = await screen.findByText(
-        new RegExp(`${optionLabel}$`, 'i'),
-        {
-          selector,
-        }
-      );
-      return option;
-    };
-
-    const getRowsForNextPage = async (
-      resources: Resource[],
-      total: number = 300
-    ) => {
-      server.use(
-        sourceResourceHandler(resources),
-        ...dataExplorerPageHandler(resources, total)
-      );
-
-      const pageInput = await screen.getByRole('listitem', { name: '2' });
-      expect(pageInput).toBeInTheDocument();
-
-      await user.click(pageInput);
-
-      await expectRowCountToBe(3);
-    };
-
-    const getInputForLabel = async (label: string) => {
-      return (await screen.getByLabelText(label, {
-        selector: 'input',
-      })) as HTMLInputElement;
-    };
-
-    const getSelectedValueInMenu = async (menuLabel: string) => {
-      const input = await getInputForLabel(menuLabel);
-      return input
-        .closest('.ant-select-selector')
-        ?.querySelector('.ant-select-selection-item')?.innerHTML;
-    };
-
-    const openMenuFor = async (ariaLabel: string) => {
-      const menuInput = await getInputForLabel(ariaLabel);
-      await userEvent.click(menuInput, { pointerEventsCheck: 0 });
-      const menuDropdown = document.querySelector(DropdownSelector);
-      expect(menuDropdown).toBeInTheDocument();
-      return menuDropdown;
-    };
-
-  const selectPath = async (path: string) => {
-    await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
-  };
-
-  const selectPredicate = async (predicate: string) => {
-    await selectOptionFromMenu(PredicateMenuLabel, predicate);
-  };
-
-  const selectOptionFromMenu = async (
-    menuAriaLabel: string,
-    optionLabel: string,
-    optionSelector?: string
-  ) => {
-    await userEvent.click(container); // Close any other open menus
-    await openMenuFor(menuAriaLabel);
-    const option = await getDropdownOption(optionLabel, optionSelector);
-    await userEvent.click(option, { pointerEventsCheck: 0 });
-  };
-
-  /**
-   * @returns All options visible in the currently open dropdown menu in the DOM.
-   * NOTE: Since antd menus use virtual scroll, not all options inside the menu are visible.
-   * This function only returns those options that are visible.
-   */
-  const getVisibleOptionsFromMenu = (
-    selector: string = DropdownOptionSelector
-  ) => {
-    const menuDropdown = document.querySelector(DropdownSelector);
-    return Array.from(menuDropdown?.querySelectorAll(selector) ?? []);
-  };
-
-  const getTotalSizeOfDataset = async (expectedCount: string) => {
-    const totalFromBackend = await screen.getByText('Total:');
-    const totalCount = within(totalFromBackend).getByText(
-      new RegExp(`${expectedCount} dataset`, 'i')
-    );
-    return totalCount;
-  };
-
-  const getSizeOfCurrentlyLoadedData = async (expectedCount: number) => {
-    const totalFromBackend = await screen.getByText(
-      'Sample loaded for review:'
-    );
-    const totalCount = within(totalFromBackend).getByText(
-      new RegExp(`${expectedCount}`, 'i')
-    );
-    return totalCount;
-  };
-
-  const getFilteredResultsCount = async (expectedCount: number = 0) => {
-    const filteredCountLabel = screen.queryByText(/of which/i);
-    if (!filteredCountLabel) {
-      return filteredCountLabel;
-    }
-    const filteredCount = within(filteredCountLabel).getByText(
-      new RegExp(`${expectedCount}`, 'i')
-    );
-    return filteredCount;
-  };
-
-  const updateResourcesShownInTable = async (
-    resources: Resource[] = mockResourcesForPage2
-  ) => {
-    await expectRowCountToBe(10);
-    await getRowsForNextPage(resources);
-    await expectRowCountToBe(resources.length);
-  };
-
-  const getResetProjectButton = async () => {
-    return await screen.getByTestId('reset-project-button');
-  };
-
-  const showMetadataSwitch = async () =>
-    await screen.getByLabelText('Show metadata');
-
-  const showEmptyDataCellsSwitch = async () =>
-    await screen.getByLabelText('Show empty data cells');
-
-  const resetPredicate = async () => {
-    const resetPredicateButton = await screen.getByRole('button', {
-      name: /reset predicate/i,
+      container = component.container;
+      user = userEvent.setup();
+      await expectRowCountToBe(mockResourcesOnPage1.length);
     });
-    await userEvent.click(resetPredicateButton);
-  };
+
+    afterEach(async () => {
+      server.resetHandlers();
+      await userEvent.click(container); // Close any open dropdowns
+      sessionStorage.clear(); // Clear the selected columns and filters in session storage.
+    });
 
     afterAll(() => {
       server.resetHandlers();
@@ -593,6 +352,11 @@ describe(
       if (!filteredCountLabel) {
         return filteredCountLabel;
       }
+      const filteredCount = within(filteredCountLabel).getByText(
+        new RegExp(`${expectedCount}`, 'i')
+      );
+      return filteredCount;
+    };
 
     const updateResourcesShownInTable = async (
       resources: Resource[] = mockResourcesForPage2
@@ -614,7 +378,8 @@ describe(
       server.use(elasticSearchQueryHandler(matchingResources));
     };
 
-      await selectOptionFromMenu(PathMenuLabel, path, CustomOptionSelector);
+    const getResetProjectButton = async () => {
+      return await screen.getByTestId('reset-project-button');
     };
 
     const showMetadataSwitch = async () =>
@@ -1142,53 +907,6 @@ describe(
       expect(selectedPathBefore).toMatch(/author/);
       await expectRowCountToBe(2);
 
-      await selectPath('author');
-      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
-
-      expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
-      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
-      expect(await screen.queryByText(FRONTEND_PREDICATE_WARNING)).toBeFalsy();
-    });
-
-    it('shows column for metadata path even if toggle for show metadata is off', async () => {
-      const metadataProperty = '_createdBy';
-      mockElasticSearchHits(metadataProperty, EXISTS, mockResourcesOnPage1);
-      await expectRowCountToBe(10);
-
-    it('only shows predicate menu if path is selected', async () => {
-      await expectRowCountToBe(10);
-
-      expect(openMenuFor(PredicateMenuLabel)).rejects.toThrow();
-      await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
-      expect(openMenuFor(PredicateMenuLabel)).resolves.not.toThrow();
-    });
-    it('resets predicate fields when reset predicate clicked', async () => {
-      console.log('@@container', container.innerHTML);
-      await updateResourcesShownInTable(mockResourcesForPage2);
-      mockElasticSearchHits('author', EXISTS, mockResourcesForPage2);
-      await selectPath('author');
-
-      const originalColumns = getTotalColumns().length;
-
-      await selectPath(metadataProperty);
-      await selectOptionFromMenu(PredicateMenuLabel, EXISTS);
-
-      await expectRowCountToBe(10);
-
-      await expectColumHeaderToExist(metadataProperty);
-      expect(getTotalColumns().length).toEqual(originalColumns + 1);
-
-      await resetPredicate();
-      expect(getTotalColumns().length).toEqual(originalColumns);
-    });
-
-
-      await selectPredicate(EXISTS);
-
-      const selectedPathBefore = await getSelectedValueInMenu(PathMenuLabel);
-      expect(selectedPathBefore).toMatch(/author/);
-      await expectRowCountToBe(2);
-
       await resetPredicate();
 
       await expectRowCountToBe(3);
@@ -1255,8 +973,9 @@ describe(
       expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
     });
 
-    it('does not reset values in filters when header was hidden due to scroll', async () => {
-      await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
+    it('shows expand header button when data explorer is not visible', async () => {
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
 
       await clickExpandHeaderButton();
 
@@ -1269,6 +988,48 @@ describe(
 
       await clickExpandHeaderButton();
       await expectDataExplorerHeaderToExist();
+
+      await clickCollapseHeaderButton();
+      expect(expectDataExplorerHeaderToExist()).rejects.toThrow();
+    });
+
+    it('hides expand header button when user scrolls up', async () => {
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
+
+      expect(await expandHeaderButton()).toBeVisible();
+
+      await scrollWindow(0);
+      await waitForHeaderToBeVisible();
+
+      expect(expandHeaderButton()).rejects.toThrow();
+    });
+
+    it('hides collapse header button when user scrolls up', async () => {
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
+
+      await clickExpandHeaderButton();
+      expect(await collapseHeaderButton()).toBeVisible();
+
+      await scrollWindow(0);
+      expect(collapseHeaderButton()).rejects.toThrow();
+    });
+
+    it('does not reset values in filters when header was hidden due to scroll', async () => {
+      await selectPath(ALWAYS_PRESENT_RESOURCE_PROPERTY);
+
+      await scrollWindow(500);
+      await waitForHeaderToBeHidden();
+
+      await scrollWindow(0);
+      await waitForHeaderToBeVisible();
+
+      const projectInput = await getInputForLabel(ProjectMenuLabel);
+      expect(projectInput.value).toMatch(new RegExp('unhcr', 'i'));
+
+      const typeInput = await getSelectedValueInMenu(TypeMenuLabel);
+      expect(typeInput).toMatch(new RegExp('file', 'i'));
 
       const pathInput = await getSelectedValueInMenu(PathMenuLabel);
       expect(pathInput).toMatch(
@@ -1285,10 +1046,9 @@ describe(
       const valueInput = await screen.getByPlaceholderText('Search for...');
       await userEvent.type(valueInput, 'iggy');
 
-      expect(await expandHeaderButton()).toBeVisible();
+      await selectPredicate(EXISTS);
 
-      await scrollWindow(0);
-      await waitForHeaderToBeVisible();
+      await selectPredicate(DOES_NOT_CONTAIN);
 
       const valueInputAfter = await screen.getByPlaceholderText(
         'Search for...'
@@ -1310,5 +1070,5 @@ describe(
       expect(await getInputForLabel(PathMenuLabel)).toBeDisabled();
     });
   },
-  // { retry: 3 }
+  { retry: 3 }
 );

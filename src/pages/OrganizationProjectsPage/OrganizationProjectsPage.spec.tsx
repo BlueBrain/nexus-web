@@ -282,7 +282,7 @@ export const orgHandler = rest.get(
   }
 );
 
-export const orgsHandler = rest.get(deltaPath('/orgs'), (req, res, ctx) => {
+export const orgsHandler = rest.get(deltaPath('/orgs'), (_req, res, ctx) => {
   const mockResponse = [
     {
       '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST1',
