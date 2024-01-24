@@ -150,7 +150,7 @@ describe('DataExplorerGraphFlow', () => {
     expect(dataExplorerState.fullscreen).toBe(false);
   });
 
-  it('should the fullscren toggle present in the screen if the user in fullscreen mode', async () => {
+  it('should the fullscreen toggle present in the screen if the user in fullscreen mode', async () => {
     store.dispatch(
       InitNewVisitDataExplorerGraphView({
         current: initialDataExplorerState.current,

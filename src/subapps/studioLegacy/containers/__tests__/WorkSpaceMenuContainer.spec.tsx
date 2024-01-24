@@ -156,7 +156,7 @@ describe(
     it('hides edit buttons for a user with out edit access', async () => {
       server.use(aclHandler);
 
-      await render(
+      render(
         <Provider store={store}>
           <ConnectedRouter history={history}>
             {/* @ts-ignore */}
