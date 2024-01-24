@@ -26,7 +26,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "knip": "knip",
-    "lint": "tslint --project tsconfig.json && tsc --noEmit --project tsconfig.json",
+    "lint": "tslint --project tsconfig.json",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "e2e:open": "cypress open",

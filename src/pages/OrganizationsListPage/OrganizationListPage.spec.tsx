@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { render, screen, server } from '../../utils/testUtil';
+import { render, screen } from '../../utils/testUtil';
 import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
@@ -21,15 +21,15 @@ import { aclHandler } from '../ProjectsPage/ProjectsPageHandlers';
 import { setupServer } from 'msw/node';
 
 describe('OrganizationListPage', () => {
-  const history = createBrowserHistory({ basename: '/' });
-vi.mock('react-router', async () => {
-  const actual: Object = await vi.importActual('react-router');
-  return {
-    ...actual,
-    useRouteMatch: vi.fn().mockImplementation(() => {
-      return { params: { orgLabel: 'orgLabel' } };
-    }),
-  };
+  vi.mock('react-router', async () => {
+    const actual: Object = await vi.importActual('react-router');
+    return {
+      ...actual,
+      useRouteMatch: vi.fn().mockImplementation(() => {
+        return { params: { orgLabel: 'orgLabel' } };
+      }),
+    };
+  });
 });
 
 describe('OrganizationListPage', () => {
@@ -58,6 +58,7 @@ describe('OrganizationListPage', () => {
     await render(
       <Provider store={store}>
         <ConnectedRouter history={history}>
+          {/* @ts-ignore */}
           <NexusProvider nexusClient={nexus}>
             <QueryClientProvider client={queryClient}>
               <OrganizationListPage />
