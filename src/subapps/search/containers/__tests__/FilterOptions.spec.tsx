@@ -398,6 +398,7 @@ describe('Filter Options Container', () => {
 
     act(() => {
       render(
+        // @ts-ignore
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
             nexusClient={nexus}
@@ -456,6 +457,7 @@ describe('Filter Options Container', () => {
 
     await act(() => {
       render(
+        // @ts-ignore
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
             nexusClient={nexus}
@@ -500,8 +502,9 @@ describe('Filter Options Container', () => {
       })
     );
 
-    await act(() => {
+    act(() => {
       render(
+        // @ts-ignore
         <NexusProvider nexusClient={nexus}>
           <FilterOptions
             nexusClient={nexus}
