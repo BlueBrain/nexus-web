@@ -550,37 +550,31 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
               encodeURIComponent(workspaceId)
             ) as Promise<Resource>;
           })
-      )
-        .then(values => {
-          setWorkspaces(
-            values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
-              const a = new Date(dateA);
-              const b = new Date(dateB);
-              if (a > b) {
-                return 1;
-              }
-              if (a < b) {
-                return -1;
-              }
-              return 0;
-            })
+      ).then(values => {
+        setWorkspaces(
+          values.sort(({ _createdAt: dateA }, { _createdAt: dateB }) => {
+            const a = new Date(dateA);
+            const b = new Date(dateB);
+            if (a > b) {
+              return 1;
+            }
+            if (a < b) {
+              return -1;
+            }
+            return 0;
+          })
+        );
+        if (workspaceId) {
+          const workspaceFilteredById = values.find(
+            w => w['@id'] === workspaceId
           );
-          if (workspaceId) {
-            const workspaceFilteredById = values.find(
-              w => w['@id'] === workspaceId
-            );
-            setSelectedWorkspace(
-              workspaceFilteredById ? workspaceFilteredById : values[0]
-            );
-          } else {
-            setSelectedWorkspace(values[0]);
-          }
-        })
-        .catch(() => {
-          notification.error({
-            message: 'Failed to fetch workspaces',
-          });
-        });
+          setSelectedWorkspace(
+            workspaceFilteredById ? workspaceFilteredById : values[0]
+          );
+        } else {
+          setSelectedWorkspace(values[0]);
+        }
+      });
     }
   }, [workspaceIds]);
 

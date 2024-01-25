@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk';
+import fetch from 'node-fetch';
 import {
   render,
   fireEvent,
@@ -396,7 +397,7 @@ describe('Filter Options Container', () => {
       })
     );
 
-    act(() => {
+    await act(() => {
       render(
         // @ts-ignore
         <NexusProvider nexusClient={nexus}>
@@ -502,7 +503,7 @@ describe('Filter Options Container', () => {
       })
     );
 
-    act(() => {
+    await act(() => {
       render(
         // @ts-ignore
         <NexusProvider nexusClient={nexus}>

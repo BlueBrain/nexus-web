@@ -78,6 +78,7 @@
     "moment": "^2.29.4",
     "morgan": "^1.10.0",
     "motion": "^10.15.5",
+    "node-fetch": "^3.3.2",
     "object-hash": "^3.0.0",
     "oidc-client": "^1.7.0",
     "os-browserify": "^0.3.0",
