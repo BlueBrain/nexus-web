@@ -32,7 +32,7 @@ exports[`JIRA > renders authorizedJiraUI 1`] = `
       >
         <div>
           <input
-            class="ant-input css-dev-only-do-not-override-dkbvqv css-dev-only-do-not-override-dkbvqv"
+            class="ant-input css-dev-only-do-not-override-1qhpsh8 ant-input-outlined"
             placeholder="Verification code"
             style="background-color: rgb(255, 255, 255); width: 200px;"
             type="text"
@@ -41,64 +41,7 @@ exports[`JIRA > renders authorizedJiraUI 1`] = `
         </div>
         <div>
           <button
-            class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-primary"
-            type="button"
-          >
-            <span>
-              Connect
-            </span>
-          </button>
-        </div>
-      </div>
-    </li>
-  </ol>
-</div>
-`;
-
-exports[`JIRA > renders authraizeJIRAUI 1`] = `
-<div>
-  <h1>
-  <h2>
-    We first need to connect your Jira account.
-  </h1>
-  </h2>
-  <ol>
-    <li>
-      Visit Jira to log-in and authorize access to Jira from Nexus Fusion
-      <br />
-      <br />
-      <a
-        href="jirurri"
-        target="_blank"
-      >
-        Authorize Jira access
-      </a>
-      <br />
-      <br />
-    </li>
-    <li>
-      Copy the 
-      <em>
-        verification code
-      </em>
-       from step 1 into the text box below and click Connect.
-      <br />
-      <br />
-      <div
-        style="display: flex;"
-      >
-        <div>
-          <input
-            class="ant-input css-dev-only-do-not-override-dkbvqv css-dev-only-do-not-override-dkbvqv"
-            placeholder="Verification code"
-            style="background-color: rgb(255, 255, 255); width: 200px;"
-            type="text"
-            value=""
-          />
-        </div>
-        <div>
-          <button
-            class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-primary"
+            class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-primary"
             type="button"
           >
             <span>
@@ -115,7 +58,7 @@ exports[`JIRA > renders authraizeJIRAUI 1`] = `
 exports[`JIRA > renders with empty prop values 1`] = `
 <div>
   <div
-    class="css-dev-only-do-not-override-dkbvqv ant-empty"
+    class="css-dev-only-do-not-override-1qhpsh8 ant-empty"
   >
     <div
       class="ant-empty-image"
@@ -189,7 +132,7 @@ exports[`JIRA > renders with empty prop values 1`] = `
       class="ant-empty-footer"
     >
       <button
-        class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-primary"
+        class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-primary"
         name="Create Issue"
         role="button"
         type="button"
@@ -202,7 +145,7 @@ exports[`JIRA > renders with empty prop values 1`] = `
       or
        
       <button
-        class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-default"
+        class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-default"
         name="Link Issue"
         role="button"
         type="button"
@@ -222,7 +165,7 @@ exports[`JIRA > renders with issues 1`] = `
     style="width: 100%; display: flex; margin-bottom: 10px; margin-top: 10px;"
   >
     <button
-      class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-primary ant-dropdown-trigger"
+      class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-primary ant-dropdown-trigger"
       style="margin-left: auto;"
       type="button"
     >
@@ -251,16 +194,16 @@ exports[`JIRA > renders with issues 1`] = `
     </button>
   </div>
   <div
-    class="ant-table-wrapper jira-table css-dev-only-do-not-override-dkbvqv"
+    class="ant-table-wrapper jira-table css-dev-only-do-not-override-1qhpsh8"
   >
     <div
-      class="ant-spin-nested-loading css-dev-only-do-not-override-dkbvqv"
+      class="ant-spin-nested-loading css-dev-only-do-not-override-1qhpsh8"
     >
       <div
         class="ant-spin-container"
       >
         <div
-          class="ant-table ant-table-small css-dev-only-do-not-override-dkbvqv"
+          class="ant-table ant-table-small css-dev-only-do-not-override-1qhpsh8"
         >
           <div
             class="ant-table-container"
@@ -350,10 +293,10 @@ exports[`JIRA > renders with issues 1`] = `
                       class="ant-table-cell"
                     >
                       <div
-                        class="ant-space-compact css-dev-only-do-not-override-dkbvqv ant-space-compact-block ant-dropdown-button"
+                        class="ant-space-compact css-dev-only-do-not-override-1qhpsh8 ant-space-compact-block ant-dropdown-button"
                       >
                         <button
-                          class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
+                          class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
                           type="button"
                         >
                           <span>
@@ -361,7 +304,7 @@ exports[`JIRA > renders with issues 1`] = `
                           </span>
                         </button>
                         <button
-                          class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
+                          class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
                           type="button"
                         >
                           <span
@@ -397,7 +340,7 @@ exports[`JIRA > renders with issues 1`] = `
           </div>
         </div>
         <ul
-          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right css-dev-only-do-not-override-dkbvqv"
+          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right css-dev-only-do-not-override-1qhpsh8"
         >
           <li
             aria-disabled="true"
@@ -487,7 +430,7 @@ exports[`JIRA > renders with projects 1`] = `
     style="width: 100%; display: flex; margin-bottom: 10px; margin-top: 10px;"
   >
     <button
-      class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-primary ant-dropdown-trigger"
+      class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-primary ant-dropdown-trigger"
       style="margin-left: auto;"
       type="button"
     >
@@ -516,16 +459,16 @@ exports[`JIRA > renders with projects 1`] = `
     </button>
   </div>
   <div
-    class="ant-table-wrapper jira-table css-dev-only-do-not-override-dkbvqv"
+    class="ant-table-wrapper jira-table css-dev-only-do-not-override-1qhpsh8"
   >
     <div
-      class="ant-spin-nested-loading css-dev-only-do-not-override-dkbvqv"
+      class="ant-spin-nested-loading css-dev-only-do-not-override-1qhpsh8"
     >
       <div
         class="ant-spin-container"
       >
         <div
-          class="ant-table ant-table-small css-dev-only-do-not-override-dkbvqv"
+          class="ant-table ant-table-small css-dev-only-do-not-override-1qhpsh8"
         >
           <div
             class="ant-table-container"
@@ -623,10 +566,10 @@ exports[`JIRA > renders with projects 1`] = `
                       class="ant-table-cell"
                     >
                       <div
-                        class="ant-space-compact css-dev-only-do-not-override-dkbvqv ant-space-compact-block ant-dropdown-button"
+                        class="ant-space-compact css-dev-only-do-not-override-1qhpsh8 ant-space-compact-block ant-dropdown-button"
                       >
                         <button
-                          class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
+                          class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-default ant-btn-sm ant-btn-compact-item ant-btn-compact-first-item"
                           type="button"
                         >
                           <span>
@@ -634,7 +577,7 @@ exports[`JIRA > renders with projects 1`] = `
                           </span>
                         </button>
                         <button
-                          class="ant-btn css-dev-only-do-not-override-dkbvqv ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
+                          class="ant-btn css-dev-only-do-not-override-1qhpsh8 ant-btn-default ant-btn-sm ant-btn-icon-only ant-btn-compact-item ant-btn-compact-last-item ant-dropdown-trigger"
                           type="button"
                         >
                           <span
@@ -670,7 +613,7 @@ exports[`JIRA > renders with projects 1`] = `
           </div>
         </div>
         <ul
-          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right css-dev-only-do-not-override-dkbvqv"
+          class="ant-pagination ant-pagination-mini ant-table-pagination ant-table-pagination-right css-dev-only-do-not-override-1qhpsh8"
         >
           <li
             aria-disabled="true"
@@ -760,13 +703,13 @@ exports[`JIRA > shows loading spinner 1`] = `
     style="width: 100%; display: flex; margin-bottom: 10px; margin-top: 10px; height: 200px; justify-content: center; align-items: center;"
   >
     <div
-      class="ant-spin-nested-loading css-dev-only-do-not-override-dkbvqv"
+      class="ant-spin-nested-loading css-dev-only-do-not-override-1qhpsh8"
     >
       <div>
         <div
           aria-busy="true"
           aria-live="polite"
-          class="ant-spin ant-spin-lg ant-spin-spinning css-dev-only-do-not-override-dkbvqv"
+          class="ant-spin ant-spin-lg ant-spin-spinning css-dev-only-do-not-override-1qhpsh8"
         >
           <span
             class="ant-spin-dot ant-spin-dot-spin"
