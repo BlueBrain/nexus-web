@@ -1,30 +1,26 @@
-import * as React from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
+import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
+import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { useMutation, useQuery } from 'react-query';
-import { Table, Button, Row, Col, notification, Tooltip, Badge } from 'antd';
-import { isArray, isString, orderBy } from 'lodash';
-import { ColumnsType } from 'antd/es/table';
-import { NexusClient, View } from '@bbp/nexus-sdk';
-import { PromisePool } from '@supercharge/promise-pool';
-import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
-import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
-import { RootState } from '../../../../shared/store/reducers';
+import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
+import { Button, Col, Row, Table, Tooltip, notification } from 'antd';
+import { ColumnsType } from 'antd/es/table';
+import { isArray, isString, orderBy } from 'lodash';
+import { useMutation, useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
-import './styles.less';
+import { RootState } from '../../../../shared/store/reducers';
+import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import {
   IndexingErrorResults,
   ViewIndexingErrors,
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
-import {
-  MinusCircleTwoTone,
-  PlusCircleTwoTone,
-  WarningOutlined,
-} from '@ant-design/icons';
+import './styles.less';
+import { useState } from 'react';
 
-type TViewType = {
+type SubView = {
   key: string;
   id: string;
   name: string;
@@ -33,7 +29,7 @@ type TViewType = {
   orgLabel: string;
   projectLabel: string;
   isAggregateView: boolean;
-  indexingErrors: IndexingErrorResults;
+  indexingErrors: IndexingErrorResults | null;
 };
 
 const AggregateViews = ['AggregateElasticSearchView', 'AggregateSparqlView'];
@@ -51,50 +47,43 @@ const fetchViewsList = async ({
   nexus,
   orgLabel,
   projectLabel,
-  apiEndpoint,
 }: {
   nexus: NexusClient;
   orgLabel: string;
   projectLabel: string;
-  apiEndpoint: string;
-}) => {
+}): Promise<{
+  errors: PromisePoolError<SubView, any>[];
+  results: SubView[];
+}> => {
   try {
     const views = await nexus.View.list(orgLabel, projectLabel, {});
-    const result: Omit<TViewType, 'indexingErrors'>[] = views._results.map(
-      item => {
-        const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
-          item._project
-        )!;
-        return {
-          orgLabel,
-          projectLabel,
-          id: item['@id'],
-          key: item['@id'] as string,
-          name: (item['@id'] as string).split('/').pop() as string,
-          type: item['@type'],
-          isAggregateView: aggregateFilterPredicate(item['@type']),
-          status: '100%',
-        };
-      }
-    );
+    const result: SubView[] = views._results.map(item => {
+      const { orgLabel, projectLabel } = getOrgAndProjectFromProjectId(
+        item._project
+      )!;
+      return {
+        orgLabel,
+        projectLabel,
+        id: item['@id'],
+        key: item['@id'] as string,
+        name: (item['@id'] as string).split('/').pop() as string,
+        type: item['@type'],
+        isAggregateView: aggregateFilterPredicate(item['@type']),
+        status: '100%',
+        indexingErrors: null,
+      };
+    });
+
     const { results, errors } = await PromisePool.withConcurrency(4)
       .for(result!)
       .process(async view => {
-        const indexingErrors = await fetchIndexingErrors({
-          nexus,
-          apiEndpoint,
-          orgLabel,
-          projectLabel,
-          viewId: view.id,
-        });
-
         if (!view.isAggregateView) {
           const iViewStats = await nexus.View.statistics(
             orgLabel,
             projectLabel,
             encodeURIComponent(view.key)
           );
-          //  TODO: we should update the type in nexus-sdk! as the response is not the same from delta!
+          //  TODO: We should update the type in nexus-sdk! as the response is not the same from delta!
           // @ts-ignore
           const percentage = iViewStats.totalEvents
             ? // @ts-ignore
@@ -102,14 +91,12 @@ const fetchViewsList = async ({
             : 0;
           return {
             ...view,
-            indexingErrors,
             status: percentage ? `${(percentage * 100).toFixed(0)}%` : '0%',
           };
         }
 
         return {
           ...view,
-          indexingErrors,
           status: 'N/A',
         };
       });
@@ -131,6 +118,7 @@ const fetchViewsList = async ({
     throw new Error('Can not fetch views', { cause: error });
   }
 };
+
 const restartIndexOneView = async ({
   nexus,
   apiEndpoint,
@@ -162,13 +150,14 @@ const restartIndexOneView = async ({
     });
   }
 };
+
 const restartIndexingAllViews = async ({
   nexus,
   apiEndpoint,
   views,
 }: {
   nexus: NexusClient;
-  views: TViewType[];
+  views: SubView[];
   apiEndpoint: string;
 }) => {
   const { results, errors } = await PromisePool.withConcurrency(4)
@@ -182,6 +171,7 @@ const restartIndexingAllViews = async ({
         viewId,
       });
     });
+
   if (errors.length) {
     Sentry.captureException('Error restarting views', {
       extra: {
@@ -189,7 +179,7 @@ const restartIndexingAllViews = async ({
       },
     });
     // @ts-ignore
-    throw new Error('Error captured when reindexing the views', {
+    throw new Error('Error captured when re-indexing the views', {
       cause: errors,
     });
   }
@@ -210,14 +200,17 @@ const ViewsSubView = () => {
     params: { orgLabel, projectLabel },
   } = match;
 
+  const [expandedRows, setExpandedRows] = useState<{
+    [key: string]: IndexingErrorResults | undefined;
+  }>({});
+
   const createNewViewHandler = () => {
     const queryURI = `/orgs/${orgLabel}/${projectLabel}/create`;
     history.push(queryURI);
   };
   const { data: views, status } = useQuery({
     queryKey: [`views-${orgLabel}-${projectLabel}`],
-    queryFn: () =>
-      fetchViewsList({ nexus, orgLabel, projectLabel, apiEndpoint }),
+    queryFn: () => fetchViewsList({ nexus, orgLabel, projectLabel }),
     refetchInterval: 30 * 1000, // 30s
   });
 
@@ -228,6 +221,14 @@ const ViewsSubView = () => {
     restartIndexingAllViews,
     {
       onError: error => {
+        Sentry.captureException(error, {
+          extra: {
+            orgLabel,
+            projectLabel,
+            error,
+          },
+        });
+
         notification.error({
           message: `Error when restarting indexing the views`,
           description: '',
@@ -236,7 +237,50 @@ const ViewsSubView = () => {
     }
   );
 
-  const columns: ColumnsType<TViewType> = [
+  const fetchIndexingErrorsOnDemand = async ({
+    nexus,
+    apiEndpoint,
+    orgLabel,
+    projectLabel,
+    viewId,
+  }: {
+    nexus: NexusClient;
+    apiEndpoint: string;
+    orgLabel: string;
+    projectLabel: string;
+    viewId: string;
+  }) => {
+    try {
+      // Fetch indexing errors for the specified view
+      const indexingErrors = await fetchIndexingErrors({
+        nexus,
+        apiEndpoint,
+        orgLabel,
+        projectLabel,
+        viewId,
+      });
+
+      return indexingErrors;
+    } catch (error) {
+      notification.error({
+        message: `Error fetching indexing errors for the selected view`,
+        description: '',
+      });
+
+      Sentry.captureException(error, {
+        extra: {
+          orgLabel,
+          projectLabel,
+          viewId,
+          error,
+        },
+      });
+
+      return null;
+    }
+  };
+
+  const columns: ColumnsType<SubView> = [
     {
       key: 'name',
       dataIndex: 'name',
@@ -381,8 +425,7 @@ const ViewsSubView = () => {
                     nexus,
                     apiEndpoint,
                     views:
-                      views?.results.filter(item => !item.isAggregateView) ||
-                      [],
+                      views?.results.filter(item => item.isAggregateView) || [],
                   });
                 }}
               >
@@ -392,7 +435,7 @@ const ViewsSubView = () => {
           </Col>
         </Row>
 
-        <Table<TViewType>
+        <Table<SubView>
           loading={status === 'loading'}
           className="views-table"
           rowClassName="view-item-row"
@@ -402,32 +445,43 @@ const ViewsSubView = () => {
           size="middle"
           pagination={false}
           rowKey={r => r.key}
-          expandIcon={({ expanded, onExpand, record }) =>
-            expanded ? (
-              <MinusCircleTwoTone
-                title="Collapse indexing errors"
-                onClick={e => onExpand(record, e)}
+          expandIcon={({ expanded, onExpand, record }) => {
+            if (expanded) {
+              return <MinusCircleTwoTone onClick={e => onExpand(record, e)} />;
+            }
+
+            return (
+              <PlusCircleTwoTone
+                data-testid="Expand indexing errors"
+                onClick={async e => {
+                  // Fetch errors every time the row is expanded
+                  record.indexingErrors = await fetchIndexingErrorsOnDemand({
+                    nexus,
+                    apiEndpoint,
+                    orgLabel: record.orgLabel,
+                    projectLabel: record.projectLabel,
+                    viewId: record.id,
+                  });
+                  setExpandedRows(prevExpandedRows => ({
+                    ...prevExpandedRows,
+                    [record.key]: record.indexingErrors || undefined,
+                  }));
+                  onExpand(record, e);
+                }}
               />
-            ) : (
-              <Badge
-                count={record.indexingErrors._total}
-                showZero={false}
-                size="small"
-              >
-                <PlusCircleTwoTone
-                  title="Expand indexing errors"
-                  data-testid="Expand indexing errors"
-                  onClick={e => onExpand(record, e)}
-                  style={{ fontSize: '16px' }}
-                />
-              </Badge>
-            )
-          }
-          expandedRowRender={(r: TViewType) => {
+            );
+          }}
+          expandedRowRender={record => {
+            const indexingErrors = expandedRows[record.key];
+            if (!indexingErrors) {
+              // Fallback content in case errors haven't been set yet
+              return <p>Loading errors...</p>;
+            }
             return (
               <ViewIndexingErrors
-                key={r.id}
-                indexingErrors={r.indexingErrors}
+                data-testid="indexing-error-list"
+                key={record.id}
+                indexingErrors={indexingErrors}
               />
             );
           }}

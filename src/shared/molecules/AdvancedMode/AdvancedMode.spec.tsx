@@ -4,7 +4,7 @@ import { act } from 'react-dom/test-utils';
 import { Router } from 'react-router-dom';
 import { Store } from 'redux';
 
-import { createBrowserHistory, History } from 'history';
+import { createMemoryHistory, History } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import AdvancedModeToggle from './AdvancedMode';
@@ -17,7 +17,7 @@ describe('AdvancedModeToggle', () => {
   let nexus;
 
   beforeEach(() => {
-    history = createBrowserHistory({ basename: '/' });
+    history = createMemoryHistory({});
     nexus = createNexusClient({
       fetch,
       uri: 'https://localhost:3000',

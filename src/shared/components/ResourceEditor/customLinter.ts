@@ -19,20 +19,47 @@ export type LinterIssue = {
  */
 export const customLinter = (text: string): LinterIssue[] => {
   const linterErrors: LinterIssue[] = [];
-  const lines = text.split('\n');
 
-  // Regex to match keys starting with an underscore followed by any character except a space or double quote
-  const regex = /"\s*_[^"\s]+"\s*:/g;
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (error) {
+    return linterErrors;
+  }
 
-  lines.forEach((line, index) => {
-    if (regex.test(line)) {
-      linterErrors.push({
-        message:
-          'Fields starting with an underscore are reserved for internal use',
-        line: index + 1,
-      });
+  // We only iterate through top-level keys of the parsed object
+  for (const key in json) {
+    if (Object.prototype.hasOwnProperty.call(json, key)) {
+      // Identify the actual key starting character by trimming the left side
+      const actualKeyStart = key.trimLeft()[0];
+
+      if (actualKeyStart === '_') {
+        linterErrors.push({
+          message:
+            'Top-level fields starting with an underscore are reserved for internal use',
+          line: findLineOfKey(text, key),
+        });
+      }
     }
-  });
+  }
 
   return linterErrors;
 };
+
+/**
+ * Find the line number of the first occurrence of a key in the given text.
+ * @param text The text to search through.
+ * @param key The key whose line number we want to find.
+ * @return The line number where the key is first found.
+ */
+function findLineOfKey(text: string, key: string): number {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`"${escapedKey}"\s*:`);
+  const matches = text.match(regex);
+
+  // Calculate the line number based on the position of the match
+  if (matches && matches.index !== undefined) {
+    return text.substring(0, matches.index).split('\n').length;
+  }
+  return -1;
+}

@@ -281,7 +281,11 @@ const ResourceViewActionsContainer: React.FC<{
   return (
     <Row>
       <Col>
-        <Dropdown overlay={revisionMenuItems}>
+        <Dropdown
+          overlay={revisionMenuItems}
+          placement="bottom"
+          overlayStyle={{ overflowY: 'scroll', maxHeight: '500px' }}
+        >
           <Button>
             Revision {resource._rev}{' '}
             {revisionLabels(resource._rev).length > 0 &&
@@ -335,7 +339,7 @@ const ResourceViewActionsContainer: React.FC<{
                         );
                       }}
                     >
-                      URL
+                      Fusion URL
                     </Menu.Item>
                     <Menu.Item
                       onClick={() => {
@@ -355,20 +359,20 @@ const ResourceViewActionsContainer: React.FC<{
                         );
                       }}
                     >
-                      URL (with revision)
+                      Fusion URL (with revision)
                     </Menu.Item>
                     <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
-                      ID
+                      Resource ID
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
                         triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
                       }
                     >
-                      ID (with revision)
+                      Resource ID (with revision)
                     </Menu.Item>
                     <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
-                      Nexus address
+                      Nexus API endpoint
                     </Menu.Item>
                     <Menu.Item
                       onClick={() =>
@@ -379,7 +383,7 @@ const ResourceViewActionsContainer: React.FC<{
                         )
                       }
                     >
-                      Nexus address (with revision)
+                      Nexus API endpoint (with revision)
                     </Menu.Item>
                   </Menu>
                 }
@@ -433,62 +437,6 @@ const ResourceViewActionsContainer: React.FC<{
                     pattern: /^(?!latest$)/,
                     message:
                       "Please choose a different name, 'latest' is a reserved word.",
-                  },
-                ]}
-                style={{ marginBottom: 8 }}
-              >
-                <Input placeholder="Resource tag" style={{ width: '100%' }} />
-              </Form.Item>
-              <Form.Item
-                wrapperCol={{ offset: 8, span: 8 }}
-                style={{ marginBottom: 0 }}
-              >
-                <Button type="primary" htmlType="submit">
-                  Confirm
-                </Button>
-              </Form.Item>
-            </Form>
-          }
-        >
-          <Button>Tag Resource</Button>
-        </Popover>
-      </Col>
-      <Col>
-        <Popover
-          destroyTooltipOnHide
-          showArrow={false}
-          key={resource._rev}
-          trigger={['click']}
-          title={
-            <div>
-              <div style={{ fontSize: 16 }}>Tag Resource</div>
-              <i style={{ fontSize: 12 }}>
-                The tag will be applied to revision{' '}
-                <strong>{resource._rev}</strong>
-              </i>
-            </div>
-          }
-          content={
-            <Form<{ tag: string }>
-              autoComplete="off"
-              name="tag-resource-form"
-              initialValues={{ tag: '' }}
-              onFinish={handleTagResource}
-              style={{ width: 300, padding: '8px 8px O' }}
-            >
-              <Form.Item
-                name="tag"
-                rules={[
-                  {
-                    required: true,
-                    whitespace: true,
-                    pattern: /^\S+$/g,
-                    message: 'Tag must not contains spaces',
-                  },
-                  {
-                    pattern: /^[a-zA-Z0-9_-]+$/,
-                    message:
-                      'Tag should include only letters, numbers, underscores, and dashes.',
                   },
                 ]}
                 style={{ marginBottom: 8 }}
