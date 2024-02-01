@@ -115,7 +115,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
     setParsedValue(rawData); // Update parsed value for submit.
 
-    return () => setFoldCodeMiror(false);
+    return () => setFoldCodeMirror(false);
   }, [rawData]); // only runs when Editor receives new resource to edit
 
   const handleChange = (
@@ -314,6 +314,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         fullscreen={fullscreen}
+        // @ts-ignore
         onLintError={handleLintError}
       />
     </div>
