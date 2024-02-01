@@ -1,16 +1,9 @@
-import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
-import { ExpandedResource, IncomingLink, Resource } from '@bbp/nexus-sdk';
-import { useNexusContext } from '@bbp/react-nexus';
-import { Alert, Button, Collapse, Divider, Spin, Typography } from 'antd';
-import { intersection, isArray } from 'lodash';
-import * as queryString from 'query-string';
-import { useEffect, useState, ReactElement, FC } from 'react';
+import * as React from 'react';
 import Helmet from 'react-helmet';
-import { useDispatch, useSelector } from 'react-redux';
 import {
-  matchPath,
-  useHistory,
   useLocation,
+  useHistory,
+  matchPath,
   useRouteMatch,
 } from 'react-router';
 import { Spin, Alert, Collapse, Typography, Divider } from 'antd';
@@ -20,32 +13,43 @@ import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk/es';
 import { useSelector, useDispatch } from 'react-redux';
 import { intersection, isArray } from 'lodash';
 import AdminPlugin from '../containers/AdminPluginContainer';
-import { useJiraPlugin } from '../hooks/useJIRA';
-import useMeasure from '../hooks/useMeasure';
-import useNotification from '../hooks/useNotification';
+import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
+import ResourcePlugins from './ResourcePlugins';
 import usePlugins from '../hooks/usePlugins';
-import { RootState } from '../store/reducers';
+import useMeasure from '../hooks/useMeasure';
 import {
-  getDestinationParam,
-  getOrgAndProjectFromProjectId,
   getResourceLabel,
+  getOrgAndProjectFromProjectId,
+  getDestinationParam,
   labelOf,
   makeResourceUri,
 } from '../utils';
 import { isDeprecated } from '../utils/nexusMaybe';
+import useNotification from '../hooks/useNotification';
+import Preview from '../components/Preview/Preview';
+import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
-import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
-import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
-import ResourcePlugins from './ResourcePlugins';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
-import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
-import { useMutation } from 'react-query';
-
-export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+import ResourceMetadata from '../components/ResourceMetadata';
+import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
+import JIRAPluginContainer from './JIRA/JIRAPluginContainer';
+import { RootState } from '../store/reducers';
+import { StudioResource } from '../../subapps/studioLegacy/containers/StudioContainer';
+import { useJiraPlugin } from '../hooks/useJIRA';
+import AnalysisPluginContainer from './AnalysisPlugin/AnalysisPluginContainer';
+import { UISettingsActionTypes } from '../../shared/store/actions/ui-settings';
+import {
+  TErrorWithType,
+  TUpdateResourceFunctionError,
+} from '../../utils/types';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
 };
+
+export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
 
 const containsImages = (distribution: any[]) => {
   const encodingFormat = distribution.map(t => t.encodingFormat);
@@ -60,58 +64,12 @@ const containsImages = (distribution: any[]) => {
   return intersection(encodingFormat, formats).length !== 0;
 };
 
-function constructUnDeprecateUrl(
-  apiEndpoint: string,
-  resource: Resource,
-  latestResource: Resource,
-  orgLabel: string,
-  projectLabel: string
-): string {
-  const typePathMapping: { [key: string]: string } = {
-    File: 'files',
-    Storage: 'storages',
-    ElasticSearchView: 'views',
-    SparqlView: 'views',
-    CompositeView: 'views',
-    View: 'views',
-    Schema: 'schemas',
-  };
-
-  const determineResourcePathSegment = (
-    inputTypes: string | string[]
-  ): string => {
-    const types = Array.isArray(inputTypes) ? inputTypes : [inputTypes];
-
-    for (const type of types) {
-      if (type in typePathMapping) {
-        return typePathMapping[type];
-      }
-    }
-
-    return 'resources';
-  };
-
-  const primaryResourceType = resource['@type'] || '';
-  const resourcePathSegment = determineResourcePathSegment(primaryResourceType);
-  const slashPrefix = Array.isArray(primaryResourceType)
-    ? primaryResourceType.some(type => type in typePathMapping)
-      ? ''
-      : '_/'
-    : primaryResourceType in typePathMapping
-    ? ''
-    : '_/';
-
-  return `${apiEndpoint}/${resourcePathSegment}/${orgLabel}/${projectLabel}/${slashPrefix}${encodeURIComponent(
-    resource['@id']
-  )}/undeprecate?rev=${latestResource._rev}`;
-}
-
-const ResourceViewContainer: FC<{
+const ResourceViewContainer: React.FunctionComponent<{
   render?: (
     resource: Resource<{
       [key: string]: any;
     }> | null
-  ) => ReactElement | null;
+  ) => React.ReactElement | null;
   deOrgLabel?: string;
   deProjectLabel?: string;
   deResourceId?: string;
@@ -126,7 +84,7 @@ const ResourceViewContainer: FC<{
   const { data: pluginManifest } = usePlugins();
   const { apiEndpoint } = useSelector((state: RootState) => state.config);
 
-  const [deltaPlugins, setDeltaPlugins] = useState<{
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
     [key: string]: string;
   }>();
   const fetchDeltaVersion = async () => {
@@ -135,13 +93,10 @@ const ResourceViewContainer: FC<{
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
-        // Do nothing
-      });
+      .then(versions => setDeltaPlugins({ ...versions.plugins }));
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchDeltaVersion();
   }, []);
 
@@ -149,7 +104,7 @@ const ResourceViewContainer: FC<{
     orgLabel: string;
     projectLabel: string;
     resourceId: string;
-  }>('/:orgLabel/:projectLabel/resources/:resourceId');
+  }>(`/:orgLabel/:projectLabel/resources/:resourceId`);
 
   const orgLabel = match?.params.orgLabel! ?? deOrgLabel;
   const projectLabel = match?.params.projectLabel! ?? deProjectLabel;
@@ -157,12 +112,12 @@ const ResourceViewContainer: FC<{
     match?.params.resourceId! ??
     (deResourceId ? encodeURIComponent(deResourceId) : '');
 
-  const [studioPlugins, setStudioPlugins] = useState<{
+  const [studioPlugins, setStudioPlugins] = React.useState<{
     customise: boolean;
     plugins: { key: string; expanded: boolean }[];
   }>();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (location.state && location.state.background) {
       const studioPathMatch = matchPath<{ StudioId: string }>(
         location.state.background.pathname,
@@ -174,6 +129,7 @@ const ResourceViewContainer: FC<{
       );
 
       if (studioPathMatch) {
+        // looks like we have us a studio
         const studioId = studioPathMatch.params.StudioId;
         nexus.Resource.get<StudioResource>(
           orgLabel,
@@ -219,7 +175,7 @@ const ResourceViewContainer: FC<{
 
   const activeTabKey = location.hash || DEFAULT_ACTIVE_TAB_KEY;
 
-  const [{ busy, resource, error }, setResource] = useState<{
+  const [{ busy, resource, error }, setResource] = React.useState<{
     busy: boolean;
     resource: Resource | null;
     error:
@@ -234,7 +190,7 @@ const ResourceViewContainer: FC<{
     resource: null,
     error: null,
   });
-  const [latestResource, setLatestResource] = useState<
+  const [latestResource, setLatestResource] = React.useState<
     (Resource & { [key: string]: any }) | null
   >(null);
 
@@ -430,16 +386,17 @@ const ResourceViewContainer: FC<{
   };
 
   const nonEditableResourceTypes = ['File'];
+
   const refreshResource = () => setResources();
 
-  useEffect(() => {
+  React.useEffect(() => {
     setResources();
   }, [orgLabel, projectLabel, resourceId, rev, tag]);
 
-  const [openPlugins, setOpenPlugins] = useState<string[]>([]);
+  const [openPlugins, setOpenPlugins] = React.useState<string[]>([]);
   const LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME = 'expanded_plugins';
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (localStorage.getItem(LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME)) {
       setOpenPlugins(
         JSON.parse(
@@ -451,15 +408,15 @@ const ResourceViewContainer: FC<{
     }
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     localStorage.setItem(
       LOCAL_STORAGE_EXPANDED_PLUGINS_KEY_NAME,
       JSON.stringify(openPlugins)
     );
   }, [openPlugins]);
 
-  useEffect(() => {
-    // If coming from studio, override what user has set in local storage
+  React.useEffect(() => {
+    // if coming from studio, override what user has set in localstorage
     if (studioPlugins?.customise && pluginManifest) {
       setOpenPlugins(
         studioPlugins.plugins
@@ -543,6 +500,7 @@ const ResourceViewContainer: FC<{
         resource={resource}
         latestResource={latestResource}
         activeTabKey={activeTabKey}
+        // @ts-ignore
         expandedFromQuery={expandedFromQuery}
         refProp={ref}
         goToResource={goToResource}
@@ -668,7 +626,7 @@ const ResourceViewContainer: FC<{
     { key: 'analysis', name: 'Analysis', pluginComponent: analysisPlugin },
   ];
 
-  useEffect(() => {
+  React.useEffect(() => {
     return () => {
       dispatch({
         type: UISettingsActionTypes.UPDATE_CURRENT_RESOURCE_VIEW,
@@ -676,34 +634,9 @@ const ResourceViewContainer: FC<{
       });
     };
   }, []);
-
-  const { mutate: unDeprecateResource } = useMutation({
-    mutationFn: async () => {
-      try {
-        await nexus.httpPut({
-          path: constructUnDeprecateUrl(
-            apiEndpoint,
-            resource!,
-            latestResource!,
-            orgLabel,
-            projectLabel
-          ),
-        });
-
-        goToResource(orgLabel, projectLabel, resourceId, {});
-      } catch (error) {
-        notification.error({
-          message: `Error undoing deprecated resource`,
-          description:
-            'An error occurred whilst attempting to undo the deprecation of the resource. Please try again.',
-        });
-      }
-    },
-  });
-
   return (
     <>
-      <div className="resource-details" data-testid="resource-details">
+      <div className="resource-details">
         <Helmet
           title={`${
             resource ? getResourceLabel(resource) : resourceId
@@ -751,19 +684,21 @@ const ResourceViewContainer: FC<{
                                 ))}
                               </ul>
 
-                          <p>
-                            For further information please refer to the API
-                            documentation,{' '}
-                            <a
-                              target="_blank"
-                              href="https://bluebrainnexus.io/docs/delta/api"
-                            >
-                              https://bluebrainnexus.io/docs/delta/api
-                            </a>
-                          </p>
-                        </>
-                      </Collapse.Panel>
-                    </Collapse>
+                              <p>
+                                For further information please refer to the API
+                                documentation,{' '}
+                                <a
+                                  target="_blank"
+                                  href="https://bluebrainnexus.io/docs/delta/api/"
+                                >
+                                  https://bluebrainnexus.io/docs/delta/api/
+                                </a>
+                              </p>
+                            </>
+                          ),
+                        },
+                      ]}
+                    />
                   )}
                 </>
               }
@@ -817,55 +752,10 @@ const ResourceViewContainer: FC<{
                       <Alert
                         type="error"
                         message={
-                          <div>
-                            <DeleteOutlined /> This resource is deprecated and
-                            not modifiable.
-                            {// Don't show the undo deprecated button if the resource is
-                            // of any unsupported resource (e.g. Resolver). However, it needs
-                            // to be shown e.g. for custom types of resources.
-                            !resource['@type']?.includes(
-                              'Resolver' ||
-                                'AggregateElasticSearchView' ||
-                                'AggregateSparqlView'
-                            ) ? (
-                              <>
-                                <br />
-                                {// If not newest revision, then don't show the button
-                                resource._rev === latestResource._rev ? (
-                                  <Button
-                                    icon={<UndoOutlined />}
-                                    style={{
-                                      marginTop: '10px',
-                                      marginBottom: '5px',
-                                    }}
-                                    onClick={() => {
-                                      unDeprecateResource();
-                                    }}
-                                  >
-                                    Undo deprecation
-                                  </Button>
-                                ) : null}
-                              </>
-                            ) : (
-                              <>
-                                {/* If unsupported resource type for undoing deprecation, then show the message to the user */}
-                                <br />
-                                As it includes at least one of the unsupported
-                                types (
-                                <span style={{ fontWeight: 'bold' }}>
-                                  {(resource['@type'] as []).find(type =>
-                                    [
-                                      'View',
-                                      'Resolver',
-                                      'Storage',
-                                      'Schema',
-                                    ].includes(type)
-                                  )}
-                                </span>
-                                ), the deprecation currently cannot be undone.
-                              </>
-                            )}
-                          </div>
+                          <>
+                            <DeleteOutlined /> This resource is deprecated. You
+                            cannot modify it.
+                          </>
                         }
                       />
                       <br />
