@@ -20,7 +20,7 @@ import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AdvancedModeToggle } from '../../molecules';
 import useNotification from '../../hooks/useNotification';
-import fusionLogo from '../../images/fusion_logo.png';
+import fusionLogo from '../../images/fusion.svg';
 
 import './Header.scss';
 
