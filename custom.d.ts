@@ -8,6 +8,11 @@ declare module '*.png' {
   export default content;
 }
 
+declare module '*.jpg' {
+  const content: any;
+  export default content;
+}
+
 // loading raw text or other files
 declare module '!!raw-loader!*' {
   const contents: string;
