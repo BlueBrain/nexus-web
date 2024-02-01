@@ -4,7 +4,7 @@ import { createBrowserHistory } from 'history';
 import { Link, Operation, Observable } from '@bbp/nexus-link';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import defaultState from './defaultState';
-import { SEARCH_PREFENCE_LOCAL_STORAGE_KEY } from './shared/store/actions/search';
+import { SEARCH_PREFERENCE_LOCAL_STORAGE_KEY } from './shared/store/actions/search';
 
 let preferredRealm;
 let searchPrefenceLocalStorag;
@@ -13,7 +13,7 @@ try {
   const realmData = JSON.parse(localStorage.getItem('nexus__realm') || '');
   realmData && (preferredRealm = realmData.label);
   searchPrefenceLocalStorag = localStorage.getItem(
-    SEARCH_PREFENCE_LOCAL_STORAGE_KEY
+    SEARCH_PREFERENCE_LOCAL_STORAGE_KEY
   );
 } catch (e) {
   preferredRealm = undefined;
