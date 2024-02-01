@@ -9,7 +9,7 @@ import { RootState } from '../../../shared/store/reducers';
 import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
 import { url as githubIssueURL } from '../../../../package.json';
 import Copy from '../../../shared/components/Copy';
-import bbpLogo from '../../images/EPFL_BBP_logo.png';
+import bbpLogo from '../../images/EPFL_BBP_logo.svg';
 
 import './styles.scss';
 
