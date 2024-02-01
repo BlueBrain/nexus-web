@@ -210,14 +210,101 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
     <Collapse
       onChange={handleCollapseChanged}
       activeKey={collapsed ? 'admin' : undefined}
-      items={[
-        {
-          key: 'admin',
-          label: 'Advanced View',
-          children: content,
-        },
-      ]}
-    />
+    >
+      <Panel header="Advanced View" key="admin">
+        <ResourceActionsContainer
+          editable={editable}
+          resource={resource}
+          refreshResource={refreshResource}
+        />
+        <Tabs
+          activeKey={activeTabKey}
+          onChange={onTabChange}
+          tabBarStyle={{ paddingLeft: '1rem' }}
+        >
+          <TabPane tab="JSON" key="#JSON">
+            <ResourceEditorContainer
+              resourceId={resource['@id']}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              rev={resource._rev}
+              defaultExpanded={
+                !!expandedFromQuery && expandedFromQuery === 'true'
+              }
+              defaultEditable={editable}
+              onSubmit={handleEditFormSubmit}
+              onExpanded={handleExpanded}
+              tabChange={tabChange}
+              showFullScreen={showFullScreen}
+            />
+          </TabPane>
+          <TabPane tab="Description" key="#mde">
+            <MarkdownEditorContainer
+              resourceId={resource['@id']}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              rev={resource._rev}
+              readOnly={!editable}
+              goToResource={goToResource}
+            />
+          </TabPane>
+          <TabPane tab="History" key="#history">
+            <HistoryContainer
+              resourceId={resource['@id']}
+              orgLabel={orgLabel}
+              projectLabel={projectLabel}
+              latestRev={latestResource._rev}
+              link={(rev: number) => {
+                return (
+                  <a
+                    onClick={() => {
+                      goToResource(orgLabel, projectLabel, resourceId, {
+                        revision: rev,
+                      });
+                    }}
+                  >
+                    Revision {rev}
+                  </a>
+                );
+              }}
+            />
+          </TabPane>
+          <TabPane tab="Links" key="#links" className="rows">
+            <section className="links incoming">
+              <h3>Incoming</h3>
+              <ResourceLinksContainer
+                resourceId={resource['@id']}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                rev={resource._rev}
+                direction="incoming"
+                onClick={handleGoToInternalLink}
+              />
+            </section>
+            <section className="links outgoing">
+              <h3>Outgoing</h3>
+              <ResourceLinksContainer
+                resourceId={resource['@id']}
+                orgLabel={orgLabel}
+                projectLabel={projectLabel}
+                rev={resource._rev}
+                direction="outgoing"
+                onClick={handleGoToInternalLink}
+              />
+            </section>
+          </TabPane>
+          <TabPane tab="Graph" key="#graph" className="rows">
+            <div className="graph-wrapper-container">
+              <div className="fixed-minus-header">
+                <div ref={ref} className="graph-wrapper">
+                  <GraphContainer resource={resource as Resource} />
+                </div>
+              </div>
+            </div>
+          </TabPane>
+        </Tabs>
+      </Panel>
+    </Collapse>
   );
 };
 

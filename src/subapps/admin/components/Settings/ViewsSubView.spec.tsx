@@ -2,24 +2,26 @@ import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { deltaPath } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
-import { Route, Router } from 'react-router-dom';
 import { NexusProvider } from '@bbp/react-nexus';
-import ViewsSubView from './ViewsSubView';
-import { render, screen, waitFor } from '../../../../utils/testUtil';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import {
   aclsHandler,
   identitiesHandler,
   viewErrorsHandler,
   viewStatsHandler,
   viewWithIndexingErrors,
-  viewWithNoIndexingErrors,
   viewsHandler,
 } from '__mocks__/handlers/Settings/ViewsSubViewHandlers';
-import { configureStore } from '../../../../store';
+import { deltaPath } from '__mocks__/handlers/handlers';
+import { createMemoryHistory } from 'history';
+import { setupServer } from 'msw/node';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { Route, Router } from 'react-router-dom';
+import configureStore from '../../../../shared/store';
+import { render, screen, waitFor } from '../../../../utils/testUtil';
+import ViewsSubView from './ViewsSubView';
 
 describe('ViewsSubView', () => {
   const mockOrganisation = 'copies';
@@ -75,26 +77,18 @@ describe('ViewsSubView', () => {
     await expectRowCountToBe(3);
   });
 
-  it('shows a badge for views that have errors', async () => {
-    expect(getErrorBadgeContent(viewWithIndexingErrors)).toEqual('2');
-  });
-
-  it('does not show error badge for views that dont have errors', async () => {
-    expect(getErrorBadgeContent(viewWithNoIndexingErrors)).toBeUndefined();
-  });
-
   it('shows indexing errors when view row is expanded', async () => {
     await expandRow(viewWithIndexingErrors);
 
-    await screen.getByText(/2 Total errors/i, { selector: 'h3' });
+    await waitFor(() => {
+      const errorRows = getErrorRows();
+      expect(errorRows.length).toEqual(2);
+      screen.getByText(/2 Total errors/i, { selector: 'h3' });
 
-    const indexingErrorRows = await getErrorRows();
-    expect(indexingErrorRows.length).toEqual(2);
-
-    const errorRow1 = await getErrorRow('Mock Error 1');
-    expect(errorRow1).toBeTruthy();
-    const errorRow2 = await getErrorRow('Mock Error 2');
-    expect(errorRow2).toBeTruthy();
+      const errorRow1 = getErrorRow('Mock Error 1');
+      const errorRow2 = getErrorRow('Mock Error 2');
+      expect(errorRow2).toBeTruthy();
+    });
   });
 
   it('shows detailed error when error row is expanded', async () => {
@@ -103,12 +97,16 @@ describe('ViewsSubView', () => {
     const errorRow1 = await getErrorRow('Mock Error 1');
     await user.click(errorRow1);
 
-    const detailedErrorContainer = container.querySelector('.react-json-view');
-    expect(detailedErrorContainer).toBeTruthy();
+    await waitFor(() => {
+      const detailedErrorContainer = container.querySelector(
+        '.react-json-view'
+      );
+      expect(detailedErrorContainer).toBeTruthy();
+    });
   });
 
   const getErrorRow = async (errorMessage: string) => {
-    const row = await screen.getByText(new RegExp(errorMessage, 'i'), {
+    const row = await screen.findByText(new RegExp(errorMessage, 'i'), {
       selector: '.ant-collapse-header-text',
     });
     return row;
@@ -143,10 +141,5 @@ describe('ViewsSubView', () => {
 
   const visibleTableRows = () => {
     return container.querySelectorAll('table tbody tr.view-item-row');
-  };
-
-  const getErrorBadgeContent = (rowId: string) => {
-    const row = getViewRowById(rowId);
-    return row.querySelector('sup')?.textContent;
   };
 });

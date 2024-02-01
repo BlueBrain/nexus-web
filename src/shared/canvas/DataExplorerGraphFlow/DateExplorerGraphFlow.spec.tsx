@@ -99,6 +99,7 @@ describe('DataExplorerGraphFlow', () => {
       fetch,
       uri: deltaPath(),
     });
+    const queryClient = new QueryClient();
     store = configureStore(history, { nexus }, {});
     app = (
       <Provider store={store}>

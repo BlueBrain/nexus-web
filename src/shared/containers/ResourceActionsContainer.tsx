@@ -1,34 +1,28 @@
-import * as React from 'react';
 import { DeleteOutlined, DownloadOutlined } from '@ant-design/icons';
 import { connect } from 'react-redux';
 import { push } from 'connected-react-router';
 import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import ResourceDownloadButton from './ResourceDownloadContainer';
-import ResourceActions from '../components/ResourceActions';
-import { getResourceLabel, getOrgAndProjectFromResource } from '../utils';
-import { download } from '../utils/download';
-import {
-  isView,
-  isFile,
-  chainPredicates,
-  not,
-  isDefaultElasticView,
-  isDeprecated,
-  toPromise,
-} from '../utils/nexusMaybe';
-import useNotification from '../hooks/useNotification';
-import RemoveTagButton from './RemoveTagButtonContainer';
+import { push } from 'connected-react-router';
+import { connect } from 'react-redux';
 import nexusUrlHardEncode from '../../shared/utils/nexusEncode';
+import ResourceActions from '../components/ResourceActions';
+import useNotification from '../hooks/useNotification';
+import { getOrgAndProjectFromResource, getResourceLabel } from '../utils';
+import { download } from '../utils/download';
+import { isFile, isView, toPromise } from '../utils/nexusMaybe';
+import RemoveTagButton from './RemoveTagButtonContainer';
+import ResourceDownloadButton from './ResourceDownloadContainer';
+import { useEffect, useState } from 'react';
 
 const ResourceActionsContainer: React.FunctionComponent<{
   resource: Resource;
   editable: boolean;
   refreshResource: () => void;
   goToView: (
+    viewId: string,
     orgLabel: string,
     projectLabel: string,
-    viewId: string,
     viewType: string[] | string
   ) => void;
   goToResource: (
@@ -38,11 +32,12 @@ const ResourceActionsContainer: React.FunctionComponent<{
     revision: number
   ) => void;
 }> = ({ resource, editable, refreshResource, goToView, goToResource }) => {
-  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
-  const resourceId = resource['@id'];
   const self = resource._self;
   const nexus = useNexusContext();
+  const resourceId = resource['@id'];
   const notification = useNotification();
+  const [isLatest, setIsLatest] = useState(false);
+  const { orgLabel, projectLabel } = getOrgAndProjectFromResource(resource)!;
 
   const isLatestResource = async (resource: Resource) => {
     // TODO: remove this if / when
@@ -56,57 +51,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
     return resource._rev === latest._rev;
   };
 
-  const actionTypes = [
-    {
-      name: 'deprecateResource',
-      predicate: async (resource: Resource) => {
-        const isLatest = await isLatestResource(resource);
-        return (
-          isLatest &&
-          chainPredicates([isDefaultElasticView, not(isDeprecated)])(resource)
-        );
-      },
-      title: 'Deprecate this resource',
-      shortTitle: 'Dangerously Deprecate',
-      message: (
-        <div>
-          <h3>Warning!</h3>
-          <p>
-            This is your default ElasticSearch View. Deprecating this resource
-            will break this application for this project. Are you sure you want
-            to deprecate it?
-          </p>
-        </div>
-      ),
-      icon: <DeleteOutlined />,
-      danger: true,
-    },
-    {
-      name: 'deprecateResource',
-      predicate: async (resource: Resource) => {
-        const isLatest = await isLatestResource(resource);
-        return (
-          isLatest &&
-          chainPredicates([not(isDeprecated), not(isDefaultElasticView)])(
-            resource
-          )
-        );
-      },
-      title: 'Deprecate this resource',
-      message: "Are you sure you'd like to deprecate this resource?",
-      shortTitle: 'Deprecate',
-      icon: <DeleteOutlined />,
-      danger: true,
-    },
-    {
-      name: 'downloadFile',
-      predicate: toPromise(isFile),
-      title: 'Download this file',
-      shortTitle: 'Download File',
-      icon: <DownloadOutlined />,
-    },
-  ];
-
   const actions = {
     deprecateResource: async () => {
       try {
@@ -119,7 +63,7 @@ const ResourceActionsContainer: React.FunctionComponent<{
           deprecateMethod = nexus.File.deprecate;
         }
 
-        const deprectatedResource = await deprecateMethod(
+        const { _rev } = await deprecateMethod(
           orgLabel,
           projectLabel,
           encodeURIComponent(resourceId),
@@ -130,7 +74,6 @@ const ResourceActionsContainer: React.FunctionComponent<{
           message: `Deprecated ${getResourceLabel(resource)}`,
         });
 
-        const { _rev } = deprectatedResource;
         goToResource(
           orgLabel,
           projectLabel,
@@ -175,6 +118,33 @@ const ResourceActionsContainer: React.FunctionComponent<{
     },
   };
 
+  const actionTypes = [
+    {
+      name: 'downloadFile',
+      predicate: toPromise(isFile),
+      title: 'Download this file',
+      shortTitle: 'Download File',
+      icon: <DownloadOutlined />,
+    },
+    {
+      name: 'deprecateResource',
+      title: 'Deprecate this resource',
+      message: "Are you sure you'd like to deprecate this resource?",
+      shortTitle: 'Deprecate',
+      icon: <DeleteOutlined />,
+      danger: true,
+    },
+  ];
+
+  useEffect(() => {
+    const checkIsLatest = async () => {
+      const result = await isLatestResource(resource);
+      setIsLatest(result);
+    };
+
+    checkIsLatest();
+  }, [resource]);
+
   return (
     <div className="resource-actions-container">
       <div className="resource-actions">
@@ -183,11 +153,22 @@ const ResourceActionsContainer: React.FunctionComponent<{
           projectLabel={projectLabel}
           resourceId={encodeURIComponent(resourceId)}
         />
-        <ResourceActions
-          resource={resource}
-          actions={actions}
-          actionTypes={actionTypes}
-        />
+        {/*
+          Don't show the deprecation button for the `defaultElasticSearchIndex`
+          and `defaultSparqlIndex` resources because it would break the listing
+          operations, ergo the application.
+        */}
+        {!resource['@id'].includes('defaultElasticSearchIndex') &&
+        !resource['@id'].includes('defaultSparqlIndex') &&
+        isLatest &&
+        !resource._deprecated ? (
+          <ResourceActions
+            resource={resource}
+            actions={actions}
+            actionTypes={actionTypes}
+          />
+        ) : null}
+
         {editable && (
           <RemoveTagButton
             orgLabel={orgLabel}

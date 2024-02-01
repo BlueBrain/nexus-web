@@ -9,7 +9,7 @@ export type ActionType = {
   name: string; // A unique name for your action type
   // predicate: This function will be called with the resource passed
   // to test if we want to display this Action Button
-  predicate: (resource: Resource) => Promise<boolean>;
+  predicate?: (resource: Resource) => Promise<boolean>;
   title: string; // A long title displayed on the confirm popup or tooltip
   shortTitle: string; // Displayed on Button
   // message: a longer message to be displayed on on the confirmation popup
@@ -67,6 +67,9 @@ const makeActionButtons = async (
 ) => {
   const appliedActions = await Promise.all(
     actionTypes.map(async action => {
+      if (!action.predicate) {
+        return true;
+      }
       return await action.predicate(resource);
     })
   );

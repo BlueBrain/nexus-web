@@ -1,17 +1,17 @@
-import React, { useRef, useState } from 'react';
-import { Button, Divider } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Realm } from '@bbp/nexus-sdk/es';
 import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
-import { RootState } from '../../shared/store/reducers';
 import useClickOutside from '../../shared/hooks/useClickOutside';
 import * as authActions from '../../shared/store/actions/auth';
 import * as configActions from '../../shared/store/actions/config';
 import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
-import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
-import BrainRegionsNexusPageVideo from '../../shared/images/BrainRegionsNexusPage.mp4';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.png'
+import BrainRegionsNexusPageVideo from '../../shared/videos/BrainRegionsNexusPage.mp4';
+import { Button, Divider } from 'antd';
+import { useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
+import { RootState } from '../../shared/store/reducers';
 
 import './styles.scss';
 
@@ -38,7 +38,6 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
-  const location = useLocation();
   const auth = useSelector((state: RootState) => state.auth);
   const { layoutSettings, serviceAccountsRealm } = useSelector(
     (state: RootState) => state.config
@@ -67,14 +66,17 @@ const IdentityPage: React.FC<{}> = () => {
       />
       <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
-        <div className="title">Nexus.Fusion</div>
-        <div className="actions">
+        <h1 className="title">Nexus.Fusion</h1>
+        <nav
+          className="actions"
+          title="Main navigation"
+          aria-label="Main navigation"
+        >
           <div className="home-authentication-content-connect">
             {!realmsFilter.length ? (
               <Button
                 key="no-realms"
-                disabled
-                role="button"
+                title="No realms available, please contact your administrator."
                 size="large"
                 className="no-realms-btn"
               >
@@ -84,8 +86,8 @@ const IdentityPage: React.FC<{}> = () => {
               <Button
                 key="realm-selector"
                 size="large"
-                role="button"
-                aria-label="identity-login"
+                title="Select a realm to connect to"
+                aria-label="Identity connect"
                 onClick={() => onPopoverVisibleChange(true)}
               >
                 Connect
@@ -115,7 +117,8 @@ const IdentityPage: React.FC<{}> = () => {
                       className="connect-btn"
                       size="large"
                       type="link"
-                      role="button"
+                      title={`Connect via ${item.name}`}
+                      aria-label={`Connect via ${item.name}`}
                     >
                       {item.name}
                     </Button>
@@ -128,6 +131,7 @@ const IdentityPage: React.FC<{}> = () => {
           <Button
             className="nav-btn"
             size="large"
+            title="View all available studios"
             onClick={() => history.push('/studios')}
           >
             View Studios
@@ -137,16 +141,40 @@ const IdentityPage: React.FC<{}> = () => {
             size="large"
             rel="noopener noreferrer"
             target="_blank"
+            title="View the documentation for Nexus Fusion"
             href="https://bluebrainnexus.io/docs/index.html"
             className="nav-btn"
           >
             Documentation
           </Button>
-          <Button className="nav-btn" size="large" onClick={openAboutModal}>
+          <Button
+            className="nav-btn"
+            size="large"
+            onClick={openAboutModal}
+            title="About Nexus Fusion"
+          >
             About
           </Button>
-        </div>
+        </nav>
       </div>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={
+          layoutSettings.logoImgLink ||
+          'https://www.epfl.ch/research/domains/bluebrain'
+        }
+      >
+        <img
+          alt="Landing page logo"
+          src={
+            layoutSettings.landingPosterImg ||
+            require('../../shared/images/EPFL_BBP_logo.svg')
+          }
+          className="home-authentication-epfl"
+        />
+      </a>
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
     </div>
   );
 };

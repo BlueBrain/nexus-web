@@ -1,37 +1,38 @@
-import * as React from 'react';
-import { useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
+import { SelectOutlined } from '@ant-design/icons';
 import {
-  ProjectResponseCommon,
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  ProjectResponseCommon,
   Statistics,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Tabs, Popover, Empty } from 'antd';
 import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import { useJiraPlugin } from '../../shared/hooks/useJIRA';
-import { RootState } from '../../shared/store/reducers';
-import useNotification from '../../shared/hooks/useNotification';
-import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
 import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
-import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
+import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
+import { useJiraPlugin } from '../../shared/hooks/useJIRA';
+import useNotification from '../../shared/hooks/useNotification';
+import { RootState } from '../../shared/store/reducers';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
+import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
+import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
 import ProjectStatsContainer from '../../subapps/admin/containers/ProjectStatsContainer';
 import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDeleteContainer';
-import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
+import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
 import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
 import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
 
 import './styles.scss';
 
-const ProjectView: React.FunctionComponent = () => {
+const ProjectView: React.FC = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
+  const subApp = useOrganisationsSubappContext();
+  const { TabPane } = Tabs;
   const subapp = useOrganisationsSubappContext();
 
   const match = useRouteMatch<{
@@ -40,26 +41,38 @@ const ProjectView: React.FunctionComponent = () => {
     viewId?: string;
   }>();
 
+  const fetchProjectData = async (orgLabel: string, projectLabel: string) => {
+    return await nexus.Project.get(orgLabel, projectLabel);
+  };
+
   const {
     params: { orgLabel, projectLabel },
   } = match;
 
+  const { data: project, error } = useQuery<ProjectResponseCommon, Error>(
+    ['project', orgLabel, projectLabel],
+    () => fetchProjectData(orgLabel, projectLabel)
+  );
+
+  if (error) {
+    notification.error({
+      message: `Could not load project ${projectLabel}`,
+      description: error.message,
+    });
+  }
+
   const tabFromPath = (path: string) => {
-    const base = `/${subapp.namespace}/:orgLabel/:projectLabel/`;
+    const base = `/${subApp.namespace}/:orgLabel/:projectLabel/`;
 
     switch (path) {
       case `${base}`:
         return 'browse';
-
       case `${base}create`:
         return 'create_upload';
-
       case `${base}query/:viewId?`:
         return 'query';
-
       case `${base}statistics`:
         return 'stats';
-
       case `${base}settings`:
         return 'settings';
       case `${base}graph-analytics`:
@@ -71,20 +84,16 @@ const ProjectView: React.FunctionComponent = () => {
   };
 
   const pathFromTab = (tab: string | undefined) => {
-    const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
+    const base = `/${subApp.namespace}/${orgLabel}/${projectLabel}/`;
     switch (tab) {
       case 'browse':
         return `${base}`;
-
       case 'query':
         return `${base}query`;
-
       case 'create_upload':
         return `${base}create`;
-
       case 'stats':
         return `${base}statistics`;
-
       case 'settings':
         return `${base}settings`;
       case 'graph-analytics':
@@ -159,8 +168,22 @@ const ProjectView: React.FunctionComponent = () => {
     }, durationInMs);
   };
 
-  React.useEffect(() => {
-    /* if location has changed, check to see if we should refresh our
+  const [refreshLists, setRefreshLists] = useState(false);
+  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
+  const [statistics, setStatistics] = useState<Statistics>();
+  const [deltaPlugins, setDeltaPlugins] = useState<{
+    [key: string]: string;
+  }>();
+
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+
+  useEffect(() => {
+    setActiveKey(tabFromPath(match.path));
+  }, [match.path]);
+
+  useEffect(() => {
+    /* If location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
@@ -173,8 +196,6 @@ const ProjectView: React.FunctionComponent = () => {
     }
   }, [location]);
 
-  const [statistics, setStatistics] = React.useState<Statistics>();
-
   const fetchAndSetStatistics = async () => {
     const stats = ((await nexus.View.statistics(
       orgLabel,
@@ -184,7 +205,7 @@ const ProjectView: React.FunctionComponent = () => {
     setStatistics(stats);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAndSetStatistics();
     fetchDeltaVersion();
   }, []);

@@ -66,13 +66,13 @@ export const setSearchPreference: ActionCreator<SetSearchPreference> = (
   type: SearchPreferenceTypes.SEARCH_PREFERENCE_SET,
 });
 
-export const SEARCH_PREFENCE_LOCAL_STORAGE_KEY = 'nexusSearchPreference';
+export const SEARCH_PREFERENCE_LOCAL_STORAGE_KEY = 'nexusSearchPreference';
 
 export const setSearchPreferenceToLocalStore: ActionCreator<ThunkAction> = (
   searchPreference: string
 ) => {
   return async (dispatch: Dispatch<any>): Promise<SetSearchPreference> => {
-    localStorage.setItem(SEARCH_PREFENCE_LOCAL_STORAGE_KEY, searchPreference);
+    localStorage.setItem(SEARCH_PREFERENCE_LOCAL_STORAGE_KEY, searchPreference);
     return dispatch(setSearchPreference(searchPreference));
   };
 };

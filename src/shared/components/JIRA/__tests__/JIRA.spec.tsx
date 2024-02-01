@@ -191,7 +191,7 @@ describe('JIRA', () => {
       expect(x).toHaveLength(1);
     });
   });
-  it('renders authraizeJIRAUI', async () => {
+  it('renders authorizedJiraUI', async () => {
     const { container } = render(
       <AuthorizeJiraUI
         jiraAuthUrl={'jirurri'}

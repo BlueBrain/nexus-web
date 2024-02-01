@@ -428,15 +428,17 @@ const ResourceViewActionsContainer: React.FC<{
                 name="tag"
                 rules={[
                   {
-                    required: true,
-                    whitespace: true,
-                    pattern: /^\S+$/g,
-                    message: 'Tag must not contains spaces',
+                    pattern: /^[\x00-\x7F]/,
+                    message: 'Tag should include only ASCII characters.',
                   },
                   {
-                    pattern: /^[a-zA-Z0-9_-]+$/,
+                    max: 64,
+                    message: 'Tag should not exceed 64 characters.',
+                  },
+                  {
+                    pattern: /^(?!latest$)/,
                     message:
-                      'Tag should include only letters, numbers, underscores, and dashes.',
+                      "Please choose a different name, 'latest' is a reserved word.",
                   },
                 ]}
                 style={{ marginBottom: 8 }}

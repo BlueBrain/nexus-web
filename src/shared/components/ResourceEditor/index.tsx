@@ -1,102 +1,116 @@
-import * as React from 'react';
-import { Button, Switch } from 'antd';
-import { useLocation } from 'react-router';
 import {
   CheckCircleOutlined,
+  WarningOutlined,
   ExclamationCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
 import { AccessControl } from '@bbp/react-nexus';
-import CodeMirror from 'codemirror';
+import { Alert, Button, Switch } from 'antd';
+import codemirror from 'codemirror';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router';
+
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/mode/javascript/javascript';
 
 import { RootState } from '../../store/reducers';
-import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
-import ResourceResolutionCache from './ResourcesLRUCache';
 import CodeEditor from './CodeEditor';
-
-import './ResourceEditor.scss';
+import { LinterIssue } from './customLinter';
+import './ResourceEditor.less';
+import ResourceResolutionCache from './ResourcesLRUCache';
+import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
 export interface ResourceEditorProps {
-  rawData: { [key: string]: any };
-  onSubmit: (rawData: { [key: string]: any }) => void;
-  onFormatChange?(expanded: boolean): void;
-  onMetadataChange?(expanded: boolean): void;
-  editable?: boolean;
-  editing?: boolean;
   busy?: boolean;
+  orgLabel: string;
+  editing?: boolean;
+  editable?: boolean;
   expanded?: boolean;
+  projectLabel: string;
   showMetadata?: boolean;
   showExpanded?: boolean;
-  showMetadataToggle?: boolean;
-  orgLabel: string;
-  projectLabel: string;
   showFullScreen: boolean;
   showControlPanel?: boolean;
+  showMetadataToggle?: boolean;
+  rawData: { [key: string]: any };
   onFullScreen(): void;
+  onFormatChange?(expanded: boolean): void;
+  onMetadataChange?(expanded: boolean): void;
+  onSubmit: (rawData: { [key: string]: any }) => void;
 }
 
 const switchMarginRight = { marginRight: 5 };
 
-const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
+const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const {
     rawData,
-    onFormatChange,
-    onMetadataChange,
-    onSubmit,
-    editable = false,
-    busy = false,
-    editing = false,
-    expanded = false,
-    showMetadata = false,
-    showExpanded = true,
-    showMetadataToggle = true,
     orgLabel,
+    busy = false,
     projectLabel,
     showFullScreen,
-    onFullScreen,
+    editing = false,
+    editable = false,
+    expanded = false,
+    showExpanded = true,
+    showMetadata = false,
     showControlPanel = true,
+    showMetadataToggle = true,
+    onSubmit,
+    onFullScreen,
+    onFormatChange,
+    onMetadataChange,
   } = props;
   const location = useLocation();
-  const [isEditing, setEditing] = React.useState(editing);
-  const [valid, setValid] = React.useState(true);
-  const [parsedValue, setParsedValue] = React.useState(rawData);
-  const [stringValue, setStringValue] = React.useState(
+  const [isEditing, setEditing] = useState(editing);
+  const [isValidJSON, setIsValidJSON] = useState(true);
+  const [linterIssues, setLinterIssues] = useState<LinterIssue[]>([]);
+  const [parsedValue, setParsedValue] = useState(rawData);
+  const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
-  const fullscreen = useSelector(
-    (state: RootState) => state.dataExplorer.fullscreen
-  );
-  const keyFoldCode = (cm: any) => cm.foldCode(cm.getCursor());
-  const codeMirorRef = React.useRef<CodeMirror.Editor>();
-  const [foldCodeMiror, setFoldCodeMiror] = React.useState<boolean>(false);
+  const {
+    dataExplorer: { fullscreen },
+  } = useSelector((state: RootState) => ({
+    dataExplorer: state.dataExplorer,
+    oidc: state.oidc,
+    config: state.config,
+  }));
+  const keyFoldCode = (cm: any) => {
+    cm.foldCode(cm.getCursor());
+  };
+  const codeMirrorRef = useRef<codemirror.Editor>();
+  const [foldCodeMirror, setFoldCodeMirror] = useState<boolean>(false);
   const onFoldChange = () => {
-    if (codeMirorRef.current) {
-      if (foldCodeMiror) {
-        codeMirorRef.current.execCommand('unfoldAll');
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+    if (codeMirrorRef.current) {
+      if (foldCodeMirror) {
+        codeMirrorRef.current.execCommand('unfoldAll');
+        setFoldCodeMirror(stateFoldCodeMirror => !stateFoldCodeMirror);
       } else {
-        codeMirorRef.current.execCommand('foldAll');
-        codeMirorRef.current.foldCode(0);
-        setFoldCodeMiror(stateFoldCodeMiror => !stateFoldCodeMiror);
+        codeMirrorRef.current.execCommand('foldAll');
+        codeMirrorRef.current.foldCode(0);
+        setFoldCodeMirror(stateFoldCodeMirror => !stateFoldCodeMirror);
       }
     }
   };
 
   const onFormatChangeFold = (expanded: boolean) => {
-    if (codeMirorRef.current) {
-      codeMirorRef.current.execCommand('foldAll');
-      codeMirorRef.current.foldCode(0);
-      setFoldCodeMiror(() => false);
+    if (codeMirrorRef.current) {
+      codeMirrorRef.current.execCommand('foldAll');
+      codeMirrorRef.current.foldCode(0);
+      setFoldCodeMirror(() => false);
     }
     onFormatChange?.(expanded);
   };
+
   const onMetadataChangeFold = (checked: boolean) => {
-    if (codeMirorRef.current) {
-      codeMirorRef.current.execCommand('foldAll');
-      codeMirorRef.current.foldCode(0);
-      setFoldCodeMiror(() => false);
+    if (codeMirrorRef.current) {
+      codeMirrorRef.current.execCommand('foldAll');
+      codeMirrorRef.current.foldCode(0);
+      setFoldCodeMirror(() => false);
     }
     onMetadataChange?.(checked);
   };
@@ -119,11 +133,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
     }
 
     try {
-      const parsedVal = JSON.parse(value);
-      setParsedValue(parsedVal);
-      setValid(true);
+      // Validate if JSON is valid
+      const parsedJSON = JSON.parse(value);
+      setParsedValue(parsedJSON);
+      setIsValidJSON(true);
     } catch (error) {
-      setValid(false);
+      setIsValidJSON(false);
     }
     setStringValue(value);
     setEditing(value !== JSON.stringify(rawData, null, 2));
@@ -137,23 +152,40 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
 
   const handleCancel = () => {
     setStringValue(JSON.stringify(rawData, null, 2));
-    setValid(true);
+    setIsValidJSON(true);
     setEditing(false);
   };
+
+  const handleLintError = useCallback(
+    (errors: LinterIssue[]) => {
+      setLinterIssues(errors);
+    },
+    [setLinterIssues]
+  );
 
   useEditorTooltip({
     orgLabel,
     projectLabel,
     isEditing,
-    ref: codeMirorRef,
+    ref: codeMirrorRef,
   });
+
   useEditorPopover({
     orgLabel,
     projectLabel,
-    ref: codeMirorRef,
+    ref: codeMirrorRef,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
+    setEditing(false);
+    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor
+    setParsedValue(rawData); // Update parsed value for submit
+    return () => {
+      setFoldCodeMirror(false);
+    };
+  }, [rawData]); // Only runs when Editor receives new resource to edit
+
+  useEffect(() => {
     return () => {
       if (location.pathname !== DATA_EXPLORER_GRAPH_FLOW_PATH) {
         ResourceResolutionCache.clear();
@@ -164,23 +196,10 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
   return (
     <div
       data-testid="resource-editor"
-      className={valid ? 'resource-editor' : 'resource-editor _invalid'}
+      className={isValidJSON ? 'resource-editor' : 'resource-editor _invalid'}
     >
       {showControlPanel && (
         <div className="control-panel">
-          <div>
-            {editable && isEditing && valid && (
-              <div className="feedback _positive">
-                <CheckCircleOutlined /> Valid
-              </div>
-            )}
-            {editable && isEditing && !valid && (
-              <div className="feedback _negative">
-                <ExclamationCircleOutlined /> Invalid JSON-LD
-              </div>
-            )}
-          </div>
-
           <div className="editor-controls-panel">
             <div className="left-side">
               {showFullScreen && (
@@ -200,11 +219,11 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
               <Switch
                 checkedChildren="Unfold"
                 unCheckedChildren="Fold"
-                checked={foldCodeMiror}
+                checked={foldCodeMirror}
                 onChange={onFoldChange}
                 style={switchMarginRight}
               />
-              {!expanded && !isEditing && valid && showMetadataToggle && (
+              {!expanded && !isEditing && isValidJSON && showMetadataToggle && (
                 <Switch
                   checkedChildren="Metadata"
                   unCheckedChildren="Show Metadata"
@@ -213,12 +232,12 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                   style={switchMarginRight}
                 />
               )}
-              {showExpanded && !isEditing && valid && (
+              {showExpanded && !isEditing && isValidJSON && (
                 <Switch
                   checkedChildren="Expanded"
                   unCheckedChildren="Expand"
                   checked={expanded}
-                  onChange={expaned => onFormatChangeFold(expanded)}
+                  onChange={expanded => onFormatChangeFold(expanded)}
                   style={switchMarginRight}
                 />
               )}
@@ -227,34 +246,80 @@ const ResourceEditor: React.FunctionComponent<ResourceEditorProps> = props => {
                 permissions={['resources/write']}
                 noAccessComponent={() => <></>}
               >
+                {editable && isEditing && (
+                  <Button
+                    className="cancel"
+                    danger
+                    size="small"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                )}
                 <Button
                   role="submit"
                   icon={<SaveOutlined />}
                   type="primary"
                   size="small"
                   onClick={handleSubmit}
-                  disabled={!valid || !editable || !isEditing}
+                  disabled={
+                    !isValidJSON ||
+                    !editable ||
+                    !isEditing ||
+                    linterIssues.length > 0
+                  }
                 >
-                  Save
+                  Save changes
                 </Button>
               </AccessControl>
-              {editable && isEditing && (
-                <Button danger size="small" onClick={handleCancel}>
-                  Cancel
-                </Button>
-              )}
             </div>
           </div>
         </div>
       )}
+
+      {/* Show to the user if there's a custom linter issue */}
+      {isValidJSON && linterIssues.length > 0 && (
+        <Alert
+          message={
+            <>
+              <WarningOutlined style={{ marginRight: '1em' }} />{' '}
+              <span style={{ fontWeight: 'bold' }}>
+                Warning on Line {linterIssues[0].line}:{' '}
+              </span>
+              {linterIssues[0].message}.
+            </>
+          }
+          style={{ border: 'none', margin: '0' }}
+          type="warning"
+        />
+      )}
+
+      {/* Show to the user if there's a general issue with the JSON-LD */}
+      {!isValidJSON && (
+        <Alert
+          message={
+            <>
+              <WarningOutlined style={{ marginRight: '1em' }} />
+              <span style={{ fontWeight: 'bold' }}>
+                Error: Incorrect JSON-LD Format.
+              </span>{' '}
+              Please check the format and fix any errors.
+            </>
+          }
+          style={{ border: 'none' }}
+          type="error"
+        />
+      )}
+
       <CodeEditor
         busy={busy}
-        ref={codeMirorRef}
+        ref={codeMirrorRef}
         value={stringValue}
         editable={editable}
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         fullscreen={fullscreen}
+        onLintError={handleLintError}
       />
     </div>
   );

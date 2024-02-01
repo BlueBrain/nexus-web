@@ -1,28 +1,31 @@
-import * as React from 'react';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk';
 import { Menu, MenuProps } from 'antd';
-import GeneralSVComponent from '../components/Settings/GeneralSubView';
-import ViewsSVComponent from '../components/Settings/ViewsSubView';
-import StoragesSVComponent from '../components/Settings/StoragesSubView';
-import ResolversSVComponent from '../components/Settings/ResolversSubView';
-import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import * as React from 'react';
 import DangerZoneSVComponent from '../components/Settings/DangerZoneSubView';
 import './SettingsContainer.scss';
+import GeneralSVComponent from '../components/Settings/GeneralSubView';
+import PermissionsAclsSVComponent from '../components/Settings/PermissionsAclsSubView';
+import ResolversSVComponent from '../components/Settings/ResolversSubView';
+import StoragesSVComponent from '../components/Settings/StoragesSubView';
+import ViewsSVComponent from '../components/Settings/ViewsSubView';
+import './SettingsContainer.less';
 
-type Props = {
+type SettingsContainerProps = {
   project?: Partial<Omit<ProjectResponseCommon, 'apiMappings'>>;
   apiMappings?: ProjectResponseCommon['apiMappings'];
   mode: string;
 };
 
-type TMenuItem = {
+type MenuItem = {
   key: string;
   id: string;
   label: string;
   Component: (props: any) => JSX.Element;
 };
+
 type OnSelectHandler = MenuProps['onSelect'];
-const subViewsMapper = new Map<string, TMenuItem>([
+
+const subViewsMapper = new Map<string, MenuItem>([
   [
     'general',
     {
@@ -50,15 +53,6 @@ const subViewsMapper = new Map<string, TMenuItem>([
       Component: StoragesSVComponent,
     },
   ],
-  // [
-  //   'quotas',
-  //   {
-  //     id: 'setting/quotas',
-  //     key: 'setting/quotas',
-  //     label: 'Quotas',
-  //     Component: QuotasSVComponent,
-  //   },
-  // ],
   [
     'resolvers',
     {
@@ -88,7 +82,7 @@ const subViewsMapper = new Map<string, TMenuItem>([
   ],
 ]);
 
-const SettingsContainer: React.FunctionComponent<Props> = ({
+const SettingsContainer: React.FC<SettingsContainerProps> = ({
   project,
   apiMappings,
   mode,
@@ -99,7 +93,7 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   const [selectedKey, setSelectedKey] = React.useState(() => menuItems[0].id);
   const handleOnSelectSubMenuItem: OnSelectHandler = info =>
     setSelectedKey(info.key);
-  const subViewSelectedComponenet = (props: Props) => {
+  const subViewSelectedComponent = (props: SettingsContainerProps) => {
     const view = subViewsMapper.get(selectedKey.split('/')[1]);
     const Component = view!.Component;
     const key = view!.key;
@@ -109,18 +103,22 @@ const SettingsContainer: React.FunctionComponent<Props> = ({
   return (
     <div className="settings-container">
       <Menu
-        defaultSelectedKeys={[menuItems[0].id]}
-        defaultOpenKeys={[menuItems[0].id]}
-        selectedKeys={[selectedKey]}
-        onSelect={handleOnSelectSubMenuItem}
         multiple={false}
-        items={menuItems.map(item => ({
-          key: item.key,
-          label: item.label,
-        }))}
-      />
+        selectedKeys={[selectedKey]}
+        defaultOpenKeys={[menuItems[0].id]}
+        onSelect={handleOnSelectSubMenuItem}
+        defaultSelectedKeys={[menuItems[0].id]}
+      >
+        {menuItems.map(item => (
+          <Menu.Item key={item.key}>{item.label}</Menu.Item>
+        ))}
+      </Menu>
       <div className="settings-content">
-        {subViewSelectedComponenet({ project, apiMappings, mode })}
+        {subViewSelectedComponent({
+          project,
+          apiMappings,
+          mode,
+        })}
       </div>
     </div>
   );

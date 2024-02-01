@@ -43,10 +43,18 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
               foldGutter: true,
               foldCode: true,
               indentUnit: INDENT_UNIT,
-              gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+              gutters: [
+                'CodeMirror-linenumbers',
+                'CodeMirror-foldgutter',
+                'CodeMirror-lint-markers',
+              ],
               lineWiseCopyCut: true,
               extraKeys: {
                 'Ctrl-Q': keyFoldCode,
+              },
+              lint: {
+                getAnnotations: handleLintErrors,
+                async: true,
               },
             } as TEditorConfiguration
           }

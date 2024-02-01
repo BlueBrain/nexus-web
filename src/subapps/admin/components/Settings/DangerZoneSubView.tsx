@@ -19,7 +19,10 @@ type TDangerZoneItem = {
   description: string;
   action: React.ReactElement;
 };
-type Props = {
+
+type DangerZoneActionState = Omit<DangerZoneActionProps, 'onClose' | 'status'>;
+
+type DangerZoneSubViewProps = {
   project: {
     _label: string;
     _rev: number;
@@ -30,6 +33,7 @@ type Props = {
     _deprecated: boolean;
   };
 };
+
 const deprecateProject = async ({
   nexus,
   orgLabel,
@@ -48,6 +52,30 @@ const deprecateProject = async ({
     throw new Error('Can not deprecate your project', { cause: error });
   }
 };
+
+const undoDeprecateProject = async ({
+  apiEndpoint,
+  nexus,
+  orgLabel,
+  projectLabel,
+  rev,
+}: {
+  apiEndpoint: string;
+  nexus: NexusClient;
+  orgLabel: string;
+  projectLabel: string;
+  rev: number;
+}) => {
+  try {
+    await nexus.httpPut({
+      path: `${apiEndpoint}/projects/${orgLabel}/${projectLabel}/undeprecate?rev=${rev}`,
+    });
+  } catch (error) {
+    // @ts-ignore
+    throw new Error('Cannot undo deprecation of the project', { cause: error });
+  }
+};
+
 const deleteProject = async ({
   nexus,
   apiEndpoint,
@@ -70,16 +98,15 @@ const deleteProject = async ({
     throw new Error('Can not delete your project', { cause: error });
   }
 };
-type TDangerZoneActionState = Omit<
-  TDangerZoneActionProps,
-  'onClose' | 'status'
->;
-const DangerZoneSubView = ({ project }: Props) => {
+
+const DangerZoneSubView = ({ project }: DangerZoneSubViewProps) => {
+  const queryClient = useQueryClient();
   const nexus = useNexusContext();
   const history = useHistory();
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
+
   const match = useRouteMatch<{
     orgLabel: string;
     projectLabel: string;
@@ -94,8 +121,8 @@ const DangerZoneSubView = ({ project }: Props) => {
     updateModalState,
   ] = useReducer(
     (
-      previous: TDangerZoneActionState,
-      nextState: Partial<TDangerZoneActionState>
+      previous: DangerZoneActionState,
+      nextState: Partial<DangerZoneActionState>
     ) => ({
       ...previous,
       ...nextState,
@@ -130,6 +157,42 @@ const DangerZoneSubView = ({ project }: Props) => {
       },
     }
   );
+
+  const {
+    mutateAsync: undoDeprecateProjectAsync,
+    status: undoDeprecationStatus,
+  } = useMutation(
+    () =>
+      undoDeprecateProject({
+        apiEndpoint,
+        nexus,
+        orgLabel,
+        projectLabel,
+        rev: project._rev,
+      }),
+    {
+      onSuccess: () => {
+        // Invalidate project query to refetch the project to update the UI
+        queryClient.invalidateQueries(['project', orgLabel, projectLabel]);
+
+        notification.success({
+          message: <strong>{`Project ${orgLabel}/${projectLabel}`}</strong>,
+          description: 'Project deprecation has been undone successfully',
+        });
+      },
+      onError: (error: any) => {
+        notification.error({
+          message: `Error undoing deprecation of project ${projectLabel}`,
+          description: (
+            <code>
+              {error && error.cause ? error.cause.message : 'An error occurred'}
+            </code>
+          ),
+        });
+      },
+    }
+  );
+
   const {
     mutateAsync: deleteProjectAsync,
     status: deletionStatus,
@@ -149,8 +212,14 @@ const DangerZoneSubView = ({ project }: Props) => {
       });
     },
   });
+
   const handleDeprecation = () =>
     deprecateProjectAsync({ nexus, orgLabel, projectLabel, rev: project._rev });
+
+  const handleUndoDeprecation = () => {
+    undoDeprecateProjectAsync();
+  };
+
   const handleDeletion = () =>
     deleteProjectAsync({
       nexus,
@@ -159,15 +228,17 @@ const DangerZoneSubView = ({ project }: Props) => {
       projectLabel,
       rev: project._rev,
     });
+
   const handleOpenDeprecationModal = () =>
     updateModalState({
       open: true,
       title: 'Deprecate Project',
       description:
-        'This action cannot be undone. This will permanently deprecated',
+        'Deprecating a project will make it read-only. You will not be able to create new resources in this project',
       action: 'deprecate',
       handler: handleDeprecation,
     });
+
   const handleOpenDeleteModal = () =>
     updateModalState({
       open: true,
@@ -176,34 +247,60 @@ const DangerZoneSubView = ({ project }: Props) => {
       action: 'delete',
       handler: handleDeletion,
     });
+
   const dangerZoneDataSource: TDangerZoneItem[] = [
     {
-      key: 'deprecate-project-section',
-      title: 'Deprecate this project',
-      description: 'Mark this project as deprecated and read-only.',
+      key: 'deprecation-action-section',
+      title: project._deprecated
+        ? 'Undo Deprecation of this project'
+        : 'Deprecate this project',
+      description: project._deprecated
+        ? 'Restore this project to its active state.'
+        : 'Mark this project as deprecated and read-only.',
       action: (
         <AccessControl
           path={[`${orgLabel}/${projectLabel}`]}
           permissions={['projects/write']}
           noAccessComponent={() => (
-            <Tooltip title="You have no permissions to deprecate this project">
+            <Tooltip
+              title={`You have no permissions to ${
+                project._deprecated ? 'undo the deprecation of' : 'deprecate'
+              } this project`}
+            >
               <Button disabled danger style={{ margin: 0, marginRight: 10 }}>
-                <span>Deprecate this Project</span>
+                <span>
+                  {project._deprecated
+                    ? 'Undo Deprecation'
+                    : 'Deprecate this Project'}
+                </span>
                 <HasNoPermission />
               </Button>
             </Tooltip>
           )}
         >
           <Button
-            danger
-            className="deprecate-btn"
-            style={{ margin: 0, marginRight: 10 }}
-            type="ghost"
+            danger={!project._deprecated}
+            type={project._deprecated ? 'primary' : 'ghost'}
             htmlType="button"
-            disabled={project._deprecated}
-            onClick={handleOpenDeprecationModal}
+            disabled={
+              project._deprecated && undoDeprecationStatus === 'loading'
+            }
+            loading={
+              project._deprecated
+                ? undoDeprecationStatus === 'loading'
+                : status === 'loading'
+            }
+            onClick={
+              project._deprecated
+                ? handleUndoDeprecation
+                : handleOpenDeprecationModal
+            }
+            style={{ margin: 0, marginRight: 10 }}
           >
-            Deprecate this Project
+            {project._deprecated ? <UndoOutlined /> : <StopOutlined />}
+            {project._deprecated
+              ? 'Undo Deprecation'
+              : 'Deprecate this Project'}
           </Button>
         </AccessControl>
       ),
@@ -233,6 +330,7 @@ const DangerZoneSubView = ({ project }: Props) => {
             htmlType="button"
             onClick={handleOpenDeleteModal}
           >
+            <DeleteOutlined />
             Delete this Project
           </Button>
         </AccessControl>

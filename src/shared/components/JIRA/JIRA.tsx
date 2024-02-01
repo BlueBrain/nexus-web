@@ -25,7 +25,7 @@ const AuthorizeJiraUI = ({
   const [verificationCode, setVerificationCode] = React.useState('');
   return (
     <>
-      <h1>We first need to connect your Jira account.</h1>
+      <h2>We first need to connect your Jira account.</h2>
 
       <ol>
         <li>

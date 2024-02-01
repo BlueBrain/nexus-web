@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { vi, describe } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
-import { createBrowserHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { Provider } from 'react-redux';
 import fetch from 'node-fetch';
@@ -25,42 +25,112 @@ import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { RenderResult, act } from '@testing-library/react';
 import { setupServer } from 'msw/node';
 
-describe(
-  'workSpaceMenu',
-  () => {
-    const history = createBrowserHistory({ basename: '/' });
-    const contextValue: StudioContextType = {
-      orgLabel: 'org',
-      projectLabel: 'project',
-      studioId: 'studio1',
-      isWritable: true,
-    };
-    const nexus = createNexusClient({
-      fetch,
-      uri: deltaPath(),
-    });
-    const store = configureStore(history, { nexus }, {});
-    const resource = ({
-      '@context': [
-        'https://bluebrain.github.io/nexus/contexts/metadata.json',
-        'https://bluebrainnexus.io/studio/context',
-      ],
-      '@id': 'studio1',
-      '@type': 'Studio',
-      description: '',
-      label: 'SSCx portal data',
-      plugins: [
-        {
-          customise: true,
-          plugins: [
-            { expanded: false, key: 'video' },
-            { expanded: false, key: 'preview' },
-            { expanded: false, key: 'admin' },
-            { expanded: false, key: 'circuit' },
-            { expanded: false, key: 'image-collection-viewer' },
-            { expanded: false, key: 'jira' },
-            { expanded: false, key: 'markdown' },
-          ],
+import { deltaPath } from '__mocks__/handlers/handlers';
+import { ButtonHTMLType } from 'antd/lib/button/button';
+
+describe('workSpaceMenu', () => {
+  const history = createMemoryHistory({});
+  const contextValue: StudioContextType = {
+    orgLabel: 'org',
+    projectLabel: 'project',
+    studioId: 'studio1',
+    isWritable: true,
+  };
+  const nexus = createNexusClient({
+    fetch,
+    uri: deltaPath(),
+  });
+  const store = configureStore(history, { nexus }, {});
+  const resource = ({
+    '@context': [
+      'https://bluebrain.github.io/nexus/contexts/metadata.json',
+      'https://bluebrainnexus.io/studio/context',
+    ],
+    '@id': 'studio1',
+    '@type': 'Studio',
+    description: '',
+    label: 'SSCx portal data',
+    plugins: [
+      {
+        customise: true,
+        plugins: [
+          { expanded: false, key: 'video' },
+          { expanded: false, key: 'preview' },
+          { expanded: false, key: 'admin' },
+          { expanded: false, key: 'circuit' },
+          { expanded: false, key: 'image-collection-viewer' },
+          { expanded: false, key: 'jira' },
+          { expanded: false, key: 'markdown' },
+        ],
+      },
+    ],
+    workspaces: ['w1'],
+    _project: 'org/project',
+    _constrainedBy:
+      'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
+    _createdAt: '2022-03-31T17:08:53.747Z',
+    _createdBy:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/serviceaccounts/users/service-account-nexus-sa',
+    _deprecated: false,
+    _incoming:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F98b08a64-f116-46cd-8568-be2aa2849cc4/incoming',
+    _outgoing:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F98b08a64-f116-46cd-8568-be2aa2849cc4/outgoing',
+    _rev: 149,
+    _schemaProject:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/projects/copies/sscx',
+    _self:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/copies/sscx/_/https:%2F%2Fbbp.epfl.ch%2Fneurosciencegraph%2Fdata%2F98b08a64-f116-46cd-8568-be2aa2849cc4',
+    _updatedAt: '2022-05-25T07:58:25.751Z',
+    _updatedBy:
+      'https://dev.nise.bbp.epfl.ch/nexus/v1/realms/local/users/localuser',
+  } as unknown) as StudioResource;
+  const queryClient = new QueryClient();
+  // establish API mocking before all tests
+  beforeAll(() => server.listen());
+  // reset any request handlers that are declared as a part of our tests
+  // (i.e. for testing one-time error scenarios)
+  afterEach(() => server.resetHandlers());
+  // clean up once the tests are done
+  afterAll(() => server.close());
+  server.use(
+    rest.get(deltaPath('/resources/org/project/_/w1'), (req, res, ctx) => {
+      const mockResponse = {
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrainnexus.io/studio/context',
+        ],
+        '@id': 'w1',
+        '@type': 'StudioWorkSpace',
+        description: `A test work space`,
+        label: `w1`,
+        dashboards: [
+          {
+            dashboard: 'd1',
+          },
+        ],
+      };
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
+  );
+
+  server.use(
+    rest.get(deltaPath('/resources/org/project/_/d1'), (req, res, ctx) => {
+      const mockResponse = {
+        '@context': [
+          'https://bluebrain.github.io/nexus/contexts/metadata.json',
+          'https://bluebrainnexus.io/studio/context',
+        ],
+        '@id': 'd1',
+        '@type': 'StudioDashboard',
+        description: `A test dashboard`,
+        label: `d1`,
+        dataTable: {
+          '@id': 'dataTable1',
         },
       ],
       workspaces: ['w1'],
