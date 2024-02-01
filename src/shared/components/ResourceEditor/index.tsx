@@ -1,9 +1,4 @@
-import {
-  CheckCircleOutlined,
-  WarningOutlined,
-  ExclamationCircleOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { WarningOutlined, SaveOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { Alert, Button, Switch } from 'antd';
 import codemirror from 'codemirror';
@@ -20,7 +15,7 @@ import { RootState } from '../../store/reducers';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import CodeEditor from './CodeEditor';
 import { LinterIssue } from './customLinter';
-import './ResourceEditor.less';
+import './ResourceEditor.scss';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
 
