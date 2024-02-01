@@ -1,10 +1,6 @@
-import { setupServer } from 'msw/node';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { deltaPath } from '__mocks__/handlers/handlers';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { NexusProvider } from '@bbp/react-nexus';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import {
   aclsHandler,
   identitiesHandler,
@@ -61,6 +57,7 @@ describe('ViewsSubView', () => {
         <QueryClientProvider client={queryClient}>
           <Router history={history}>
             <Route path="/orgs/:orgLabel/:projectLabel/settings">
+              {/* @ts-ignore */}
               <NexusProvider nexusClient={nexus}>
                 <ViewsSubView />
               </NexusProvider>
@@ -85,7 +82,7 @@ describe('ViewsSubView', () => {
       expect(errorRows.length).toEqual(2);
       screen.getByText(/2 Total errors/i, { selector: 'h3' });
 
-      const errorRow1 = getErrorRow('Mock Error 1');
+      // const errorRow1 = getErrorRow('Mock Error 1');
       const errorRow2 = getErrorRow('Mock Error 2');
       expect(errorRow2).toBeTruthy();
     });
