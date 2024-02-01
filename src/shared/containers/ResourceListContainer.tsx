@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useNexusContext } from '@bbp/react-nexus';
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ElasticSearchViewQueryResponse,
-  Resource,
-} from '@bbp/nexus-sdk/es';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID, Resource } from '@bbp/nexus-sdk/es';
 
 import ResourceListComponent, {
   ResourceBoardList,
@@ -84,6 +80,10 @@ const ResourceListContainer: React.FunctionComponent<{
       size: pageSize,
     };
 
+    if (searchValue) {
+      query.sort = undefined;
+    }
+
     if (searchValue !== list.query.q) {
       return setList({
         ...list,
@@ -148,7 +148,7 @@ const ResourceListContainer: React.FunctionComponent<{
                             '@id': list.query.q,
                           },
                         },
-                      ].filter(query => !isEmpty(query)),
+                      ],
                     },
                   },
                   {
@@ -164,7 +164,7 @@ const ResourceListContainer: React.FunctionComponent<{
                             _self: list.query.q,
                           },
                         },
-                      ].filter(query => !isEmpty(query)),
+                      ],
                     },
                   },
                 ],
@@ -173,13 +173,8 @@ const ResourceListContainer: React.FunctionComponent<{
             size: 10,
           }
         ),
-        nexus.Resource.list(
-          orgLabel,
-          projectLabel,
-          list.query.q ? { ...list.query, sort: undefined } : list.query
-        ),
+        nexus.Resource.list(orgLabel, projectLabel, list.query),
       ]);
-
       if (resourcesByIdOrSelf.status === 'fulfilled') {
         const resultsLength = resourcesByIdOrSelf.value.hits.hits.length;
         const hits = resourcesByIdOrSelf.value.hits.hits;
@@ -301,6 +296,7 @@ const ResourceListContainer: React.FunctionComponent<{
   };
 
   return (
+    // @ts-ignore
     <ResourceListComponent
       busy={busy}
       list={list}
