@@ -1,15 +1,13 @@
 import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
-import { NexusClient } from '@bbp/nexus-sdk';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useMutation, useQuery } from 'react-query';
-import { Table, Button, Row, Col, notification, Tooltip, Badge } from 'antd';
+import { Table, Button, Row, Col, notification, Tooltip } from 'antd';
 import { isArray, isString, orderBy } from 'lodash';
 import { ColumnsType } from 'antd/es/table';
 import { NexusClient } from '@bbp/nexus-sdk/es';
-import { PromisePool } from '@supercharge/promise-pool';
+import { PromisePool, PromisePoolError } from '@supercharge/promise-pool';
 import { useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
-import { MinusCircleTwoTone, PlusCircleTwoTone } from '@ant-design/icons';
 import { getOrgAndProjectFromProjectId } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
@@ -20,6 +18,8 @@ import {
   fetchIndexingErrors,
 } from './ViewIndexingErrors';
 import './styles.scss';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useState } from 'react';
 
 type SubView = {
   key: string;
@@ -401,7 +401,7 @@ const ViewsSubView = () => {
                   title="You have no permissions to re-index the views"
                 >
                   <Button
-                    type="ghost"
+                    type="default"
                     disabled
                     style={{ margin: 0, marginTop: 20 }}
                   >
@@ -418,7 +418,7 @@ const ViewsSubView = () => {
                   (status === 'success' && !Boolean(views?.results))
                 }
                 loading={isLoading}
-                type="ghost"
+                type="default"
                 style={{ maxWidth: 150, margin: 0, marginTop: 20 }}
                 htmlType="button"
                 onClick={() => {
