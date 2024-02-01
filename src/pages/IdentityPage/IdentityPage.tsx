@@ -4,8 +4,8 @@ import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
 import useClickOutside from '../../shared/hooks/useClickOutside';
 import * as authActions from '../../shared/store/actions/auth';
 import * as configActions from '../../shared/store/actions/config';
-import landingPosterImg from '../../shared/images/EPFL_BBP_logo.png';
-import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.png'
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.svg';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
 import BrainRegionsNexusPageVideo from '../../shared/videos/BrainRegionsNexusPage.mp4';
 import { Button, Divider } from 'antd';
 import { useRef, useState } from 'react';
