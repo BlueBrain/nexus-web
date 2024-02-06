@@ -90,6 +90,17 @@ describe('Resource with id that contains URL encoded characters', () => {
     });
   });
 
+  it('resource with any id opens when user clicks on resource row in Search table', function() {
+    cy.visit(`/search?layout=Neuron%20Morphology`);
+
+    cy.findAllByTestId('search-table-row')
+      .first()
+      .click();
+
+    cy.findByText('Advanced View').click();
+    cy.contains(`"@id"`);
+  });
+
   it('resource opens when user directly navigates to resource page', function() {
     const resourcePage = `/${Cypress.env('ORG_LABEL')}/${
       this.projectLabel
