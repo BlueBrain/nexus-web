@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import React from 'react';
 import { RenderResult, act, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -23,8 +23,6 @@ import {
   getDataExplorerGraphFlowResourceObjectTags,
   getDataExplorerGraphFlowResourceSource,
 } from '../../../__mocks__/handlers/DataExplorerGraphFlow/handlers';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
-import { getResourceLabel } from '../../../shared/utils';
 import { configureStore } from '../../../store';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -93,7 +91,6 @@ describe('DataExplorerGraphFlow', () => {
 
   beforeEach(() => {
     history = createMemoryHistory({});
-    const queryClient = new QueryClient();
 
     nexus = createNexusClient({
       fetch,
@@ -105,6 +102,7 @@ describe('DataExplorerGraphFlow', () => {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <Router history={history}>
+            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <DateExplorerGraphFlow />
             </NexusProvider>
@@ -152,7 +150,7 @@ describe('DataExplorerGraphFlow', () => {
     expect(dataExplorerState.fullscreen).toBe(false);
   });
 
-  it('should the fullscren toggle present in the screen if the user in fullscreen mode', async () => {
+  it('should the fullscreen toggle present in the screen if the user in fullscreen mode', async () => {
     store.dispatch(
       InitNewVisitDataExplorerGraphView({
         current: initialDataExplorerState.current,

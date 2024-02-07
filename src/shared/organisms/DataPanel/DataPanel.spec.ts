@@ -1,4 +1,3 @@
-import { vi as jest } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { downloadArchive } from './DataPanel';
 import { ParsedNexusUrl } from '../../../shared/utils/nexusParse';

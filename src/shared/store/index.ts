@@ -4,6 +4,9 @@ import {
   applyMiddleware,
   compose,
   Store,
+  Middleware,
+  AnyAction,
+  Dispatch,
 } from 'redux';
 import thunk, { ThunkAction as ReduxThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
@@ -44,12 +47,14 @@ function configureStore(
     DataExplorerFlowSliceListener.middleware,
   ];
 
-  // @ts-ignore
-  if (import.meta.env.MODE === 'development') {
-    middlwares = [...middlwares, logger];
+  if (process.env.NODE_ENV === 'development') {
+    middlwares = [
+      ...middlwares,
+      logger as Middleware<{}, any, Dispatch<AnyAction>>,
+    ];
   }
+
   const store = createStore(
-    // @ts-ignore
     combineReducers({
       router: connectRouter(history),
       oidc: oidcReducer,
