@@ -53,6 +53,7 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
                 'Ctrl-Q': keyFoldCode,
               },
               lint: {
+                // TODO Fix this missing implementation
                 getAnnotations: handleLintErrors,
                 async: true,
               },
