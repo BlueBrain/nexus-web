@@ -84,13 +84,15 @@ const SearchContainer: React.FC = () => {
       background: location,
     });
   };
-  const onRowClick = (record: any): { onClick: () => void } => {
+  const onRowClick = (
+    record: any
+  ): { onClick: () => void; 'data-testid': string } => {
     return {
       onClick: () => {
         const [orgLabel, projectLabel] = record.project.label.split('/');
-        const resourceId = encodeURIComponent(record['@id']);
-        goToResource(orgLabel, projectLabel, resourceId);
+        goToResource(orgLabel, projectLabel, record['@id']);
       },
+      'data-testid': 'search-table-row',
     };
   };
   const {
