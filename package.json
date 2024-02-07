@@ -24,6 +24,7 @@
     "test:ci": "vitest run",
     "test:ci:silent": "vitest run --silent",
     "test": "vitest",
+    "test:snaps": "vitest --update",
     "test:ui": "vitest --ui",
     "knip": "knip",
     "lint": "tslint --project tsconfig.json",
