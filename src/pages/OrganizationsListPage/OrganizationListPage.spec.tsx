@@ -1,13 +1,12 @@
 import '@testing-library/jest-dom';
 import { renderHook } from '@testing-library/react-hooks/dom';
-import fetch from 'node-fetch';
 import { NexusProvider } from '@bbp/react-nexus';
 import { OrganizationList, createNexusClient } from '@bbp/nexus-sdk';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
-import { render, screen, server } from '../../utils/testUtil';
+import { render, screen } from '../../utils/testUtil';
 import OrganizationListPage, {
   useInfiniteOrganizationQuery,
 } from './OrganizationListPage';
@@ -57,6 +56,7 @@ describe('OrganizationListPage', () => {
     await render(
       <Provider store={store}>
         <ConnectedRouter history={history}>
+          {/* @ts-ignore */}
           <NexusProvider nexusClient={nexus}>
             <QueryClientProvider client={queryClient}>
               <OrganizationListPage />
