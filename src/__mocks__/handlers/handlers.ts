@@ -594,7 +594,7 @@ export const handlers = [
         'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
       )}/sparql`
     ),
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       const mockResponse = {
         head: { vars: ['self', 'p', 'o'] },
         results: {
@@ -731,7 +731,7 @@ export const handlers = [
       );
     }
   ),
-  rest.get(deltaPath('/views/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/views/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -871,7 +871,7 @@ export const handlers = [
     deltaPath(
       '/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex'
     ),
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       const mockResponse = {
         '@context': [
           'https://bluebrain.github.io/nexus/contexts/sparql.json',
@@ -905,7 +905,7 @@ export const handlers = [
       );
     }
   ),
-  rest.get(deltaPath('/acls/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/acls/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1002,7 +1002,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/resources/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1141,7 +1141,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/identities'), (req, res, ctx) => {
+  rest.get(deltaPath('/identities'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1173,8 +1173,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/org/:label'), (req, res, ctx) => {
-    const { label } = req.params;
+  rest.get(deltaPath('/org/:label'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id':
@@ -1260,7 +1259,7 @@ export const handlers = [
     ];
     return res(ctx.status(200), ctx.json(mockResponse));
   }),
-  rest.get(deltaPath('/orgs'), (req, res, ctx) => {
+  rest.get(deltaPath('/orgs'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST1',
@@ -1531,7 +1530,7 @@ export const handlers = [
       })
     );
   }),
-  rest.get(deltaPath('/projects'), (req, res, ctx) => {
+  rest.get(deltaPath('/projects'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id':

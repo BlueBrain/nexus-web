@@ -13,9 +13,8 @@ import {
   searchHitsHandler,
 } from '__mocks__/handlers/ResourceListContainerHandlers';
 import ResourceListBoardContainer from './ResourceListBoardContainer';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import configureStore from '../store';
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 
 describe('ResourceListBoardContainer', () => {
   const queryClient = new QueryClient();
@@ -40,6 +39,7 @@ describe('ResourceListBoardContainer', () => {
       <Provider store={store}>
         <Router history={history}>
           <QueryClientProvider client={queryClient}>
+            {/* @ts-ignore */}
             <NexusProvider nexusClient={nexus}>
               <ResourceListBoardContainer
                 orgLabel="bbp"
