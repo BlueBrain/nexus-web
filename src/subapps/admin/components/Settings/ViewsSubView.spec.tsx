@@ -15,9 +15,9 @@ import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { Route, Router } from 'react-router-dom';
-import configureStore from '../../../../shared/store';
 import { render, screen, waitFor } from '../../../../utils/testUtil';
 import ViewsSubView from './ViewsSubView';
+import { configureStore } from '../../../../store';
 
 describe('ViewsSubView', () => {
   const mockOrganisation = 'copies';

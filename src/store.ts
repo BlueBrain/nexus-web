@@ -1,4 +1,4 @@
-import configureStore from './shared/store';
+import { configureStore } from './shared/store';
 import { RootState } from './shared/store/reducers';
 import { createBrowserHistory } from 'history';
 import { Link, Operation, Observable } from '@bbp/nexus-link';
