@@ -7,8 +7,7 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
 import { RenderResult, act, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import {
   MOCK_VAR,
   ORIGINAL_1_SORTED_2,
