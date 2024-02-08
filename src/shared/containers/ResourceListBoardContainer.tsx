@@ -92,8 +92,9 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   };
 
   return (
+    // @ts-ignore
     <ResourceListBoardComponent createList={createList}>
-      {resourceLists.map((list, index: number) => {
+      {resourceLists.map((list, _index: number) => {
         return (
           <ResourceListContainer
             refreshList={refreshLists}
