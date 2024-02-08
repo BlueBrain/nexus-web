@@ -1,13 +1,13 @@
-import React, { forwardRef, useRef } from 'react';
-import { EditorConfiguration } from 'codemirror';
+import { Spin } from 'antd';
+import { clsx } from 'clsx';
+import { customLinter, LinterIssue } from './customLinter';
+import codemirror from 'codemirror';
+import 'codemirror/addon/lint/lint.css';
+import 'codemirror/addon/lint/lint.js';
+import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-import { clsx } from 'clsx';
-import { Spin } from 'antd';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/addon/fold/brace-fold';
 
 type TCodeEditor = {
   busy: boolean;
@@ -16,15 +16,40 @@ type TCodeEditor = {
   fullscreen: boolean;
   keyFoldCode(cm: any): void;
   handleChange(editor: any, data: any, value: any): void;
+  onLintError?: (errors: LinterIssue[]) => void;
 };
 
-type TEditorConfiguration = EditorConfiguration & {
+type TEditorConfiguration = codemirror.EditorConfiguration & {
   foldCode: boolean;
+  lint?: boolean | any;
 };
 
-const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
-  ({ busy, value, editable, fullscreen, keyFoldCode, handleChange }, ref) => {
-    const wrapperRef = useRef(null);
+const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
+  (
+    {
+      busy,
+      value,
+      editable,
+      fullscreen,
+      keyFoldCode,
+      handleChange,
+      onLintError,
+    },
+    ref
+  ) => {
+    const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
+    const handleLintErrors = useCallback((text: string) => {
+      const linterErrors = customLinter(text);
+      if (
+        JSON.stringify(linterErrors) !==
+        JSON.stringify(prevLinterErrorsRef.current)
+      ) {
+        onLintError?.(linterErrors);
+        prevLinterErrorsRef.current = linterErrors;
+      }
+      return linterErrors;
+    }, []);
+
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -53,7 +78,6 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
                 'Ctrl-Q': keyFoldCode,
               },
               lint: {
-                // TODO Fix this missing implementation
                 getAnnotations: handleLintErrors,
                 async: true,
               },
@@ -63,20 +87,10 @@ const CodeEditor = forwardRef<CodeMirror.Editor | undefined, TCodeEditor>(
             'code-mirror-editor',
             fullscreen && 'full-screen-mode'
           )}
-          ref={wrapperRef}
           onChange={handleChange}
           editorDidMount={editor => {
             highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<CodeMirror.Editor>).current = editor;
-          }}
-          editorWillUnmount={() => {
-            const editor = (ref as React.MutableRefObject<
-              CodeMirror.Editor
-            >).current.getWrapperElement();
-            if (editor) editor.remove();
-            if (wrapperRef.current) {
-              (wrapperRef.current as { hydrated: boolean }).hydrated = false;
-            }
+            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
           }}
         />
       </Spin>

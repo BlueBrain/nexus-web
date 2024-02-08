@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import * as React from 'react';
 import { render, waitFor } from '../../../utils/testUtil';
-import { resourceResolverApi } from '__mocks__/handlers/ResourceEditor/handlers';
+import { resourceResolverApi } from '../../../__mocks__/handlers/ResourceEditor/handlers';
 import CodeEditor from './CodeEditor';
 
 import codemiror from 'codemirror';
