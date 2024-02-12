@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
