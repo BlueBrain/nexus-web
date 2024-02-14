@@ -5,10 +5,9 @@ import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
-import React, { forwardRef, useCallback, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
-import ts from 'typescript';
+import { INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;
@@ -26,18 +25,15 @@ type TEditorConfiguration = codemirror.EditorConfiguration & {
 };
 
 const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
-  (
-    {
-      busy,
-      value,
-      editable,
-      fullscreen,
-      keyFoldCode,
-      handleChange,
-      onLintError,
-    },
-    ref
-  ) => {
+  ({
+    busy,
+    value,
+    editable,
+    fullscreen,
+    keyFoldCode,
+    handleChange,
+    onLintError,
+  }) => {
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
