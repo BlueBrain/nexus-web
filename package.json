@@ -28,8 +28,6 @@
     "test:ui": "vitest --ui",
     "knip": "knip",
     "lint": "tslint --project tsconfig.json",
-    "start": "NODE_ENV=development DEBUG=* webpack --mode development --config-name server && node dist/server.js",
-    "start:storybook": "start-storybook -p 6006",
     "style": "prettier --check \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "style:fix": "prettier --write \"./src/**/*.{ts,tsx,js,jsx,less}\"",
     "e2e:open": "cypress open",
