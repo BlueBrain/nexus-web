@@ -22,7 +22,6 @@ const ResourcePlugins: React.FunctionComponent<{
 }> = ({
   resource,
   goToResource,
-  empty = null,
   openPlugins,
   studioDefinedPluginsToInclude,
   builtInPlugins,
@@ -137,7 +136,7 @@ const ResourcePlugins: React.FunctionComponent<{
             >
               <Collapse
                 key={pluginData.name}
-                onChange={e => handleCollapseChange(pluginData.name)}
+                onChange={() => handleCollapseChange(pluginData.name)}
                 activeKey={
                   openPlugins.includes(pluginData.name)
                     ? pluginData.name
