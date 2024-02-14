@@ -8,8 +8,8 @@ import Header from '../components/Header/Header';
 import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
 import useLocalStorage from '../hooks/useLocalStorage';
-import './FusionMainLayout.scss';
 import { getUserManager } from 'authManager';
+import './FusionMainLayout.scss';
 
 const { Content } = Layout;
 
@@ -37,11 +37,9 @@ const FusionMainLayout: React.FC<{
     'consentToTracking'
   );
   const state = useSelector((state: RootState) => state);
-  const { oidc, config } = useSelector((state: RootState) => ({
-    auth: state.auth,
-    oidc: state.oidc,
-    config: state.config,
-  }));
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const config = useSelector((state: RootState) => state.config);
+
   const { layoutSettings } = config;
   const token = oidc && oidc.user && !!oidc.user.access_token;
   const name =
