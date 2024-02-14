@@ -5,9 +5,10 @@ import codemirror from 'codemirror';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
-import React, { forwardRef, useCallback, useRef } from 'react';
+import React, { forwardRef, useCallback, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
+import ts from 'typescript';
 
 type TCodeEditor = {
   busy: boolean;
@@ -50,6 +51,9 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
       return linterErrors;
     }, []);
 
+    const editor = useRef<codemirror.Editor>();
+    const wrapper = useRef(null);
+
     return (
       <Spin spinning={busy}>
         <CodeMirror
@@ -88,9 +92,19 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
-          editorDidMount={editor => {
-            highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
+          editorDidMount={editorElement => {
+            (editor as React.MutableRefObject<
+              codemirror.Editor
+            >).current = editorElement;
+          }}
+          editorWillUnmount={() => {
+            const editorWrapper = (editor as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editor) editorWrapper.remove();
+            if (wrapper.current) {
+              (wrapper.current as { hydrated: boolean }).hydrated = false;
+            }
           }}
         />
       </Spin>
