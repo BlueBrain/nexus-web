@@ -584,7 +584,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             }}
             rowKey={r => r.tableKey!}
             data-testid="dashboard-table"
-            onChange={(page, fileter, sorter, extra) => {
+            onChange={(_page, _fileter, _sorter, extra) => {
               setDisplayedRows(extra.currentDataSource?.length ?? 0);
             }}
           />

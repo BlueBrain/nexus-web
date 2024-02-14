@@ -418,9 +418,11 @@ describe(
 
       await user.click(secondRowCheckbox!);
 
-      await screen.findByText(
+      const notifications = await screen.findAllByText(
         '2 other resources with same metadata have also been automatically selected for download.'
       );
+
+      expect(notifications.length).toBeGreaterThan(0);
     });
   },
 
@@ -467,7 +469,7 @@ export const invalidSparqlHandler = rest.post(
       'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
     )}/sparql`
   ),
-  (req, res, ctx) => {
+  (_req, res, ctx) => {
     return res(ctx.status(400), ctx.json(invalidSparqlQueryResponse));
   }
 );
