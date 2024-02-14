@@ -20,5 +20,8 @@
     ],
     "variable-name": [true, "allow-pascal-case", "allow-leading-underscore"],
     "no-parameter-reassignment": false
+  },
+  "linterOptions": {
+    "exclude": ["src/__mocks__/**/*.js", "./init.js"]
   }
 }
