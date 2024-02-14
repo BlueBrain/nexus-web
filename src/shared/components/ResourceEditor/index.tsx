@@ -67,6 +67,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
+
   const {
     dataExplorer: { fullscreen },
   } = useSelector((state: RootState) => ({

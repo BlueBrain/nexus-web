@@ -92,6 +92,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             (editor as React.MutableRefObject<
               codemirror.Editor
             >).current = editorElement;
+            editor?.current?.setValue(value);
           }}
           editorWillUnmount={() => {
             const editorWrapper = (editor as React.MutableRefObject<
