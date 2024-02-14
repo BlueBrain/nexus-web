@@ -1,11 +1,8 @@
-import React from 'react';
 import { Tooltip } from 'antd';
 import { clsx } from 'clsx';
 import { MoreOutlined, PlusOutlined } from '@ant-design/icons';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../store/reducers';
-import './styles.scss';
 import { TDELink } from 'shared/store/reducers/data-explorer';
+import './styles.scss';
 
 const BORDER_ITEMS = 2;
 const NavigationStackShrinkedItem = ({

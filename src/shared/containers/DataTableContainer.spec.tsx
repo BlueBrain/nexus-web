@@ -1,7 +1,7 @@
 import { describe, it } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import { createMemoryHistory } from 'history';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
