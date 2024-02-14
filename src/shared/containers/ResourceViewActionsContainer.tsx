@@ -322,7 +322,7 @@ const ResourceViewActionsContainer: React.FC<{
                     items={[
                       {
                         key: 'url',
-                        label: 'URL',
+                        label: 'Fusion URL',
                         onClick: () => {
                           const pathToResource = `${basePath}${generatePath(
                             '/:orgLabel/:projectLabel/resources/:resourceId',
@@ -340,7 +340,7 @@ const ResourceViewActionsContainer: React.FC<{
                       },
                       {
                         key: 'url_with_revision',
-                        label: 'URL (with revision)',
+                        label: 'Fusion URL (with revision)',
                         onClick: () => {
                           const pathToResource = `${basePath}${generatePath(
                             '/:orgLabel/:projectLabel/resources/:resourceId',
@@ -360,12 +360,12 @@ const ResourceViewActionsContainer: React.FC<{
                       },
                       {
                         key: 'id',
-                        label: 'ID',
+                        label: 'Resource ID',
                         onClick: () => triggerCopy(resource['@id']),
                       },
                       {
                         key: 'id_with_revision',
-                        label: 'ID (with revision)',
+                        label: 'Resource ID (with revision)',
                         onClick: () =>
                           triggerCopy(
                             `${resource['@id']}?rev=${resource._rev}`
@@ -373,12 +373,12 @@ const ResourceViewActionsContainer: React.FC<{
                       },
                       {
                         key: 'nexus_address',
-                        label: 'Nexus address',
+                        label: 'Nexus API endpoint',
                         onClick: () => triggerCopy(self ? self : ''),
                       },
                       {
                         key: 'nexus_address_with_revision',
-                        label: 'Nexus address (with revision)',
+                        label: 'Nexus API endpoint (with revision)',
                         onClick: () =>
                           triggerCopy(
                             self
