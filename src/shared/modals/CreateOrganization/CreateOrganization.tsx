@@ -7,10 +7,7 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import { RootState } from '../../store/reducers';
-import {
-  ModalsActionsEnum,
-  updateOrganizationModalVisibility,
-} from '../../../shared/store/actions/modals';
+import { updateOrganizationModalVisibility } from '../../../shared/store/actions/modals';
 
 const formItemLayout = {
   labelCol: {
