@@ -92,7 +92,10 @@ const ResourcePlugins: React.FunctionComponent<{
               <div
                 id={`plugin-collapsable-${index}`}
                 style={{ marginBottom: 10 }}
+                key={`builtin-plugin-${plugin}`}
               >
+                <ErrorBoundary fallback={Fallback}>
+                  {builtInComponent}
                 <ErrorBoundary key={plugin} fallback={Fallback}>
                   <>{builtInComponent}</>
                 </ErrorBoundary>
