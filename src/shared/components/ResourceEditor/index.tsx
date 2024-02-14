@@ -110,19 +110,8 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  React.useEffect(() => {
-    setEditing(false);
-    setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor.
-    setParsedValue(rawData); // Update parsed value for submit.
-
-    return () => setFoldCodeMirror(false);
-  }, [rawData]); // only runs when Editor receives new resource to edit
-
-  const handleChange = (
-    editor: CodeMirror.Editor,
-    data: CodeMirror.EditorChange,
-    value: string
-  ) => {
+  const handleChange = (editor: any, data: any, value: any) => {
+    editor;
     if (!editable) {
       return;
     }
@@ -314,7 +303,6 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
         handleChange={handleChange}
         keyFoldCode={keyFoldCode}
         fullscreen={fullscreen}
-        // @ts-ignore
         onLintError={handleLintError}
       />
     </div>
