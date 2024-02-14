@@ -8,8 +8,8 @@ import Header from '../components/Header/Header';
 import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
 import useLocalStorage from '../hooks/useLocalStorage';
-import './FusionMainLayout.scss';
 import { getUserManager } from 'authManager';
+import './FusionMainLayout.scss';
 
 const { Content } = Layout;
 

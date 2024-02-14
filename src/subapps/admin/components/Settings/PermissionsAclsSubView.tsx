@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { groupBy, sortBy } from 'lodash';
 import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';

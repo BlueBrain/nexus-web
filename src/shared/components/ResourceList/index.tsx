@@ -1,4 +1,10 @@
-import * as React from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import {
   Tooltip,
   Button,
@@ -30,7 +36,6 @@ import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
-import { DEFAULT_LIST } from '../../../shared/containers/ResourceListBoardContainer';
 import Copy from '../Copy';
 
 import './ResourceList.scss';
@@ -82,6 +87,7 @@ const ResourceListComponent: React.FunctionComponent<{
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
   shareableLink: string;
+  children: React.ReactNode;
 }> = ({
   busy,
   list,
@@ -107,9 +113,9 @@ const ResourceListComponent: React.FunctionComponent<{
   const defaultSearchValue = list.query.q;
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-  const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
+  const [sortOption, setSortOption] = useState(DEFAULT_SORT_OPTION);
 
-  const hiddenHeightTestListItemRef = React.useRef<HTMLDivElement>(null);
+  const hiddenHeightTestListItemRef = useRef<HTMLDivElement>(null);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -150,11 +156,11 @@ const ResourceListComponent: React.FunctionComponent<{
     onSortBy(key);
   };
 
-  const [searchValue, setSearchValue] = React.useState<string | undefined>(
+  const [searchValue, setSearchValue] = useState<string | undefined>(
     defaultSearchValue
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSearchValue(defaultSearchValue);
   }, [defaultSearchValue]);
 
@@ -207,7 +213,7 @@ const ResourceListComponent: React.FunctionComponent<{
     </div>
   );
 
-  const calculateNumberOfListItemsThatFit = React.useCallback(() => {
+  const calculateNumberOfListItemsThatFit = useCallback(() => {
     const listItemDiv = hiddenHeightTestListItemRef.current;
     if (!listItemDiv) return;
 
@@ -252,7 +258,7 @@ const ResourceListComponent: React.FunctionComponent<{
   /* height changes a few times when resizing a window so debounce */
   const debounceHeightChange = debounce(() => updatePageSize(), 300);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     debounceHeightChange();
   }, [wrapperHeight]);
   return (
@@ -371,7 +377,7 @@ const ResourceListComponent: React.FunctionComponent<{
                       goToResource(resource['@id']);
                     }}
                   >
-                    <ListItem
+                    <List.Item
                       key={resource['@id']}
                       onClick={() => goToResource(resource['@id'])}
                     >
@@ -393,7 +399,7 @@ const ResourceListComponent: React.FunctionComponent<{
                           )}
                         </div>
                       </Popover>
-                    </ListItem>
+                    </List.Item>
                   </a>
                 );
               }}
