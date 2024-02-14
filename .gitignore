@@ -26,6 +26,7 @@ coverage/
 cypress/screenshots/
 cypress/videos/
 cypress.env.json
+cypress/downloads/
 
 # Editor-specific files
 .vscode/
