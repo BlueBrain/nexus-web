@@ -3,7 +3,6 @@ import { Resource } from '@bbp/nexus-sdk/es';
 import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from '../containers/NexusPlugin';
-import PluginInfo from '../components/PluginInfo';
 import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 import ErrorBoundary from '../../shared/components/ErrorBoundary';
@@ -19,7 +18,6 @@ const ResourcePlugins: React.FunctionComponent<{
 }> = ({
   resource,
   goToResource,
-  empty = null,
   openPlugins,
   studioDefinedPluginsToInclude,
   builtInPlugins,
@@ -96,7 +94,7 @@ const ResourcePlugins: React.FunctionComponent<{
                 style={{ marginBottom: 10 }}
               >
                 <ErrorBoundary key={plugin} fallback={Fallback}>
-                  {builtInComponent}
+                  <>{builtInComponent}</>
                 </ErrorBoundary>
               </div>
             );
@@ -133,7 +131,7 @@ const ResourcePlugins: React.FunctionComponent<{
             >
               <Collapse
                 key={pluginData.name}
-                onChange={e => handleCollapseChange(pluginData.name)}
+                onChange={() => handleCollapseChange(pluginData.name)}
                 activeKey={
                   openPlugins.includes(pluginData.name)
                     ? pluginData.name

@@ -29,7 +29,7 @@ export const workspaceHandler = rest.get(
 
 export const dashboardHandler = rest.get(
   deltaPath('/resources/org/project/_/d1'),
-  (req, res, ctx) => {
+  (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -53,7 +53,7 @@ export const dashboardHandler = rest.get(
 
 export const tableHandler = rest.get(
   deltaPath('/resources/org/project/_/dataTable1'),
-  (req, res, ctx) => {
+  (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
