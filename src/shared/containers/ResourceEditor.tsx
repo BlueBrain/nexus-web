@@ -112,12 +112,13 @@ const ResourceEditorContainer: React.FunctionComponent<{
 
   const handleFormatChange = () => {
     onExpanded && onExpanded(!expanded);
-    setExpanded(!expanded);
+    setExpanded(value => !value);
   };
 
   const handleMetaDataChange = () => {
     setShowMetadata(!showMetadata);
   };
+
   const handleFullScreen = async () => {
     const data = (await nexus.Resource.get(
       orgLabel,
@@ -151,6 +152,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
       navigate.push('/data-explorer/graph-flow');
     }
   };
+
   async function getResourceSource(
     nexus: NexusClient,
     orgLabel: string,

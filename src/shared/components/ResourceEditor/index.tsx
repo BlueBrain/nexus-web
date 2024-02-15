@@ -67,14 +67,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
-
-  const {
-    dataExplorer: { fullscreen },
-  } = useSelector((state: RootState) => ({
-    dataExplorer: state.dataExplorer,
-    oidc: state.oidc,
-    config: state.config,
-  }));
+  const { fullscreen } = useSelector((state: RootState) => state.dataExplorer);
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -165,9 +158,8 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor
     setParsedValue(rawData); // Update parsed value for submit
-    return () => {
-      setFoldCodeMirror(false);
-    };
+
+    return () => setFoldCodeMirror(false);
   }, [rawData]); // Only runs when Editor receives new resource to edit
 
   useEffect(() => {
