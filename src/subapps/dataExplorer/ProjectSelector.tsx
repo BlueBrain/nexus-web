@@ -52,7 +52,7 @@ export const ProjectSelector: React.FC<Props> = ({
         }}
         onClear={() => onSelect(undefined, undefined)}
         aria-label="project-filter"
-        bordered={false}
+        variant="borderless"
         className="search-input"
         popupClassName="search-menu"
         data-testid="project-filter"
