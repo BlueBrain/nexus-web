@@ -72,7 +72,7 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       destroyOnClose
       maskClosable
       className="app-information-modal"
-      maskStyle={{ background: '#002766' }}
+      styles={{ mask: { background: '#002766' } }}
       footer={null}
       {...{ open, onCancel }}
     >

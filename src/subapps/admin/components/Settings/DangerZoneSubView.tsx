@@ -1,14 +1,15 @@
 import React, { useReducer } from 'react';
 import { Button, notification, Tooltip, List } from 'antd';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { DeleteOutlined, UndoOutlined, StopOutlined } from '@ant-design/icons';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { NexusClient } from '@bbp/nexus-sdk/es';
 import { makeOrganizationUri } from '../../../../shared/utils';
 import { RootState } from '../../../../shared/store/reducers';
 import DangerZoneAction, {
-  TDangerZoneActionProps,
+  DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import './styles.scss';

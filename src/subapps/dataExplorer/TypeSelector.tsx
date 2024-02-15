@@ -65,7 +65,7 @@ export const TypeSelector: React.FC<Props> = ({
         }}
         placeholder="All types"
         aria-label="type-filter"
-        bordered={false}
+        variant="borderless"
         className="search-input"
         popupClassName="search-menu"
         value={defaultValue}
