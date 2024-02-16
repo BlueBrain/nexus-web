@@ -7,7 +7,7 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
 import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
+import { INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;
@@ -25,18 +25,15 @@ type TEditorConfiguration = codemirror.EditorConfiguration & {
 };
 
 const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
-  (
-    {
-      busy,
-      value,
-      editable,
-      fullscreen,
-      keyFoldCode,
-      handleChange,
-      onLintError,
-    },
-    ref
-  ) => {
+  ({
+    busy,
+    value,
+    editable,
+    fullscreen,
+    keyFoldCode,
+    handleChange,
+    onLintError,
+  }) => {
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
@@ -49,6 +46,9 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
       }
       return linterErrors;
     }, []);
+
+    const editor = useRef<codemirror.Editor>();
+    const wrapper = useRef(null);
 
     return (
       <Spin spinning={busy}>
@@ -88,9 +88,20 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
-          editorDidMount={editor => {
-            highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
+          editorDidMount={editorElement => {
+            (editor as React.MutableRefObject<
+              codemirror.Editor
+            >).current = editorElement;
+            editor?.current?.setValue(value);
+          }}
+          editorWillUnmount={() => {
+            const editorWrapper = (editor as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editor) editorWrapper.remove();
+            if (wrapper.current) {
+              (wrapper.current as { hydrated: boolean }).hydrated = false;
+            }
           }}
         />
       </Spin>

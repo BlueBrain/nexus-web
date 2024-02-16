@@ -67,6 +67,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
+
   const {
     dataExplorer: { fullscreen },
   } = useSelector((state: RootState) => ({
@@ -110,7 +111,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const handleChange = (editor: any, data: any, value: any) => {
+  const handleChange = (editor: any, _data: any, value: any) => {
     editor;
     if (!editable) {
       return;
