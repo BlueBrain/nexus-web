@@ -45,7 +45,6 @@ const ResourceViewActionsContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ resource, orgLabel, projectLabel, latestResource, isLatest }) => {
-  const encodedResourceId = encodeURIComponent(resource['@id']);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -131,6 +130,7 @@ const ResourceViewActionsContainer: React.FC<{
   const [view, setView] = React.useState<Resource | null>(null);
   const subapp = useOrganisationsSubappContext();
   React.useEffect(() => {
+    const encodedResourceId = encodeURIComponent(resource['@id']);
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
       data => {
         setTags(data);
@@ -193,7 +193,7 @@ const ResourceViewActionsContainer: React.FC<{
           .map(rev => ({
             key: rev,
             onClick: () =>
-              goToResource(orgLabel, projectLabel, encodedResourceId, rev),
+              goToResource(orgLabel, projectLabel, resource['@id'], rev),
             label: (
               <>
                 Revision {rev}
@@ -301,7 +301,7 @@ const ResourceViewActionsContainer: React.FC<{
                     {
                       orgLabel,
                       projectLabel,
-                      resourceId: encodedResourceId,
+                      resourceId: resource['@id'],
                     }
                   )}`;
 
@@ -329,7 +329,7 @@ const ResourceViewActionsContainer: React.FC<{
                             {
                               orgLabel,
                               projectLabel,
-                              resourceId: encodedResourceId,
+                              resourceId: resource['@id'],
                             }
                           )}`;
 
@@ -347,7 +347,7 @@ const ResourceViewActionsContainer: React.FC<{
                             {
                               orgLabel,
                               projectLabel,
-                              resourceId: encodedResourceId,
+                              resourceId: resource['@id'],
                             }
                           )}`;
 
