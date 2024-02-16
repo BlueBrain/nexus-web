@@ -45,7 +45,6 @@ const ResourceViewActionsContainer: React.FC<{
   orgLabel: string;
   projectLabel: string;
 }> = ({ resource, orgLabel, projectLabel, latestResource, isLatest }) => {
-  const encodedResourceId = encodeURIComponent(resource['@id']);
   const nexus = useNexusContext();
   const history = useHistory();
   const location = useLocation();
@@ -131,6 +130,7 @@ const ResourceViewActionsContainer: React.FC<{
   const [view, setView] = React.useState<Resource | null>(null);
   const subapp = useOrganisationsSubappContext();
   React.useEffect(() => {
+    const encodedResourceId = encodeURIComponent(resource['@id']);
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
       data => {
         setTags(data);
@@ -194,7 +194,7 @@ const ResourceViewActionsContainer: React.FC<{
             <Menu.Item
               key={rev}
               onClick={() => {
-                goToResource(orgLabel, projectLabel, encodedResourceId, rev);
+                goToResource(orgLabel, projectLabel, resource['@id'], rev);
               }}
             >
               Revision {rev}
@@ -305,7 +305,7 @@ const ResourceViewActionsContainer: React.FC<{
                     {
                       orgLabel,
                       projectLabel,
-                      resourceId: encodedResourceId,
+                      resourceId: resource['@id'],
                     }
                   )}`;
 
@@ -324,13 +324,14 @@ const ResourceViewActionsContainer: React.FC<{
                 overlay={
                   <Menu>
                     <Menu.Item
+                      key="fusion-url"
                       onClick={() => {
                         const pathToResource = `${basePath}${generatePath(
                           '/:orgLabel/:projectLabel/resources/:resourceId',
                           {
                             orgLabel,
                             projectLabel,
-                            resourceId: encodedResourceId,
+                            resourceId: resource['@id'],
                           }
                         )}`;
 
@@ -342,13 +343,14 @@ const ResourceViewActionsContainer: React.FC<{
                       Fusion URL
                     </Menu.Item>
                     <Menu.Item
+                      key="fusion-url-(with-revision)"
                       onClick={() => {
                         const pathToResource = `${basePath}${generatePath(
                           '/:orgLabel/:projectLabel/resources/:resourceId',
                           {
                             orgLabel,
                             projectLabel,
-                            resourceId: encodedResourceId,
+                            resourceId: resource['@id'],
                           }
                         )}`;
 
@@ -361,20 +363,28 @@ const ResourceViewActionsContainer: React.FC<{
                     >
                       Fusion URL (with revision)
                     </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(resource['@id'])}>
+                    <Menu.Item
+                      onClick={() => triggerCopy(resource['@id'])}
+                      key="resource-id"
+                    >
                       Resource ID
                     </Menu.Item>
                     <Menu.Item
+                      key="resource-id-with-revision"
                       onClick={() =>
                         triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
                       }
                     >
                       Resource ID (with revision)
                     </Menu.Item>
-                    <Menu.Item onClick={() => triggerCopy(self ? self : '')}>
+                    <Menu.Item
+                      onClick={() => triggerCopy(self ? self : '')}
+                      key="nexus-api-endpoint"
+                    >
                       Nexus API endpoint
                     </Menu.Item>
                     <Menu.Item
+                      key="nexus-api-endpoitn-with-revision"
                       onClick={() =>
                         triggerCopy(
                           self
