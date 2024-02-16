@@ -1,8 +1,7 @@
 @import '../../lib.scss';
 
 .list-board {
-  // 82 = 40 (header) + 42 (project banner)
-  height: calc(100vh - 82px);
+  height: calc(100vh - 150px);
   overflow: hidden;
   overflow-x: scroll;
   padding: $default-pad $default-pad 0;

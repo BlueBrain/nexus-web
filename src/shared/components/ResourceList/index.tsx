@@ -183,7 +183,7 @@ const ResourceListComponent: React.FunctionComponent<{
           label: 'Oldest',
         },
       ]}
-    ></Menu>
+    />
   );
 
   const hiddenListForCalculatingDimensionsForPageSize = (
@@ -367,43 +367,42 @@ const ResourceListComponent: React.FunctionComponent<{
                 responsive: true,
                 showLessItems: true,
               }}
-              renderItem={resource => {
-                return (
-                  <a
-                    href={makeResourceUri(resource['@id'])}
+              renderItem={resource => (
+                <a
+                  href={makeResourceUri(resource['@id'])}
+                  key={resource['@id']}
+                  onClick={e => {
+                    e.preventDefault();
+                    goToResource(resource['@id']);
+                  }}
+                  className="resource-list-item"
+                >
+                  <List.Item
                     key={resource['@id']}
-                    onClick={e => {
-                      e.preventDefault();
-                      goToResource(resource['@id']);
-                    }}
+                    onClick={() => goToResource(resource['@id'])}
                   >
-                    <List.Item
-                      key={resource['@id']}
-                      onClick={() => goToResource(resource['@id'])}
-                    >
-                      <Popover
-                        content={
-                          <div style={{ width: 600 }}>
-                            <ResourceCardComponent
-                              resource={resource}
-                              schemaLink={schemaLinkContainer}
-                            />
-                          </div>
-                        }
-                        mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
-                      >
-                        {getResourceLabel(resource)}
-                        <div className="resource-type-list">
-                          {!!resource['@type'] && (
-                            <TypesIconList type={[resource['@type']].flat()} />
-                          )}
+                    <Popover
+                      content={
+                        <div style={{ width: 600 }}>
+                          <ResourceCardComponent
+                            resource={resource}
+                            schemaLink={schemaLinkContainer}
+                          />
                         </div>
-                      </Popover>
-                    </List.Item>
-                  </a>
-                );
-              }}
-            ></List>
+                      }
+                      mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
+                    >
+                      {getResourceLabel(resource)}
+                      <div className="resource-type-list">
+                        {!!resource['@type'] && (
+                          <TypesIconList type={[resource['@type']].flat()} />
+                        )}
+                      </div>
+                    </Popover>
+                  </List.Item>
+                </a>
+              )}
+            />
           )}
         </Spin>
       </div>

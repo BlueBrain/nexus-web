@@ -196,9 +196,11 @@ export const PredicateSelector: React.FC<Props> = ({
           placement="top"
         >
           <Select
-            options={pathOptions(paths ?? [])}
-            showSearch={true}
+            virtual
+            showSearch
+            allowClear
             labelInValue
+            options={pathOptions(paths ?? [])}
             onSelect={(pathLabel: DefaultOptionType) => {
               setFormField(PATH_FIELD, pathLabel);
               predicateSelected(
@@ -209,11 +211,9 @@ export const PredicateSelector: React.FC<Props> = ({
             }}
             disabled={disablePredicateSelection}
             loading={arePathsLoading}
-            allowClear={true}
             onClear={() => {
               onReset();
             }}
-            virtual={true}
             className="select-menu"
             popupClassName="search-menu"
             optionLabelProp="label"

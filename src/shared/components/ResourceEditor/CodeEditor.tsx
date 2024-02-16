@@ -25,15 +25,19 @@ type TEditorConfiguration = codemirror.EditorConfiguration & {
 };
 
 const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
-  ({
-    busy,
-    value,
-    editable,
-    fullscreen,
-    keyFoldCode,
-    handleChange,
-    onLintError,
-  }) => {
+  (
+    {
+      busy,
+      value,
+      editable,
+      fullscreen,
+      keyFoldCode,
+      handleChange,
+      onLintError,
+    },
+    ref
+  ) => {
+    const wrapperRef = useRef(null);
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
@@ -47,12 +51,10 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
       return linterErrors;
     }, []);
 
-    const editor = useRef<codemirror.Editor>();
-    const wrapper = useRef(null);
-
     return (
       <Spin spinning={busy}>
         <CodeMirror
+          ref={wrapperRef}
           data-testid="code-mirror-editor"
           value={value}
           autoCursor={false}
@@ -89,18 +91,17 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
           )}
           onChange={handleChange}
           editorDidMount={editorElement => {
-            (editor as React.MutableRefObject<
+            (ref as React.MutableRefObject<
               codemirror.Editor
             >).current = editorElement;
-            editor?.current?.setValue(value);
           }}
           editorWillUnmount={() => {
-            const editorWrapper = (editor as React.MutableRefObject<
+            const editorWrapper = (ref as React.MutableRefObject<
               CodeMirror.Editor
             >).current.getWrapperElement();
-            if (editor) editorWrapper.remove();
-            if (wrapper.current) {
-              (wrapper.current as { hydrated: boolean }).hydrated = false;
+            if (editorWrapper) editorWrapper.remove();
+            if (wrapperRef.current) {
+              (wrapperRef.current as { hydrated: boolean }).hydrated = false;
             }
           }}
         />
