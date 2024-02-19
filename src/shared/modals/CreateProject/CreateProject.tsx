@@ -117,6 +117,7 @@ const CreateProject: React.FC<{}> = ({}) => {
   const nexus = useNexusContext();
   const history = useHistory();
   const { identities } = useSelector((state: RootState) => state.auth);
+
   const userUri = identities?.data?.identities.find(
     t => t['@type'] === 'User'
   )?.['@id'];
@@ -162,6 +163,7 @@ const CreateProject: React.FC<{}> = ({}) => {
         deprecated: false,
       }),
   });
+
   const { mutateAsync, status } = useMutation(createProjectMutation);
   const handleSubmit = ({
     organization,

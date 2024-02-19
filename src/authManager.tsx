@@ -15,7 +15,9 @@ import { fetchIdentitiesFulfilledAction } from 'shared/store/actions/auth';
 
 const userManagerCache: Map<string, UserManager> = new Map();
 
-export const getUserManager = (state: RootState): UserManager | undefined => {
+export const getUserManager = (
+  state: Pick<RootState, 'config' | 'auth'>
+): UserManager | undefined => {
   const {
     auth: { realms },
     config: { clientId, redirectHostName, preferredRealm },
@@ -62,10 +64,6 @@ export const setupUserSession = async (userManager: UserManager) => {
   userManager.events.addUserLoaded(async user => {
     loadUser(store, userManager);
     localStorage.setItem('nexus__token', user.access_token);
-    const identities = await (
-      await fetch(`${store.getState().config.apiEndpoint}/identities`)
-    ).json();
-    store.dispatch(fetchIdentitiesFulfilledAction(identities));
   });
 
   // Raised prior to the access token expiring.
