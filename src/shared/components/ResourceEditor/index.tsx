@@ -255,7 +255,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
       )}
 
       {/* Show to the user if there's a custom linter issue */}
-      {isValidJSON && linterIssues.length > 0 && (
+      {isValidJSON && linterIssues.length > 0 && !showMetadata && (
         <Alert
           message={
             <>
