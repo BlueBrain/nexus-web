@@ -1,7 +1,10 @@
 import { useSelector } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
+import { ConfigProvider } from 'antd';
+import { antdTheme } from 'theme/antd';
+import { IdentityList } from '@bbp/nexus-sdk/es/types';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout from './layouts/FusionMainLayout';
@@ -16,10 +19,9 @@ import { RootState } from './store/reducers';
 import DataPanel from './organisms/DataPanel/DataPanel';
 import AppInfo from './modals/AppInfo/AppInfo';
 import EntityCreation from './modals';
-
+import { fetchIdentitiesFulfilledAction } from './store/actions/auth';
+import store from '../store';
 import './App.scss';
-import { ConfigProvider } from 'antd';
-import { antdTheme } from 'theme/antd';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();
@@ -29,15 +31,26 @@ const App: React.FC = () => {
   const notificationData: NotificationContextType = getNotificationContextValue();
   const routesWithSubApps = [...routes, ...subAppRoutes];
 
-  const { data: nexusEcosystem } = useQuery({
-    queryKey: ['nexus-ecosystem'],
-    queryFn: () =>
-      nexus.httpGet({
-        path: `${config.apiEndpoint}/version`,
-        context: { as: 'json' },
-      }),
-    refetchOnWindowFocus: false,
-  });
+  const [{ data: nexusEcosystem }] = useQueries([
+    {
+      queryKey: ['nexus-ecosystem'],
+      queryFn: () =>
+        nexus.httpGet({
+          path: `${config.apiEndpoint}/version`,
+          context: { as: 'json' },
+        }),
+      refetchOnWindowFocus: false,
+    },
+    {
+      queryKey: ['nexus-identities'],
+      queryFn: () => nexus.Identity.list(),
+      refetchOnWindowFocus: false,
+      onSuccess: (data: IdentityList) => {
+        console.log('@@onSuccess', data);
+        store.dispatch(fetchIdentitiesFulfilledAction(data));
+      },
+    },
+  ]);
 
   return (
     <ConfigProvider theme={antdTheme}>
