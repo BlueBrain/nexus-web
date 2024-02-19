@@ -36,7 +36,7 @@ const FusionMainLayout: React.FC<{
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
-  const state = useSelector((state: RootState) => state);
+  const auth = useSelector((state: RootState) => state.auth);
   const oidc = useSelector((state: RootState) => state.oidc);
   const config = useSelector((state: RootState) => state.config);
 
@@ -44,7 +44,7 @@ const FusionMainLayout: React.FC<{
   const token = oidc && oidc.user && !!oidc.user.access_token;
   const name =
     oidc.user && oidc.user.profile && oidc.user.profile.preferred_username;
-  const userManager = getUserManager(state);
+  const userManager = getUserManager({ config, auth });
   const authenticated = !isEmpty(oidc.user);
 
   const handleLogout: MenuItemProps['onClick'] = e => {
@@ -52,6 +52,7 @@ const FusionMainLayout: React.FC<{
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
   return (
     <>
       <SeoHeaders />

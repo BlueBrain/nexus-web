@@ -46,7 +46,6 @@ const App: React.FC = () => {
       queryFn: () => nexus.Identity.list(),
       refetchOnWindowFocus: false,
       onSuccess: (data: IdentityList) => {
-        console.log('@@onSuccess', data);
         store.dispatch(fetchIdentitiesFulfilledAction(data));
       },
     },
