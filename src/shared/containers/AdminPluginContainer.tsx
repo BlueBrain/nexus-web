@@ -71,23 +71,6 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
 
   const content = (
     <>
-      <AccessControl
-        path={`/${orgLabel}/${projectLabel}`}
-        permissions={['resources/write']}
-        noAccessComponent={() => <></>}
-      >
-        {editable && (
-          <Alert
-            message={
-              <>
-                <EditOutlined /> You can edit this resource.
-              </>
-            }
-            type="success"
-          />
-        )}
-      </AccessControl>
-
       <ResourceActionsContainer
         editable={editable}
         resource={resource}
