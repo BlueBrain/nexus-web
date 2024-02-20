@@ -1,24 +1,26 @@
 @import '../../lib.scss';
 
 .list-board {
+  padding: $default-pad $default-pad 0;
   height: calc(100vh - 150px);
   overflow: hidden;
   overflow-x: scroll;
-  padding: $default-pad $default-pad 0;
   & > .wrapper {
     display: flex;
-    width: fit-content;
     padding-bottom: $default-pad;
+    width: fit-content;
     height: 100%;
   }
   & > .wrapper > .resource-list {
+    margin: 0 0.5em;
     &:first-child {
       margin-left: 0;
     }
     &:last-child {
-      // necessary beause the queries board padding doesn't contain last element
       margin-right: $default-pad;
+      background-color: rgba(0, 0, 0, 0.3);
+      // Necessary because the queries board padding doesn't contain last element
+      color: white;
     }
-    margin: 0 0.5em;
   }
 }
