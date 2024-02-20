@@ -1,4 +1,4 @@
-import React from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   ExpandedResource,
   ResourceSource,
@@ -22,44 +22,44 @@ import {
   getResourceLabel,
 } from '../utils';
 
-const ResourceEditorContainer: React.FunctionComponent<{
-  resourceId: string;
-  orgLabel: string;
-  projectLabel: string;
+const ResourceEditorContainer: FC<{
   rev: number;
+  orgLabel: string;
+  resourceId: string;
+  tabChange?: boolean;
+  projectLabel: string;
+  showExpanded?: boolean;
+  showFullScreen: boolean;
   defaultExpanded?: boolean;
   defaultEditable?: boolean;
+  showControlPanel?: boolean;
+  showMetadataToggle?: boolean;
   onSubmit: (value: object) => void;
   onExpanded?: (expanded: boolean) => void;
-  tabChange?: boolean;
-  showMetadataToggle?: boolean;
-  showFullScreen: boolean;
-  showExpanded?: boolean;
-  showControlPanel?: boolean;
 }> = ({
-  resourceId,
-  orgLabel,
-  projectLabel,
   rev,
-  defaultEditable = false,
-  defaultExpanded = false,
-  onSubmit,
-  onExpanded,
+  orgLabel,
   tabChange,
+  resourceId,
+  projectLabel,
+  showExpanded,
   showMetadataToggle,
   showFullScreen = false,
+  defaultEditable = false,
+  defaultExpanded = false,
   showControlPanel = true,
-  showExpanded,
+  onSubmit,
+  onExpanded,
 }) => {
-  const nexus = useNexusContext();
   const dispatch = useDispatch();
+  const nexus = useNexusContext();
   const navigate = useHistory();
   const location = useLocation();
   const notification = useNotification();
-  const [expanded, setExpanded] = React.useState(defaultExpanded);
-  const [editable, setEditable] = React.useState(defaultEditable);
-  const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
-  const [{ busy, resource }, setResource] = React.useState<{
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [editable, setEditable] = useState(defaultEditable);
+  const [showMetadata, setShowMetadata] = useState<boolean>(false);
+  const [{ busy, resource }, setResource] = useState<{
     busy: boolean;
     resource: ResourceSource | ExpandedResource | Resource | null;
     error: Error | null;
@@ -69,7 +69,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     error: null,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     setResource({
       resource,
       error: null,
@@ -153,13 +153,13 @@ const ResourceEditorContainer: React.FunctionComponent<{
     }
   };
 
-  async function getResourceSource(
+  const getResourceSource = async (
     nexus: NexusClient,
     orgLabel: string,
     projectLabel: string,
     resourceId: string,
     rev: number
-  ) {
+  ) => {
     try {
       return await nexus.Resource.getSource(
         orgLabel,
@@ -171,7 +171,7 @@ const ResourceEditorContainer: React.FunctionComponent<{
     } catch {
       return {} as ResourceSource;
     }
-  }
+  };
 
   const getNewResource = async () => {
     if (expanded) {
