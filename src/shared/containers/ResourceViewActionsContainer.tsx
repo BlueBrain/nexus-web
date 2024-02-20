@@ -129,6 +129,7 @@ const ResourceViewActionsContainer: React.FC<{
   };
   const [view, setView] = React.useState<Resource | null>(null);
   const subapp = useOrganisationsSubappContext();
+
   React.useEffect(() => {
     const encodedResourceId = encodeURIComponent(resource['@id']);
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
@@ -151,6 +152,7 @@ const ResourceViewActionsContainer: React.FC<{
       }
     );
   }, [resource, latestResource]);
+
   const redirectToQueryTab = React.useCallback(() => {
     if (view) {
       const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
@@ -190,22 +192,26 @@ const ResourceViewActionsContainer: React.FC<{
         items={[...Array(latestResource?._rev).keys()]
           .map(k => k + 1)
           .sort((a, b) => b - a)
-          .map(rev => (
-            <Menu.Item
-              key={rev}
-              onClick={() => {
-                goToResource(orgLabel, projectLabel, resource['@id'], rev);
-              }}
-            >
-              Revision {rev}
-              {revisionLabels(rev).length > 0 &&
-                ` (${revisionLabels(rev).join(', ')})`}
-            </Menu.Item>
-          ))}
-      </Menu>
+          .map(rev => {
+            const revison = `Revision ${rev} ${
+              revisionLabels(rev).length > 0
+                ? revisionLabels(rev).join(', ')
+                : ''
+            }`;
+            return {
+              key: rev,
+              title: `Revison ${rev}`,
+              label: revison,
+            };
+          })}
+        onClick={({ key: rev }) =>
+          goToResource(orgLabel, projectLabel, resource['@id'], Number(rev))
+        }
+      />
     ),
     [resource, latestResource, tags]
   );
+
   React.useEffect(() => {
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
