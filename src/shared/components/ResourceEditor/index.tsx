@@ -1,6 +1,6 @@
 import { WarningOutlined, SaveOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import { Alert, Button, Switch } from 'antd';
+import { Alert, Button, Switch, Tooltip } from 'antd';
 import codemirror from 'codemirror';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ import { LinterIssue } from './customLinter';
 import './ResourceEditor.scss';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
+import HasNoPermission from '../Icons/HasNoPermission';
 
 export interface ResourceEditorProps {
   busy?: boolean;
@@ -221,7 +222,14 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               <AccessControl
                 path={[`${orgLabel}/${projectLabel}`]}
                 permissions={['resources/write']}
-                noAccessComponent={() => <></>}
+                noAccessComponent={() => (
+                  <Tooltip title="You have no permissions to create/modify the resource">
+                    <Button disabled type="link">
+                      <span style={{ marginRight: 5 }}>Save changes</span>
+                      <HasNoPermission />
+                    </Button>
+                  </Tooltip>
+                )}
               >
                 {editable && isEditing && (
                   <Button
