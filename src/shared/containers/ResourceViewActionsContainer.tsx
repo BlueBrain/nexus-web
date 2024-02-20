@@ -190,19 +190,19 @@ const ResourceViewActionsContainer: React.FC<{
         items={[...Array(latestResource?._rev).keys()]
           .map(k => k + 1)
           .sort((a, b) => b - a)
-          .map(rev => ({
-            key: rev,
-            onClick: () =>
-              goToResource(orgLabel, projectLabel, resource['@id'], rev),
-            label: (
-              <>
-                Revision {rev}
-                {revisionLabels(rev).length > 0 &&
-                  ` (${revisionLabels(rev).join(', ')})`}
-              </>
-            ),
-          }))}
-      />
+          .map(rev => (
+            <Menu.Item
+              key={rev}
+              onClick={() => {
+                goToResource(orgLabel, projectLabel, resource['@id'], rev);
+              }}
+            >
+              Revision {rev}
+              {revisionLabels(rev).length > 0 &&
+                ` (${revisionLabels(rev).join(', ')})`}
+            </Menu.Item>
+          ))}
+      </Menu>
     ),
     [resource, latestResource, tags]
   );
@@ -317,78 +317,82 @@ const ResourceViewActionsContainer: React.FC<{
                     );
                   }
                 }}
-                dropdownRender={() => (
-                  <Menu
-                    items={[
-                      {
-                        key: 'url',
-                        label: 'Fusion URL',
-                        onClick: () => {
-                          const pathToResource = `${basePath}${generatePath(
-                            '/:orgLabel/:projectLabel/resources/:resourceId',
-                            {
-                              orgLabel,
-                              projectLabel,
-                              resourceId: resource['@id'],
-                            }
-                          )}`;
+                overlay={
+                  <Menu>
+                    <Menu.Item
+                      key="fusion-url"
+                      onClick={() => {
+                        const pathToResource = `${basePath}${generatePath(
+                          '/:orgLabel/:projectLabel/resources/:resourceId',
+                          {
+                            orgLabel,
+                            projectLabel,
+                            resourceId: resource['@id'],
+                          }
+                        )}`;
 
-                          triggerCopy(
-                            `${window.location.origin.toString()}${pathToResource}`
-                          );
-                        },
-                      },
-                      {
-                        key: 'url_with_revision',
-                        label: 'Fusion URL (with revision)',
-                        onClick: () => {
-                          const pathToResource = `${basePath}${generatePath(
-                            '/:orgLabel/:projectLabel/resources/:resourceId',
-                            {
-                              orgLabel,
-                              projectLabel,
-                              resourceId: resource['@id'],
-                            }
-                          )}`;
+                        triggerCopy(
+                          `${window.location.origin.toString()}${pathToResource}`
+                        );
+                      }}
+                    >
+                      Fusion URL
+                    </Menu.Item>
+                    <Menu.Item
+                      key="fusion-url-(with-revision)"
+                      onClick={() => {
+                        const pathToResource = `${basePath}${generatePath(
+                          '/:orgLabel/:projectLabel/resources/:resourceId',
+                          {
+                            orgLabel,
+                            projectLabel,
+                            resourceId: resource['@id'],
+                          }
+                        )}`;
 
-                          triggerCopy(
-                            `${window.location.origin.toString()}${pathToResource}?rev=${
-                              resource._rev
-                            }`
-                          );
-                        },
-                      },
-                      {
-                        key: 'id',
-                        label: 'Resource ID',
-                        onClick: () => triggerCopy(resource['@id']),
-                      },
-                      {
-                        key: 'id_with_revision',
-                        label: 'Resource ID (with revision)',
-                        onClick: () =>
-                          triggerCopy(
-                            `${resource['@id']}?rev=${resource._rev}`
-                          ),
-                      },
-                      {
-                        key: 'nexus_address',
-                        label: 'Nexus API endpoint',
-                        onClick: () => triggerCopy(self ? self : ''),
-                      },
-                      {
-                        key: 'nexus_address_with_revision',
-                        label: 'Nexus API endpoint (with revision)',
-                        onClick: () =>
-                          triggerCopy(
-                            self
-                              ? `${self}?rev=${resource ? resource._rev : ''}`
-                              : ''
-                          ),
-                      },
-                    ]}
-                  />
-                )}
+                        triggerCopy(
+                          `${window.location.origin.toString()}${pathToResource}?rev=${
+                            resource._rev
+                          }`
+                        );
+                      }}
+                    >
+                      Fusion URL (with revision)
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => triggerCopy(resource['@id'])}
+                      key="resource-id"
+                    >
+                      Resource ID
+                    </Menu.Item>
+                    <Menu.Item
+                      key="resource-id-with-revision"
+                      onClick={() =>
+                        triggerCopy(`${resource['@id']}?rev=${resource._rev}`)
+                      }
+                    >
+                      Resource ID (with revision)
+                    </Menu.Item>
+                    <Menu.Item
+                      onClick={() => triggerCopy(self ? self : '')}
+                      key="nexus-api-endpoint"
+                    >
+                      Nexus API endpoint
+                    </Menu.Item>
+                    <Menu.Item
+                      key="nexus-api-endpoitn-with-revision"
+                      onClick={() =>
+                        triggerCopy(
+                          self
+                            ? `${self}?rev=${resource ? resource._rev : ''}`
+                            : ''
+                        )
+                      }
+                    >
+                      Nexus API endpoint (with revision)
+                    </Menu.Item>
+                  </Menu>
+                }
               >
                 {copySuccess ? 'Copied!' : 'Copy'}
               </Dropdown.Button>
