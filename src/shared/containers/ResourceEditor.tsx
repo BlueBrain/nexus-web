@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   ExpandedResource,
   ResourceSource,
@@ -22,7 +22,7 @@ import {
   getResourceLabel,
 } from '../utils';
 
-const ResourceEditorContainer: React.FunctionComponent<{
+const ResourceEditorContainer: FC<{
   rev: number;
   orgLabel: string;
   resourceId: string;
@@ -56,10 +56,10 @@ const ResourceEditorContainer: React.FunctionComponent<{
   const navigate = useHistory();
   const location = useLocation();
   const notification = useNotification();
-  const [expanded, setExpanded] = React.useState(defaultExpanded);
-  const [editable, setEditable] = React.useState(defaultEditable);
-  const [showMetadata, setShowMetadata] = React.useState<boolean>(false);
-  const [{ busy, resource }, setResource] = React.useState<{
+  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [editable, setEditable] = useState(defaultEditable);
+  const [showMetadata, setShowMetadata] = useState<boolean>(false);
+  const [{ busy, resource }, setResource] = useState<{
     busy: boolean;
     resource: ResourceSource | ExpandedResource | Resource | null;
     error: Error | null;
