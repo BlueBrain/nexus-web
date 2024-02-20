@@ -124,7 +124,7 @@ const StudioItem = ({
               )}
             </h3>
           </Link>
-          <p>{description}</p>
+          <p className="description">{description}</p>
         </div>
         <div className="statistics studios-list-item">
           <div className="statistics_item">

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
+import { omitBy } from 'lodash';
 import { useHistory } from 'react-router';
+
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import StudioReactContext from '../contexts/StudioContext';
@@ -114,7 +116,9 @@ const StudioContainer: React.FunctionComponent = () => {
         studioId,
         studioResource._rev,
         {
-          ...studioResource,
+          // remove the metadata from the payload, delta do full update
+          // and not accept the metadata fields to be in the payload
+          ...omitBy(studioResource, (_, key) => key.trim().startsWith('_')),
           label,
           description,
           plugins,
@@ -145,7 +149,7 @@ const StudioContainer: React.FunctionComponent = () => {
       onSave={updateStudio}
       onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
       markdownViewer={MarkdownViewerContainer}
-    ></EditStudio>
+    />
   );
   return (
     <>
