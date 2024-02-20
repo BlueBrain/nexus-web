@@ -11,7 +11,7 @@ import {
 import PromisePool from '@supercharge/promise-pool';
 import { ItemType } from 'antd/lib/menu/hooks/useItems';
 import { useQuery } from 'react-query';
-import { find, orderBy } from 'lodash';
+import { find, omitBy, orderBy } from 'lodash';
 import useNotification from '../../../shared/hooks/useNotification';
 import EditTableForm from '../../../shared/components/EditTableForm';
 import DashboardEditorContainer from './DashBoardEditor/DashboardEditorContainer';
@@ -30,6 +30,7 @@ import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { ErrorComponent } from '../../../shared/components/ErrorComponent';
 import '../studio.less';
+import { resourceWithoutMetadata } from './StudioContainer';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -484,18 +485,18 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     data: TableResource | UnsavedTableResource
   ) => {
     if (selectedDashboard) {
-      const resource = await nexus.Resource.get(
+      const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(selectedDashboard['@id'])
-      );
+      )) as StudioResource;
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
         encodeURIComponent(selectedDashboard['@id']),
         selectedDashboard._rev,
         {
-          ...resource,
+          ...resourceWithoutMetadata(resource),
           description: data.description,
           label: data['name'],
         }

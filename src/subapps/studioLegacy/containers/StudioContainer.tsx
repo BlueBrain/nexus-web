@@ -16,6 +16,10 @@ import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 
+export const resourceWithoutMetadata = (
+  studioResource: StudioResource | Resource
+) => omitBy(studioResource, (_, key) => key.trim().startsWith('_'));
+
 const resourcesWritePermissionsWrapper = (
   child: React.ReactNode,
   permissionPath: string
@@ -118,7 +122,7 @@ const StudioContainer: React.FunctionComponent = () => {
         {
           // remove the metadata from the payload, delta do full update
           // and not accept the metadata fields to be in the payload
-          ...omitBy(studioResource, (_, key) => key.trim().startsWith('_')),
+          ...resourceWithoutMetadata(studioResource),
           label,
           description,
           plugins,
