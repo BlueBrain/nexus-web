@@ -126,7 +126,8 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
 
       const localStorageRows = toLocalStorageResources(
         record,
-        DATA_EXPLORER_NAMESPACE
+        DATA_EXPLORER_NAMESPACE,
+        recordKey
       );
       let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
       let selectedRows = dataPanelLS?.selectedRows || [];
@@ -177,7 +178,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
 
       if (selected) {
         const results = changeRows.map(row =>
-          toLocalStorageResources(row, DATA_EXPLORER_NAMESPACE)
+          toLocalStorageResources(row, DATA_EXPLORER_NAMESPACE, row._self)
         );
         selectedRows = [...selectedRows, ...results.flat()];
         selectedRowKeys = [...selectedRowKeys, ...changeRows.map(t => t._self)];

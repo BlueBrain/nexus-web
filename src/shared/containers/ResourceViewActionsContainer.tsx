@@ -69,7 +69,8 @@ const ResourceViewActionsContainer: React.FC<{
     } else {
       const localStorageObjects = toLocalStorageResources(
         resource,
-        'resource-view'
+        'resource-view',
+        recordKey
       );
 
       selectedRowKeys = uniq([...selectedRowKeys, recordKey]);
