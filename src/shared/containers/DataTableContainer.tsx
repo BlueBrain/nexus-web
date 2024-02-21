@@ -37,6 +37,7 @@ import {
   DataPanelEvent,
 } from '../organisms/DataPanel/DataPanel';
 import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
+import { resourceWithoutMetadata } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type TableColumn = {
   '@type': string;
@@ -290,7 +291,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         projectLabel,
         encodeURIComponent(data['@id']),
         latest._rev,
-        { ...latest, ...data }
+        { ...resourceWithoutMetadata(latest), ...resourceWithoutMetadata(data) }
       );
     }
     const resource = await nexus.Resource.create(orgLabel, projectLabel, data);
