@@ -8,6 +8,41 @@
   "orientation": "landscape",
   "background_color": "#fff",
   "theme_color": "#050a56",
+  "start_url": "/",
+  "scope": "/",
+  "categories": [
+    "science",
+    "knowledge graph",
+    "neuroscience",
+    "data-driven",
+    "in silico"
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/001.png",
+      "form_factor": "wide",
+      "type": "image/png",
+      "sizes": "3024x1694"
+    },
+    {
+      "src": "screenshots/002.png",
+      "form_factor": "wide",
+      "type": "image/png",
+      "sizes": "3024x1694"
+    },
+    {
+      "src": "screenshots/003.png",
+      "form_factor": "wide",
+      "type": "image/png",
+      "sizes": "3024x1694"
+    },
+    {
+      "src": "screenshots/004.png",
+      "form_factor": "wide",
+      "type": "image/png",
+      "sizes": "3024x1694"
+    }
+  ],
   "icons": [
     {
       "src": "favicon-64x64.png",
