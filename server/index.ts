@@ -190,7 +190,7 @@ app.get(`${base}/web-manifest`, (req, res) => {
     NODE_ENV === 'development' ? req.protocol : 'https'
   }://${host}${base}`;
 
-  const manifestTempalte = fs.readFileSync(
+  const manifestTemplate = fs.readFileSync(
     path.join(
       __dirname,
       NODE_ENV === 'development' ? '../public' : '',
@@ -199,7 +199,7 @@ app.get(`${base}/web-manifest`, (req, res) => {
     'utf-8'
   );
 
-  const manifest = manifestTempalte.replace('<!--start-url-->', startUrl);
+  const manifest = manifestTemplate.replace('<!--start-url-->', startUrl);
 
   res.header('content-type', 'application/json');
   return res.status(200).send(manifest);
