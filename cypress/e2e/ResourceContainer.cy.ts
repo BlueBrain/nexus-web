@@ -68,7 +68,7 @@ describe('Resource with id that contains URL encoded characters', () => {
   });
 
   function testResourceDataInJsonViewer() {
-    cy.findByText('Advanced View').click();
+    cy.findByTestId('admin-collapse').click();
 
     cy.contains(`"@id"`);
     cy.contains(resourceIdWithEncodedCharacters);
