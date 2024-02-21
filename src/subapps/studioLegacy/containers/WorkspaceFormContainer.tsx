@@ -19,6 +19,7 @@ import {
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import useNotification from '../../../shared/hooks/useNotification';
+import { resourceWithoutMetadata } from './StudioContainer';
 
 type NexusSparqlError = {
   reason: string;
@@ -123,7 +124,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       projectLabel,
       encodeURIComponent(workspace['@id']),
       workspace['_rev'],
-      newWorkspace
+      resourceWithoutMetadata(newWorkspace)
     )
       .then(result => {
         if (onSuccess) {
