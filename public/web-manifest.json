@@ -1,14 +1,13 @@
 {
-  "name": "Nexus Fusion",
-  "short_name": "BBP-NF",
+  "name": "Blue Brain Nexus Fusion",
+  "short_name": "Fusion",
   "description": "The interface of Blue Brain Nexus, the open-source knowledge graph for data-driven science.",
   "dir": "left",
   "lang": "en-US",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "landscape",
   "background_color": "#fff",
-  "theme_color": "#fff",
-  "start_url": "<!--start-url-->",
+  "theme_color": "#050a56",
   "icons": [
     {
       "src": "favicon-64x64.png",
