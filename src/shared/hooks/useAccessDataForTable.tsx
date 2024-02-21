@@ -499,13 +499,15 @@ export const useAccessDataForTable = (
           return;
         })
         .process(async row => {
+          const recordKey = getStudioLocalStorageKey(row);
           const fetchedRow = await fetchResourceForDownload(
             getStudioLocalStorageKey(row),
             nexus
           );
           const localStorageResources = toLocalStorageResources(
             fetchedRow,
-            'studios'
+            'studios',
+            recordKey
           );
           rowKeysForLS.push(getStudioLocalStorageKey(row));
 
@@ -544,7 +546,8 @@ export const useAccessDataForTable = (
       const deltaResource = await fetchResourceForDownload(recordKey, nexus);
       const localStorageResource = toLocalStorageResources(
         deltaResource,
-        'studios'
+        'studios',
+        recordKey
       );
       localStorageRowKeys = [...localStorageRowKeys, recordKey];
       localStorageRows = [...localStorageRows, ...localStorageResource];
