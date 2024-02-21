@@ -115,8 +115,8 @@ export default defineConfig({
                 orgLabel,
                 projectLabel,
               });
-            } catch (e) {
-              console.log('Error encountered in project:teardown task.', e);
+            } catch (error) {
+              console.log('Error encountered in project:teardown task.', error);
             }
 
             return null;
