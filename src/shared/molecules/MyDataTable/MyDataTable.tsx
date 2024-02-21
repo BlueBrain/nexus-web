@@ -414,11 +414,16 @@ const MyDataTable: React.FC<TProps> = ({
       setFetchingResources(true);
       const expandedResource = await fetchResourceForDownload(recordKey, nexus);
       setFetchingResources(false);
-      localStorageRows = toLocalStorageResources(expandedResource, 'my-data');
+      localStorageRows = toLocalStorageResources(
+        expandedResource,
+        'my-data',
+        recordKey
+      );
     } else {
-      localStorageRows = toLocalStorageResources(record, 'my-data');
+      localStorageRows = toLocalStorageResources(record, 'my-data', recordKey);
     }
-    toLocalStorageResources(record, 'my-data');
+    // TODO: Check if needed
+    toLocalStorageResources(record, 'my-data', recordKey);
     let selectedRowKeys = dataPanelLS?.selectedRowKeys || [];
     let selectedRows = dataPanelLS?.selectedRows || [];
 
@@ -488,10 +493,15 @@ const MyDataTable: React.FC<TProps> = ({
             const fetchedRow = await fetchResourceForDownload(row._self, nexus);
             localStorageResources = toLocalStorageResources(
               fetchedRow,
-              'my-data'
+              'my-data',
+              row._self
             );
           } else {
-            localStorageResources = toLocalStorageResources(row, 'my-data');
+            localStorageResources = toLocalStorageResources(
+              row,
+              'my-data',
+              row._self
+            );
           }
           return localStorageResources;
         });
