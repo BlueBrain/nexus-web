@@ -11,11 +11,12 @@ import { parseURL } from './nexusParse';
 const baseLocalStorageObject = (
   resource: Resource,
   source: string,
+  key: string,
   keySuffix?: string
 ): Omit<TDataSource, 'distribution'> => {
   return {
     source,
-    key: keySuffix ? `${resource._self}-${keySuffix}` : resource._self,
+    key: keySuffix ? `${key}-${keySuffix}` : key,
     _self: resource._self,
     id: resource['@id'],
     name: getResourceLabel(resource),
@@ -31,7 +32,8 @@ const baseLocalStorageObject = (
 
 export const toLocalStorageResources = (
   resource: Resource,
-  source: string
+  source: string,
+  key: string
 ): TDataSource[] => {
   const resourceName = getResourceLabel(resource);
   try {
@@ -39,7 +41,7 @@ export const toLocalStorageResources = (
     if (isNil(resource.distribution)) {
       return [
         {
-          ...baseLocalStorageObject(resource, source),
+          ...baseLocalStorageObject(resource, source, key),
           localStorageType: 'resource',
           distribution: {
             hasDistribution: false,
@@ -63,7 +65,7 @@ export const toLocalStorageResources = (
 
       // First store an object for the parent resource.
       localStorageObjs.push({
-        ...baseLocalStorageObject(resource, source),
+        ...baseLocalStorageObject(resource, source, key),
         localStorageType: 'resource',
         distributionItemsLength: resource.distribution.length,
         distribution: {
@@ -79,7 +81,7 @@ export const toLocalStorageResources = (
       // Now store an object for each distribution item
       resource.distribution.forEach((distItem, index) => {
         localStorageObjs.push({
-          ...baseLocalStorageObject(resource, source, `${index}`),
+          ...baseLocalStorageObject(resource, source, key, `${index}`),
           localStorageType: 'distribution',
           distribution: {
             hasDistribution: true, // So, we don't download the distribution twice
@@ -100,7 +102,7 @@ export const toLocalStorageResources = (
     return [
       // First store an object for the parent resource.
       {
-        ...baseLocalStorageObject(resource, source),
+        ...baseLocalStorageObject(resource, source, key),
         localStorageType: 'resource',
         distribution: {
           hasDistribution: true,
@@ -113,7 +115,7 @@ export const toLocalStorageResources = (
       },
       // Now store an object for the distribution item.
       {
-        ...baseLocalStorageObject(resource, source, '1'),
+        ...baseLocalStorageObject(resource, source, key, '1'),
         localStorageType: 'distribution',
         distribution: {
           hasDistribution: true,
