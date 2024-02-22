@@ -149,8 +149,8 @@ const SearchContainer: React.FC = () => {
     resetAll();
   };
   const handleSelect = (record: Resource, selected: any) => {
-    const newRecords = toLocalStorageResources(record, layout);
     const recordKey = record._self;
+    const newRecords = toLocalStorageResources(record, layout, recordKey);
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -195,7 +195,7 @@ const SearchContainer: React.FC = () => {
   ) => {
     const changedRowsLS: TDataSource[] = [];
     changeRows.forEach(row => {
-      const localStorageRows = toLocalStorageResources(row, layout);
+      const localStorageRows = toLocalStorageResources(row, layout, row._self);
       changedRowsLS.push(...localStorageRows);
     });
 
