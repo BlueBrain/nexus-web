@@ -34,6 +34,7 @@ import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { ErrorComponent } from '../../../shared/components/ErrorComponent';
 import '../studio.scss';
+import { resourceWithoutMetadata } from './StudioContainer';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
 
@@ -488,18 +489,18 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
     data: TableResource | UnsavedTableResource
   ) => {
     if (selectedDashboard) {
-      const resource = await nexus.Resource.get(
+      const resource = (await nexus.Resource.get(
         orgLabel,
         projectLabel,
         encodeURIComponent(selectedDashboard['@id'])
-      );
+      )) as StudioResource;
       await nexus.Resource.update(
         orgLabel,
         projectLabel,
         encodeURIComponent(selectedDashboard['@id']),
         selectedDashboard._rev,
         {
-          ...resource,
+          ...resourceWithoutMetadata(resource),
           description: data.description,
           label: data['name'],
         }
