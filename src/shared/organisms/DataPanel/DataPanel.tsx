@@ -65,6 +65,7 @@ import {
 } from '../../molecules/MyDataTable/MyDataTable';
 import {
   distributionMatchesTypes,
+  getPathSeparator,
   getSizeOfResourcesToDownload,
   pathForChildDistributions,
   pathForTopLevelResources,
@@ -153,6 +154,7 @@ export async function downloadArchive({
   const resourcesForDownload = resourcesPayload.filter(
     item => item.localStorageType === 'resource'
   );
+  const slash = getPathSeparator();
 
   const resourcesNotFetched: Error[] = [];
   const { results } = await PromisePool.withConcurrency(4)
@@ -174,7 +176,7 @@ export async function downloadArchive({
         item,
         existingPaths
       );
-      const parentPath = `${path}/${filename}.${extension}`;
+      const parentPath = `${path}${slash}${filename}.${extension}`;
       // For resources with distribution(s), we want to download both, the metadata as well as all its distribution(s).
       // To do that, first prepare the metadata for download.
       topLevelResources.push({
@@ -207,7 +209,7 @@ export async function downloadArchive({
             ...item,
             // @ts-ignore
             '@type': childResource['@type'] ?? 'File',
-            path: `${childPath.path}/${childPath.fileName}`,
+            path: `${childPath.path}${slash}${childPath.fileName}`,
             _self: childResource._self ?? item._self,
             resourceId: childResource['@id'],
           });

@@ -12,10 +12,18 @@ import {
   pathForTopLevelResources,
   toLocalStorageResources,
 } from '../datapanel';
+import * as deviceMock from 'react-device-detect';
+
+jest.mock('react-device-detect', () => ({
+  __esModule: true,
+  isWindows: false,
+}));
 
 describe('datapanel utilities', () => {
   const orgName = 'orgA';
   const projectName = 'projectA';
+
+  const getDeviceMock = () => (deviceMock as unknown) as { isWindows: boolean };
 
   it('serializes resources with no distribution correctly to local storage object', () => {
     const actualLSResources = toLocalStorageResources(
@@ -400,6 +408,26 @@ describe('datapanel utilities', () => {
     const expectPathProps = {
       path: `${parentPath}/${namePrefix}${nameSuffix}`,
       fileName: `${namePrefix}${nameSuffix}.asc`,
+    };
+
+    expect(actualPathProps).toEqual(expectPathProps);
+  });
+
+  it('uses backslashes as separator when user has windows device', () => {
+    getDeviceMock().isWindows = true;
+
+    const parentPath = `\\${orgName}\\${projectName}\\parentPath`;
+    const filename = 'awesome-file.asc';
+    const mockResource = getMockDistribution(filename);
+    const actualPathProps = pathForChildDistributions(
+      mockResource,
+      parentPath,
+      new Map()
+    );
+
+    const expectPathProps = {
+      path: `${parentPath}\\awesome-file`,
+      fileName: filename,
     };
 
     expect(actualPathProps).toEqual(expectPathProps);
