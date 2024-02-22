@@ -634,6 +634,7 @@ export const useAccessDataForTable = (
         );
         return result;
       }
+
       return {};
     },
     {
