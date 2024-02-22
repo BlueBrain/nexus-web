@@ -3,6 +3,8 @@ import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';
+import omitBy from 'lodash/omitBy';
+
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import StudioReactContext from '../contexts/StudioContext';
@@ -114,7 +116,7 @@ const StudioContainer: React.FunctionComponent = () => {
         studioId,
         studioResource._rev,
         {
-          ...studioResource,
+          ...omitBy(studioResource, (_, key) => key.trim().startsWith('_')),
           label,
           description,
           plugins,
@@ -145,7 +147,7 @@ const StudioContainer: React.FunctionComponent = () => {
       onSave={updateStudio}
       onSaveImage={saveImage(nexus, orgLabel, projectLabel)}
       markdownViewer={MarkdownViewerContainer}
-    ></EditStudio>
+    />
   );
   return (
     <>

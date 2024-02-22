@@ -132,6 +132,7 @@
                   text-align: center;
                   vertical-align: middle;
                 }
+
                 .depreacted-tag {
                   font-family: 'Titillium Web';
                   font-style: normal;
@@ -143,6 +144,7 @@
                   margin: 0 3px;
                   vertical-align: middle;
                 }
+
                 .deletion-tag {
                   font-family: 'Titillium Web';
                   font-style: normal;
@@ -166,6 +168,14 @@
                 color: $fusion-daybreak-9;
                 max-width: 80%;
               }
+            }
+
+            .description {
+              overflow: hidden;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              line-clamp: 2;
             }
 
             .statistics {
