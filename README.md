@@ -65,6 +65,12 @@ a. To run the tests in headed mode:
 yarn cy:open
 ```
 
+If you encounter issues with `project:setup` or `resources:create` tasks because of SSL or certificate errors when running the tests locally, try the following:
+
+```sh
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn cy:open
+```
+
 b. To run the tests in headless mode:
 
 ```sh

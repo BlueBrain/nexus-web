@@ -141,12 +141,16 @@ export default defineConfig({
                 token: authToken,
               });
 
-              return await createResource({
+              const createdResource = await createResource({
                 nexus,
                 orgLabel,
                 projectLabel,
                 resource: resourcePayload,
               });
+              if (!createResource) {
+                throw new Error('Test Resource was not created');
+              }
+              return createdResource;
             } catch (e) {
               console.log(
                 'Error encountered in analysisResource:create task.',

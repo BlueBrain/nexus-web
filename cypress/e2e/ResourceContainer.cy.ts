@@ -41,8 +41,6 @@ describe('Resource with id that contains URL encoded characters', () => {
                 orgLabel,
                 projectLabel,
                 resourcePayload,
-              }).then((resource: Resource) => {
-                cy.wrap(resource['@id']).as('fullResourceId');
               });
             }
           );
