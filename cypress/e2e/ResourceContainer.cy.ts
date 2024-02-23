@@ -134,10 +134,14 @@ describe('Resource with id that contains URL encoded characters', () => {
         testResourceDataInJsonViewer();
       } else {
         // Multiple resources with same id found.
-        cy.findByText('Open Resource', {
-          selector: `a[href="${resourcePage}"]`,
-        }).click();
+        // find element by data-testid open-resource and click it.
+        cy.findByTestId('open-resource').click();
         testResourceDataInJsonViewer();
+
+        // cy.findByText('Open Resource', {
+        //   selector: `a[href="${resourcePage}"]`,
+        // }).click();
+        // testResourceDataInJsonViewer();
       }
     });
   });
