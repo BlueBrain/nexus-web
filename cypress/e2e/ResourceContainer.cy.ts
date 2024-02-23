@@ -91,6 +91,11 @@ describe('Resource with id that contains URL encoded characters', () => {
   it('resource with any id opens when user clicks on resource row in Search table', function() {
     cy.visit(`/search?layout=Neuron%20Morphology`);
 
+    // Wait for the specific table header element to be visible
+    cy.get('th.ant-table-cell:contains("Project")', { timeout: 10000 }).should(
+      'be.visible'
+    );
+
     cy.findAllByTestId('search-table-row')
       .first()
       .click();
