@@ -130,7 +130,7 @@ describe('Resource with id that contains URL encoded characters', () => {
     cy.wait('@idResolution').then(interception => {
       const resolvedResources = interception.response.body._results;
 
-      if (resolvedResources.length === 1) {
+      if (resolvedResources && resolvedResources.length === 1) {
         testResourceDataInJsonViewer();
       } else {
         // Multiple resources with same id found.
