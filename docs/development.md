@@ -291,6 +291,11 @@ yarn run cy:ci
 
 6. You can also navigate to <http://fusion.test:8000> in your browser to see the same instance of fusion that cypress is testing.
 
+NOTE:
+
+- Depending on the scenario you want to test, you might want to remove/rename the `cypress.env.json` (or set `use_existing_delta_instance` key to `false`)
+- If there are issues with logging into http://fusion.test:8000, make sure your chrome browser has the `--unsafely-treat-insecure-origin-as-secure` flag set to `http://keycloak.test:8080`
+
 7. Remember to stop the services once done:
 
 ```sh
