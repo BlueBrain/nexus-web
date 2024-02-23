@@ -1,42 +1,42 @@
-import * as React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { Pagination, Table, Button, Checkbox, Result } from 'antd';
-import { useSelector } from 'react-redux';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { uniq } from 'lodash';
-import { clsx } from 'clsx';
+import { Resource } from '@bbp/nexus-sdk/es';
+import { Button, Checkbox, Pagination, Result, Table } from 'antd';
 import { TableRowSelection } from 'antd/lib/table/interface';
-import useGlobalSearchData from '../hooks/useGlobalSearch';
-import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
+import { clsx } from 'clsx';
+import { uniq } from 'lodash';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
 import useQueryString from '../../../shared/hooks/useQueryString';
-import useSearchPagination, {
-  useAdjustTableHeight,
-  SearchPagination,
-  ESMaxResultWindowSize,
-} from '../hooks/useSearchPagination';
-import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
-import FiltersConfig from '../components/FiltersConfig';
-import SortConfigContainer from './SortConfigContainer';
 import {
   MAX_DATA_SELECTED_SIZE__IN_BYTES,
   MAX_LOCAL_STORAGE_ALLOWED_SIZE,
   TDataSource,
   TResourceTableData,
   getLocalStorageSize,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExeeced as notifyTotalSizeExceeded,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
+import { SearchByPresetsCompact } from '../../../shared/organisms/SearchByPresets/SearchByPresets';
 import { RootState } from '../../../shared/store/reducers';
-import './SearchContainer.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
-import { Resource } from '@bbp/nexus-sdk/es';
+import ColumnsVisibilityConfig from '../components/ColumnsVisibilityConfig';
+import FiltersConfig from '../components/FiltersConfig';
+import useGlobalSearchData from '../hooks/useGlobalSearch';
+import useSearchPagination, {
+  ESMaxResultWindowSize,
+  SearchPagination,
+  useAdjustTableHeight,
+} from '../hooks/useSearchPagination';
+import './SearchContainer.scss';
+import SortConfigContainer from './SortConfigContainer';
+import { FC, Fragment, useEffect, useRef, useState } from 'react';
 
 type TRecord = Resource & {
   key: string;
@@ -55,12 +55,12 @@ type TRecord = Resource & {
   [key: string]: any;
 };
 
-const SearchContainer: React.FC = () => {
+const SearchContainer: FC = () => {
   const history = useHistory();
   const location = useLocation();
-  const filterMenuRef = React.useRef<HTMLDivElement>(null);
-  const searchToolsMenuRef = React.useRef<HTMLDivElement>(null);
-  const [selectedRowKeys, setSelectedRowKeys] = React.useState<any>([]);
+  const filterMenuRef = useRef<HTMLDivElement>(null);
+  const searchToolsMenuRef = useRef<HTMLDivElement>(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any>([]);
   const { currentResourceView } = useSelector(
     (state: RootState) => state.uiSettings
   );
@@ -171,7 +171,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -188,11 +188,7 @@ const SearchContainer: React.FC = () => {
       })
     );
   };
-  const onSelectAllChange = (
-    selected: boolean,
-    tSelectedRows: TRecord[],
-    changeRows: Resource[]
-  ) => {
+  const onSelectAllChange = (selected: boolean, changeRows: Resource[]) => {
     const changedRowsLS: TDataSource[] = [];
     changeRows.forEach(row => {
       const localStorageRows = toLocalStorageResources(row, layout, row._self);
@@ -223,7 +219,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -284,22 +280,22 @@ const SearchContainer: React.FC = () => {
   };
 
   const {
-    isLoading,
-    searchError,
-    columns,
     data,
-    visibleColumns,
-    filterState,
-    dispatchFilter,
+    config,
+    columns,
+    resetAll,
+    isLoading,
     sortState,
+    searchError,
+    filterState,
+    visibleColumns,
+    dispatchFilter,
     removeSortOption,
     changeSortOption,
-    resetAll,
+    selectedSearchLayout,
     fieldsVisibilityState,
     dispatchFieldVisibility,
-    config,
     handleChangeSearchLayout,
-    selectedSearchLayout,
   } = useGlobalSearchData({
     query,
     onSortOptionsChanged,
@@ -308,7 +304,8 @@ const SearchContainer: React.FC = () => {
     queryLayout: layout,
     onSuccess: onQuerySuccess,
   });
-  React.useEffect(() => {
+
+  useEffect(() => {
     const dataLs = localStorage.getItem(DATA_PANEL_STORAGE);
     const dataLsObject: TResourceTableData = JSON.parse(dataLs as string);
     if (dataLs && dataLs.length) {
@@ -317,7 +314,7 @@ const SearchContainer: React.FC = () => {
     }
   }, [layout, pagination]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const dataPanelEventListner = (
       event: DataPanelEvent<{ datapanel: TResourceTableData }>
     ) => {
@@ -348,7 +345,7 @@ const SearchContainer: React.FC = () => {
   }
   if (visibleColumns && data) {
     return (
-      <React.Fragment>
+      <Fragment>
         <div className="search-tools-menu" ref={searchToolsMenuRef}>
           {config?.layouts && (
             <SearchByPresetsCompact
@@ -428,7 +425,7 @@ const SearchContainer: React.FC = () => {
             scroll={{ x: true }}
           />
         </div>
-      </React.Fragment>
+      </Fragment>
     );
   }
   return null;

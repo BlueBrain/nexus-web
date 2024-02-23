@@ -14,7 +14,7 @@ describe('Report (formerly Analysis) Plugin', () => {
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
-    ).then(session => {
+    ).then(() => {
       cy.window().then(win => {
         const authToken = win.localStorage.getItem('nexus__token');
         cy.wrap(authToken).as('nexusToken');
@@ -36,8 +36,14 @@ describe('Report (formerly Analysis) Plugin', () => {
               orgLabel,
               projectLabel,
               resourcePayload,
-            }).then((resource: Resource) => {
-              cy.wrap(resource['@id']).as('fullResourceId');
+            }).then((resource: Resource | null) => {
+              if (resource && resource['@id']) {
+                cy.wrap(resource['@id']).as('fullResourceId');
+              } else {
+                throw new Error(
+                  'Resource creation failed, received null resource object.'
+                );
+              }
             });
           });
         });

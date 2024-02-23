@@ -115,8 +115,8 @@ export default defineConfig({
                 orgLabel,
                 projectLabel,
               });
-            } catch (e) {
-              console.log('Error encountered in project:teardown task.', e);
+            } catch (error) {
+              console.log('Error encountered in project:teardown task.', error);
             }
 
             return null;
@@ -152,12 +152,18 @@ export default defineConfig({
               }
               return createdResource;
             } catch (e) {
-              console.log(
-                'Error encountered in analysisResource:create task.',
-                e
+              console.error(
+                'Error encountered in resource:create task.',
+                e.message
               );
+              console.error(e.stack); // Log stack trace if available
+              // If the error is an instance of HTTP error, log response details
+              if (e.response) {
+                console.error('HTTP Status:', e.response.status);
+                console.error('Response body:', e.response.data);
+              }
+              throw e; // Rethrow the error to let Cypress handle it
             }
-            return null;
           },
         });
 

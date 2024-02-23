@@ -62,7 +62,19 @@ Run end to end tests:
 a. To run the tests in headed mode:
 
 ```sh
-yarn cy:open
+yarn e2e:open
+```
+
+If you encounter issues with `project:setup` or `resources:create` tasks because of SSL or certificate errors when running the tests locally, try the following:
+
+```sh
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn e2e:open
+```
+
+If you encounter issues with `project:setup` or `resources:create` tasks because of SSL or certificate errors when running the tests locally, try the following:
+
+```sh
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn cy:open
 ```
 
 If you encounter issues with `project:setup` or `resources:create` tasks because of SSL or certificate errors when running the tests locally, try the following:
@@ -74,7 +86,7 @@ NODE_TLS_REJECT_UNAUTHORIZED=0 yarn cy:open
 b. To run the tests in headless mode:
 
 ```sh
-yarn cy:run
+yarn e2e:run
 ```
 
 ## Build for production

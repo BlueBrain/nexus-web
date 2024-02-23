@@ -227,6 +227,7 @@ const ResolversSubView = (props: Props) => {
                 message="Resource resolved successfully"
                 description={
                   <Button
+                    data-testid="open-resource"
                     type="link"
                     onClick={() => {
                       history.push(

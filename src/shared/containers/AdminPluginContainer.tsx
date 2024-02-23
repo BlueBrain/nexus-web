@@ -192,6 +192,7 @@ const AdminPlugin: React.FunctionComponent<AdminProps> = ({
   return (
     <Collapse
       onChange={handleCollapseChanged}
+      data-testid="admin-collapse"
       activeKey={collapsed ? 'admin' : undefined}
       items={[
         {

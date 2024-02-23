@@ -153,7 +153,7 @@ jobs:
       - name: Run e2e tests
         run: >-
           echo | timeout --verbose 20m docker exec
-          -e 'DEBUG=cypress:launcher:browsers'
+          -e 'DEBUG=cypress:launcher:browsers NODE_TLS_REJECT_UNAUTHORIZED=0'
           -t
           cypress
           cypress run

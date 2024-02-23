@@ -68,7 +68,7 @@ describe('Resource with id that contains URL encoded characters', () => {
   });
 
   function testResourceDataInJsonViewer() {
-    cy.findByText('Advanced View').click();
+    cy.findByTestId('admin-collapse').click();
 
     cy.contains(`"@id"`);
     cy.contains(resourceIdWithEncodedCharacters);
@@ -130,14 +130,18 @@ describe('Resource with id that contains URL encoded characters', () => {
     cy.wait('@idResolution').then(interception => {
       const resolvedResources = interception.response.body._results;
 
-      if (resolvedResources.length === 1) {
+      if (resolvedResources && resolvedResources.length === 1) {
         testResourceDataInJsonViewer();
       } else {
         // Multiple resources with same id found.
-        cy.findByText('Open Resource', {
-          selector: `a[href="${resourcePage}"]`,
-        }).click();
+        // find element by data-testid open-resource and click it.
+        cy.findByTestId('open-resource').click();
         testResourceDataInJsonViewer();
+
+        // cy.findByText('Open Resource', {
+        //   selector: `a[href="${resourcePage}"]`,
+        // }).click();
+        // testResourceDataInJsonViewer();
       }
     });
   });

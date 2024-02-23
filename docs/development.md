@@ -85,60 +85,6 @@ console.log(add(1, 2));
 
 They usually do some more advance operations, like tree-shaking for example, in order to minimise the final bundle size.
 
-### HMR
-
-On the client, traditionally we would take a similar approach with technologies such as _livereload_ but we don't want to reload the page _every time_ we have a new bundle. The reason for that is, bt reloading the page we loose the current context.
-
-If you are editing a popup for example, you after to click on the button that triggers the popup after each reload, or if you are editing step 4 of a form, you have to complete step 1/2/3 before reaching your changes. You can partially solve this by having a very strict stateless application (reload /form/step/2) and re-hydrate the state of your app but if a particular part of your app is dependent on fetching data first, you'll make async calls on each reload (and that data might not be stateless, which means side effects can break your logic).
-
-Instead what we can do is Hot Module Replacement, which will dynamically re-render your app, using the same state but with the new code, and dynamically replace it on the client. You can read more about HMR online, there are tons of articles about it.
-
-[Webpack](https://webpack.js.org/concepts/hot-module-replacement/) does support HMR. You can set it up directly into your webpack config and using Webpack CLI, or you can use [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for express (the web server framework we use).
-
-Combined with [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware), we can trigger our webpack build directly from our express, when we run in development mode.
-
-```javascript
-// our express app
-const app = express();
-
-// load webpack
-const webpack = require('webpack');
-
-// load our webpack the config
-const webpackConfig = require('../../webpack.config');
-
-// we need to overwrite and add a few things
-const devConfig = {...webpackConfig, {
-  mode: 'development',                    // mode is development (no minify, watch changes, etc...)
-  entry: {...webpackConfig.entry, {
-    bundle: [
-      ...webpackConfig.entry.bundle,
-      'webpack-hot-middleware/client',    // add hmr client js code to the bundle
-    ],
-  }},
-  plugins: [
-    ...webpackConfig.plugins,
-    new webpack.HotModuleReplacementPlugin() // run the HMR plugin
-  ],
-}};
-
-// create a new webpack compiler with our dev config
-const compiler = webpack(devConfig);
-
-// add the dev middleware (runs webpack when server starts)
-app.use(require('webpack-dev-middleware')(compiler, {
-  publicPath: '/public', // this needs to match the public path from our config.output.publicPath if set
-}));
-
-// add the HMR middleware
-app.use(require('webpack-hot-middleware')(compiler, {
-  path: '/__webpack_hmr',
-  timeout: 20000,
-}));
-```
-
-This means that for development, all we need to run is `ts-node server/index.ts`.
-
 ## Lint
 
 We use `ts-lint` with Airbnb rules.
@@ -168,7 +114,7 @@ CYPRESS_AUTH_REALM=https://auth.realm.url/ \
 CYPRESS_AUTH_USERNAME=nexus_username \
 CYPRESS_AUTH_PASSWORD=nexus_password \
 CYPRESS_NEXUS_API_URL=https://nexusapi.url/v1 \
-yarn cy:open --e2e --browser chrome
+yarn e2e:open --e2e --browser chrome
 ```
 
 ### CLI
