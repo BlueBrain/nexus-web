@@ -11,7 +11,7 @@ import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
 export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
-  video: false,
+  video: true,
   screenshotOnRunFailure: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
