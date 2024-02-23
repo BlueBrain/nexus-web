@@ -220,7 +220,7 @@ CYPRESS_AUTH_REALM=https://auth.realm.url/ \
 CYPRESS_AUTH_USERNAME=nexus_username \
 CYPRESS_AUTH_PASSWORD=nexus_password \
 CYPRESS_NEXUS_API_URL=https://nexusapi.url/v1 \
-yarn cy:open --e2e --browser chrome
+yarn e2e:open --e2e --browser chrome
 ```
 
 ### CLI
