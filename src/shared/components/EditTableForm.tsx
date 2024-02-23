@@ -274,14 +274,18 @@ const EditTableForm: React.FC<{
           return Object.assign(result, current);
         }, {});
 
-        return Object.keys(mergedItem).map(title => ({
-          '@type': '',
-          name: title,
-          format: '',
-          enableSearch: false,
-          enableSort: false,
-          enableFilter: false,
-        }));
+        return Object.keys(mergedItem).map(title => {
+          const currentItemConfig = findCurrentColumnConfig(title);
+          return {
+            '@type': '',
+            name: title,
+            format: '',
+            enableSearch: false,
+            enableSort: false,
+            enableFilter: false,
+            ...currentItemConfig,
+          };
+        });
       }
 
       const result = await querySparql(
@@ -296,14 +300,19 @@ const EditTableForm: React.FC<{
             .sort((a, b) => {
               return a.title > b.title ? 1 : -1;
             })
-            .map(x => ({
-              '@type': 'text',
-              name: x.dataIndex,
-              format: '',
-              enableSearch: false,
-              enableSort: false,
-              enableFilter: false,
-            }));
+            .map(header => {
+              const currentHeaderConfig =
+                findCurrentColumnConfig(header.dataIndex) ?? {};
+              return {
+                '@type': 'text',
+                name: header.dataIndex,
+                format: '',
+                enableSearch: false,
+                enableSort: false,
+                enableFilter: false,
+                ...currentHeaderConfig,
+              };
+            });
         })
         .catch(error => {
           // Sometimes delta's error message can be in `name` or `reason` field.
@@ -323,12 +332,7 @@ const EditTableForm: React.FC<{
     {
       onSuccess: data => {
         updateTableDataError(null);
-        if (
-          isNil(configuration) ||
-          (configuration as TableColumn[]).length === 0
-        ) {
-          setConfiguration(data);
-        }
+        setConfiguration(data);
       },
       onError: (error: Error) => {
         updateTableDataError(error);
@@ -339,6 +343,16 @@ const EditTableForm: React.FC<{
       retry: false,
     }
   );
+
+  const findCurrentColumnConfig = (name: string) => {
+    if (Array.isArray(configuration)) {
+      return configuration.find(column => column.name === name);
+    }
+    if (configuration?.name === name) {
+      return { ...configuration };
+    }
+    return undefined;
+  };
 
   const onChangeName = (event: any) => {
     setName(event.target.value);
