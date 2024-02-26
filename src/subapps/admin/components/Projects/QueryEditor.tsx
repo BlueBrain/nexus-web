@@ -47,8 +47,7 @@ const QueryEditor: React.FC<{
       } catch (error) {
         notification.error({
           message: 'Problem loading View',
-          // @ts-ignore
-          description: error.message,
+          description: (error as Error).message,
         });
       } finally {
         setLoading(false);
