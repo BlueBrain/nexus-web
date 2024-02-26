@@ -1,5 +1,7 @@
 {
   "recommendations": [
+    "vitest.explorer",
+    "ms-playwright.playwright",
     "editorconfig.editorconfig",
     "christian-kohler.npm-intellisense"
   ]
