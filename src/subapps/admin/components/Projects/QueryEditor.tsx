@@ -30,35 +30,33 @@ const QueryEditor: React.FC<{
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (match.params.viewId) {
-      nexus.View.get(orgLabel, projectLabel, match.params.viewId)
-        .then(result => {
-          // show appropriate search tab
-          if ([result['@type']].flat().includes('SparqlView')) {
-            setActiveKey('sparql');
-          } else {
-            setActiveKey('elasticsearch');
-          }
-          setLoading(false);
-        })
-        .catch(error => {
-          notification.error({
-            message: 'Problem loading View',
-            description: error.message,
-          });
-          setLoading(false);
+    const viewId = match.params.viewId;
+
+    const fetchAndSetActiveViewKey = async () => {
+      if (!viewId) {
+        return;
+      }
+      setLoading(true);
+      try {
+        const view = await nexus.View.get(orgLabel, projectLabel, viewId);
+        if ([view['@type']].flat().includes('SparqlView')) {
+          setActiveKey('sparql');
+        } else {
+          setActiveKey('elasticsearch');
+        }
+      } catch (error) {
+        notification.error({
+          message: 'Problem loading View',
+          // @ts-ignore
+          description: error.message,
         });
-    } else {
-      setLoading(false);
-      history.replace(
-        `/${
-          subapp.namespace
-        }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
-          DEFAULT_SPARQL_VIEW_ID
-        )}`
-      );
-    }
-  }, [orgLabel, projectLabel]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAndSetActiveViewKey();
+  }, [match.params.viewId, nexus.View, notification, orgLabel, projectLabel]);
 
   if (loading) {
     return null;
@@ -75,16 +73,18 @@ const QueryEditor: React.FC<{
         <Tabs
           className="query-tabs"
           onChange={tab => {
-            setActiveKey(tab);
-            history.replace(
-              `/${
-                subapp.namespace
-              }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
-                tab === 'sparql'
-                  ? DEFAULT_SPARQL_VIEW_ID
-                  : DEFAULT_ELASTIC_SEARCH_VIEW_ID
-              )}`
-            );
+            // Only trigger navigation if the active tab has changed.
+            if (tab !== activeKey) {
+              history.replace(
+                `/${
+                  subapp.namespace
+                }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
+                  tab === 'sparql'
+                    ? DEFAULT_SPARQL_VIEW_ID
+                    : DEFAULT_ELASTIC_SEARCH_VIEW_ID
+                )}`
+              );
+            }
           }}
           activeKey={activeKey}
           tabPosition="left"
