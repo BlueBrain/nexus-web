@@ -15,11 +15,8 @@ import './view-form.scss';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
-/**
- * This is tricky because error can be KG error OR an ElasticSearch Error.
- *
- * In the case of ES, the reason message is nested within an error object
- */
+// Can be KG error or an ElasticSearch Error
+// In the case of ES, the reason message is nested within an error object
 export type NexusESError = {
   reason?: string;
   error?: {
@@ -27,7 +24,6 @@ export type NexusESError = {
   };
 };
 
-// TODO this needs to be broken into Input, Result, and Form components.
 const ElasticSearchQueryForm: FC<{
   query: object;
   response?: ElasticSearchViewQueryResponse<any> | null;
@@ -39,30 +35,40 @@ const ElasticSearchQueryForm: FC<{
   onQueryChange: (query: object) => void;
   onChangePageSize: (size: number) => void;
 }> = ({
-  query,
-  response,
   busy,
-  error,
   from,
   size,
-  onPaginationChange,
+  query,
+  error,
+  response,
   onQueryChange,
   onChangePageSize,
+  onPaginationChange,
 }): JSX.Element => {
   const [_initialQuery, setInitialQuery] = useState('');
-  // TODO Clean multiple states
-  const [value, _setValue] = useState<string>();
-  const wrapper = useRef(null);
-
   const [editorValue, setEditorValue] = useState('');
   const [valid, setValid] = useState(true);
   const [pageSize, setPageSize] = useState<number>(size);
+
+  const wrapper = useRef(null);
   const editor = useRef<codemirror.Editor>();
+
+  const data =
+    response && response.hits.hits.map(result => result._source || []);
+  const total =
+    (response && response.hits.total && response.hits.total.value) || 0;
+  const totalPages = Math.ceil(total / size);
+  const current = Math.floor((totalPages / total) * from + 1);
 
   useEffect(() => {
     const formattedInitialQuery = JSON.stringify(query, null, 2);
     setEditorValue(formattedInitialQuery);
   }, [query]);
+
+  useEffect(() => {
+    const formattedInitialQuery = JSON.stringify(query, null, 2);
+    setInitialQuery(formattedInitialQuery);
+  }, []);
 
   const handleChange = (_: any, __: any, value: string) => {
     setEditorValue(value);
@@ -74,19 +80,6 @@ const ElasticSearchQueryForm: FC<{
     }
   };
 
-  useEffect(() => {
-    // only on first render!
-    const formattedInitialQuery = JSON.stringify(query, null, 2);
-    setInitialQuery(formattedInitialQuery);
-  }, []);
-
-  const data =
-    response && response.hits.hits.map(result => result._source || []);
-  const total =
-    (response && response.hits.total && response.hits.total.value) || 0;
-  const totalPages = Math.ceil(total / size);
-  const current = Math.floor((totalPages / total) * from + 1);
-
   const changePageSize = (_: number, size: number) => {
     setPageSize(size);
     onChangePageSize(size);
@@ -95,23 +88,22 @@ const ElasticSearchQueryForm: FC<{
   return (
     <div className="view-form">
       <Form
-        // onFinish={() => {
-        //   editorValue && onQueryChange(JSON.parse(editorValue));
-        // }}
+        onFinish={() => {
+          editorValue && onQueryChange(JSON.parse(editorValue));
+        }}
         layout="vertical"
       >
         <>
           <div className="control-panel">
-            <div>
-              <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                {valid ? (
-                  <CheckCircleOutlined />
-                ) : (
-                  <ExclamationCircleOutlined />
-                )}{' '}
-                {valid ? 'Valid JSON' : 'Invalid JSON'}
-              </div>
+            <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
+              {valid ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}{' '}
+              {valid ? 'Valid JSON' : 'Invalid JSON'}
             </div>
+            <FormItem>
+              <Button type="primary" htmlType="submit" disabled={!valid}>
+                Execute ElasticSearch query
+              </Button>
+            </FormItem>
           </div>
           <CodeMirror
             autoCursor={false}
@@ -139,16 +131,6 @@ const ElasticSearchQueryForm: FC<{
             }}
           />
         </>
-        <FormItem>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={!valid}
-            style={{ marginTop: '10px' }}
-          >
-            Execute ElasticSearch query
-          </Button>
-        </FormItem>
       </Form>
       <Card bordered className="results">
         {error && (
@@ -183,8 +165,8 @@ const ElasticSearchQueryForm: FC<{
               <ListItem>
                 {(result && (
                   <ReactJson
-                    collapsed
                     src={result}
+                    collapsed
                     name={null}
                     enableClipboard={false}
                     displayObjectSize={false}
