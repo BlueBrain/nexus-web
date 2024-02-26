@@ -29,7 +29,7 @@ const organisationSubappProps = {
   namespace: 'orgs',
   requireLogin: true,
   description:
-    'Browse through different  group of datasets gather by those providing datas',
+    'Browse through different  group of datasets gather by those providing data',
 };
 export const AdminSubappContext = React.createContext<{
   title: string;
@@ -47,7 +47,7 @@ export const AdminSubappProviderHOC = (component: React.FunctionComponent) => {
   );
 };
 
-export const RedirectAdmin: React.FunctionComponent = props => {
+export const RedirectAdmin: React.FunctionComponent = () => {
   const location = useLocation();
   const route = useRouteMatch();
   return (
@@ -87,7 +87,7 @@ export const Organizations: SubApp = () => {
     namespace: 'orgs',
     requireLogin: true,
     description:
-      'Browse through different  group of datasets gather by those providing datas',
+      'Browse through different  group of datasets gather by those providing data',
     routes: [
       {
         path: '/',
@@ -119,5 +119,3 @@ export const Organizations: SubApp = () => {
     ],
   };
 };
-
-// export default Admin;

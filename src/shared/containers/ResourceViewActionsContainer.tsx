@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Context, Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
@@ -13,21 +12,18 @@ import {
   Row,
   notification,
 } from 'antd';
-import { generatePath, Link, useHistory, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import { isArray, isString, uniq } from 'lodash';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
-import { makeResourceUri } from '../utils';
-import { RootState } from '../store/reducers';
-import { useOrganisationsSubappContext } from '../../subapps/admin';
-import Copy from '../components/Copy';
+import { useSelector } from 'react-redux';
+import { Link, generatePath, useHistory, useLocation } from 'react-router-dom';
 import {
-  MAX_DATA_SELECTED_SIZE__IN_BYTES,
-  TResourceTableData,
-  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
-  getLocalStorageSize,
-  notifyTotalSizeExeeced,
   Distribution,
+  MAX_DATA_SELECTED_SIZE__IN_BYTES,
+  MAX_LOCAL_STORAGE_ALLOWED_SIZE,
+  TResourceTableData,
+  getLocalStorageSize,
+  notifyTotalSizeExceeded,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -37,8 +33,12 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
+import { useOrganisationsSubappContext } from '../../subapps/admin';
+import Copy from '../components/Copy';
+import { RootState } from '../store/reducers';
+import { makeResourceUri } from '../utils';
 
-const ResourceViewActionsContainer: React.FC<{
+const ResourceViewActionsContainer: FC<{
   resource: Resource;
   latestResource: Resource;
   isLatest: boolean;
@@ -51,7 +51,7 @@ const ResourceViewActionsContainer: React.FC<{
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
-  const [isInCart, setIsInCart] = React.useState(() => false);
+  const [isInCart, setIsInCart] = useState(() => false);
 
   const handleAddToCart = async () => {
     const recordKey = resource._self;
@@ -85,7 +85,7 @@ const ResourceViewActionsContainer: React.FC<{
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -114,7 +114,7 @@ const ResourceViewActionsContainer: React.FC<{
     }
   };
   const basePath = useSelector((state: RootState) => state.config.basePath);
-  const [tags, setTags] = React.useState<{
+  const [tags, setTags] = useState<{
     '@context'?: Context;
     tags: {
       rev: number;
@@ -128,10 +128,10 @@ const ResourceViewActionsContainer: React.FC<{
     }
     return [];
   };
-  const [view, setView] = React.useState<Resource | null>(null);
-  const subapp = useOrganisationsSubappContext();
+  const [view, setView] = useState<Resource | null>(null);
+  const subApp = useOrganisationsSubappContext();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const encodedResourceId = encodeURIComponent(resource['@id']);
     nexus.Resource.tags(orgLabel, projectLabel, encodedResourceId).then(
       data => {
@@ -154,9 +154,9 @@ const ResourceViewActionsContainer: React.FC<{
     );
   }, [resource, latestResource]);
 
-  const redirectToQueryTab = React.useCallback(() => {
+  const redirectToQueryTab = useCallback(() => {
     if (view) {
-      const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}`;
+      const base = `/${subApp.namespace}/${orgLabel}/${projectLabel}`;
       const href = `${base}/query/${encodeURIComponent(view['@id'])}`;
       return href;
     }
@@ -187,22 +187,22 @@ const ResourceViewActionsContainer: React.FC<{
     return labels;
   };
 
-  const revisionMenuItems = React.useMemo(
+  const revisionMenuItems = useMemo(
     () => (
       <Menu
         items={[...Array(latestResource?._rev).keys()]
           .map(k => k + 1)
           .sort((a, b) => b - a)
           .map(rev => {
-            const revison = `Revision ${rev} ${
+            const revision = `Revision ${rev} ${
               revisionLabels(rev).length > 0
                 ? revisionLabels(rev).join(', ')
                 : ''
             }`;
             return {
               key: rev,
-              title: `Revison ${rev}`,
-              label: revison,
+              title: `Revision ${rev}`,
+              label: revision,
             };
           })}
         onClick={({ key: rev }) =>
@@ -213,7 +213,7 @@ const ResourceViewActionsContainer: React.FC<{
     [resource, latestResource, tags]
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     const dataPanelLS: TResourceTableData = JSON.parse(
       localStorage.getItem(DATA_PANEL_STORAGE)!
     );
@@ -267,7 +267,7 @@ const ResourceViewActionsContainer: React.FC<{
           });
         },
         onError: error => {
-          console.log('@@errror tagging the resource', error);
+          console.log('@@error tagging the resource', error);
           notification.error({
             message: `Resource Tagging`,
             description: (
@@ -387,7 +387,7 @@ const ResourceViewActionsContainer: React.FC<{
                       Nexus API endpoint
                     </Menu.Item>
                     <Menu.Item
-                      key="nexus-api-endpoitn-with-revision"
+                      key="nexus-api-endpoint-with-revision"
                       onClick={() =>
                         triggerCopy(
                           self

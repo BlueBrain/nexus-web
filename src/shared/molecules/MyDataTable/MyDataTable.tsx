@@ -120,7 +120,7 @@ export const getLocalStorageSize = () => {
   return size;
 };
 
-export const notifyTotalSizeExeeced = () => {
+export const notifyTotalSizeExceeded = () => {
   return notification.warning({
     message: (
       <div>
@@ -443,7 +443,7 @@ const MyDataTable: React.FC<TProps> = ({
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -526,7 +526,7 @@ const MyDataTable: React.FC<TProps> = ({
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

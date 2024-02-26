@@ -29,7 +29,7 @@ import {
   TDataSource,
   TResourceTableData,
   getLocalStorageSize,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -571,7 +571,7 @@ export const useAccessDataForTable = (
       newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
 
     localStorage.setItem(
