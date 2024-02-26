@@ -7,7 +7,7 @@ import { Button, Card, Empty, Form, List } from 'antd';
 import * as codemirror from 'codemirror';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
-import { useEffect, useRef, useState } from 'react';
+import { FC, MutableRefObject, useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import ReactJson from 'react-json-view';
 
@@ -28,7 +28,7 @@ export type NexusESError = {
 };
 
 // TODO this needs to be broken into Input, Result, and Form components.
-const ElasticSearchQueryForm: React.FunctionComponent<{
+const ElasticSearchQueryForm: FC<{
   query: object;
   response?: ElasticSearchViewQueryResponse<any> | null;
   busy: boolean;
@@ -49,12 +49,31 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   onQueryChange,
   onChangePageSize,
 }): JSX.Element => {
-  const [initialQuery, setInitialQuery] = useState('');
+  const [_initialQuery, setInitialQuery] = useState('');
   const [valid, setValid] = useState(true);
-  const [value, setValue] = useState<string>();
+  // TODO Clean multiple states
+  const [value, _setValue] = useState<string>();
   const [pageSize, setPageSize] = useState<number>(size);
   const editor = useRef<codemirror.Editor>();
   const wrapper = useRef(null);
+
+  const [editorValue, setEditorValue] = useState(''); // New state to manage the editor content
+
+  useEffect(() => {
+    const formattedInitialQuery = JSON.stringify(query, null, 2);
+    setInitialQuery(formattedInitialQuery);
+    setEditorValue(formattedInitialQuery); // Initialize the editor value with the formatted query
+  }, [query]); // Dependency on `query` to update initial value when the prop changes
+
+  const handleChange = (_: any, __: any, value: string) => {
+    setEditorValue(value); // Update editor value directly
+    try {
+      JSON.parse(value);
+      setValid(true);
+    } catch (error) {
+      setValid(false);
+    }
+  };
 
   useEffect(() => {
     // only on first render!
@@ -68,16 +87,6 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     (response && response.hits.total && response.hits.total.value) || 0;
   const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
-
-  const handleChange = (_: any, __: any, value: string) => {
-    try {
-      JSON.parse(value);
-      setValue(value);
-      setValid(true);
-    } catch (error) {
-      setValid(false);
-    }
-  };
 
   const changePageSize = (_: number, size: number) => {
     setPageSize(size);
@@ -106,7 +115,7 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             </div>
           </div>
           <CodeMirror
-            value={initialQuery}
+            value={editorValue}
             options={{
               mode: { name: 'javascript', json: true },
               theme: 'base16-light',
@@ -115,12 +124,12 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             }}
             onChange={handleChange}
             editorDidMount={editorElement => {
-              (editor as React.MutableRefObject<
+              (editor as MutableRefObject<
                 codemirror.Editor
               >).current = editorElement;
             }}
             editorWillUnmount={() => {
-              const editorWrapper = (editor as React.MutableRefObject<
+              const editorWrapper = (editor as MutableRefObject<
                 CodeMirror.Editor
               >).current.getWrapperElement();
               if (editor) editorWrapper.remove();
