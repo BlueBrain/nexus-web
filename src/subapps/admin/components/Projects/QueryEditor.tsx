@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Tabs } from 'antd';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
@@ -12,7 +12,7 @@ import useNotification from '../../../../shared/hooks/useNotification';
 import { useOrganisationsSubappContext } from '../..';
 import './QueryEditor.scss';
 
-const QueryEditor: React.FC<{
+const QueryEditor: FC<{
   orgLabel: string;
   projectLabel: string;
   onUpdate: () => void;
@@ -39,6 +39,7 @@ const QueryEditor: React.FC<{
       setLoading(true);
       try {
         const view = await nexus.View.get(orgLabel, projectLabel, viewId);
+        // Show appropriate search tab
         if ([view['@type']].flat().includes('SparqlView')) {
           setActiveKey('sparql');
         } else {
