@@ -1,4 +1,4 @@
-<img src="docs/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
+<img src="docs/assets/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
 
 # Nexus Fusion
 

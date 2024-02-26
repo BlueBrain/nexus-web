@@ -4,7 +4,7 @@
 
 A `Dashboard` is simply a query with a description and label. This will be used by the `Workspace` to query against the view paired with it inside the `Workspace` configuration. This way, you can write one query, and re-use it against multiple potential views.
 
-An example `Dashbaord` resource looks like this:
+An example `Dashboard` resource looks like this:
 
 ```json
 {
@@ -23,7 +23,7 @@ The `Dashboard`, once configured, will present the results of your sparql query 
 
 ## Plugins (Experimental!)
 
-There's also an experimantal `plugin` key in the configuration that can be used to load experimental nexus plugins. These plugins will be loaded into the `Details` page of a resource.
+There's also an experimental `plugin` key in the configuration that can be used to load experimental nexus plugins. These plugins will be loaded into the `Details` page of a resource.
 
 > [plugin development documentation](./docs/pluginDevelopment.md).
 
@@ -58,7 +58,7 @@ In order for the UI to function as intended, you must provide a unique ID variab
 
 In addition to the `?self` variable, you need to have at minimum one other one defined, which will be displayed on each row. The variable name will label the header of the table column, capitalized.
 
-#### The minimum functioning query with the `?self` variable defined:
+#### The minimum functioning query with the `?self` variable defined
 
 ![Minimum Query](../assets/minimum-query-example.png)
 

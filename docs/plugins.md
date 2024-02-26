@@ -28,18 +28,18 @@ The plugin config should be available as an object under the `mapping` key of th
 
 The following will show `nexus-plugin-test` for _every_ resource inside Nexus Web.
 
-```
+```json
 {
-    "nexus-plugin-test": {
-      "modulePath": "nexus-plugin-test.js",
-      "name": "Nexus Plugin Test",
-      "description": "",
-      "version": "",
-      "tags": [],
-      "author": "",
-      "license": "",
-      "mapping": {}
-    }
+  "nexus-plugin-test": {
+    "modulePath": "nexus-plugin-test.js",
+    "name": "Nexus Plugin Test",
+    "description": "",
+    "version": "",
+    "tags": [],
+    "author": "",
+    "license": "",
+    "mapping": {}
+  }
 }
 ```
 
@@ -47,7 +47,7 @@ The following will show `nexus-plugin-test` for _every_ resource inside Nexus We
 
 The following will show `nexus-plugin-test` for any resource of type `File` but only if they have a `distribution.encodingFormat` property that's `application/swc`
 
-```
+```json
 {
     "nexus-plugin-test": {
       "modulePath": "nexus-plugin-test.js",
