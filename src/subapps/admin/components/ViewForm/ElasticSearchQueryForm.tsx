@@ -50,23 +50,22 @@ const ElasticSearchQueryForm: FC<{
   onChangePageSize,
 }): JSX.Element => {
   const [_initialQuery, setInitialQuery] = useState('');
-  const [valid, setValid] = useState(true);
   // TODO Clean multiple states
   const [value, _setValue] = useState<string>();
-  const [pageSize, setPageSize] = useState<number>(size);
-  const editor = useRef<codemirror.Editor>();
   const wrapper = useRef(null);
 
-  const [editorValue, setEditorValue] = useState(''); // New state to manage the editor content
+  const [editorValue, setEditorValue] = useState('');
+  const [valid, setValid] = useState(true);
+  const [pageSize, setPageSize] = useState<number>(size);
+  const editor = useRef<codemirror.Editor>();
 
   useEffect(() => {
     const formattedInitialQuery = JSON.stringify(query, null, 2);
-    setInitialQuery(formattedInitialQuery);
-    setEditorValue(formattedInitialQuery); // Initialize the editor value with the formatted query
-  }, [query]); // Dependency on `query` to update initial value when the prop changes
+    setEditorValue(formattedInitialQuery);
+  }, [query]);
 
   const handleChange = (_: any, __: any, value: string) => {
-    setEditorValue(value); // Update editor value directly
+    setEditorValue(value);
     try {
       JSON.parse(value);
       setValid(true);
@@ -96,9 +95,9 @@ const ElasticSearchQueryForm: FC<{
   return (
     <div className="view-form">
       <Form
-        onFinish={() => {
-          value && onQueryChange(JSON.parse(value));
-        }}
+        // onFinish={() => {
+        //   editorValue && onQueryChange(JSON.parse(editorValue));
+        // }}
         layout="vertical"
       >
         <>
@@ -115,6 +114,7 @@ const ElasticSearchQueryForm: FC<{
             </div>
           </div>
           <CodeMirror
+            autoCursor={false}
             value={editorValue}
             options={{
               mode: { name: 'javascript', json: true },
@@ -140,7 +140,12 @@ const ElasticSearchQueryForm: FC<{
           />
         </>
         <FormItem>
-          <Button type="primary" htmlType="submit" disabled={!valid}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            disabled={!valid}
+            style={{ marginTop: '10px' }}
+          >
             Execute ElasticSearch query
           </Button>
         </FormItem>
