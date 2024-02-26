@@ -7,7 +7,6 @@ import isValidUrl from '../../utils/validUrl';
 import { ResourceObscured } from 'shared/organisms/DataPanel/DataPanel';
 import { getResourceLabel, uuidv4 } from '.';
 import { parseURL } from './nexusParse';
-import { isWindows } from 'react-device-detect';
 
 const baseLocalStorageObject = (
   resource: Resource,
@@ -267,20 +266,13 @@ export function pathForTopLevelResources(
   };
 }
 
-export const getPathSeparator = () => {
-  if (isWindows) {
-    return '\\';
-  }
-  return '/';
-};
-
 export function pathForChildDistributions(
   distItem: any,
   parentPath: string,
   existingPaths: Map<string, number>
 ) {
   const defaultUniqueName = uuidv4().substring(0, 10); // TODO use last part of child self or id
-  const slash = getPathSeparator();
+
   const fullFileName = fileNameForDistributionItem(distItem, defaultUniqueName);
   const fileNameWithoutExtension = fullFileName.slice(
     0,
@@ -289,7 +281,7 @@ export function pathForChildDistributions(
   const extension = fullFileName.slice(fullFileName.lastIndexOf('.') + 1);
 
   const childDir = fileNameWithoutExtension; // Max Length 20
-  const pathToChildFile = `${parentPath}${slash}${childDir}`; // Max Length 60 + 1 + 20 = 80
+  const pathToChildFile = `${parentPath}/${childDir}`; // Max Length 60 + 1 + 20 = 80
   let uniquePath: string; // TODO de-deuplicate
   if (existingPaths.has(pathToChildFile)) {
     const count = existingPaths.get(pathToChildFile)!;
