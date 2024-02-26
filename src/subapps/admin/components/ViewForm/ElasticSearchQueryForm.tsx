@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { Form, Button, Card, List, Empty } from 'antd';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk/es';
+import { Button, Card, Empty, Form, List } from 'antd';
 import * as codemirror from 'codemirror';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
+import { useEffect, useRef, useState } from 'react';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+import ReactJson from 'react-json-view';
 
 import './view-form.scss';
 

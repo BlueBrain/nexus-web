@@ -63,6 +63,7 @@ const QueryEditor: React.FC<{
   if (loading) {
     return null;
   }
+
   return (
     <div className="query-editor">
       <div className="query-editor__header">
