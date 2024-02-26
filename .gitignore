@@ -39,3 +39,7 @@ cypress/downloads/
 *.key
 *.asdcas
 dist_refresh/manifest.json
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

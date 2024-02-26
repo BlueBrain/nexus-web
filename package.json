@@ -133,6 +133,7 @@
     "@commitlint/config-conventional": "^11.0.0",
     "@esbuild-kit/esm-loader": "^2.6.5",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "@playwright/test": "^1.41.2",
     "@testing-library/cypress": "9.0.0",
     "@testing-library/dom": "^9.3.3",
     "@testing-library/jest-dom": "^6.1.3",
