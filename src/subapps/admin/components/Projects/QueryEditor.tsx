@@ -75,6 +75,7 @@ const QueryEditor: FC<{
           onChange={tab => {
             // Only trigger navigation if the active tab has changed.
             if (tab !== activeKey) {
+              setActiveKey(tab);
               history.replace(
                 `/${
                   subapp.namespace
