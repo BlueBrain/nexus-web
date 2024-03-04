@@ -65,11 +65,6 @@ const ElasticSearchQueryForm: FC<{
     setEditorValue(formattedInitialQuery);
   }, [query]);
 
-  useEffect(() => {
-    const formattedInitialQuery = JSON.stringify(query, null, 2);
-    setInitialQuery(formattedInitialQuery);
-  }, []);
-
   const handleChange = (_: any, __: any, value: string) => {
     setEditorValue(value);
     try {
