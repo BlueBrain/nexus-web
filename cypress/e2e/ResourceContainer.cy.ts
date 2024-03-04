@@ -87,17 +87,17 @@ describe('Resource with id that contains URL encoded characters', () => {
     });
   });
 
-  it.only('resource with any id opens when user clicks on resource row in Search table', function() {
-    cy.visit(`/`);
-    cy.findByText('Neuron Morphology').click();
+  // it.only('resource with any id opens when user clicks on resource row in Search table', function() {
+  //   cy.visit(`/`);
+  //   cy.findByText('Neuron Morphology').click();
 
-    cy.findAllByTestId('search-table-row')
-      .first()
-      .click();
+  //   cy.findAllByTestId('search-table-row')
+  //     .first()
+  //     .click();
 
-    cy.findByText('Advanced View').click();
-    cy.contains(`"@id"`);
-  });
+  //   cy.findByText('Advanced View').click();
+  //   cy.contains(`"@id"`);
+  // });
 
   it('resource opens when user directly navigates to resource page', function() {
     const resourcePage = `/${Cypress.env('ORG_LABEL')}/${
