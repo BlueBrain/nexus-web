@@ -271,11 +271,13 @@ const ResourceViewContainer: FC<{
         );
 
         const { _rev } = await updateFn();
+
         goToResource(orgLabel, projectLabel, resourceId, { revision: _rev });
         notification.success({
           message: 'Resource saved',
           description: getResourceLabel(resource),
         });
+        setResource({ resource, error: null, busy: false });
       } catch (error) {
         const potentiallyUpdatedResource = (await nexus.Resource.get(
           orgLabel,
