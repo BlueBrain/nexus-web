@@ -7,7 +7,7 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
 import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT } from './editorUtils';
+import { highlightUrlOverlay, INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;
@@ -91,6 +91,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
           )}
           onChange={handleChange}
           editorDidMount={editorElement => {
+            highlightUrlOverlay(editorElement);
             (ref as React.MutableRefObject<
               codemirror.Editor
             >).current = editorElement;
