@@ -1,14 +1,14 @@
-import { useState, FC } from 'react';
-import { useNexusContext } from '@bbp/react-nexus';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   ElasticSearchViewQueryResponse,
 } from '@bbp/nexus-sdk/es';
+import { useNexusContext } from '@bbp/react-nexus';
+import { FC, useState } from 'react';
 
+import { useQuery } from 'react-query';
 import ElasticSearchQueryForm, {
   NexusESError,
 } from '../components/ViewForm/ElasticSearchQueryForm';
-import { useQuery } from 'react-query';
 
 const DEFAULT_PAGE_SIZE = 5;
 const DEFAULT_QUERY = {

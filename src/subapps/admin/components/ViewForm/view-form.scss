@@ -6,9 +6,9 @@
     margin: 0 auto;
   }
   .code {
+    margin-bottom: $default-pad;
     max-height: 600;
     overflow: 'scroll';
-    margin-bottom: $default-pad;
   }
   .ant-card-body {
     overflow: scroll;

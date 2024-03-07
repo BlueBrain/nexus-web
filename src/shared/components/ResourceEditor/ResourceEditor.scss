@@ -45,12 +45,21 @@ button.cancel {
   }
 }
 
+.ant-card.ant-card-bordered.results {
+  margin-top: 2rem !important;
+}
+
+.ant-form-item {
+  margin-bottom: 0;
+}
+
 .control-panel {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background-color: #f0efef;
-  padding: 1rem;
-  height: 52px;
+  padding: 0.75rem;
+  height: 56px;
 }
 
 ._positive {

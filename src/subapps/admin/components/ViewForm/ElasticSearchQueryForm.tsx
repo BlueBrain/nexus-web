@@ -1,25 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
-import { Form, Button, Card, List, Empty } from 'antd';
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
-import ReactJson from 'react-json-view';
 import { ElasticSearchViewQueryResponse } from '@bbp/nexus-sdk/es';
+import { Button, Card, Empty, Form, List } from 'antd';
 import * as codemirror from 'codemirror';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
 import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
+import { FC, MutableRefObject, useEffect, useRef, useState } from 'react';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
+import ReactJson from 'react-json-view';
 
 import './view-form.scss';
 
 const FormItem = Form.Item;
 const ListItem = List.Item;
-/**
- * This is tricky because error can be KG error OR an ElasticSearch Error.
- *
- * In the case of ES, the reason message is nested within an error object
- */
+// Can be KG error or an ElasticSearch Error
+// In the case of ES, the reason message is nested within an error object
 export type NexusESError = {
   reason?: string;
   error?: {
@@ -27,8 +24,7 @@ export type NexusESError = {
   };
 };
 
-// TODO this needs to be broken into Input, Result, and Form components.
-const ElasticSearchQueryForm: React.FunctionComponent<{
+const ElasticSearchQueryForm: FC<{
   query: object;
   response?: ElasticSearchViewQueryResponse<any> | null;
   busy: boolean;
@@ -39,28 +35,23 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   onQueryChange: (query: object) => void;
   onChangePageSize: (size: number) => void;
 }> = ({
-  query,
-  response,
   busy,
-  error,
   from,
   size,
-  onPaginationChange,
+  query,
+  error,
+  response,
   onQueryChange,
   onChangePageSize,
+  onPaginationChange,
 }): JSX.Element => {
-  const [initialQuery, setInitialQuery] = useState('');
+  const [_initialQuery, setInitialQuery] = useState('');
+  const [editorValue, setEditorValue] = useState('');
   const [valid, setValid] = useState(true);
-  const [value, setValue] = useState<string>();
   const [pageSize, setPageSize] = useState<number>(size);
-  const editor = useRef<codemirror.Editor>();
-  const wrapper = useRef(null);
 
-  useEffect(() => {
-    // only on first render!
-    const formattedInitialQuery = JSON.stringify(query, null, 2);
-    setInitialQuery(formattedInitialQuery);
-  }, []);
+  const wrapper = useRef(null);
+  const editor = useRef<codemirror.Editor>();
 
   const data =
     response && response.hits.hits.map(result => result._source || []);
@@ -69,10 +60,15 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
   const totalPages = Math.ceil(total / size);
   const current = Math.floor((totalPages / total) * from + 1);
 
+  useEffect(() => {
+    const formattedInitialQuery = JSON.stringify(query, null, 2);
+    setEditorValue(formattedInitialQuery);
+  }, [query]);
+
   const handleChange = (_: any, __: any, value: string) => {
+    setEditorValue(value);
     try {
       JSON.parse(value);
-      setValue(value);
       setValid(true);
     } catch (error) {
       setValid(false);
@@ -88,25 +84,25 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
     <div className="view-form">
       <Form
         onFinish={() => {
-          value && onQueryChange(JSON.parse(value));
+          editorValue && onQueryChange(JSON.parse(editorValue));
         }}
         layout="vertical"
       >
         <>
           <div className="control-panel">
-            <div>
-              <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
-                {valid ? (
-                  <CheckCircleOutlined />
-                ) : (
-                  <ExclamationCircleOutlined />
-                )}{' '}
-                {valid ? 'Valid JSON' : 'Invalid JSON'}
-              </div>
+            <div className={`feedback ${valid ? '_positive' : '_negative'}`}>
+              {valid ? <CheckCircleOutlined /> : <ExclamationCircleOutlined />}{' '}
+              {valid ? 'Valid JSON' : 'Invalid JSON'}
             </div>
+            <FormItem>
+              <Button type="primary" htmlType="submit" disabled={!valid}>
+                Execute ElasticSearch query
+              </Button>
+            </FormItem>
           </div>
           <CodeMirror
-            value={initialQuery}
+            autoCursor={false}
+            value={editorValue}
             options={{
               mode: { name: 'javascript', json: true },
               theme: 'base16-light',
@@ -115,12 +111,12 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             }}
             onChange={handleChange}
             editorDidMount={editorElement => {
-              (editor as React.MutableRefObject<
+              (editor as MutableRefObject<
                 codemirror.Editor
               >).current = editorElement;
             }}
             editorWillUnmount={() => {
-              const editorWrapper = (editor as React.MutableRefObject<
+              const editorWrapper = (editor as MutableRefObject<
                 CodeMirror.Editor
               >).current.getWrapperElement();
               if (editor) editorWrapper.remove();
@@ -130,11 +126,6 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
             }}
           />
         </>
-        <FormItem>
-          <Button type="primary" htmlType="submit" disabled={!valid}>
-            Execute ElasticSearch query
-          </Button>
-        </FormItem>
       </Form>
       <Card bordered className="results">
         {error && (
@@ -169,8 +160,8 @@ const ElasticSearchQueryForm: React.FunctionComponent<{
               <ListItem>
                 {(result && (
                   <ReactJson
-                    collapsed
                     src={result}
+                    collapsed
                     name={null}
                     enableClipboard={false}
                     displayObjectSize={false}

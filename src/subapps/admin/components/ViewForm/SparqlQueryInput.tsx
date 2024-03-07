@@ -1,15 +1,15 @@
-import React, { useRef } from 'react';
 import * as codemirror from 'codemirror';
-import { UnControlled as UnControlledCodeMirror } from 'react-codemirror2';
-import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/display/autorefresh';
 import 'codemirror/addon/display/placeholder';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/sparql/sparql';
 import 'codemirror/theme/base16-light.css';
-import 'codemirror/lib/codemirror.css';
+import { FC, useRef } from 'react';
+import { UnControlled as UnControlledCodeMirror } from 'react-codemirror2';
 import './SparqlQueryInput.scss';
 
-const SparqlQueryInput: React.FunctionComponent<{
+const SparqlQueryInput: FC<{
   value?: string;
   onChange?: (query: string) => void;
 }> = ({ value = '', onChange }) => {
@@ -25,8 +25,8 @@ const SparqlQueryInput: React.FunctionComponent<{
       <div className="code">
         <UnControlledCodeMirror
           ref={wrapper}
+          autoCursor={false}
           value={value}
-          autoCursor={true}
           autoScroll={true}
           options={{
             mode: { name: 'sparql' },
