@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from 'react';
-import { Tabs } from 'antd';
 import { useHistory, useRouteMatch } from 'react-router';
 import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
@@ -7,8 +6,6 @@ import {
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Tabs } from 'antd';
-import { FC, useEffect, useState } from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
 import { useOrganisationsSubappContext } from '../..';
 import useNotification from '../../../../shared/hooks/useNotification';
 import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
@@ -82,7 +79,7 @@ const QueryEditor: FC<{
               setActiveKey(tab);
               history.replace(
                 `/${
-                  subapp.namespace
+                  subApp.namespace
                 }/${orgLabel}/${projectLabel}/query/${encodeURIComponent(
                   tab === 'sparql'
                     ? DEFAULT_SPARQL_VIEW_ID
