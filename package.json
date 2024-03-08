@@ -33,6 +33,7 @@
     "e2e:open": "cypress open",
     "e2e:run": "cypress run --config-file cypress.config.ts",
     "e2e:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --headless --config-file cypress.config.ts --browser chrome",
+    "cy:ci": "echo | sudo docker exec --user=$UID -t cypress cypress run --config-file cypress.config.ts --browser chrome",
     "e2e:ps": "echo | cypress run --config-file cypress-public-studios.config.ts --browser chrome --spec \"cypress/e2e/PublicStudios.cy.ts\"",
     "e2e:ui": "API_ENDPOINT=http://test start-server-and-test dev http://localhost:8000 cy:run"
   },
@@ -66,7 +67,7 @@
     "deep-object-diff": "^1.1.0",
     "express": "^4.18.2",
     "handlebars": "^4.7.7",
-    "history": "^4.7.2",
+    "history": "4.5.1",
     "https-browserify": "^1.0.0",
     "json2csv": "^5.0.5",
     "jwt-decode": "^2.2.0",
@@ -228,7 +229,8 @@
   },
   "resolutions": {
     "d3-interpolate": "2.0.1",
-    "headers-polyfill": "3.0.10"
+    "headers-polyfill": "3.0.10",
+    "history": "4.5.1"
   },
   "overrides": {
     "d3-interpolate": "2.0.1"

@@ -6,10 +6,13 @@ import {
   DEFAULT_SPARQL_VIEW_ID,
 } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
-import SparqlQueryView from '../../views/SparqlQueryView';
-import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
-import useNotification from '../../../../shared/hooks/useNotification';
+import { Tabs } from 'antd';
+import { FC, useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
 import { useOrganisationsSubappContext } from '../..';
+import useNotification from '../../../../shared/hooks/useNotification';
+import ElasticSearchQueryView from '../../views/ElasticSearchQueryView';
+import SparqlQueryView from '../../views/SparqlQueryView';
 import './QueryEditor.scss';
 
 const QueryEditor: FC<{
@@ -17,7 +20,7 @@ const QueryEditor: FC<{
   projectLabel: string;
   onUpdate: () => void;
 }> = ({ orgLabel, projectLabel }) => {
-  const subapp = useOrganisationsSubappContext();
+  const subApp = useOrganisationsSubappContext();
   const history = useHistory();
   const match = useRouteMatch<{
     orgLabel: string;
@@ -61,6 +64,7 @@ const QueryEditor: FC<{
   if (loading) {
     return null;
   }
+
   return (
     <div className="query-editor">
       <div className="query-editor__header">

@@ -11,7 +11,7 @@ import setup, { TestUsers } from './cypress/support/setupRealmsAndUsers';
 export default defineConfig({
   projectId: '1iihco',
   viewportWidth: 1200,
-  video: false,
+  video: true,
   screenshotOnRunFailure: false,
   e2e: {
     baseUrl: 'http://localhost:8000',
@@ -24,6 +24,7 @@ export default defineConfig({
       DEBUG: 'cypress:launcher:browsers',
       ELECTRON_DISABLE_GPU: 'true',
       ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
+      NODE_TLS_REJECT_UNAUTHORIZED: 0,
     },
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
@@ -141,12 +142,16 @@ export default defineConfig({
                 token: authToken,
               });
 
-              return await createResource({
+              const createdResource = await createResource({
                 nexus,
                 orgLabel,
                 projectLabel,
                 resource: resourcePayload,
               });
+              if (!createResource) {
+                throw new Error('Test Resource was not created');
+              }
+              return createdResource;
             } catch (e) {
               console.log(
                 'Error encountered in analysisResource:create task.',

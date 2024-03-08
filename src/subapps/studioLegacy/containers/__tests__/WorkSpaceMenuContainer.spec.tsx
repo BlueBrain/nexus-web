@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { vi, describe } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
-import { createBrowserHistory } from 'history';
+import { createMemoryHistory } from 'history';
 import { createNexusClient } from '@bbp/nexus-sdk';
 import { Provider } from 'react-redux';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -26,7 +26,7 @@ import { setupServer } from 'msw/node';
 describe(
   'workSpaceMenu',
   () => {
-    const history = createBrowserHistory({ basename: '/' });
+    const history = createMemoryHistory({});
     const contextValue: StudioContextType = {
       orgLabel: 'org',
       projectLabel: 'project',
