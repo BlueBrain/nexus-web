@@ -23,7 +23,7 @@ import {
   TDataSource,
   TResourceTableData,
   getLocalStorageSize,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -171,7 +171,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -223,7 +223,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

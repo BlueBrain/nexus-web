@@ -14,7 +14,7 @@ import {
   TResourceTableData,
   getLocalStorageSize,
   makeOrgProjectTuple,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
@@ -149,7 +149,7 @@ export const DataExplorerTable = forwardRef<AntdTableRef, TDataExplorerTable>(
         size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
         getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
       ) {
-        return notifyTotalSizeExeeced();
+        return notifyTotalSizeExceeded();
       }
       localStorage.setItem(
         DATA_PANEL_STORAGE,
@@ -199,7 +199,7 @@ export const DataExplorerTable = forwardRef<AntdTableRef, TDataExplorerTable>(
         size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
         getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
       ) {
-        return notifyTotalSizeExeeced();
+        return notifyTotalSizeExceeded();
       }
       localStorage.setItem(
         DATA_PANEL_STORAGE,
