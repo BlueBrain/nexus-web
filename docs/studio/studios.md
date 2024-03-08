@@ -1,6 +1,6 @@
-## Studio
+# Studio
 
-### What is a Studio?
+## What is a Studio?
 
 A studio is a collection of queries organized in a table layout for users to quickly access relevant data in a customizable way. Studio authors can create a studio to match a specific topic, and create organization schemes called workspaces and dashboards to access various aspects of that data.
 
@@ -24,7 +24,7 @@ In essence, a studio is a UI layer that performs queries according to a configur
 
 > Note: A studio will be given a URI for navigation or sharing.
 
-#### About the Studio Context
+### About the Studio Context
 
 In order for the studio to work as intended with the UI, a context must be in the project. It's purpose is to direct the knowledge graph to understand how studio-specific properties behave, such as that `workspaces` should be set (an unordered collection without duplicates).
 
@@ -117,9 +117,9 @@ The `Studio` link in the Header allows you to access your list of Studios.
 
 To enable this feature, the following should be done:
 
-#### 1. If you don't have a project to store the application data, create one.
+#### 1. If you don't have a project to store the application data, create one
 
-#### 2. Create an Aggregated Elastic Search View inside this project, and add all of the projects that contain Studio resources to the list.
+#### 2. Create an Aggregated Elastic Search View inside this project, and add all of the projects that contain Studio resources to the list
 
 Example:
 
@@ -145,7 +145,7 @@ Example:
 }
 ```
 
-#### 3. Ask a developer to add an ENV variable with the location of the 'AggregateElasticSearchView' as following:
+#### 3. Ask a developer to add an ENV variable with the location of the 'AggregateElasticSearchView' as following
 
 `STUDIO_VIEW=[yourOrgLabel]/[yourProjectLabel]/[viewId]`
 

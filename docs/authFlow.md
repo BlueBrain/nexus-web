@@ -11,4 +11,4 @@ Finally, there are 3 scenarios we can be in, regarding authentication and token:
 - an invalid/expired token is present
 
 Those 3 case are described in the sequence diagram below:
-![Authentication flow sequence diagram](./authentication_sequence_diagram.png)
+![Authentication flow sequence diagram](./assets/authentication_sequence_diagram.png)
