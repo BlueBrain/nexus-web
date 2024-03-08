@@ -1,5 +1,5 @@
 import { Button, Tooltip } from 'antd';
-import './Categories.less';
+import './Categories.scss';
 
 import { TypeWidgetProps } from '../../types/plugins/report';
 import { InfoCircleOutlined } from '@ant-design/icons';

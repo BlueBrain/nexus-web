@@ -1,7 +1,7 @@
 import { TableOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
 import { SearchLayout } from '../../hooks/useGlobalSearch';
-import './SearchLayouts.less';
+import './SearchLayouts.scss';
 
 type SearchLayoutProps = {
   layouts?: SearchLayout[];
@@ -18,7 +18,7 @@ const SearchLayouts = ({
     suffixIcon={<TableOutlined />}
     onChange={layout => onChangeLayout(layout as string)}
     value={selectedLayout}
-    dropdownMatchSelectWidth={false}
+    popupMatchSelectWidth={false}
     className="search-layout"
     options={layouts?.map(o => ({ key: o.name, value: o.name }))}
   />

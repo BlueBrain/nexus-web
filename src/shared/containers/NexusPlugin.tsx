@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import invariant from 'ts-invariant';
-import { NexusClient, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, Resource } from '@bbp/nexus-sdk/es';
 import { Result } from 'antd';
 
 import Loading from '../components/Loading';

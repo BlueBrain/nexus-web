@@ -1,0 +1,24 @@
+@import '../../lib.scss';
+
+.link-item {
+  .label {
+    @include ellipsis;
+    font-weight: bold;
+    color: $text-color;
+  }
+
+  .description {
+    @include ellipsis;
+    margin-bottom: 0;
+    color: $text-color-secondary;
+  }
+
+  .types {
+    margin-top: 5px;
+  }
+}
+
+.resource-links {
+  height: 95%;
+  overflow: scroll;
+}

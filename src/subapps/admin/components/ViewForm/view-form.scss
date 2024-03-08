@@ -1,0 +1,26 @@
+@import '../../../../shared/lib.scss';
+
+.view-form {
+  width: 100%;
+  > form {
+    margin: 0 auto;
+  }
+  .code {
+    margin-bottom: $default-pad;
+    max-height: 600;
+    overflow: 'scroll';
+  }
+  .ant-card-body {
+    overflow: scroll;
+  }
+  .results .empty {
+    color: $error-color;
+  }
+  .react-json-view {
+    overflow-x: scroll;
+  }
+}
+
+.react-json-view .object-key-val .pushed-content.object-container {
+  width: 100% !important;
+}

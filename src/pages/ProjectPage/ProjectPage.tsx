@@ -1,39 +1,38 @@
-import { SelectOutlined } from '@ant-design/icons';
-import {
-  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
-  ProjectResponseCommon,
-  Statistics,
-} from '@bbp/nexus-sdk';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Empty, Popover, Tabs } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-import { useSelector } from 'react-redux';
+import * as React from 'react';
 import { useRouteMatch } from 'react-router';
+import { useSelector } from 'react-redux';
+import {
+  ProjectResponseCommon,
+  DEFAULT_ELASTIC_SEARCH_VIEW_ID,
+  Statistics,
+} from '@bbp/nexus-sdk/es';
+import { useNexusContext, AccessControl } from '@bbp/react-nexus';
+import { Tabs, Popover, Empty } from 'antd';
+import { SelectOutlined } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
-import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
-import { useJiraPlugin } from '../../shared/hooks/useJIRA';
-import useNotification from '../../shared/hooks/useNotification';
-import { RootState } from '../../shared/store/reducers';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
-import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
-import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
-import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
+import { useJiraPlugin } from '../../shared/hooks/useJIRA';
+import { RootState } from '../../shared/store/reducers';
+import useNotification from '../../shared/hooks/useNotification';
+import ResourceListBoardContainer from '../../shared/containers/ResourceListBoardContainer';
+import ResourceCreateUploadContainer from '../../shared/containers/ResourceCreateUploadContainer';
+import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
+import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
 import ProjectStatsContainer from '../../subapps/admin/containers/ProjectStatsContainer';
 import ProjectToDeleteContainer from '../../subapps/admin/containers/ProjectToDeleteContainer';
-import QuotasContainer from '../../subapps/admin/containers/QuotasContainer';
+import JiraPluginProjectContainer from '../../subapps/admin/containers/JiraContainer';
 import SettingsContainer from '../../subapps/admin/containers/SettingsContainer';
-import StoragesContainer from '../../subapps/admin/containers/StoragesContainer';
-import './styles.less';
+import ViewStatisticsContainer from '../../subapps/admin/components/Views/ViewStatisticsProgress';
+import QueryEditor from '../../subapps/admin/components/Projects/QueryEditor';
 
-const ProjectView: React.FC = () => {
+import './styles.scss';
+
+const ProjectView: React.FunctionComponent = () => {
   const notification = useNotification();
   const nexus = useNexusContext();
   const location = useLocation();
   const history = useHistory();
-  const subApp = useOrganisationsSubappContext();
-  const { TabPane } = Tabs;
+  const subapp = useOrganisationsSubappContext();
 
   const match = useRouteMatch<{
     orgLabel: string;
@@ -41,38 +40,26 @@ const ProjectView: React.FC = () => {
     viewId?: string;
   }>();
 
-  const fetchProjectData = async (orgLabel: string, projectLabel: string) => {
-    return await nexus.Project.get(orgLabel, projectLabel);
-  };
-
   const {
     params: { orgLabel, projectLabel },
   } = match;
 
-  const { data: project, error } = useQuery<ProjectResponseCommon, Error>(
-    ['project', orgLabel, projectLabel],
-    () => fetchProjectData(orgLabel, projectLabel)
-  );
-
-  if (error) {
-    notification.error({
-      message: `Could not load project ${projectLabel}`,
-      description: error.message,
-    });
-  }
-
   const tabFromPath = (path: string) => {
-    const base = `/${subApp.namespace}/:orgLabel/:projectLabel/`;
+    const base = `/${subapp.namespace}/:orgLabel/:projectLabel/`;
 
     switch (path) {
       case `${base}`:
         return 'browse';
+
       case `${base}create`:
         return 'create_upload';
+
       case `${base}query/:viewId?`:
         return 'query';
+
       case `${base}statistics`:
         return 'stats';
+
       case `${base}settings`:
         return 'settings';
       case `${base}graph-analytics`:
@@ -84,16 +71,20 @@ const ProjectView: React.FC = () => {
   };
 
   const pathFromTab = (tab: string | undefined) => {
-    const base = `/${subApp.namespace}/${orgLabel}/${projectLabel}/`;
+    const base = `/${subapp.namespace}/${orgLabel}/${projectLabel}/`;
     switch (tab) {
       case 'browse':
         return `${base}`;
+
       case 'query':
         return `${base}query`;
+
       case 'create_upload':
         return `${base}create`;
+
       case 'stats':
         return `${base}statistics`;
+
       case 'settings':
         return `${base}settings`;
       case 'graph-analytics':
@@ -103,6 +94,60 @@ const ProjectView: React.FC = () => {
     }
     return `${base}browse`;
   };
+
+  const [{ project }, setState] = React.useState<{
+    project: ProjectResponseCommon | null;
+    busy: boolean;
+    error: Error | null;
+  }>({
+    project: null,
+    busy: false,
+    error: null,
+  });
+
+  const [refreshLists, setRefreshLists] = React.useState(false);
+  const [activeKey, setActiveKey] = React.useState<string>(
+    tabFromPath(match.path)
+  );
+
+  const [statisticsPollingPaused, setStatisticsPollingPaused] = React.useState(
+    false
+  );
+  const [deltaPlugins, setDeltaPlugins] = React.useState<{
+    [key: string]: string;
+  }>();
+
+  const { apiEndpoint } = useSelector((state: RootState) => state.config);
+  React.useEffect(() => {
+    setActiveKey(tabFromPath(match.path));
+  }, [match.path]);
+
+  React.useEffect(() => {
+    setState({
+      project,
+      error: null,
+      busy: true,
+    });
+    nexus.Project.get(orgLabel, projectLabel)
+      .then(response => {
+        setState({
+          project: response,
+          busy: false,
+          error: null,
+        });
+      })
+      .catch(error => {
+        notification.error({
+          message: `Could not load project ${projectLabel}`,
+          description: error.message,
+        });
+        setState({
+          project,
+          error,
+          busy: false,
+        });
+      });
+  }, [orgLabel, projectLabel, nexus]);
 
   const pauseStatisticsPolling = (durationInMs: number) => {
     setStatisticsPollingPaused(true);
@@ -114,22 +159,8 @@ const ProjectView: React.FC = () => {
     }, durationInMs);
   };
 
-  const [refreshLists, setRefreshLists] = useState(false);
-  const [activeKey, setActiveKey] = useState<string>(tabFromPath(match.path));
-  const [statisticsPollingPaused, setStatisticsPollingPaused] = useState(false);
-  const [statistics, setStatistics] = useState<Statistics>();
-  const [deltaPlugins, setDeltaPlugins] = useState<{
-    [key: string]: string;
-  }>();
-
-  const { apiEndpoint } = useSelector((state: RootState) => state.config);
-
-  useEffect(() => {
-    setActiveKey(tabFromPath(match.path));
-  }, [match.path]);
-
-  useEffect(() => {
-    /* If location has changed, check to see if we should refresh our
+  React.useEffect(() => {
+    /* if location has changed, check to see if we should refresh our
     resources and reset initial statistics state */
     const refresh =
       location.state && (location.state as { refresh?: boolean }).refresh;
@@ -142,6 +173,8 @@ const ProjectView: React.FC = () => {
     }
   }, [location]);
 
+  const [statistics, setStatistics] = React.useState<Statistics>();
+
   const fetchAndSetStatistics = async () => {
     const stats = ((await nexus.View.statistics(
       orgLabel,
@@ -151,7 +184,7 @@ const ProjectView: React.FC = () => {
     setStatistics(stats);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchAndSetStatistics();
     fetchDeltaVersion();
   }, []);
@@ -162,10 +195,7 @@ const ProjectView: React.FC = () => {
         path: `${apiEndpoint}/version`,
         context: { as: 'json' },
       })
-      .then(versions => setDeltaPlugins({ ...versions.plugins }))
-      .catch(error => {
-        // do nothing
-      });
+      .then(versions => setDeltaPlugins({ ...versions.plugins }));
   };
 
   const showDeletionBanner = deltaPlugins && 'project-deletion' in deltaPlugins;
@@ -230,118 +260,155 @@ const ProjectView: React.FC = () => {
             />
           )}
           <div className="tabs-container">
-            <Tabs onChange={handleTabChange} activeKey={activeKey}>
-              <TabPane tab="Browse" key="browse">
-                <div className="list-board">
-                  <div className="wrapper">
-                    <ResourceListBoardContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                      refreshLists={refreshLists}
+            <Tabs
+              className="project-tabs"
+              onChange={handleTabChange}
+              activeKey={activeKey}
+              items={[
+                {
+                  key: 'browse',
+                  label: 'Browse',
+                  children: (
+                    <div className="list-board">
+                      <div className="wrapper">
+                        <ResourceListBoardContainer
+                          orgLabel={orgLabel}
+                          projectLabel={projectLabel}
+                          refreshLists={refreshLists}
+                        />
+                      </div>
+                    </div>
+                  ),
+                },
+                {
+                  key: 'query',
+                  label: 'Query',
+                  children: (
+                    <div style={{ flexGrow: 1 }}>
+                      <QueryEditor
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                        onUpdate={() => {
+                          setRefreshLists(!refreshLists);
+                          // Statistics aren't immediately updated so pause polling briefly
+                          pauseStatisticsPolling(5000);
+                        }}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  key: 'create_upload',
+                  label: 'Create and Upload',
+                  children: (
+                    <AccessControl
+                      path={`/${orgLabel}/${projectLabel}`}
+                      permissions={['files/write']}
+                      noAccessComponent={() => (
+                        <Empty>
+                          You don't have the access to create/upload. Please
+                          contact the Administrator for access.
+                        </Empty>
+                      )}
+                    >
+                      <ResourceCreateUploadContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    </AccessControl>
+                  ),
+                },
+                {
+                  key: 'stats',
+                  label: 'Statistics',
+                  children: (
+                    <AccessControl
+                      key="quotas-access-control"
+                      path={`/${orgLabel}/${projectLabel}`}
+                      permissions={['test']}
+                      noAccessComponent={() => (
+                        <Empty>
+                          You don't have read access to quotas. Please contact
+                          the Administrator for access.
+                        </Empty>
+                      )}
+                    >
+                      <QuotasContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                      <StoragesContainer
+                        orgLabel={orgLabel}
+                        projectLabel={projectLabel}
+                      />
+                    </AccessControl>
+                  ),
+                },
+                {
+                  key: 'settings',
+                  label: 'Settings',
+                  children: (
+                    <SettingsContainer
+                      project={{
+                        _label: project._label,
+                        _rev: project._rev,
+                        description: project.description || '',
+                        base: project.base,
+                        vocab: project.vocab,
+                        _deprecated: project._deprecated,
+                      }}
+                      apiMappings={project.apiMappings}
+                      mode="edit"
                     />
-                  </div>
-                </div>
-              </TabPane>
-              <TabPane tab="Query" key="query">
-                <div style={{ flexGrow: 1 }}>
-                  <QueryEditor
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                    onUpdate={() => {
-                      setRefreshLists(!refreshLists);
-                      // Statistics aren't immediately updated so pause polling briefly
-                      pauseStatisticsPolling(5000);
-                    }}
-                  />
-                </div>
-              </TabPane>
-              <TabPane tab="Create and Upload" key="create_upload">
-                <AccessControl
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['files/write']}
-                  noAccessComponent={() => (
-                    <Empty>
-                      You don't have the access to create/upload. Please contact
-                      the Administrator for access.
-                    </Empty>
-                  )}
-                >
-                  <ResourceCreateUploadContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-              </TabPane>
-              <TabPane tab="Statistics" key="stats">
-                <AccessControl
-                  key="quotas-access-control"
-                  path={`/${orgLabel}/${projectLabel}`}
-                  permissions={['test']}
-                  noAccessComponent={() => (
-                    <Empty>
-                      You don't have read access to quotas. Please contact the
-                      Administrator for access.
-                    </Empty>
-                  )}
-                >
-                  <QuotasContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                  <StoragesContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </AccessControl>
-              </TabPane>
-              <TabPane tab="Settings" key="settings">
-                <SettingsContainer
-                  project={{
-                    _label: project._label,
-                    _rev: project._rev,
-                    description: project.description || '',
-                    base: project.base,
-                    vocab: project.vocab,
-                    _deprecated: project._deprecated,
-                  }}
-                  apiMappings={project.apiMappings}
-                  mode="edit"
-                />
-              </TabPane>
-              {deltaPlugins &&
+                  ),
+                },
+                ...(deltaPlugins &&
                 'jira' in deltaPlugins &&
                 isUserInSupportedJiraRealm &&
-                !jiraInaccessibleBecauseOfVPN && (
-                  <TabPane tab="Jira" key="jira">
-                    <JiraPluginProjectContainer
-                      orgLabel={orgLabel}
-                      projectLabel={projectLabel}
-                    />
-                  </TabPane>
-                )}
-              {deltaPlugins && 'graph-analytics' in deltaPlugins && (
-                <TabPane tab="Graph Analytics" key="graph-analytics">
-                  <ProjectStatsContainer
-                    orgLabel={orgLabel}
-                    projectLabel={projectLabel}
-                  />
-                </TabPane>
-              )}
-              <TabPane
-                tab={
-                  <span>
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      to={`/studios/${orgLabel}/${projectLabel}/studios`}
-                    >
-                      <SelectOutlined /> Studios
-                    </Link>
-                  </span>
-                }
-                key="studios"
-              ></TabPane>
-            </Tabs>
+                !jiraInaccessibleBecauseOfVPN
+                  ? [
+                      {
+                        key: 'jira',
+                        label: 'Jira',
+                        children: (
+                          <JiraPluginProjectContainer
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                          />
+                        ),
+                      },
+                    ]
+                  : []),
+                ...(deltaPlugins && 'graph-analytics' in deltaPlugins
+                  ? [
+                      {
+                        key: 'graph-analytics',
+                        label: 'Graph Analytics',
+                        children: (
+                          <ProjectStatsContainer
+                            orgLabel={orgLabel}
+                            projectLabel={projectLabel}
+                          />
+                        ),
+                      },
+                    ]
+                  : []),
+                {
+                  key: 'studios',
+                  label: (
+                    <span>
+                      <Link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        to={`/studios/${orgLabel}/${projectLabel}/studios`}
+                      >
+                        <SelectOutlined /> Studios
+                      </Link>
+                    </span>
+                  ),
+                },
+              ]}
+            />
           </div>
         </>
       )}

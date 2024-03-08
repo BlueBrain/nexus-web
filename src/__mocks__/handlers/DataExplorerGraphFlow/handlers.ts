@@ -313,6 +313,7 @@ const initialResource = getMockResource(
         label: 'Rattus norvegicus',
       },
     },
+    name: 'initial-resource',
   }
 );
 
@@ -722,6 +723,18 @@ const getDataExplorerGraphFlowResourceObject = rest.get(
     return res(ctx.status(200), ctx.json(initialResource));
   }
 );
+
+const getDataExplorerGraphFlowResourceSource = rest.get(
+  deltaPath(
+    `resources/public/sscx/_/${encodeURIComponent(
+      initialResource['@id']
+    )}/source`
+  ),
+  (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(initialResource));
+  }
+);
+
 const getDataExplorerGraphFlowResourceObjectTags = rest.get(
   deltaPath(
     `resources/public/sscx/_/${encodeURIComponent(initialResource['@id'])}/tags`
@@ -742,4 +755,5 @@ export {
   initialResource,
   getDataExplorerGraphFlowResourceObject,
   getDataExplorerGraphFlowResourceObjectTags,
+  getDataExplorerGraphFlowResourceSource,
 };

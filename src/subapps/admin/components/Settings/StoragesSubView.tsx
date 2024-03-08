@@ -4,11 +4,11 @@ import { Table, Button, Spin, Tooltip } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { useQuery } from 'react-query';
-import { NexusClient, Storage } from '@bbp/nexus-sdk';
-import * as moment from 'moment';
+import { NexusClient, Storage } from '@bbp/nexus-sdk/es';
+import moment from 'moment';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 
-import './styles.less';
+import './styles.scss';
 
 type Props = {};
 type StorageData = {
@@ -194,6 +194,7 @@ const StoragesSubView = (props: Props) => {
               rowClassName="view-item-row"
               columns={columns}
               dataSource={(storagesData as TDataType[]) ?? []}
+              rowKey={item => item.id}
               sticky={true}
               size="small"
               pagination={false}

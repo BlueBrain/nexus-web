@@ -1,5 +1,11 @@
 import { fileExtensionFromResourceEncoding } from '../../utils/contentTypes';
 
+declare global {
+  interface Navigator {
+    msSaveBlob?: (blob: any, defaultName?: string) => boolean;
+  }
+}
+
 export const download = (
   filename: string,
   mediaType: string | undefined,

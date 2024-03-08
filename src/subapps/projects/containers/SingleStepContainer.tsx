@@ -9,9 +9,10 @@ import fusionConfig from '../config';
 import { StepResource, WorkflowStepMetadata } from '../types';
 import { WORKFLOW_STEP_CONTEXT } from '../fusionContext';
 import useNotification, {
+  NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 const SingleStepContainer: React.FC<{
   projectLabel: string;
@@ -62,7 +63,7 @@ const SingleStepContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'Failed to load Workflow Steps',
-        description: parseNexusError(error),
+        description: parseNexusError(error as NexusError),
       });
     }
   };

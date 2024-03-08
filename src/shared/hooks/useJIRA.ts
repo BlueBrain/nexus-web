@@ -1,4 +1,4 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
@@ -145,7 +145,7 @@ function useJIRA({
           value: verificationCode,
         }),
       })
-      .then(response => {
+      .then(_ => {
         setIsJiraConnected(true);
       })
       .catch(e => {
@@ -402,7 +402,6 @@ function useJIRA({
         const issuesResponse = await (resource
           ? getResourceIssues(resource._self)
           : getProjectIssues());
-
         if (issuesResponse.issues) {
           const issuesOrderedByLastUpdate = issuesResponse.issues.sort(
             (a: any, b: any) =>

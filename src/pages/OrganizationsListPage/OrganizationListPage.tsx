@@ -19,10 +19,10 @@ import {
   NexusClient,
   OrganizationList,
   OrgResponseCommon,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNexusContext } from '@bbp/react-nexus';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { match as pmatch } from 'ts-pattern';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
@@ -31,8 +31,9 @@ import useIntersectionObserver from '../../shared/hooks/useIntersectionObserver'
 import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import formatNumber from '../../utils/formatNumber';
-import '../../shared/styles/route-layout.less';
-import { isNil } from 'lodash';
+import organizationImg from '../../shared/images/sscx-by-layers-v3.png';
+
+import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = false;
@@ -114,8 +115,8 @@ const OrganizationItem = ({
     queryFn: () => nexus.Project.list(title),
   });
   return (
-    <List.Item className="route-result-list_item" role="routeitem-org">
-      <div className="route-result-list_item_wrapper">
+    <List.Item className="route-result-list_item">
+      <div className="route-result-list_item_wrapper" role="routeitem-org">
         <div className="org">
           <Link to={to}>
             <h3>{title}</h3>
@@ -254,11 +255,8 @@ const OrganizationListView: React.FC<{}> = () => {
               'No organizations found'
             )
           }
-          alt="Organization image"
-          bg={
-            layoutSettings.organizationImg ||
-            require('../../shared/images/sscx-by-layers-v3.png')
-          }
+          alt="sscx"
+          bg={layoutSettings.organizationImg || organizationImg}
           createLabel="Create Organization"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['organizations/create']}

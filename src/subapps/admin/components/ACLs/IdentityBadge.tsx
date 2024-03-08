@@ -6,9 +6,9 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Identity } from '@bbp/nexus-sdk';
+import { Identity } from '@bbp/nexus-sdk/es';
 
-import './ACLs.less';
+import './ACLs.scss';
 
 const getTitle = (identity: Identity): React.ReactElement<any> => {
   switch (identity['@type']) {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk';
+import { ArchivePayload, NexusClient } from '@bbp/nexus-sdk/es';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
 import { getResourceLabel, parseProjectUrl, uuidv4 } from '../../shared/utils';
 import { parseURL, ParsedNexusUrl } from '../../shared/utils/nexusParse';
@@ -266,11 +266,21 @@ const DataCartContainer = () => {
           ? downLoadFiles()
           : downLoadMetaData();
       }}
-    >
-      <Menu.Item key="meta-data">Metadata</Menu.Item>
-      <Menu.Item key="files">Files</Menu.Item>
-      <Menu.Item key="both">Both</Menu.Item>
-    </Menu>
+      items={[
+        {
+          key: 'meta-data',
+          label: 'Metadata',
+        },
+        {
+          key: 'files',
+          label: 'Files',
+        },
+        {
+          key: 'both',
+          label: 'Both',
+        },
+      ]}
+    />
   );
 
   const downloadButton = (disabled: boolean) => {
@@ -345,7 +355,9 @@ const DataCartContainer = () => {
                 noAccessComponent={() => downloadButton(true)}
                 loadingComponent={downloadButton(false)}
               >
-                <Dropdown overlay={menu}>{downloadButton(false)}</Dropdown>
+                <Dropdown dropdownRender={() => menu}>
+                  {downloadButton(false)}
+                </Dropdown>
               </AccessControl>
               <Button onClick={onEmptyCart}>Empty Cart</Button>
             </div>
@@ -373,7 +385,7 @@ const DataCartContainer = () => {
                     <div className="result-preview-card">
                       <div>
                         <CloseCircleFilled
-                          onClick={e => {
+                          onClick={() => {
                             onRemove(resource._self);
                           }}
                           style={{

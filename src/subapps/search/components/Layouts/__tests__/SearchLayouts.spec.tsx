@@ -1,4 +1,4 @@
-// import SearchLayouts from '../index';
+import { vi } from 'vitest';
 import {
   render,
   fireEvent,
@@ -8,7 +8,7 @@ import {
 } from '../../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import SearchLayouts from '..';
-import { SearchLayout } from 'subapps/search/hooks/useGlobalSearch';
+import { SearchLayout } from '../../../../../subapps/search/hooks/useGlobalSearch';
 
 describe('SearchLayouts', () => {
   // @ts-ignore
@@ -154,8 +154,8 @@ describe('SearchLayouts', () => {
     },
   ] as SearchLayout[];
 
-  xit('renders something', async () => {
-    render(<SearchLayouts layouts={layouts} onChangeLayout={jest.fn()} />);
+  it('renders something', async () => {
+    render(<SearchLayouts layouts={layouts} onChangeLayout={vi.fn()} />);
 
     await act(async () => {
       // required to populate select items (come on antd!)

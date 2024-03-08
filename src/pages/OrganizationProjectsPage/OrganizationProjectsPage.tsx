@@ -20,10 +20,10 @@ import {
   NexusClient,
   ProjectList,
   ProjectResponseCommon,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useDispatch, useSelector } from 'react-redux';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import { useOrganisationsSubappContext } from '../../subapps/admin';
 import { sortBackgroundColor } from '../StudiosPage/StudiosPage';
 import { ModalsActionsEnum } from '../../shared/store/actions/modals';
@@ -39,8 +39,8 @@ import PinnedMenu from '../../shared/PinnedMenu/PinnedMenu';
 import RouteHeader from '../../shared/RouteHeader/RouteHeader';
 import timeago from '../../utils//timeago';
 import formatNumber from '../../utils/formatNumber';
-
-import '../../shared/styles/route-layout.less';
+import hippocampus from '../../shared/images/hippocampus.png';
+import '../../shared/styles/route-layout.scss';
 
 const DEFAULT_PAGE_SIZE = 10;
 const SHOULD_INCLUDE_DEPRECATED = true;
@@ -114,6 +114,7 @@ const fetchOrganizationProjectsList = async ({
     });
   }
 };
+
 export const useInfiniteOrganizationProjectsQuery = ({
   nexus,
   orgLabel,
@@ -166,8 +167,11 @@ const ProjectItem = ({
   });
   const datasets = data?._total;
   return (
-    <List.Item className="route-result-list_item" role="routeitem-org-project">
-      <div className="route-result-list_item_wrapper">
+    <List.Item className="route-result-list_item">
+      <div
+        className="route-result-list_item_wrapper"
+        role="routeitem-org-project"
+      >
         <div className="org">
           <Link to={to}>
             <h3>
@@ -220,6 +224,7 @@ const ProjectItem = ({
     </List.Item>
   );
 };
+
 const OrganizationProjectsPage: React.FC<{}> = ({}) => {
   const dispatch = useDispatch();
   const nexus = useNexusContext();
@@ -241,17 +246,20 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
     }),
     { sort: 'asc' }
   );
+
   const { data: organization, error: organisationError } = useQuery({
     enabled: !!orgLabel,
     queryKey: ['organization-projects', { orgLabel, sort }],
     queryFn: () => fetchOrganizationDetails({ nexus, orgLabel: orgLabel! }),
   });
+
   const updateCreateModelVisibility = (payload?: boolean) => {
     dispatch({
       payload,
       type: ModalsActionsEnum.OPEN_PROJECT_CREATION_MODAL,
     });
   };
+
   const handleOnOrgSearch: React.ChangeEventHandler<HTMLInputElement> = e =>
     setQueryString(e.target.value);
   const handleUpdateSorting = (value: string) => {
@@ -333,10 +341,7 @@ const OrganizationProjectsPage: React.FC<{}> = ({}) => {
             )
           }
           alt="hippocampus"
-          bg={
-            layoutSettings.projectsImg ||
-            require('../../shared/images/hippocampus.png')
-          }
+          bg={layoutSettings.projectsImg || hippocampus}
           createLabel="Create Project"
           onCreateClick={() => updateCreateModelVisibility(true)}
           permissions={['projects/create']}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { THeaderProps } from '../../../shared/canvas/MyData/types';
 import { MyDataHeaderTitle, MyDataHeaderFilters } from './MyDataHeaderFilters';
-import './styles.less';
+import './styles.scss';
 
 const MyDataHeader: React.FC<THeaderProps> = ({
   total,

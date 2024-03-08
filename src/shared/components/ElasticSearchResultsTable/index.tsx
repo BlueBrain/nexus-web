@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Table, Button, Input, Select } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { sortBy } from 'lodash';
 import { ColumnsType, TablePaginationConfig } from 'antd/lib/table';
 
@@ -12,7 +12,7 @@ import {
 import { SorterResult, TableRowSelection } from 'antd/lib/table/interface';
 import { ResultTableFields } from '../../types/search';
 
-import './../../styles/result-table.less';
+import './../../styles/result-table.scss';
 import { parseESResults, addColumnsForES } from '../../utils/parseESResults';
 import { antTableFilterConfig } from '../../../shared/hooks/useAccessDataForTable';
 import { useSelector } from 'react-redux';

@@ -1,4 +1,10 @@
-import * as React from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import {
   Tooltip,
   Button,
@@ -21,7 +27,7 @@ import {
   SortDescendingOutlined,
   SwitcherOutlined,
 } from '@ant-design/icons';
-import { ResourceList, Resource } from '@bbp/nexus-sdk';
+import { ResourceList, Resource } from '@bbp/nexus-sdk/es';
 import { debounce } from 'lodash';
 
 import RenameableItem from '../Renameable';
@@ -30,10 +36,9 @@ import ResourceCardComponent from '../ResourceCard';
 import { getResourceLabel } from '../../utils';
 import TypesIconList from '../Types/TypesIcon';
 import useMeasure from '../../hooks/useMeasure';
-import { DEFAULT_LIST } from '../../../shared/containers/ResourceListBoardContainer';
 import Copy from '../Copy';
 
-import './ResourceList.less';
+import './ResourceList.scss';
 
 const { Search } = Input;
 
@@ -82,6 +87,7 @@ const ResourceListComponent: React.FunctionComponent<{
   makeResourceUri(resourceId: string): string;
   goToResource(resourceId: string): void;
   shareableLink: string;
+  children: React.ReactNode;
 }> = ({
   busy,
   list,
@@ -107,9 +113,9 @@ const ResourceListComponent: React.FunctionComponent<{
   const defaultSearchValue = list.query.q;
   const [{ ref: wrapperHeightRef }, { height: wrapperHeight }] = useMeasure();
   const { name } = list;
-  const [sortOption, setSortOption] = React.useState(DEFAULT_SORT_OPTION);
+  const [sortOption, setSortOption] = useState(DEFAULT_SORT_OPTION);
 
-  const hiddenHeightTestListItemRef = React.useRef<HTMLDivElement>(null);
+  const hiddenHeightTestListItemRef = useRef<HTMLDivElement>(null);
 
   const handleUpdate = (value: string) => {
     onUpdate({ ...list, name: value });
@@ -150,11 +156,11 @@ const ResourceListComponent: React.FunctionComponent<{
     onSortBy(key);
   };
 
-  const [searchValue, setSearchValue] = React.useState<string | undefined>(
+  const [searchValue, setSearchValue] = useState<string | undefined>(
     defaultSearchValue
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     setSearchValue(defaultSearchValue);
   }, [defaultSearchValue]);
 
@@ -164,10 +170,20 @@ const ResourceListComponent: React.FunctionComponent<{
   };
 
   const sortOptions = (
-    <Menu onClick={onChangeSort} selectedKeys={[sortOption]}>
-      <Menu.Item key="-_createdAt">Newest</Menu.Item>
-      <Menu.Item key="_createdAt">Oldest</Menu.Item>
-    </Menu>
+    <Menu
+      onClick={onChangeSort}
+      selectedKeys={[sortOption]}
+      items={[
+        {
+          key: '-_createdAt',
+          label: 'Newest',
+        },
+        {
+          key: '_createdAt',
+          label: 'Oldest',
+        },
+      ]}
+    />
   );
 
   const hiddenListForCalculatingDimensionsForPageSize = (
@@ -197,7 +213,7 @@ const ResourceListComponent: React.FunctionComponent<{
     </div>
   );
 
-  const calculateNumberOfListItemsThatFit = React.useCallback(() => {
+  const calculateNumberOfListItemsThatFit = useCallback(() => {
     const listItemDiv = hiddenHeightTestListItemRef.current;
     if (!listItemDiv) return;
 
@@ -242,7 +258,7 @@ const ResourceListComponent: React.FunctionComponent<{
   /* height changes a few times when resizing a window so debounce */
   const debounceHeightChange = debounce(() => updatePageSize(), 300);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     debounceHeightChange();
   }, [wrapperHeight]);
   return (
@@ -277,7 +293,10 @@ const ResourceListComponent: React.FunctionComponent<{
             )}
           />
           {!list.query.q && (
-            <Dropdown overlay={sortOptions} trigger={['hover', 'click']}>
+            <Dropdown
+              dropdownRender={() => sortOptions}
+              trigger={['hover', 'click']}
+            >
               <Tooltip title="Sort resources">
                 <Button
                   ghost
@@ -348,43 +367,42 @@ const ResourceListComponent: React.FunctionComponent<{
                 responsive: true,
                 showLessItems: true,
               }}
-              renderItem={resource => {
-                return (
-                  <a
-                    href={makeResourceUri(resource['@id'])}
+              renderItem={resource => (
+                <a
+                  href={makeResourceUri(resource['@id'])}
+                  key={resource['@id']}
+                  onClick={e => {
+                    e.preventDefault();
+                    goToResource(resource['@id']);
+                  }}
+                  className="resource-list-item"
+                >
+                  <List.Item
                     key={resource['@id']}
-                    onClick={e => {
-                      e.preventDefault();
-                      goToResource(resource['@id']);
-                    }}
+                    onClick={() => goToResource(resource['@id'])}
                   >
-                    <ListItem
-                      key={resource['@id']}
-                      onClick={() => goToResource(resource['@id'])}
-                    >
-                      <Popover
-                        content={
-                          <div style={{ width: 600 }}>
-                            <ResourceCardComponent
-                              resource={resource}
-                              schemaLink={schemaLinkContainer}
-                            />
-                          </div>
-                        }
-                        mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
-                      >
-                        {getResourceLabel(resource)}
-                        <div className="resource-type-list">
-                          {!!resource['@type'] && (
-                            <TypesIconList type={[resource['@type']].flat()} />
-                          )}
+                    <Popover
+                      content={
+                        <div style={{ width: 600 }}>
+                          <ResourceCardComponent
+                            resource={resource}
+                            schemaLink={schemaLinkContainer}
+                          />
                         </div>
-                      </Popover>
-                    </ListItem>
-                  </a>
-                );
-              }}
-            ></List>
+                      }
+                      mouseEnterDelay={RESOURCE_CARD_MOUSE_ENTER_DELAY}
+                    >
+                      {getResourceLabel(resource)}
+                      <div className="resource-type-list">
+                        {!!resource['@type'] && (
+                          <TypesIconList type={[resource['@type']].flat()} />
+                        )}
+                      </div>
+                    </Popover>
+                  </List.Item>
+                </a>
+              )}
+            />
           )}
         </Spin>
       </div>

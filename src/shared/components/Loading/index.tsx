@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import './loading.less';
+import './loading.scss';
 
 const classPrefix = 'loading';
 

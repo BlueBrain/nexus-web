@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { AutoComplete, Tooltip } from 'antd';
 
-import { TypesIcon } from '../Types/TypesIcon';
-
 const Option = AutoComplete.Option;
 
 export const TypeDropdownItem: React.FunctionComponent<{
@@ -17,7 +15,6 @@ export const TypeDropdownItem: React.FunctionComponent<{
           <div className="label">
             <span className="count">({count})</span> {label}
           </div>
-          {/* <TypesIcon type={label} /> */}
         </div>
       </Tooltip>
     </Option>

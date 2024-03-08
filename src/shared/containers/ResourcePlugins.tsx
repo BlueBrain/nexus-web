@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Collapse } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
 import { NexusPlugin } from '../containers/NexusPlugin';
-import PluginInfo from '../components/PluginInfo';
 import { matchPlugins, pluginsMap, pluginsExcludeMap } from '../utils';
 import usePlugins from '../hooks/usePlugins';
 import ErrorBoundary from '../../shared/components/ErrorBoundary';
-
-const { Panel } = Collapse;
 
 const ResourcePlugins: React.FunctionComponent<{
   resource?: Resource;
@@ -16,12 +13,15 @@ const ResourcePlugins: React.FunctionComponent<{
   empty?: React.ReactElement;
   openPlugins: string[];
   studioDefinedPluginsToInclude?: string[];
-  builtInPlugins: { key: string; name: string; pluginComponent: React.FC }[];
+  builtInPlugins: {
+    key: string;
+    name: string;
+    pluginComponent: React.ReactNode;
+  }[];
   handleCollapseChange: (pluginName: string) => void;
 }> = ({
   resource,
   goToResource,
-  empty = null,
   openPlugins,
   studioDefinedPluginsToInclude,
   builtInPlugins,
@@ -93,9 +93,15 @@ const ResourcePlugins: React.FunctionComponent<{
             ?.pluginComponent;
           if (builtInComponent) {
             return (
-              <ErrorBoundary key={plugin} fallback={Fallback}>
-                {builtInComponent}
-              </ErrorBoundary>
+              <div
+                id={`plugin-collapsable-${index}`}
+                style={{ marginBottom: 10 }}
+                key={`builtin-plugin-${plugin}`}
+              >
+                <ErrorBoundary fallback={Fallback}>
+                  {builtInComponent}
+                </ErrorBoundary>
+              </div>
             );
           }
           return null;
@@ -104,49 +110,61 @@ const ResourcePlugins: React.FunctionComponent<{
         const pluginData = pluginDataMap.find(p => p?.key === plugin);
 
         return pluginData ? (
-          <ErrorBoundary
-            fallback={() => (
-              <Collapse key={pluginData.name}>
-                <Panel key={pluginData.name} header={pluginData.name}>
-                  <h1>Something went wrong.</h1>
-                  <p>
-                    Check that the shape of the data matches the plugin's
-                    expectations.
-                  </p>
-                </Panel>
-              </Collapse>
-            )}
-            key={pluginData.name}
-          >
-            <Collapse
+          <div id={`plugin-collapsable-${index}`} style={{ marginBottom: 10 }}>
+            <ErrorBoundary
+              fallback={() => (
+                <Collapse
+                  key={pluginData.name}
+                  items={[
+                    {
+                      key: pluginData.name,
+                      label: pluginData.name,
+                      children: (
+                        <>
+                          <h1>Something went wrong.</h1>
+                          <p>
+                            Check that the shape of the data matches the
+                            plugin's expectations.
+                          </p>
+                        </>
+                      ),
+                    },
+                  ]}
+                />
+              )}
               key={pluginData.name}
-              onChange={e => handleCollapseChange(pluginData.name)}
-              activeKey={
-                openPlugins.includes(pluginData.name)
-                  ? pluginData.name
-                  : undefined
-              }
             >
-              <Panel
-                header={pluginData.name}
-                key={`${pluginData.name}`}
-                extra={<PluginInfo plugin={pluginData} />}
-              >
-                <div
-                  className="resource-plugin"
-                  key={`plugin-${pluginData.name}`}
-                >
-                  <NexusPlugin
-                    nexusClient={nexus}
-                    url={pluginData.absoluteModulePath}
-                    pluginName={pluginData.name}
-                    resource={resource}
-                    goToResource={goToResource}
-                  />
-                </div>
-              </Panel>
-            </Collapse>
-          </ErrorBoundary>
+              <Collapse
+                key={pluginData.name}
+                onChange={() => handleCollapseChange(pluginData.name)}
+                activeKey={
+                  openPlugins.includes(pluginData.name)
+                    ? pluginData.name
+                    : undefined
+                }
+                items={[
+                  {
+                    key: `${pluginData.name}`,
+                    label: `${pluginData.name}`,
+                    children: (
+                      <div
+                        className="resource-plugin"
+                        key={`plugin-${pluginData.name}`}
+                      >
+                        <NexusPlugin
+                          nexusClient={nexus}
+                          url={pluginData.absoluteModulePath}
+                          pluginName={pluginData.name}
+                          resource={resource}
+                          goToResource={goToResource}
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </ErrorBoundary>
+          </div>
         ) : null;
       })}
     </>

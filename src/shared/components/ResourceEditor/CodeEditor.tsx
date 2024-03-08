@@ -7,7 +7,7 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/mode/javascript/javascript'; // Ensure you have the JavaScript mode
 import React, { forwardRef, useCallback, useRef } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { INDENT_UNIT, highlightUrlOverlay } from './editorUtils';
+import { highlightUrlOverlay, INDENT_UNIT } from './editorUtils';
 
 type TCodeEditor = {
   busy: boolean;
@@ -37,6 +37,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     },
     ref
   ) => {
+    const wrapperRef = useRef(null);
     const prevLinterErrorsRef = useRef<LinterIssue[]>([]);
     const handleLintErrors = useCallback((text: string) => {
       const linterErrors = customLinter(text);
@@ -53,6 +54,7 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
     return (
       <Spin spinning={busy}>
         <CodeMirror
+          ref={wrapperRef}
           data-testid="code-mirror-editor"
           value={value}
           autoCursor={false}
@@ -88,9 +90,20 @@ const CodeEditor = forwardRef<codemirror.Editor | undefined, TCodeEditor>(
             fullscreen && 'full-screen-mode'
           )}
           onChange={handleChange}
-          editorDidMount={editor => {
-            highlightUrlOverlay(editor);
-            (ref as React.MutableRefObject<codemirror.Editor>).current = editor;
+          editorDidMount={editorElement => {
+            highlightUrlOverlay(editorElement);
+            (ref as React.MutableRefObject<
+              codemirror.Editor
+            >).current = editorElement;
+          }}
+          editorWillUnmount={() => {
+            const editorWrapper = (ref as React.MutableRefObject<
+              CodeMirror.Editor
+            >).current.getWrapperElement();
+            if (editorWrapper) editorWrapper.remove();
+            if (wrapperRef.current) {
+              (wrapperRef.current as { hydrated: boolean }).hydrated = false;
+            }
           }}
         />
       </Spin>

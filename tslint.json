@@ -1,4 +1,7 @@
 {
+  "globals": {
+    "vi": true
+  },
   "defaultSeverity": "error",
   "extends": [
     "tslint-config-airbnb",
@@ -15,6 +18,10 @@
         "react-helmet": "Helmet"
       }
     ],
-    "variable-name": [true, "allow-pascal-case"]
+    "variable-name": [true, "allow-pascal-case", "allow-leading-underscore"],
+    "no-parameter-reassignment": false
+  },
+  "linterOptions": {
+    "exclude": ["src/__mocks__/**/*.js", "./init.js"]
   }
 }

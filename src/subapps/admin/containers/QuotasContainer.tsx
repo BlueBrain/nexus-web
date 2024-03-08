@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ProjectStatistics, Quota } from '@bbp/nexus-sdk';
+import { ProjectStatistics, Quota } from '@bbp/nexus-sdk/es';
 
 import ProjectQuotas from '../components/Projects/ProjectQuotas';
 

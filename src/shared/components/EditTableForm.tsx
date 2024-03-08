@@ -1,4 +1,4 @@
-import { View } from '@bbp/nexus-sdk';
+import { View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Button,
@@ -11,15 +11,8 @@ import {
   Spin,
   Tooltip,
 } from 'antd';
-import 'codemirror/addon/display/placeholder';
-import 'codemirror/addon/fold/brace-fold';
-import 'codemirror/addon/fold/foldcode';
-import 'codemirror/addon/fold/foldgutter';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/mode/sparql/sparql';
-import 'codemirror/theme/base16-light.css';
-import * as React from 'react';
+
+import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useQuery } from 'react-query';
 import { FUSION_TABLE_CONTEXT } from '../../subapps/projects/fusionContext';
@@ -34,9 +27,17 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
-import './EditTableForm.less';
-import { isNil, isObject } from 'lodash';
+import './EditTableForm.scss';
+import { isNil } from 'lodash';
 import { ErrorComponent } from './ErrorComponent';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/mode/sparql/sparql';
+import 'codemirror/theme/base16-light.css';
+import 'codemirror/addon/display/placeholder';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -517,9 +518,9 @@ const EditTableForm: React.FC<{
           setProjectionId(table.projection['@id']);
         } else {
           /* 
-            when no projection id it means search all of the
-            specified projection type
-            */
+              when no projection id it means search all of the
+              specified projection type
+              */
           setProjectionId(`All_${table.projection['@type']}`);
         }
       } else {

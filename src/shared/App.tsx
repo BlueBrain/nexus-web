@@ -1,14 +1,15 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { useQuery } from 'react-query';
+import { useQueries } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
+import { ConfigProvider } from 'antd';
+import { antdTheme } from 'theme/antd';
+import { IdentityList } from '@bbp/nexus-sdk/es/types';
 import GalleryView from './views/GalleryView';
 import routes from '../shared/routes';
 import FusionMainLayout from './layouts/FusionMainLayout';
 import SubAppsView from './views/SubAppsView';
 import useSubApps from './hooks/useSubApps';
-import useDataCart, { CartContext, CartType } from './hooks/useDataCart';
 import {
   getNotificationContextValue,
   NotificationContext,
@@ -16,37 +17,42 @@ import {
 } from './hooks/useNotification';
 import { RootState } from './store/reducers';
 import DataPanel from './organisms/DataPanel/DataPanel';
-import CreateProject from './modals/CreateProject/CreateProject';
-import CreateOrganization from './modals/CreateOrganization/CreateOrganization';
-import CreateStudio from './modals/CreateStudio/CreateStudio';
 import AppInfo from './modals/AppInfo/AppInfo';
-
-import './App.less';
+import EntityCreation from './modals';
+import { fetchIdentitiesFulfilledAction } from './store/actions/auth';
+import store from '../store';
+import './App.scss';
 
 const App: React.FC = () => {
   const nexus = useNexusContext();
   const { subAppRoutes } = useSubApps();
-  const cartData: CartType = useDataCart();
-  const { oidc, config } = useSelector((state: RootState) => ({
-    oidc: state.oidc,
-    config: state.config,
-  }));
-  const authenticated = !!oidc.user;
-  const token = oidc.user && oidc.user.access_token;
+  const config = useSelector((state: RootState) => state.config);
+
   const notificationData: NotificationContextType = getNotificationContextValue();
-  const userAuthenticated = Boolean(authenticated) && Boolean(token);
   const routesWithSubApps = [...routes, ...subAppRoutes];
 
-  const { data: nexusEcosystem } = useQuery({
-    queryKey: ['nexus-ecosystem'],
-    queryFn: () =>
-      nexus.httpGet({
-        path: `${config.apiEndpoint}/version`,
-        context: { as: 'json' },
-      }),
-  });
+  const [{ data: nexusEcosystem }] = useQueries([
+    {
+      queryKey: ['nexus-ecosystem'],
+      queryFn: () =>
+        nexus.httpGet({
+          path: `${config.apiEndpoint}/version`,
+          context: { as: 'json' },
+        }),
+      refetchOnWindowFocus: false,
+    },
+    {
+      queryKey: ['nexus-identities'],
+      queryFn: () => nexus.Identity.list(),
+      refetchOnWindowFocus: false,
+      onSuccess: (data: IdentityList) => {
+        store.dispatch(fetchIdentitiesFulfilledAction(data));
+      },
+    },
+  ]);
+
   return (
-    <CartContext.Provider value={cartData}>
+    <ConfigProvider theme={antdTheme}>
       <NotificationContext.Provider value={notificationData}>
         <ReactQueryDevtools initialIsOpen={false} />
         <FusionMainLayout environment={nexusEcosystem?.environment}>
@@ -54,16 +60,10 @@ const App: React.FC = () => {
           <AppInfo {...{ ...nexusEcosystem }} />
           <DataPanel />
           <GalleryView />
-          {userAuthenticated && (
-            <React.Fragment>
-              <CreateProject />
-              <CreateOrganization />
-              <CreateStudio />
-            </React.Fragment>
-          )}
+          <EntityCreation />
         </FusionMainLayout>
       </NotificationContext.Provider>
-    </CartContext.Provider>
+    </ConfigProvider>
   );
 };
 

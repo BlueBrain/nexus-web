@@ -1,7 +1,6 @@
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
-import { createNexusClient } from '@bbp/nexus-sdk';
-import * as React from 'react';
-import fetch from 'node-fetch';
+import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import AnalysisPluginContainer from '../AnalysisPluginContainer';
 import { deltaPath } from '__mocks__/handlers/handlers';
@@ -14,7 +13,6 @@ import {
 } from '../../../../utils/testUtil';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import userEvent from '@testing-library/user-event';
@@ -29,30 +27,10 @@ import {
   DEFAULT_REPORT_CATEGORIES,
   DEFAULT_REPORT_TYPES,
 } from '../../../../constants';
+import { configureStore } from '../../../../store';
 
 describe('Analysis Plugin', () => {
-  const mockState = {
-    config: {
-      apiEndpoint: deltaPath(),
-      analysisPluginSparqlDataQuery: 'detailedCircuit',
-      analysisPluginTypes: DEFAULT_REPORT_TYPES,
-      analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
-    },
-    auth: {
-      identities: [],
-    },
-  };
   const queryClient = new QueryClient();
-  const mockStore = configureStore();
-  jest.mock('react-redux', () => {
-    const ActualReactRedux = jest.requireActual('react-redux');
-    return {
-      ...ActualReactRedux,
-      useSelector: jest.fn().mockImplementation(() => {
-        return mockState;
-      }),
-    };
-  });
 
   // establish API mocking before all tests
   beforeAll(() => server.listen());
@@ -70,11 +48,28 @@ describe('Analysis Plugin', () => {
     uri: deltaPath(),
   });
 
+  const history = createMemoryHistory({});
+  const store = configureStore(
+    history,
+    { nexus },
+    {
+      config: {
+        apiEndpoint: deltaPath(),
+        analysisPluginSparqlDataQuery: 'detailedCircuit',
+        analysisPluginTypes: DEFAULT_REPORT_TYPES,
+        analysisPluginCategories: DEFAULT_REPORT_CATEGORIES,
+      },
+      auth: {
+        identities: [],
+      },
+    }
+  );
+
   it('add new Analysis Report button is present', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
 
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -84,7 +79,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -103,7 +98,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -174,7 +169,6 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -184,7 +178,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -223,7 +217,7 @@ describe('Analysis Plugin', () => {
     );
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -233,7 +227,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -274,7 +268,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -284,7 +278,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -322,7 +316,7 @@ describe('Analysis Plugin', () => {
     );
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -332,7 +326,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysisReport1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -354,7 +348,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -364,7 +358,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -387,7 +381,7 @@ describe('Analysis Plugin', () => {
   it('on initial load the first analysis report is visible', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -397,7 +391,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -412,7 +406,7 @@ describe('Analysis Plugin', () => {
   it('when no analysis report selected, zoom options are hidden', async () => {
     server.use(sparqlAnalysisReportNoResultsHandler);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -422,7 +416,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="resourceId"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -437,7 +431,7 @@ describe('Analysis Plugin', () => {
   it('analysis report assets show image name (or filename if not present) along with last updated details', async () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     const user = userEvent.setup();
     render(
       <Router history={history}>
@@ -448,7 +442,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -468,7 +462,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup();
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -478,7 +472,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -502,7 +496,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -512,7 +506,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>
@@ -543,7 +537,7 @@ describe('Analysis Plugin', () => {
     server.use(sparqlAnalysisReportSingleResult, reportResource);
     const user = userEvent.setup({ pointerEventsCheck: 0 });
     const history = createMemoryHistory({});
-    const store = mockStore(mockState);
+    //     const store = mockStore(mockState);
     render(
       <Router history={history}>
         <Provider store={store}>
@@ -553,7 +547,7 @@ describe('Analysis Plugin', () => {
                 projectLabel="projectLabel"
                 orgLabel="orgLabel"
                 resourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp-users/nicholas/_/MyTestAnalysis1"
-              ></AnalysisPluginContainer>
+              />
             </NexusProvider>
           </QueryClientProvider>
         </Provider>

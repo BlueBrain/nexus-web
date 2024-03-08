@@ -2,7 +2,7 @@ import { AutoComplete, Input } from 'antd';
 import React, { useState } from 'react';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.less';
+import './styles.scss';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { normalizeString } from '../../utils/stringUtils';
 
@@ -47,11 +47,12 @@ export const ProjectSelector: React.FC<Props> = ({
             onSelect(org, project);
           }
         }}
-        allowClear={true}
-        clearIcon={<CloseOutlined data-testid="reset-project-button" />}
+        allowClear={{
+          clearIcon: <CloseOutlined data-testid="reset-project-button" />,
+        }}
         onClear={() => onSelect(undefined, undefined)}
         aria-label="project-filter"
-        bordered={false}
+        variant="borderless"
         className="search-input"
         popupClassName="search-menu"
         data-testid="project-filter"

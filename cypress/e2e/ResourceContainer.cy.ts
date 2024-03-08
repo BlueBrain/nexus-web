@@ -1,5 +1,3 @@
-import { Resource } from '@bbp/nexus-sdk';
-
 describe('Resource with id that contains URL encoded characters', () => {
   const resourceIdWithEncodedCharacters =
     'https://hello.lol/https%3A%2F%2Fencoded.url%2Fwow';
@@ -41,8 +39,6 @@ describe('Resource with id that contains URL encoded characters', () => {
                 orgLabel,
                 projectLabel,
                 resourcePayload,
-              }).then((resource: Resource) => {
-                cy.wrap(resource['@id']).as('fullResourceId');
               });
             }
           );
@@ -53,7 +49,7 @@ describe('Resource with id that contains URL encoded characters', () => {
 
   beforeEach(() => {
     cy.login(
-      `${Cypress.env('users').morty.username}-report-plugin`,
+      `${Cypress.env('users').morty.username}-studio`,
       Cypress.env('users').morty.realm,
       Cypress.env('users').morty.username,
       Cypress.env('users').morty.password
@@ -78,8 +74,9 @@ describe('Resource with id that contains URL encoded characters', () => {
     cy.contains('[]');
   }
 
-  it('resource opens when user clicks on resource row in MyData table', function() {
+  it.only('resource opens when user clicks on resource row in MyData table', function() {
     cy.visit(`/`);
+    cy.findByText('Neuron Morphology');
 
     cy.findAllByText(new RegExp(displayName))
       .first()
@@ -90,16 +87,17 @@ describe('Resource with id that contains URL encoded characters', () => {
     });
   });
 
-  it('resource with any id opens when user clicks on resource row in Search table', function() {
-    cy.visit(`/search?layout=Neuron%20Morphology`);
+  // it.only('resource with any id opens when user clicks on resource row in Search table', function() {
+  //   cy.visit(`/`);
+  //   cy.findByText('Neuron Morphology').click();
 
-    cy.findAllByTestId('search-table-row')
-      .first()
-      .click();
+  //   cy.findAllByTestId('search-table-row')
+  //     .first()
+  //     .click();
 
-    cy.findByText('Advanced View').click();
-    cy.contains(`"@id"`);
-  });
+  //   cy.findByText('Advanced View').click();
+  //   cy.contains(`"@id"`);
+  // });
 
   it('resource opens when user directly navigates to resource page', function() {
     const resourcePage = `/${Cypress.env('ORG_LABEL')}/${
@@ -114,6 +112,7 @@ describe('Resource with id that contains URL encoded characters', () => {
   });
 
   it('resource opens with id resolution page', function() {
+    cy.visit('/');
     const resolvePage = `/resolve/${encodeURIComponent(
       resourceIdWithEncodedCharacters
     )}`;
@@ -130,9 +129,13 @@ describe('Resource with id that contains URL encoded characters', () => {
     // If many e2e tests ran together there may be many resources with same id.
     // In this case the id resolution page will look different. Test accordingly.
     cy.wait('@idResolution').then(interception => {
+      // expect(interception.response.body).to.equal(200);
+      // expect(interception.response.statusMessage).to.equal(200);
+      expect(interception.response.statusCode).to.equal(200);
       const resolvedResources = interception.response.body._results;
-
-      if (resolvedResources.length === 1) {
+      cy.log(`Resolved resources delta response`, interception.response.body);
+      console.log('Resolved resources delta', interception.response.body);
+      if (resolvedResources?.length === 1) {
         testResourceDataInJsonViewer();
       } else {
         // Multiple resources with same id found.

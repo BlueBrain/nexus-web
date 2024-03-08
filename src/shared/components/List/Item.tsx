@@ -1,10 +1,11 @@
 import * as React from 'react';
 
-import './Item.less';
+import './Item.scss';
 
 const Item: React.FunctionComponent<{
   onClick?: () => void;
   actions?: React.ReactElement | React.ReactElement[];
+  children: React.ReactNode;
 }> = props => {
   return (
     <li className="ListItem" onClick={props.onClick}>

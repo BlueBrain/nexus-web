@@ -1,10 +1,10 @@
+import React, { useEffect, useRef } from 'react';
 import { UndoOutlined } from '@ant-design/icons';
-import { Resource } from '@bbp/nexus-sdk';
 import { Button, Form, Input, Select, Tooltip } from 'antd';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { FormInstance } from 'antd/es/form';
 import { DefaultOptionType } from 'antd/lib/cascader';
-import React, { useEffect, useRef } from 'react';
-import { TType } from 'shared/molecules/TypeSelector/types';
+import { TType } from '../../shared/molecules/TypeSelector/types';
 import { normalizeString } from '../../utils/stringUtils';
 import { TColumn } from './ColumnsSelector';
 import { DataExplorerConfiguration } from './DataExplorer';
@@ -16,7 +16,8 @@ import {
   sortColumns,
   useGraphAnalyticsPath,
 } from './DataExplorerUtils';
-import './styles.less';
+
+import './styles.scss';
 
 interface Props {
   columns: TColumn[];
@@ -195,9 +196,11 @@ export const PredicateSelector: React.FC<Props> = ({
           placement="top"
         >
           <Select
-            options={pathOptions(paths ?? [])}
-            showSearch={true}
+            virtual
+            showSearch
+            allowClear
             labelInValue
+            options={pathOptions(paths ?? [])}
             onSelect={(pathLabel: DefaultOptionType) => {
               setFormField(PATH_FIELD, pathLabel);
               predicateSelected(
@@ -208,17 +211,16 @@ export const PredicateSelector: React.FC<Props> = ({
             }}
             disabled={disablePredicateSelection}
             loading={arePathsLoading}
-            allowClear={true}
             onClear={() => {
               onReset();
             }}
-            virtual={true}
             className="select-menu"
             popupClassName="search-menu"
             optionLabelProp="label"
             aria-label="path-selector"
+            data-testid="path-selector"
             style={{ width: 200, minWidth: 'max-content' }}
-            dropdownMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
+            popupMatchSelectWidth={false} // This ensures that the items in the dropdown list are always fully legible (ie they are not truncated) just because the input of select is too short.
           />
         </Tooltip>
       </Form.Item>

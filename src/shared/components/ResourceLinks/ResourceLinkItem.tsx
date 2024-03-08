@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Tooltip } from 'antd';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource } from '@bbp/nexus-sdk/es';
 import TypesIconList from '../Types/TypesIcon';
-import './ResourceLinkItem.less';
+import './ResourceLinkItem.scss';
 import { labelOf } from '../../utils';
 
 export type ResourceLinkAugmented = ResourceLink &

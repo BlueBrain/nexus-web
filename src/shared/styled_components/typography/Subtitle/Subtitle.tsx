@@ -1,5 +1,5 @@
 import React, { ReactChild, ReactChildren } from 'react';
-import './Subtitle.less';
+import './Subtitle.scss';
 
 interface SubtitleProps {
   className?: string;

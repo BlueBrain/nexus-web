@@ -9,14 +9,14 @@ import {
   Descriptions,
   Statistic,
 } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import * as charts from '@ant-design/charts';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 import { FilterState } from '../hooks/useGlobalSearch';
 import { constructQuery } from '../utils';
-import './FilterOptions.less';
 import { createKeyWord } from './FilterOptions';
-import './NumberFilterOptionsContainer.less';
-import { Line, Column } from '@ant-design/charts';
+import './NumberFilterOptionsContainer.scss';
+import './FilterOptions.scss';
 
 type ConfigField =
   | {
@@ -279,7 +279,7 @@ const NumberFilterOptions: React.FC<{
       </Form.Item>
       <Form.Item>
         {graphValue === 'line' && (
-          <Line
+          <charts.Line
             data={histoValues}
             height={100}
             xField="key"
@@ -288,16 +288,16 @@ const NumberFilterOptions: React.FC<{
               size: 5,
               shape: 'diamon',
             }}
-            color="#0083cb" // @fusion-primary-color
+            color="#0083cb" // #0083cb
           />
         )}
         {graphValue === 'bar' && (
-          <Column
+          <charts.Column
             height={100}
             data={histoValues}
             yField="doc_count"
             xField="key"
-            color="#0083cb" // @fusion-primary-color
+            color="#0083cb" // #0083cb
           />
         )}
       </Form.Item>

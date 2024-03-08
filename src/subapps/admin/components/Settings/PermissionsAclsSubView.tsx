@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { groupBy, sortBy } from 'lodash';
 import { Table, Collapse, Checkbox, Empty, Spin, Tag } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { useQuery } from 'react-query';
-import { Identity, NexusClient } from '@bbp/nexus-sdk';
+import { Identity, NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { match as pmatch } from 'ts-pattern';
 import { useOrganisationsSubappContext } from '../../../../subapps/admin';
-import './styles.less';
+import './styles.scss';
 
 type TError = Error & { cause: any };
 type Props = {};
@@ -217,12 +217,13 @@ const PermissionsAclsSubView = (props: Props) => {
               );
             }
             return (
-              <Collapse accordion bordered={false}>
-                {results?.map(({ id, path, data }, index) => (
-                  <Panel
-                    header={`Permissions applied to: ${path}`}
-                    key={`${id}:${index}`}
-                  >
+              <Collapse
+                accordion
+                bordered={false}
+                items={results?.map(({ id, path, data }, index) => ({
+                  key: `${id}:${index}`,
+                  label: `Permissions applied to: ${path}`,
+                  children: (
                     <Table
                       key={`table:${id}:${index}`}
                       className="views-table acls-table"
@@ -233,9 +234,9 @@ const PermissionsAclsSubView = (props: Props) => {
                       size="middle"
                       pagination={false}
                     />
-                  </Panel>
-                ))}
-              </Collapse>
+                  ),
+                }))}
+              />
             );
           })
           .otherwise(() => (
