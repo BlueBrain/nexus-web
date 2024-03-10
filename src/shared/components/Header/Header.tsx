@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { Menu, Dropdown, MenuItemProps } from 'antd';
@@ -20,8 +20,9 @@ import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AdvancedModeToggle } from '../../molecules';
 import useNotification from '../../hooks/useNotification';
-import fusionLogo from '../../images/fusion_logo.svg';
+import FullTextSearch from '../FullTextSearch';
 
+import fusionLogo from '../../images/fusion_logo.svg';
 import './Header.scss';
 
 export interface HeaderProps {
@@ -46,6 +47,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const { openCreationPanel } = useSelector(
     (state: RootState) => state.uiSettings
   );
+  const [openCmdk, onOpenCmdk] = useReducer(prev => !prev, false);
+
   const notShowDefaultHeader =
     (!token && location.pathname === '/') || location.pathname === '/login';
   const copyTokenCmd = () => {
@@ -186,52 +189,64 @@ const Header: React.FunctionComponent<HeaderProps> = ({
     dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   if (notShowDefaultHeader) return null;
   return (
-    <header id="main-header" className="Header">
-      <div className="logo-container">
-        <Link to="/">
-          <div className="logo-container__logo">
-            <img src={logoImg || fusionLogo} alt="Logo" />
-          </div>
-        </Link>
-      </div>
-      {token ? (
-        <div className="menu-block">
-          {name && <AdvancedModeToggle />}
-          {name && showCreationPanel && (
-            <div
-              role="button"
-              className="menu-open-creation-panel"
-              onClick={handleOpenCreationPanel}
-            >
-              <PlusOutlined
-                rotate={openCreationPanel ? 45 : 90}
-                style={{ color: 'white', fontSize: 18 }}
-              />
+    <>
+      <header id="main-header" className="Header">
+        <div className="logo-container">
+          <Link to="/">
+            <div className="logo-container__logo">
+              <img src={logoImg || fusionLogo} alt="Logo" />
             </div>
-          )}
-          {name && (
-            <Dropdown
-              trigger={['click']}
-              dropdownRender={() => menu}
-              overlayClassName="menu-overlay-custom"
-              getPopupContainer={() => document.getElementById('main-header')!}
-            >
-              <a className="menu-dropdown ant-dropdown-link">
-                <UserOutlined />
-                <span>{name}</span>
-              </a>
-            </Dropdown>
-          )}
-        </div>
-      ) : (
-        <div className="menu-block">
-          <Link to="/login" className="menu-dropdown ant-dropdown-link">
-            <UserOutlined />
-            <span>Login</span>
           </Link>
         </div>
-      )}
-    </header>
+        {token ? (
+          <div className="menu-block">
+            <button
+              title="fulltext-search"
+              className="cmdk-shortcut"
+              onClick={onOpenCmdk}
+            >
+              /
+            </button>
+            {name && <AdvancedModeToggle />}
+            {name && showCreationPanel && (
+              <div
+                role="button"
+                className="menu-open-creation-panel"
+                onClick={handleOpenCreationPanel}
+              >
+                <PlusOutlined
+                  rotate={openCreationPanel ? 45 : 90}
+                  style={{ color: 'white', fontSize: 18 }}
+                />
+              </div>
+            )}
+            {name && (
+              <Dropdown
+                trigger={['click']}
+                dropdownRender={() => menu}
+                overlayClassName="menu-overlay-custom"
+                getPopupContainer={() =>
+                  document.getElementById('main-header')!
+                }
+              >
+                <a className="menu-dropdown ant-dropdown-link">
+                  <UserOutlined />
+                  <span>{name}</span>
+                </a>
+              </Dropdown>
+            )}
+          </div>
+        ) : (
+          <div className="menu-block">
+            <Link to="/login" className="menu-dropdown ant-dropdown-link">
+              <UserOutlined />
+              <span>Login</span>
+            </Link>
+          </div>
+        )}
+      </header>
+      <FullTextSearch {...{ openCmdk, onOpenCmdk }} />
+    </>
   );
 };
 
