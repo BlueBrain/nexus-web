@@ -1,0 +1,54 @@
+@import '../../lib.scss';
+
+.cmdk-list-container {
+  padding: 10px;
+  margin-top: 0 !important;
+}
+.cmdk-list-title {
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+  color: $fusion-daybreak-7;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .ant-tag {
+    padding: 2px 4px;
+  }
+}
+
+.cmdk-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cmdk-list-item {
+  padding: 10px 8px;
+  margin-left: 5px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #efefef;
+
+  &:hover {
+    background: $fusion-secondary-color !important;
+    box-shadow: 0 2px 12px 0px rgba($color: #333, $alpha: 0.12);
+  }
+}
+
+.type-tags-list {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  margin: 4px 0px;
+  .tag {
+    padding: 2px 3px;
+  }
+}
+
+.item-creation_date {
+  font-size: 12px;
+}
