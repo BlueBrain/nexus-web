@@ -46,7 +46,6 @@ export function useFullTextSearch() {
       nexus.Resource.list(undefined, undefined, {
         q: search,
         deprecated: false,
-        sort: '_updatedAt',
       }),
     select: data => data._results,
     staleTime: 2,
