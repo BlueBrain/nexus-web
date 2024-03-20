@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
 import { TError } from '../../../utils/types';
+import * as Sentry from '@sentry/browser';
 
 export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -176,22 +177,27 @@ const Preview: React.FC<{
           body: JSON.stringify(payload),
         }
       );
+      const archive = await nexus.httpGet({
+        path: `${apiEndpoint}/archives/${orgLabel}/${projectLabel}/${payload.archiveId}?ignoreNotFound=true`,
+        headers: { accept: 'application/zip, application/json' },
+        context: {
+          parseAs: 'blob',
+        },
+      });
+      const blob = archive as Blob;
+      const archiveName = `data-${payload.archiveId}.zip`;
+      downloadBlobHelper(blob, archiveName);
+
+      notification.success({
+        message: `Archive ${archiveName} downloaded successfully`,
+      });
     } catch (error) {
+      Sentry.captureException({ error, message: 'Failed to download archive' });
       notification.error({
         message: 'Failed to download the file',
         description: (error as TError).reason || (error as TError).message,
       });
     }
-    const archive = (await nexus.Archive.get(
-      orgLabel,
-      projectLabel,
-      archiveId,
-      {
-        as: 'x-tar',
-      }
-    )) as string;
-    const blob = new Blob([archive]);
-    downloadBlobHelper(blob, `${archiveId}.tar.gz`);
   };
 
   const downloadButton = (disabled: boolean) => {
