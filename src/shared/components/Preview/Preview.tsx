@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
 import { TError } from '../../../utils/types';
+import * as Sentry from '@sentry/browser';
 
 export const parseResourceId = (url: string) => {
   const fileUrlPattern = /files\/([\w-]+)\/([\w-]+)\/(.*)/;
@@ -191,6 +192,7 @@ const Preview: React.FC<{
         message: `Archive ${archiveName} downloaded successfully`,
       });
     } catch (error) {
+      Sentry.captureException({ error, message: 'Failed to download archive' });
       notification.error({
         message: 'Failed to download the file',
         description: (error as TError).reason || (error as TError).message,
