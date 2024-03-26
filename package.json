@@ -100,7 +100,7 @@
     "cytoscape-avsdf": "^1.0.0",
     "cytoscape-cola": "^2.5.0",
     "deep-object-diff": "^1.1.0",
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "express-prom-bundle": "^5.0.2",
     "git-revision-webpack-plugin": "^3.0.6",
     "handlebars": "^4.7.7",
