@@ -44,6 +44,7 @@ import {
   TErrorWithType,
   TUpdateResourceFunctionError,
 } from '../../utils/types';
+import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -255,6 +256,7 @@ const ResourceViewContainer: React.FunctionComponent<{
         notification.error({
           message: 'An error occurred whilst updating the resource',
         });
+
         if ((error as TUpdateResourceFunctionError).wasUpdated) {
           const expandedResources = (await nexus.Resource.get(
             orgLabel,
@@ -655,56 +657,75 @@ const ResourceViewContainer: React.FunctionComponent<{
 
         <Spin spinning={busy}>
           {!!error ? (
-            <Alert
-              message={
-                error.wasUpdated ? 'Resource updated with errors' : 'Error'
-              }
-              showIcon
-              closable
-              style={{ marginTop: 40 }}
-              type="error"
-              description={
-                <>
-                  <Typography.Paragraph
-                    ellipsis={{ rows: 2, expandable: true }}
-                  >
-                    {error.message}
-                  </Typography.Paragraph>
-                  {error.rejections && (
-                    <Collapse
-                      bordered={false}
-                      ghost
-                      items={[
-                        {
-                          key: '1',
-                          label: 'More detail...',
-                          children: (
-                            <>
-                              <ul>
-                                {error.rejections.map((el, ix) => (
-                                  <li key={ix}>{el.reason}</li>
-                                ))}
-                              </ul>
+            <>
+              <Alert
+                message={
+                  error.wasUpdated ? 'Resource updated with errors' : 'Error'
+                }
+                showIcon
+                closable
+                style={{ marginTop: 40 }}
+                type="error"
+                description={
+                  <>
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 2, expandable: true }}
+                    >
+                      {error.message}
+                    </Typography.Paragraph>
+                    {error.rejections && (
+                      <Collapse
+                        bordered={false}
+                        ghost
+                        items={[
+                          {
+                            key: '1',
+                            label: 'More detail...',
+                            children: (
+                              <>
+                                <ul>
+                                  {error.rejections.map((el, ix) => (
+                                    <li key={ix}>{el.reason}</li>
+                                  ))}
+                                </ul>
 
-                              <p>
-                                For further information please refer to the API
-                                documentation,{' '}
-                                <a
-                                  target="_blank"
-                                  href="https://bluebrainnexus.io/docs/delta/api/"
-                                >
-                                  https://bluebrainnexus.io/docs/delta/api/
-                                </a>
-                              </p>
-                            </>
-                          ),
-                        },
-                      ]}
-                    />
-                  )}
-                </>
-              }
-            />
+                                <p>
+                                  For further information please refer to the
+                                  API documentation,{' '}
+                                  <a
+                                    target="_blank"
+                                    href="https://bluebrainnexus.io/docs/delta/api/"
+                                  >
+                                    https://bluebrainnexus.io/docs/delta/api/
+                                  </a>
+                                </p>
+                              </>
+                            ),
+                          },
+                        ]}
+                      />
+                    )}
+                  </>
+                }
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '28px',
+                }}
+              >
+                <ResponseViewer
+                  data={error}
+                  showHeader={false}
+                  style={{
+                    width: '1000px',
+                    background: 'white',
+                    padding: '10px',
+                  }}
+                />
+              </div>
+            </>
           ) : (
             <>
               {resource && (
