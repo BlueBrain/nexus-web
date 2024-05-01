@@ -43,6 +43,7 @@ import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import { useMutation } from 'react-query';
 
 export const DEFAULT_ACTIVE_TAB_KEY = '#JSON';
+import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
 
 export type PluginMapping = {
   [pluginKey: string]: object;
@@ -707,48 +708,67 @@ const ResourceViewContainer: FC<{
 
         <Spin spinning={busy}>
           {!!error ? (
-            <Alert
-              message={
-                error.wasUpdated ? 'Resource updated with errors' : 'Error'
-              }
-              showIcon
-              closable
-              style={{ marginTop: 40 }}
-              type="error"
-              description={
-                <>
-                  <Typography.Paragraph
-                    ellipsis={{ rows: 2, expandable: true }}
-                  >
-                    {error.message}
-                  </Typography.Paragraph>
-                  {error.rejections && (
-                    <Collapse bordered={false} ghost>
-                      <Collapse.Panel key={1} header="More detail...">
-                        <>
-                          <ul>
-                            {error.rejections.map((el, ix) => (
-                              <li key={ix}>{el.reason}</li>
-                            ))}
-                          </ul>
+            <>
+              <Alert
+                message={
+                  error.wasUpdated ? 'Resource updated with errors' : 'Error'
+                }
+                showIcon
+                closable
+                style={{ marginTop: 40 }}
+                type="error"
+                description={
+                  <>
+                    <Typography.Paragraph
+                      ellipsis={{ rows: 2, expandable: true }}
+                    >
+                      {error.message}
+                    </Typography.Paragraph>
+                    {error.rejections && (
+                      <Collapse bordered={false} ghost>
+                        <Collapse.Panel key={1} header="More detail...">
+                          <>
+                            <ul>
+                              {error.rejections.map((el, ix) => (
+                                <li key={ix}>{el.reason}</li>
+                              ))}
+                            </ul>
 
-                          <p>
-                            For further information please refer to the API
-                            documentation,{' '}
-                            <a
-                              target="_blank"
-                              href="https://bluebrainnexus.io/docs/delta/api"
-                            >
-                              https://bluebrainnexus.io/docs/delta/api
-                            </a>
-                          </p>
-                        </>
-                      </Collapse.Panel>
-                    </Collapse>
-                  )}
-                </>
-              }
-            />
+                            <p>
+                              For further information please refer to the API
+                              documentation,{' '}
+                              <a
+                                target="_blank"
+                                href="https://bluebrainnexus.io/docs/delta/api"
+                              >
+                                https://bluebrainnexus.io/docs/delta/api
+                              </a>
+                            </p>
+                          </>
+                        </Collapse.Panel>
+                      </Collapse>
+                    )}
+                  </>
+                }
+              />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  marginTop: '28px',
+                }}
+              >
+                <ResponseViewer
+                  data={error}
+                  showHeader={false}
+                  style={{
+                    width: '1000px',
+                    background: 'white',
+                    padding: '10px',
+                  }}
+                />
+              </div>
+            </>
           ) : (
             <>
               {resource && (

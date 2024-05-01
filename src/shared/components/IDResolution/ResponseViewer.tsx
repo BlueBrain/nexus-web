@@ -4,12 +4,20 @@ type Props = {
   data: any;
   header?: string;
   showHeader?: boolean;
+  collapsed?: boolean;
+  style?: React.CSSProperties;
 };
 
-const ResponseViewer = ({ data, showHeader = false, header = '' }: Props) => {
+const ResponseViewer = ({
+  data,
+  showHeader = false,
+  header = '',
+  collapsed = false,
+  style = {},
+}: Props) => {
   return (
     <ReactJson
-      collapsed
+      collapsed={collapsed}
       name={showHeader ? header : undefined}
       src={data as object}
       indentWidth={3}
@@ -17,7 +25,7 @@ const ResponseViewer = ({ data, showHeader = false, header = '' }: Props) => {
       enableClipboard={false}
       displayObjectSize={false}
       displayDataTypes={false}
-      style={{ maxWidth: 'inherit', width: '600px' }}
+      style={{ maxWidth: 'inherit', width: '600px', ...style }}
     />
   );
 };
