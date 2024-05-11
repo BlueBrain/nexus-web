@@ -56,6 +56,7 @@ const PDFThumbnail = ({
         file={url}
         onLoadError={console.error}
         renderMode="svg"
+        options={{ isEvalSupported: false }}
       >
         <Page
           className="pdf-thumbnail-page"
