@@ -2,9 +2,8 @@ import * as React from 'react';
 import { Resource } from '@bbp/nexus-sdk';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
-import { omitBy } from 'lodash';
 import { useHistory } from 'react-router';
-
+import { omitBy } from 'lodash';
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import StudioReactContext from '../contexts/StudioContext';
