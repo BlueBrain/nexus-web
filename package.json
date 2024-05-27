@@ -90,7 +90,7 @@
     "query-string": "^8.1.0",
     "querystring": "^0.2.1",
     "rc-tween-one": "^2.7.3",
-    "react": "^18.2.0",
+    "react": "18.3",
     "react-beautiful-dnd": "^13.1.0",
     "react-codemirror2": "^7.2.1",
     "react-device-detect": "^2.2.3",
