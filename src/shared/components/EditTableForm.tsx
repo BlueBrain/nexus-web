@@ -11,7 +11,7 @@ import {
   Spin,
   Tooltip,
 } from 'antd';
-
+import codemirror from 'codemirror';
 import React from 'react';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { useQuery } from 'react-query';
@@ -27,9 +27,8 @@ import {
   querySparql,
 } from '../hooks/useAccessDataForTable';
 import ColumnConfig from './ColumnConfig';
-import './EditTableForm.scss';
-import { isNil } from 'lodash';
 import { ErrorComponent } from './ErrorComponent';
+import { INDENT_UNIT } from './ResourceEditor/editorUtils';
 import 'codemirror/addon/fold/brace-fold';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
@@ -38,6 +37,8 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/sparql/sparql';
 import 'codemirror/theme/base16-light.css';
 import 'codemirror/addon/display/placeholder';
+
+import './EditTableForm.scss';
 
 const DEFAULT_SPARQL_QUERY =
   'prefix nxv: <https://bluebrain.github.io/nexus/vocabulary/> \nSELECT DISTINCT ?self ?s WHERE { ?s nxv:self ?self } LIMIT 20';
@@ -94,6 +95,8 @@ const EditTableForm: React.FC<{
   busy,
   formName = 'Edit',
 }) => {
+  const editorRef = React.useRef<codemirror.Editor>();
+  const wrapperRef = React.useRef(null);
   // state
   const [name, setName] = React.useState<string | undefined>(table?.name);
   const [nameError, setNameError] = React.useState<boolean>(false);
@@ -517,10 +520,10 @@ const EditTableForm: React.FC<{
         if (table.projection['@id']) {
           setProjectionId(table.projection['@id']);
         } else {
-          /* 
-              when no projection id it means search all of the
-              specified projection type
-              */
+          /*
+                when no projection id it means search all of the
+                specified projection type
+                */
           setProjectionId(`All_${table.projection['@type']}`);
         }
       } else {
@@ -692,11 +695,30 @@ const EditTableForm: React.FC<{
                 theme: 'base16-light',
                 lineNumbers: true,
                 lineWrapping: true,
+                viewportMargin: Infinity,
+                foldGutter: true,
+                indentUnit: INDENT_UNIT,
+                autoRefresh: true,
                 placeholder: placeHolder,
               }}
               onBeforeChange={(editor, data, value) => {
                 setPreview(false);
                 handleQueryChange(value);
+              }}
+              editorDidMount={editorElement => {
+                (editorRef as React.MutableRefObject<
+                  codemirror.Editor
+                >).current = editorElement;
+              }}
+              editorWillUnmount={() => {
+                (editorRef as React.MutableRefObject<CodeMirror.Editor>).current
+                  .getWrapperElement()
+                  ?.remove();
+                if (wrapperRef.current) {
+                  (wrapperRef.current as {
+                    hydrated: boolean;
+                  }).hydrated = false;
+                }
               }}
             />
           </div>
