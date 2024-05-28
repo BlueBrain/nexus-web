@@ -67,4 +67,32 @@
   padding: 10px;
   color: #333;
   user-select: none;
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cmdk-list-item {
+    background: white;
+    color: black;
+
+    &:hover {
+      background: #efefef !important;
+      box-shadow: 0 2px 12px 0px rgba($color: white, $alpha: 0.14);
+      color: black;
+      .item-title {
+        color: #333;
+      }
+    }
+  }
+
+  .search-for-placeholder {
+    background-color: white;
+    color: #101827;
+  }
+
+  .ant-empty {
+    .ant-empty-description {
+      color: white;
+    }
+  }
 }
