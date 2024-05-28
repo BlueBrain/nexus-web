@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useQuery } from 'react-query';
 import CommandPalette from 'react-cmdk';
-import { useNexusContext } from '@bbp/react-nexus';
 import { Spin, Tag, Empty } from 'antd';
-import { groupBy } from 'lodash';
+import { LoadingOutlined } from '@ant-design/icons';
 
-import {
-  getNormalizedTypes,
-  getOrgAndProjectFromProjectId,
-  getResourceLabel,
-} from 'shared/utils';
+import { getNormalizedTypes, getResourceLabel } from 'shared/utils';
+import { useFullTextSearch } from './useFullTextSearch';
+
 import 'react-cmdk/dist/cmdk.css';
 import './styles.scss';
-import { LoadingOutlined } from '@ant-design/icons';
 
 type Props = {
   openCmdk: boolean;
@@ -33,44 +28,6 @@ const TagRenderer = ({ type }: { type?: string | string[] }) => {
     </div>
   );
 };
-
-export function useFullTextSearch() {
-  const [search, setSearch] = useState('');
-  const nexus = useNexusContext();
-
-  const onSearch = (value: string) => setSearch(value);
-  const resetSearch = () => setSearch('');
-
-  const { isLoading, data } = useQuery({
-    enabled: !!search,
-    queryKey: ['cmdk-search', { search }],
-    queryFn: () =>
-      nexus.Resource.list(undefined, undefined, {
-        q: search,
-        deprecated: false,
-      }),
-    select: data => data._results,
-    staleTime: 2,
-  });
-  const resources = groupBy(data, '_project');
-
-  const searchResults = Object.entries(resources).map(([key, value]) => {
-    const orgProject = getOrgAndProjectFromProjectId(key);
-    return {
-      id: key,
-      title: orgProject,
-      items: value,
-    };
-  });
-
-  return {
-    search,
-    onSearch,
-    resetSearch,
-    isLoading,
-    searchResults,
-  };
-}
 
 const FullTextSearch = ({ openCmdk, onOpenCmdk }: Props) => {
   const {
