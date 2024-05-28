@@ -1,0 +1,98 @@
+@import '../../lib.scss';
+
+.cmdk-list-container {
+  padding: 10px;
+  margin-top: 0 !important;
+}
+.cmdk-list-title {
+  text-transform: uppercase !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+  color: $fusion-daybreak-7;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .ant-tag {
+    padding: 2px 4px;
+  }
+}
+
+.cmdk-list-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cmdk-list-item {
+  padding: 10px 8px;
+  margin-left: 5px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #efefef;
+
+  &:hover {
+    background: $fusion-blue-1 !important;
+    box-shadow: 0 2px 12px 0px rgba($color: #333, $alpha: 0.14);
+  }
+}
+
+.type-tags-list {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  margin: 4px 0px;
+  .tag {
+    padding: 2px 3px;
+  }
+}
+
+.item-creation_date {
+  font-size: 12px;
+}
+
+.search-resources-loader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.search-for-placeholder {
+  background-color: $fusion-neutral-2;
+  padding: 10px;
+  color: #333;
+  user-select: none;
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cmdk-list-item {
+    background: white;
+    color: black;
+
+    &:hover {
+      background: #efefef !important;
+      box-shadow: 0 2px 12px 0px rgba($color: white, $alpha: 0.14);
+      color: black;
+      .item-title {
+        color: #333;
+      }
+    }
+  }
+
+  .search-for-placeholder {
+    background-color: white;
+    color: #101827;
+  }
+
+  .ant-empty {
+    .ant-empty-description {
+      color: white;
+    }
+  }
+}

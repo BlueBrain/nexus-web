@@ -6,7 +6,7 @@ import {
 } from '@ant-design/icons';
 import codemirror from 'codemirror';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import 'codemirror/addon/display/placeholder';
+// import 'codemirror/addon/display/placeholder';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/foldgutter';
