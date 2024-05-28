@@ -12,6 +12,9 @@ import { useNexusContext } from '@bbp/react-nexus';
 import { Resource, IncomingLink, ExpandedResource } from '@bbp/nexus-sdk/es';
 import { useSelector, useDispatch } from 'react-redux';
 import { intersection, isArray } from 'lodash';
+import { DeleteOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+
 import AdminPlugin from '../containers/AdminPluginContainer';
 import VideoPluginContainer from './VideoPluginContainer/VideoPluginContainer';
 import ResourcePlugins from './ResourcePlugins';
@@ -29,8 +32,7 @@ import useNotification from '../hooks/useNotification';
 import Preview from '../components/Preview/Preview';
 import ImagePreview from '../components/ImagePreview/ImagePreview';
 import { getUpdateResourceFunction } from '../utils/updateResource';
-import { DeleteOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+
 import ResourceViewActionsContainer from './ResourceViewActionsContainer';
 import ResourceMetadata from '../components/ResourceMetadata';
 import { ResourceLinkAugmented } from '../components/ResourceLinks/ResourceLinkItem';
@@ -44,6 +46,7 @@ import {
   TErrorWithType,
   TUpdateResourceFunctionError,
 } from '../../utils/types';
+
 import ResponseViewer from '../../shared/components/IDResolution/ResponseViewer';
 
 export type PluginMapping = {
