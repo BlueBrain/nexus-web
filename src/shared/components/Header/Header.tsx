@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { Menu, Dropdown, MenuItemProps } from 'antd';
+
 import {
   UserOutlined,
   BookOutlined,
@@ -12,6 +13,7 @@ import {
   CopyOutlined,
   MenuOutlined,
   PlusOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
@@ -200,13 +202,18 @@ const Header: React.FunctionComponent<HeaderProps> = ({
         </div>
         {token ? (
           <div className="menu-block">
-            <button
-              title="fulltext-search"
-              className="cmdk-shortcut"
-              onClick={onOpenCmdk}
-            >
-              /
-            </button>
+            <div className="cmdk-shortcut" onClick={onOpenCmdk}>
+              <SearchOutlined />
+              <div
+                title="fulltext-search"
+                className="cmdk-shortcut-input"
+              ></div>
+              Click on
+              <div className="cmdk-shortcut-btn">
+                <kbd>Ctrl</kbd>+<kbd>e</kbd>
+              </div>
+              to search
+            </div>
             {name && <AdvancedModeToggle />}
             {name && showCreationPanel && (
               <div

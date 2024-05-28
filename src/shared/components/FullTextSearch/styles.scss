@@ -33,8 +33,8 @@
   border: 1px solid #efefef;
 
   &:hover {
-    background: $fusion-secondary-color !important;
-    box-shadow: 0 2px 12px 0px rgba($color: #333, $alpha: 0.12);
+    background: $fusion-blue-1 !important;
+    box-shadow: 0 2px 12px 0px rgba($color: #333, $alpha: 0.14);
   }
 }
 
@@ -51,4 +51,20 @@
 
 .item-creation_date {
   font-size: 12px;
+}
+
+.search-resources-loader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.search-for-placeholder {
+  background-color: $fusion-neutral-2;
+  padding: 10px;
+  color: #333;
+  user-select: none;
 }

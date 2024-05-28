@@ -240,4 +240,28 @@
   cursor: pointer;
   border-radius: 4px;
   color: #efefef;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  min-width: max-content;
+  position: relative;
+  background-color: white;
+  color: #33333385;
+
+  &-input {
+    position: absolute;
+    inset: 0;
+  }
+  &-btn {
+    position: relative;
+    width: max-content;
+    min-width: max-content;
+  }
+  kbd {
+    box-shadow: none;
+    background-color: transparent;
+    margin-left: 2px;
+    margin-right: 2px;
+  }
 }

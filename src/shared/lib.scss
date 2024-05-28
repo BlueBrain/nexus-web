@@ -22,8 +22,6 @@ $fusion-blue-4: #40a9ff;
 $fusion-blue-8: #003a8c;
 $fusion-component-background-color: #f2f2f2;
 $fusion-warning-color: #faad14;
-$fusion-blue-1: #e6f7ff;
-$fusion-blue-1: #e6f7ff;
 $fusion-gray-4: #d9d9d9;
 $fusion-daybreak-3: #91d5ff;
 $fusion-daybreak-4: #69c0ff;
@@ -93,7 +91,6 @@ $font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
   Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
   'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
-
 $primary-color: $fusion-primary-color; // primary color for all components
 $link-color: $fusion-active-link-color; // link color
 $link-hover-color: $fusion-hover-link-color;
@@ -136,7 +133,6 @@ $component-background: $fusion-component-background-color;
   box-shadow: 0 12px 24px -6px rgba(9, 30, 66, 0.25),
     0 0 0 1px rgba(9, 30, 66, 0.08);
 }
-
 
 @mixin unstyleList {
   list-style: none;
@@ -214,8 +210,8 @@ $component-background: $fusion-component-background-color;
 
 :root {
   --font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-  Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 // Top-level styles
@@ -244,7 +240,6 @@ h1 {
   display: flex;
   flex-direction: row;
 }
-
 
 .ant-tag-blue {
   background-color: fade($fusion-secondary-color, 10%);
