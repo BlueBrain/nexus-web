@@ -5,7 +5,7 @@ import {
   DEFAULT_ELASTIC_SEARCH_VIEW_ID,
   DEFAULT_SPARQL_VIEW_ID,
   ElasticSearchViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Alert,
@@ -262,7 +262,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
         setViews([]);
         setError(e);
       });
-  });
+  }, []);
 
   React.useEffect(() => {
     if (workspace && dashboards.length > 0) {
@@ -336,6 +336,7 @@ const WorkspaceForm: React.FunctionComponent<WorkspaceFormProps> = ({
       {workspace ? (
         <Modal
           title={`Edit ${workspace['label']}`}
+          data-testid="editWorkspace"
           open={true}
           footer={null}
           onCancel={() => onCancel()}

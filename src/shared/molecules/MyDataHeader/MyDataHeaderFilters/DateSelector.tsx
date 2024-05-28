@@ -2,7 +2,7 @@ import { CalendarOutlined } from '@ant-design/icons';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Dropdown, Input, Radio, RadioChangeEvent } from 'antd';
 import { capitalize } from 'lodash';
-import * as moment from 'moment';
+import moment from 'moment';
 import { Fragment, useReducer, useRef, useState } from 'react';
 import {
   DATE_PATTERN,
@@ -153,7 +153,6 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
           />
         )}
         <Button
-          type="ghost"
           htmlType="submit"
           disabled={notValidForm}
           style={{ alignSelf: 'flex-end', margin: '10px 0 0' }}
@@ -168,7 +167,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
     <Dropdown
       placement="bottomLeft"
       trigger={['click']}
-      overlay={
+      dropdownRender={() => (
         <Fragment>
           {dateFilterContainer && (
             <div ref={popoverRef} className="my-data-date-popover">
@@ -176,7 +175,7 @@ const DateSelector = ({ dateField, setFilterOptions }: TDateSelectorProps) => {
             </div>
           )}
         </Fragment>
-      }
+      )}
       overlayStyle={{ width: datePopWidth }}
     >
       <Input

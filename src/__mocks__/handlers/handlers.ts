@@ -594,7 +594,7 @@ export const handlers = [
         'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex'
       )}/sparql`
     ),
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       const mockResponse = {
         head: { vars: ['self', 'p', 'o'] },
         results: {
@@ -731,7 +731,7 @@ export const handlers = [
       );
     }
   ),
-  rest.get(deltaPath('/views/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/views/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -871,7 +871,7 @@ export const handlers = [
     deltaPath(
       '/views/org/project/https%3A%2F%2Fbluebrain.github.io%2Fnexus%2Fvocabulary%2FdefaultSparqlIndex'
     ),
-    (req, res, ctx) => {
+    (_req, res, ctx) => {
       const mockResponse = {
         '@context': [
           'https://bluebrain.github.io/nexus/contexts/sparql.json',
@@ -905,7 +905,7 @@ export const handlers = [
       );
     }
   ),
-  rest.get(deltaPath('/acls/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/acls/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1002,7 +1002,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/resources/org/project'), (req, res, ctx) => {
+  rest.get(deltaPath('/resources/org/project'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1141,7 +1141,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/identities'), (req, res, ctx) => {
+  rest.get(deltaPath('/identities'), (_req, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',
@@ -1173,8 +1173,7 @@ export const handlers = [
       ctx.json(mockResponse)
     );
   }),
-  rest.get(deltaPath('/org/:label'), (req, res, ctx) => {
-    const { label } = req.params;
+  rest.get(deltaPath('/org/:label'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id':
@@ -1200,59 +1199,6 @@ export const handlers = [
             _namespace:
               'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
             _prefix: 'documents',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-            _prefix: 'defaultResolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-            _prefix: 'schema',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: 'resource',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: '_',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
-            _prefix: 'view',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/storages.json',
-            _prefix: 'storage',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
-            _prefix: 'file',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-            _prefix: 'resolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-            _prefix: 'graph',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/archives.json',
-            _prefix: 'archive',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-            _prefix: 'defaultStorage',
           },
         ],
         _label: 'test1-pr1',
@@ -1297,64 +1243,6 @@ export const handlers = [
             _namespace: 'https://bluebrain.github.io/nexus/vocabulary/',
             _prefix: 'nxv',
           },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultElasticSearchIndex',
-            _prefix: 'documents',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultInProject',
-            _prefix: 'defaultResolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/shacl-20170720.ttl',
-            _prefix: 'schema',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: 'resource',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/unconstrained.json',
-            _prefix: '_',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/views.json',
-            _prefix: 'view',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/storages.json',
-            _prefix: 'storage',
-          },
-          {
-            _namespace: 'https://bluebrain.github.io/nexus/schemas/files.json',
-            _prefix: 'file',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/resolvers.json',
-            _prefix: 'resolver',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/defaultSparqlIndex',
-            _prefix: 'graph',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/schemas/archives.json',
-            _prefix: 'archive',
-          },
-          {
-            _namespace:
-              'https://bluebrain.github.io/nexus/vocabulary/diskStorageDefault',
-            _prefix: 'defaultStorage',
-          },
         ],
         _label: 'test1-pr2',
         _markedForDeletion: false,
@@ -1371,7 +1259,7 @@ export const handlers = [
     ];
     return res(ctx.status(200), ctx.json(mockResponse));
   }),
-  rest.get(deltaPath('/orgs'), (req, res, ctx) => {
+  rest.get(deltaPath('/orgs'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id': 'https://staging.nise.bbp.epfl.ch/nexus/v1/orgs/TEST1',
@@ -1642,7 +1530,7 @@ export const handlers = [
       })
     );
   }),
-  rest.get(deltaPath('/projects'), (req, res, ctx) => {
+  rest.get(deltaPath('/projects'), (_req, res, ctx) => {
     const mockResponse = [
       {
         '@id':

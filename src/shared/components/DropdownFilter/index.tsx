@@ -5,7 +5,7 @@ import { SelectValue } from 'antd/lib/select';
 import { labelOf, getProp } from '../../utils';
 import DropdownItem from './DropdownItem';
 
-import './DropdownFilter.less';
+import './DropdownFilter.scss';
 
 const DropdownFilter: React.FunctionComponent<{
   placeholder?: string;
@@ -56,20 +56,27 @@ const DropdownFilter: React.FunctionComponent<{
   return (
     <div className="dropdown-filter">
       <AutoComplete
-        dropdownMatchSelectWidth={false}
+        allowClear
+        popupMatchSelectWidth={false}
         placeholder={placeholder}
         onChange={handleInputChange}
         onSelect={handleChange}
         value={inputValue ? inputValue : ''}
-        allowClear={true}
         filterOption={(inputValue, option) => {
           return getProp(option, 'props.value', '')
             .toUpperCase()
             .includes(inputValue.toUpperCase());
         }}
-      >
-        {dataSource}
-      </AutoComplete>
+        options={buckets.map(({ key, count }) => {
+          const label = labelOf(key);
+          return { label: `(${count}) ${label}`, value: key };
+        })}
+        optionRender={({ label }) => (
+          <div className="drop-option">
+            <div className="label">{label}</div>
+          </div>
+        )}
+      />
     </div>
   );
 };

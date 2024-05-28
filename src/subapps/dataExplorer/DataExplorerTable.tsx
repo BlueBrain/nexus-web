@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer, forwardRef } from 'react';
+import React, { useEffect, useReducer, forwardRef, ElementRef } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Empty, Table, Tooltip } from 'antd';
 import { ColumnType, TablePaginationConfig } from 'antd/lib/table';
 import { isArray, isNil, isString, startCase } from 'lodash';
@@ -14,7 +14,7 @@ import {
   TResourceTableData,
   getLocalStorageSize,
   makeOrgProjectTuple,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import isValidUrl from '../../utils/validUrl';
 import { NoDataCell } from './NoDataCell';
@@ -33,7 +33,7 @@ import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../shared/utils/datapanel';
-import './styles.less';
+import './styles.scss';
 
 interface TDataExplorerTable {
   isLoading: boolean;
@@ -53,9 +53,10 @@ type TDateExplorerTableData = {
   selectedRows: TDataSource[];
 };
 
+export type AntdTableRef = ElementRef<typeof Table>;
 type TColumnNameToConfig = Map<string, ColumnType<Resource>>;
 const DATA_EXPLORER_NAMESPACE = 'data-explorer';
-export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
+export const DataExplorerTable = forwardRef<AntdTableRef, TDataExplorerTable>(
   (
     {
       isLoading,
@@ -148,7 +149,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
         getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
       ) {
-        return notifyTotalSizeExeeced();
+        return notifyTotalSizeExceeded();
       }
       localStorage.setItem(
         DATA_PANEL_STORAGE,
@@ -198,7 +199,7 @@ export const DataExplorerTable = forwardRef<HTMLDivElement, TDataExplorerTable>(
         size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
         getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
       ) {
-        return notifyTotalSizeExeeced();
+        return notifyTotalSizeExceeded();
       }
       localStorage.setItem(
         DATA_PANEL_STORAGE,

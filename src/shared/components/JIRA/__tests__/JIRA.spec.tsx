@@ -1,20 +1,23 @@
-import * as React from 'react';
+import '@testing-library/jest-dom';
 import JIRA, { AuthorizeJiraUI, CreateIssueUI, LinkIssueUI } from '../JIRA';
 import { render, fireEvent, waitFor, screen } from '../../../../utils/testUtil';
-import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import { vi } from 'vitest';
+
+window.computedStyle = vi.fn();
+
 describe('JIRA', () => {
   it('renders with empty prop values', () => {
     const { container } = render(
       <JIRA
         projects={[]}
         issues={[]}
-        onCreateIssue={jest.fn()}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onCreateIssue={vi.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="resource"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={false}
       ></JIRA>
     );
@@ -39,12 +42,12 @@ describe('JIRA', () => {
       <JIRA
         projects={[]}
         issues={issues}
-        onCreateIssue={jest.fn()}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onCreateIssue={vi.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="resource"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={false}
       ></JIRA>
     );
@@ -68,12 +71,12 @@ describe('JIRA', () => {
       <JIRA
         projects={[]}
         issues={issues}
-        onCreateIssue={jest.fn()}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onCreateIssue={vi.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="project"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={false}
       ></JIRA>
     );
@@ -83,35 +86,35 @@ describe('JIRA', () => {
     expect(container).not.toHaveTextContent('Link Existing Issue');
   });
   it('shows loading spinner', async () => {
-    const createIssue = jest.fn();
+    const createIssue = vi.fn();
     const { container } = render(
       <JIRA
         projects={[]}
         issues={[]}
         onCreateIssue={createIssue}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="resource"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={true}
-      ></JIRA>
+      />
     );
     expect(container).toMatchSnapshot();
     expect(container).toHaveTextContent('Loading');
   });
   it('shows create modal', async () => {
-    const createIssue = jest.fn();
-    const { container } = render(
+    const createIssue = vi.fn();
+    render(
       <JIRA
         projects={[]}
         issues={[]}
         onCreateIssue={createIssue}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="resource"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={false}
       ></JIRA>
     );
@@ -129,9 +132,9 @@ describe('JIRA', () => {
     });
   });
   it('renders createIssue UI', async () => {
-    const createIssueCallBack = jest.fn();
-    const cancelBack = jest.fn();
-    const { container } = render(
+    const createIssueCallBack = vi.fn();
+    const cancelBack = vi.fn();
+    render(
       <CreateIssueUI
         displayType={'resource'}
         projects={[
@@ -149,9 +152,9 @@ describe('JIRA', () => {
     expect(cancelBack).toHaveBeenCalled();
   });
   it('renders linkIssue UI', async () => {
-    const linkIssueCallBack = jest.fn();
-    const cancelBack = jest.fn();
-    const { container } = render(
+    const linkIssueCallBack = vi.fn();
+    const cancelBack = vi.fn();
+    render(
       <LinkIssueUI
         searchJiraLink={'jiralink'}
         onOk={linkIssueCallBack}
@@ -166,16 +169,16 @@ describe('JIRA', () => {
     expect(linkIssueCallBack).toHaveBeenCalled();
   });
   it('shows link modal', async () => {
-    const { container } = render(
+    render(
       <JIRA
         projects={[]}
         issues={[]}
-        onCreateIssue={jest.fn()}
-        onLinkIssue={jest.fn()}
-        onUnlinkIssue={jest.fn()}
+        onCreateIssue={vi.fn()}
+        onLinkIssue={vi.fn()}
+        onUnlinkIssue={vi.fn()}
         searchJiraLink={''}
         displayType="resource"
-        onNavigateToResource={jest.fn()}
+        onNavigateToResource={vi.fn()}
         isLoading={false}
       ></JIRA>
     );
@@ -192,7 +195,7 @@ describe('JIRA', () => {
     const { container } = render(
       <AuthorizeJiraUI
         jiraAuthUrl={'jirurri'}
-        onSubmitVerificationCode={jest.fn()}
+        onSubmitVerificationCode={vi.fn()}
       />
     );
     expect(container).toMatchSnapshot();

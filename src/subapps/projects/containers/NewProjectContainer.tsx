@@ -9,6 +9,7 @@ import ActionButton from '../components/ActionButton';
 import { userOrgLabel } from '../utils';
 import { createProject } from '../utils/workFlowMetadataUtils';
 import useNotification, {
+  NexusError,
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 
@@ -51,7 +52,7 @@ const NewProjectContainer: React.FC<{
     } catch (error) {
       notification.error({
         message: 'An error occurred',
-        description: parseNexusError(error),
+        description: parseNexusError(error as NexusError),
       });
       setShowForm(false);
       setBusy(false);

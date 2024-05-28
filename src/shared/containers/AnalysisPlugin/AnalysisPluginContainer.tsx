@@ -1,4 +1,9 @@
-import { NexusClient, NexusFile, Resource, SparqlView } from '@bbp/nexus-sdk';
+import {
+  NexusClient,
+  NexusFile,
+  Resource,
+  SparqlView,
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -68,7 +73,6 @@ const AnalysisPluginContainer = ({
   const queryClient = useQueryClient();
 
   const [unsavedAssets, setUnsavedAssets] = React.useState<Asset[]>([]);
-
   const apiEndpoint = useSelector(
     (state: RootState) => state.config.apiEndpoint
   );
@@ -290,7 +294,7 @@ const AnalysisPluginContainer = ({
           const fileResource = (await nexus.File.get(
             orgLabel,
             projectLabel,
-            encodeURIComponent(imageId)
+            imageId
           )) as Resource;
 
           const src = await fetchImageObjectUrl(
@@ -754,6 +758,7 @@ const AnalysisPluginContainer = ({
     const savedAndUnsavedAnalysisReports = analysisData
       ? analysisData.concat(newAnalysisReports)
       : newAnalysisReports;
+
     return savedAndUnsavedAnalysisReports.map(a => {
       return {
         ...a,
@@ -862,14 +867,23 @@ const AnalysisPluginContainer = ({
             scripts?: ReportGeneration[]
           ) => {
             try {
-              mutateAnalysis.mutate({
-                name,
-                description,
-                id,
-                categories,
-                types,
-                scripts,
-              });
+              mutateAnalysis.mutate(
+                {
+                  name,
+                  description,
+                  id,
+                  categories,
+                  types,
+                  scripts,
+                },
+                {
+                  onSuccess: data => {
+                    notification.success({
+                      message: 'Report saved successfully',
+                    });
+                  },
+                }
+              );
             } catch (e) {
               notification.error({
                 message:

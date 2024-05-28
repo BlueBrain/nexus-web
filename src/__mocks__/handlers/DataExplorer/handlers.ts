@@ -38,8 +38,8 @@ export const dataExplorerPageHandler = (
       };
       return res(ctx.status(200), ctx.json(mockResponse));
     }),
-    rest.post(deltaPath('/multi-fetch/resources'), (req, res, ctx) => {
-      const requestedIds = ((req.body as any)?.resources).map(
+    rest.post(deltaPath('/multi-fetch/resources'), async (req, res, ctx) => {
+      const requestedIds: string[] = (((await req.json()) as any)?.resources).map(
         (res: { id: string }) => res.id
       );
       const response: NexusMultiFetchResponse = {

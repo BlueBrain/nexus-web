@@ -1,14 +1,10 @@
-import React from 'react';
+import graphNodes from '../../images/graphNodes.svg';
 
 const DataExplorerGraphFlowEmpty = () => {
   return (
     <div className="data-explorer-resolver no-current">
       <div className="empty">
-        <img
-          src={require('../../images/graphNodes.svg')}
-          alt="nodes"
-          style={{ width: 500 }}
-        />
+        <img src={graphNodes} alt="nodes" style={{ width: 500 }} />
         <div className="empty__title">No data explorer graph flow</div>
         <div className="empty__subtitle">
           Please select a node from any resource view editor to start exploring

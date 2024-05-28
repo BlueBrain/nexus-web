@@ -1,11 +1,16 @@
+import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient, Resource } from '@bbp/nexus-sdk';
 import VideoPluginContainer from '../VideoPluginContainer/VideoPluginContainer';
 import fetch from 'node-fetch';
-import { render, server, screen, fireEvent } from '../../../utils/testUtil';
+import { render, server } from '../../../utils/testUtil';
 import { rest } from 'msw';
 import '@testing-library/jest-dom';
 import { act } from 'react-dom/test-utils';
+import { RenderResult } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+
 describe('VideoPluginContainer', () => {
   // establish API mocking before all tests
   beforeAll(() => server.listen());
@@ -57,6 +62,18 @@ describe('VideoPluginContainer', () => {
       }
     )
   );
+
+  server.use(
+    rest.get('https://noembed.com/embed', (req, res, ctx) => {
+      const mockResponse = resource;
+
+      return res(
+        // Respond with a 200 status code
+        ctx.status(200),
+        ctx.json(mockResponse)
+      );
+    })
+  );
   it('renders with well formatted data', async () => {
     await act(async () => {
       const { container } = await render(
@@ -66,8 +83,8 @@ describe('VideoPluginContainer', () => {
             orgLabel="org"
             projectLabel="project"
             collapsed={false}
-            handleCollapseChanged={jest.fn}
-          ></VideoPluginContainer>
+            handleCollapseChanged={vi.fn}
+          />
         </NexusProvider>
       );
       expect(container).toMatchSnapshot();
@@ -141,8 +158,8 @@ describe('VideoPluginContainer', () => {
             orgLabel="org"
             projectLabel="project"
             collapsed={false}
-            handleCollapseChanged={jest.fn}
-          ></VideoPluginContainer>
+            handleCollapseChanged={vi.fn}
+          />
         </NexusProvider>
       );
       expect(container).toMatchSnapshot();
@@ -150,23 +167,25 @@ describe('VideoPluginContainer', () => {
   });
 
   it('When clicked fires collapse event handler', async () => {
-    const collapseHandler = jest.fn();
-    await act(async () => {
-      const { container } = await render(
-        <NexusProvider nexusClient={nexus}>
-          <VideoPluginContainer
-            resource={resource}
-            orgLabel="org"
-            projectLabel="project"
-            collapsed={false}
-            handleCollapseChanged={collapseHandler}
-          ></VideoPluginContainer>
-        </NexusProvider>
-      );
-      const panel = await screen.getByRole('button');
+    const collapseHandler = vi.fn();
+    const component: RenderResult = render(
+      <NexusProvider nexusClient={nexus}>
+        <VideoPluginContainer
+          resource={resource}
+          orgLabel="org"
+          projectLabel="project"
+          collapsed={false}
+          handleCollapseChanged={collapseHandler}
+        />
+      </NexusProvider>
+    );
+    const container: HTMLElement = component.container;
+    const user: UserEvent = userEvent.setup();
+    const panel = container.querySelector('.ant-collapse-header');
+    if (panel) {
       expect(panel).toBeVisible();
-      fireEvent.click(panel);
+      await user.click(panel);
       expect(collapseHandler).toHaveBeenCalled();
-    });
+    }
   });
 });

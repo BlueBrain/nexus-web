@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { normalizeString } from '../../utils/stringUtils';
 import isValidUrl from '../../utils/validUrl';
 import { AggregatedBucket, useAggregations } from './DataExplorerUtils';
-import './styles.less';
+import './styles.scss';
 import Select, { DefaultOptionType } from 'antd/lib/select';
 
 interface Props {
@@ -55,8 +55,9 @@ export const TypeSelector: React.FC<Props> = ({
         removeIcon={true}
         suffixIcon={showClearIcon ? <CloseOutlined /> : <SearchOutlined />}
         showSearch={true}
-        allowClear={true}
-        clearIcon={<CloseOutlined data-testid="reset-type-button" />}
+        allowClear={{
+          clearIcon: <CloseOutlined data-testid="reset-type-button" />,
+        }}
         onClear={() => {
           setDisplayedOptions(optionsRef.current);
           setShowClearIcon(false);
@@ -64,7 +65,7 @@ export const TypeSelector: React.FC<Props> = ({
         }}
         placeholder="All types"
         aria-label="type-filter"
-        bordered={false}
+        variant="borderless"
         className="search-input"
         popupClassName="search-menu"
         value={defaultValue}

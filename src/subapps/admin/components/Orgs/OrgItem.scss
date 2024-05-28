@@ -1,0 +1,15 @@
+@import '../../../../shared/lib.scss';
+
+.org-item {
+  .label {
+    @include ellipsis;
+    font-weight: bold;
+    color: $text-color;
+  }
+
+  .description {
+    @include ellipsis;
+    margin-bottom: 0;
+    color: $text-color-secondary;
+  }
+}

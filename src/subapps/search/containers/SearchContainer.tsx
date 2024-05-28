@@ -3,7 +3,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { Pagination, Table, Button, Checkbox, Result } from 'antd';
 import { useSelector } from 'react-redux';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { difference, differenceBy, has, union, uniq, uniqBy } from 'lodash';
+import { uniq } from 'lodash';
 import { clsx } from 'clsx';
 import { TableRowSelection } from 'antd/lib/table/interface';
 import useGlobalSearchData from '../hooks/useGlobalSearch';
@@ -23,7 +23,7 @@ import {
   TDataSource,
   TResourceTableData,
   getLocalStorageSize,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -31,12 +31,12 @@ import {
   DataPanelEvent,
 } from '../../../shared/organisms/DataPanel/DataPanel';
 import { RootState } from '../../../shared/store/reducers';
-import './SearchContainer.less';
+import './SearchContainer.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
 } from '../../../shared/utils/datapanel';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 
 type TRecord = Resource & {
   key: string;
@@ -171,7 +171,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -223,7 +223,7 @@ const SearchContainer: React.FC = () => {
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

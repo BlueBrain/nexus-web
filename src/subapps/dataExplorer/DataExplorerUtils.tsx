@@ -1,15 +1,14 @@
 import { useEffect } from 'react';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { Resource, PaginatedList } from '@bbp/nexus-sdk/es';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { isString } from 'lodash';
-import PromisePool from '@supercharge/promise-pool';
 import { makeOrgProjectTuple } from '../../shared/molecules/MyDataTable/MyDataTable';
 import { TTypeOperator } from '../../shared/molecules/TypeSelector/types';
 import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
-import { SearchResponse } from 'shared/types/search';
+import { RootState } from '../../shared/store/reducers';
+import { SearchResponse } from '../../shared/types/search';
 
 export const usePaginatedExpandedResources = ({
   pageSize,
@@ -65,7 +64,6 @@ export const usePaginatedExpandedResources = ({
           size: pageSize,
         }
       );
-
       const expandedResources = await fetchMultipleResources(
         nexus,
         apiEndpoint,
@@ -135,7 +133,6 @@ export const fetchMultipleResources = async (
   if (resourceData.length === 0) {
     return [];
   }
-
   const multipleResources: NexusMultiFetchResponse = await nexus
     .httpPost({
       path: `${apiEndpoint}/multi-fetch/resources`,
@@ -241,10 +238,7 @@ const getResultsForPredicateQuery = async (
     '@id': matching._source['@id'],
     _project: matching._source['_project'],
   }));
-  console.log(
-    'Requesting matching resources',
-    resourcesToFetch.map(r => r['@id'])
-  );
+
   const matchingResources = await fetchMultipleResources(
     nexus,
     apiEndpoint,

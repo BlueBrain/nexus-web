@@ -7,9 +7,9 @@ import { RootState } from '../store/reducers';
 import Header from '../components/Header/Header';
 import SeoHeaders from './SeoHeaders';
 import ConsentContainer from '../containers/ConsentContainer';
-import getUserManager from '../../client/userManager';
 import useLocalStorage from '../hooks/useLocalStorage';
-import './FusionMainLayout.less';
+import { getUserManager } from 'authManager';
+import './FusionMainLayout.scss';
 
 const { Content } = Layout;
 
@@ -36,17 +36,15 @@ const FusionMainLayout: React.FC<{
   const [consent, setConsent] = useLocalStorage<ConsentType>(
     'consentToTracking'
   );
-  const state = useSelector((state: RootState) => state);
-  const { oidc, config } = useSelector((state: RootState) => ({
-    auth: state.auth,
-    oidc: state.oidc,
-    config: state.config,
-  }));
+  const auth = useSelector((state: RootState) => state.auth);
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const config = useSelector((state: RootState) => state.config);
+
   const { layoutSettings } = config;
   const token = oidc && oidc.user && !!oidc.user.access_token;
   const name =
     oidc.user && oidc.user.profile && oidc.user.profile.preferred_username;
-  const userManager = getUserManager(state);
+  const userManager = getUserManager({ config, auth });
   const authenticated = !isEmpty(oidc.user);
 
   const handleLogout: MenuItemProps['onClick'] = e => {
@@ -54,6 +52,7 @@ const FusionMainLayout: React.FC<{
     localStorage.removeItem('nexus__state');
     userManager && userManager.signoutRedirect();
   };
+
   return (
     <>
       <SeoHeaders />

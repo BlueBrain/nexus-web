@@ -6,6 +6,7 @@ interface Error {
 
 interface ErrorBoundaryProps {
   fallback?: React.FunctionComponent<{ resetErrorState?: () => void }>;
+  children: React.ReactNode;
 }
 
 class ErrorBoundary extends React.Component<

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import './GraphLegend.less';
+import './GraphLegend.scss';
 
 const GraphLegend: React.FunctionComponent = () => (
   <div className="legend">

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from 'antd';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { match } from 'ts-pattern';
 import { UseSearchResponse } from '../hooks/useSearchQuery';
 import TypesIconList from '../components/Types/TypesIcon';
@@ -13,13 +13,9 @@ import {
 import { convertMarkdownHandlebarStringWithData } from './markdownTemplate';
 import { parseURL } from './nexusParse';
 import { ResultTableFields } from '../types/search';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/reducers';
 import { FilterConfigByColumnFn } from 'shared/hooks/useAccessDataForTable';
 
 export const rowRender = (value: string, basePath: string) => {
-  // const basePath =
-  //   useSelector((state: RootState) => state.config.basePath) || '';
   if (isURL(value)) {
     const sanitizedURL = deltaUrlToFusionUrl(value, basePath);
     return (

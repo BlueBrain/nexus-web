@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 
-import './ListBoard.less';
+import './ListBoard.scss';
 
 const ResourceListBoardComponent: React.FunctionComponent<{
   createList(): void;

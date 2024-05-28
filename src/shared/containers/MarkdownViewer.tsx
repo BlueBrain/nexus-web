@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk';
+import { NexusClient, NexusFile, Resource } from '@bbp/nexus-sdk/es';
 
 import { convertMarkdownHandlebarStringWithData } from '../utils/markdownTemplate';
 import useAsyncCall from '../hooks/useAsynCall';

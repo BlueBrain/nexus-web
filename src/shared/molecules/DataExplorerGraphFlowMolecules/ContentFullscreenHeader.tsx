@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'shared/store/reducers';
 import { InitDataExplorerGraphFlowFullscreenVersion } from '../../store/reducers/data-explorer';
-import './styles.less';
+import './styles.scss';
 
 const DataExplorerGraphFlowContentLimitedHeader = () => {
   const dispatch = useDispatch();

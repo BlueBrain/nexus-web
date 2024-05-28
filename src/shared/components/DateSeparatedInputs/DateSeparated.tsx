@@ -1,9 +1,9 @@
 import React, { useEffect, useReducer, useRef } from 'react';
-import * as moment from 'moment';
+import moment from 'moment';
 import { clsx } from 'clsx';
 import useDateTimeInputs from './useDateTimeInputs';
 import { DATE_PATTERN } from '../../canvas/MyData/types';
-import './styles.less';
+import './styles.scss';
 
 type TDate = {
   day: string;
@@ -111,7 +111,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={2}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Day"
       />
       <input
@@ -123,7 +122,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={2}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Month"
       />
       <input
@@ -135,7 +133,6 @@ const DateSeparated = ({ name, value, updateUpperDate }: Props) => {
         maxLength={4}
         inputMode="numeric"
         pattern="[0-9]*"
-        defaultValue=""
         placeholder="Year"
       />
     </fieldset>

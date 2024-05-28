@@ -1,0 +1,8 @@
+@import '../../lib.scss';
+
+.renameable-item {
+  cursor: pointer;
+  > .-editing {
+    cursor: text;
+  }
+}

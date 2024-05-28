@@ -9,11 +9,10 @@ import MarkdownViewerContainer from '../../../../shared/containers/MarkdownViewe
 import SubStepItem from './SubStepItem';
 import { isEmptyInput } from '../../utils';
 import { labelOf } from '../../../../shared/utils';
+import settingIcon from '../../../../shared/images/settingIcon.svg';
+import editIcon from '../../../../shared/images/pencil.svg';
 
-import './StepCard.less';
-
-const settingIcon = require('../../../../shared/images/settingIcon.svg');
-const editIcon = require('../../../../shared/images/pencil.svg');
+import './StepCard.scss';
 
 const MAX_TITLE_LENGTH = 45;
 const MAX_DESCRIPTION_LENGTH = 100;
@@ -181,13 +180,13 @@ const StepCard: React.FC<{
   };
 
   const menu = (
-    <Menu onClick={handleMenuClick}>
-      {Object.values(Status).map(status => (
-        <Menu.Item key={status}>
-          <span className="step-card__status-item">{status}</span>
-        </Menu.Item>
-      ))}
-    </Menu>
+    <Menu
+      onClick={handleMenuClick}
+      items={Object.values(Status).map(status => ({
+        key: status,
+        label: <span className="step-card__status-item">{status}</span>,
+      }))}
+    />
   );
 
   const enterNewName = () => {
@@ -231,7 +230,7 @@ const StepCard: React.FC<{
             className={`step-card__status step-card__status--${stepStatus &&
               stepStatus.replace(' ', '-')}`}
           >
-            <Dropdown overlay={menu} trigger={['click']}>
+            <Dropdown dropdownRender={() => menu} trigger={['click']}>
               <Button type="text">
                 <span className="step-card__status-button">{stepStatus}</span>
                 <DownOutlined />

@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { NexusClient, DEFAULT_SPARQL_VIEW_ID, Resource } from '@bbp/nexus-sdk';
+import {
+  NexusClient,
+  DEFAULT_SPARQL_VIEW_ID,
+  Resource,
+} from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { Button, Modal, Menu, Popover, Empty, Spin } from 'antd';
 import {
@@ -29,7 +33,7 @@ import DataTableContainer, {
 import STUDIO_CONTEXT from '../components/StudioContext';
 import { createTableContext } from '../../../subapps/projects/utils/workFlowMetadataUtils';
 import { ErrorComponent } from '../../../shared/components/ErrorComponent';
-import '../studio.less';
+import '../studio.scss';
 import { resourceWithoutMetadata } from './StudioContainer';
 
 const DASHBOARD_TYPE = 'StudioDashboard';
@@ -855,7 +859,7 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
             viewId={selectedWorkspace['dashboards'][0].view}
             setShowEditModal={setShowDashEditor}
             onSuccess={fetchAndSetupDashboards}
-          ></DashboardEditorContainer>
+          />
         )}
       </div>
     </div>

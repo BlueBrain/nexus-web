@@ -1,4 +1,4 @@
-<img src="docs/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
+<img src="docs/assets/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
 
 # Nexus Fusion
 
@@ -63,6 +63,12 @@ a. To run the tests in headed mode:
 
 ```sh
 yarn cy:open
+```
+
+If you encounter issues with `project:setup` or `resources:create` tasks because of SSL or certificate errors when running the tests locally, try the following:
+
+```sh
+NODE_TLS_REJECT_UNAUTHORIZED=0 yarn cy:open
 ```
 
 b. To run the tests in headless mode:

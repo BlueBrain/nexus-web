@@ -1,11 +1,6 @@
-import {
-  CheckCircleOutlined,
-  WarningOutlined,
-  ExclamationCircleOutlined,
-  SaveOutlined,
-} from '@ant-design/icons';
+import { WarningOutlined, SaveOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
-import { Alert, Button, Switch } from 'antd';
+import { Alert, Button, Switch, Tooltip } from 'antd';
 import codemirror from 'codemirror';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,9 +15,10 @@ import { RootState } from '../../store/reducers';
 import { DATA_EXPLORER_GRAPH_FLOW_PATH } from '../../store/reducers/data-explorer';
 import CodeEditor from './CodeEditor';
 import { LinterIssue } from './customLinter';
-import './ResourceEditor.less';
+import './ResourceEditor.scss';
 import ResourceResolutionCache from './ResourcesLRUCache';
 import { useEditorPopover, useEditorTooltip } from './useEditorTooltip';
+import HasNoPermission from '../Icons/HasNoPermission';
 
 export interface ResourceEditorProps {
   busy?: boolean;
@@ -72,13 +68,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
   const [stringValue, setStringValue] = useState(
     JSON.stringify(rawData, null, 2)
   );
-  const {
-    dataExplorer: { fullscreen },
-  } = useSelector((state: RootState) => ({
-    dataExplorer: state.dataExplorer,
-    oidc: state.oidc,
-    config: state.config,
-  }));
+  const { fullscreen } = useSelector((state: RootState) => state.dataExplorer);
   const keyFoldCode = (cm: any) => {
     cm.foldCode(cm.getCursor());
   };
@@ -115,7 +105,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     onMetadataChange?.(checked);
   };
 
-  const handleChange = (editor: any, data: any, value: any) => {
+  const handleChange = (editor: any, _data: any, value: any) => {
     editor;
     if (!editable) {
       return;
@@ -169,9 +159,8 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
     setEditing(false);
     setStringValue(JSON.stringify(rawData, null, 2)); // Update copy of the rawData for the editor
     setParsedValue(rawData); // Update parsed value for submit
-    return () => {
-      setFoldCodeMirror(false);
-    };
+
+    return () => setFoldCodeMirror(false);
   }, [rawData]); // Only runs when Editor receives new resource to edit
 
   useEffect(() => {
@@ -233,7 +222,14 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
               <AccessControl
                 path={[`${orgLabel}/${projectLabel}`]}
                 permissions={['resources/write']}
-                noAccessComponent={() => <></>}
+                noAccessComponent={() => (
+                  <Tooltip title="You have no permissions to create/modify the resource">
+                    <Button disabled type="link">
+                      <span style={{ marginRight: 5 }}>Save changes</span>
+                      <HasNoPermission />
+                    </Button>
+                  </Tooltip>
+                )}
               >
                 {editable && isEditing && (
                   <Button
@@ -267,7 +263,7 @@ const ResourceEditor: React.FC<ResourceEditorProps> = props => {
       )}
 
       {/* Show to the user if there's a custom linter issue */}
-      {isValidJSON && linterIssues.length > 0 && (
+      {isValidJSON && linterIssues.length > 0 && !showMetadata && (
         <Alert
           message={
             <>

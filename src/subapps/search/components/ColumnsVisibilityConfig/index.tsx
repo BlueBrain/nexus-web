@@ -6,7 +6,7 @@ import {
   fieldVisibilityActionType,
   FieldsVisibilityState,
 } from '../../hooks/useGlobalSearch';
-import './ColumnsVisibility.less';
+import './ColumnsVisibility.scss';
 
 export type ColumnVisibility = {
   key: string;

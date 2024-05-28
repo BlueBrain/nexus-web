@@ -10,6 +10,7 @@ describe('AppInfo', () => {
   beforeAll(async () => {
     server.listen();
   });
+
   afterEach(() => server.resetHandlers());
   afterAll(() => server.close());
   const mockStore = configureStore();

@@ -9,11 +9,13 @@ import { RootState } from '../../../shared/store/reducers';
 import { updateAboutModalVisibility } from '../../../shared/store/actions/modals';
 import { url as githubIssueURL } from '../../../../package.json';
 import Copy from '../../../shared/components/Copy';
+import bbpLogo from '../../images/EPFL_BBP_logo.svg';
 
-import './styles.less';
+import './styles.scss';
 
 declare var FUSION_VERSION: string;
 declare var COMMIT_HASH: string;
+
 const repoUrl = 'https://github.com/BlueBrain/nexus-web';
 
 export type TNexusEco = {
@@ -70,7 +72,7 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       destroyOnClose
       maskClosable
       className="app-information-modal"
-      maskStyle={{ background: '#002766' }}
+      styles={{ mask: { background: '#002766' } }}
       footer={null}
       {...{ open, onCancel }}
     >
@@ -81,11 +83,7 @@ const AppInfo: React.FC<TNexusEco> = ({ delta, environment: infraEnv }) => {
       <Divider />
       <div className="copyright">
         <span>© 2017–{new Date().getFullYear()}</span>
-        <img
-          src={require('../../images/EPFL_BBP_logo.svg')}
-          alt="EPFL Blue Brain Project logo"
-          width={160}
-        />
+        <img src={bbpLogo} alt="epfl/bbp" />
       </div>
       <Divider />
       <div className="versions">

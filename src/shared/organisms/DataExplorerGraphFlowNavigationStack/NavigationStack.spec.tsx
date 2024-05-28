@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import { NexusProvider } from '@bbp/react-nexus';
 import { deltaPath } from '../../../__mocks__/handlers/handlers';
-import configureStore from '../../store';
+import { configureStore } from '../../../store';
 import {
   AddNewNodeDataExplorerGraphFlow,
   ResetDataExplorerGraphFlow,

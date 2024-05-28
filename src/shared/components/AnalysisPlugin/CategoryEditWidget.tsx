@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select, Form } from 'antd';
-import './CategoryTypeEdits.less';
+import './CategoryTypeEdits.scss';
 import { CategoryEditWidgetProps } from '../../types/plugins/report';
 import { changeAnalysisCategories } from '../../slices/plugins/report';
 
@@ -20,7 +20,7 @@ const CategoryEditWidget = ({
     <>
       {allCategories && allCategories.length > 0 && (
         <div style={{ margin: '20px 0' }} className={'categoryEdits'}>
-          <h4 style={{ marginTop: '10px', color: '#003A8C' }}>Categories</h4>
+          <h4 style={{ marginTop: '10px', color: '003a8c' }}>Categories</h4>
           <Form layout={'vertical'}>
             <Form.Item label="" aria-label="Analysis Categories">
               <Select

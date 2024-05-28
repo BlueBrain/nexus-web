@@ -13,7 +13,7 @@ import {
   VerticalAlignMiddleOutlined,
 } from '@ant-design/icons';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 import { isString, isArray, isNil } from 'lodash';
 import { clsx } from 'clsx';
 import { useSelector } from 'react-redux';
@@ -28,7 +28,7 @@ import { RootState } from '../../../shared/store/reducers';
 import { TFilterOptions } from '../../../shared/canvas/MyData/types';
 import timeago from '../../../utils/timeago';
 import isValidUrl from '../../../utils/validUrl';
-import './styles.less';
+import './styles.scss';
 import {
   removeLocalStorageRows,
   toLocalStorageResources,
@@ -120,7 +120,7 @@ export const getLocalStorageSize = () => {
   return size;
 };
 
-export const notifyTotalSizeExeeced = () => {
+export const notifyTotalSizeExceeded = () => {
   return notification.warning({
     message: (
       <div>
@@ -279,7 +279,7 @@ const MyDataTable: React.FC<TProps> = ({
             </div>
           );
         },
-        render: (text, record) => {
+        render: text => {
           if (text) {
             const { org, project } = makeOrgProjectTuple(text);
             return (
@@ -443,7 +443,7 @@ const MyDataTable: React.FC<TProps> = ({
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,
@@ -463,7 +463,7 @@ const MyDataTable: React.FC<TProps> = ({
 
   const onSelectAllChange = async (
     selected: boolean,
-    tSelectedRows: TMyDataTableRow[],
+    _: TMyDataTableRow[],
     changeRows: TMyDataTableRow[]
   ) => {
     const dataPanelLS: TResourceTableData = JSON.parse(
@@ -475,7 +475,7 @@ const MyDataTable: React.FC<TProps> = ({
     if (selected) {
       setFetchingResources(true);
 
-      const { results, errors } = await PromisePool.withConcurrency(4)
+      const { results } = await PromisePool.withConcurrency(4)
         .for(changeRows)
         .handleError(async err => {
           console.log(
@@ -526,7 +526,7 @@ const MyDataTable: React.FC<TProps> = ({
       size > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       getLocalStorageSize() > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
     localStorage.setItem(
       DATA_PANEL_STORAGE,

@@ -7,7 +7,7 @@ import {
   getOrgAndProjectFromProjectId,
   makeStudioUri,
 } from '../../../shared/utils';
-import '../studio.less';
+import '../studio.scss';
 
 const DEFAULT_STUDIO_TYPE =
   'https://bluebrainnexus.io/studio/vocabulary/Studio';

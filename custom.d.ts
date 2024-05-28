@@ -8,10 +8,20 @@ declare module '*.png' {
   export default content;
 }
 
+declare module '*.jpg' {
+  const content: any;
+  export default content;
+}
+
 // loading raw text or other files
 declare module '!!raw-loader!*' {
   const contents: string;
   export = contents;
+}
+
+declare module '*.mp4' {
+  const src: string;
+  export default src;
 }
 
 //
@@ -64,9 +74,6 @@ declare module promBundle {
   }
 }
 declare function promBundle(options: promBundle.PromBundleOptions): any;
-declare module 'express-prom-bundle' {
-  export = promBundle;
-}
 
 declare module 'cytoscape-cola';
 

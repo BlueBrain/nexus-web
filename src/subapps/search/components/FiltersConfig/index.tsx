@@ -3,7 +3,7 @@ import { Button, Modal, Tag } from 'antd';
 import * as React from 'react';
 import { labelOf } from '../../../../shared/utils';
 import { FilterState, SearchConfigField } from '../../hooks/useGlobalSearch';
-import './FiltersConfig.less';
+import './FiltersConfig.scss';
 
 const FiltersConfig: React.FC<{
   onRemoveFilter: (filter: FilterState) => void;

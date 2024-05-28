@@ -9,7 +9,7 @@ import { MyDataHeader, MyDataTable } from '../../molecules';
 import { RootState } from '../../store/reducers';
 import { TFilterOptions } from './types';
 import { makeDatetimePattern } from './utils';
-import './styles.less';
+import './styles.scss';
 
 const HomeMyData: React.FC<{}> = () => {
   const nexus = useNexusContext();
@@ -17,6 +17,7 @@ const HomeMyData: React.FC<{}> = () => {
     (state: RootState) => state.auth.identities?.data?.identities
   );
   const issuerUri = identities?.find(item => item['@type'] === 'User')?.['@id'];
+
   const [
     {
       dateField,
@@ -80,6 +81,7 @@ const HomeMyData: React.FC<{}> = () => {
   const order = sort.join('-');
   const resourceTypes = types?.map(item => get(item, 'value'));
   const { data: resources, isLoading } = useQuery({
+    enabled: !!issuerUri,
     queryKey: [
       'my-data-resources',
       {

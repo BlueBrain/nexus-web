@@ -1,17 +1,17 @@
-import * as React from 'react';
 import { Card, Table, Tooltip } from 'antd';
 import Column from 'antd/lib/table/Column';
-import * as hash from 'object-hash';
-import { matchResultUrls } from '../../../../shared/utils';
+import hash from 'object-hash';
 import {
   AskQueryResponse,
   SelectQueryResponse,
   SparqlViewQueryResponse,
-} from '@bbp/nexus-sdk';
+} from '@bbp/nexus-sdk/es';
 
-import './view-form.less';
-import useNotification from '../../../../shared/hooks/useNotification';
-import { ErrorComponent } from '../../../../shared/components/ErrorComponent';
+import { matchResultUrls } from 'shared/utils';
+import useNotification from 'shared/hooks/useNotification';
+import { ErrorComponent } from 'shared/components/ErrorComponent';
+import { TError } from 'utils/types';
+import './view-form.scss';
 
 export type NexusSparqlError =
   | string
@@ -28,7 +28,7 @@ export type Entry = {
 };
 
 const SparqlQueryResults: React.FunctionComponent<{
-  response: SparqlViewQueryResponse | null;
+  response?: SparqlViewQueryResponse | null;
   busy: boolean;
   error: NexusSparqlError | null;
 }> = ({ response, busy, error }): JSX.Element => {
@@ -56,7 +56,7 @@ const SparqlQueryResults: React.FunctionComponent<{
     } catch (error) {
       notification.error({
         message: `Could not parse ${entry}`,
-        description: error.message,
+        description: (error as TError).message,
       });
     }
     return entry;
@@ -72,7 +72,7 @@ const SparqlQueryResults: React.FunctionComponent<{
       {!error && (
         <Table
           dataSource={data}
-          pagination={{ position: ['topLeft', 'bottomRight'] }}
+          pagination={{ position: ['bottomRight'] }}
           rowKey={record => hash(record)}
           loading={busy}
         >
@@ -86,7 +86,7 @@ const SparqlQueryResults: React.FunctionComponent<{
                   return <span className="empty">no value</span>;
                 }
 
-                // TODO: Improve sparql repsonse types visuall
+                // TODO: Improve sparql response types visual
                 // https://github.com/BlueBrain/nexus/issues/756
                 return (
                   <Tooltip title={entry.datatype}>

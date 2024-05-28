@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useNexusContext } from '@bbp/react-nexus';
-import { ResourceLink, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, Resource } from '@bbp/nexus-sdk/es';
 
 import { getResourceLabel, getOrgAndProjectFromResource } from '../../utils';
 import Graph, { ElementNodeData } from '../../components/Graph';
@@ -16,6 +16,7 @@ import {
 } from './Graph';
 import { DEFAULT_LAYOUT } from '../../components/Graph/LayoutDefinitions';
 import useNotification from '../../hooks/useNotification';
+import { TError } from '../../../utils/types';
 
 const GraphContainer: React.FunctionComponent<{
   resource: Resource;
@@ -193,7 +194,7 @@ const GraphContainer: React.FunctionComponent<{
     } catch (error) {
       notification.error({
         message: `Could not fetch resource info for node ${id}`,
-        description: error.message,
+        description: (error as TError).message,
       });
     }
     setLoading(false);

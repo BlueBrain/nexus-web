@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useNexusContext, AccessControl } from '@bbp/react-nexus';
 import { Empty, message } from 'antd';
 import { useHistory } from 'react-router';
-import { omitBy } from 'lodash';
+import omitBy from 'lodash/omitBy';
+
 import EditStudio from '../components/EditStudio';
 import StudioHeader from '../components/StudioHeader';
 import StudioReactContext from '../contexts/StudioContext';
@@ -15,6 +16,8 @@ import useNotification, {
   parseNexusError,
 } from '../../../shared/hooks/useNotification';
 
+// remove the metadata from the payload, delta do full update
+// and not accept the metadata fields to be in the payload
 export const resourceWithoutMetadata = (
   studioResource: StudioResource | Resource
 ) => omitBy(studioResource, (_, key) => key.trim().startsWith('_'));
@@ -119,8 +122,6 @@ const StudioContainer: React.FunctionComponent = () => {
         studioId,
         studioResource._rev,
         {
-          // remove the metadata from the payload, delta do full update
-          // and not accept the metadata fields to be in the payload
           ...resourceWithoutMetadata(studioResource),
           label,
           description,

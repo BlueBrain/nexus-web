@@ -5,8 +5,8 @@ import {
   GetFileOptions,
   NexusFile,
   ArchivePayload,
-} from '@bbp/nexus-sdk';
-import { Button, Collapse, Table, Tooltip } from 'antd';
+} from '@bbp/nexus-sdk/es';
+import { Button, Col, Collapse, Row, Table, Tooltip } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { AccessControl } from '@bbp/react-nexus';
 import { uuidv4 } from '../../utils';
@@ -16,6 +16,7 @@ import TableViewerContainer from '../../containers/TableViewerContainer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/reducers';
 import nexusUrlHardEncode from '../../utils/nexusEncode';
+import { TError } from '../../../utils/types';
 import * as Sentry from '@sentry/browser';
 
 export const parseResourceId = (url: string) => {
@@ -116,23 +117,29 @@ const Preview: React.FC<{
         encodingFormat: string;
       }) => {
         return (
-          <>
-            <Button
-              onClick={() =>
-                downloadSingleFile(nexus, orgLabel, projectLabel, asset)
-              }
-              disabled={!isNexusFile(asset.url)}
-            >
-              Download
-            </Button>
-            <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
-            <Button
-              onClick={() => setPreviewAsset(asset)}
-              disabled={!isSupportedFile(asset)}
-            >
-              Preview
-            </Button>
-          </>
+          <Row gutter={5}>
+            <Col>
+              <Button
+                onClick={() =>
+                  downloadSingleFile(nexus, orgLabel, projectLabel, asset)
+                }
+                disabled={!isNexusFile(asset.url)}
+              >
+                Download
+              </Button>
+            </Col>
+            <Col>
+              <Button onClick={() => copyURI(asset.url)}>Copy Location</Button>
+            </Col>
+            <Col>
+              <Button
+                onClick={() => setPreviewAsset(asset)}
+                disabled={!isSupportedFile(asset)}
+              >
+                Preview
+              </Button>
+            </Col>
+          </Row>
         );
       },
     },
@@ -188,7 +195,7 @@ const Preview: React.FC<{
       Sentry.captureException({ error, message: 'Failed to download archive' });
       notification.error({
         message: 'Failed to download the file',
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     }
   };
@@ -263,7 +270,7 @@ const Preview: React.FC<{
     } catch (error) {
       notification.error({
         message: 'Failed to download the file',
-        description: error.reason || error.message,
+        description: (error as TError).reason || (error as TError).message,
       });
     }
   };
@@ -340,43 +347,50 @@ const Preview: React.FC<{
       <Collapse
         onChange={handleCollapsedChanged}
         activeKey={collapsed ? 'preview' : undefined}
-      >
-        <Collapse.Panel header="Preview" key="preview">
-          <AccessControl
-            path={`/${orgLabel}/${projectLabel}`}
-            permissions={['archives/write']}
-            noAccessComponent={() => downloadButton(true)}
-            loadingComponent={downloadButton(false)}
-          >
-            {downloadButton(false)}
-          </AccessControl>
-          <Table
-            rowSelection={{
-              checkStrictly: false,
-              onSelect: (record: any, selected: any) => {
-                if (selected) {
-                  setSelectedRows([...selectedRows, record]);
-                } else {
-                  const currentRows = selectedRows.filter(
-                    s => s.key !== record.key
-                  );
-                  setSelectedRows(currentRows);
-                }
-              },
-              onSelectAll: (select, selectedRows) => {
-                if (select) {
-                  setSelectedRows(selectedRows);
-                } else {
-                  setSelectedRows([]);
-                }
-              },
-            }}
-            columns={columns}
-            dataSource={getResourceAssets(resource)}
-            bordered={true}
-          ></Table>
-        </Collapse.Panel>
-      </Collapse>
+        items={[
+          {
+            key: 'preview',
+            label: 'Preview',
+            children: (
+              <>
+                <AccessControl
+                  path={`/${orgLabel}/${projectLabel}`}
+                  permissions={['archives/write']}
+                  noAccessComponent={() => downloadButton(true)}
+                  loadingComponent={downloadButton(false)}
+                >
+                  {downloadButton(false)}
+                </AccessControl>
+                <Table
+                  rowSelection={{
+                    checkStrictly: false,
+                    onSelect: (record: any, selected: any) => {
+                      if (selected) {
+                        setSelectedRows([...selectedRows, record]);
+                      } else {
+                        const currentRows = selectedRows.filter(
+                          s => s.key !== record.key
+                        );
+                        setSelectedRows(currentRows);
+                      }
+                    },
+                    onSelectAll: (select, selectedRows) => {
+                      if (select) {
+                        setSelectedRows(selectedRows);
+                      } else {
+                        setSelectedRows([]);
+                      }
+                    },
+                  }}
+                  columns={columns}
+                  dataSource={getResourceAssets(resource)}
+                  bordered={true}
+                ></Table>
+              </>
+            ),
+          },
+        ]}
+      />
     </div>
   );
 };
