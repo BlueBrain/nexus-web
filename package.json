@@ -148,6 +148,7 @@
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1",
     "showdown": "^1.9.1",
+    "sparqljs": "^3.7.1",
     "string-similarity": "^4.0.4",
     "ts-debounce": "^1.0.0",
     "ts-invariant": "^0.4.4",

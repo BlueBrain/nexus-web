@@ -26,25 +26,53 @@ export const sparqlQueryExecutor = async (
   dataQuery: string,
   view: SparqlView,
   hasProjection: boolean,
-  projectionId?: string
+  projectionId?: string,
+  apiEndpoint?: string
 ) => {
   const { org: orgLabel, project: projectLabel, id: viewId } = parseURL(
     view._self
   );
-  const result: SparqlViewQueryResponse = hasProjection
-    ? await nexus.View.compositeSparqlQuery(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(view['@id'] ?? viewId),
-        encodeURIComponent(projectionId || '_'),
-        dataQuery
-      )
-    : await nexus.View.sparqlQuery(
-        orgLabel,
-        projectLabel,
-        encodeURIComponent(view['@id'] ?? viewId),
-        dataQuery
-      );
+
+  const SparqlParser = require('sparqljs').Parser;
+  const parser = new SparqlParser();
+
+  const parsedQuery = parser.parse(dataQuery);
+  const whereClause = parsedQuery['where'];
+  const type = whereClause
+    .reduce((acc: any, cur: any) => [...acc, ...(cur['triples'] ?? [])], [])
+    .find(
+      (k: any) =>
+        k.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+    )
+    ?.object.value.split('/')
+    .pop();
+
+  const result = await fetch(
+    `${apiEndpoint}/views/${orgLabel}/${projectLabel}/${type}`,
+    {
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('nexus__token')}`,
+      },
+    }
+  )
+    .then(res => res.json())
+    .catch(er => console.error);
+
+  // const result: SparqlViewQueryResponse = hasProjection
+  //   ? await nexus.View.compositeSparqlQuery(
+  //     orgLabel,
+  //     projectLabel,
+  //     encodeURIComponent(view['@id'] ?? viewId),
+  //     encodeURIComponent(projectionId || '_'),
+  //     dataQuery
+  //   )
+  //   : await nexus.View.sparqlQuery(
+  //     orgLabel,
+  //     projectLabel,
+  //     encodeURIComponent(view['@id'] ?? viewId),
+  //     dataQuery
+  //   );
   const data: SelectQueryResponse = result as SelectQueryResponse;
   const tempHeaderProperties: {
     title: string;
