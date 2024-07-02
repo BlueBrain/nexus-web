@@ -48,6 +48,8 @@ import { sparqlQueryExecutor } from '../utils/querySparqlView';
 import { CartContext } from './useDataCart';
 import PromisePool from '@supercharge/promise-pool';
 import { normalizeString } from '../../utils/stringUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from 'shared/store/reducers';
 
 export const EXPORT_CSV_FILENAME = 'nexus-query-result.csv';
 export const CSV_MEDIATYPE = 'text/csv';
@@ -144,13 +146,13 @@ const sortFn = (datumA: any, datumB: any) => {
   const normalizedA = isNumeric(datumA)
     ? toNumber(datumA)
     : isString(datumA)
-    ? normalizeString(datumA)
-    : datumA;
+      ? normalizeString(datumA)
+      : datumA;
   const normalizedB = isNumeric(datumB)
     ? toNumber(datumB)
     : isString(datumB)
-    ? normalizeString(datumB)
-    : datumB;
+      ? normalizeString(datumB)
+      : datumB;
   if (normalizedA < normalizedB) {
     return -1;
   }
@@ -215,14 +217,20 @@ export async function querySparql(
   dataQuery: string,
   view: View,
   hasProjection: boolean,
-  projectionId?: string
+  projectionId?: string,
+  apiEndpoint?: string,
+  selectedWorkspace?: any,
+  selectedDashboard?: any
 ) {
   const result = await sparqlQueryExecutor(
     nexus,
     dataQuery,
     view as SparqlView,
     hasProjection,
-    projectionId
+    projectionId,
+    apiEndpoint,
+    selectedWorkspace,
+    selectedDashboard,
   );
 
   const headerProperties = result.headerProperties;
@@ -318,8 +326,12 @@ const accessData = async (
   tableResource: TableResource,
   view: View,
   nexus: NexusClient,
-  basePath: string
+  basePath: string,
+  apiEndpoint?: string,
+  selectedWorkspace?: any,
+  selectedDashboard?: any,
 ) => {
+  console.log('@@accessData')
   const dataQuery: string = tableResource.dataQuery;
   const columnConfig: TableColumn[] = [tableResource.configuration].flat();
   if (
@@ -344,13 +356,13 @@ const accessData = async (
     const fields =
       columnConfig.length > 0
         ? columnConfig.map((x, index) => ({
-            title: x.name,
-            dataIndex: x.name,
-            key: x.name,
-            displayIndex: index,
-            sortable: x.enableSort,
-            filterable: x.enableFilter,
-          }))
+          title: x.name,
+          dataIndex: x.name,
+          key: x.name,
+          displayIndex: index,
+          sortable: x.enableSort,
+          filterable: x.enableFilter,
+        }))
         : DEFAULT_FIELDS(basePath);
 
     const headerProperties = fields
@@ -370,7 +382,10 @@ const accessData = async (
     !!tableResource.projection,
     tableResource.projection?.['@id'] === 'All_SparqlProjection'
       ? undefined
-      : tableResource.projection?.['@id']
+      : tableResource.projection?.['@id'],
+    apiEndpoint,
+    selectedWorkspace,
+    selectedDashboard,
   );
 
   const headerProperties = result.headerProperties.map(headerProp => {
@@ -464,8 +479,11 @@ export const useAccessDataForTable = (
   tableResourceId: string,
   basePath: string,
   onError: (err: Error) => void,
-  tableResource?: Resource
+  tableResource?: Resource,
+  selectedWorkspace?: any,
+  selectedDashboard?: any
 ) => {
+  const apiEndpoint = useSelector((state: RootState) => state.config.apiEndpoint)
   const revision = tableResource ? tableResource._rev : 0;
   const nexus = useNexusContext();
   const [selectedResources, setSelectedResources] = React.useState<Resource[]>(
@@ -615,6 +633,7 @@ export const useAccessDataForTable = (
     }
   );
 
+
   const dataResult = useQuery<any, Error>(
     [tableResult.data],
     async () => {
@@ -625,7 +644,10 @@ export const useAccessDataForTable = (
           tableResult.data.tableResource,
           tableResult.data.view,
           nexus,
-          basePath
+          basePath,
+          apiEndpoint,
+          selectedWorkspace,
+          selectedDashboard
         );
 
         result.items.forEach(
@@ -684,8 +706,8 @@ export const useAccessDataForTable = (
       const selectedItems =
         selectedRowKeys.length > 0
           ? dataResult.data.items.filter((item: any) => {
-              return selectedRowKeys.includes(item.key);
-            })
+            return selectedRowKeys.includes(item.key);
+          })
           : dataResult.data.items;
 
       exportAsCSV(
@@ -706,7 +728,7 @@ export const useAccessDataForTable = (
       });
     }
   }, [selectedResources, addResourceCollectionToCart]);
-  const addFromDataCart = () => {};
+  const addFromDataCart = () => { };
 
   return {
     downloadCSV,

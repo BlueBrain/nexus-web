@@ -642,6 +642,8 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
           }}
           showEdit={showDataTableEdit}
           toggledEdit={show => setShowDataTableEdit(show)}
+          selectedWorkspace={selectedWorkspace}
+          selectedDashboard={selectedDashboard}
         />
       ) : (
         // Old format Studio
@@ -710,43 +712,42 @@ const WorkspaceMenu: React.FC<WorkspaceMenuProps> = ({
   const items: ItemType[] =
     isSuccess && workspaceDashboards && Boolean(workspaceDashboards.length)
       ? orderBy(
-          workspaceDashboards.map(item => {
-            return {
-              key: item.workspace['@id'],
-              label: item.workspace.label,
-              title: item.workspace.label,
-              expandIcon: <DownOutlined />,
-              icon: <DownOutlined />,
-              className: selectKeysHighlight(item.workspace),
-              onTitleClick: () => setSelectedWorkspace(item.workspace),
-              popupClassName: 'workspace-popup-classname',
-              popupOffset: [0, 0],
-              createdAt: item.workspace._createdAt,
-              children: orderBy(
-                item.dashboards.map(dash => {
-                  return {
-                    label: dash.label,
-                    updatedAt: dash._updatedAt,
-                    key: `${item.workspace['@id']}*${dash['@id']}`,
-                    dataTestId: `dashboard-item-${dash.label}`,
-                    onClick: () => {
-                      setSelectedDashboard(dash);
-                      setSelectedKeys([
-                        `${item.workspace['@id']}*${dash['@id']}`,
-                      ]);
-                    },
-                  };
-                }),
-                ['label'],
-                ['asc']
-              ),
-            };
-          }),
-          ['createdAt'],
-          ['asc']
-        )
+        workspaceDashboards.map(item => {
+          return {
+            key: item.workspace['@id'],
+            label: item.workspace.label,
+            title: item.workspace.label,
+            expandIcon: <DownOutlined />,
+            icon: <DownOutlined />,
+            className: selectKeysHighlight(item.workspace),
+            onTitleClick: () => setSelectedWorkspace(item.workspace),
+            popupClassName: 'workspace-popup-classname',
+            popupOffset: [0, 0],
+            createdAt: item.workspace._createdAt,
+            children: orderBy(
+              item.dashboards.map(dash => {
+                return {
+                  label: dash.label,
+                  updatedAt: dash._updatedAt,
+                  key: `${item.workspace['@id']}*${dash['@id']}`,
+                  dataTestId: `dashboard-item-${dash.label}`,
+                  onClick: () => {
+                    setSelectedDashboard(dash);
+                    setSelectedKeys([
+                      `${item.workspace['@id']}*${dash['@id']}`,
+                    ]);
+                  },
+                };
+              }),
+              ['label'],
+              ['asc']
+            ),
+          };
+        }),
+        ['createdAt'],
+        ['asc']
+      )
       : [];
-
   return (
     <div className="workspace-list-container">
       <div className="top-menu">

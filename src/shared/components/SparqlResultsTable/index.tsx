@@ -38,6 +38,7 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   handleClick,
   tableLabel,
 }) => {
+  console.log('@@SparqlResultsTable',)
   const [selectedColumns, setSelectedColumns] = React.useState<
     HeaderProperties | undefined
   >(headerProperties);
@@ -64,102 +65,102 @@ const SparqlResultsTable: React.FunctionComponent<ResultTableProps> = ({
   const columnList = [
     ...(columnsToSelect
       ? columnsToSelect.map(({ title, dataIndex }) => {
-          // We can create special renderers for the cells here
-          let render;
-          switch (title) {
-            case 'Created At':
-              render = (date: string) => (
-                <span>
-                  <FriendlyTimeAgo date={moment(date)} />
-                </span>
-              );
-              break;
-            case 'Project':
-              render = (projectURI: string) => {
-                if (projectURI) {
-                  const [org, project] = parseProjectUrl(projectURI);
-                  return (
-                    <span>
-                      <b>{org}</b> / {project}
-                    </span>
-                  );
-                }
-                return null;
-              };
-              break;
-            default:
-              render = (value: string) => {
-                const item = items.find(item => item[dataIndex] === value);
-                const studioResourceViewLink = item
-                  ? `/?_self=${item.self.value}`
-                  : '';
-                if (isISODate(value)) {
-                  return (
-                    <a href={studioResourceViewLink}>
-                      {getDateString(moment(value))}
-                    </a>
-                  );
-                }
+        // We can create special renderers for the cells here
+        let render;
+        switch (title) {
+          case 'Created At':
+            render = (date: string) => (
+              <span>
+                <FriendlyTimeAgo date={moment(date)} />
+              </span>
+            );
+            break;
+          case 'Project':
+            render = (projectURI: string) => {
+              if (projectURI) {
+                const [org, project] = parseProjectUrl(projectURI);
+                return (
+                  <span>
+                    <b>{org}</b> / {project}
+                  </span>
+                );
+              }
+              return null;
+            };
+            break;
+          default:
+            render = (value: string) => {
+              const item = items.find(item => item[dataIndex] === value);
+              const studioResourceViewLink = item
+                ? `/?_self=${item.self.value}`
+                : '';
+              if (isISODate(value)) {
+                return (
+                  <a href={studioResourceViewLink}>
+                    {getDateString(moment(value))}
+                  </a>
+                );
+              }
 
-                return <a href={studioResourceViewLink}>{value}</a>;
-              };
+              return <a href={studioResourceViewLink}>{value}</a>;
+            };
 
-              break;
+            break;
+        }
+
+        const distinctValues = filteredItems.reduce((memo, item) => {
+          const value = item[dataIndex];
+          if (value && !memo.includes(value)) {
+            memo.push(value);
           }
+          return memo;
+        }, [] as any[]);
 
-          const distinctValues = filteredItems.reduce((memo, item) => {
-            const value = item[dataIndex];
-            if (value && !memo.includes(value)) {
-              memo.push(value);
-            }
-            return memo;
-          }, [] as any[]);
-
-          const filterOptions =
-            distinctValues.length > MIN_FILTER_LIMIT &&
+        const filterOptions =
+          distinctValues.length > MIN_FILTER_LIMIT &&
             distinctValues.length < MAX_FILTER_LIMIT
-              ? {
-                  filters: distinctValues.map(value => ({
-                    value,
-                    text: isISODate(value)
-                      ? getDateString(moment(value))
-                      : value,
-                  })),
-                  filterMultiple: false,
-                  filteredValue: filteredValues
-                    ? filteredValues[dataIndex]
-                    : null,
-                  onFilter: (filterValue: any, item: any) => {
-                    return item[dataIndex] === filterValue;
-                  },
-                }
-              : {};
-          return {
-            title,
-            dataIndex,
-            render,
-            className: `result-column ${dataIndex}`,
-            sorter: (
-              a: {
-                [key: string]: any;
+            ? {
+              filters: distinctValues.map(value => ({
+                value,
+                text: isISODate(value)
+                  ? getDateString(moment(value))
+                  : value,
+              })),
+              filterMultiple: false,
+              filteredValue: filteredValues
+                ? filteredValues[dataIndex]
+                : null,
+              onFilter: (filterValue: any, item: any) => {
+                return item[dataIndex] === filterValue;
               },
-              b: {
-                [key: string]: any;
-              }
-            ) => {
-              const sortA = a[dataIndex];
-              const sortB = b[dataIndex];
-              if (sortA < sortB) {
-                return -1;
-              }
-              if (sortA > sortB) {
-                return 1;
-              }
-              return 0;
+            }
+            : {};
+        return {
+          title,
+          dataIndex,
+          render,
+          className: `result-column ${dataIndex}`,
+          sorter: (
+            a: {
+              [key: string]: any;
             },
-            ...filterOptions,
-          };
-        })
+            b: {
+              [key: string]: any;
+            }
+          ) => {
+            const sortA = a[dataIndex];
+            const sortB = b[dataIndex];
+            if (sortA < sortB) {
+              return -1;
+            }
+            if (sortA > sortB) {
+              return 1;
+            }
+            return 0;
+          },
+          ...filterOptions,
+        };
+      })
       : []),
   ];
 

@@ -19,7 +19,7 @@ const DashboardSparqlQueryContainer: React.FC<{
   goToStudioResource: (selfUrl: string) => void;
 }> = ({ view, dataQuery, dashboardLabel, goToStudioResource }) => {
   const nexus = useNexusContext();
-
+  console.log('@@dashboardLabel', dashboardLabel)
   const queryResult = useAsyncCall<
     {
       headerProperties: ResultTableProps['headerProperties'];
