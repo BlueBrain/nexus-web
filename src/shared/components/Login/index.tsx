@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Card, Dropdown, Menu, Button } from 'antd';
 import { LoginOutlined, DownOutlined } from '@ant-design/icons';
+import logo from '../../images/logo.svg';
 
-import './Login.less';
-
-const logo = require('../../images/logo.svg');
+import './Login.scss';
 
 export interface LoginProps {
   realms: string[];
@@ -32,11 +31,11 @@ const Login: React.FunctionComponent<LoginProps> = ({
           onRealmSelected(realm);
         }
       }}
-    >
-      {realms.map(realm => (
-        <Menu.Item key={realm}>{realm}</Menu.Item>
-      ))}
-    </Menu>
+      items={realms.map(realm => ({
+        key: realm,
+        label: realm,
+      }))}
+    />
   );
 
   return (
@@ -64,7 +63,10 @@ const Login: React.FunctionComponent<LoginProps> = ({
             </Button>
             <div className="realm-holder">
               <span> with </span>
-              <Dropdown overlay={menu} trigger={['click', 'hover']}>
+              <Dropdown
+                dropdownRender={() => menu}
+                trigger={['click', 'hover']}
+              >
                 <span className="realm">
                   {realm} <DownOutlined />
                 </span>

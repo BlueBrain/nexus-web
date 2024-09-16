@@ -7,7 +7,7 @@ export const dashboardResource = rest.get(
       'https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937'
     )}`
   ),
-  (req, res, ctx) => {
+  (_, res, ctx) => {
     const mockResponse = {
       '@context': [
         'https://bluebrain.github.io/nexus/contexts/metadata.json',

@@ -1,0 +1,18 @@
+@import '../../lib.scss';
+
+.side-menu {
+  @include highShadow;
+  position: fixed;
+  z-index: 5;
+  right: 0;
+  top: 38px;
+  max-width: 300px;
+
+  .header {
+    margin: 2px 0;
+  }
+  .ant-drawer-close {
+    line-height: 43px;
+    height: 43px;
+  }
+}

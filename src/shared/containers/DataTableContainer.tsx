@@ -1,5 +1,5 @@
 import { useNexusContext } from '@bbp/react-nexus';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { useHistory, useLocation } from 'react-router-dom';
 import React, { Key, useEffect, useReducer, useState } from 'react';
 import {
@@ -22,7 +22,7 @@ import {
   SmallDashOutlined,
 } from '@ant-design/icons';
 
-import '../styles/data-table.less';
+import '../styles/data-table.scss';
 import { useAccessDataForTable } from '../hooks/useAccessDataForTable';
 import EditTableForm, { Projection } from '../components/EditTableForm';
 import { useMutation } from 'react-query';
@@ -30,13 +30,13 @@ import { parseProjectUrl } from '../utils';
 import useNotification from '../hooks/useNotification';
 import { ErrorComponent } from '../components/ErrorComponent';
 import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
 import {
   DATA_PANEL_STORAGE,
   DATA_PANEL_STORAGE_EVENT,
   DataPanelEvent,
 } from '../organisms/DataPanel/DataPanel';
 import { TResourceTableData } from '../molecules/MyDataTable/MyDataTable';
+import { RootState } from '../../shared/store/reducers';
 import { resourceWithoutMetadata } from '../../subapps/studioLegacy/containers/StudioContainer';
 
 export type TableColumn = {
@@ -219,9 +219,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         if (resource['@type'] === 'Project') {
           return;
         }
+        const url = new URL(selfUrl);
+        url.searchParams.set('format', 'expanded');
         nexus
           .httpGet({
-            path: `${selfUrl}?format=expanded`,
+            path: `${url.toString()}`,
             headers: { Accept: 'application/json' },
           })
           .then((fullIdResponse: Resource) => {
@@ -232,7 +234,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             history.push(hist, { background: location });
           });
       })
-      .catch(error => {
+      .catch(() => {
         notification.error({ message: `Resource ${self} could not be found` });
       });
   };
@@ -260,16 +262,16 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     return deprecated;
   };
   const deprecateTableResource = useMutation(deprecateTable, {
-    onMutate: (data: TableResource) => {
+    onMutate: () => {
       Modal.destroyAll();
     },
-    onSuccess: data => {
+    onSuccess: () => {
       onDeprecate && onDeprecate();
       notification.success({
         message: 'Table deprecated',
       });
     },
-    onError: error => {
+    onError: () => {
       notification.error({
         message: 'Failed to delete table',
       });
@@ -302,11 +304,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
     onMutate: (data: TableResource | UnsavedTableResource) => {
       onSave && onSave(data);
     },
-    onSuccess: data => {
+    onSuccess: () => {
       setTableDataError(null);
       setShowEditForm(false);
     },
-    onError: error => {
+    onError: () => {
       notification.error({
         message: 'Failed to save table data',
       });
@@ -504,6 +506,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                 const self = data._self || data.self.value;
                 goToStudioResource(self);
               },
+              'data-testid': 'data-table-row',
             })}
             pagination={{
               pageSize: 50,
@@ -525,6 +528,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
                   (item: StudioTableRow) =>
                     getStudioLocalStorageKey(item) === selectedStorageKey
                 ).length;
+
                 if (additionalSelectedRows > 1) {
                   antnotifcation.info({
                     duration: 5,
@@ -583,7 +587,7 @@ const DataTableContainer: React.FC<DataTableProps> = ({
             }}
             rowKey={r => r.tableKey!}
             data-testid="dashboard-table"
-            onChange={(page, fileter, sorter, extra) => {
+            onChange={(_page, _fileter, _sorter, extra) => {
               setDisplayedRows(extra.currentDataSource?.length ?? 0);
             }}
           />

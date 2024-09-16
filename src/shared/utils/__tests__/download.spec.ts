@@ -1,28 +1,33 @@
 import { download } from '../download';
 import { fileExtensionFromResourceEncoding } from '../../../utils/contentTypes';
+import { vi, describe, it, expect, beforeAll, beforeEach, Mock } from 'vitest';
 
-// Mock fileExtensionFromResourceEncoding
-jest.mock('../../../utils/contentTypes', () => ({
-  fileExtensionFromResourceEncoding: jest.fn(),
-}));
+// Mocking modules with Vitest
+vi.mock('../../../utils/contentTypes', () => {
+  const originalModule = vi.importActual('../../../utils/contentTypes');
+  return {
+    ...originalModule,
+    fileExtensionFromResourceEncoding: vi.fn(),
+  };
+});
 
 describe('download function', () => {
-  const mockCreateObjectURL = jest.fn();
-  const mockRevokeObjectURL = jest.fn();
+  const mockCreateObjectURL = vi.fn();
+  const mockRevokeObjectURL = vi.fn();
 
   beforeAll(() => {
-    globalThis.Blob = jest.fn(() => ({})) as any;
-
-    // Mock URL.createObjectURL and URL.revokeObjectURL
+    // Global mocks setup with Vitest
+    globalThis.Blob = vi.fn(() => ({})) as any;
     globalThis.URL.createObjectURL = mockCreateObjectURL;
     globalThis.URL.revokeObjectURL = mockRevokeObjectURL;
 
-    (fileExtensionFromResourceEncoding as jest.Mock).mockImplementation(
+    // Reset and redefine mocks here
+    (fileExtensionFromResourceEncoding as Mock).mockImplementation(
       (mediaType: string) => {
         if (mediaType === 'application/json') {
           return 'json';
         }
-        return '';
+        return ''; // Default mock return value
       }
     );
   });
@@ -30,11 +35,12 @@ describe('download function', () => {
   beforeEach(() => {
     mockCreateObjectURL.mockReset();
     mockRevokeObjectURL.mockReset();
+    (fileExtensionFromResourceEncoding as Mock).mockReset();
   });
 
   it('should handle filename with existing correct extension', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {
@@ -51,8 +57,8 @@ describe('download function', () => {
   });
 
   it('should handle filename with duplicate extension', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {
@@ -69,8 +75,8 @@ describe('download function', () => {
   });
 
   it('should append extension if missing', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {
@@ -87,8 +93,8 @@ describe('download function', () => {
   });
 
   it('should handle if filename is another type than extension', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {
@@ -105,8 +111,8 @@ describe('download function', () => {
   });
 
   it('should handle if filename is another type than extension', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {
@@ -123,8 +129,8 @@ describe('download function', () => {
   });
 
   it('should download without a mediaType', () => {
-    const linkClickMock = jest.fn();
-    jest.spyOn(document, 'createElement').mockImplementation(
+    const linkClickMock = vi.fn();
+    vi.spyOn(document, 'createElement').mockImplementation(
       () =>
         ({
           set href(url: string) {

@@ -4,11 +4,10 @@ import { Tooltip } from 'antd';
 
 import StatusIcon from './StatusIcon';
 import { Status } from '../types';
+import arrowIcon from '../../../shared/images/arrow.svg';
+import editIcon from '../../../shared/images/pencil.svg';
 
-import './ProjectCard.less';
-
-const arrowIcon = require('../../../shared/images/arrow.svg');
-const editIcon = require('../../../shared/images/pencil.svg');
+import './ProjectCard.scss';
 
 type ProjectCardProps = {
   name: string;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'antd';
-import { ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import { AccessControl } from '@bbp/react-nexus';
 import {
   SortAscendingOutlined,

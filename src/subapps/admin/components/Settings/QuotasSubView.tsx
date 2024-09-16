@@ -4,8 +4,8 @@ import { ColumnsType } from 'antd/es/table';
 import { useRouteMatch } from 'react-router';
 import { Gauge } from '@ant-design/charts';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Quota } from '@bbp/nexus-sdk';
-import './styles.less';
+import { Quota } from '@bbp/nexus-sdk/es';
+import './styles.scss';
 
 type Props = {};
 type GaugeProps = {

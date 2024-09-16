@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Progress, Tooltip, Button } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import * as moment from 'moment';
-import { Statistics } from '@bbp/nexus-sdk';
+import moment from 'moment';
+import { Statistics } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import FriendlyTimeAgo from '../../../../shared/components/FriendlyDate';
 
@@ -37,7 +37,7 @@ export const ViewStatisticsProgress: React.FunctionComponent<ViewStatisticsProgr
         </Button>
       ) : (
         <Tooltip title={label}>
-          <Progress type="circle" width={25} percent={percent} />
+          <Progress type="circle" size={25} percent={percent} />
         </Tooltip>
       )}
     </>

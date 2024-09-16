@@ -1,16 +1,19 @@
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { Realm } from '@bbp/nexus-sdk';
+import { Realm } from '@bbp/nexus-sdk/es';
+import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
+import useClickOutside from '../../shared/hooks/useClickOutside';
+import * as authActions from '../../shared/store/actions/auth';
+import * as configActions from '../../shared/store/actions/config';
+import landingPosterImg from '../../shared/images/EPFL_BBP_logo.svg';
+import BrainRegionsNexusPage from '../../shared/images/BrainRegionsNexusPage.jpg';
+import BrainRegionsNexusPageVideo from '../../shared/videos/BrainRegionsNexusPage.mp4';
 import { Button, Divider } from 'antd';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
-import useClickOutside from '../../shared/hooks/useClickOutside';
-import { performLogin } from '../../shared/store/actions/auth';
-import { setPreferredRealm } from '../../shared/store/actions/config';
-import { updateAboutModalVisibility } from '../../shared/store/actions/modals';
+import { useHistory } from 'react-router';
 import { RootState } from '../../shared/store/reducers';
 
-import './styles.less';
+import './styles.scss';
 
 const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
   <video
@@ -18,18 +21,11 @@ const LandingVideo = ({ videoUrl }: { videoUrl: string }) => (
     muted
     autoPlay
     className="home-authentication-fusion"
+    poster={BrainRegionsNexusPage}
     preload="auto"
     controls={false}
   >
-    <source
-      type="video/mp4"
-      src={videoUrl || require('../../shared/videos/BrainRegionsNexusPage.mp4')}
-    />
-    {/* Load an image as a Fallback */}
-    <img
-      alt="Landing page image"
-      src={require('../../shared/images/BrainRegionsNexusPage.jpg')}
-    />
+    <source type="video/mp4" src={videoUrl || BrainRegionsNexusPageVideo} />
   </video>
 );
 
@@ -42,15 +38,11 @@ const IdentityPage: React.FC<{}> = () => {
   const popoverRef = useRef(null);
   const history = useHistory();
   const dispatch = useDispatch<any>();
-  const location = useLocation();
-  const { layoutSettings } = useSelector((state: RootState) => state.config);
-  const {
-    auth,
-    config: { serviceAccountsRealm },
-  } = useSelector((state: RootState) => ({
-    auth: state.auth,
-    config: state.config,
-  }));
+  const auth = useSelector((state: RootState) => state.auth);
+  const { layoutSettings, serviceAccountsRealm } = useSelector(
+    (state: RootState) => state.config
+  );
+
   const realms: Realm[] =
     (auth.realms && auth.realms.data && auth.realms.data._results) || [];
 
@@ -59,6 +51,7 @@ const IdentityPage: React.FC<{}> = () => {
   const realmsFilter = realms.filter(
     r => r._label !== serviceAccountsRealm && !r._deprecated
   );
+
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   useClickOutside(popoverRef, () => onPopoverVisibleChange(false));
 
@@ -67,6 +60,11 @@ const IdentityPage: React.FC<{}> = () => {
       className="home-authentication"
       style={{ backgroundColor: layoutSettings.mainColor }}
     >
+      <img
+        src={layoutSettings.landingPosterImg || landingPosterImg}
+        className="home-authentication-epfl"
+      />
+      <LandingVideo videoUrl={layoutSettings.landingVideo} />
       <div className="home-authentication-content">
         <h1 className="title">Nexus.Fusion</h1>
         <nav
@@ -113,10 +111,8 @@ const IdentityPage: React.FC<{}> = () => {
                     <Button
                       onClick={e => {
                         e.preventDefault();
-                        dispatch(setPreferredRealm(item.name));
-                        dispatch(
-                          performLogin(location.state as TLocationState)
-                        );
+                        dispatch(configActions.setPreferredRealm(item.name));
+                        dispatch(authActions.performLogin());
                       }}
                       className="connect-btn"
                       size="large"

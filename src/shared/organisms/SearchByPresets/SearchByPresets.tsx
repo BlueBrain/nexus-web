@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { Alert, Spin } from 'antd';
 import { orderBy } from 'lodash';
 import { match as pmatch } from 'ts-pattern';
@@ -18,7 +18,7 @@ import {
   SearchLayout,
 } from '../../../subapps/search/hooks/useGlobalSearch';
 import useIntersectionObserver from '../../../shared/hooks/useIntersectionObserver';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {};
 type TLayout = {

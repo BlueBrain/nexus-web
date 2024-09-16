@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState, ReactElement } from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import {
   Checkbox,
@@ -12,6 +12,7 @@ import {
 } from 'antd';
 import { isString, orderBy } from 'lodash';
 import { useQuery } from 'react-query';
+import { useSelector } from 'react-redux';
 import { prettifyNumber } from '../../../utils/formatNumber';
 import {
   TRowRendererProps,
@@ -21,10 +22,10 @@ import {
   TTypesAggregatedBucket,
 } from './types';
 import isValidUrl from '../../../utils/validUrl';
-import './style.less';
-import { useSelector } from 'react-redux';
-import { RootState } from 'shared/store/reducers';
-import { TIssuer } from 'shared/canvas/MyData/types';
+
+import { RootState } from '../../../shared/store/reducers';
+import { TIssuer } from '../../../shared/canvas/MyData/types';
+import './style.scss';
 
 const typesOperatorOptions = [
   { label: 'AND', value: 'AND' },

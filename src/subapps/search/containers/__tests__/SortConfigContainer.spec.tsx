@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { render, fireEvent, screen, within } from '../../../../utils/testUtil';
 import SortConfigContainer from '../SortConfigContainer';
 import { ESSortField } from 'subapps/search/hooks/useGlobalSearch';
@@ -63,7 +64,7 @@ describe('Sort Config Container', () => {
   });
 
   it('Clicking on sort descending triggers callback with correct params', () => {
-    const onChangeSortDirection = jest.fn();
+    const onChangeSortDirection = vi.fn();
     const sortedFields = [
       {
         direction: SortDirection.ASCENDING,
@@ -97,7 +98,7 @@ describe('Sort Config Container', () => {
   });
 
   it('Clicking on sort ascending triggers callback with correct params', () => {
-    const onChangeSortDirection = jest.fn();
+    const onChangeSortDirection = vi.fn();
     const sortedFields = [
       {
         direction: SortDirection.DESCENDING,
@@ -131,7 +132,7 @@ describe('Sort Config Container', () => {
   });
 
   it('Clicking on sort ascending triggers callback with correct params', () => {
-    const onRemoveSortOption = jest.fn();
+    const onRemoveSortOption = vi.fn();
     const sortedFields = [
       {
         direction: SortDirection.DESCENDING,

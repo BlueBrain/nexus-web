@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { Button, Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { useQueries } from 'react-query';
-import { useNexusContext } from '@bbp/react-nexus';
+import { useNexusContext } from '@bbp/react-nexus/es';
 import {
   CaretDownOutlined,
   EyeInvisibleOutlined,
@@ -30,7 +30,7 @@ import DateFilterOptions from '../containers/DateFilterOptions';
 import NumberFilterOptions from '../containers/NumberFilterOptions';
 import { SortDirection } from '../../../shared/hooks/useAccessDataForTable';
 import SortMenuOptions from '../components/SortMenuOptions';
-import '../containers/SearchContainer.less';
+import '../containers/SearchContainer.scss';
 
 export type SearchConfigField =
   | {

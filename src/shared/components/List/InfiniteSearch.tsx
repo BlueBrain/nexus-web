@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Input } from 'antd';
-import * as InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-import './InfiniteSearch.less';
+import './InfiniteSearch.scss';
 
 const { Search } = Input;
 

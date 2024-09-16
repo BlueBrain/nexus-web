@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import CodeMirror from 'codemirror';
 import clsx from 'clsx';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useSelector } from 'react-redux';
-import * as pluralize from 'pluralize';
+import pluralize from 'pluralize';
 import {
   CODEMIRROR_COPY_URL_CLASS,
   CODEMIRROR_HOVER_CLASS,
@@ -17,10 +17,10 @@ import { RootState } from '../../store/reducers';
 import useResolutionActions from './useResolutionActions';
 import { triggerCopy } from '../../utils/copy';
 
-const downloadImg = require('../../images/DownloadingLoop.svg');
-const infoImg = require('../../images/InfoCircleLine.svg');
-const copyImg = require('../../images/copyColor.svg');
-const copyConfirmedImage = require('../../images/confirmAnimated.svg');
+import downloadImg from '../../images/DownloadingLoop.svg';
+import infoImg from '../../images/InfoCircleLine.svg';
+import copyImg from '../../images/copyColor.svg';
+import copyConfirmedImage from '../../images/confirmAnimated.svg';
 
 type TTooltipCreator = Pick<
   TEditorPopoverResolvedData,
@@ -249,18 +249,16 @@ function useEditorTooltip({
 }) {
   const nexus = useNexusContext();
   const { downloadBinaryAsyncHandler } = useResolutionActions();
-  const {
-    config: { apiEndpoint },
-  } = useSelector((state: RootState) => ({
-    config: state.config,
-  }));
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
 
   const allowTooltip = !isEditing;
 
   React.useEffect(() => {
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
       ?.current;
-    const editorWrapper = currentEditor.getWrapperElement();
+    const editorWrapper = currentEditor && currentEditor.getWrapperElement();
 
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
@@ -368,15 +366,19 @@ function useEditorTooltip({
     }
     // allow the tooltip only when the editor is not in edition mode
     // and the popover is not open
-    allowTooltip && editorWrapper.addEventListener('mouseover', onMouseOver);
+    allowTooltip &&
+      editorWrapper &&
+      editorWrapper.addEventListener('mouseover', onMouseOver);
     // remove the event listener when not allwoed
     !allowTooltip &&
+      editorWrapper &&
       editorWrapper.removeEventListener('mouseover', onMouseOver);
 
     // cleanup
     // remove the event listener when the component is unmounted
     return () => {
       allowTooltip &&
+        editorWrapper &&
         editorWrapper.removeEventListener('mouseover', onMouseOver);
     };
   }, [
@@ -399,16 +401,14 @@ function useEditorPopover({
     navigateResourceHandler,
     downloadBinaryAsyncHandler,
   } = useResolutionActions();
-  const {
-    config: { apiEndpoint },
-  } = useSelector((state: RootState) => ({
-    config: state.config,
-  }));
+  const apiEndpoint = useSelector(
+    (state: RootState) => state.config.apiEndpoint
+  );
 
   React.useEffect(() => {
     const currentEditor = (ref as React.MutableRefObject<CodeMirror.Editor>)
       ?.current;
-    const editorWrapper = currentEditor.getWrapperElement();
+    const editorWrapper = currentEditor && currentEditor.getWrapperElement();
     function positionner(ev: MouseEvent, tooltip: HTMLDivElement) {
       const editorRect = (ev.target as HTMLElement).getBoundingClientRect();
       const tooltipRect = tooltip.getBoundingClientRect();
@@ -500,9 +500,9 @@ function useEditorPopover({
         }
       }
     }
-    currentEditor.on('mousedown', onMouseDown);
+    currentEditor && currentEditor.on('mousedown', onMouseDown);
     return () => {
-      currentEditor.off('mousedown', onMouseDown);
+      currentEditor && currentEditor.off('mousedown', onMouseDown);
     };
   }, [
     (ref as React.MutableRefObject<CodeMirror.Editor>)?.current,

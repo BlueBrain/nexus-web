@@ -1,5 +1,5 @@
 import React, { ReactNode, useLayoutEffect, useRef, useState } from 'react';
-import './styles.less';
+import './styles.scss';
 import { Button } from 'antd';
 import { FilterIcon } from '../../shared/components/Icons/FilterIcon';
 import { CloseOutlined } from '@ant-design/icons';

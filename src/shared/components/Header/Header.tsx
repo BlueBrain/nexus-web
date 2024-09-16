@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router';
 import { Menu, Dropdown, MenuItemProps } from 'antd';
+
 import {
   UserOutlined,
   BookOutlined,
@@ -12,6 +13,7 @@ import {
   CopyOutlined,
   MenuOutlined,
   PlusOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UISettingsActionTypes } from '../../store/actions/ui-settings';
@@ -20,7 +22,10 @@ import { updateAboutModalVisibility } from '../../store/actions/modals';
 import { triggerCopy as copyCmd } from '../../utils/copy';
 import { AdvancedModeToggle } from '../../molecules';
 import useNotification from '../../hooks/useNotification';
-import './Header.less';
+import FullTextSearch from '../FullTextSearch';
+
+import fusionLogo from '../../images/fusion_logo.svg';
+import './Header.scss';
 
 export interface HeaderProps {
   name?: string;
@@ -44,6 +49,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   const { openCreationPanel } = useSelector(
     (state: RootState) => state.uiSettings
   );
+  const [openCmdk, onOpenCmdk] = useReducer(prev => !prev, false);
+
   const notShowDefaultHeader =
     (!token && location.pathname === '/') || location.pathname === '/login';
   const copyTokenCmd = () => {
@@ -57,143 +64,196 @@ const Header: React.FunctionComponent<HeaderProps> = ({
   };
   const openAboutModal = () => dispatch(updateAboutModalVisibility(true));
   const menu = (
-    <Menu mode="inline" className="ant-menu-inline">
-      <Menu.Item className="link-menu-item" key="header-menu-my-profile">
-        <Link to="/user">
-          <UserOutlined style={headerIconStyle} />
-          My Profile
-        </Link>
-      </Menu.Item>
-      <Menu.Item className="link-menu-item" key="header-menu-my-date">
-        <Link to="/my-data">
-          <MenuOutlined style={headerIconStyle} />
-          My data
-        </Link>
-      </Menu.Item>
-      {token && (
-        <Menu.Item onClick={copyTokenCmd} key="header-menu-my-token">
-          <CopyOutlined style={headerIconStyle} />
-          Copy token
-        </Menu.Item>
-      )}
-      <Menu.SubMenu
-        key="header-menu-resources"
-        className="submenu-overlay-custom"
-        popupClassName="submenu-overlay-custom-popup"
-        title={
-          <>
-            <BookOutlined style={headerIconStyle} />
-            <span>Resources</span>
-          </>
-        }
-      >
-        <Menu.Item key="header-menu-resources-docs">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://bluebrainnexus.io/docs/index.html"
-          >
-            <FileTextOutlined style={headerIconStyle} />
-            <span>Documentation</span>
-          </a>
-        </Menu.Item>
-        <Menu.Item key="header-menu-resources-web">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href="https://bbp.epfl.ch/nexus/webprotege/"
-          >
-            <LinkOutlined style={headerIconStyle} />
-            <span>Web Protégé</span>
-          </a>
-        </Menu.Item>
-        <Menu.Item key="header-menu-resources-atlas">
-          <a
-            rel="noopener noreferrer"
-            target="_blank"
-            href={
-              environment === 'dev'
-                ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/'
-                : 'https://bbp.epfl.ch/nexus/cell-atlas/'
+    <Menu
+      className="ant-menu-inline"
+      items={[
+        {
+          key: 'header-menu-my-profile',
+          label: (
+            <Link to="/user">
+              <UserOutlined style={headerIconStyle} />
+              My Profile
+            </Link>
+          ),
+          className: 'link-menu-item',
+        },
+        {
+          key: 'header-menu-my-date',
+          label: (
+            <Link to="/my-data">
+              <MenuOutlined style={headerIconStyle} />
+              My data
+            </Link>
+          ),
+          className: 'link-menu-item',
+        },
+        ...(token
+          ? [
+              {
+                key: 'header-menu-my-token',
+                label: (
+                  <>
+                    <CopyOutlined style={headerIconStyle} />
+                    Copy token
+                  </>
+                ),
+                onClick: () => copyTokenCmd(),
+              },
+            ]
+          : []),
+        {
+          key: 'header-menu-resources',
+          label: (
+            <>
+              <BookOutlined style={headerIconStyle} />
+              <span>Resources</span>
+            </>
+          ),
+          className: 'submenu-overlay-custom',
+          popupClassName: 'submenu-overlay-custom-popup',
+          children: [
+            {
+              key: 'header-menu-resources-docs',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://bluebrainnexus.io/docs/index.html"
+                >
+                  <FileTextOutlined style={headerIconStyle} />
+                  <span>Documentation</span>
+                </a>
+              ),
+            },
+            {
+              key: 'header-menu-resources-web',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://bbp.epfl.ch/nexus/webprotege/"
+                >
+                  <LinkOutlined style={headerIconStyle} />
+                  <span>Web Protégé</span>
+                </a>
+              ),
+            },
+            {
+              key: 'header-menu-resources-atlas',
+              label: (
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={
+                    environment === 'dev'
+                      ? 'http://cell-atlas.kcpdev.bbp.epfl.ch/'
+                      : 'https://bbp.epfl.ch/nexus/cell-atlas/'
+                  }
+                >
+                  <LinkOutlined style={headerIconStyle} />
+                  <span>Atlas</span>
+                </a>
+              ),
+            },
+          ],
+        },
+        {
+          key: 'header-menu-about',
+          className: 'link-menu-item',
+          onClick: () => openAboutModal(),
+          label: (
+            <>
+              <SettingOutlined style={headerIconStyle} />
+              About
+            </>
+          ),
+        },
+        {
+          key: 'logout',
+          className: 'menu-item-logout',
+          onClick: event => {
+            if (handleLogout) {
+              handleLogout(event);
             }
-          >
-            <LinkOutlined style={headerIconStyle} />
-            <span>Atlas</span>
-          </a>
-        </Menu.Item>
-      </Menu.SubMenu>
-      <Menu.Item
-        key="header-menu-about"
-        className="link-menu-item"
-        onClick={openAboutModal}
-      >
-        <SettingOutlined style={headerIconStyle} />
-        About
-      </Menu.Item>
-      <Menu.Item
-        key="logout"
-        onClick={handleLogout}
-        className="menu-item-logout"
-      >
-        <LogoutOutlined style={headerIconStyle} />
-        Logout
-      </Menu.Item>
-    </Menu>
+          },
+          label: (
+            <>
+              <LogoutOutlined style={headerIconStyle} />
+              Logout
+            </>
+          ),
+        },
+      ]}
+    />
   );
   const showCreationPanel = location.pathname === '/search';
   const handleOpenCreationPanel = () =>
     dispatch({ type: UISettingsActionTypes.CHANGE_HEADER_CREATION_PANEL });
   if (notShowDefaultHeader) return null;
   return (
-    <header id="main-header" className="Header">
-      <div className="logo-container">
-        <Link to="/">
-          <div className="logo-container__logo">
-            <img
-              src={logoImg || require('../../images/fusion_logo.svg')}
-              alt="Logo"
-            />
-          </div>
-        </Link>
-      </div>
-      {token ? (
-        <div className="menu-block">
-          {name && <AdvancedModeToggle />}
-          {name && showCreationPanel && (
-            <div
-              role="button"
-              className="menu-open-creation-panel"
-              onClick={handleOpenCreationPanel}
-            >
-              <PlusOutlined
-                rotate={openCreationPanel ? 45 : 90}
-                style={{ color: 'white', fontSize: 18 }}
-              />
+    <>
+      <header id="main-header" className="Header">
+        <div className="logo-container">
+          <Link to="/">
+            <div className="logo-container__logo">
+              <img src={logoImg || fusionLogo} alt="Logo" />
             </div>
-          )}
-          {name && (
-            <Dropdown
-              trigger={['click']}
-              overlay={menu}
-              overlayClassName="menu-overlay-custom"
-              getPopupContainer={() => document.getElementById('main-header')!}
-            >
-              <a className="menu-dropdown ant-dropdown-link">
-                <UserOutlined />
-                <span>{name}</span>
-              </a>
-            </Dropdown>
-          )}
-        </div>
-      ) : (
-        <div className="menu-block">
-          <Link to="/login" className="menu-dropdown ant-dropdown-link">
-            <UserOutlined />
-            <span>Login</span>
           </Link>
         </div>
-      )}
-    </header>
+        {token ? (
+          <div className="menu-block">
+            <div className="cmdk-shortcut" onClick={onOpenCmdk}>
+              <SearchOutlined />
+              <div
+                title="fulltext-search"
+                className="cmdk-shortcut-input"
+              ></div>
+              Click on
+              <div className="cmdk-shortcut-btn">
+                <kbd>Ctrl</kbd>+<kbd>e</kbd>
+              </div>
+              to search
+            </div>
+            {name && <AdvancedModeToggle />}
+            {name && showCreationPanel && (
+              <div
+                role="button"
+                className="menu-open-creation-panel"
+                onClick={handleOpenCreationPanel}
+              >
+                <PlusOutlined
+                  rotate={openCreationPanel ? 45 : 90}
+                  style={{ color: 'white', fontSize: 18 }}
+                />
+              </div>
+            )}
+            {name && (
+              <Dropdown
+                trigger={['click']}
+                dropdownRender={() => menu}
+                overlayClassName="menu-overlay-custom"
+                getPopupContainer={() =>
+                  document.getElementById('main-header')!
+                }
+              >
+                <a className="menu-dropdown ant-dropdown-link">
+                  <UserOutlined />
+                  <span>{name}</span>
+                </a>
+              </Dropdown>
+            )}
+          </div>
+        ) : (
+          <div className="menu-block">
+            <Link to="/login" className="menu-dropdown ant-dropdown-link">
+              <UserOutlined />
+              <span>Login</span>
+            </Link>
+          </div>
+        )}
+      </header>
+      <FullTextSearch {...{ openCmdk, onOpenCmdk }} />
+    </>
   );
 };
 

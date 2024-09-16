@@ -6,7 +6,7 @@ import {
 import { Button } from 'antd';
 import { SortDirection } from '../../../../shared/hooks/useAccessDataForTable';
 import { ESSortField } from '../../hooks/useGlobalSearch';
-import './SortConfig.less';
+import './SortConfig.scss';
 
 type SortConfigProps = {
   sortedFields: ESSortField[];

@@ -1,9 +1,6 @@
 import * as React from 'react';
 import { Alert, Button } from 'antd';
 import { Document, Page, pdfjs } from 'react-pdf';
-pdfjs.GlobalWorkerOptions.workerSrc = 'public/pdf.worker.min.js';
-import './PDFThumbnail.less';
-import './PDFPreview.less';
 import {
   CloseOutlined,
   EyeOutlined,
@@ -13,6 +10,15 @@ import {
 } from '@ant-design/icons';
 import useMeasure from '../../hooks/useMeasure';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+import './PDFThumbnail.scss';
+import './PDFPreview.scss';
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.js',
+  import.meta.url
+).toString();
 
 type PDFThumbnailProps = {
   url: string;
@@ -73,7 +79,8 @@ const PDFThumbnail = ({
           {!previewDisabled && (
             <div className="ant-image-mask" onClick={() => onPreview()}>
               <div className="ant-image-mask-info">
-                <EyeOutlined />
+                <EyeOutlined size={16} />
+                <br />
                 Preview
               </div>
             </div>

@@ -1,12 +1,21 @@
-FROM timbru31/node-alpine-git:16 as builder
+FROM timbru31/node-alpine-git:20 as builder
 
 WORKDIR /tmp/nexus-web
 COPY . /tmp/nexus-web
-ENV GENERATE_SOURCEMAP=false
-RUN yarn && yarn --max-old-space-size=6144 build
+RUN apk add --no-cache \
+    build-base \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev
 
-FROM node:16-alpine
+RUN yarn
+RUN NODE_OPTIONS=--max-old-space-size=8192 yarn build
+
+FROM node:20-alpine
+ENV NODE_ENV=production
 WORKDIR /opt/nexus
-COPY --from=builder /tmp/nexus-web/dist /opt/nexus
+COPY --from=builder /tmp/nexus-web/dist /opt/nexus/dist
 EXPOSE 8000
-ENTRYPOINT ["node", "server.js"]
+ENTRYPOINT ["node", "dist/index.mjs"]

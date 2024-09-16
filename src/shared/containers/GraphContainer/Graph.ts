@@ -1,4 +1,4 @@
-import { ResourceLink, PaginatedList, Resource } from '@bbp/nexus-sdk';
+import { ResourceLink, PaginatedList, Resource } from '@bbp/nexus-sdk/es';
 
 import { labelOf, getOrgAndProjectFromResource } from '../../utils';
 import { ElementNodeData } from '../../components/Graph';

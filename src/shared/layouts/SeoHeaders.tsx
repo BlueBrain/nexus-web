@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Helmet from 'react-helmet';
-
-const favicon = require('../favicon.png');
+import favicon from '../favicon.png';
 
 const TITLE = 'A knowledge graph for data-driven science';
 const DESCRIPTION =
@@ -25,7 +24,7 @@ const SeoHeaders: React.FC = () => {
       <meta property="og:site_name" content="Nexus" />
       <meta property="og:title" content={TITLE} />
       <meta property="og:description" content={DESCRIPTION} />
-      {/* If browser supports customizing color of surrounding UI via theme-color set to @fusion-secondary-color */}
+      {/* If browser supports customizing color of surroding UI via theme-color set to #7cb4fa */}
       <meta name="theme-color" content="#7cb4fa" />
     </Helmet>
   );

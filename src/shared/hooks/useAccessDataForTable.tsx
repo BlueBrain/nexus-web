@@ -1,9 +1,9 @@
 import { FilterFilled } from '@ant-design/icons';
-import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk';
+import { NexusClient, Resource, SparqlView, View } from '@bbp/nexus-sdk/es';
 import { useNexusContext } from '@bbp/react-nexus';
 import { notification } from 'antd';
 import { ColumnType } from 'antd/lib/table/interface';
-import * as bodybuilder from 'bodybuilder';
+import bodybuilder from 'bodybuilder';
 import json2csv, { Parser } from 'json2csv';
 import {
   isArray,
@@ -29,7 +29,7 @@ import {
   TDataSource,
   TResourceTableData,
   getLocalStorageSize,
-  notifyTotalSizeExeeced,
+  notifyTotalSizeExceeded,
 } from '../../shared/molecules/MyDataTable/MyDataTable';
 import {
   DATA_PANEL_STORAGE,
@@ -571,7 +571,7 @@ export const useAccessDataForTable = (
       newLocalStorageSize > MAX_DATA_SELECTED_SIZE__IN_BYTES ||
       currentLocalStorageSize > MAX_LOCAL_STORAGE_ALLOWED_SIZE
     ) {
-      return notifyTotalSizeExeeced();
+      return notifyTotalSizeExceeded();
     }
 
     localStorage.setItem(
@@ -602,7 +602,6 @@ export const useAccessDataForTable = (
         projectLabel,
         encodeURIComponent(tableResourceId)
       )) as TableResource;
-
       const view: View = (await nexus.View.get(
         orgLabel,
         projectLabel,

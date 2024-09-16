@@ -1,16 +1,13 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form, Modal, Input, Button, notification } from 'antd';
-import { NexusClient } from '@bbp/nexus-sdk';
+import { NexusClient } from '@bbp/nexus-sdk/es';
 import { useMutation } from 'react-query';
 import { useNexusContext } from '@bbp/react-nexus';
 import { useHistory } from 'react-router';
 import { useOrganisationsSubappContext } from '../../../subapps/admin';
 import { RootState } from '../../store/reducers';
-import {
-  ModalsActionsEnum,
-  updateOrganizationModalVisibility,
-} from '../../../shared/store/actions/modals';
+import { updateOrganizationModalVisibility } from '../../../shared/store/actions/modals';
 
 const formItemLayout = {
   labelCol: {

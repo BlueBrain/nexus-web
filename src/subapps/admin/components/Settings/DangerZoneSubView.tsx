@@ -1,18 +1,18 @@
-import { DeleteOutlined, StopOutlined, UndoOutlined } from '@ant-design/icons';
-import { NexusClient } from '@bbp/nexus-sdk';
-import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { Button, List, Tooltip, notification } from 'antd';
 import React, { useReducer } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { Button, notification, Tooltip, List } from 'antd';
+import { AccessControl, useNexusContext } from '@bbp/react-nexus';
+import { DeleteOutlined, UndoOutlined, StopOutlined } from '@ant-design/icons';
 import { useHistory, useRouteMatch } from 'react-router';
-import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+import { useSelector } from 'react-redux';
+import { useMutation, useQueryClient } from 'react-query';
+import { NexusClient } from '@bbp/nexus-sdk/es';
+import { makeOrganizationUri } from '../../../../shared/utils';
+import { RootState } from '../../../../shared/store/reducers';
 import DangerZoneAction, {
   DangerZoneActionProps,
 } from '../../../../shared/modals/DangerZone/DangerZoneAction';
-import { RootState } from '../../../../shared/store/reducers';
-import { makeOrganizationUri } from '../../../../shared/utils';
-import './styles.less';
+import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
+import './styles.scss';
 
 type TDangerZoneItem = {
   key: React.Key;

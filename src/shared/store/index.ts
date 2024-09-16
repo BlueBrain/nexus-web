@@ -4,13 +4,17 @@ import {
   applyMiddleware,
   compose,
   Store,
+  Middleware,
+  AnyAction,
+  Dispatch,
 } from 'redux';
 import thunk, { ThunkAction as ReduxThunkAction } from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { reducer as oidcReducer } from 'redux-oidc';
+import { createLogger } from 'redux-logger';
 import { History } from 'history';
 import { NexusClient } from '@bbp/nexus-sdk';
-import reducers from './reducers';
+import reducers, { RootState } from './reducers';
 import { DataExplorerFlowSliceListener } from './reducers/data-explorer';
 
 export type Services = {
@@ -30,37 +34,35 @@ try {
 } catch (e) {
   composeEnhancers = compose;
 }
+const logger = createLogger({});
 
-export default function configureStore(
+export function configureStore(
   history: History,
   { nexus }: { nexus: NexusClient },
   preloadedState: any = {}
-): Store {
-  // ignore server lists, fetch from local storage when available
+): Store<RootState> {
+  let middlwares = [
+    thunk.withExtraArgument({ nexus }),
+    routerMiddleware(history),
+    DataExplorerFlowSliceListener.middleware,
+  ];
+
+  if (process.env.NODE_ENV === 'development') {
+    middlwares = [
+      ...middlwares,
+      logger as Middleware<{}, any, Dispatch<AnyAction>>,
+    ];
+  }
+
   const store = createStore(
-    // @ts-ignore
     combineReducers({
       router: connectRouter(history),
       oidc: oidcReducer,
       ...reducers,
     }),
     preloadedState,
-    composeEnhancers(
-      applyMiddleware(
-        thunk.withExtraArgument({ nexus }),
-        routerMiddleware(history),
-        DataExplorerFlowSliceListener.middleware
-      )
-    )
+    composeEnhancers(applyMiddleware(...middlwares))
   );
-  // DEVELOPMENT ONLY
-  // if Hot module Replacement is enabled
-  // replace store's reducers with new ones.
-  if (module.hot) {
-    module.hot.accept('./reducers', () => {
-      const newReducers = require('./reducers');
-      store.replaceReducer(newReducers);
-    });
-  }
+
   return store;
 }

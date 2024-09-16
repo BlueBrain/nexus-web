@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useRouteMatch } from 'react-router';
 import { useMutation } from 'react-query';
-import { Form, Input, Button, Spin, Tooltip } from 'antd';
+import { Form, Input, Button, Spin, Tooltip, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { AccessControl, useNexusContext } from '@bbp/react-nexus';
-import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk';
+import { NexusClient, ProjectResponseCommon } from '@bbp/nexus-sdk/es';
 import HasNoPermission from '../../../../shared/components/Icons/HasNoPermission';
 import useNotification from '../../../../shared/hooks/useNotification';
-import './styles.less';
+import './styles.scss';
 
 type TProps = {
   project: {
@@ -42,7 +42,7 @@ const PrefixMappingGroupInput = ({
   value?: any;
 }) => {
   return (
-    <Input.Group className="api-mapping-row-inputs">
+    <Space.Compact className="api-mapping-row-inputs">
       <Form.Item
         noStyle
         name={['apiMappings', `apiMappings[${groupId - 1}]`, 'prefix']}
@@ -69,7 +69,7 @@ const PrefixMappingGroupInput = ({
       >
         <Input style={{ width: '50%' }} placeholder="namespace" />
       </Form.Item>
-    </Input.Group>
+    </Space.Compact>
   );
 };
 

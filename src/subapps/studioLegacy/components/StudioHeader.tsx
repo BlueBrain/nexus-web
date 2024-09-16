@@ -1,7 +1,7 @@
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import * as React from 'react';
 
-import './StudioHeader.less';
+import './StudioHeader.scss';
 
 const StudioHeader: React.FC<{
   resource: Resource;

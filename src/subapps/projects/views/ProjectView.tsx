@@ -4,7 +4,7 @@ import { useRouteMatch } from 'react-router';
 import { useProjectsSubappContext } from '..';
 import WorkflowStepsContainer from '../containers/WorkflowStepsContainer';
 
-import './ProjectView.less';
+import './ProjectView.scss';
 
 const ProjectView: React.FC = () => {
   const subapp = useProjectsSubappContext();

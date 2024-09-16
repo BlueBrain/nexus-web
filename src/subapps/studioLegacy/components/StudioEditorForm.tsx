@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Resource } from '@bbp/nexus-sdk';
+import { Resource } from '@bbp/nexus-sdk/es';
 import { Input, Form, Tooltip, Button, Switch, FormInstance } from 'antd';
 import { SaveImageHandler } from 'react-mde';
 import {
@@ -7,7 +7,7 @@ import {
   MoreOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
-import './StudioEditorForm.less';
+import './StudioEditorForm.scss';
 import { MarkdownEditorFormItemComponent } from '../../../shared/components/MarkdownEditor';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import usePlugins from '../../../shared/hooks/usePlugins';

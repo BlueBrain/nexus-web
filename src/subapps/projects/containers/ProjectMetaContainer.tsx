@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Drawer } from 'antd';
 import { useNexusContext } from '@bbp/react-nexus';
-import { Project, Resource } from '@bbp/nexus-sdk';
+import { Project, Resource } from '@bbp/nexus-sdk/es';
 
 import fusionConfig from '../config';
 import ProjectForm, { ProjectMetadata } from '../components/ProjectForm';

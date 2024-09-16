@@ -1,7 +1,7 @@
-import * as React from 'react';
-import * as cytoscape from 'cytoscape';
+import React from 'react';
+import cytoscape from 'cytoscape';
 // @ts-ignore
-import * as avsdf from 'cytoscape-avsdf';
+import avsdf from 'cytoscape-avsdf';
 
 const GRAPH_STYLE: cytoscape.Stylesheet[] = [
   {
@@ -64,6 +64,7 @@ const ProjectGraph: React.FC<{
       layout: {
         // @ts-ignore
         name: 'avsdf',
+        // @ts-ignore
         fit: true,
         nodeSeparation: 100,
       },

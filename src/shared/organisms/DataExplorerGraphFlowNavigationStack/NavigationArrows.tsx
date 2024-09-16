@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavigationArrow } from '../../molecules/DataExplorerGraphFlowMolecules';
 import useNavigationStackManager from './useNavigationStack';
-import './styles.less';
+import './styles.scss';
 
 const NavigationArrows = () => {
   const {

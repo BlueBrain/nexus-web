@@ -13,12 +13,9 @@ export type UserPageData = {
   groups?: string[];
 };
 
-const UserPage: React.FunctionComponent<{}> = props => {
-  const name = useSelector(
-    ({ oidc }: RootState) =>
-      oidc.user && oidc.user.profile && oidc.user.profile.name
-  );
-
+const UserPage: React.FunctionComponent<{}> = () => {
+  const oidc = useSelector((state: RootState) => state.oidc);
+  const name = oidc.user && oidc.user.profile && oidc.user.profile.name;
   const [userPageData, setUserPageData] = React.useState<UserPageData>({});
   const history = useHistory();
 

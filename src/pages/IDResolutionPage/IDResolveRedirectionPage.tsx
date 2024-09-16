@@ -39,10 +39,9 @@ const isErrorResult = isMatching({
 
 const IDResolveRedirectionPage = () => {
   const navigate = useHistory().push;
-  const { apiEndpoint, basePath } = useSelector((state: RootState) => ({
-    apiEndpoint: state.config.apiEndpoint,
-    basePath: state.config.basePath,
-  }));
+  const { apiEndpoint, basePath } = useSelector(
+    (state: RootState) => state.config
+  );
   const [expandedItem, setExpandedItem] = useState<string | string[]>(
     'resolved-resource-0'
   );

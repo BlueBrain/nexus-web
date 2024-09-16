@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { message } from 'antd';
-import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk';
+import { DEFAULT_ELASTIC_SEARCH_VIEW_ID } from '@bbp/nexus-sdk/es';
 
 import { uuidv4 } from '../utils';
 import ResourceListBoardComponent from '../components/ResourceListBoard';
@@ -92,8 +92,9 @@ const ResourceListBoardContainer: React.FunctionComponent<{
   };
 
   return (
+    // @ts-ignore
     <ResourceListBoardComponent createList={createList}>
-      {resourceLists.map((list, index: number) => {
+      {resourceLists.map((list, _index: number) => {
         return (
           <ResourceListContainer
             refreshList={refreshLists}
