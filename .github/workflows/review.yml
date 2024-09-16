@@ -35,7 +35,7 @@ jobs:
         run: |
           docker build . --tag=nexus-web:fresh
       - name: Start services
-        run: docker-compose -f ci/docker-compose.yml up -d && sleep 60
+        run: docker compose -f ci/docker-compose.yml up -d && sleep 60
       - name: Copy nexus-web into Cypress container
         # avoids permission issue where cypress writes screenshots to host with root as user
         # which we can't then delete easily
@@ -55,4 +55,4 @@ jobs:
       #     --key ${{ secrets.CYPRESS_RECORD_KEY }}
       - name: Cleanup Docker Containers
         if: ${{ always() }}
-        run: docker-compose -f ci/docker-compose.yml down --rmi "local" --volumes
+        run: docker compose -f ci/docker-compose.yml down --rmi "local" --volumes
