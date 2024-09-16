@@ -219,9 +219,11 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         if (resource['@type'] === 'Project') {
           return;
         }
+        const url = new URL(selfUrl);
+        url.searchParams.set('format', 'expanded');
         nexus
           .httpGet({
-            path: `${selfUrl}?format=expanded`,
+            path: `${url.toString()}`,
             headers: { Accept: 'application/json' },
           })
           .then((fullIdResponse: Resource) => {

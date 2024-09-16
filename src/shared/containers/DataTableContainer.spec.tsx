@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest';
+import { describe, it, vitest } from 'vitest';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { NexusProvider } from '@bbp/react-nexus';
 import '@testing-library/jest-dom/vitest';
@@ -30,6 +30,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { configureStore } from '../../store';
 import { cleanup, render, screen, waitFor } from '../../utils/testUtil';
 import DataTableContainer from './DataTableContainer';
+import { getMockResource } from '__mocks__/handlers/DataExplorer/handlers';
 
 describe(
   'DataTableContainer.spec.tsx',
@@ -430,6 +431,168 @@ describe(
   // While I investigate the issue, I'll add this to see if it brings any relief.
   { retry: 3 }
 );
+
+describe('DataTableContainer - Row Click', () => {
+  const queryClient = new QueryClient();
+  let dataTableContainer: JSX.Element;
+  let container: HTMLElement;
+  let rerender: (ui: React.ReactElement) => void;
+  let user: UserEvent;
+  let server: ReturnType<typeof setupServer>;
+  let component: RenderResult;
+  let nexus: ReturnType<typeof createNexusClient>;
+  let nexusSpy: jest.SpyInstance;
+
+  beforeAll(() => {
+    server = setupServer(
+      dashboardResource,
+      dashboardVocabulary,
+      fetchResourceForDownload
+    );
+
+    server.listen();
+  });
+
+  beforeEach(async () => {
+    const history = createMemoryHistory({});
+
+    nexus = createNexusClient({
+      fetch,
+      uri: deltaPath(),
+    });
+    const store = configureStore(history, { nexus }, {});
+    dataTableContainer = (
+      <Provider store={store}>
+        <Router history={history}>
+          <QueryClientProvider client={queryClient}>
+            <NexusProvider nexusClient={nexus}>
+              <DataTableContainer
+                orgLabel="bbp"
+                projectLabel="agents"
+                tableResourceId="https://dev.nise.bbp.epfl.ch/nexus/v1/resources/bbp/agents/_/8478b9ae-c50e-4178-8aae-16221f2c6937"
+                options={{
+                  disableAddFromCart: true,
+                  disableDelete: true,
+                  disableEdit: true,
+                }}
+              />
+            </NexusProvider>
+          </QueryClientProvider>
+        </Router>
+      </Provider>
+    );
+
+    component = render(dataTableContainer);
+
+    container = component.container;
+    rerender = component.rerender;
+    user = userEvent.setup();
+
+    nexusSpy = vitest
+      .spyOn(nexus, 'httpGet')
+      .mockImplementation(request =>
+        request.path.toString().includes('format')
+          ? Promise.resolve([getMockResource('doesnt-matter', {}, 'agents')])
+          : Promise.resolve(getMockResource('doesnt-matter', {}, 'agents'))
+      );
+  });
+
+  // reset any request handlers that are declared as a part of our tests
+  // (i.e. for testing one-time error scenarios)
+  afterEach(() => {
+    cleanup();
+    queryClient.clear();
+    localStorage.clear();
+    nexusSpy.mockClear();
+  });
+
+  afterAll(() => {
+    server.resetHandlers();
+    server.close();
+  });
+
+  const visibleTableRows = () => {
+    return container.querySelectorAll('table tbody tr.data-table-row');
+  };
+
+  const waitForTableRows = async (expectedRowsCount: number) => {
+    return await waitFor(() => {
+      const rows = visibleTableRows();
+      expect(rows.length).toEqual(expectedRowsCount);
+      return rows;
+    });
+  };
+
+  it('requests correct resource from delta when user clicks on row with revision in self', async () => {
+    const selfWithRevision =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g?rev=30';
+
+    const resources = [getMockStudioResource('Malory', `${selfWithRevision}`)];
+
+    server.use(sparqlViewResultHandler(resources));
+    rerender(dataTableContainer);
+    await waitForTableRows(1);
+
+    await user.click(screen.getByText('Malory'));
+    expect(nexusSpy).toHaveBeenLastCalledWith({
+      path: `${selfWithRevision}&format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+  });
+
+  it('requests correct resource from delta when user clicks on row with tag in self', async () => {
+    const selfWithTag =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g?tag=30';
+
+    const resources = [getMockStudioResource('Malory', `${selfWithTag}`)];
+
+    server.use(sparqlViewResultHandler(resources));
+    rerender(dataTableContainer);
+    await waitForTableRows(1);
+
+    await user.click(screen.getByText('Malory'));
+    expect(nexusSpy).toHaveBeenLastCalledWith({
+      path: `${selfWithTag}&format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+  });
+
+  it('requests correct resource from delta when user clicks on row with tag and revision in self', async () => {
+    const selfWithTagAndRev =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g?tag=30&rev=2-';
+
+    const resources = [getMockStudioResource('Malory', `${selfWithTagAndRev}`)];
+
+    server.use(sparqlViewResultHandler(resources));
+    rerender(dataTableContainer);
+    await waitForTableRows(1);
+
+    await user.click(screen.getByText('Malory'));
+    expect(nexusSpy).toHaveBeenLastCalledWith({
+      path: `${selfWithTagAndRev}&format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+  });
+
+  it('requests correct resource from delta when user clicks on row with no tag or revision in self', async () => {
+    const selfWithoutTagOrRev =
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g';
+
+    const resources = [
+      getMockStudioResource('Malory', `${selfWithoutTagOrRev}`),
+    ];
+
+    server.use(sparqlViewResultHandler(resources));
+    rerender(dataTableContainer);
+    await waitForTableRows(1);
+
+    await user.click(screen.getByText('Malory'));
+    expect(nexusSpy).toHaveBeenLastCalledWith({
+      path: `${selfWithoutTagOrRev}?format=expanded`,
+      headers: { Accept: 'application/json' },
+    });
+  });
+});
 
 const dashboardErrorResponse = {
   '@context': 'https://bluebrain.github.io/nexus/contexts/error.json',
