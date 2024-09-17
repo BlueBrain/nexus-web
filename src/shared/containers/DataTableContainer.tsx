@@ -219,19 +219,32 @@ const DataTableContainer: React.FC<DataTableProps> = ({
         if (resource['@type'] === 'Project') {
           return;
         }
-        const url = new URL(selfUrl);
-        url.searchParams.set('format', 'expanded');
+        const resourceUrl = new URL(selfUrl);
+        resourceUrl.searchParams.set('format', 'expanded');
+
         nexus
           .httpGet({
-            path: `${url.toString()}`,
+            path: `${resourceUrl.toString()}`,
             headers: { Accept: 'application/json' },
           })
           .then((fullIdResponse: Resource) => {
             const [orgLabel, projectLabel] = parseProjectUrl(resource._project);
-            const hist = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
+            let fullResourceId = `/${orgLabel}/${projectLabel}/resources/${encodeURIComponent(
               fullIdResponse[0]['@id']
             )}`;
-            history.push(hist, { background: location });
+
+            const revision = resourceUrl.searchParams.get('rev');
+            const tag = resourceUrl.searchParams.get('tag');
+
+            if (revision) {
+              fullResourceId = `${fullResourceId}?rev=${revision}`;
+            } else if (tag) {
+              fullResourceId = `${fullResourceId}?tag=${tag}`;
+            }
+
+            history.push(`${fullResourceId.toString()}`, {
+              background: location,
+            });
           });
       })
       .catch(() => {

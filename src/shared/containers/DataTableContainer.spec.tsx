@@ -442,6 +442,7 @@ describe('DataTableContainer - Row Click', () => {
   let component: RenderResult;
   let nexus: ReturnType<typeof createNexusClient>;
   let nexusSpy: jest.SpyInstance;
+  let historySpy: jest.SpyInstance;
 
   beforeAll(() => {
     server = setupServer(
@@ -495,6 +496,7 @@ describe('DataTableContainer - Row Click', () => {
           ? Promise.resolve([getMockResource('doesnt-matter', {}, 'agents')])
           : Promise.resolve(getMockResource('doesnt-matter', {}, 'agents'))
       );
+    historySpy = vitest.spyOn(history, 'push');
   });
 
   // reset any request handlers that are declared as a part of our tests
@@ -504,6 +506,7 @@ describe('DataTableContainer - Row Click', () => {
     queryClient.clear();
     localStorage.clear();
     nexusSpy.mockClear();
+    historySpy.mockClear();
   });
 
   afterAll(() => {
@@ -538,6 +541,8 @@ describe('DataTableContainer - Row Click', () => {
       path: `${selfWithRevision}&format=expanded`,
       headers: { Accept: 'application/json' },
     });
+    const navigateTo = historySpy.mock.calls[0][0];
+    expect(navigateTo).toContain('rev=30');
   });
 
   it('requests correct resource from delta when user clicks on row with tag in self', async () => {
@@ -555,11 +560,13 @@ describe('DataTableContainer - Row Click', () => {
       path: `${selfWithTag}&format=expanded`,
       headers: { Accept: 'application/json' },
     });
+    const navigateTo = historySpy.mock.calls[0][0];
+    expect(navigateTo).toContain('tag=30');
   });
 
   it('requests correct resource from delta when user clicks on row with tag and revision in self', async () => {
     const selfWithTagAndRev =
-      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g?tag=30&rev=2-';
+      'https://localhost:3000/resources/bbp/agents/_/persons%2Fc3358e61-7650-4954-99b7-f7572cbf5d5g?tag=30&rev=20';
 
     const resources = [getMockStudioResource('Malory', `${selfWithTagAndRev}`)];
 
@@ -572,6 +579,8 @@ describe('DataTableContainer - Row Click', () => {
       path: `${selfWithTagAndRev}&format=expanded`,
       headers: { Accept: 'application/json' },
     });
+    const navigateTo = historySpy.mock.calls[0][0];
+    expect(navigateTo).toContain('rev=20');
   });
 
   it('requests correct resource from delta when user clicks on row with no tag or revision in self', async () => {
@@ -591,6 +600,9 @@ describe('DataTableContainer - Row Click', () => {
       path: `${selfWithoutTagOrRev}?format=expanded`,
       headers: { Accept: 'application/json' },
     });
+    const navigateTo = historySpy.mock.calls[0][0];
+    expect(navigateTo).not.toContain('rev');
+    expect(navigateTo).not.toContain('tag');
   });
 });
 
