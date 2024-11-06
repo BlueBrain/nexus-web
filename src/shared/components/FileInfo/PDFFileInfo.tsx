@@ -54,7 +54,10 @@ export default ({
         <PDFThumbnail
           previewDisabled={previewDisabled}
           url={src}
-          onPreview={() => !previewDisabled && setIsVisible(true)}
+          onPreview={React.useCallback(
+            () => !previewDisabled && setIsVisible(true),
+            []
+          )}
         />
       )}
       {isVisible && src && (

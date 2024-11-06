@@ -148,7 +148,7 @@ export default defineConfig({
                 projectLabel,
                 resource: resourcePayload,
               });
-              if (!createResource) {
+              if (!createdResource) {
                 throw new Error('Test Resource was not created');
               }
               return createdResource;
