@@ -16,7 +16,7 @@ import './PDFThumbnail.scss';
 import './PDFPreview.scss';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
+  'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url
 ).toString();
 
@@ -36,7 +36,7 @@ const PDFThumbnail = ({
     height: number;
     width: number;
   }>();
-
+  const [isReady, setIsReady] = React.useState(false);
   /**
    * Returns either height or width prop for specifying
    * size of PDF document for display on screen depending
@@ -55,37 +55,40 @@ const PDFThumbnail = ({
     return { width: Math.floor(bounds.width * 0.8) };
   }, [bounds, pdfDimensions]);
 
+  const onDocumentLoadSuccess = React.useCallback(() => {
+    setIsReady(true);
+  }, []);
   return (
     <div className="pdf-thumbnail-wrapper" ref={wrapperHeightRef}>
       <Document
         loading={<>loading...</>}
         file={url}
         onLoadError={console.error}
-        renderMode="svg"
-        options={{ isEvalSupported: false }}
+        onLoadSuccess={onDocumentLoadSuccess}
       >
-        <Page
-          className="pdf-thumbnail-page"
-          pageNumber={1}
-          renderMode="svg"
-          onLoadSuccess={page => {
-            setPdfDimensions({
-              height: page.originalHeight,
-              width: page.originalWidth,
-            });
-          }}
-          {...calculatePDFSizingProp}
-        >
-          {!previewDisabled && (
-            <div className="ant-image-mask" onClick={() => onPreview()}>
-              <div className="ant-image-mask-info">
-                <EyeOutlined size={16} />
-                <br />
-                Preview
+        {isReady && (
+          <Page
+            className="pdf-thumbnail-page"
+            pageNumber={1}
+            onLoadSuccess={page => {
+              setPdfDimensions({
+                height: page.originalHeight,
+                width: page.originalWidth,
+              });
+            }}
+            {...calculatePDFSizingProp}
+          >
+            {!previewDisabled && (
+              <div className="ant-image-mask" onClick={() => onPreview()}>
+                <div className="ant-image-mask-info">
+                  <EyeOutlined size={16} />
+                  <br />
+                  Preview
+                </div>
               </div>
-            </div>
-          )}
-        </Page>
+            )}
+          </Page>
+        )}
       </Document>
     </div>
   );
@@ -177,7 +180,6 @@ const PDFViewer: React.FC<{
                 <TransformComponent>
                   <Page
                     pageNumber={pageNumber}
-                    renderMode="svg"
                     renderTextLayer={false}
                     renderAnnotationLayer={false}
                     onLoadSuccess={page => {
