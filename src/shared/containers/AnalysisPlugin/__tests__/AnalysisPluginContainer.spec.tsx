@@ -1,4 +1,3 @@
-import { vi } from 'vitest';
 import { NexusProvider } from '@bbp/react-nexus';
 import { createNexusClient } from '@bbp/nexus-sdk/es';
 import { QueryClient, QueryClientProvider } from 'react-query';

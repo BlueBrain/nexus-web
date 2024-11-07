@@ -23,7 +23,7 @@ export default defineConfig(() => {
             console.log('⛔️ describe may not getting the latest tag')
         }
     }
-    
+
     return ({
         base: process.env.NODE_ENV === 'production' ? "/__BASE__/" : "/",
         plugins: [
@@ -88,7 +88,7 @@ export default defineConfig(() => {
                 output: {
                     manualChunks: {
                         lodash: ['lodash'],
-                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.worker.min.js'],
+                        pdfjs: ['node_modules/pdfjs-dist/build/pdf.worker.min.mjs'],
                         codemirror: ["codemirror", "react-codemirror2"]
                     }
                 }
