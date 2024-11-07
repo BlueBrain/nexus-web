@@ -153,7 +153,7 @@
     "@types/lodash": "^4.14.202",
     "@types/morgan": "^1.7.35",
     "@types/mustache": "^4.2.5",
-    "@types/node": "^20.10.6",
+    "@types/node": "^22.9.0",
     "@types/object-hash": "^1.2.0",
     "@types/pluralize": "^0.0.29",
     "@types/qs": "^6.9.5",
