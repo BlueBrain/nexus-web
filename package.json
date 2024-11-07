@@ -175,7 +175,7 @@
     "@vitest/ui": "^1.1.1",
     "browserify-zlib": "^0.2.0",
     "css-loader": "^2.1.1",
-    "cypress": "^13.6.2",
+    "cypress": "^13.15.2",
     "cypress-file-upload": "^5.0.8",
     "esbuild": "^0.19.4",
     "esbuild-node-tsc": "^2.0.5",
@@ -231,7 +231,8 @@
   "resolutions": {
     "d3-interpolate": "2.0.1",
     "headers-polyfill": "3.0.10",
-    "history": "4.5.1"
+    "history": "4.5.1",
+    "canvas": "Automattic/node-canvas#master"
   },
   "overrides": {
     "d3-interpolate": "2.0.1"
