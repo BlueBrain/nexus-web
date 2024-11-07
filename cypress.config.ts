@@ -26,6 +26,7 @@ export default defineConfig({
       ELECTRON_EXTRA_LAUNCH_ARGS: '--disable-gpu',
       NODE_TLS_REJECT_UNAUTHORIZED: 0,
     },
+
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
         launchOptions.args.push('--window-size=1920,1080');
@@ -148,6 +149,7 @@ export default defineConfig({
                 projectLabel,
                 resource: resourcePayload,
               });
+              console.log('Created Resource', createdResource);
               if (!createdResource) {
                 throw new Error('Test Resource was not created');
               }
