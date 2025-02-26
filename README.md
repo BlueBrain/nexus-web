@@ -1,3 +1,7 @@
+> [!WARNING]
+> The Blue Brain Project concluded in December 2024, so development has ceased under the BlueBrain GitHub organization.
+> Future development will take place at: https://github.com/openbraininstitute/nexus-web
+
 <img src="docs/assets/Blue-Brain-Nexus-Fusion-Github-banner.jpg"/>
 
 # Nexus Fusion
